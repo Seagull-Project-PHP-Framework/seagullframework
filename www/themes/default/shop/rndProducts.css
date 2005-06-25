@@ -1,0 +1,29 @@
+/* /////////////// RndProducts block /////////////// */
+
+div.rndProducts {
+    background-color: #e7e7e7;
+    font-size: 0.85em;
+    color: #184a84;
+    border-right: 1px solid #bbbbbb;
+    border-left: 1px solid #bbbbbb;
+    border-bottom: 1px solid #bbbbbb;
+}
+div.rndProducts img {
+    border: 1px solid #bbbbbb;
+}
+div.rndProducts a {
+    text-decoration: none;
+}
+div.rndProducts a:hover img {
+    border: 1px solid #184a84;
+}
+div.rndProducts h5 {
+    margin: 0;
+    font-size: 1.1em;
+    white-space: nowrap;
+}
+div.rndProducts h6 {
+    margin: 0;
+    font-size: 1em;
+    color: #184a84;
+}

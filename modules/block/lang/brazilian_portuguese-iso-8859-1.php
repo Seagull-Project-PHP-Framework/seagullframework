@@ -1,0 +1,28 @@
+<?php
+$words['Left'] = 'Esquerda';
+$words['Right'] = 'Direita';
+$words['With selected block(s)'] = 'Com o(s) bloco(s) selecionado(s)';
+$words['Blocks Manager'] = 'Gerenciar blocos';
+$words['Browse'] = 'Navegar';
+$words['Edit block'] = 'Editar bloco';
+$words['New block'] = 'Novo bloco';
+$words['Reorder blocks'] = 'Reordenar blocos';
+$words['Title class'] = 'Classe do título';
+$words['Body class'] = 'Classe do corpo';
+$words['Sections'] = 'Seções';
+$words['Order'] = 'Ordenar';
+$words['Position'] = 'Posição';
+$words['Block Details'] = 'Detalhes do bloco';
+$words['Block successfully added'] = 'Bloco adicionado com sucesso';
+$words['Block details successfully updated'] = 'Detalhes do bloco atualizado com sucesso';
+$words['The selected block(s) have successfully been deleted'] = 'O(s) bloco(s) selecionado(s) foi(ram) removido(s) com sucesso';
+$words['You must enter a name for your block'] = 'Você deve digitar um nome para o seu bloco';
+$words['You must enter a title for your block'] = 'Você deve digitar um título para o seu bloco';
+$words['You need to define a class for this block before activating it'] = 'Você precisa definir uma classe para esse bloco antes de ativá-lo';
+$words['Block'] = 'Bloco';
+$words['Reorder instructions'] = 'Altere a ordem de exibição selecionando um item clicando em mover para cima ou mover para baixo.Se assegur de clicar em Enviar quando terminar.';
+$words['Left column'] = 'Coluna esquerda';
+$words['Right column'] = 'Coluna direita';
+$words['No section'] = 'Nenhum selecionado';
+$words['All sections'] = 'Todos selecionados';
+?>
