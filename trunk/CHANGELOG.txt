@@ -1,0 +1,1541 @@
+CHANGELOG
+=========
+
++-----------------------+
+| VERSION: 0.4.2        |
++-----------------------+
+BUGFIXES
+23-06-05    Fixed bug where recursive array merging between global and module
+            configs was causing duplicate keys.  In the case where Config lib
+            was being used, this caused errors.
+21-06-05    Added missing config values so OrgTypeMgr now usable
+21-06-05    Missing perm checks added for install routine (Michael Heuberger)
+08-06-05    Public users can now view article author details
+05-06-05    Fixed bug #1213557, 'wrong language in select on org_manager'
+05-06-05    Fixed bug #1005263, "can't add new users", where preferences were not
+            being assigned to users correctly (Pierpaolo Toniolo)
+
+IMPROVEMENTS
+23-06-05    More user-friendly error msgs when directories have incorrect perms
+23-06-05    Linked org type manager to the org manager screen
+16-06-05    Implemented bug reporter screen (to disable see 
+            Configuration -> Debugging Options -> Show debug reporting link )
+13-06-05    More helpful debug info returned on failed db connect during install
+13-06-05    HTML <title> tag now displays article titles
+12-06-05    MTA backend & params now configurable, allows SGL_Emailer to work
+            with a variety of configurations (Ferdinand Hoffmann)
+09-06-05    Improved logic for db operations during setup wizard
+08-06-05    Logout now redirects you correctly to custom section if defined
+06-06-05    Renamed getPrefsByUid to getPrefsByUserId for consistency
+06-06-05    Renamed 'default' perms and prefs methods to 'master' to mark the
+            difference, ie, between master prefs and default prefs
+06-06-05    Added add/delete perm/prefs methods to be used with new installer
+05-06-05    Sessions make more secure, see SGL_HTTP_Session::_init and
+            see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+31-05-05    Updated deprecated html (Riccardo Magliocchetti)
+31-05-05    Increased default size of FCK wysiwyg window
+31-05-05    Oracle data updates
+
++-----------------------+
+| VERSION: 0.4.1        |
++-----------------------+
+BUGFIXES
+29-05-05    Fixed bug #1192774, where existing navigation sections couldn't have
+            their type changed (static/dynamic), and fixed related parsing errors
+28-05-05    Fixed bug #1198638, moving blocks from left to right kills assignments
+28-05-05    Fixed bug #1177570, Can't show blocks for sub-sections
+28-05-05    Fixed bug #1198109, block delete is not working
+26-05-05    Fixed cookieless browsing
+26-05-05    Password reset now redirects to more appropriate page
+26-05-05    Fixed bug where all sections were listed as being assigned to
+            'no section' (AJ Tarachanowicz)
+24-05-05    Fixed bug where disabling cookies created problems in url parsing
+24-05-05    Fixed parsing bug in SGL_Url::parseResourceUri(), wrote tests
+24-05-05    Fixed bug #1198669, 'When I edit a page, the current static-article 
+            page is lost'
+24-05-05    Type enforcement added to article IDs (Mindaugas Pocius)
+24-05-05    Fixed bug where articles with no body were not editable after
+            submission
+18-05-05    Fixed bug #1201361, 'Ending spaces removed during translation', for
+            all languages
+17-05-05    Consolidated 'last login' methods
+15-05-05    Fixed html error in guestbook (Mindaugas Pocius)
+15-05-05    Fixed bug when 'reset passwd' didn't mail password correctly
+13-05-05    Fixed missing group name in AccountMgr _summary (Tobias Kuckuck)
+10-05-05    Fixed failed redirect after updating block order
+08-05-05    Fixed last login time to reflect more accurately (Fabio Bacigalupo)
+08-05-05    Fixed bug where roles with no perms set would cause infinite loop
+08-05-05    Fixed bug where $baseUri variable was not refreshed correctly in 
+            SimpleNav::getTabsByRid() (Mindaugas Pocius)
+04-05-05    Fixed bug where failure to open email template not correctly
+            bubbled up to caller
+02-05-05    Fixed empty password reminder email issue
+28-04-05    Fixed caching and table naming issues in SGL_NestedSet (Lorenzo 
+            Alberton)
+24-04-05    Fixed bug with reply-to in messaging module
+23-04-05    Added an ini_set('session.auto_start', 0) since when it's enabled 
+            sessions fail to initialise (Emmanuel B.)
+22-04-05    Fixed implode() call in SGL_Util::makeIniUnreadable() where glue 
+            arg is not optional in PHP < 4.3 (Stephen Martin)
+21-04-05    Fixed bug where permissions and user objects were not being 
+            updated correctly in PHP5 by DB_DataObject (Tobias Kuckuck)
+21-04-05    Fixed issue with PHP5/Oracle where DB_DataObject db resource was 
+            not being shared with the SGL_DB resource (Tobias Kuckuck)
+            
+IMPROVEMENTS
+28-05-05    Blocks are now disabled whenever an error is triggered, so error
+            message can be read properly
+24-05-05    SglDefault_TwoLevelA.css renamed to SglDefault_TwoLevel.css
+22-05-05    Security improvements and bugfixes added to the messaging module 
+            (Louay Gammo)
+17-05-05    FckEditor now replaces the discontinued htmlArea (Rares Benea)
+17-05-05    Emails no longer hard-coded to iso-8859-1 (Mindaugas Pocius)
+17-05-05    Linked in the user import manager (Werner Krauss)
+17-05-05    Created data access layer for user module, refactored relevant methods
+16-05-05    Header cleanup, login/out button redone in CSS (Riccardo Magliocchetti)
+15-05-05    SglListamaticSubtle.css cleaned up (Riccardo Magliocchetti)
+08-05-05    Improved number of strings translated in templates (Rafael Ferreira Silva)
+08-05-05    Updated brazilian_portuguese translation (Rafael Ferreira Silva)
+07-05-05    Improved Newsletter module (Rares Benea, AJ Tarachanowicz) 
+07-05-05    Added new shopping cart functionality (Rares Benea) 
+05-05-05    Improved module generator (Werner Krauss)
+02-05-05    Static articles no longer have category headings
+28-04-05    Added $conf['site']['defaultParams'] key so it's now possible to 
+            set a static article as your default (home) page, ie
+                [site]
+                ...
+                frontScriptName=index.php
+                defaultModule=publisher
+                defaultManager=articleview
+                defaultParams=frmArticleID/1/staticId/6            
+24-04-05    Added workaround to overcome hostname spoofs so installer routine
+            is not exposed (Miha Vrhovnik)
+23-04-05    If $conf['debug']['production'] is true, errors of any type are now
+            suppressed with a ini_set('display_errors', 0)
+21-04-05    Unix users can now edit/save files created by the module generator
+21-04-05    Added ability to rebuild sequences for specific tables (Andy Crain)
+20-04-05    Added SGL_Locale class which wraps PEAR's I18Nv2 (Jacob Singh)
+
++-----------------------+
+| VERSION: 0.4.0        |    
++-----------------------+
+BUGFIXES
+17-04-05    Fixed timezone/locale handling (Mindaugas Pocius)
+17-04-05    Fixed  Site News block links
+17-04-05    Fixed SimpleNav issue where categories block would disappear when navigating
+            publisher categories
+17-04-05    Fixed bug where non-admin view of articles (publisher.html) had incorrect
+            links
+06-04-05    Fixed get/post prob with updating user perms (Anas Nashif)
+04-04-05    Fixed wizard example (Tobias Kuckuck)
+04-04-05    Fixed oci schema and data (Tobias Kuckuck)
+03-04-05    Fixed include problem that only gave errors in Apache2 (Alain Bonnel)
+03-04-05    Implemented suggested fix for CGI installs (Armand Pasteau)
+02-04-05    Fixed bug where static article wouldn't update correctly
+            (Matti Tahvonen)
+01-04-05    Corrected foreign key integrity error with Postgres data
+            (Pierpaolo Toniolo)
+31-03-05    Improved checking for presence of PHP_SELF, in cgi and non-
+            apache environments
+            
+IMPROVEMENTS
+17-04-05    Updated French translation (Aymerick Jehanne)
+08-04-05    Updated German translation (Werner M. Krauss)
+06-04-05    Improved security for ini files, see SGL_Util::makeIniUnreadable() (Georg 
+            Gell)
+06-04-05    Improved parsing in getBaseUrl() so you can pass /?deleteConfig=1 from any
+            Seagull url
+03-04-05    Improved user import manager, some cleanup from last version was necessary
+
++-----------------------+
+| VERSION: 0.4.0dev3    |    
++-----------------------+
+BUGFIXES
+28-03-05    Fixed bug with document preview in articleView.html
+27-03-05    Fixed problem when unchanged data in updated perm resulted in
+            error (DataObject NO_AFFECTED_ROWS issue)
+27-03-05    Session timeout info can now be obtained statically by calling
+            SGL_HTTP_Session::isTimedOut() (Louay Gammo)
+27-03-05    Fixed bug where error_log default file was set incorrectly
+17-03-05    Updated Wizard to work with front controller urls (Tobias Kuckuck)
+17-03-05    Fixed bug where links in OrgMgr were not working correctly
+17-03-05    Modified locale setting to work for windows (Jürgen Mutz)
+17-03-05    Fixed bug where users couldn't register due to a missing perm
+            (Dustin Rottmann)
+17-03-05    Fixed a data loading bug in postgres (Pierpaolo Toniolo)
+15-03-05    Fixed subquery bug in SGL_DB::getPagedData (Tobias Kuckuck)
+
+IMPROVEMENTS
+29-03-05    Added ability to selectively delete caches (Andy Crain)
+29-03-05    Implemented a cache singleton to improve performance (Andy Crain)
+28-03-05    Removed interim 'category_nested' table in favour of 'category'
+28-03-05    Added auto-reloader cronjob for demo (required wizard form to be
+            reverted to GET)
+27-03-05    Auto-login implemented correctly (Rares Benea)
+27-03-05    The 'redirectToDefault' action no longer requires specific perms
+27-03-05    Differentiated between debug log messages that indicate method
+            step-through and all other logged messages which are of higher priority,
+            therefore easier to make sense of the logs on a production site
+22-03-05    Reinstated Module generator that was lost during merge
+17-03-05    Made url handling more robust, params of type /foo[]/bar/ and /foo[]//
+            are now parsed correctly (Lorenzo Alberton)
+17-03-05    Re-added missing parsing of constraints in etc folder (Tobias Kuckuck)
+
++-----------------------+
+| VERSION: 0.4.0dev2    |    
++-----------------------+
+
+BUGFIXES
+26-03-05    Fixed bug where contactUs tab did not highight if session id was present
+26-03-05    Fixed bug where article categories block would disappear when browsing
+            categories
+13-03-05    Fixed bug where a $dsn with no DB name supplied correctly 
+            returned a PEAR DB object but wasn't caught (Werner M. Krauss)
+13-03-05    Add missing port param for non-standard db connects (Ireneusz Pluta)
+08-03-05    Removed 'get default category' from tree nav widget, last action
+            often proved inappropriate for next link
+08-03-05    Fixed all FC-related bugs with LoginBlock
+08-03-05    Fixed bug where sequence regeneration multiplied tables for type 'mysql'
+08-03-05    Made mysql_SGL default and added related missing key from Config screen
+27-02-05    Fixed bug where section detection would abort prematurely for disabled 
+            tabs, even when they where current, causing categories widget to fail
+            to appear
+27-02-05    Bugfix accepted for Cache_Lite, empty cache dir no longer returns
+            null
+22-02-05    Bugfix accepted for File_Util, directory sorting now works
+17-02-05    Fixed syntax errors in LoginBlock (Tobias Kuckuck)
+13-02-05    Fixed a number of org manager related bugs
+07-02-05    Fixed bug where MtceMgr created manager classes in the root
+            of the module folder, forgetting the 'classes' dir
+29-01-05    Fixed float problem with related items box in Articles
+            (AJ Tarachanowicz)
+28-01-05    Submitted bug for HTML_Template_Flexy, embedded templates now get
+            vars parsed correctly
+23-01-04    Fixed ArticleViewManager bug (AJ Tarachanowicz)
+06-01-05    Fixed reorder loses assignments bug in blocks (Miha Vrhovnik)
+06-01-05    Fixed multiple pre-selection bug in blocks (Miha Vrhovnik)
+05-01-05    Fixed multiple assignment bug in blocks (Dustin Rottmann)
+
+IMPROVEMENTS
+26-03-05    Auto-enable for new registrations set to false, admins must manually approve
+            new registrants
+26-03-05    Action redirects now allowed without requiring specific perms
+13-03-05    Added a query count indicator in the footer, you need to use the mysql_SGL
+            driver to see it.  Adding a SQL log would be trivial with this hook.
+09-03-05    Translate method now accepts a filter parameter, now text format can
+            be defined in the template method calls, and all translation keys
+            can be standardised to lowercase (Andy Crain)
+09-03-05    Database password 'text' field in installer changed to 'password' field
+09-03-05    Made log path more flexible in Config (James Floyd)
+08-03-05    Removed category operations from 'navigation' screens: category
+            still has independent functionality, tying it with only Publisher
+            makes context easier to understand
+27-02-05    Completed work integrating a front controller into seagull, 
+            thanks for a lot of help from AJ Tarachanowicz
+23-02-05    Multilevel list css cleanup (Riccardo Magliocchetti)
+19-02-05    Added ability to use default PEAR sequences or SGL-overrided
+            version where all sequences are consolidated in a single table
+            (Andy Crain)
+19-02-05    Implemented the rebuildSequences() method for pgsql (Andy Crain)
+17-02-05    Improved INSTALL doc, added quickstart
+13-02-05    Added an org type manager (AJ Tarachanowicz)
+12-02-05    Moved PEAR error handler setup to init()
+12-02-05    Moved SGL::inherit to SGL_Controller::_copyObjectProperties as
+            it is only used there
+12-02-05    Moved isObjEmpty($obj) to SGL_Wizard as it is only used there
+10-02-05    Refactored directory listing methods in SGL_Util to use
+            File_Util method
+08-02-05    TwolevelA list css cleanup (Riccardo Magliocchetti)
+04-02-05    Added better error handling to SGL_NestedSet
+29-01-05    Modified SGL_NestedSet to use the singleton pattern (Lorenzo Alberton)
+29-01-05    Converted category hierarchy to nested set which allows for reordering
+            siblings (AJ Tarachanowicz, Radek Maciaszek)
+27-01-05    Integrated use of Flexy plugins instead of former aggregate_methods
+            which was not PHP5 compatible (Rares Benea)
+23-01-05    Created SGL_Date class and moved appropriate methods to it
+23-01-05    Created SGL_String class and moved appropriate methods to it
+23-01-05    Moved all generateSelect() calls to templates
+21-01-05    Renamed session DB methods more conventionally
+21-01-05    Moved url-related methods into new class, SGL_Url
+21-01-05    Moved SGL::getPagedData() to SGL_DB::getPagedData()
+21-01-05    Implemented HTTP::Download in publisher (Pierpaolo Toniolo)
+14-01-05    Added Brazilian Portuguese translation (Rafael F. Silva)
+01-01-05    Updated Chinese translation (Henry Juan)
+24-12-04    Updated PEAR libs
+
++-----------------------+
+| VERSION: 0.4.0dev1    |    
++-----------------------+
+BUGFIXES
+17-12-04    Modified  fields incompatible with Oracle (contact_us.type, 
+            contact_us.comment, session)
+17-11-04    Both 'update' and 'insert' action needed to be checked along with 
+            $input->submit in RegisterMgr::validate()
+15-11-04    Fixed bug where activating a block produced an error
+09-11-04    Fixed wizard proof of concept
+29-11-04    Fixed iso-8859-1 to iso-8859-15 issue in default data (AJ 
+            Tarachanowicz)
+
+IMPROVEMENTS
+24-12-04    username and email are now unique fields at the schema level in 
+            Oracle and MySQL
+24-12-04    Renamed a number of tables/columns to address cases of reserved 
+            words in Oracle
+23-12-04    Refactored SQL calls into data access methods for UserMgr
+22-12-04    Refactored user search into its own manager
+22-12-04    Various improvements on installer
+21-12-04    Added enhanced Oracle driver for PEAR::DB that enables integration 
+            with DB_DataObject (Tobias Kuckuck)
+20-12-04    Refactored generateDataObjectEntities() and rebuildSequences() into 
+            new SGL_Sql system object (duplication resolved in SGL_SetupWizard 
+            and MaintenanceMgr)
+20-12-04    Refactored dbBootstrap.php into SGL_SetupWizard
+20-12-04    Moved Emailer to core SGL directory
+12-12-04    Added user import manager (Michal Pawlowski)
+07-12-04    Implemented module generator in Maintenance module
+07-12-04    Merged userAdd.html and userEdit.html
+07-12-04    Added ability to define range of years for SGL_Output::showDateSelector
+            (Tobias Kuckuck)
+04-12-04    Merged the navigation add/edit template (Werner M. Krauss)
+04-12-04    Implemented Gerry's suggestion to enable dynamic loading of js files
+            http://seagull.phpkitchen.com/docs/wakka.php?wakka=IncludingModuleSpecificJS
+04-12-04    Removed webfx menus and all references to them to comply with GPL 
+            restrictions
+02-12-04    Improved install wizard with dynamically updated module status table
+            (Andy Crain)
+01-12-04    Added querystring params to makeUrl method
+30-11-04    Added memory allocation feedback for linux users with > PHP 4.3, displayed
+            in footer when you set the config option $conf[debug][profiling] to true
+29-11-04    Added a login block (Werner M. Krauss)
+26-11-04    Implemented a Request singleton, must be called as follows:
+                $req = & SGL_HTTP_Request::singleton();
+23-11-04    Decoupled SQL data needed for various modules by grouping data files on
+            a per-module basis (AJ Tarachanowicz)
+22-11-04    Refactored SGL::DB, it is now in its own class, instead of calling
+                $dbh = &SGL::DB()
+            use
+                $dbh = &SGL_DB::singleton()
+21-11-04    Created subnavigation for navigation module (Rares Benea)
+21-11-04    Removed all redirects from action methods, this uncoupling makes testing
+            much easier.  All managers now inherit SGL_Manager's _redirectToDefault()
+            method which just redirects to the page's default action.  There are a 
+            few situations where this functionality is too generic, in these cases
+            the method is overridden specifically.
+21-11-04    Corrected $conf['debug']['authenticationEnabled'] key so when disabled,
+            you can access any screen in the system without being logged in - easier
+            for debugging.
+19-11-04    Articles now diplayed as lists per category, with related docs/articles
+            in the detail view (AJ Tarachanowicz)
+18-11-04    Decoupled category management from Publisher module (Rares Benea)
+18-11-04    Changed all instances of SGL_Output::msgSet to SGL::raiseMsg
+17-11-04    Added coding standards doc adapted from Horde project
+17-11-04    Added logic to check is MySQL extension compiled in
+15-11-04    Improved consistency, all workflow and action methods now take args
+            by reference
+15-11-04    Removed popup for delete document
+15-11-04    Improve group/role selection for newsletterMgr (Peter Cruickshank)
+14-11-04    Added Oracle and MaxDB schemas (Tobias Kuckuck)
+14-11-04    Added calendar block (Pierpaolo Toniolo)
+08-11-04    Made SGL_Manager the super class for manager objects, removed
+            redundant implementations of process() and display() methods
+08-11-04    Renamed anything with Base:: to SGL::
+08-11-04    Filenames/paths closer to PEAR convention, ie
+                the class in Path/To/File.php is called Path_To_File()
+08-11-04    SGL_LIB_DIR now points to the more intuitive seagull/lib
+08-11-04    seagull/lib/core renamed to seagull/lib/SGL
+08-11-04    Merged moduleMgr's add/edit templates into one (Werner M. Krauss)
+08-11-04    Added more functionality to perms mgnt, ie, synch users to roles
+            and a user search feature (Jacob Hanson)
+
++-----------------------+
+| VERSION: 0.3.11.p1    |    
++-----------------------+
+BUGFIXES
+07-11-04    Fixed some previous issues with the translation mgr and corrected a 
+            corrupt Russian translation file (Werner M. Krauss)
+07-11-04    Fixed bug 1059162 where navMgr returned warnings
+07-11-04    xmlns lang attribute now correctly reflects user's lang, as per bug
+            1058843 (Michael Heuberger)
+
++-----------------------+
+| VERSION: 0.3.11       |    
++-----------------------+
+BUGFIXES
+02-11-04    Fixed inability to prevent wysiwyg in specific action methods
+02-11-04    Fixed inability to delete modules from form
+31-10-04    Attempted to fix bug 1034457 where aggregate_methods() doesn't exist
+            in PHP5, a fix is in place but doesn't work possibly due to a PHP
+            bug.
+31-10-04    Fixed bug 1038358 with catID being lost between doc uploads
+31-10-04    Root category can no longer be deleted
+30-10-04    Added recursion check for category functions
+30-10-04    Fixed but where params would not show up when creating navigation
+26-10-04    Fixed error handling and created an errorObjToString() method
+20-10-04    Removed hard-coded theme paths from org hierarchy images
+19-10-04    Added rebuildSequence functionality to web installer
+18-10-04    Updating profile set is_active to false, implemented DataObject
+            difference clone update
+18-10-04    When switching stylesheets, role ID was lost (Werner M. Krauss)
+18-10-04    Current section was incorrectly being identified in SimpleNav (Peter 
+            Cruickshank)
+15-10-04    Corrected error handling problem in SGL::DB (Jacob Hanson)
+15-10-04    Fixed bug that arises when static articles are enabled but none are 
+            in database (AJ Tarachanowicz)
+14-10-04    PEAR error passed to error stack was cast to string, now remains as an object
+13-10-04    Made authentication optional which eases debugging (see Config)
+11-10-04    Reduced perms insert to a single INSERT statement to overcome race condition
+            issue.
+06-10-04    Improved URL redirection for timed out sessions
+28-09-04    Fixed notice in getPagedData (Lorenzo Alberton)
+28-09-04    BC compatibility extended from PHP 4.3.0 to 4.2.0 (josx@interorganic.com.ar)
+27-09-04    Fixed [debug][production] key in the global config so setting it suppresses
+            and error messages being sent to screen, however they are still logged.
+27-09-04    Navigation drivers are now correctly loaded
+27-09-04    Fixed bug where 'more info' link in publisher -> articles didn't work in mozilla
+26-09-04    Fixed bug #1024883 where removing a role didn't deal with 
+                consequences, ie:
+                -   setting all users and orgs who had that role to an 
+                    'unassigned' role
+                -   removing all user perms associated with the role
+25-09-04    Flexy's 'globalfunctions' is now correctly implemented by default
+            so you can call PHP functions from the templates. See 
+                seagull/www/themes/default/maintenance/langEdit.html for eg
+            (beltspeed@shaw.ca)
+24-09-04    SGL_Output::dateArray2String fix (Werner M. Krauss)
+23-09-04    makeUrl no longer perpetuates existing action param, this was 
+            leading to unexpected URLs
+21-09-04    The makeUrl() method in Output (for use when search-engine-friendly 
+            URLs are enabled) now takes the format:
+                {makeUrl(#actionName#,#managerName#,#moduleName#)}frmParamName/frmParamValue
+            note the absence of a / after the method call - this gets around
+            an issue when using Zend debugger the last querystring param
+            was being altered by the auto-appended 
+                ?start_debug=1&debug_port=10000&debug_host=127.0.0.1
+                &send_sess_end=1&debug_no_cache=1095852384295&debug_stop=1
+                &debug_url=1&debug_new_session=1
+21-09-04    Setup wizard (dbBootstrap.php) now registers connection details
+            even when schema is not created / better error handling
+20-09-04    Fixed bugs regarding which template was called in FaqMgr
+19-09-04    Article viewer can now handle any article type (AJ Tarachanowicz)
+19-09-04    Added improved paginated resulset Pager wrapper (Lorenzo Alberton)
+19-09-04    Border attributes removed from html (Riccardo Magliocchetti)
+18-09-04    Cleaned up error messages using CSS class instead of style tag
+            (Riccardo Magliocchetti)
+18-09-04    Added the missing traling slashes to input tags, some whitespace
+            cleanup too (Riccardo Magliocchetti)
+18-09-04    Consolidated the image border:none properties in CSS
+            (Riccardo Magliocchetti)
+18-09-04    Removed all occurences of deprecated align="center", replaced
+            with CSS equivalent (Riccardo Magliocchetti)
+18-09-04    Added missing trailing slashes to HTML img tags and set alt
+            properties (Riccardo Magliocchetti)
+18-09-04    Category IDs should only be updated if a dynamic html article
+            is being edited (AJ Tarachanowicz)
+18-09-04    Added missing module combobox from PermissionMgr:add
+            (AJ Tarachanowicz)
+17-09-04    Moved blocks to z-index: 1 so footer doesn't overlap vertical 
+            navigation (chris@awarez.net)
+17-09-04    Moved session initialisation after model instantiation due to 
+            problems with unserializing objects from session (luis@awarez.net)
+17-09-04    Added ability for search engine friendly URLs to parse GET arrays.  
+            PHP's 'magic' functionality that converts 
+                <input name="user[password]">
+            into $user['password'] is not available when you parse 
+            $_SERVER['QUERY_STRING'] (michael@awarez.net)
+17-09-04    Fixed bug in Output::generateSelect() where ('status' == 0) 
+            evaluates to true:
+                var_dump('status');
+                string(6) "status"
+
+                var_dump(0);
+                int(0)
+
+                var_dump('status' == 0); 
+                bool(true) /* ? */
+            (luis@awarez.net)
+
+IMPROVEMENTS
+03-10-04    Html cleanup in error handler (Michael Heuberger)
+30-10-04    Changed sgl version global to constant, moved non module-specific 
+            constants to constants.php
+29-10-04    Add new utility to detect missing perms in system and add them
+            automatically (Jacob Hanson)
+27-10-04    New master template layouts makes screen design easier (Jacob Hanson)
+27-10-04    Added some unit tests for the User module
+25-10-04    Removed navigation mgr dependency on default theme, cleaned up html
+20-10-04    Split out constants from init.php file, BC maintained but now
+            it easier to include Seagull paths when integrating other apps
+18-10-04    Removed frames from publisher (Miha Vrhovnik)
+17-10-04    Cleaned up Contact Us: translations moved to template, check for 
+            previously set type input
+15-10-04    Added additional param to SGL::getPagedData() to allow object 
+            return type (Andy Crain)
+15-10-04    articleBrowser.html cleanup (Riccardo Magliocchetti)
+29-09-04    Added UK counties data file
+28-09-04    Added english-iso-8859-15 lang files for euro compatibility  
+28-09-04    Removed MAX_REQUEST_ELEMENTS constraint, too restrictive
+28-09-04    Simplified FAQ templates (Werner M. Krauss)
+27-09-04    You can now set a default module/manager to be loaded instead of 
+            getting the 'homepage' (only when front controller mode enabled)
+21-09-04    Improved the way debug logging is called, thanks to Andrew Hill's 
+            patch to SGL::logMessage you can now pass a much simpler call the 
+            logger to register that your method was invoked.  Additionally, 
+            setting the SGL_DEBUG_SHOW_LINE_NUMBERS constant to true you can get 
+            file and line number info.  The change is BC with the previous
+            format (andrew@awarez.net)
+
++-----------------------+
+| VERSION: 0.3.10       |    
++-----------------------+
+BUGFIXES
+01-09-04    Fixed bug with permissionMgr::browse and mods combo box
+30-08-04    Fixed bug where minimum range of theme dirs were not being 
+            correctly scanned (Rares Benea)
+30-08-04    Fixed bug where is_account_active wasn't being passed correctly
+26-08-04    Fixed bug in PreferenceMgr::_syncDefaults() (Pierpaolo Toniolo)
+22-08-04    Fixed bug where a permission's parent module wasn't correctly being
+            detected (Miha Vrhovnik)
+21-08-04    Fixed http?s ommission in style.php (Pierpaolo Toniolo)
+18-08-04    Fixed cats that didn't appear when added in postgres (Pierpaolo 
+            Toniolo)
+18-08-04    Fixed paging bug in article manager
+18-08-04    Fixed query parsing in SGL::getPagedData (Luis Correa d'Almeida)
+18-08-04    Fixed some inefficient code in the DB singleton (Luis Correa 
+            d'Almeida)
+12-08-04    Fixed bug with censoring constants (Pierpaolo Toniolo)
+12-08-04    Fixed bug in SGL_HTTP:redirect (Jacob Hanson)
+30-07-04    Fixed URI related bugs when webserver is not Apache (John Steele)
+
+IMPROVEMENTS
+05-09-04    Pager now fully replaces DB_Pager
+05-09-04    Fixed bug where admin changes to a user's role or org did not result
+            in his perms/prefs being updated accordingly
+04-09-04    Made content items (articles at the moment) more generic so they
+            can be used in any module (AJ Tarachanowicz)
+01-09-04    Added support for anchors in navigation mgr
+31-08-04    Added first vertical menu that makes room for itself by moving
+            down the left hand blocks when detected
+30-08-04    Updated following modules to new paging system: guestbook, 
+            block, randommsg, publisher
+30-08-04    Removed a few unneccesary elements from htmlArea so it didn't
+            stretch page
+27-08-04    Improved db singleton method so you can connect to x number of DBs
+            and have the connection cached for each one.
+26-08-04    Made seagull PHP5 compatible
+24-08-04    Character map functionality added via htmlArea plugin
+23-08-04    Improvement to translation mgr, you can now check all modules
+            at once to see which require updates (Werner M. Krauss)
+22-08-04    Upgraded to the latest htmlArea 3, now works fine in Mozilla
+22-08-04    Incorporated Miha Vrhovnik's big admin/public user integration
+            patch.  Now the admin user sees the same pages as public/member
+            users with the addition of 'Config' and 'Modules' tabs
+22-08-04    Massive table cleanup and CSS fixes (Riccardo Magliocchetti)
+22-08-04    Beginnings of module manager complete, details can now be edited
+21-08-04    It's now easier for the admin user to change his password
+20-08-04    Thanks to this hack we no longer have to include HTML_Javascript:
+                http://blog.iworks.at/?/archives/2_Javascript__Flexy.html
+            (Miha Vrhovnik)
+17-08-04    Request vars have now been moved to the global scope, as they should
+            have a long time ago!  To call them into scope:
+                $req = & $GLOBALS['_SGL']['REQUEST'];
+16-08-04    French translation updated (Aymerick Jehanne)
+01-08-04    Added ability to reset framework config via a browser request if the
+            IP it comes from is in the $GLOBALS['_SGL']['TRUSTED_IPS'] array.  
+            To make the request add 'deleteConfig=1' to the url
+01-08-04    New Spanish translation (Mario Izquierdo 
+            <izquierdo@paleontologia.co.uk>)
+29-07-04    Fixed bug where custom Output methods failed once validation failed
+            (Antonio Josï¿½ Garcï¿½a Laga)
+25-07-04    Installer added to Seagull, thanks to Gerry Lachac
+25-07-04    Factored out BC fixes, only loaded for relevant versions
+22-07-04    Amended SGL_Output::switchRowClass() so it can be reset when 
+            starting new tables
+
+KNOWN ISSUES
+30-08-04    Changing to DB based session gives log errors on linux machines
+07-08-04    Block manager still has quite a few problems
+
++-----------------------+
+| VERSION: 0.3.9.p1     |
++-----------------------+
+BUGFIXES
+18-07-04    Fixed db config when using Postgres over unix sockets
+
+IMPROVEMENTS
+18-07-04    Added ability to edit module details
+
++-----------------------+
+| VERSION: 0.3.9        |
++-----------------------+
+BUGFIXES
+05-07-04    Fixed bug where boolean value of 'showExecutionTime' in session was 
+            not correctly being detected
+04-07-04    Fixed issues with downloads in FileMgr where incorrect headers were
+            being sent
+03-07-04    Fixed bug in NewsletterMgr
+25-06-04    Fixed bug where paths were wrong in htmlArea (Dustin Rottmann)
+24-06-04    Fixed notice when HTTP_ACCEPT_LANGUAGE is not set (Michael Willemot)
+24-06-04    Fixed validation error in ModuleMgr (Nick Temple)
+22-06-04    Fixed bugs with profile listings and adding users to contact list
+17-06-04    Cache delete now correctly removes template folders as well as files
+17-06-04    Fixed bug where not loading default data would create an infinite 
+            loop (Thomas Moulard)
+
+IMPROVEMENTS
+12-07-04    Cleaned up publisher templates
+04-07-04    Themes dir now scanned to produce themes listing for user prefs
+04-07-04    SGL_HTTP_Session::getAuthLevel now changed to getUserType()
+04-07-04    The SGL_ErrorHandler class can now be disabled
+03-07-04    Headers can now be turned off for any individual page, allowing custom
+            headers to be sent.  Disable headers in the relvant conf.ini file:
+                [examplemgr]
+                setHeaders = false
+02-07-04    New permissions/roles system implemented, you can find it in the 
+            'Users and Security' module, an introductory overview can be found 
+            at the end of the 'Creating Your Own Modules' tutorial:
+                http://seagull.phpkitchen.com/docs/wakka.php?wakka=CreatingYourOwnModules
+02-07-04    Added improved pagination using PEAR::Pager (Lorenzo Alberton)
+24-06-04    Added ability to add custom Output objects to modules, ie, if you want
+            to add to your own methods to Flexy.  For more details:
+                http://seagull.phpkitchen.com/docs/wakka.php?wakka=AddingCustomMethodsToTemplates
+17-06-04    Added ability to rebuild sequence table in MtceMgr (Thomas Moulard)
+14-06-04    Updated PEAR libs: archive_tar, xml_util, config, http_header, 
+            config, html_css
+13-06-04    Added Andy Crain's improved NestedSet class with simplified api
+09-06-04    Registration confirmation email's message now reflects account 
+            auto-enabled status
+
+
++-----------------------+
+| VERSION: 0.3.8        |
++-----------------------+
+BUGFIXES
+31-05-04    Fixed bug where wrong default style is supplied when creating
+            new blocks
+28-05-04    Fixed bug where viewing non-authorised pages threw errors
+25-05-04    Fixed missing usr_id hidden field in password reset form
+21-05-04    Fixed path to email templates (Marcel Evenson)
+07-05-04    Fixed wizard that broke with session cleanup (Pierpaolo Toniolo)
+06-05-04    Fixed problems with Documentor module
+06-05-04    Fixed bug where simoultaneous cache cleans were not possible
+
+IMPROVEMENTS
+31-05-04    Czech translation added (Petr Votocek)
+31-05-04    Improved module management (Michaï¿½l Willemot)
+28-05-04    Modified SGL_Manager so it's properly abstract, will make it an
+            interface when PHP5 compat happens
+28-05-04    Added reverse sorting to guestbook and pagination (Michaï¿½l Willemot)
+27-05-04    Added error msg for missing images requested from doc mgr
+27-05-04    Some fixes to init.php so users can now switch seamlessly between 
+            ssl and non-ssl http connections.  also removed the 'baseUrl' 
+            key from config and am determining it dynamically instead, see code 
+            in init.php for details. 
+23-05-04    Enabled ability to run partially completed themes, which
+            is a feature of Flexy, so if you want to make your own theme,
+            just copy the 'default' theme directory, and remove everything
+            except for 'images' and 'css' whose contents you will modify.
+            Then, if you modify the 'default' module's templates in your 
+            new theme, eg, banner, header and footer, these will override
+            the default versions but leave the rest of the body content
+            untouched.  In other words, it's quite a quick and easy process
+            to create a new look & feel.
+23-05-04    Cleaned up directory structure as agreed on mailing list, it
+            now looks something like this:
+                +---etc
+                +---lib
+                ï¿½   +---core
+                ï¿½   +---data
+                ï¿½   +---other
+                ï¿½   +---pear
+                +---modules
+                +---var
+                ï¿½   +---cache
+                ï¿½   ï¿½   +---entities
+                ï¿½   ï¿½   +---tmpl
+                ï¿½   ï¿½       +---default
+                ï¿½   +---log
+                ï¿½   +---tmp
+                +---www
+                    +---htmlarea
+                    +---js
+                    +---themes
+                        +---default
+                            +---css
+                            +---images
+
+14-05-04    CSS cleaned up and consolidated (AJ Tarachanowicz)
+14-05-04    Themes consolidated and moved to their own directory (AJ 
+            Tarachanowicz)
+14-05-04    All templates converted to be XHTML compliant (AJ Tarachanowicz)
+13-05-04    Static articles are a configurable option
+13-05-04    Whether logins are recorded in the Db is now a configurable option 
+            in seagull/modules/user/conf.ini
+12-05-04    Left/right columns (blocks) can now be disabled globally
+12-05-04    Added required error checking for potential sql problems in 
+            ArticeMgr
+12-05-04    Fixed Publisher explorer menu generator for Postgres users (thanks 
+            Radek Maciaszek)
+11-05-04    global namespace cleanup: 
+            - moved errorhandler stuff to _SGL
+            - moved dataobject init to init.php
+            - moved $conf into _SGL only
+            ===============
+            from now on use:
+                $conf = & $GLOBALS['_SGL']['CONF'];
+            instead of:
+                global $conf;
+            ===============
+11-05-04    Improved output of PEAR/application errors, now formatted in a 
+            user-friendly way; PHP errors still present debug/lineNo info
+10-05-04    Added Guestbook module by Boris Kerbikov
+10-05-04    Added Random Message module by Michaï¿½l Willemot
+09-05-04    Modified all cache code to take advantage of Cache_Lite's internal
+            debug mode which allows for dynamic enabling/disabling of caching
+04-05-04    Extended the session class to work with a db handler
+
++-----------------------+
+| VERSION: 0.3.7.p2     |
++-----------------------+
+
+BUGFIXES
+04-05-04    Fixed incorrect link in account summary (Pierpaolo Toniolo)
+04-05-04    Fixed missing class fatal error on Password reminder
+04-05-04    Fixed bug where incorrect null $lang gets stored in cookie (Scott 
+            Goodwin)
+04-05-04    Fixed bug where user messages persist across screens when 
+            register_globals = on (Scott Goodwin)
+30-04-04    Fixed incorrectly defined parent class in Wizard example (johdah)
+
+IMPROVEMENTS
+
++-----------------------+
+| VERSION: 0.3.7.p1     |
++-----------------------+
+
+BUGFIXES
+30-04-04    Fixed error checking bug in PreferenceMgr
+29-04-04    Fixed missing class declaration in news items (Lorenzo Alberton)
+28-04-04    Fixed missing cookie param in config GUI (Lorenzo Alberton)
+28-04-04    Fixed missing class fatal error on 'view profile' (Ilya Nemihin)
+28-04-04    Fixed hostnameToFilename to work in CLI (Scott Switzer)
+28-04-04    Fixed OS detection in SGL_Util to work in CLI (Scott Switzer)
+
+IMPROVEMENTS
+29-04-04    CSS selection now dynamic, no file rewriting required (Andy Crain)
+
++-----------------------+
+| VERSION: 0.3.7        |
++-----------------------+
+
+BUGFIXES
+25-04-04    Fixed apostrophe problem in category manager
+25-04-04    Caching problem fixed where incorrect blocks were retrieved            
+18-04-04    Fixed inability to update Group assignments in Mozilla (thanks 
+            Pierpaolo Toniolo)
+10-04-04    Various Contact Us fixes
+10-04-04    Fixed ConfigMgr so options correctly displayed when input not valid
+04-04-04    Errors in latest PEAR release of DB_NestedSet fixed with patch added
+31-03-04    Added DB_NestedSet patch (thanks Andy)
+29-03-04    Corrected wrong designation of zh-tw translation on sample page
+26-03-04    Fixed BlockMgr bug, suppressed DO no data affected errors
+24-03-04    Fixed PEAR error bug that occured while updating FAQs
+24-03-04    Fixed bug in profile editing
+24-03-04    Fixed bug where static articles were incorrectly showing related 
+            content
+23-03-04    Fixed bug that incorrectly showed current article as 'related' 
+            article too
+18-03-04    Interestingly a bug crept into the FileMgr functionality whereby
+            requesting to view files with a text/plain mime type incorrectly
+            prompted a download in MSIE 6 (with the latest patches) - I'm 
+            guessing MS has changed the functionality as I haven't changed the 
+            code and it used to work fine for the past year or so.  The fix 
+            included adding an additional header which forces the 
+            Content-Disposition to 'inline'.
+16-03-04    Fixed typo for 'current category'
+25-02-04    Fixed block_id error (AJ Tarachanowicz)
+15-02-04    Fixed a bug where updating categories did not reflect change in
+            the front end menus, select boxes, etc.
+15-02-04    Fixed bug where lang was not being maintained correctly
+            in the session (Werner M. Krauss)
+15-02-04    Fixed table_locks schema definition which caused errors in
+            3.23.x versions of MySQL (Werner M. Krauss)
+13-02-04    Applied John's patch to fix CSS issues in basic-css theme 
+            (John Dell)
+11-02-04    Fixed bug in ConfigMgr where failure to write config ini file
+            was not correctly detected (Gerry Lachac)
+14-01-04    Fixed bug in custom MySQL driver that broke transactions
+01-01-04    Incorporated various xhtml and Output fixes (Thomas Moulard)
+08-01-04    Fixed hard-coded field index references in UserMgr
+08-01-04    Reduced all occurences of $this->validated = false to a single 
+            checking of error stack
+
+IMPROVEMENTS
+26-04-04    Nav code abstracted out of Controller and loaded as a default driver
+25-04-04    Util::cache* removed as they overlapped with Cache_Lite 
+            functionality
+24-04-04    Added descriptions for the modules.
+21-04-04    Applied Michaï¿½l Willemot's improvement for module listing, data now
+            in DB instead of ini file
+20-04-04    Various performance improvements resulting from only loading DataObject
+            when required, up to  60% faster in some cases
+14-04-04    Applied Radek's patch, date handling improved/simplified with PEAR
+            Date, pgsql schema correctly uses TIMESTAMP datatype instead of 
+            DATETIME
+12-04-04    Improved translation tool to handle subarrays
+10-04-04    Install script now looks for a *.tar.gz file
+10-04-04    Clarified article types and their usage
+10-04-04    Admins can now use the reset password form
+10-04-04    Divided up js includes, relevant files loaded according to role
+10-04-04    The ability to use Seagull without cookies has been reinstated
+08-04-04    Renamed 'Section/Navigation Mgr to PageMgr, simplified concept
+            of adding dynamic or static pages.
+06-04-04    Big schema reoganisation, all table primary keys conform to a 
+            tablename_id format, with indexes and referential integrity (thanks 
+            Radek Maciaszek)
+05-04-04    Adapted raw query LIMIT style to be Postgresql compatible (thanks 
+            Pierpaolo Toniolo)
+31-03-04    Cache manager added to maintenance module
+29-03-04    Articles navigation widget now correctly manages permissions
+            for public as well logged in users.  This means you can create
+            articles and documents that can be hidden from the public and only
+            displayed to authenticated users.  Please note that while a user can 
+            pass an category ID as a URL parameter and access a forbidden 
+            category name, s/he will not be able to see any articles/documents 
+            within it.
+29-03-04    Updated PEAR libs html_css, html_quickform, xml_rpc, validate and 
+            db_nestedset
+29-03-04    Added dataobject entity generator to the maintenance module 
+            (Gerry Lachac)
+29-03-04    Last selected module now remembered in session, makes updates easier
+28-03-04    Created new maintenance module for basic framework housekeeping 
+            tasks
+25-03-04    Removed open_basedir = SGL_PATH recommendation as Rasmus says it's a
+            real performance killer
+24-03-04    New Italian translation added (thanks Pierpaolo Toniolo)
+24-03-04    Thanks to Pierpaolo Toniolo for an updated postgres schema
+23-03-04    The safe delete feature for articles is now configurable, if
+            you set it to false (/app/modules/publisher/conf.ini) articles
+            are wiped from the DB; if not, their status is only set to zero,
+            in other words, a safe delete.
+22-03-04    Added a LanguageMgr class which provides tools to manage 
+            translations and language files.  You can diff translated files 
+            against English masters, add missing definitions, and/or edit 
+            existing translations.
+18-03-04    Added new wizard (multi-page form) functionality, see the README.txt
+            in the wizardExample folder in /app/modules
+17-03-04    Improved Output::showDateSelector method to give future and 
+            historical date ranges
+17-03-04    Reinstated permissions for Publisher
+16-03-04    Moved htmlArea js to mainAdmin.js so it's not called on every page
+16-03-04    You can now use admin's Configuration tab to switch between SQL and 
+            file logging in one easy step
+16-03-04    Renamed 'table_locks' table to 'table_lock' for consistency
+16-03-04    Renamed 'sequences' table to 'sequence' for consistency
+16-03-04    Added dynamic language selection sample page
+16-03-04    New Russian translation added (thanks Ilya Nemihin)
+15-03-04    Improved handling of language files and character sets, current 
+            system is similar to phpMyAdmin
+11-03-04    New Chinese translations added, Simplified and Traditional (thanks 
+            Henry Juan)
+02-03-04    New German translation added (thanks Werner M. Krauss)
+02-03-04    Hard-coded lang strings removed from majority of templates and into 
+            language files (thanks Werner M. Krauss)
+01-03-04    Added new open source LGPL-licensed icons to represent modules
+16-02-04    Added a new interface, Wizard, so all classes implementing this instead
+            of Manager can easily create multipage wizard functionality
+15-02-04    Moved language arrays out of /app/data and into relevant lang files
+15-02-04    Manager and Output cleanup: Mananger now only has methods
+            pertinent to its subclasses; removed unnecessary vars from Output;
+            Factored extra methods into new PublisherBase class
+15-02-04    Changed default charset from iso-8859-1 to iso-8859-15 to allow
+            for euro character (Werner M. Krauss)
+14-02-04    Incorporated Andy's big CSS fix so now menus are generated
+            as html lists and transformed into either 2 level tabs or 
+            dropdowns by selected stylesheet.  This is one big step towards
+            XHTML compliance, reducing page size and using latest CSS
+            standards to control look and feel. 
+12-02-04    Big cleanup which basically got rid of long case statements in 
+            process methods and replaced them with the newer, 
+            if (method_exists()) syntax that checks against the class var 
+            $_aAllowedActions.
+10-02-04    Preferences system added: admin can alter default pref values, 
+            add/remove new ones; registered users can alter their preferences, 
+            values carred in session and persisted in DB
+01-02-04    Dynamic navigation extended to admin section
+01-02-04    Made ini_{set|get}s optional so Seagull can run when PHP has safe 
+            mode enabled, ie, in a shared hosting environment
+31-01-04    Changed all template function calls from old {t.funcName(arg)} to 
+            Flexy's new {funcName(arg)} format
+31-01-04    Removed all occurences of stripslashes in templates and code as
+            this is implicitly handled by Request
+31-01-04    Fewer confirmations for publishing articles
+31-01-04    Further improvements to Request handling, auto-stripping of html
+            and javascript, whitespace, magic_quotes_gpc
+31-01-04    Made input censoring functionality easier to use
+24-01-04    Upgraded to latest Flexy, DB_DataObject, DB and PEAR
+21-01-04    Simplified calling of $conf var from 
+                $conf = & $GLOBALS['_SGL']['CONF'] 
+            to
+                global $conf;
+21-01-04    Added P3P privacy policy support
+21-01-04    Created web GUI for modifying config values
+21-01-04    Modified default logfile path in *.conf.ini from c:/msys/1.0/home/..
+            to correct location, ie seagull/logs/php_log.txt
+19-01-04    Updated PEAR libs: Net_URL, Log
+19-01-04    See Output::msgSet() for global Seagull error-checking, similar to 
+            PEAR's errorPop()
+19-01-04    Changed to using divs for outputing the wrapping list of modules
+19-01-04    Relicensed core framework files to BSD for greater flexibility
+16-01-04    Renamed sql data files to bring them more into line with config file 
+            naming.  'default' is instead of 'minimal' and 'extended' has become
+            'sample', as in sample application.
+16-01-04    Changed method of locating main app-wide config file, now 
+            SERVER_NAME is queried and the appropriate conf file is loaded.
+            This way it is not necessary to modify the init.php file when 
+            uploading your code to a live server.  The naming convention for
+            the file is <hostname>.<type>.conf.ini this way you can run various
+            conf files for the same host, ie default, optimised, debug, etc.
+            Support is also included for virtual hosts running on ports other 
+            than 80, such as localhost_8080.default.conf.ini
+15-01-04    Upgraded to latest version of Log
+15-01-04    Removed html admin nav from Controller
+15-01-04    Cleaned up Session class, security improved, IP check removed from 
+            fingerprint since it doesn't work with AOL, proxies, etc
+13-01-04    Made Request more efficient
+13-01-04    Removed SGL::importGlobalVariable
+01-01-04    Moved css files to their own subdir
+
+KNOWN ISSUES
+08-04-04    Navigation Style Mgr does not seem to work reliably in Mozilla
+
++-----------------------+
+| VERSION: 0.3.6-beta   |
++-----------------------+
+
+BUGFIXES
+23-12-03    Login forgot passwd field too short (Mark Sudbury)
+05-12-03    Renamed 'password' db field to 'passwd' because it was a reserved
+            word
+04-12-03    Fixed bug where session expiry was being missed
+30-11-03    PEAR errors were not being written to the browser, only logs,
+            this now works as expected when $conf['debug']['production'] is
+            false
+11-11-03    Fixed some nasty notices when users who had no email tried to
+            view messages
+
+IMPROVEMENTS
+01-01-04    A polish translation has been started by Radek Maciaszek 
+            <radek@maciaszek.pl>
+23-12-03    A new XHTML skin is available (basic-css) which is very close to
+            validating, a few more Coolmenu glitches to work out (John Dell)
+20-12-03    Updated following PEAR libs: http, http_header, date, config, log, 
+            xml_util, html_quickform, html_treemenu, pear, validate, date, 
+            console_getopt
+18-12-03    Base class no longer unneccesarily inherits from PEAR (thanks Davey)
+            nor Controller from Base.  Also removed unneccesary parent 
+            constructor firing
+13-12-03    Cleaned up failed DB connect error msgs
+12-12-03    Added debug info to logged PEAR error messages
+11-12-03    You no longer have to open a new database connection when requesting a
+            nextId() to insert a dataObject.  Old instances of 
+                $dbh = & SGL_DB::singleton();
+            can now be replaced with the cleaner:
+                $dbh = $dataObject->getDatabaseConnection();
+11-12-03    Thanks to Alan Knowles <alan@akbkhome.com> for incorporating a patch 
+            into Flexy which allows multiple paths to be searched for templates.  
+            With these changes please now do all your template includes 
+            according to the following format:
+                <flexy:include src="myTemplate.html" />
+09-12-03    Andy Crain created a new Navigation Style Manager which provides a 
+            web form to customise the look&feel of CoolMenu dHtml dropdowns
+09-12-03    Stylesheets more customisable and are cached by PHP, thanks to
+            John Dell <jdell@unr.edu>
+02-12-03    Updated login form to be more user-friendly (John Dell)
+01-12-03    Errors are now location-specific, ie the error is printed out
+            in the brower where it occurs, a la Quickform
+01-12-03    Added the ability to create themes/skins
+01-12-03    Cleaned up LoginMgr and separated out password-related functionality
+            into a new PasswordMgr class.
+01-12-03    Incorporated Andy Crain's new Navigation Manager which makes
+            excellent use of DB_NestedSet and the custom CoolMenus driver
+            he wrote for it.  Updated schema accordingly.
+01-12-03    Started replacing long switch/case action statements with a more
+            efficient if (method_exists($method)) approach, see 
+            UserMgr::process() for example.  Added 'allowed methods' array to 
+            check against (Gilles Laborderie).  Original idea from a post by 
+            Alan Knowles.
+01-12-03    Sending error/status messages is now simplified, previous message
+            'tokens' have been removed from GET and now message is stored in 
+            session and retrieved on target page, with Output::msgSet and msgSet
+            respectively.  This change allowed for the removal of the large and
+            ugly showMsg method from Output, and consolidates all translations
+            in the language files.  Thanks to Simon Willison for the idea:
+            http://simon.incutio.com/archive/2003/11/22/statusNotification
+            All message/notifications are now broken up into two types, usually
+            delivered together:
+            1. general notification message (one per page), eg: "please fill in all
+               required fields"
+            2. field-specific error messages (as many as required)
+            I hope to be able to reproduce quickform's pretty 'error next to 
+            relevant field' effect shortly.
+30-11-03    The Controller::initPage() method is now public, this makes it
+            possible to initialise the framework without having to go through
+            the validate/process/display workflow, something very handy for
+            the logout functionality
+30-11-03    Controller processing now broken up into discreet methods,
+            should make page logic clearer
+28-11-03    All 'delete' buttons now appear at bottom of admin screens
+27-11-03    Check out Alan's example file, /etc/flexyExample.htm for insight
+            on how to use Flexy templates
+23-11-03    Removed Quickform from all user management screens for performance
+            reasons
+23-11-03    Passwords finally one-way encrypted with md5.  So we now have new
+            'retrieve password' functionality, users get their passwords reset
+            when they correctly enter their email address, security question
+            and answer.  Admin can now also reset passwords and optionally 
+            notify users
+23-11-03    In order to modify the admin password, just run md5 from the 
+            command line against the clear-text passwd of your choice, and
+            paste it into the db:
+                php -r "print md5('admin');"
+
+KNOWN ISSUES
+02-01-04    After modifying categories in admin the structure is not modified in
+            the front end: simply delete nav.dat and categories.dat in the 
+            /app/tmp directory
+02-01-04    An 'element already exists' error appears when trying to edit an
+            existing block: this is being worked on
+02-01-04    Reording and inserting levels in the Navigation Manager is 
+            unreliable: this is also being worked on
+02-01-04    Navigation Style Manager preview does not reflect Coolmenu choice:
+            being worked on
+
++-----------------------+
+| VERSION: 0.3.5-beta   |
++-----------------------+
+
+BUGFIXES
+11-11-03    Added PEAR's Log constants so when logging is disabled notices are
+            not raised
+11-11-03    Fixed bug with FAQ manager where inserting a new FAQ incorrectly 
+            returned an error, this is because DO expects sequences/auto_increment
+            and the default functionality is overriden in mysql driver
+11-11-03    Changed all PSG_ references to SGL_
+09-11-03    Fixed bug where Flesch score was not correctly referenced in Publisher
+09-11-03    ErrorHandler class now correctly ignores expressions prefixed with
+            the @ operator (Gilles Laborderie)
+
+
+IMPROVEMENTS
+18-11-03    Updated pear libs to latest Quickform, HTML_Common, DB_DataObject
+            and Log
+09-11-03    Blocks look & feel abstracted to stylesheet.  The styles are 
+            used by default although they can be overriden by calling 
+            user-defined styles from the 'block' table
+09-11-03    Previous 'debug' mode now enabled by default if Seagull is setup 
+            in development mode, with E_ALL errors fed back to the browser
+09-11-03    Simplified init.php file, now only 1 line needs to be configured,
+            all other settings moved to /etc/{dev|live}.ini files
+09-11-03    Added switch in /etc/{dev|live}.ini to enable code profiling if 
+            xDebug installed
+09-11-03    Removed additional notices
+09-11-03    Updated navigation and block cacheing to be configurable, 
+            see /etc/{dev|live}.ini, easier to develop with caching disabled
+09-11-03    Moved 'module' mgr to 'default' module
+08-11-03    Updated HTTP_Request and Cache_Lite libs
+07-11-03    Created additional schemas for Oracle and MS SQL
+07-11-03    Created sql migration scripts for MySQL
+29-10-03    Made following alterations to schema for pg compatibility
+            - separated schemas from data
+            - removed all 'unsigned'
+            - changed all 'tinyint' to 'smallint'
+            - removed backticks enclosing column names
+            - made all column names lowercase, words separated by _, removed
+              _fk suffixes
+            - replaced sequence table with pg sequences
+            NB: dhtml nav widget for articles won't work with pgsql
+                as it's dependent on mysql in HTML_TreeMenu
+
+KNOWN ISSUES
+19-11-03    Please set allow_call_time_pass_reference = On in your php.ini, this
+            will overcome notice errors in the nav widget when you go into
+            publisher.  The errors occur in Tree class, the author will be 
+            contacted.
+
++-----------------------+
+| VERSION: 0.3.4-beta   |
++-----------------------+
+
+BUGFIXES
+28-10-03    Logging to DB now works correctly, thanks to Jan Tammen 
+            <Jan.Tammen@seitenbau.com> for comments
+17-10-03    Fixed the blank 'forgot passwd' button resulting from incorrectly 
+            nested tags
+
+
+IMPROVEMENTS
+28-10-03    Added the ini setting allow_url_fopen and set it to false, this can
+            avoid some nasty hacks
+27-10-03    The Request::get method has been changed so it strips any PHP/HTML
+            tags by default, thus minimising XSS attacks.  If you wish to accept 
+            html from the request, pass a true argument as the optional second 
+            parameter like so:
+                $input->body = $req->get('frmBody', true);
+            In the case that html is allowed, javascript is stripped from the
+            string
+27-10-03    Example usage of improving form security with one-time tokens, see
+            /modules/contactus/classes/ContactUsMgr.php lines 66-73 and display
+            method for details
+26-10-03    Cleaned up date functions in Output
+20-10-03    Thanks to Thomas Moulard <thomas.moulard@wanadoo.fr> for improving 
+            the install script, it now works well provided you're installing on
+            a *nix based machine and have root
+17-10-03    Incorporated Andy's navigation cacheing, big performance improvement
+            <apcrain@fuse.net>
+17-10-03    Cleaned up error codes
+17-10-03    Made cookie settings more configurable in init.php
+
+KNOWN ISSUES
+26-10-03    There is an incompatibility with DB_DataObject and MMcache.  You can
+            fix this by modifying line 316 of DataObject.php from:
+                $this->_build_condition($this->table()) ; 
+            to
+                $tbl = $this->table(); $this->_build_condition($tbl); 
+
+
++-----------------------+
+| VERSION: 0.3.3-beta   |
++-----------------------+
+
+BUGFIXES
+15-10-03    Fixed bug where cateogories updated in admin were not updated
+            in front end
+13-10-03    Fixed error in Controller that incorrectly tested for session 
+            timeouts (Andy Crain)
+13-10-03    Fixed upload problem in docMgr that resulted from new input
+            filtering in Request::get() (alexmartin)
+
+IMPROVEMENTS
+15-10-03    Additional error types added (init.php), all raised errors assigned
+            types in 2nd arg
+15-10-03    Added cacheing for blocks (thanks to Andy Crain <apcrain@fuse.net>)
+            Remember that for admin changes to be reflected in front end, admins 
+            must first logout which fires an 'empty cache' event
+14-10-03    Removed notices from Controller and SimpleNav
+14-10-03    Added BC support for PHP versions < 4.2.0 in init.php
+13-10-03    Added months array in French (Thomas Moulard)
+13-10-03    Thanks to Thomas Moulard <thomas.moulard@wanadoo.fr> Seagull can now
+            ban blacklisted IPs.
+13-10-03    Added 2 optimisations for db connections in SGL::connect
+            (thanks to Andy Crain <apcrain@fuse.net>)
+13-10-03    Added configurable charset meta tag as per 
+            http://www.joelonsoftware.com/articles/Unicode.html
+            update: commented out as this broke accented chars, any 
+            ideas?
+10-10-03    Latest Flexy class integrated at last!  This means:
+            - no more <?= short tags
+            - coding to E_ALL is possible
+            - update.php no longer required, pages work like old-style .jsp in 
+              the sense that the first time the webserver receives a request 
+              for them, they compile, after which requests are much quicker
+            For seasoned Seagull developers, pls watch out for the following
+            gotchas:
+            - unless you want to take advantage of Flexys forms features, make
+              sure your forms contain the 'flexy:ignore' element:
+              <form name="login" method="POST" action="login.php" flexy:ignore>
+            - anywhere you had {o.varName} it's now {varName}
+            - if your using a foreach to loop over a SINGLE <tr> you can 
+              now get rid of the old:
+                {foreach:results,key,valueObj}
+              and replace it with the much sexier:
+                <tr flexy:foreach="results,key,valueObj">
+            - there are two types of includes: 
+              (1) is for the global banner.html and footer.html templates, and 
+              indeed anything in the default tmpl folder: 
+                {t.psg_include(#adminBanner.html#)}
+              (2) to pick up includes in your current module's tmpl dir, use
+                {include(#template.html#)}
+            - in the next release, includes will be consolidated in the form:
+              <flexy:include src="xxx.html"/>, this is still under dev on Flexy
+              in CVS
+            - there are also great ways of displaying conditional errors, see
+              Flexy docs at pear.php.net, it does many things currently taken
+              care of by QuickForm
+            - if you get any errors after changing a template, try deleting
+              and recompiling
+            - watch out for incorrectly nested html tags, these can invalidate
+              template vars
+            - the file /lib/pear/HTML/Template/Flexy/Compiler/Standard/Functions.php
+              has a call to the constant __CLASS__ in it which works only in PHP 4.3+
+              so I've added a pretty crude hack to the file to get around this
+10-10-03    Moved most javascript into external .js files
+09-10-03    Upgraded to latest HTML_TreeMenu, class overriden for custom
+            behaviour.  Tried to integrate Wolfram's Tree class (instead of the
+            current R. Hayes Tree class) which has the advantage that it is part 
+            of the PEAR library and makes most of categoryMgr redundant.  
+            However with Wolfram's class I cannot get the graphic icons working
+            nor the hrefs.  Lately the most actively maintained tree lib seems
+            to be NestedSet - any ideas?
+09-10-03    Thomas Moulard <thomas.moulard@wanadoo.fr> contributed French 
+            translations for all the modules!
+
+KNOWN ISSUES  
+16-10-03    Block manager does not successfully clean up old assignments
+15-10-03    Cache_lite give a warning error first time to a page, this should
+            only show up in the logs in the default setup
+15-10-03    The cookieless implementation currently doesn't work
+15-10-03    Install script, setupSGL.sh, is still not working properly
+
+
++-----------------------+
+| VERSION: 0.3.2-beta   |
++-----------------------+
+
+BUGFIXES
+30-09-03    Fixed all email templates which had incorrect paths since v.3.0
+29-09-03    Fixed bug where sort graphics were of incorrect case (Oscar Porcar)
+25-09-03    Fixed email template bug with Contact Us module
+25-09-03    Fixed incorrect page redirect in Contact Us module
+
+
+IMPROVEMENTS
+01-10-03    Removed persistent connect (again) as it's been reported many times
+            to cause problems with MySQL (change in SGL::DB):
+            http://news.php.net/article.php?group=php.pear.dev&article=22271
+01-10-03    Improved the Explorer2 driver for MenuBuilder: dhtml for menu
+            moved from session to a cache file, and SID only appended if
+            cookies are disabled
+01-10-03    Cleaned up stylesheet and converted remaining tabs to spaces
+01-10-03    Removed if (!defined(SGL_MANAGER_CLASS_CALLED)) stuff which is no
+            longer required
+01-10-03    Global detection of magic quotes, and removal of backslashes if 
+            magic_quotes_gpc is enabled, which it is by default.  Therefore any 
+            user input value received from Request::get() will have leading and 
+            trailing whitespace removed (see trim entry below), and will have 
+            PHP's automatic magic quoting, ie, backslashes before ' and ", 
+            removed so the developer gets 'clean' data.  Basically, reference 
+            this post by A. Knowles, 
+            http://marc.theaimsgroup.com/?l=pear-general&m=106100849229394&w=2
+            DB_DataObject will automatically escape values passed to it before
+            performing any query, avoiding security issues.  Be wary, though, 
+            if you are performing a query using PEAR::DB and are unsure if your 
+            data needs to be escaped, always sanitise it with DB::quote($var) 
+            first.  See /core/Request
+01-10-03    Global trim() of user input data added
+01-10-03    Experiemental Util::cleanInput introduced in LoginMgr. See 
+            /core/Request, above two points describe how whitespace and slashes
+            are removed, Util::cleanInput additionally removes HTML tags and any 
+            further whitespace that is revealed in the process.  Please see 
+            forum posting for how this can be improved:
+            http://forum.phpkitchen.com/viewtopic.php?p=169#169
+            Ideally I would like to have the static method handle the 4 
+            scenarios described in the post, a given scenario would be specified
+            by passing it as a constant parameter.
+01-10-03    is_a BC hack moved from VFS for easier upgrades
+01-10-03    Utils class not required by default, you must call on an as-needs 
+            basis, for performance
+01-10-03    Fixed inefficient building of article collections
+25-09-03    Added appropriate error message to Contact Us in case of fail
+25-09-03    Improved Request class to automatically remove whitespace from 
+            $_GET, $_POST & $_FILES
+
+KNOWN ISSUES  
+01-10-03    The cookieless implementation currently doesn't work
+01-10-03    Install script, setupSGL.sh, not working properly
+
++-----------------------+
+| VERSION: 0.3.1-beta   |
++-----------------------+
+
+BUGFIXES
+23-09-03    Stopped update.php from parsing CVS dirs
+23-09-03    Fixed bug where wrong URL glue was used if no options passed to 
+            Response::redirect()
+23-09-03    Fixed bug in Navigation mgr::deactivate section (Gilles Laborderie)
+23-09-03    Fixed hard-coded links in adminNav.php (Adelino Monteiro)
+04-09-03    Fixed errors in GroupManager::_insert() added sorting to
+            UserManager (Sï¿½nia Cardoso)
+02-09-03    Fixed bug in htmlArea's image delete fn (Jeroen Laarhoven)
+02-09-03    Set correct id to default example category
+17-08-03    Added correct base url constant to htmlArea config  - now 
+            newsletters with images will arrive with images correctly 
+            linked (Sï¿½nia Cardoso)
+14-08-03    Fixed problem where default lang from conf.ini was not being picked 
+            up (Jeroen Laarhoven)
+13-08-03    Members unassigned to groups can no longer log in
+
+IMPROVEMENTS
+
+23-09-03    Moved the DB::mysql::nextId mod, which allows all sequence IDs to be 
+            stored in a single table, out into it's own class that overrides the 
+            PEAR default functionality, making upgrades easier
+23-09-03    Added ability to create 'static' pages which are hard-coded links to
+            specific module elements, for example, individual articles.  So you 
+            can create an article in Publisher->articles, then create a new tab 
+            in Navigation Mgr and create a link directly to that article.  In 
+            this case the 'static' box must be checked, and the article ID 
+            passed in the 'additional params' field, eg, 'frmCatID=320'.  The 
+            same approach can be taken to create a tab directly to a viewable or 
+            downloadable document, FAQ item, whatver you like.
+22-09-03    Upated following PEAR libs: Config, DB, DB_DataObject, HTTP_Header, 
+            Log, Mail, Var_Dump, VFS, XML_Util
+19-09-03    Thanks to Gilles Laborderie <gilles@users.sourceforge.net> for his 
+            block manager, this is now fully integrated as an independent module
+18-09-03    Combined Permissions module with Publisher to fit with simpler 
+            modules logic
+17-09-03    Admin view of framework simplified, now accomodates 'unlimited' 
+            modules, still need some nice icons, suggestions welcomed :-)
+15-09-03    SimpleTabView navigation tab generator replaced with simpler 
+            and more powerful SimpleNav, no longer dependency on js links, 
+            simple hrefs
+14-09-03    Added the file /etc/debugIdeas.txt which includes some suggestions 
+            targetted at less experienced programmers not familiar with 
+            debugging techniques
+12-09-03    Added improved error handling and debugging 
+            (see http://www.phpkitchen.com/seagull/overview.htm#Debugging_&_Error_Handling)
+02-09-03    Zipped downloads now a configurable option in Publisher 
+            (Mario Izquierdo) 
+02-09-03    Cleaned up init.php, config choices for user simplified
+            (Jeroen Laarhoven)
+13-08-03    Improved group assignments, modifed 'unassigned' group id to -1
+13-08-03    document.type_id_fk changed to type_id in schema
+13-08-03    document.user_id_fk changed to added_by in schema
+
++-----------------------+
+| VERSION: 0.3.0.p2-beta|
++-----------------------+
+
+BUGFIXES
+02-09-03    Fixed some bugs in install
+
++-----------------------+
+| VERSION: 0.3.0.p1-beta|
++-----------------------+
+
+BUGFIXES
+12-08-03    Fixed some case sensitivity issues in module names
+
+IMPROVEMENTS
+12-08-03    Created a cleaned db dump for framework
+
+
++-----------------------+
+| VERSION: 0.3.0-beta   |
++-----------------------+
+
+BUGFIXES
+03-08-03    Fixed bug where Account's last login date was incorrect
+02-08-03    Added optional .htaccess file that can be used to enhance security
+02-08-03    Removed some ini_set() directives that were were not user modifiable
+01-08-03    Fixed bug where db singleton was not working incorrectly, fix 
+            improves page renders by 4/100ths of a sec on my pIV 2Ghz, quite a 
+            big difference actually
+30-07-03    Thanks for Merrick Poon for pointing out failure to catch 
+            email/username duplicates for admins using User, now fixed
+16-07-03    Fixed php 4.1+ dependency in session::_init() and isvalid()
+16-07-03    Thanks to Jason Whittenburg <phpseagull@jasonwhittenburg.com> for
+            pointing out that the user table can not be named 'user' as this
+            is a reserved keyword in SQL92 standard and in MS SQL.  I've changed
+            it to 'users' which resulted in a fair amount of knock-on changes.
+
+
+IMPROVEMENTS
+06-08-03    Moved "$process->requiresAuth = true" from start files to individual 
+            class conf.ini files, making start files redundant; will allow for
+            a single index.php?mod=modname&action=list type navigation
+06-08-03    Created Example module as basis for creating new modules
+06-08-03    Made class naming scheme consistent, any class that inherits from 
+            Manager ends in 'Mgr'. For a full explanation see
+            http://forum.phpkitchen.com/viewtopic.php?p=147#147
+05-08-03    Changed inbox look&feel to be more in line with other modules
+04-08-03    Removed all MySQL-specific 'auto_increment' types, all tables
+            now increment from 'sequences' table using a modified 
+            PEAR::DB::nextId()
+04-08-03    Removed all 't_name' prefixes, changed to more conventional 'table'
+03-08-03    Renamed 'user_holding' table to 'contact', and former 'contact'
+            table to 'contact_us' for clarity
+01-08-03    Pass optional true boolean parameter to SGL::getTime() to get gmt 
+            timestamp instead of localised one
+01-08-03    Failed DB connections properly caught, finally ;-)
+29-07-03    Replaced MySQL specific NOW() calls, thanks to Jason Whittenburg
+29-07-03    Relicensed Seagull to the less restrictive LGPL
+29-07-03    Created constants to represent article statuses, thanks to 
+            Jeroen Laarhoven for the suggestion
+29-07-03    Renamed project to Seagull from PHPseagull, thanks to Jason
+            Whittenburg, see 
+            (http://forum.phpkitchen.com/viewtopic.php?p=128&highlight=#128)
+29-07-03    Renamed session vars from SESSION_VAR_FORMAT to varFormat to keep
+            in line with CS
+28-07-03    Cleaned up access to useful vars: created SGL::getTime(), renamed
+            Session::getCurrentAuthLevel() to Session::getAuthLevel(), created
+            Session::getUid() as 'singleton' wrapper to 
+            Session::get('uid')
+28-07-03    Moved majority of config settings from init.php to /etc/conf.ini
+16-07-03    Cleaned up inheritance tree, all methods in Base now static, no
+            longer necessary to inherit from Base
+16-07-03    Text strings moved out to translation file for header, footer,
+            Home, Login, Register, Contact Us
+16-07-03    Removed Manager::hasAccess which duplicated 
+            Session::getCurrentAuthLevel
+16-07-03    Abtracted user table from ContactMgr, Article, ArticleBrowser,
+            ArticleList
+16-07-03    DB_DataObject updated to version 1.0.2
+
++-----------------------+
+| VERSION: 0.2.1.p1-beta|
++-----------------------+
+
+BUGFIXES
+12-07-03    Fixed bug where templates were not compiling properly
+12-07-03    Fixed PEAR::log constants that were incorrectly set if logging
+            disabled
+
++-----------------------+
+| VERSION: 0.2.1-beta   |
++-----------------------+
+
+BUGFIXES
+11-07-03    Fixed bug where 'news items' were showing up under 'articles'
+11-07-03    Put in test for flesch score, avoids potential errors
+03-07-03    Modified Output::generateSelect() to be able to correctly accept 
+            arrays for the selected param, in other words, so your multi-select 
+            lists can have multiple items pre-selected.  No bc break, 
+            additional third param indicates if select is multiple
+03-07-03    Fixed bug in CategoryManager where getBreadCrumbs() class var had 
+            to be unset in order not to produce errors for multilpe calls
+
+
+IMPROVEMENTS
+11-07-03    Updated to latest PEAR::mail
+11-07-03    Added the ability to dynamically gzip page content in init.php, 
+            defaults to off
+11-07-03    All constants bound to PSG namespace, ever tried a 
+            print '<pre>'; print_r(get_defined_constants()); print '</pre>';
+11-07-03    Session::getCurrentUserType() more accurately renamed 
+            getCurrentAuthLevel(), now returns a contstant instead of literal
+11-07-03    New FAQ and Contact Us modules
+11-07-03    /core/Process.php, the app controller, renamed to Controller.php
+10-07-03    Block Manager now allows blocks to appear in multiple sections,
+            not just one, all, or none as before
+10-07-03    API docs now downloadable here 
+            http://www.phpkitchen.com/phpseagull/#api
+10-07-03    Thanks to Erlend Stromsvik <ehs@hvorfor.no> SGL_WEB_DIR added to 
+            init.php
+09-07-03    Improved file viewing code in Publisher/FileManager
+09-07-03    Added open_basedir ini setting for additional security
+07-07-03    Thanks to Gilles Laborderie <gilles@users.sourceforge.net> for 
+            integrating PEAR::Log
+07-07-03    Thanks to Thomas Kulvik <thomask@stud.aitel.hist.no> for a norwegian 
+            translation
+07-07-03    Thanks to Erlend Stromsvik <ehs@hvorfor.no> for improving the 
+            _setLanguage() method in the controller
+04-07-03    Added global var for templates, isMember, accessible as 
+            {if:o.isMember} do something {end:}, analagous to {o.isAdmin}
+
+
++-----------------------+
+| VERSION: 0.2.0-beta   |
++-----------------------+
+
+BUGFIXES
+20-06-03    Fixed incorrect instant message reply redirect
+20-06-03    Fixed some errors for Linux client users: case sensitivity for script
+            names, mime type variants
+
+IMPROVEMENTS
+25-06-03    Added ability for registered users to contribute articles which then 
+            prompt the admin user to edit/approve/publish
+24-06-03    Added Util class where regex, datatype transforms will go
+24-06-03    Big api cleanup, all manager classes now inherit from Manager (which 
+            used to be Page) and override standard add, insert, edit, update, 
+            delete, view methods
+24-06-03    Added ability to view author profiles and save authors to 'My 
+            Contacts'
+24-06-03    Moved common vars into Base class for global access, including
+            currentUid, currentUserType, LOCALEd nowDateTime, webRoot
+24-06-03    Added optional Flesch readability score for articles
+24-06-03    Added Instant Messenger to admin
+24-06-03    Clicking on login name shows profile
+20-06-03    Optional email confirmation sent out after registration     
+20-06-03    Login auditing with IP added for security
+20-06-03    Added 'My Account' functionality
+20-06-03    Made crlf OS dependent
+20-06-03    Added config param to allow US date formatting, ie, MM.DD.YYYY
+20-06-03    Updated PEAR classes Validate, Text
+18-06-03    Created shell script to automate framework setup
+16-06-03    App headers unified and cleaned up (in Process)
+16-06-03    Output buffering added for performance improvement, easier header
+            management
+
++-----------------------+
+| VERSION: 0.1.5-beta   |
++-----------------------+
+
+BUGFIXES
+14-06-03    Fixed bug in retrieve password method
+12-06-03    Improved error handling and validation in Newsletter
+11-06-03    Disabled logging to Apache's error_log when DEBUG was set to 0
+10-06-03    Fixed bug in schema where articles used incorrect attribute mapping
+10-06-03    Removed PHP short tags for XML compliance
+06-06-03    Fixed bug in Documentor where anchor tags were incorrectly formed
+
+IMPROVEMENTS
+14-06-03    Cleaned up the Login class
+13-06-03    Overview docs significantly updated
+12-06-03    Replaced most popup system alerts with in-browser equivalents,
+            except for in Publisher due to js/frames issues
+12-06-03    Removed Notice class made redundant by item above
+11-06-03    Cleaned up GroupMgr
+10-06-03    Added profanity filter for majority of user input
+10-06-03    Updated PEAR classes: HTTP, HTTP_Header, HTTP_Request, Net_URL, 
+            Net_Socket
+
++-----------------------+
+| VERSION: 0.1.4-beta   |
++-----------------------+
+
+05-06-03    Changed package status to beta ;-)
+05-06-03    Added PEAR's Net_UserAgent class for browser handling
+05-06-03    Improved handling of replying to messages, changed logic based on 
+            browser detection
+05-06-03    Implemented first step of basic locale handling, timezone correctly 
+            reflected
+05-06-03    Cleaned up phpdoc comments, regenerated api docs with much improved
+            phpDocumentor phpDocumentor 1.2.0a
+30-05-03    Setup anonymous CVS access, Forum
+28-05-03    Added pagination to inbox
+28-05-03    Updated Emailer (PEAR::Mail wrapper) class for quick emails
+28-05-03    Made session validation method more rigourous to protect against
+            session vulnerabilities exposed by use_trans_sid = on
+28-05-03    Synched cookie expire with session expire
+27-05-03    Integrated Benchmark_Timer, ability to set markers
+23-05-03    Fixed tabs to spaces
+22-05-03    Updated PEAR libraries Benchmark, HTML_Common, Validate and 
+            DB_DataObject 
+
++-----------------------+
+| VERSION: 0.1.3-alpha  |
++-----------------------+
+
+20-05-03    Framework updated to work when users have cookies disabled
+16-05-03    Fixed Documentor::Manual
+16-05-03    Updated PEAR libs: PEAR, DB 
+02-05-03    Added ability to reply to messages
+
++-----------------------+
+| VERSION: 0.1.2-alpha  |
++-----------------------+
+
+01-05-03    Fixed 'Call-time pass-by-reference has been deprecated' warnings
+
++-----------------------+
+| VERSION: 0.1.1-alpha  |
++-----------------------+
+
+20-04-03    Added error redirection where simple page blocking was not 
+            appropriate
+20-04-03    Improved retrieve password functionality
+20-04-03    Improved logon security (maxlength to avoid injections, more 
+            thorough request parsing)
+20-04-03    integration with PEAR error handling slightly improved
+20-04-03    removed admin from admin group blocked
