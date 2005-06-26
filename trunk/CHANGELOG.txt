@@ -1,5 +1,14 @@
 CHANGELOG
 =========
++-----------------------+
+| VERSION: 0.4.2        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+27-06-05    Implemented updates for improved Pager_Wrapper (Lorenzo Alberton) and added
+            tests
+27-06-05    Changed to svn for SCM
 
 +-----------------------+
 | VERSION: 0.4.2        |

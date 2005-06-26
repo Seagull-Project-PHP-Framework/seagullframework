@@ -168,6 +168,23 @@ class SGL_DB
         }
         return $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
     }
+    
+    /**
+     * Helper method - Rewrite the query into a "SELECT COUNT(*)" query.
+     * @param string $sql query
+     * @return string rewritten query OR false if the query can't be rewritten
+     * @access private
+     */
+    function rewriteCountQuery($sql)
+    {
+        if (preg_match('/^\s*SELECT\s+\bDISTINCT\b/is', $sql) || preg_match('/\s+GROUP\s+BY\s+/is', $sql)) {
+            return false;
+        }
+        $queryCount = preg_replace('/(?:.*)\bFROM\b\s+/Uims', 'SELECT COUNT(*) FROM ', $sql, 1);
+        list($queryCount, ) = preg_split('/\s+ORDER\s+BY\s+/is', $queryCount);
+        list($queryCount, ) = preg_split('/\bLIMIT\b/is', $queryCount);
+        return trim($queryCount);
+    }
 
     /**
      * @param object PEAR::DB instance
@@ -179,27 +196,18 @@ class SGL_DB
      * @return array with links and paged data
      */
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 
-        $fetchMode = DB_FETCHMODE_ASSOC, $db_params = array())
+        $fetchMode = DB_FETCHMODE_ASSOC, $dbparams = array())
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if (isset($pager_options) && empty($pager_options['totalItems'])) {
-
+        if (!array_key_exists('totalItems', $pager_options)) {
             //  be smart and try to guess the total number of records
-            if (stristr($query, 'GROUP BY') === false) {
-
-                //  no GROUP BY => do a fast COUNT(*) on the rewritten query
-                //  $queryCount = 'SELECT COUNT(*)'.stristr($query, ' FROM ');
-                $queryCount = preg_replace('/(.|\n)*?FROM/', 'SELECT COUNT(*) FROM', $query, 1);
-                list($queryCount, ) = spliti('ORDER BY ', $queryCount);
-                list($queryCount, ) = spliti('LIMIT ', $queryCount);
-                $totalItems = $db->getOne($queryCount, $db_params);
-                if (DB::isError($totalItems)) {
+            if ($countQuery = SGL_DB::rewriteCountQuery($query)) {
+                $totalItems = $db->getOne($countQuery, $dbparams);
+                if (PEAR::isError($totalItems)) {
                     return $totalItems;
                 }
             } else {
-                //  GROUP BY => fetch the whole resultset and count the rows returned
-                $res =& $db->query($query, $db_params);
-                if (DB::isError($res)) {
+                $res =& $db->query($query, $dbparams);
+                if (PEAR::isError($res)) {
                     return $res;
                 }
                 $totalItems = (int)$res->numRows();
@@ -209,7 +217,7 @@ class SGL_DB
         }
         require_once 'Pager/Pager.php';
         $pager = Pager::factory($pager_options);
-
+        
         $page = array();
         $page['totalItems'] = $pager_options['totalItems'];
         $page['links'] = $pager->links;
@@ -218,12 +226,12 @@ class SGL_DB
             'total'   => $pager->numPages()
         );
         list($page['from'], $page['to']) = $pager->getOffsetByPageId();
-
+        
         $res = ($disabled)
-            ? $db->limitQuery($query, 0, $totalItems, $db_params)
-            : $db->limitQuery($query, $page['from']-1, $pager_options['perPage'], $db_params);
-
-        if (DB::isError($res)) {
+            ? $db->limitQuery($query, 0, $totalItems, $dbparams)
+            : $db->limitQuery($query, $page['from']-1, $pager_options['perPage'], $dbparams);
+        
+        if (PEAR::isError($res)) {
             return $res;
         }
         $page['data'] = array();
