@@ -8,7 +8,6 @@ first time.  The main thing you need to do is:
 
 This document makes reference to an [web-doc-root] which typically is
 
-
     /var/www/html on Linux and
     C:\Program Files\Apache Group\Apache\htdocs on Windows
 
