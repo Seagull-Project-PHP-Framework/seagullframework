@@ -30,7 +30,7 @@ require_once 'PEAR/PackageFileManager.php';
 $packagexml = new PEAR_PackageFileManager;
 $e = $packagexml->setOptions(array(
     'baseinstalldir' => 'seagull',
-    'version' => '0.4.0',
+    'version' => '0.4.3',
     'license' => 'BSD License',
     'packagedirectory' => '/var/www/html/tmp/seagull',
     'state' => 'beta',
@@ -49,8 +49,7 @@ $e = $packagexml->setOptions(array(
         ),
     'ignore' => array(
         'generatePackage.php', 
-        'lib/pear/', 
-        'TODO.txt',
+        'lib/pear/',
         '*CVS*',
         ), 
     'roles' => array(
@@ -65,8 +64,9 @@ $e = $packagexml->setOptions(array(
         'constants.php' => 'data',
         'INSTALL.txt' => 'data',
         'README.txt' => 'data',
+        'VERSION.txt' => 'data',         
         'etc/mysql_SGL.php' => 'php',
-        'etc/Tree.php' => 'php',
+        'etc/Tree.php' => 'php',       
         ),
     'installexceptions' => array(
         'mysql_SGL.php' => 'DB',
@@ -188,19 +188,7 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
-$e = $packagexml->addDependency('OLE', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
 $e = $packagexml->addDependency('Pager', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
-$e = $packagexml->addDependency('Spreadsheet_Excel_Writer', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
     exit;

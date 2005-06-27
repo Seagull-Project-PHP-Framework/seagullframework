@@ -129,9 +129,6 @@ function exportCvsAndPackage()
     rm -rf seagull/www/themes/default/rate
     rm -rf seagull/www/themes/default/shop
     
-    #make apiDocs script executable
-    chmod 755 seagull/etc/phpDocCli.sh
-    
     # rename folder to current release
     mv seagull seagull-$VERSION
     
@@ -162,7 +159,10 @@ EOF
 ##############################
 function generateApiDocs()
 {
+    #make apiDocs script executable
     chmod 755 seagull-$VERSION/etc/phpDocCli.sh
+    
+    #execute phpDoc
     seagull-$VERSION/etc/phpDocCli.sh
 
     # rename folder    
