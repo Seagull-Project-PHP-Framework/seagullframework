@@ -13,9 +13,10 @@ BEGIN;
 --
 -- Dumping data for table category
 --
-INSERT INTO category VALUES (1,'PublisherRoot','',0,1,1,4,1,1);
-INSERT INTO category VALUES (2,'example','',1,1,2,3,1,2);
-INSERT INTO category VALUES (3,'OtherRoot','',0,3,1,2,1,1);
+INSERT INTO category (category_id, label, perms, parent_id, root_id, left_id, right_id, order_id, level_id) VALUES (0, 'HiddenRoot', '', 0, 0, 0, 0, 0, 0);
+INSERT INTO category (category_id, label, perms, parent_id, root_id, left_id, right_id, order_id, level_id) VALUES (1, 'PublisherRoot', '', 0, 1, 1, 4, 1, 1);
+INSERT INTO category (category_id, label, perms, parent_id, root_id, left_id, right_id, order_id, level_id) VALUES (2, 'example', '', 1, 1, 2, 3, 1, 2);
+INSERT INTO category (category_id, label, perms, parent_id, root_id, left_id, right_id, order_id, level_id) VALUES (3, 'OtherRoot', '', 0, 3, 1, 2, 1, 1);
 
 
 --

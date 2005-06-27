@@ -74,8 +74,6 @@ INSERT INTO permission (permission_id, name, description, module_id) VALUES (52,
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (53, 'pagemgr_delete', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (54, 'pagemgr_reorder', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (55, 'pagemgr_list', '', 9);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (56, 'newslettermgr_send', '', 10);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (57, 'newslettermgr_addressBook', '', 10);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (58, 'articleviewmgr_view', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (59, 'articleviewmgr_summary', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (60, 'articlemgr_add', '', 11);
@@ -86,12 +84,10 @@ INSERT INTO permission (permission_id, name, description, module_id) VALUES (64,
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (65, 'articlemgr_delete', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (66, 'articlemgr_view', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (67, 'articlemgr_list', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (68, 'categorymgr_add', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (69, 'categorymgr_insert', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (70, 'categorymgr_edit', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (71, 'categorymgr_update', '', 11);
+INSERT INTO permission (permission_id, name, description, module_id) VALUES (69, 'categorymgr_insert', '', 9);
+INSERT INTO permission (permission_id, name, description, module_id) VALUES (71, 'categorymgr_update', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (73, 'rolemgr_duplicate', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (75, 'categorymgr_list', '', 11);
+INSERT INTO permission (permission_id, name, description, module_id) VALUES (75, 'categorymgr_list', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (76, 'documentmgr_add', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (77, 'documentmgr_insert', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (78, 'documentmgr_edit', '', 11);
@@ -159,85 +155,58 @@ INSERT INTO permission (permission_id, name, description, module_id) VALUES (141
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (142, 'userpreferencemgr_editAll', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (143, 'userpreferencemgr_updateAll', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (145, 'newslettermgr_list', '', 10);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (146, 'orgpreferencemgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (147, 'accountmgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (148, 'accountmgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (149, 'loginmgr', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (150, 'loginmgr_logout', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (151, 'orgmgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (152, 'orgmgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (153, 'orgpreferencemgr', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (154, 'orgpreferencemgr_editAll', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (155, 'orgpreferencemgr_updateAll', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (156, 'passwordmgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (157, 'passwordmgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (158, 'permissionmgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (159, 'permissionmgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (160, 'permissionmgr_scanNew', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (161, 'permissionmgr_insertNew', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (162, 'permissionmgr_scanOrphaned', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (163, 'permissionmgr_deleteOrphaned', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (164, 'preferencemgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (165, 'preferencemgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (166, 'profilemgr', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (167, 'registermgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (168, 'registermgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (169, 'rolemgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (170, 'rolemgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (171, 'userimportmgr', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (172, 'userimportmgr_list', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (173, 'userimportmgr_insertImportedUsers', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (174, 'userimportmgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (175, 'usermgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (176, 'usermgr_redirectToDefault', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (177, 'usermgr_search', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (178, 'usermgr_syncToRole', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (179, 'userpreferencemgr', '', 12);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (180, 'userpreferencemgr_redirectToDefault', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (181, 'rndmsgmgr', '', 13);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (182, 'rndmsgmgr_redirectToDefault', '', 13);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (183, 'articlemgr', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (184, 'articlemgr_redirectToDefault', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (185, 'articleviewmgr', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (186, 'documentmgr', '', 11);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (187, 'documentmgr_redirectToDefault', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (188, 'filemgr', '', 11);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (189, 'newslettermgr', '', 10);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (190, 'newslettermgr_redirectToDefault', '', 10);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (191, 'categorymgr', '', 9);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (192, 'categorymgr_redirectToDefault', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (193, 'categorymgr_delete', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (194, 'navstylemgr', '', 9);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (195, 'navstylemgr_redirectToDefault', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (196, 'pagemgr', '', 9);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (197, 'pagemgr_redirectToDefault', '', 9);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (198, 'contactmgr', '', 8);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (199, 'contactmgr_redirectToDefault', '', 8);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (200, 'imessagemgr', '', 8);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (201, 'imessagemgr_redirectToDefault', '', 8);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (202, 'imessagemgr_sendAlert', '', 8);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (203, 'maintenancemgr', '', 7);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (204, 'maintenancemgr_verify', '', 7);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (205, 'maintenancemgr_redirectToDefault', '', 7);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (206, 'maintenancemgr_checkAllModules', '', 7);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (207, 'maintenancemgr_rebuildSequences', '', 7);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (208, 'maintenancemgr_createModule', '', 7);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (209, 'guestbookmgr', '', 6);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (210, 'guestbookmgr_redirectToDefault', '', 6);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (211, 'faqmgr', '', 5);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (212, 'faqmgr_redirectToDefault', '', 5);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (213, 'documentormgr', '', 4);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (214, 'configmgr', '', 3);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (215, 'configmgr_redirectToDefault', '', 3);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (216, 'defaultmgr', '', 3);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (217, 'modulemgr', '', 3);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (218, 'modulemgr_redirectToDefault', '', 3);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (219, 'modulemgr_edit', '', 3);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (221, 'contactusmgr', '', 2);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (222, 'contactusmgr_redirectToDefault', '', 2);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (223, 'blockmgr', '', 1);
-INSERT INTO permission (permission_id, name, description, module_id) VALUES (224, 'blockmgr_redirectToDefault', '', 1);
+INSERT INTO permission (permission_id, name, description, module_id) VALUES (224, 'bugmgr', '', 3);
 
 --
 -- Dumping data for table preference
@@ -323,16 +292,10 @@ INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES 
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (57, 0, 85);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (58, 0, 86);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (59, 2, 147);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (60, 2, 199);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (61, 2, 222);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (62, 2, 201);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (63, 2, 149);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (64, 2, 157);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (65, 2, 165);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (66, 2, 180);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (67, 0, 222);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (68, 0, 138);
-INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (69, 0, 168);
+INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (69, 0, 224);
+INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (70, 0, 121);
 
 --
 -- Dumping data for table user_permission
@@ -380,13 +343,7 @@ INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (40, 2, 63);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (41, 2, 66);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (42, 2, 147);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (43, 2, 199);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (44, 2, 222);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (45, 2, 201);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (46, 2, 149);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (47, 2, 157);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (48, 2, 165);
-INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (49, 2, 180);
 
 --
 -- Dumping data for table user_preference

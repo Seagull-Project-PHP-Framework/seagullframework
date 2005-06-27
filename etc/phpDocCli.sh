@@ -42,7 +42,7 @@ PACKAGES="SGL"
 #  *
 #  * @var               string PATH_PROJECT
 #  */
-PATH_PROJECT=/var/www/html/seagull/lib/SGL
+PATH_PROJECT=/var/www/html/seagull/trunk/lib/SGL
 
 #/**
 #  * path of PHPDoc executable
