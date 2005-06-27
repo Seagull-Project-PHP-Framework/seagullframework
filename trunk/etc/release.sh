@@ -36,8 +36,8 @@ function usage()
       echo ""
       echo "Usage: ./release.sh version release password"
       echo "where \"version\" is the Seagull version (e.g. 0.3.1)"
-      echo "and release is the release (e.g. release_0_3_1),"
-      echo "and password is the password"  
+      echo "and \"release\" is the release (e.g. release_0_3_1),"
+      echo "and \"password\" is the password"  
 }
 
 ##############################
@@ -162,6 +162,7 @@ EOF
 ##############################
 function generateApiDocs()
 {
+    chmod 755 seagull-$VERSION/etc/phpDocCli.sh
     seagull-$VERSION/etc/phpDocCli.sh
 
     # rename folder    
@@ -210,23 +211,23 @@ function scpChangelogToSglSite()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
-tagRelease
+#tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportCvsAndPackage
+#exportCvsAndPackage
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
 #generateApiDocs
 
 #packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
-scpChangelogToSglSite
+#scpChangelogToSglSite
 
 exit 0
