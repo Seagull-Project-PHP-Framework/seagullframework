@@ -51,7 +51,6 @@
         require_once 'etc/bc.php';
     }
 
-
     require_once 'constants.php';
     SGL_init();
 
