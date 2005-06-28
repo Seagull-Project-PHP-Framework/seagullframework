@@ -1,0 +1,128 @@
+<script type="text/javascript">
+function addFormValue(myElement, form)
+{
+    var myForm = document.getElementById(form);
+    
+    newInput = document.createElement("input");
+    newInput.setAttribute('name', myElement.name);
+    newInput.setAttribute('value', myElement.value);
+    newInput.setAttribute('type', 'hidden');
+    myForm.appendChild(newInput);  
+}
+</script>
+
+    <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit">
+        <input type="hidden" name="action" value="{action}" /> 
+        <input type="hidden" name="page[section_id]" value="{section[section_id]}" />
+        <input type="hidden" name="page[order_id]" value="{section[order_id]}" />
+        <input type="hidden" name="page[original_parent_id]" value="{section[parent_id]}" />
+        <input type="hidden" name="page[original_is_enabled]" value="{section[is_enabled]}" />
+
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+    <table class="wide">
+        <tr>
+            <td colspan="2" align="center">{foreach:error,error,string} <strong>{string}</strong><br />
+            {end:}</td>
+        </tr>
+    
+        <tr>
+            <td colspan="2">
+                <p>{translate(#intro text 1#)}</p>
+                <p>{translate(#intro text 2#)}</p>
+                <p>&nbsp;</p>
+            </td>
+        </tr>
+        
+        {if:section[section_id]}
+            <tr>
+                <th align="left">{translate(#Section ID#)}</th>
+                <td>{section[section_id]}</td>
+            </tr>
+        {end:}
+
+        <tr>
+            <th align="left">{translate(#Page Title#)}</th>
+            <td><input type="text" name="page[title]" value="{section[title]:h}" /></td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Parent Page#)}:</th>
+            <td>
+                <select name="page[parent_id]">
+                    {sectionNodesOptions:h}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Page#)}:</th>
+            
+            <td>
+                <select name="page[articleType]" multiple 
+                    onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                    
+                <option value="static" flexy:raw="{staticSelected}">
+                    {translate(#static articles#)}
+                </option>
+
+                <option value="dynamic" flexy:raw="{dynamicSelected}">
+                    {translate(#dynamic pages#)}
+                </option>  
+                </select>
+
+                {if:staticSelected}
+                    <select size="1" name="page[staticArticleId]">
+                        {generateSelect(aStaticArticles,section[resource_uri]):h}
+                    </select>
+                {else:}<br />
+                    <select size="1" name="page[module]"
+                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                        {generateSelect(aModules,section[module]):h}
+                    </select> module<br />
+                    <select size="1" name="page[manager]"
+                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                        {generateSelect(aManagers,section[manager]):h}
+                    </select> manager<br />
+                    <select size="1" name="page[actionMapping]">
+                        <option value="">none
+                        {generateSelect(aActions,section[actionMapping]):h}
+                    </select> action                                       
+                {end:}
+            </td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Additional params#)}:</th>
+            <td><input type="text" name="page[add_params]" value="{section[add_params]}" /> {translate(#separate with slashes (/)#)}</td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Anchor#)}:</th>
+            <td><input type="text" name="page[anchor]" value="{section[anchor]}" /> {translate(#just the anchor name#)}</td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Status#)}:</th>
+            <td><input type="checkbox" name="page[is_enabled]" flexy:raw="{pageIsEnabled}" /> {translate(#check to activate#)}</td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Can view#)}:</th>
+
+            <td>
+                <select size="5" name="page[perms][]" multiple="multiple">
+                    {generateSelect(aRoles,aSelectedRoles,1):h}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp; 
+                <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href='{makeUrl(#list#,#page#,#navigation#)}'" />
+            </td>
+        </tr>
+    </table>
+</form>

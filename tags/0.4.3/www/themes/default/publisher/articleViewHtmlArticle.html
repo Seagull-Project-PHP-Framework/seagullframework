@@ -1,0 +1,5 @@
+<h3>{leadArticle[title]}</h3>
+<p>{formatDatePretty(leadArticle[startDate])} <br />
+    {translate(#contributed by#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|leadArticle[createdByID]#)}">{leadArticle[creatorName]}</a>
+</p>
+<p>{leadArticle[bodyHtml]:h}</p>
