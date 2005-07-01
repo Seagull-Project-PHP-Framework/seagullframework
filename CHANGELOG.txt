@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.4.3        |
+| VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES
 01-07-05    Fixed bug where recordsets sent to Pager weren't working because the
@@ -11,7 +11,7 @@ IMPROVEMENTS
 
 
 +-----------------------+
-| VERSION: 0.4.2        |
+| VERSION: 0.4.3        |
 +-----------------------+
 BUGFIXES
 
