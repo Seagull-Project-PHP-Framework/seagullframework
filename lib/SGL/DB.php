@@ -198,7 +198,7 @@ class SGL_DB
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 
         $fetchMode = DB_FETCHMODE_ASSOC, $dbparams = array())
     {
-        if (!array_key_exists('totalItems', $pager_options)) {
+        if (!array_key_exists('totalItems', $pager_options) || is_null($pager_options['totalItems'])) {
             //  be smart and try to guess the total number of records
             if ($countQuery = SGL_DB::rewriteCountQuery($query)) {
                 $totalItems = $db->getOne($countQuery, $dbparams);

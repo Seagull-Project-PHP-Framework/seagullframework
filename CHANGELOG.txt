@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.4.3        |
++-----------------------+
+BUGFIXES
+01-07-05    Fixed bug where recordsets sent to Pager weren't working because the
+            'totalItems' key existed but was null
+
+IMPROVEMENTS
+
+
++-----------------------+
 | VERSION: 0.4.2        |
 +-----------------------+
 BUGFIXES
