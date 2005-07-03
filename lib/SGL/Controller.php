@@ -742,7 +742,7 @@ class SGL_Controller
             ob_end_flush();
         }
         echo $data;
-print '<pre>'; print_r($GLOBALS['_SGL']['REQUEST']);
+#print '<pre>'; print_r($GLOBALS['_SGL']['REQUEST']);
     }
 
     /**
