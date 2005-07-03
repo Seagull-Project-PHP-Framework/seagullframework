@@ -116,9 +116,12 @@ class SimpleNav
     function SimpleNav()
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
-        $aParams = explode('/', $_SERVER['REQUEST_URI']);
-        $key = array_search('staticId', $aParams);
-        $this->_staticId = ($key) ? $aParams[$key + 1] : 0;
+        
+        //  get a reference to the request object
+        $req = & SGL_HTTP_Request::singleton();
+        
+        $key = $req->get('staticId');
+        $this->_staticId = (is_null($key)) ? 0 : $key;
     }
 
     /**
