@@ -510,7 +510,7 @@ class SGL_Item
             break;
 
         case 2:     // field type = html paragraph
-            $formHTML = "<textarea id='frmBodyName' cols='75' rows='20' name='frmBodyName'>$fieldValue</textarea>";
+            $formHTML = "<textarea id='frmBodyName' name='frmBodyName' cols='75' rows='20'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID'";
             break;
         }
