@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES
+04-07-05    Adding a block redirected to a blank screen - fixed
 04-07-05    Removed stray comma that killed FCK editor for msie (Ori Shiloh)
 04-07-05    Changed use of document.all to document.getElementById in installer (Leo 
             Lijstenmaker)
