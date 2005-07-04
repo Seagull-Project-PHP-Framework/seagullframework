@@ -14,7 +14,6 @@
 CVS=/usr/bin/cvs
 FTP=/usr/bin/ftp
 
-
 # SF FTP details
 FTP_HOSTNAME=upload.sourceforge.net
 FTP_USERNAME=anonymous
@@ -45,23 +44,11 @@ function usage()
 ##############################
 function checkArgs()
 {
-    # Check that a version tag was specified:
-    if [ -z "$VERSION" ]; then
+    # Check that arguments were specified:
+    if [ -z $VERSION ] || [ -z $RELEASE ] || [ -z $CVS_PASSWD ]; then
       usage
       exit 1
     fi
-    
-    # Check that a release tag was specified:
-    if [ -z "$RELEASE" ]; then
-      usage
-      exit 1
-    fi
-    
-    # Check that a password was specified:
-    if [ -z "$CVS_PASSWD" ]; then
-      usage
-      exit 1
-    fi    
 }
 
 ##############################
@@ -69,12 +56,6 @@ function checkArgs()
 ##############################
 function checkPreviousVersions()
 {
-    # Check that the release directory doesn't already exist:
-    if [ -d "/tmp/seagull*" ]; then
-      echo "Removing last seagull export ..."
-      rm -rf /tmp/seagull*
-    fi
-    
     # Check that the release directory doesn't already exist:
     if [ -d "/tmp/seagull-$VERSION" ]; then
       echo "Removing last seagull export ..."
