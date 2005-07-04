@@ -142,7 +142,7 @@ class BlockMgr extends SGL_Manager
 
                 //  Redirect on success
                 SGL::raiseMsg('Block successfully added');
-                SGL_HTTP::redirect();
+                SGL_HTTP::redirect(array());
             }
         }
     }
