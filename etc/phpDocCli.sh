@@ -44,6 +44,13 @@ PACKAGES="SGL"
 #  */
 PATH_PROJECT=/var/www/html/seagull/trunk/lib/SGL
 
+#/** 
+#  * name of a file(s) to parse file1,file2
+#  *
+#  * @var               string FILES
+#  */
+FILES=/var/www/html/seagull/trunk/lib/SGL.php
+
 #/**
 #  * path of PHPDoc executable
 #  *
@@ -89,7 +96,7 @@ PRIVATE=on
 rm -fr $PATH_DOCS
 mkdir $PATH_DOCS
 # make documentation
-$PATH_PHPDOC -d $PATH_PROJECT -t $PATH_DOCS -ti "$TITLE" -dn $PACKAGES -o $OUTPUTFORMAT:$CONVERTER:$TEMPLATE -pp $PRIVATE --ignore "tests/"
+$PATH_PHPDOC -d $PATH_PROJECT -f $FILES -t $PATH_DOCS -ti "$TITLE" -dn $PACKAGES -o $OUTPUTFORMAT:$CONVERTER:$TEMPLATE -pp $PRIVATE --ignore "tests/"
 
 
 # vim: set expandtab :
