@@ -364,9 +364,9 @@ class SGL_SetupWizard
             $msg = $displayHtml;
             $displayHtml = '<span class=\\"pageTitle\\">' . $msg . '</span>';
         }
-        echo '<script>
-              document.all.' . $id . '.innerHTML= "' . $displayHtml . '";
-              </script>';
+        echo "<script>
+              document.getElementById('$id').innerHTML=\"$displayHtml\";
+              </script>";
 
         //  echo 5K+ worth of spaces, since some browsers will buffer internally until they get 4K
         echo str_repeat(' ', 5120);
