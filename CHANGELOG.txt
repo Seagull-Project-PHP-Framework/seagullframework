@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES
+04-06-05    Changed use of document.all to document.getElementById in installer (Leo 
+            Lijstenmaker)
 03-07-05    Removed reference to $_SERVER['REQUEST_URI'] in SimpleNav (Tony Oliver) that
             would cause non-Apache environments to fail
 01-07-05    Fixed bug where recordsets sent to Pager weren't working because the
