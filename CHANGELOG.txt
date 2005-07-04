@@ -13,6 +13,7 @@ BUGFIXES
             'totalItems' key existed but was null
 
 IMPROVEMENTS
+04-07-05    Renamed SGL_Controller::_getPageObject() to _getModel()
 
 
 +-----------------------+

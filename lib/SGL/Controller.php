@@ -136,7 +136,7 @@ class SGL_Controller
         SGL_Util::getUserOs();
         
         //  load relevant manager class and instantiate
-        $this->page = $this->_getPageObject();
+        $this->page = $this->_getModel();
         
         //  do general session & language initialisation and access-control check
         $this->init();
@@ -220,7 +220,7 @@ class SGL_Controller
      * @param   object  $req    the Request object
      * @return  void
      */
-    function _getPageObject()
+    function _getModel()
     {
         //  get a reference to the request object
         $req = & SGL_HTTP_Request::singleton();
