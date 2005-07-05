@@ -100,5 +100,14 @@ EOF;
         }
         return $sql;
     }
+    
+    function testRemoveNonAlphaChars()
+    {
+        $foo = 'this is (foo - )';
+        $pattern = "/[^\sa-z]/i";
+        $replace = "";
+        $ret = preg_replace($pattern, $replace, $foo);
+        $this->assertEqual($ret, 'this is foo  ');     
+    }
 }
 ?>
