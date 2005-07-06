@@ -73,7 +73,7 @@ class UserMgr extends RegisterMgr
             'delete'                => array('delete', 'redirectToDefault'),
             'list'                  => array('list'),
             'requestPasswordReset'  => array('requestPasswordReset'),
-            'resetPassword'         => array('resetPassword', 'redirectToEdit'),
+            'resetPassword'         => array('resetPassword', 'redirectToDefault'),
             'editPerms'             => array('editPerms'),
             'updatePerms'           => array('updatePerms', 'redirectToDefault'),
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),

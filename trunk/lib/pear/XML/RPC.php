@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: RPC.php,v 1.11 2005/06/23 15:56:43 demian Exp $
+ * @version    CVS: $Id: RPC.php,v 1.74 2005/05/09 20:51:54 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -237,7 +237,7 @@ function XML_RPC_se($parser_resource, $name, $attrs)
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= "'";
+        $XML_RPC_xh[$parser]['st'] .= '"';
         $XML_RPC_xh[$parser]['ac'] = '';
         break;
 
@@ -320,7 +320,7 @@ function XML_RPC_ee($parser_resource, $name)
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'] . "' => ";
+        $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'] . '" => ';
         break;
 
     case 'BOOLEAN':
@@ -345,8 +345,8 @@ function XML_RPC_ee($parser_resource, $name)
             // we use double quotes rather than single so backslashification works OK
             $XML_RPC_xh[$parser]['st'] .= '"' . $XML_RPC_xh[$parser]['ac'] . '"';
         } elseif ($XML_RPC_xh[$parser]['qt'] == 2) {
-            $XML_RPC_xh[$parser]['st'] .= "base64_decode('"
-                                        . $XML_RPC_xh[$parser]['ac'] . "')";
+            $XML_RPC_xh[$parser]['st'] .= 'base64_decode("'
+                                        . $XML_RPC_xh[$parser]['ac'] . '")';
         } elseif ($name == 'BOOLEAN') {
             $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'];
         } else {
@@ -456,7 +456,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -501,7 +501,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -919,7 +919,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1010,7 +1010,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1348,7 +1348,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base

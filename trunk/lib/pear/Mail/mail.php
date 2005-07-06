@@ -16,12 +16,12 @@
 // | Author: Chuck Hagenbuch <chuck@horde.org>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: mail.php,v 1.6 2004/09/14 03:05:52 cvsroot Exp $
+// $Id: mail.php,v 1.13 2004/09/09 02:08:55 jon Exp $
 
 /**
  * internal PHP-mail() implementation of the PEAR Mail:: interface.
  * @package Mail
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.13 $
  */
 class Mail_mail extends Mail {
 
@@ -104,6 +104,7 @@ class Mail_mail extends Mail {
             return $headerElements;
         }
         list(, $text_headers) = $headerElements;
+
         /*
          * We only use mail()'s optional fifth parameter if the additional
          * parameters have been provided and we're not running in safe mode.

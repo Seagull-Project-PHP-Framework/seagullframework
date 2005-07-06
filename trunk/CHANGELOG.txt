@@ -4,6 +4,9 @@ CHANGELOG
 | VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES
+06-07-05    Fixed incorrect redirect following a 'Reset password' action invoked by
+            admin
+06-07-05    Updated PEAR xml-rpc lib with security flaw            
 05-07-05    Fixed bug where non-alpha chars in config site name would cause parse
             error (STB Land)
 04-07-05    Adding a block redirected to a blank screen - fixed
