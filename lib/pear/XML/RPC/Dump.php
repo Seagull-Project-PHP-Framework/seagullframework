@@ -11,7 +11,7 @@
  * @category   Web Services
  * @package    XML_RPC
  * @author     Christian Weiske <cweiske@php.net>
- * @version    CVS: $Id: Dump.php,v 1.6 2005/06/23 15:56:44 demian Exp $
+ * @version    CVS: $Id: Dump.php,v 1.7 2005/01/24 03:47:55 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -42,7 +42,7 @@ function XML_RPC_Dump($value)
  * @category   Web Services
  * @package    XML_RPC
  * @author     Christian Weiske <cweiske@php.net>
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Dump
