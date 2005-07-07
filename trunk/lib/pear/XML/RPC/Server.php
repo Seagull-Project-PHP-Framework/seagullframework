@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: Server.php,v 1.26 2005/05/09 21:39:47 danielc Exp $
+ * @version    CVS: $Id: Server.php,v 1.28 2005/07/07 01:21:29 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -270,7 +270,7 @@ function XML_RPC_Server_debugmsg($m)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.3.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
@@ -385,8 +385,12 @@ class XML_RPC_Server
      */
     function service()
     {
-        $this->createServerPayload();
-        $this->createServerHeaders();
+        if (!$this->server_payload) {
+            $this->createServerPayload();
+        }
+        if (!$this->server_headers) {
+            $this->createServerHeaders();
+        }
         header($this->server_headers);
         print $this->server_payload;
     }
@@ -529,7 +533,7 @@ class XML_RPC_Server
             for ($i = 0; $i < sizeof($XML_RPC_xh[$parser]['params']); $i++) {
                 // print '<!-- ' . $XML_RPC_xh[$parser]['params'][$i]. "-->\n";
                 $plist .= "$i - " . $XML_RPC_xh[$parser]['params'][$i] . " \n";
-                eval('$m->addParam(' . $XML_RPC_xh[$parser]['params'][$i] . ');');
+                @eval('$m->addParam(' . $XML_RPC_xh[$parser]['params'][$i] . ');');
             }
             XML_RPC_Server_debugmsg($plist);
 
