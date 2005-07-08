@@ -664,7 +664,7 @@ span.tipOwner:hover span.tipText {
 }
 /* IE javascript workaround */
 span.tipOwner {
-    behavior: url(themes/default/css/tooltipHover.htc);
+    behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
 }
 
 <?php
