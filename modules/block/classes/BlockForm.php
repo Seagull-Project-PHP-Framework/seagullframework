@@ -85,8 +85,8 @@ class BlockForm
             //  Set default form values
             $defaultValues['block[name]']         = null;
             $defaultValues['block[title]']        = null;
-            $defaultValues['block[title_class]']  = 'sgl-blocks-left-item-title';
-            $defaultValues['block[body_class]']   = 'sgl-blocks-left-item-body';
+            $defaultValues['block[title_class]']  = 'blockHeader';
+            $defaultValues['block[body_class]']   = 'blockContent';
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;

@@ -20,8 +20,8 @@ INSERT INTO block VALUES (3,'SampleBlock1','Sample Block 1','','',3,1,1);
 INSERT INTO block VALUES (4,'SampleBlock2','Sample Block 2','','',4,1,1);
 INSERT INTO block VALUES (5,'CategoryNav','Categories','','navWidget',1,1,1);
 INSERT INTO block VALUES (10,'SampleRightBlock1','Sample Right Block','','',1,0,1);
-INSERT INTO block VALUES (11,'CalendarBlock','Calendar','sgl-blocks-left-item-title','sgl-blocks-left-item-body',2,0,0);
-INSERT INTO block VALUES (12,'LoginBlock','Login','sgl-blocks-right-item-title','sgl-blocks-right-item-body',3,0,0);
+INSERT INTO block VALUES (11,'CalendarBlock','Calendar','blockHeader','blockContent',2,0,0);
+INSERT INTO block VALUES (12,'LoginBlock','Login','blockHeader','blockContent',3,0,0);
 
 --
 -- Dumping data for table block_assignment
