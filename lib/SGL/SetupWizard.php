@@ -484,6 +484,9 @@ EOF;
         $form->addElement('submit', 'btnSubmit', 'Execute (pls be patient if schema creation selected)');
 
         $form->setDefaults($this->conf['db']);
+        
+        //  get around probs with parse_ini_file's inability to handle non-alphanumeric chars
+        $form->addRule('pass', 'Please use only alphanumeric chars for DB password', 'alphanumeric', null, 'client');
 
         if (!$deleteConfigFlag && $form->validate()) {
             $form->process(array(&$this, 'processSettings'));
