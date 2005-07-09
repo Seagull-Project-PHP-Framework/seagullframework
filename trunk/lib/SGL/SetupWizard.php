@@ -354,7 +354,6 @@ class SGL_SetupWizard
     function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
-        #return str_replace('"', '', $version);
         return $version;
     }
 
