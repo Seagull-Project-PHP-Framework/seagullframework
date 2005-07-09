@@ -212,14 +212,14 @@ cd /tmp
 
 exportSvnAndPackage
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
-#scpChangelogToSglSite
+scpChangelogToSglSite
 
 exit 0
