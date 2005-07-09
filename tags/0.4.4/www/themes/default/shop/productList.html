@@ -1,0 +1,61 @@
+<link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/shop/shop.css" />
+
+<!-- <h1 class="pageTitle">{pageTitle}</h1> -->
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
+<h3 class="colHeader"><strong>{translate(#You are here#)}:</strong> {path:h}</h3>
+<h2 class="sectionHeader"><strong>{translate(#Current Category#)}:</strong> {currentCat}</h2>
+<table class="full" flexy:if="childrenCat" class="colHeader">
+    <tr><td colspan="4"><strong>{translate(#Subcategories#)}:</strong></td></tr>
+    {this.plugin(#formatChildrenCat#,childrenCat):h}
+</table>
+<table class="full">
+<tr><td><strong>Total produse: </strong> {totalItems}</td>
+<!-- // TODO: add {if:keywords}?keywords={keywords}{end:} to fastLink HREF !-->
+<td align="right"><strong>{translate(#Switch to#)}:</strong> <a href="{makeUrl(#fastList#)}frmCatID/{catID}/?keywords={keywords}">{translate(#List view#)}</a></td> 
+</tr>
+</table>
+{if:keywords}<strong>Rezultatele cautarii dupa:</strong> {keywords}{end:}
+<br />
+
+<table class="productText">
+  {if:aPagedData[data]}
+  <tr class="tableHeader" nowrap> 
+    <td width="130" nowrap><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/manufacturer/frmSortOrder/DESC/"><img src="{webRoot}/themes/{theme}/images/ar_up{imgDir_manufacturer_ASC}.gif" border="0" alt=""/></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/manufacturer/frmSortOrder/ASC/"><img src="{webRoot}/themes/{theme}/images/ar_down{imgDir_manufacturer_DESC}.gif" border="0" alt="" /></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/manufacturer/frmSortOrder/{sortOrder}/">{translate(#Manufacturer#)}</a></td>
+    <td nowrap><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/name/frmSortOrder/DESC/"><img src="{webRoot}/themes/{theme}/images/ar_up{imgDir_name_ASC}.gif" border="0" alt=""/></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/name/frmSortOrder/ASC/"><img src="{webRoot}/themes/{theme}/images/ar_down{imgDir_name_DESC}.gif" border="0" alt="" /></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/name/frmSortOrder/{sortOrder}/">{translate(#Product#)}</a></td>
+    <td align="right" nowrap><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/price/frmSortOrder/DESC/"><img src="{webRoot}/themes/{theme}/images/ar_up{imgDir_price_ASC}.gif" border="0" alt=""/></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/price/frmSortOrder/ASC/"><img src="{webRoot}/themes/{theme}/images/ar_down{imgDir_price_DESC}.gif" border="0" alt="" /></a><a href="{makeUrl(##)}frmCatID/{catID}/frmSortBy/price/frmSortOrder/{sortOrder}/">{translate(#Price#)}</a></td>
+  </tr>
+  {foreach:aPagedData[data],key,product}
+  <tr valign="top"> 
+    <td width="130" align="center">{product.manufacturer}<br />
+      <a href="{makeUrl(#details#)}pid/{product.product_id}/"><img src="{product.img}" alt="{product.manufacturer} : {product.name}"></a></td>
+    <td><span class="productName"><a href="{makeUrl(#details#)}pid/{product.product_id}/">{product.name}</a></span><br />
+      {this.plugin(#nl2br#,product.short_description):h}<br />
+      </td>
+    <td align="right">
+      {if:product.oldPriceEuro}<strong>{translate(#Old price#)}: </strong><span style="text-decoration: line-through;">{this.plugin(#currencyConverter#,product.oldPrice,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<br /></span><br />{end:}
+      {this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<br />
+	  <span class="productDescKey">Stoc:</span> {product.statusString}<br />
+	  <form action="" method="post" flexy:ignore="yes" flexy:if="showCart">
+	  	<input type="hidden" name="action" value="order" />
+		<input type="hidden" name="pid" value="{product.product_id}" />
+		<input type="submit" name="order" value="{translate(#Order#)}" />
+	  </form>
+	</td>
+  </tr>
+  {end:} 
+  {if:pager}
+  <tr valign="top"> 
+    <td colspan="3"  style="border: none">
+		<strong>{translate(#Products#)}: {aPagedData[from]}-{aPagedData[to]} din {aPagedData[totalItems]} &nbsp; &nbsp; ::</B> &nbsp; &nbsp;
+        {aPagedData[links]:h} 
+    </td>
+  </tr>
+  {end:}
+  {else:} 
+  <tr valign="top"> 
+    <td colspan="3" align="center">{translate(#No products#)}</td>
+  </tr>
+  {end:} 
+</table>
+<p>&nbsp;</p>
+ 

@@ -1,0 +1,35 @@
+<form action="" method="post" name="frmPerms" flexy:ignore>
+{if:isNewForm}<input type="hidden" name="action" value="insertNew"/>
+{else:}<input type="hidden" name="action" value="deleteOrphaned"/>
+{end:}
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+<table class="narrow">
+    <tr>
+        <th colspan="2">{translate(#Details#)}</th>
+    </tr>
+    <tr>
+	<td class="fieldNameWrap">
+	{if:isNewForm}
+	{translate(#Detected Perms#)}<br />
+	<span class="detail">{translate(#detected perms description#)}</span>
+	{else:}
+	{translate(#Detected Orphaned Perms#)}<br />
+	<span class="detail">{translate(#orphaned perms description#)}</span>
+	{end:}
+            </td>
+	<td valign="top" align="left">
+        <select name="scannedPerms[]" size="10" multiple>{scannedOptions:h}</select>
+    </td>
+    </tr>
+    <tr>
+	<td align="center" colspan="2">
+    {if:isNewForm}<input class="wideButton" name="submitted" value="{translate(#Add#)}" type="submit" />
+    {else:}<input class="wideButton" name="submitted" value="{translate(#Delete#)}" type="submit" />
+    {end:}
+	<input class="wideButton" type="button" value="{translate(#Cancel#)}" 
+	   onClick="javascript:document.location.href='{makeUrl(##,#permission#,#user#)}'" />
+    </td>
+    </tr>
+</table>
+</form>
