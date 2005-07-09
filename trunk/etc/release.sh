@@ -4,14 +4,15 @@
 # +---------------------------------------------------------------------------+
 # | script for automating a Seagull release                                   |
 # +---------------------------------------------------------------------------+
-# | execute from seagull CVS repository root                                  |
+# | execute from seagull svn repository root                                  |
 # +---------------------------------------------------------------------------+
 ##############################
 # init vars + binaries
 ##############################
 
 # binaries
-CVS=/usr/bin/cvs
+SVN=/usr/bin/svn
+SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
 
 # SF FTP details
@@ -23,9 +24,8 @@ FTP_REMOTE_DIR=incoming
 # Get the tag name from the command line:
 VERSION=$1
 RELEASE=$2
-CVS_PASSWD=$3
-
-export CVSROOT=pserver:demian:$CVS_PASSWD@phpkitchen.com:/var/cvs
+PROJECT_NAME=seagull
+SVN_REPO_ROOT=http://seagull.phpkitchen.com:8172/svn/seagull
 
 ##############################
 # usage
@@ -34,9 +34,8 @@ function usage()
 {
       echo ""
       echo "Usage: ./release.sh version release password"
-      echo "where \"version\" is the Seagull version (e.g. 0.3.1)"
-      echo "and \"release\" is the release (e.g. release_0_3_1),"
-      echo "and \"password\" is the password"  
+      echo "    where \"version\" is the $PROJECT_NAME version (e.g. 0.3.1)"
+      echo "    and \"release\" is the release (e.g. release_0_3_1)"
 }
 
 ##############################
@@ -45,7 +44,7 @@ function usage()
 function checkArgs()
 {
     # Check that arguments were specified:
-    if [ -z $VERSION ] || [ -z $RELEASE ] || [ -z $CVS_PASSWD ]; then
+    if [ -z $VERSION ] || [ -z $RELEASE ]; then
       usage
       exit 1
     fi
@@ -87,35 +86,47 @@ function checkPreviousVersions()
 function tagRelease()
 {
     # tag release
-    $CVS -q tag $RELEASE
+    $SVN copy $SVN_REPO_ROOT/trunk $SVN_REPO_ROOT/tags/$RELEASE
 }
 
 ##############################
-# export cvs and package
+# export svn and package
 ##############################
-function exportCvsAndPackage()
+function exportSvnAndPackage()
 {   
     # export release
-    $CVS -z3 -d:$CVSROOT -q export -r $RELEASE seagull 
+    $SVN export $SVN_REPO_ROOT/trunk -r $RELEASE 
+    
+    #rename trunk to project name
+    mv trunk $PROJECT_NAME
     
     # remove unwanted dirs
-    rm -f seagull/TODO.txt
-    rm -rf seagull/lib/other/phpthumb
-    rm -rf seagull/modules/cart
-    rm -rf seagull/modules/rate
-    rm -rf seagull/modules/shop
-    rm -rf seagull/www/images/shop
-    rm -rf seagull/lib/pear/Spreadsheet
-    rm -rf seagull/www/themes/default/cart
-    rm -rf seagull/www/themes/default/rate
-    rm -rf seagull/www/themes/default/shop
+    rm -f $PROJECT_NAME/TODO.txt
+    rm -f $PROJECT_NAME/etc/badBoyWebTests.bb
+    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
+    rm -f $PROJECT_NAME/etc/demoReload.sh
+    rm -f $PROJECT_NAME/etc/generatePackage.php
+    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
+    rm -f $PROJECT_NAME/etc/release.sh
+    rm -rf $PROJECT_NAME/lib/other/phpthumb
+    rm -rf $PROJECT_NAME/lib/pear/Spreadsheet
+    rm -rf $PROJECT_NAME/lib/SGL/tests       
+    rm -rf $PROJECT_NAME/modules/cart
+    rm -rf $PROJECT_NAME/modules/rate
+    rm -rf $PROJECT_NAME/modules/shop
+    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -f $PROJECT_NAME/www/ errorTests.php     
+    rm -rf $PROJECT_NAME/www/images/shop
+    rm -rf $PROJECT_NAME/www/themes/default/cart
+    rm -rf $PROJECT_NAME/www/themes/default/rate
+    rm -rf $PROJECT_NAME/www/themes/default/shop
     
     # rename folder to current release
-    mv seagull seagull-$VERSION
+    mv $PROJECT_NAME $PROJECT_NAME-$VERSION
     
     # tar and zip
-    tar cvf seagull-$VERSION.tar seagull-$VERSION
-    gzip seagull-$VERSION.tar
+    tar cvf $PROJECT_NAME-$VERSION.tar $PROJECT_NAME-$VERSION
+    gzip -f $PROJECT_NAME-$VERSION.tar
 }
 
 ##############################
@@ -130,7 +141,7 @@ user $FTP_USERNAME $FTP_PASSWORD
 bin
 has
 cd $FTP_REMOTE_DIR
-put seagull-$VERSION.tar.gz
+put $PROJECT_NAME-$VERSION.tar.gz
 bye
 EOF
 }
@@ -141,10 +152,10 @@ EOF
 function generateApiDocs()
 {
     #make apiDocs script executable
-    chmod 755 seagull-$VERSION/etc/phpDocCli.sh
+    chmod 755 $PROJECT_NAME-$VERSION/etc/phpDocCli.sh
     
     #execute phpDoc
-    seagull-$VERSION/etc/phpDocCli.sh
+    $PROJECT_NAME-$VERSION/etc/phpDocCli.sh
 
     # rename folder    
     mv seagullApiDocs seagullApiDocs-$VERSION
@@ -181,7 +192,7 @@ EOF
 ##############################
 function scpChangelogToSglSite()
 {
-    scp -1 seagull-$VERSION/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
+    scp -1 $PROJECT_NAME-$VERSION/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
 }
 
 ##############################
@@ -192,14 +203,14 @@ function scpChangelogToSglSite()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportCvsAndPackage
+exportSvnAndPackage
 
 #uploadToSfWholePackage
 
@@ -207,7 +218,7 @@ cd /tmp
 
 #packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpChangelogToSglSite
 
