@@ -149,32 +149,32 @@ body {
 
 /******************************* LAYOUT : HEADER ******************************/
 
-#sgl-header {
+#sgl #header {
     background-color: <?php echo $primary ?>;
     height: 50px;
 }
-#sgl-header-left {
+#sgl #logo {
     float: left;
     margin: 5px 5px 5px 10px;
     font-size: 2em;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl-header-right {
+#sgl #login {
     float: right;
     margin: 10px;
     margin-left: 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl-header-right a {
+#sgl #login a {
     padding: 0 5px;
     text-decoration: none;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl-header-right a:hover {
+#sgl #login a:hover {
     text-decoration: underline;
 }
-#sgl-header-right #headerLogAction {
+#sgl #login #LogAction {
     float: left;
     margin-left: 1em;
     padding: 0.2em;
@@ -182,14 +182,14 @@ body {
     border-color: <?php echo $buttonBorderColors ?>;
     background-color: <?php echo $primaryLight ?>;
 }
-#sgl-header-right #headerUserInfo {
+#sgl #login #UserInfo {
     float: left;
     padding-top: 0.35em;
 }
-#sgl-header-right #headerUserInfo .guest {
+#sgl #login #UserInfo .guest {
     font-weight: bold;
 }
-#sgl-header-right #bugReporter {
+#sgl #bugReporter {
     float: left;
     margin: 4px; 
     background: url('<?php echo $baseUrl ?>/images/bug.png') no-repeat;
@@ -240,23 +240,23 @@ th {
 
 /****************************** LAYOUT : MAIN *********************************/
 
-#sgl-main {
+#sgl #container {
     top: <?php echo $blocksMarginTop ?>;
 }
 
 /************************ LAYOUT : LEFT & RIGHT BLOCKS ************************/
 
-#sgl-blocks-left, #sgl-blocks-right {
+#sgl #leftSidebar, #sgl #rightSidebar {
     position: absolute;
     margin-top: <?php echo $blocksMarginTop ?>;
     top: 0;
     z-index:1;
 }
-#sgl-blocks-left {
+#sgl #leftSidebar {
     width: <?php echo $blocksWidthLeft ?>;
     left: 0;
 }
-#sgl-blocks-right {
+#sgl #rightSidebar {
     width: <?php echo $blocksWidthRight ?>;
     right: 0;
 }
@@ -266,7 +266,7 @@ th {
 .options-block {
     margin: 20px 0;
 }
-#sgl-blocks-left .blockContainer, #sgl-blocks-right .blockContainer {
+#sgl #leftSidebar .blockContainer, #sgl #rightSidebar .blockContainer {
     margin: 4px 1px 0 1px;
 }
 .blockHeader {
@@ -289,7 +289,7 @@ th {
 
 /*************************** LAYOUT : MIDDLE BLOCKS ***************************/
 
-#sgl-blocks-middle, #sgl-blocks-middle-nocols, #sgl-blocks-middle-leftcol, #sgl-blocks-middle-rightcol {
+#sgl #content, #sgl #content-nocols, #sgl #content-leftcol, #sgl #content-rightcol {
     position: relative;
     margin: 0 <?php echo $blocksWidthRight; ?> 0 <?php echo $blocksWidthLeft ?>;
     width: auto;
@@ -298,30 +298,30 @@ th {
     z-index: 2;
     padding: 0 20px;
 }
-#sgl-blocks-middle #options {
+#sgl #content #options {
     float: right;
     width: 28%;
 }
-#sgl-blocks-middle-nocols {
+#sgl #content-nocols {
     margin: 0;
 }
-#sgl-blocks-middle-leftcol {
+#sgl #content-leftcol {
     margin: 0 0 0 <?php echo $blocksWidthLeft ?>;
 }
-#sgl-blocks-middle-rightcol {
+#sgl #content-rightcol {
     margin: 0 <?php echo $blocksWidthRight ?> 0 0;
 }
 /* Holly Hack here so that tooltips don't act screwy:
  * http://www.positioniseverything.net/explorer/threepxtest.html */
 /* Hide next from Mac IE plus non-IE \*/
-* html #sgl-blocks-middle {
+* html #sgl #content {
     height: 1%;
 }
 /* End hide from IE5/mac plus non-IE */
 
 /******************************* LAYOUT : FOOTER ******************************/
 
-#sgl-footer {
+#sgl #footer {
     position: relative;
     float: middle;
     clear: both;

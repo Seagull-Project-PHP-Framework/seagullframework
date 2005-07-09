@@ -9,7 +9,7 @@ class SummariserTest extends UnitTestCase
     function setup()
     {
         $this->html = <<<EOF
-<div id="sgl-blocks-middle">
+<div id="content">
 <h1 class="pageTitle">Welcome to Seagull Framework</h1>
  
 <p>Welcome to the <strong>Seagull Framework</strong> project. Seagull is an OO <a href="http://php.net" title="PHP"><acronym title="PHP: Hypertext Preprocessor">PHP</acronym></a> framework, with core components <acronym title="Berkeley Software Distribution">BSD</acronym> licensed, that has the following design goals:</p>
