@@ -86,7 +86,9 @@ class PageMgr extends SGL_Manager
                 'title'         => 'title',
                 'perms'         => 'perms',
                 'is_enabled'    => 'is_enabled',
-                'is_static'     => 'is_static'
+                'is_static'     => 'is_static',
+                'access_key'	=> 'access_key',
+                'rel'			=> 'rel'
             ),
             'tableName'      => 'section',
             'lockTableName'  => 'table_lock',
@@ -139,10 +141,28 @@ class PageMgr extends SGL_Manager
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
+            
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
             }
+            
+            if (!empty($input->section['access_key'])) {
+            	$id2Ignore= null;
+            	
+            	if($input->action == 'update') {
+            		$id2Ignore = $input->section['section_id'];
+            	}
+            	
+            	if(!$this->_isUniqueAccessKey($input->section['access_key'], $id2Ignore)) {
+                	$aErrors[] = 'There already exists another page with the same access key';
+            	}
+            }
+
+            if (!empty($input->section['rel'])) {
+                $aErrors[] = 'Please fill in a title';
+            }                       
+            
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
             if (($input->action == 'update' || $input->action == 'insert') && $input->section['parent_id'] != 0) {
@@ -568,5 +588,30 @@ class PageMgr extends SGL_Manager
         }
         return "<script type='text/javascript'>\nvar nodeArray = new Array()\n" . $nodesArrayJS . "</script>\n";
     }
+    
+    /**
+     * Determines if an access key is unique.
+     *
+     * @param string access key
+     * @param id any id to ignore, important when updating entry itself
+     * @return boolean
+     * @todo get rid of DataObject
+     */
+    function _isUniqueAccessKey($accessKey, $id2Ignore = null)
+    {
+        if (isset($accessKey)) {
+            $oSection = & new DataObjects_Section();
+            $oSection->whereAdd("access_key = '$accessKey'");
+            
+            if(isset($id2Ignore)) {
+            	$oSection->whereAdd("secion_id <> $id2Ignore");
+            }
+            
+            $numRows = $oSection->find();
+
+            //  return false if any rows found
+            return (boolean)$numRows == 0;
+        }
+    }    
 }
 ?>

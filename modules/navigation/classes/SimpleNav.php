@@ -384,11 +384,24 @@ class SimpleNav
                 //  place anchor at end
                 $url .= $namedAnchor;
             }
-            $anchor      = '<a' . ' href="' . $url . '">' . $section->title . '</a>';
+            
+            $anchor = '<a' . ' href="' . $url . '"';
+            
+			if (!empty($section->access_key)) {
+				$anchor .= ' accesskey="' . $section->access_key . '"';    	
+			}
+			
+			if (!empty($section->rel)) {
+				$anchor .= ' rel="' . $section->rel . '"';    
+			}                        
+            
+            $anchor .= '>' . $section->title . '</a>';
+            
             $listItems  .= "<li" . $liAtts . '>' . $anchor;
             if ($section->children) {
                $listItems .= $this->_toHtml($section->children);
             }
+            
             $listItems  .= "</li>\n";
         }
         $output = (isset($listItems)) ? "\n<ul>" . $listItems . "</ul>\n":false;

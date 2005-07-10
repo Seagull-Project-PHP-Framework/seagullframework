@@ -27,6 +27,8 @@ create table section
    level_id             INT4                 null,
    is_enabled           INT2                 null,
    is_static            INT2                 null,
+   access_key           CHAR(1)              null,
+   rel                  VARCHAR(16)          null,   
    constraint PK_SECTION primary key (section_id)
 );
 
