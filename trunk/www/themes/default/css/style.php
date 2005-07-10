@@ -153,7 +153,7 @@ body {
     background-color: <?php echo $primary ?>;
     height: 50px;
 }
-#sgl #logo {
+#sgl #logo * {
     float: left;
     margin: 5px 5px 5px 10px;
     font-size: 2em;
@@ -161,8 +161,7 @@ body {
 }
 #sgl #login {
     float: right;
-    margin: 10px;
-    margin-left: 0;
+    margin: 10px 20px 10px 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
 }
@@ -190,8 +189,9 @@ body {
     font-weight: bold;
 }
 #sgl #bugReporter {
-    float: left;
-    margin: 4px;
+    position: absolute;
+    right: 4px;
+    top: 12px;
 }
 
 /***************************** LAYOUT : TABLES ********************************/
