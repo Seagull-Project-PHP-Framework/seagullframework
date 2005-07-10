@@ -191,8 +191,7 @@ body {
 }
 #sgl #bugReporter {
     float: left;
-    margin: 4px; 
-    background: url('<?php echo $baseUrl ?>/images/bug.png') no-repeat;
+    margin: 4px;
 }
 
 /***************************** LAYOUT : TABLES ********************************/

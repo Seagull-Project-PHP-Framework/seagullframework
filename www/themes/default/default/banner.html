@@ -16,10 +16,15 @@
         <div id="UserInfo">{translate(#currently_logged_on_as#)}: <span class="guest">{translate(#guest#)}</span></div>
         <div id="LogAction"><a href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a></div>
     {end:}
-        <div id="bugReporter" flexy:if="GLOBALS[_SGL][CONF][debug][showBugReporterLink]">
+    {if:GLOBALS[_SGL][CONF][debug][showBugReporterLink]}
+        <a id="bugReporter" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
+            <img src="{webRoot}/themes/{theme}/images/bug.png" alt="{translate(#send bug report#)}" />
+        </a>
+    {end:}
+<!--        <div id="bugReporter" flexy:if="GLOBALS[_SGL][CONF][debug][showBugReporterLink]">
             <a href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
             </a>
-        </div>
+        </div>-->
     </div>
 </div>
 
