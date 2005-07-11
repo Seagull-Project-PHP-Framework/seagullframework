@@ -743,7 +743,7 @@ class DA_User
     /**
      * Returns all organisations.
      *
-     * @return unknown
+     * @return array $aAllOrgs
      */
     function getOrgs()
     {
