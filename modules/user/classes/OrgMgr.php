@@ -298,47 +298,24 @@ class OrgMgr extends SGL_Manager
 
     function _delete(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);                
-        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             $nestedSet = new SGL_NestedSet($this->_params);
             //  deleting parent nodes automatically deletes chilren nodes, but user
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
-            //  and therefore error, so test first to make sure they're still around ...
-            
-            // ... and also check if the organisation is not needed by any users. If a
-            // forein key to user exists, abort deletion to avoid bad integrity in the 
-            // database.
-            
-            $success = true;
-            
-            while ((list($index, $orgId) = each($input->aDelete)) && $success) {            	            	
-            	$org = $nestedSet->getNode($orgId);
-                if ($org) {
-                	
-                	$users = DA_User::getUsersByOrgId($orgId);
-                	
-                	if (empty($users)) {
-                		// ok, not dangerous to delete
-                    	$nestedSet->deleteNode($orgId);
-                	} else {
-                		$success = false;
-                		$orgName = $org['name'];
-                		SGL::raiseMsg(	"The selected organisation $orgName cannot be deleted because " .
-                						"there are users relating to it!");
-                	}
+            //  and therefore error, so test first to make sure they're still around
+            foreach ($input->aDelete as $index => $orgId) {
+                if ($nestedSet->getNode($orgId)){
+                    $nestedSet->deleteNode($orgId);
                 }
             }
-            
-	        if ($success) {
-	        	//  redirect on success
-	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
-	        }            
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }        
+        }
+        //  redirect on success
+        SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
     }
 
     function _list(&$input, &$output)

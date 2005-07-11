@@ -1,16 +1,6 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.4.5        |
-+-----------------------+
-BUGFIXES
-
-IMPROVEMENTS
-10-07-05    Usernames can now be as short as 3 chars (Michael Heuberger)
-10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
-10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
-
-+-----------------------+
 | VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES

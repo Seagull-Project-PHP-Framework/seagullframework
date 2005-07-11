@@ -626,9 +626,8 @@ class SGL_Controller
             include_once SGL_CORE_DIR . '/BlockLoader.php';
             $blockLoader = & new SGL_BlockLoader($sectionId);
             $aBlocks = $blockLoader->render($output);
-            
-            $output->blocksLeft 	= (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
-            $output->blocksRight 	= (isset($aBlocks['right'])) ? $aBlocks['right'] : '';            
+            $output->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
+            $output->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
 
         //  stop clock execution time
@@ -643,12 +642,9 @@ class SGL_Controller
         $output->newWinHeight = $this->conf['popup']['winHeight'];
         $output->newWinWidth  = $this->conf['popup']['winWidth'];
         $output->showLogo     = $this->conf['site']['showLogo'];
-        
         if ($this->conf['navigation']['enabled']) {
             $output->navStylesheet = $this->conf['navigation']['stylesheet'];
-            $output->isVerticalNav = in_array($this->conf['navigation']['stylesheet'], array('SglListamaticSubtle', 'verticalSimple'));
         }
-        
         $output->currUrl          = $_SERVER['PHP_SELF'];
         $output->currLang         = SGL::getCurrentLang();
         $output->theme            = $theme = $_SESSION['aPrefs']['theme'];

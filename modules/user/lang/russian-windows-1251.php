@@ -170,7 +170,7 @@
         'Passwords are not the same' => 'Пароли не совпадают',
         'You have entered your original password incorrectly' => 'Ваш пароль некорректен',
         'Please confirm password' => 'Пожалуйста подтвердите пароль',
-        'username min length' => 'Ваш логин должен состоять из букв или цифр - по крайней мере 3 знаков и без пробелов',
+        'username min length' => 'Ваш логин должен состоять из букв или цифр - по крайней мере 6 знаков и без пробелов',
         'You must enter your first name' => 'Вы не ввели имя',
         'You must enter your last name' => 'Вы не ввели фамилию',
         'You must enter your company name' => 'Вы не указали название вашей компании',

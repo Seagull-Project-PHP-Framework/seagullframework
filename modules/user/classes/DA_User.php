@@ -690,23 +690,6 @@ class DA_User
     }
     
     /**
-     * Returns an array of user ids.
-     *
-     * @param integer $orgId
-     * @return array
-     */
-    function getUsersByOrgId($orgId)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "  SELECT  usr_id 
-                    FROM    {$this->conf['table']['user']}
-                    WHERE   organisation_id = " . $orgId;
-
-        $aOrgUsers = $this->dbh->getCol($query);
-        return $aOrgUsers;
-    }    
-    
-    /**
      * Updates role-permission assignments.
      *
      * @access  public
@@ -743,7 +726,7 @@ class DA_User
     /**
      * Returns all organisations.
      *
-     * @return array $aAllOrgs
+     * @return unknown
      */
     function getOrgs()
     {

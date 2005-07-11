@@ -15,8 +15,6 @@ create table if not exists section
    level_id                       int,
    is_enabled                     smallint,
    is_static                      smallint,
-   access_key                     char(1)                       default NULL,
-   rel                            varchar(16)                   default NULL,   
    primary key (section_id),
    key AK_key_root_id (root_id),
    key AK_key_order_id (order_id),

@@ -93,8 +93,8 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {
-                //  username must be at least 3 chars
-                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 3 ))) {
+                //  username must be at least 5 chars
+                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
                     $aErrors['username'] = 'username min length';
                 }
             }

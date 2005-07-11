@@ -1,10 +1,10 @@
 <flexy:include src="header.html" />
 
-<div id="header">
+<div id="sgl-header">
     {if:showLogo} 
         <span><img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} logo" /></span> 
     {else:}
-        <h1 id="logo">{siteName}</h1>
+        <h1 id="sgl-header-left">{siteName}</h1>
     {end:}
 </div>
 
@@ -12,4 +12,5 @@
     return to main screen: <input type="button" value="close preview" onclick="self.parent.window.close();" />
 </div>
 
-<div id="container">
+<div id="sgl-main">
+
