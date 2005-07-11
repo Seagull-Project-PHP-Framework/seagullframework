@@ -32,10 +32,9 @@ SVN_REPO_ROOT=http://seagull.phpkitchen.com:8172/svn/seagull
 ##############################
 function usage()
 {
-      echo ""
-      echo "Usage: ./release.sh version release password"
-      echo "    where \"version\" is the $PROJECT_NAME version (e.g. 0.3.1)"
-      echo "    and \"release\" is the release (e.g. release_0_3_1)"
+      echo "Usage: ./release.sh VERSION RELEASE"
+      echo "  where VERSION is the $PROJECT_NAME version (e.g. 0.4.4)"
+      echo "  and RELEASE is the release (e.g. release_0_4_4)"
 }
 
 ##############################
@@ -55,29 +54,18 @@ function checkArgs()
 ##############################
 function checkPreviousVersions()
 {
-    # Check that the release directory doesn't already exist:
-    if [ -d "/tmp/seagull-$VERSION" ]; then
-      echo "Removing last seagull export ..."
-      rm -rf /tmp/seagull-$VERSION
-    fi
+    # Remove unuseful old stuff
+    echo "Removing last seagull export ..."
+    rm -rf /tmp/seagull-$VERSION
     
-    # Check that the last tarball doesn't exist:
-    if [ -e "/tmp/seagull-$VERSION.tar.gz" ]; then
-      echo "Removing last seagull tarball ..."
-      rm -f /tmp/seagull-$VERSION.tar.gz
-    fi
+    echo "Removing last seagull tarball ..."
+    rm -f /tmp/seagull-$VERSION.tar.gz
 
-    # Check that the last apiDocs dir doesn't exist:
-    if [ -d "/tmp/seagullApiDocs-$VERSION" ]; then
-      echo "Removing last seagull apiDocs dir ..."
-      rm -rf /tmp/seagullApiDocs-$VERSION
-    fi
+    echo "Removing last seagull apiDocs dir ..."
+    rm -rf /tmp/seagullApiDocs-$VERSION
     
-    # Check that the last apiDocs tarball doesn't exist:
-    if [ -e "/tmp/seagullApiDocs-$VERSION.tar.gz" ]; then
-      echo "Removing last seagull apiDocs tarball ..."
-      rm -f /tmp/seagullApiDocs-$VERSION.tar.gz
-    fi
+    echo "Removing last seagull apiDocs tarball ..."
+    rm -f /tmp/seagullApiDocs-$VERSION.tar.gz
 }
 
 ##############################
@@ -85,7 +73,6 @@ function checkPreviousVersions()
 ##############################
 function tagRelease()
 {
-    # tag release
     $SVN copy $SVN_REPO_ROOT/trunk $SVN_REPO_ROOT/tags/$RELEASE
 }
 
@@ -94,7 +81,6 @@ function tagRelease()
 ##############################
 function exportSvnAndPackage()
 {   
-    # export release
     $SVN export $SVN_REPO_ROOT/trunk -r $RELEASE 
     
     #rename trunk to project name
@@ -125,8 +111,8 @@ function exportSvnAndPackage()
     mv $PROJECT_NAME $PROJECT_NAME-$VERSION
     
     # tar and zip
-    tar cvf $PROJECT_NAME-$VERSION.tar $PROJECT_NAME-$VERSION
-    gzip -f $PROJECT_NAME-$VERSION.tar
+    tar cvf $PROJECT_NAME-$VERSION.tar $PROJECT_NAME-$VERSION \
+        | gzip -f > $PROJECT_NAME-$VERSION.tar.gz
 }
 
 ##############################
@@ -157,7 +143,6 @@ function generateApiDocs()
     #execute phpDoc
     $PROJECT_NAME-$VERSION/etc/phpDocCli.sh
 
-    # rename folder    
     mv seagullApiDocs seagullApiDocs-$VERSION
 }
 
@@ -166,8 +151,8 @@ function generateApiDocs()
 ##############################
 function packageApiDocs()
 {
-    tar cvf seagullApiDocs-$VERSION.tar seagullApiDocs-$VERSION
-    gzip -f seagullApiDocs-$VERSION.tar
+    tar cvf seagullApiDocs-$VERSION.tar seagullApiDocs-$VERSION \
+        | gzip -f > seagullApiDocs-$VERSION.tar.gz
 }
 
 ##############################
@@ -192,7 +177,8 @@ EOF
 ##############################
 function scpChangelogToSglSite()
 {
-    scp -1 $PROJECT_NAME-$VERSION/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
+    scp -1 $PROJECT_NAME-$VERSION/CHANGELOG.txt \
+        demian@phpkitchen.com:/var/www/html/seagull/web/
 }
 
 ##############################
@@ -207,7 +193,6 @@ checkPreviousVersions
 
 #tagRelease
 
-# move to tmp dir
 cd /tmp
 
 exportSvnAndPackage
