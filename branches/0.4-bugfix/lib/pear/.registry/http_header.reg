@@ -1,0 +1,63 @@
+a:14:{s:8:"provides";a:0:{}s:8:"filelist";a:8:{s:10:"Header.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"913cb156014b6f3ec582d10c4fee89e3";s:12:"installed_as";s:42:"C:\htdocs\seagull\lib\pear\HTTP\Header.php";}s:16:"Header\Cache.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"efa7800e74260f7046894ce33e83d414";s:12:"installed_as";s:48:"C:\htdocs\seagull\lib\pear\HTTP\Header\Cache.php";}s:18:"tests/response.php";a:5:{s:4:"role";s:4:"test";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"1e9be453ad96394789355d497e530653";s:10:"install-as";s:12:"response.php";s:12:"installed_as";s:42:"C:\php\pear\tests\HTTP_Header\response.php";}s:23:"tests/cacheresponse.php";a:5:{s:4:"role";s:4:"test";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"294999a5c46136b0e7a4e2bf0f43779b";s:10:"install-as";s:17:"cacheresponse.php";s:12:"installed_as";s:47:"C:\php\pear\tests\HTTP_Header\cacheresponse.php";}s:16:"tests/header.php";a:5:{s:4:"role";s:4:"test";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"dd2d7baa7bf79463f7b6d071ae600de3";s:10:"install-as";s:10:"header.php";s:12:"installed_as";s:40:"C:\php\pear\tests\HTTP_Header\header.php";}s:22:"tests/header_cache.php";a:5:{s:4:"role";s:4:"test";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"387d18c59247c881cb96ec3da21c12db";s:10:"install-as";s:16:"header_cache.php";s:12:"installed_as";s:46:"C:\php\pear\tests\HTTP_Header\header_cache.php";}s:16:"tests/README.txt";a:5:{s:4:"role";s:4:"test";s:14:"baseinstalldir";s:4:"HTTP";s:6:"md5sum";s:32:"57674de284cab179a509e6e8b67433ab";s:10:"install-as";s:10:"README.txt";s:12:"installed_as";s:40:"C:\php\pear\tests\HTTP_Header\README.txt";}s:7:"dirtree";a:3:{s:31:"C:\htdocs\seagull\lib\pear\HTTP";b:1;s:38:"C:\htdocs\seagull\lib\pear\HTTP\Header";b:1;s:29:"C:\php\pear\tests\HTTP_Header";b:1;}}s:7:"package";s:11:"HTTP_Header";s:7:"summary";s:64:"OO interface to modify and handle HTTP headers and status codes.";s:11:"description";s:160:"This class provides methods to set/modify HTTP headers 
+and status codes including an HTTP caching facility.
+It also provides methods for checking Status types.";s:11:"maintainers";a:3:{i:0;a:4:{s:6:"handle";s:4:"cain";s:4:"name";s:16:"Wolfram Kriesing";s:5:"email";s:19:"wolfram@kriesing.de";s:4:"role";s:4:"lead";}i:1;a:4:{s:6:"handle";s:5:"davey";s:4:"name";s:12:"Davey Shafik";s:5:"email";s:13:"davey@php.net";s:4:"role";s:4:"lead";}i:2;a:4:{s:6:"handle";s:4:"mike";s:4:"name";s:15:"Michael Wallner";s:5:"email";s:12:"mike@php.net";s:4:"role";s:4:"lead";}}s:7:"version";s:8:"1.1.2RC1";s:12:"release_date";s:10:"2004-12-22";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:74:"* use "Status:" instead of HTTP/1.1 for sending status codes with CGI-SAPI";s:12:"release_deps";a:3:{i:1;a:4:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.3.1";s:4:"name";s:4:"HTTP";}i:2;a:3:{s:4:"type";s:3:"pkg";s:3:"rel";s:3:"has";s:4:"name";s:4:"PEAR";}i:3;a:3:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:5:"4.2.0";}}s:9:"changelog";a:15:{i:0;a:5:{s:7:"version";s:5:"1.1.1";s:12:"release_date";s:10:"2004-11-10";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:45:"* POST requests should *NOT* be cached
+
+   
+
+";}i:1;a:5:{s:7:"version";s:5:"1.1.0";s:12:"release_date";s:10:"2004-08-05";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:38:"+ Support for Internet Explorer
+
+   
+
+";}i:2;a:5:{s:7:"version";s:5:"1.0.2";s:12:"release_date";s:10:"2004-08-05";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:24:"* Fixed Bug #2063
+
+   
+
+";}i:3;a:5:{s:7:"version";s:5:"1.0.1";s:12:"release_date";s:10:"2004-08-04";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:159:"* Don't append a question mark to redirection urls which have no query string
+* Fixed Header_Cache::isOlderThan() and Header_Cache::isCached() (finally)
+
+   
+
+";}i:4;a:5:{s:7:"version";s:5:"1.0.0";s:12:"release_date";s:10:"2004-07-21";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:193:"* Call parent constructor in HTTP_Header_Cache
+* Fixed Bug in HTTP_Header_Cache::isCached()
+* Fixed Bug #1908 (added optional parameter $session to redirect())
++ Added PHPUnit test cases
+
+   
+
+";}i:5;a:5:{s:7:"version";s:8:"1.0.0RC1";s:12:"release_date";s:10:"2004-07-02";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:51:"* First Release Candidate for stable release.
+   
+
+";}i:6;a:5:{s:7:"version";s:5:"0.3.0";s:12:"release_date";s:10:"2004-06-12";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:84:"* refactored HTTP_Header_Cache
+* fixed typos in HTTP_Header::dateToTimestamp()
+   
+
+";}i:7;a:5:{s:7:"version";s:5:"0.2.0";s:12:"release_date";s:10:"2004-06-09";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:168:"* honor actual HTTP version
+* added accessors to HTTP version
+* check if headers were alread sent
+* marked dateToTimestamp() as deprecated
+* general code clean up
+   
+
+";}i:8;a:5:{s:7:"version";s:5:"0.1.6";s:12:"release_date";s:10:"2003-12-28";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:125:"* Fixed Errors in sendStatusCode
+* Fixed all HTTP_Header::isError (and similar) methods
+* Fixed HTTP_Header::sendStatusCode
+
+";}i:9;a:5:{s:7:"version";s:5:"0.1.5";s:12:"release_date";s:10:"2003-12-09";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:294:"* fix in redirect(), when parameter was added, it was always added with ?para=value, 
+instead of checking if there was already a param
+* added quite some methods by Davey Shafik
+* changed HTTP_HEADER_STATUS_* content by Davey Shafik
+* added getStatusType() and getStatusText() by Davey Shafik
+
+";}i:10;a:5:{s:7:"version";s:5:"0.1.4";s:12:"release_date";s:10:"2003-09-19";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:81:"* redirect sends session id by default when trans_sid=1, behaviour has changed!
+
+";}i:11;a:5:{s:7:"version";s:5:"0.1.3";s:12:"release_date";s:10:"2003-03-31";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:57:"* fixed dateToTimestamp() to retrieve proper cache date
+
+";}i:12;a:5:{s:7:"version";s:5:"0.1.2";s:12:"release_date";s:10:"2003-03-10";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:118:"* if redirect has no params given, redirect to PHP_SELF
+* Cache::exitIfCached() returns false if isCached() is false
+
+";}i:13;a:5:{s:7:"version";s:5:"0.1.1";s:12:"release_date";s:10:"2003-01-27";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:5:"alpha";s:13:"release_notes";s:115:"- added redirect, which takes care of additional GET vars too
+- added all HTTP1.1 code (thanks to Patrick O'Lone)
+
+";}i:14;a:5:{s:7:"version";s:3:"0.1";s:12:"release_date";s:10:"2003-01-17";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:5:"alpha";s:13:"release_notes";s:27:"- initial release in PEAR
+
+";}}s:13:"_lastmodified";i:1106265854;}

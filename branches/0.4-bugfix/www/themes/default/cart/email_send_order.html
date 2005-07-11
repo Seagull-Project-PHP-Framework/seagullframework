@@ -1,0 +1,74 @@
+<style type="text/css" flexy:ignore>
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 0.6em;
+    font: small Arial, Helvetica, sans-serif, "Bitstream Vera Sans", Trebuchet MS, Verdana;
+    color: #666666;
+}
+
+table {
+    border: none;
+    /* This is not a typo, we want first set a fallback for IE, then set the
+     * real margin for real browsers ;) */
+    margin: 0 5%;
+    margin: 0 auto;
+}
+td, th {
+    padding: 2px;
+}
+th {
+    background-color: #bcbcbc;
+    text-align: left;
+    color: #ffffff;
+    font-size: 0.8em;
+    font-wight: bold;
+    letter-spacing: 0.1px;
+    lline-height: 1em;
+}
+td {
+    font-size: 0.8em;
+}
+.sgl-row-light {
+    background-color: #e7e7e7;
+}
+.sgl-row-dark {
+    background-color: #d9d9d9;
+}
+</style>
+  
+<h3>{translate(#Order received#)} :: {emailSiteName}</h3>
+
+{translate(#Dear#)} {emailName},</br>
+</br>
+</br>
+{translate(#You receive this message because#)}
+</br>
+</br>
+{translate(#This is the list of the goods that you bought#)}:
+</br>
+</br>
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>   
+  <table class="wide">
+    <tr> 
+      <th>{translate(#Name#)}</th>
+      <th width="30">{translate(#Quantity#)}</th>
+      <th width="200"><div align="right">{translate(#Price#)}</div></th>
+    </tr>
+      <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue"> 
+      <td><a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
+      <td width="30" align="center">{aValue.quantity}</td>
+      <td width="200" align="right" nowrap>{this.plugin(#formatPrice#,aValue.price):h} Lei</td>
+    </tr>
+    <tr> 
+      <td align="right"><strong>{translate(#Total#)}:</strong></td>
+      <td width="30" align="center"><strong>{itemCount}</strong></td>
+      <td width="200" align="right"><strong>{this.plugin(#formatPrice#,total):h} Lei</strong></td>
+    </tr>
+  </table>
+<br />
+{translate(#We will contact you as soon as possible#)}
+</br>
+</br>
+{translate(#Best regards#)},<br />
+{emailSiteName}

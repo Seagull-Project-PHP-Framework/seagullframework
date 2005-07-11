@@ -1,0 +1,133 @@
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span> 
+
+{if:items}
+<strong>{translate(#Order recorded on#)}:</strong> {cart.date_created}
+<br />
+<br />
+    <table class="wide">
+    <tr> 
+      <th>{translate(#Name#)}</th>
+      <th width="30">{translate(#Quantity#)}</th>
+      <th width="150"><div align="right">{translate(#Price#)}</div></th>
+    </tr>
+      <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue"> 
+      <td><a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
+      <td width="30" align="center">{aValue.quantity}</td>
+      <td width="150" align="right" nowrap>{this.plugin(#formatPrice#,aValue.price):h} Lei</td>
+    </tr>
+    <tr> 
+      <td align="right"><strong>{translate(#Total#)}:</strong></td>
+      <td width="30" align="center"><strong>{itemCount}</strong></td>
+      <td width="150" align="right"><strong>{this.plugin(#formatPrice#,cart.total):h} Lei</strong></td>
+    </tr>
+  </table>
+  <br />
+<strong>{translate(#User information#)}:</strong> 
+<br />
+<br />    
+        <!-- /////////////////////    STATUS     ////////////////////// -->
+
+        <table class="narrow">
+            <tr>
+                <th colspan="2">{translate(#Personal Details#)}</th>
+            </tr>
+
+            <tr>
+                <td class="fieldName" width="50%">{translate(#Username#)}</td>
+                <td class="fieldvalue" width="50%">{user.username}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#First Name#)}</td>
+                <td class="fieldvalue">{user.first_name}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#Last Name#)}</td>
+                <td class="fieldvalue">{user.last_name}</td>
+            </tr>
+
+            <tr flexy:if="user.company_name">
+                <td class="fieldName">{translate(#Company#)}</td>
+                <td class="fieldvalue">{user.company_name}</td>
+            </tr>
+        </table><!-- /////////////////////    TABLE 2:      ////////////////////// -->
+
+        <table class="narrow">
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+
+            <tr>
+                <th colspan="2">{translate(#Location#)}</th>
+            </tr>
+
+            <tr>
+                <td class="fieldName" width="50%">{translate(#Address 1#)}</td>
+                <td class="fieldvalue" width="50%">{user.addr_1}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#Address 2#)}</td>
+                <td class="fieldvalue">{if:user.addr_2} {user.addr_2} {else:}&nbsp;{end:}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#Address 3#)}</td>
+                <td class="fieldvalue">{if:user.addr_3} {user.addr_3} {else:}&nbsp;{end:}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#City#)}</td>
+                <td class="fieldvalue">{user.city}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#County/State/Province#)}</td>
+                <td class="fieldvalue">{user.region}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#ZIP/Postal Code#)}</td>
+                <td class="fieldvalue">{user.post_code}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName" width="35%">{translate(#Country#)}</td>
+                <td class="fieldvalue" width="65%">{user.country}</td>
+            </tr>
+        </table><!-- /////////////////////    TABLE 3:       ////////////////////// -->
+
+        <table class="narrow">
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+
+            <tr>
+                <th colspan="2">{translate(#Contact#)}</th>
+            </tr>
+
+            <tr>
+                <td class="fieldName" width="35%">{translate(#Email#)}</td>
+                <td class="fieldvalue" width="65%">{user.email}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName" width="50%">{translate(#Telephone#)}</td>
+                <td class="fieldvalue" width="50%">{user.telephone}</td>
+            </tr>
+
+            <tr>
+                <td class="fieldName">{translate(#Mobile#)}</td>
+                <td class="fieldvalue">{user.mobile}</td>
+            </tr>
+
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+        </table>
+
+{end:}   
+    

@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}">
+<head>
+    <title flexy:if="!GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {translate(pageTitle)}</title>
+    <title flexy:if="GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {GLOBALS[_SGL][REQUEST][articleTitle]}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Rating" content="General" />
+    <meta name="Generator" content="Seagull Framework v{versionAPI}" />
+    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/style.php" />
+
+    {scriptOpen:h}
+        var SGL_JS_WEBROOT="{webRoot}";
+        var SGL_JS_WINHEIGHT={newWinHeight};
+        var SGL_JS_WINWIDTH={newWinWidth};
+        var SGL_JS_SESSID="{sessID}";
+        var SGL_JS_CURRURL="{currUrl}";
+    {scriptClose:h}
+
+    {if:isAdmin}
+    <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
+    {end:}
+    <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>
+
+    {foreach:javascriptSrc,file}
+    <script type="text/javascript" src="{webRoot}/js/{file}"></script>
+    {end:}
+
+    {if:wysiwyg}
+    {if:wysiwyg_htmlarea}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/htmlarea/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{webRoot}/htmlarea/htmlarea.js"></script>
+    <script type="text/javascript">
+        HTMLArea.loadPlugin("CharacterMap");
+        function initDocument() 
+        {
+            var config = new HTMLArea.Config();
+            config.toolbar = [
+        		[ "fontname", "space",
+        		  "fontsize", "space",
+        		  "formatblock", "space",
+        		  "bold", "italic", "underline", "strikethrough", "separator",
+        		  "subscript", "superscript", "separator",
+        		  "copy", "cut", "paste", "space"],
+        		[ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
+        		  "lefttoright", "righttoleft", "separator",
+        		  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
+        		  "forecolor", "hilitecolor", "separator",
+        		  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
+        		  "popupeditor", "separator", "showhelp"]
+            ];
+            var editor = new HTMLArea("frmBodyName", config);
+            editor.registerPlugin(CharacterMap);
+            editor.generate();
+        }
+        HTMLArea.onload = initDocument;
+    </script>
+    {end:}
+    {if:wysiwyg_xinha}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/xinha/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{webRoot}/xinha/htmlarea.js"></script>
+    <script type="text/javascript" src="{webRoot}/xinha/sgl_config.js"></script>   
+    {end:}
+    {if:wysiwyg_fck}
+    <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
+	<script type="text/javascript">
+    function fck_init() 
+    {
+    	var oFCKeditor = new FCKeditor('frmBodyName') ;
+		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
+		oFCKeditor.ReplaceTextarea() ;
+    }
+    </script>
+    {end:}
+    {end:}
+
+<!-- /////////////////////////////////////  START NAVIGATION STYLESHEET  //////////////////////////////-->
+
+    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/{navStylesheet}.css" />
+
+<!-- /////////////////////////////////////  END NAVIGATION STYLESHEET   //////////////////////////////-->
+</head>
+
+<body onload="{onLoad}" style="{style}">

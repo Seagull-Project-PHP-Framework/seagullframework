@@ -1,0 +1,23 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<h2 class="sectionHeader">{translate(#Current Category#)}: {currentCat:h}</h2>
+<h3 class="colHeader">{translate(#You are here#)}: {path:h}</h3>
+
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+{if:articleList}   
+    {foreach:articleList,key,aValue}
+        <h3><strong>{aValue[title]}</strong></h3>
+        <div>{formatDatePretty(aValue[startDate])} :: {translate(#Contributed by#)}: <a href="{makeUrl(#view#,#profile#,#user#,articleList,#frmUserID|createdByID#,key)}">{aValue[creatorName]}</a></div>        
+        {if:aValue[bodyHtml]}
+            <p>{aValue[bodyHtml]:h}{end:}
+        {if:aValue[newsHtml]}
+            <p>{aValue[newsHtml]:h}
+        {end:} [<a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}" title="{aValue[title]}">{translate(#full story#)}</a>]</p>
+    {end:}
+    </ul>
+{else:}
+    {translate(#No articles found#)}
+{end:}
+
+{if:pager}<flexy:include src="pager.html" />{end:}
