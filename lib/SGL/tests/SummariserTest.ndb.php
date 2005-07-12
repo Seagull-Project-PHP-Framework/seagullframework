@@ -36,7 +36,7 @@ class SummariserTest extends UnitTestCase
 EOF;
     }
     
-    function testFoo()
+    function xtestFoo()
     {
         $regex = 
           '#(?!<[^>]*?)
@@ -45,7 +45,6 @@ EOF;
            #six';
         $ret = preg_replace($regex, 'foo', $this->html);
         echo '<pre>'; print_r($ret).'\n';
-        
     }
 }
 ?>
