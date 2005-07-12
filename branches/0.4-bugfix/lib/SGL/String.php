@@ -283,6 +283,22 @@ class SGL_String
          }
          return $str;
     }
+    
+    /**
+     * Returns a set number of lines of a block of html, for summarising articles.
+     *
+     * @param string $str
+     * @param integer $lines
+     * @param string $appendString
+     * @return string
+     */
+    function htmlSummarise($str, $lines=10, $appendString=' ...')
+    {
+        $aLines = explode("\n", $str);
+        $segment = array_slice($aLines, 0, $lines);
+        array_push($segment, $appendString);
+        return implode("\n", $segment);
+    }
 
     /**
      * Converts bytes to Kb or MB as appropriate.
