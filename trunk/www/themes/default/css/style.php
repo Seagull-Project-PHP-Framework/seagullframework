@@ -249,7 +249,7 @@ th {
     position: absolute;
     margin-top: <?php echo $blocksMarginTop ?>;
     top: 0;
-    z-index:1;
+    z-index: 1;
 }
 #sgl #leftSidebar {
     width: <?php echo $blocksWidthLeft ?>;
@@ -265,10 +265,10 @@ th {
 .options-block {
     margin: 20px 0;
 }
-#sgl #leftSidebar .blockContainer, #sgl #rightSidebar .blockContainer {
+#sgl .blockContainer {
     margin: 4px 1px 0 1px;
 }
-.blockHeader {
+#sgl .blockHeader {
     background-color: <?php echo $blocksBackgroundTitle ?>;
     color: <?php echo $blocksColorTitle ?>;
     line-height: 1.5em;
@@ -277,7 +277,7 @@ th {
     border: 1px solid <?php echo $blocksBorderTitle ?>;
     margin: 0;
 }
-.blockContent {
+#sgl .blockContent {
     background-color: <?php echo $blocksBackgroundBody ?>;
     color: <?php echo $blocksColorBody ?>;
     font-size: 0.9em;
