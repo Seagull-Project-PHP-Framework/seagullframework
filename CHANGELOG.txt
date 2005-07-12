@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.5.0        |
++-----------------------+
+BUGFIXES
+
++-----------------------+
+| VERSION: 0.4.5        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+13-07-05    Added 'recent articles' block (Werner Krauss)
+
++-----------------------+
 | VERSION: 0.4.4        |
 +-----------------------+
 BUGFIXES

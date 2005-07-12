@@ -134,7 +134,7 @@ class BlockForm
         // Rules
         if ($this->action == 'edit' ) {
             $this->form->registerRule( 'can_be_activated', 'function', 'classAvailable', $this );
-            $this->form->addRule( 'block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
+            $this->form->addRule('block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
         }
 
         $this->form->addRule('block[name]', SGL_String::translate('You must enter a name for your block'), 'required');
