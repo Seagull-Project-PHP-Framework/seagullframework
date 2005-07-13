@@ -85,8 +85,6 @@ class BlockForm
             //  Set default form values
             $defaultValues['block[name]']         = null;
             $defaultValues['block[title]']        = null;
-            $defaultValues['block[title_class]']  = 'blockHeader';
-            $defaultValues['block[body_class]']   = 'blockContent';
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
@@ -134,7 +132,7 @@ class BlockForm
         // Rules
         if ($this->action == 'edit' ) {
             $this->form->registerRule( 'can_be_activated', 'function', 'classAvailable', $this );
-            $this->form->addRule( 'block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
+            $this->form->addRule('block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
         }
 
         $this->form->addRule('block[name]', SGL_String::translate('You must enter a name for your block'), 'required');
