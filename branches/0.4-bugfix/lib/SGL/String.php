@@ -292,11 +292,10 @@ class SGL_String
      * @param string $appendString
      * @return string
      */
-    function htmlSummarise($str, $lines=10, $appendString=' ...')
+    function summariseHtml($str, $lines=10)
     {
         $aLines = explode("\n", $str);
         $segment = array_slice($aLines, 0, $lines);
-        array_push($segment, $appendString);
         return implode("\n", $segment);
     }
 
