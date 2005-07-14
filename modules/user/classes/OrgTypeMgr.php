@@ -140,7 +140,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);        
         $output->orgTypes = $this->da->getOrgTypes();
-        $output->addOnLoadEvent('document.frmUserMgrChooser.orgs.disabled = true');        
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
     }
 
     function _delete(&$input, &$output)

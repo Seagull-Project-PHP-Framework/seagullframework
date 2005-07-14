@@ -256,7 +256,7 @@ class PreferenceMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        $output->addOnLoadEvent('document.frmUserMgrChooser.prefs.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').prefs.disabled = true");
     }
 }
 ?>

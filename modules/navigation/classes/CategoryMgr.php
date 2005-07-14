@@ -138,7 +138,7 @@ class CategoryMgr extends SGL_Manager
     function display(&$output)
     {
         //  prepare subnav
-        $output->addOnLoadEvent('self.document.frmResourceChooser.categories.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
     }
 
     function _insert(&$input, &$output)

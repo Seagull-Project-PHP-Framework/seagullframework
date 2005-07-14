@@ -260,7 +260,7 @@ class RoleMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        $output->addOnLoadEvent('document.frmUserMgrChooser.roles.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
     }
 
     function _duplicate(&$input, &$output)

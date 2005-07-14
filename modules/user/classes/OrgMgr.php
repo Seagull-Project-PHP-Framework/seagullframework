@@ -342,7 +342,7 @@ class OrgMgr extends SGL_Manager
             }
         }
         $output->results = $sectionNodes;
-        $output->addOnLoadEvent('document.frmUserMgrChooser.orgs.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
     }
 
     /**
