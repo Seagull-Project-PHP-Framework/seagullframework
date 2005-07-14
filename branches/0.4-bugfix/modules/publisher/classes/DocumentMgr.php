@@ -354,7 +354,7 @@ class DocumentMgr extends FileMgr
         }
 
         //  prepare data for publisher subnav
-        $output->addOnLoadEvent('self.document.frmResourceChooser.documents.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
 
         //  prepare breadcrumbs
         $menu = & new MenuBuilder('SelectBox');
