@@ -362,7 +362,7 @@ class UserMgr extends RegisterMgr
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = $aPagedData['totalItems'];
-        $output->addOnLoadEvent('document.frmUserMgrChooser.users.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
     }
     
     function _requestPasswordReset(&$input, &$output)

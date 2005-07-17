@@ -110,7 +110,7 @@
         'With selected document(s)' => 'With selected document(s)',
         'Contributed by' =>'Contributed by',
         'contributed by' =>'contributed by',
-        'full story'=> 'full story',
+        'full story'=> 'Continue reading',
        // ''=>'',
     );
 ?>

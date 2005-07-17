@@ -292,12 +292,28 @@ class SGL_String
      * @param string $appendString
      * @return string
      */
-    function htmlSummarise($str, $lines=10, $appendString=' ...')
+    function summariseHtml($str, $lines=10)
     {
         $aLines = explode("\n", $str);
-        $segment = array_slice($aLines, 0, $lines);
-        array_push($segment, $appendString);
-        return implode("\n", $segment);
+        $aSegment = array_slice($aLines, 0, $lines);
+        
+        //  close tags like <ul> so page layout doesn't break
+        $unclosedListTags = 0;
+        $aMatches = array();
+        foreach ($aSegment as $line) {
+            if (preg_match("/<[u|o]l/i", $line, $matches)) {
+                $aMatches[] = $matches;
+                $unclosedListTags++;
+            }
+            if (preg_match("/<\/[u|o]l>/i", $line)) {
+                $unclosedListTags--;
+            }
+        }
+        //  reinstate close tags
+        for ($x=0; $x < $unclosedListTags; $x++) {
+            array_push($aSegment, '</ul>');
+        }
+        return implode("\n", $aSegment);
     }
 
     /**
@@ -310,11 +326,11 @@ class SGL_String
     function formatBytes($size)
     {
         $sizeList = array( 
-                       '1073741824' => 'GB',
-                       '1048576'    => 'MB',
-                       '1024'       => 'kb',
-                       '0'          => 'b'
-                       );
+           '1073741824' => 'GB',
+           '1048576'    => 'MB',
+           '1024'       => 'kb',
+           '0'          => 'b'
+           );
 
         foreach ($sizeList as $bytes => $unit) {
             if ($size > $bytes) {

@@ -1,6 +1,7 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 
 <!-- If not a static article display option blocks -->
+
 {if:staticArticle}
     <div id="staticArticle">
         {if:leadArticle} 
@@ -30,21 +31,20 @@
             </div>
         </div>
     
+        {if:documentList}
         <div class="options-block">
             <div class="blockHeader">{translate(#Related Documents#)}</div>
     		<div class="blockContent">
-            {if:documentList}
+
                 <ul class="noindent">
                 {foreach:documentList,key,valueObj}
                     <!--{this.plugin(#id2AssetIcon#,valueObj.document_type_id):h}-->
                     <li><a href="#" onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,documentList,#frmAssetID|document_id#,key)}',500,350)">{valueObj.name}</a></li>
                 {end:}
                 </ul>
-            {else:}
-                {translate(#No documents found#)}
-            {end:}
             </div>
         </div>
+        {end:}
     </div>
 
     <div id="leadArticle">

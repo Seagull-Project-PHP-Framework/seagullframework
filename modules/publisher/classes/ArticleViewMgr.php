@@ -149,15 +149,15 @@ class ArticleViewMgr extends SGL_Manager
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
                 case 'bodyHtml':
-                    $content = strip_tags($output->articleList[$key]['bodyHtml']);
+                    $content = $output->articleList[$key]['bodyHtml'];
                     $output->articleList[$key]['bodyHtml'] = 
-                        SGL_String::summarise($content, 700);
+                        SGL_String::summariseHtml($content);
                 break;
 
                 case 'newsHtml':
-                    $content = strip_tags($output->articleList[$key]['newsHtml']);
+                    $content = $output->articleList[$key]['newsHtml'];
                     $output->articleList[$key]['newsHtml'] = 
-                        SGL_String::summarise($content, 700);
+                        SGL_String::summariseHtml($content);
                 break; 
                 }
             }

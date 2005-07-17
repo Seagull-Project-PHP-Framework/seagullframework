@@ -350,7 +350,7 @@ class PermissionMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit || $input->moduleId) ? false : true;
         }
-        $output->addOnLoadEvent('document.frmUserMgrChooser.perms.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').perms.disabled = true");
 
         //  setup module combobox
         require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';

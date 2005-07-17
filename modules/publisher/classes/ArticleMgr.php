@@ -383,7 +383,7 @@ class ArticleMgr extends SGL_Manager
         if ($this->isAdmin) {
             $theme = $_SESSION['aPrefs']['theme'];
             $output->addOnLoadEvent('checkNewButton()');
-            $output->addOnLoadEvent('self.document.frmResourceChooser.articles.disabled = true');
+            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
             $menu = & new MenuBuilder('SelectBox');
             $output->breadCrumbs = $menu->getBreadCrumbs($input->catID);
         }
