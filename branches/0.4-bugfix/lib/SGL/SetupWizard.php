@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Gerry Lachac                                          |
+// | Copyright (c) 2005, Gerry Lachac                                          |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -354,7 +354,6 @@ class SGL_SetupWizard
     function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
-        #return str_replace('"', '', $version);
         return $version;
     }
 

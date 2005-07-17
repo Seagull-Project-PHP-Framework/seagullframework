@@ -101,7 +101,7 @@ class LoginMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->addOnLoadEvent('document.getElementById("login").frmUsername.focus()');
+        $output->addOnLoadEvent('document.getElementById("frmLogin").frmUsername.focus()');
     }
 
     function _login(&$input, &$output)
