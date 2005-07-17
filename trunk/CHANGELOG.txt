@@ -11,7 +11,11 @@ BUGFIXES
 BUGFIXES
 
 IMPROVEMENTS
-13-07-05    Added article summariser method
+15-07-05    Articles now editable in situ
+14-07-05    Improved w3c compliance by removing 'name' attribute from some forms
+13-07-05    Related documents only displayed next to articles if they exist
+13-07-05    Added article summariser method that preserves HTML formatting and
+            cleaned up article listing - ArticleViewMgr::summary()
 13-07-05    Added 'recent articles' block (Werner Krauss)
 10-07-05    Usernames can now be as short as 3 chars (Michael Heuberger)
 10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
