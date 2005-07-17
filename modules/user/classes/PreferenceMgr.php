@@ -171,7 +171,9 @@ class PreferenceMgr extends SGL_Manager
         $oPref = & new DataObjects_Preference();
         $oPref->setFrom($input->pref);
         $dbh = & $oPref->getDatabaseConnection();
-        $oPref->preference_id = $dbh->nextId('preference');
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $oPref->preference_id = $dbh->nextId($conf['table']['preference']);
         $success = $oPref->insert();
         if ($success) {
             //  synchronise with user_preference table
@@ -242,7 +244,9 @@ class PreferenceMgr extends SGL_Manager
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $dbh = & SGL_DB::singleton();
-        $query = 'SELECT preference_id, name, default_value FROM preference';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $query = "SELECT preference_id, name, default_value FROM {$conf['table']['preference']}";
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',

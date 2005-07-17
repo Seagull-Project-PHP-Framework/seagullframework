@@ -179,10 +179,13 @@ class PageMgr extends SGL_Manager
     function _getStaticArticles()
     {
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    item i, item_addition ia, item_type it, item_type_mapping itm
+             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id

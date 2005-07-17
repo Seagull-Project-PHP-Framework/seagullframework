@@ -108,13 +108,14 @@ class ContactMgr extends SGL_Manager
             require_once SGL_ENT_DIR . '/Contact.php';
             $savedUser = & new DataObjects_Contact();
             $dbh = $savedUser->getDatabaseConnection();
+            $conf = & $GLOBALS['_SGL']['CONF'];            
 
             //  skip if user already exists
             $savedUser->usr_id = $input->userID;
             $savedUser->originator_id  = SGL_HTTP_Session::getUid();
             $numRows = $savedUser->find();
             if ($numRows < 1) {
-                $savedUser->contact_id       = $dbh->nextId('contact');
+                $savedUser->contact_id       = $dbh->nextId($conf['table']['contact']);
                 $savedUser->date_created     = SGL::getTime();
                 $savedUser->originator_id    = SGL_HTTP_Session::getUid();
                 $savedUser->usr_id           = $input->userID;
@@ -146,13 +147,13 @@ class ContactMgr extends SGL_Manager
         $output->sectionTitle = 'Contacts';
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $dbh = & SGL_DB::singleton();
-        $query = '
+        $query = "
             SELECT  u.usr_id, u.username, u.first_name, u.last_name
-            FROM    ' . $conf['table']['user'] . ' u, ' . $conf['table']['contact'] . ' c 
-            WHERE   c.originator_id = ' . SGL_HTTP_Session::getUid() . '
+            FROM    {$conf['table']['user']} u, {$conf['table']['contact']} c 
+            WHERE   c.originator_id = " . SGL_HTTP_Session::getUid() . "
             AND     u.usr_id = c.usr_id
             ORDER BY u.last_updated DESC
-        ';
+        ";
 
         $pagerOptions = array(
             'mode'      => 'Sliding',

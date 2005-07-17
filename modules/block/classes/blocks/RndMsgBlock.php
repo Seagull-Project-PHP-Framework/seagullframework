@@ -20,7 +20,9 @@ class RndMsgBlock
     function getBlockContent()
     {
         $dbh = & SGL_DB::singleton();
-        $sql = 'SELECT msg FROM rndmsg_message';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $sql = "SELECT msg FROM {$conf['table']['rndmsg_message']}";
 
         // get random number (max=number of messages)
         $tmp = & $dbh->query($sql);

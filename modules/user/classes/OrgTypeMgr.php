@@ -102,7 +102,7 @@ class OrgTypeMgr extends SGL_Manager
         $orgType = & new DataObjects_Organisation_type();
         $orgType->setFrom($input->orgTypes);
         $dbh = $orgType->getDatabaseConnection();
-        $orgType->organisation_type_id = $dbh->nextId('organisation_type');        
+        $orgType->organisation_type_id = $dbh->nextId($conf['table']['organisation_type']);        
         $success = $orgType->insert();
         if ($success) {
             SGL::raiseMsg('Organisation type saved successfully');

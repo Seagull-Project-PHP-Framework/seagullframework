@@ -53,7 +53,9 @@ class RndProducts
     {
         
         $dbh = & SGL_DB::singleton();
-        $sql = 'SELECT * FROM product WHERE promotion >= "1" ';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $sql = "SELECT * FROM {$conf['table']['product']} WHERE promotion >= '1' ";
         // get random number (max=number of messages)
         $res = & $dbh->query($sql);
         

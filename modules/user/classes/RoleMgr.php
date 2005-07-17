@@ -128,10 +128,12 @@ class RoleMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $oRole = & new DataObjects_Role();
         $oRole->setFrom($input->role);
         $dbh = & $oRole->getDatabaseConnection();
-        $oRole->role_id = $dbh->nextId('role');
+        $oRole->role_id = $dbh->nextId($conf['table']['role']);
         $oRole->date_created = $oRole->last_updated = SGL::getTime();
         $oRole->created_by = $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->insert();
@@ -243,10 +245,10 @@ class RoleMgr extends SGL_Manager
         $output->template = 'roleManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
 
-        $query = '  SELECT
+        $query = "  SELECT
                         role_id, name, description, date_created, 
                         created_by, last_updated, updated_by 
-                    FROM role';
+                    FROM {$conf['table']['role']}";
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -270,12 +272,12 @@ class RoleMgr extends SGL_Manager
         $dbh = & SGL_DB::singleton();
 
         //  get role name info
-        $name = $dbh->getOne('SELECT name FROM role WHERE role_id = ' . $input->roleId);
+        $name = $dbh->getOne("SELECT name FROM {$conf['table']['role']} WHERE role_id = " . $input->roleId);
         $duplicateName = $name . ' (duplicate)';
 
         //  insert new role duplicate, wrap in transaction
         $dbh->autocommit();
-        $newRoleId = $dbh->nextId('role');
+        $newRoleId = $dbh->nextId($conf['table']['role']);
         $res1 = $dbh->query('INSERT INTO ' . $conf['table']['role'] . "
                             (role_id, name, description)
                             VALUES ($newRoleId, '$duplicateName', 'please enter description')");
@@ -287,7 +289,7 @@ class RoleMgr extends SGL_Manager
             foreach ($aRolePerms as $permId => $permName) {
                 $res2 = $dbh->query('INSERT INTO ' . $conf['table']['role_permission'] . "
                                      (role_permission_id, role_id, permission_id)
-                                     VALUES (" . $dbh->nextId('role_permission') . ", $newRoleId, $permId)");
+                                     VALUES (" . $dbh->nextId($conf['table']['role_permission']) . ", $newRoleId, $permId)");
             }
             $isError = DB::isError($res2);
         }

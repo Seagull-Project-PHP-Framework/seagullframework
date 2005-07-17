@@ -162,21 +162,21 @@ class RateAdminMgr extends RateMgr
 
         $dbh = & SGL_DB::singleton();
         
-        $query = "DELETE FROM rate WHERE currency='$currency' AND date='$date'";   
+        $query = "DELETE FROM {$conf['table']['rate']} WHERE currency='$currency' AND date='$date'";   
         $result = $dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
         }  
       
-        $nextId = $dbh->nextId('rate');
+        $nextId = $dbh->nextId($conf['table']['rate']);
         $fields = array(
-                    'rate_id' => $nextId,
-                    'currency' => $currency,
-                    'rate' => $rate,
-                    'date' => $date,
-                    'last_updated' => SGL::getTime(),
-                    );        
+            'rate_id' => $nextId,
+            'currency' => $currency,
+            'rate' => $rate,
+            'date' => $date,
+            'last_updated' => SGL::getTime(),
+            );        
         $result = $dbh->autoExecute('rate', $fields, DB_AUTOQUERY_INSERT);
         
         if (DB::isError($result)) {
