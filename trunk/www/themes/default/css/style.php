@@ -403,6 +403,9 @@ img {
 .error {
     color: <?php echo $errorTextMedium ?>;
 }
+.hide {
+    display: none;
+}
 .small {
     font-size: 0.8em;
 }
@@ -449,6 +452,11 @@ img {
     font-weight: bold;
     text-align: right;
     line-height: 18px;
+}
+.uploadLayer {
+    position: relative;
+    left: 10px;
+    top: 0;
 }
     
 /* /////////////// Article Manager /////////////// */
@@ -631,6 +639,11 @@ ul.bullets li {
 .bgnd {
     background-color: <?php echo $secondaryLight ?>;
     border: 1px solid <?php echo $tertiaryDark ?>;
+}
+.bgnd a {
+    color: <?php echo $secondaryDark ?>;
+    text-decoration: none;
+    font-weight: normal;
 }
 .treeMenuDefault {
     font-size: 11px;
