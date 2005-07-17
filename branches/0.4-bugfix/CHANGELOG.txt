@@ -13,6 +13,7 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+17-07-05    All table names are now config driven
 15-07-05    Articles now editable in situ
 14-07-05    Improved w3c compliance by removing 'name' attribute from some forms
 13-07-05    Related documents only displayed next to articles if they exist

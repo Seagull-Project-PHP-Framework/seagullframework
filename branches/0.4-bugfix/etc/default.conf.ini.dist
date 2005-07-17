@@ -63,6 +63,7 @@ instant_message         = instant_message
 item                    = item
 item_addition           = item_addition
 item_type               = item_type
+item_type_mapping       = item_type_mapping
 login                   = login
 module                  = module
 newsletter              = newsletter
