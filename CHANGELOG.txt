@@ -9,6 +9,8 @@ BUGFIXES
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+17-07-05    Fixed sections listed in blocks mgr, 'none' now correctly reads
+            'all sections'
 
 IMPROVEMENTS
 15-07-05    Articles now editable in situ
