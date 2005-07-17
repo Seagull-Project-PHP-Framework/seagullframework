@@ -50,6 +50,7 @@ driver                  = SimpleNav
 stylesheet              = SglDefault_TwoLevel
 
 [table]
+block                   = block
 cart                    = cart
 category                = category
 contact                 = contact

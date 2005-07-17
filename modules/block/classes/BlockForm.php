@@ -47,6 +47,9 @@
  * @since   PHP 4.1
  */
 
+require_once 'HTML/QuickForm.php';
+require_once SGL_ENT_DIR . '/Section.php';
+
 class BlockForm
 {
     var $action;
@@ -56,21 +59,17 @@ class BlockForm
     function BlockForm($action = '')
     {
         $this->action = $action;
-
-        require_once 'HTML/QuickForm.php';
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
-
-        require_once SGL_ENT_DIR . '/Section.php';
         $sectionList = & new DataObjects_Section();
         $sectionList->whereAdd('parent_id = 0');        
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
-        $sections[0] = 'All sections';
         if ($result > 0) {
             while ( $sectionList->fetch() ) {
                 $sections[ $sectionList->section_id ] = $sectionList->title;
             }
         }
+        $sections[0] = 'All sections';        
         $this->sections = $sections;
     }
 
