@@ -99,21 +99,23 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $query1 = ' DELETE FROM org_preference
-                    WHERE organisation_id = ' . $input->orgId;
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $query1 = " DELETE FROM {$conf['table']['org_preference']}
+                    WHERE organisation_id = " . $input->orgId;
         $dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO org_preference 
+            INSERT INTO {$conf['table']['org_preference']} 
                 (   org_preference_id, 
                     organisation_id, 
                     preference_id, 
                     value)
             VALUES(" . 
-                    $dbh->nextId('org_preference') . ", 
+                    $dbh->nextId($conf['table']['org_preference']) . ", 
                     $input->orgId,
                     $aMapping[$prefName],
                     '$prefValue'

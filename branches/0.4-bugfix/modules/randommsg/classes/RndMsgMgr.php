@@ -154,6 +154,9 @@ class RndMsgMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $output->template = 'rndMsg.html';
         if ($input->msgUpload) {
             $aLines = $this->file2($_FILES['msgFile']['tmp_name']);
@@ -166,7 +169,7 @@ class RndMsgMgr extends SGL_Manager
                 $msg = & new DataObjects_Rndmsg_message();
                 $msg->msg = $rndmsg;
                 $dbh = $msg->getDatabaseConnection();
-                $msg->rndmsg_message_id = $dbh->nextId('rndmsg_message');
+                $msg->rndmsg_message_id = $dbh->nextId($conf['table']['rndmsg_message']);
                 $success = ($success && $msg->insert());
             }
         }
@@ -198,11 +201,12 @@ class RndMsgMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'rndMsg.html';
 
-        $query = '  SELECT
+        $query = "  SELECT
                          rndmsg_message_id, msg
-                    FROM rndmsg_message';
+                    FROM {$conf['table']['rndmsg_message']}";
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(

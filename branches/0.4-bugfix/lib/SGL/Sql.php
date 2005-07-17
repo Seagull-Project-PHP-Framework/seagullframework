@@ -129,7 +129,6 @@ class SGL_Sql
         if (!(count($res))) {
             return SGL::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE);
         }
-        
         return true;
     }
 

@@ -170,9 +170,9 @@ class SimpleNav
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = & SGL_DB::singleton();
-        $query = '
-            SELECT * FROM section 
-            WHERE parent_id = ' . $sectionId . '
+        $query = "
+            SELECT * FROM {$conf['table']['section']}
+            WHERE parent_id = " . $sectionId . '
             ORDER BY order_id';
 
         $result = $dbh->query($query);

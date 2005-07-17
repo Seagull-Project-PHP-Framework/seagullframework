@@ -404,7 +404,6 @@ class ListMgr extends NewsletterMgr
             if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
                 $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
             }
-
             $output->totalItems = $aPagedData['totalItems'];
             $output->aPagedData = $aPagedData;
         } 

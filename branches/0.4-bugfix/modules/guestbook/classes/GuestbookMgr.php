@@ -113,11 +113,13 @@ class GuestbookMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         //  insert record
         $newEntry = & new DataObjects_Guestbook();
         $newEntry->setFrom($input->guestbook);
         $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->guestbook_id = $dbh->nextId('guestbook');
+        $newEntry->guestbook_id = $dbh->nextId($conf['table']['guestbook']);
         $newEntry->date_created = SGL::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
@@ -132,12 +134,15 @@ class GuestbookMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->pageTitle = 'Welcome to our Guestbook';
-        $query = '  SELECT
-                        guestbook_id, date_created, name, email, message
-                    FROM guestbook
-                    ORDER BY guestbook_id DESC';
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $output->pageTitle = 'Welcome to our Guestbook';
+        $query = "  SELECT
+                        guestbook_id, date_created, name, email, message
+                    FROM {$conf['table']['guestbook']}
+                    ORDER BY guestbook_id DESC";
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',

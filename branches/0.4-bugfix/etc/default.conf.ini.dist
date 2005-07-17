@@ -51,11 +51,18 @@ stylesheet              = SglDefault_TwoLevel
 
 [table]
 block                   = block
+block_assignment        = block_assignment
 cart                    = cart
 category                = category
 contact                 = contact
+contact_us              = contact_us
 document                = document
 document_type           = document_type
+guestbook               = guestbook
+instant_message         = instant_message
+item                    = item
+item_addition           = item_addition
+item_type               = item_type
 login                   = login
 module                  = module
 newsletter              = newsletter
@@ -67,11 +74,14 @@ preference              = preference
 price                   = price
 product                 = product
 rate					= rate
+rndmsg_message          = rndmsg_message
 role                    = role
 role_permission         = role_permission
+section                 = section
 user                    = usr
 user_permission         = user_permission
 user_preference         = user_preference
+user_session            = user_session
 
 [log]
 ;   Should Seagull log errors and other useful information?

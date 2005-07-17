@@ -150,7 +150,7 @@ class ContactUsMgr extends SGL_Manager
             $contact = & new DataObjects_Contact_us();
             $contact->setFrom($input->contact);
             $dbh = $contact->getDatabaseConnection();
-            $contact->contact_us_id = $dbh->nextId('contact_us');
+            $contact->contact_us_id = $dbh->nextId($conf['table']['contact_us']);
             $contact->insert();
 
             //  4. redirect on success - inherited redirectToDefault method forwards user to default page

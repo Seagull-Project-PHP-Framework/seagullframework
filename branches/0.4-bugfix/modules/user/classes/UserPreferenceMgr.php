@@ -97,22 +97,24 @@ class UserPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $uid = SGL_HTTP_Session::getUid();
-        $query1 = ' DELETE FROM user_preference
-                    WHERE usr_id = ' . $uid;
+        $query1 = " DELETE FROM {$conf['table']['user_preference']}
+                    WHERE usr_id = " . $uid;
         $dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO user_preference 
+            INSERT INTO {$conf['table']['user_preference']} 
                 (   user_preference_id, 
                     usr_id, 
                     preference_id, 
                     value)
             VALUES(" . 
-                    $dbh->nextId('user_preference') . ", 
+                    $dbh->nextId($conf['table']['user_preference']) . ", 
                     $uid,
                     $aMapping[$prefName],
                     '$prefValue'
