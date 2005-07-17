@@ -48,6 +48,14 @@
  * @access  public
  * @since   PHP 4.1
  */
+ 
+ /* *
+ * HTML blocks.
+ * Ori: 
+ * line 157 in function _loadBlocks() - add b.content
+ * line 205 in function _buildBlocks() - added trick to send block content if dynamic html.
+ */
+ 
 class SGL_BlockLoader
 {
     /**
@@ -147,7 +155,7 @@ class SGL_BlockLoader
         $query = '
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
-                b.body_class, b.is_onleft
+                b.body_class, b.is_onleft, b.content
             FROM    block b, block_assignment ba
             WHERE   b.is_enabled = 1
             AND     b.block_id = ba.block_id
@@ -191,8 +199,14 @@ class SGL_BlockLoader
                         SGL_ERROR_NOCLASS);
                 } else {
                     @$obj = & new $blockClass();
+                    if (isset($obj->dynamic)) {
+                        // this is a dynamic block. do the boogie.
+                        $this->_aData[$index]->content = $obj->init($oBlock);
+                    } else {
+                        // This is a standard SGL block.
                     $this->_aData[$index]->content = $obj->init($this->output);
                 }
+            }
             }
             $this->_sort();
         }

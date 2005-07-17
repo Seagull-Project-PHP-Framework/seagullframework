@@ -5,6 +5,9 @@ CHANGELOG
 +-----------------------+
 BUGFIXES
 
+IMPROVEMENTS
+17-07-05    Added the ability to add custom html blocks (uprooter)
+
 +-----------------------+
 | VERSION: 0.4.5        |
 +-----------------------+

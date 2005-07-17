@@ -11,7 +11,9 @@ create table if not exists block
    blk_order                      smallint,
    is_onleft                      smallint,
    is_enabled                     smallint,
-   primary key (block_id)
+   content longtext,
+   primary key (block_id),
+   FULLTEXT KEY cont (content)
 );
 
 /*==============================================================*/
