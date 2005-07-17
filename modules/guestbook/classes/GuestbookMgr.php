@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Boris Kerbikov, Tech Data Solutions                   |
+// | Copyright (c) 2005, Boris Kerbikov, Tech Data Solutions                   |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
