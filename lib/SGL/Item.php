@@ -333,6 +333,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
         for ($x=0; $x < count($itemID); $x++) {
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No text entered');
