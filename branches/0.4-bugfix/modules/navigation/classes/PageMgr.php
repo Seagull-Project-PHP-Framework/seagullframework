@@ -328,40 +328,43 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        //  setup article type, dropdowns built in display()
-        $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
-        
-        //  parse url details
-        $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
-        $section = array_merge($section, $parsed);
-        
-        //  adjust friendly mgr name to class filename
-        $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
-        $section['manager'] = $className . '.php';
-        
-        //  represent additional params as string
-        if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
-            foreach ($parsed['parsed_params'] as $k => $v) {
-                $ret[] = $k . '/' . $v;
+        //  passing a non-existent section id results in null or false $section
+        if ($section) {
+            $conf = & $GLOBALS['_SGL']['CONF'];
+                    
+            //  setup article type, dropdowns built in display()
+            $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
+            
+            //  parse url details
+            $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
+            $section = array_merge($section, $parsed);
+            
+            //  adjust friendly mgr name to class filename
+            $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
+            $section['manager'] = $className . '.php';
+            
+            //  represent additional params as string
+            if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
+                foreach ($parsed['parsed_params'] as $k => $v) {
+                    $ret[] = $k . '/' . $v;
+                }
+                $section['add_params'] = implode('/', $ret);
+            } else {
+                $section['add_params'] = null;
             }
-            $section['add_params'] = implode('/', $ret);
-        } else {
-            $section['add_params'] = null;
-        }
-        //  deal with static articles
-        if ($section['is_static']) {
-            if (isset($parsed['parsed_params'])) {
-                $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+            //  deal with static articles
+            if ($section['is_static']) {
+                if (isset($parsed['parsed_params'])) {
+                    $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+                }
+                $section['add_params'] = '';
             }
-            $section['add_params'] = '';
-        }
-
-        //  split off anchor if exists
-        if (stristr($section['resource_uri'], '#')) {
-            list(,$anchor) = split("#", $section['resource_uri']);
-            $section['anchor'] = $anchor;
+    
+            //  split off anchor if exists
+            if (stristr($section['resource_uri'], '#')) {
+                list(,$anchor) = split("#", $section['resource_uri']);
+                $section['anchor'] = $anchor;
+            }
         }
         $output->section = $section;
     }
