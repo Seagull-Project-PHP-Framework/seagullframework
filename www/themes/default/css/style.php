@@ -640,9 +640,11 @@ ul.bullets li {
     background-color: <?php echo $secondaryLight ?>;
     border: 1px solid <?php echo $tertiaryDark ?>;
 }
+.bgnd a, a.noDecoration {
+    text-decoration: none;
+}
 .bgnd a {
     color: <?php echo $secondaryDark ?>;
-    text-decoration: none;
     font-weight: normal;
 }
 .treeMenuDefault {
