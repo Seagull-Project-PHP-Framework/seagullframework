@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: RPC.php,v 1.79 2005/07/07 01:08:28 danielc Exp $
+ * @version    CVS: $Id: RPC.php,v 1.81 2005/07/14 02:15:26 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -456,7 +456,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.2
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -501,7 +501,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.2
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -828,7 +828,11 @@ class XML_RPC_Client extends XML_RPC_Base {
         }
 
         if ($timeout) {
-            stream_set_timeout($fp, $timeout);
+            /*
+             * Using socket_set_timeout() because stream_set_timeout()
+             * was introduced in 4.3.0, but we need to support 4.2.0.
+             */
+            socket_set_timeout($fp, $timeout);
         }
 
         // Pre-emptive BC hacks for fools calling sendPayloadHTTP10() directly
@@ -919,7 +923,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.2
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1010,7 +1014,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.2
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1246,6 +1250,7 @@ class XML_RPC_Message extends XML_RPC_Base
         $parser_resource = xml_parser_create($encoding);
         $parser = (int) $parser_resource;
 
+        $XML_RPC_xh = array();
         $XML_RPC_xh[$parser] = array();
 
         $XML_RPC_xh[$parser]['st'] = '';
@@ -1348,7 +1353,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.2
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base

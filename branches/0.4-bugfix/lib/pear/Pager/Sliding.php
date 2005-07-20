@@ -17,7 +17,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2003-2005 Lorenzo Alberton
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Sliding.php,v 1.13 2005/06/23 15:56:43 demian Exp $
+ * @version    CVS: $Id: Sliding.php,v 1.7 2005/04/01 13:04:53 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 

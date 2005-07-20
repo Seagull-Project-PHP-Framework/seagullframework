@@ -15,7 +15,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DataObject.php,v 1.17 2005/06/25 08:41:52 demian Exp $
+ * @version    CVS: $Id: DataObject.php,v 1.361 2005/07/06 06:13:09 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
   
@@ -235,7 +235,7 @@ class DB_DataObject extends DB_DataObject_Overload
     * @access   private
     * @var      string
     */
-    var $_DB_DataObject_version = "1.7.14";
+    var $_DB_DataObject_version = "1.7.15";
 
     /**
      * The Database table (used by table extends)
@@ -1482,10 +1482,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
         }
         $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-        if (!is_string($countWhat)) {
-            $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
-        }
-        
+        $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         
         // support distinct on default keys.
