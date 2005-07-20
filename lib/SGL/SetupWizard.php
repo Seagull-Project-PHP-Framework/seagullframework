@@ -523,6 +523,7 @@ EOF;
             'debug'                 => 0,
             'production'            => 0,
             'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema'=> 1,            
         );
 
         include_once 'System.php';
