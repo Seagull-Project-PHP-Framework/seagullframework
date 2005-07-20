@@ -12,8 +12,7 @@ create table if not exists block
    is_onleft                      smallint,
    is_enabled                     smallint,
    content longtext,
-   primary key (block_id),
-   FULLTEXT KEY cont (content)
+   primary key (block_id)
 );
 
 /*==============================================================*/
