@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Jacob Singh                                        |
+// | Copyright (c) 2005, Jacob Singh                                        |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -78,7 +78,9 @@ class SGL_Locale
 
                 if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
-                    $country = $dbh->getOne('SELECT country FROM usr WHERE usr_id = '.$uid);
+                    $conf = & $GLOBALS['_SGL']['CONF'];
+                    
+                    $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);
 
                     if (!$country) {

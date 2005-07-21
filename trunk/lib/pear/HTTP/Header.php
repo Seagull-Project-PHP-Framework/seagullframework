@@ -1,20 +1,31 @@
 <?php
-// +----------------------------------------------------------------------+
-// | PEAR :: HTTP :: Header                                               |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 3.0 of the PHP license,       |
-// | that is available at http://www.php.net/license/3_0.txt              |
-// | If you did not receive a copy of the PHP license and are unable      |
-// | to obtain it through the world-wide-web, please send a note to       |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Wolfram Kriesing <wk@visionp.de>                            |
-// |          Davey Shafik <davey@php.net>                                |
-// |          Michael Wallner <mike@php.net>                              |
-// +----------------------------------------------------------------------+
-//
-// $Id: Header.php,v 1.1 2005/01/21 00:07:51 demian Exp $
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
+/**
+ * HTTP::Header
+ * 
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category    HTTP
+ * @package     HTTP_Header
+ * @author      Wolfram Kriesing <wk@visionp.de>
+ * @author      Davey Shafik <davey@php.net>
+ * @author      Michael Wallner <mike@php.net>
+ * @copyright   2003-2005 The Authors
+ * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version     CVS: $Id: Header.php,v 1.30 2005/07/18 09:42:39 mike Exp $
+ * @link        http://pear.php.net/package/HTTP_Header
+ */
+
+/**
+ * Requires HTTP
+ */
 require_once 'HTTP.php';
 
 /**#@+
@@ -32,7 +43,7 @@ define('HTTP_HEADER_STATUS_INFORMATIONAL',1);
 define('HTTP_HEADER_STATUS_200', '200 OK');
 define('HTTP_HEADER_STATUS_201', '201 Created');
 define('HTTP_HEADER_STATUS_202', '202 Accepted');
-define('HTTP_HEADER_STATUS_203', '203 Non-Authoriative Information');
+define('HTTP_HEADER_STATUS_203', '203 Non-Authoritative Information');
 define('HTTP_HEADER_STATUS_204', '204 No Content');
 define('HTTP_HEADER_STATUS_205', '205 Reset Content');
 define('HTTP_HEADER_STATUS_206', '206 Partial Content');
@@ -88,8 +99,8 @@ define('HTTP_HEADER_STATUS_500', '500 Internal Server Error');
 define('HTTP_HEADER_STATUS_501', '501 Not Implemented');
 define('HTTP_HEADER_STATUS_502', '502 Bad Gateway');
 define('HTTP_HEADER_STATUS_503', '503 Service Unavailable');
-define('HTTP_HEADER_STATUS_504', '504 Gateway Timeout');
-define('HTTP_HEADER_STATUS_505', '505 HTTP Version Not Supported');
+define('HTTP_HEADER_STATUS_504', '504 Gateway Time-out');
+define('HTTP_HEADER_STATUS_505', '505 HTTP Version not supported');
 define('HTTP_HEADER_STATUS_507', '507 Insufficient Storage');
 define('HTTP_HEADER_STATUS_SERVER_ERROR',5);
 /**#@-*/
@@ -101,7 +112,7 @@ define('HTTP_HEADER_STATUS_SERVER_ERROR',5);
  * @category    HTTP
  * @license     PHP License
  * @access      public
- * @version     $Revision: 1.1 $
+ * @version     $Revision: 1.30 $
  */
 class HTTP_Header extends HTTP
 {

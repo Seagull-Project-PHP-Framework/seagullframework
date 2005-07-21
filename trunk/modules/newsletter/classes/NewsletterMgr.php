@@ -193,7 +193,7 @@ class NewsletterMgr extends SGL_Manager
             }
             
             $dbh = $oList->getDatabaseConnection();
-            $oList->newsletter_id = $dbh->nextId('newsletter');  
+            $oList->newsletter_id = $dbh->nextId($conf['table']['newsletter']);  
             if (!empty($input->name)) {
                 $oList->name = $input->name;
             }

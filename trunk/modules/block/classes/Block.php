@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author: Gilles Laborderie <gillesl@users.sourceforge.net>                 |
 // +---------------------------------------------------------------------------+
-// $Id: Block.php,v 1.9 2005/01/23 13:47:24 demian Exp $
+// $Id: Block.php,v 1.11 2005/05/29 00:29:08 demian Exp $
 
 require_once SGL_ENT_DIR . '/Block.php';
 require_once SGL_ENT_DIR . '/Block_assignment.php';
@@ -47,7 +47,7 @@ require_once SGL_ENT_DIR . '/Block_assignment.php';
  *
  * @package block
  * @author  Gilles Laborderie <gillesl@users.sourceforge.net>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.11 $
  * @since   PHP 4.1
  */
 class Block extends DataObjects_Block
@@ -233,12 +233,14 @@ class Block extends DataObjects_Block
             $block_assignment = & new DataObjects_Block_Assignment();
             $block_assignment->block_id = $this->block_id;
             $block_assignment->delete();
+            unset($block_assignment);
             foreach ($this->sections as $section) {
                 // Insert a block_assignment record for each assigned sections
-                if ($section->section_id) {
+                $block_assignment = & new DataObjects_Block_Assignment();
+                $block_assignment->block_id = $this->block_id;                                    
                 $block_assignment->section_id = $section->section_id;
                 $block_assignment->insert();
-                }
+                unset($block_assignment);                    
             }
         }
         return true;

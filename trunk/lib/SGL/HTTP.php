@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -645,12 +645,14 @@ class SGL_HTTP_Session
     function dbRead($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "SELECT data_value FROM user_session WHERE session_id = '$sessId'";
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $query = "SELECT data_value FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         if ($res->numRows() == 1) {
             return $dbh->getOne($query);
         } else {
-            $query = "INSERT INTO user_session (session_id, last_updated, data_value)
+            $query = "INSERT INTO {$conf['table']['user_session']} (session_id, last_updated, data_value)
             VALUES ('$sessId', '" . SGL::getTime(true) . "', '')";
             $dbh->query($query);
             return '';
@@ -665,7 +667,9 @@ class SGL_HTTP_Session
     function dbWrite($sessId, $value)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "  UPDATE user_session SET data_value = " . $dbh->quote($value) . ", 
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "  UPDATE {$conf['table']['user_session']} SET data_value = " . $dbh->quote($value) . ", 
                         last_updated = '" . SGL::getTime(true) . "' 
                     WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
@@ -680,7 +684,9 @@ class SGL_HTTP_Session
     function dbDestroy($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "DELETE FROM user_session WHERE session_id = '$sessId'";
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "DELETE FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         return true;
     }
@@ -693,7 +699,9 @@ class SGL_HTTP_Session
     function dbGc($expiry)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "DELETE FROM user_session WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "DELETE FROM {$conf['table']['user_session']} WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
                 "') - UNIX_TIMESTAMP(last_updated ) > $expiry";
         $dbh->query($query);
         return true;

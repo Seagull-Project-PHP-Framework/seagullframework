@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -199,7 +199,7 @@ class UserMgr extends RegisterMgr
         if (@$conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
-        $oUser->usr_id = $dbh->nextId('usr');
+        $oUser->usr_id = $dbh->nextId($conf['table']['user']);
         $oUser->date_created = $oUser->last_updated = SGL::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
         $success = $oUser->insert();
@@ -337,14 +337,14 @@ class UserMgr extends RegisterMgr
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    usr u, organisation o, role r
+                FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id
                 ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
-                FROM    usr u, role r
+                FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
                 WHERE   r.role_id = u.role_id
                 ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
         }
@@ -577,7 +577,6 @@ class UserMgr extends RegisterMgr
                     $results[$userId] = 0; //log result for user
                     continue;
                 }
-
             }
             //  if we make it here, we're all good (for this user)
             $dbh->commit();

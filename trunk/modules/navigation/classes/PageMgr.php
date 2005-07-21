@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -86,9 +86,7 @@ class PageMgr extends SGL_Manager
                 'title'         => 'title',
                 'perms'         => 'perms',
                 'is_enabled'    => 'is_enabled',
-                'is_static'     => 'is_static',
-                'access_key'	=> 'access_key',
-                'rel'			=> 'rel'
+                'is_static'     => 'is_static'
             ),
             'tableName'      => 'section',
             'lockTableName'  => 'table_lock',
@@ -141,28 +139,10 @@ class PageMgr extends SGL_Manager
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
-            
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
             }
-            
-            if (!empty($input->section['access_key'])) {
-            	$id2Ignore= null;
-            	
-            	if($input->action == 'update') {
-            		$id2Ignore = $input->section['section_id'];
-            	}
-            	
-            	if(!$this->_isUniqueAccessKey($input->section['access_key'], $id2Ignore)) {
-                	$aErrors[] = 'There already exists another page with the same access key';
-            	}
-            }
-
-            if (!empty($input->section['rel'])) {
-                $aErrors[] = 'Please fill in a title';
-            }                       
-            
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
             if (($input->action == 'update' || $input->action == 'insert') && $input->section['parent_id'] != 0) {
@@ -199,10 +179,13 @@ class PageMgr extends SGL_Manager
     function _getStaticArticles()
     {
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    item i, item_addition ia, item_type it, item_type_mapping itm
+             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id
@@ -345,40 +328,43 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        //  setup article type, dropdowns built in display()
-        $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
-        
-        //  parse url details
-        $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
-        $section = array_merge($section, $parsed);
-        
-        //  adjust friendly mgr name to class filename
-        $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
-        $section['manager'] = $className . '.php';
-        
-        //  represent additional params as string
-        if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
-            foreach ($parsed['parsed_params'] as $k => $v) {
-                $ret[] = $k . '/' . $v;
+        //  passing a non-existent section id results in null or false $section
+        if ($section) {
+            $conf = & $GLOBALS['_SGL']['CONF'];
+                    
+            //  setup article type, dropdowns built in display()
+            $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
+            
+            //  parse url details
+            $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
+            $section = array_merge($section, $parsed);
+            
+            //  adjust friendly mgr name to class filename
+            $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
+            $section['manager'] = $className . '.php';
+            
+            //  represent additional params as string
+            if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
+                foreach ($parsed['parsed_params'] as $k => $v) {
+                    $ret[] = $k . '/' . $v;
+                }
+                $section['add_params'] = implode('/', $ret);
+            } else {
+                $section['add_params'] = null;
             }
-            $section['add_params'] = implode('/', $ret);
-        } else {
-            $section['add_params'] = null;
-        }
-        //  deal with static articles
-        if ($section['is_static']) {
-            if (isset($parsed['parsed_params'])) {
-                $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+            //  deal with static articles
+            if ($section['is_static']) {
+                if (isset($parsed['parsed_params'])) {
+                    $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+                }
+                $section['add_params'] = '';
             }
-            $section['add_params'] = '';
-        }
-
-        //  split off anchor if exists
-        if (stristr($section['resource_uri'], '#')) {
-            list(,$anchor) = split("#", $section['resource_uri']);
-            $section['anchor'] = $anchor;
+    
+            //  split off anchor if exists
+            if (stristr($section['resource_uri'], '#')) {
+                list(,$anchor) = split("#", $section['resource_uri']);
+                $section['anchor'] = $anchor;
+            }
         }
         $output->section = $section;
     }
@@ -588,30 +574,5 @@ class PageMgr extends SGL_Manager
         }
         return "<script type='text/javascript'>\nvar nodeArray = new Array()\n" . $nodesArrayJS . "</script>\n";
     }
-    
-    /**
-     * Determines if an access key is unique.
-     *
-     * @param string access key
-     * @param id any id to ignore, important when updating entry itself
-     * @return boolean
-     * @todo get rid of DataObject
-     */
-    function _isUniqueAccessKey($accessKey, $id2Ignore = null)
-    {
-        if (isset($accessKey)) {
-            $oSection = & new DataObjects_Section();
-            $oSection->whereAdd("access_key = '$accessKey'");
-            
-            if(isset($id2Ignore)) {
-            	$oSection->whereAdd("secion_id <> $id2Ignore");
-            }
-            
-            $numRows = $oSection->find();
-
-            //  return false if any rows found
-            return (boolean)$numRows == 0;
-        }
-    }    
 }
 ?>

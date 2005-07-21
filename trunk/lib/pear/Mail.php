@@ -46,16 +46,18 @@ class Mail
      * @return object Mail a instance of the driver class or if fails a PEAR Error
      * @access public
      */
-    function factory($driver, $params = array())
+    function &factory($driver, $params = array())
     {
         $driver = strtolower($driver);
         @include_once 'Mail/' . $driver . '.php';
         $class = 'Mail_' . $driver;
         if (class_exists($class)) {
-            return new $class($params);
+            $mailer = &new $class($params);
         } else {
-            return PEAR::raiseError('Unable to find class for driver ' . $driver);
+            $mailer = PEAR::raiseError('Unable to find class for driver ' . $driver);
         }
+
+        return $mailer;
     }
 
     /**

@@ -8,7 +8,7 @@
 // |                                                                           |
 // | Author: Rares Benea <rbenea@bluestardesign.ro>                            |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Rares Benea                                           |
+// | Copyright (c) 2005, Rares Benea                                           |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -262,7 +262,7 @@ class CartMgr extends SGL_Manager
          // Write order to DB
          $oOrder = & new DataObjects_Cart();
          $dbh = $oOrder->getDatabaseConnection();
-         $oOrder->cart_id = $dbh->nextId('cart');
+         $oOrder->cart_id = $dbh->nextId($conf['table']['cart']);
          $oOrder->usr_id = $order->uid;
          $oOrder->items = addslashes(serialize($order->items));
          $oOrder->items_count = $order->itemCount;
@@ -281,25 +281,25 @@ class CartMgr extends SGL_Manager
          $output->total = $this->_order->total; 
          $output->items = array();
          $block = array();
-         foreach($this->_order->items as $key => $item) {
+         foreach ($this->_order->items as $key => $item) {
             $output->items[$key] = clone($item);
             $block[] = array('name' => $item->name, 'price' => $item->price, 'quantity' => $item->quantity);  
          }
          
          
-         if($conf['Cart']['emailConfirmation']) {
-                    // Send email
-                    $name = $oUser->first_name.' '.$oUser->last_name;
-                    $output->emailSiteName = $conf['site']['name'];
-                    $output->emailSubject = SGL_String::translate('Order received').' '.$conf['site']['name'];
-                    $output->emailName = strlen($name) > 2 ? $name : 'User';
-                    $output->emailAddress = $oUser->email;
-                    $output->emailBcc = $conf['email']['admin'];
-                    $ret = $this->_send($input, $output);
-                    if(!$ret) {
-                       SGL::logMessage('Unable to send order message to: '.$oUser->email);
-                    }
-                }
+         if ($conf['Cart']['emailConfirmation']) {
+            // Send email
+            $name = $oUser->first_name.' '.$oUser->last_name;
+            $output->emailSiteName = $conf['site']['name'];
+            $output->emailSubject = SGL_String::translate('Order received').' '.$conf['site']['name'];
+            $output->emailName = strlen($name) > 2 ? $name : 'User';
+            $output->emailAddress = $oUser->email;
+            $output->emailBcc = $conf['email']['admin'];
+            $ret = $this->_send($input, $output);
+            if(!$ret) {
+               SGL::logMessage('Unable to send order message to: '.$oUser->email);
+            }
+        }
          
         if ($success) {
             //  redirect on success
@@ -388,6 +388,5 @@ class CartMgr extends SGL_Manager
         
         return $success;
     }
-    
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -38,6 +38,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: BlockForm.php,v 1.11 2005/05/28 21:15:50 demian Exp $
 
+require_once 'HTML/QuickForm.php';
+require_once SGL_ENT_DIR . '/Section.php';
+
 /**
  * Quickform Block wrapper class.
  *
@@ -47,8 +50,6 @@
  * @since   PHP 4.1
  */
 
-require_once 'HTML/QuickForm.php';
-require_once SGL_ENT_DIR . '/Section.php';
 
 class BlockForm
 {
@@ -69,7 +70,7 @@ class BlockForm
                 $sections[ $sectionList->section_id ] = $sectionList->title;
             }
         }
-        $sections[0] = 'All sections';        
+        $sections[0] = 'All sections';
         $this->sections = $sections;
     }
 

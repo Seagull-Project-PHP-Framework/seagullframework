@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -223,6 +223,9 @@ class BugMgr extends SGL_Manager
 
 class BugReport
 {   
+    var $reporter_first_name;
+    var $reporter_last_name;
+    
     function BugReport($oData)
     {
         foreach ($oData as $k => $v) {
@@ -232,12 +235,14 @@ class BugReport
     
     function getEmail()
     {
-        return isset($this->reporter_email) ? $this->reporter_email : nobody;
+        return isset($this->reporter_email) ? $this->reporter_email : 'anonymous';
     }
     
     function getName()
     {
-        return $this->reporter_first_name .' '. $this->reporter_last_name;
+        return isset($this->reporter_first_name) 
+            ? $this->reporter_first_name .' '. $this->reporter_last_name 
+            : 'BugReporter';
         
     }
     

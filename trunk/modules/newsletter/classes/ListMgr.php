@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -404,7 +404,6 @@ class ListMgr extends NewsletterMgr
             if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
                 $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
             }
-
             $output->totalItems = $aPagedData['totalItems'];
             $output->aPagedData = $aPagedData;
         } 

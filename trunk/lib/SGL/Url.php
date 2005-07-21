@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -370,17 +370,27 @@ class SGL_Url
                 //  or no resulset was passed (qs params are literals)
                 //  - empty array if from manager
                 //  - string equal to 0 if ## passed from template
-                if (is_array(end($aList)) || !(count($aList)) || $aList == 0) {
+                if (is_array(end($aList)) || (is_array($aList) && !is_object(end($aList))) || !(count($aList)) || $aList == 0) {
                 
                     //  determine type of param value
-                    if (isset($aList[$idx][$listKey])) { // pass referenced array element
+                    if (isset($aList[$idx][$listKey]) && !is_null($listKey)) { // pass referenced array element
                         $qsParamValue = $aList[$idx][$listKey];
+                        
+                    //  we're here because a simple array was passed for $aList, ie:
+                    //  makeUrl(#edit#,#orgType#,#user#,orgTypes,#frmOrgTypeID#,id)
+                    //  in this case, the key from the flexy foreach is what we want to assign as the value, ie
+                    //  - frmOrgTypeId/0
+                    //  - frmOrgTypeId/1 ... etc
+                    } elseif (isset($aList[$idx])) {
+                        $qsParamValue = $idx;
+                        
                     } else {
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
                             $elems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
+                                
                                 //  variable is of type $output->org['organisation_id'] = 'foo';
                                 $qsParamValue = $output->{$elems[0]}[$elems[1]];
                             } else {

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -76,11 +76,14 @@ INTRO;
     function retrieveAll()
     {
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
                 SELECT      i.item_id,
                             ia.addition,
                             i.start_date
-                FROM    item i, item_addition ia, item_type it, item_type_mapping itm
+                FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                        {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm                
                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id
                 AND     i.item_id = ia.item_id

@@ -32,7 +32,7 @@
  *
  * @package
  * @author daniel
- * @copyright Copyright (c) 2004
+ * @copyright Copyright (c) 2005
  * @version $Id: Menu.php,v 1.8 2004/10/25 06:39:22 cvsroot Exp $
  * @access public
  */
