@@ -110,6 +110,7 @@ class BlockMgr extends SGL_Manager
         $output->template = 'blockFormdynamic.html';
         $output->mode = 'New block';
         $output->wysiwyg = true;
+
         // Build form
         $myForm = & new BlockFormDynamic('addDynamic');
         $output->form = $myForm->init();
@@ -125,7 +126,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = 'SELECT MAX( blk_order ) FROM block WHERE is_onleft = ' . $oBlock->is_onleft;
+                $query = "SELECT MAX(blk_order) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 $block->insert(); // This takes into account block assignments as well
@@ -162,7 +163,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = 'SELECT MAX( blk_order ) FROM block WHERE is_onleft = ' . $oBlock->is_onleft;
+                $query = "SELECT MAX( blk_order ) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
