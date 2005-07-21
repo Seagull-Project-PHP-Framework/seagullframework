@@ -10,12 +10,12 @@
 
     <div id="login">
     {if:loggedOnUser}
-        <div id="UserInfo">{translate(#currently_logged_on_as#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="User profile">{loggedOnUser}</a>
+        <div id="userInfo">{translate(#currently_logged_on_as#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="User profile">{loggedOnUser}</a>
         &nbsp;{translate(#session started at#)} {loggedOnSince}</div>
-        <div id="LogAction"><a href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a></div>
+        <a id="logAction" href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a>
     {else:}
-        <div id="UserInfo">{translate(#currently_logged_on_as#)}: <span class="guest">{translate(#guest#)}</span></div>
-        <div id="LogAction"><a href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a></div>
+        <div id="userInfo">{translate(#currently_logged_on_as#)}: <span class="guest">{translate(#guest#)}</span></div>
+        <a id="logAction" href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a>
     {end:}
     </div>
     {if:GLOBALS[_SGL][CONF][debug][showBugReporterLink]}
