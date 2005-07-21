@@ -17,7 +17,7 @@
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Download.php,v 1.7 2005/06/23 15:56:30 demian Exp $
+ * @version    CVS: $Id: Download.php,v 1.69 2005/07/18 09:38:36 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -92,7 +92,7 @@ define('HTTP_DOWNLOAD_E_INVALID_ARCHIVE_TYPE',  -9);
  * if you want to send already gzipped data!
  * 
  * @access   public
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.69 $
  */
 class HTTP_Download
 {
@@ -149,12 +149,12 @@ class HTTP_Download
     var $size = 0;
     
     /**
-     * Last modified (GMT)
+     * Last modified
      *
      * @access  protected
-     * @var     string
+     * @var     int
      */
-    var $lastModified = '';
+    var $lastModified = 0;
     
     /**
      * HTTP headers
@@ -410,15 +410,16 @@ class HTTP_Download
      * @access  public
      * @return  bool
      * @param   string  $cache  private or public
+     * @param   int     $maxage maximum age of the client cache entry
      */
-    function setCacheControl($cache = 'public')
+    function setCacheControl($cache = 'public', $maxage = 0)
     {
         switch ($cache = strToLower($cache))
         {
             case 'private':
             case 'public':
                 $this->headers['Cache-Control'] = 
-                    $cache .', must-revalidate, max-age=0';
+                    $cache .', must-revalidate, max-age='. $maxage;
                 return true;
             break;
         }
@@ -510,8 +511,7 @@ class HTTP_Download
      */
     function setLastModified($last_modified)
     {
-        $this->lastModified             = HTTP::Date((int) $last_modified);
-        $this->headers['Last-Modified'] = (int) $last_modified;
+        $this->lastModified = $this->headers['Last-Modified'] = (int) $last_modified;
     }
     
     /**
@@ -726,7 +726,7 @@ class HTTP_Download
      *  HTTP_Download::sendArchive(
      *      'myArchive.tgz',
      *      '/var/ftp/pub/mike',
-     *      HTTP_DOWNLOAD_BZ2,
+     *      HTTP_DOWNLOAD_TGZ,
      *      '',
      *      '/var/ftp/pub'
      *  );
@@ -922,8 +922,8 @@ class HTTP_Download
     {
         return (
             (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) &&
-            $this->lastModified === array_shift(explode(';', 
-                $_SERVER['HTTP_IF_MODIFIED_SINCE']))) ||
+            $this->lastModified == strtotime(array_shift(explode(
+                ';', $_SERVER['HTTP_IF_MODIFIED_SINCE'])))) ||
             (isset($_SERVER['HTTP_IF_NONE_MATCH']) &&
             $this->compareAsterisk('HTTP_IF_NONE_MATCH', $this->etag))
         );
@@ -943,13 +943,20 @@ class HTTP_Download
         }
         if (isset($_SERVER['HTTP_IF_RANGE']) &&
                   $_SERVER['HTTP_IF_RANGE'] !== $this->etag &&
-                  $_SERVER['HTTP_IF_RANGE'] !== $this->lastModified) {
+                  strtotime($_SERVER['HTTP_IF_RANGE']) !== $this->lastModified) {
             return false;
         }
-        if (isset($_SERVER['HTTP_IF_UNMODIFIED_SINCE']) && 
-            array_shift(explode(';', $_SERVER['HTTP_IF_UNMODIFIED_SINCE'])) !== 
-                $this->lastModified) {
-            return false;
+        if (isset($_SERVER['HTTP_IF_UNMODIFIED_SINCE'])) {
+            $lm = array_shift(explode(';', $_SERVER['HTTP_IF_UNMODIFIED_SINCE']));
+            if (strtotime($lm) !== $this->lastModified) {
+                return false;
+            }
+        }
+        if (isset($_SERVER['HTTP_UNLESS_MODIFIED_SINCE'])) {
+            $lm = array_shift(explode(';', $_SERVER['HTTP_UNLESS_MODIFIED_SINCE']));
+            if (strtotime($lm) !== $this->lastModified) {
+                return false;
+            }
         }
         return true;
     }

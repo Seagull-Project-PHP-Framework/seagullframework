@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | ContentTypeMgr.php                                                        |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004 Demian Turner                                          |
+// | Copyright (c) 2005 Demian Turner                                          |
 // |                                                                           |
 // | Author: Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
 // +---------------------------------------------------------------------------+
@@ -142,9 +142,11 @@ var $fieldTypes;
         
         //  insert item type into item_type table.
         $dbh = &SGL_DB::singleton();
-        $item_type_id   = $dbh->nextId('item_type');
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        
+        $item_type_id   = $dbh->nextId($conf['table']['item_type']);
         $item_type_name = $input->type['item_type_name']; 
-        $query = "INSERT INTO item_type (item_type_id, item_type_name) VALUES ($item_type_id, '". $item_type_name . "')";
+        $query = "INSERT INTO {$conf['table']['item_type']} (item_type_id, item_type_name) VALUES ($item_type_id, '". $item_type_name . "')";
         $result = $dbh->query($query);         
         if (DB::isError($result)) {
         SGL::raiseError('Error inserting item type name exiting ...', 
@@ -156,8 +158,8 @@ var $fieldTypes;
         //  insert item type fields into item_type_mapping table.       
         foreach ($input->type['field_name'] as $nKey => $nValue) {
             $field_type = $input->type['field_type'][$nKey];
-            $item_type_mapping_id = $dbh->nextId('item_type_mapping');
-            $subquery = "INSERT INTO item_type_mapping (item_type_mapping_id, item_type_id, field_name, field_type) 
+            $item_type_mapping_id = $dbh->nextId($conf['table']['item_type_mapping']);
+            $subquery = "INSERT INTO {$conf['table']['item_type_mapping']} (item_type_mapping_id, item_type_id, field_name, field_type) 
                          VALUES ($item_type_mapping_id, $item_type_id, '" . $nValue . "', $field_type)";
             $subresult = $dbh->query($subquery);
             print_r($subresult);
@@ -184,10 +186,12 @@ var $fieldTypes;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'contentTypeEdit.html';
         $dbh = &SGL_DB::singleton();
-        $query = "SELECT itm.item_type_id,  it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM item_type_mapping itm, item_type it                   
-                  WHERE itm.item_type_id = $input->contentTypeID
-                  AND it.item_type_id = $input->contentTypeID";
+        $conf = & $GLOBALS['_SGL']['CONF'];       
+                
+        $query = "SELECT    itm.item_type_id,  it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
+                  FROM      {$conf['table']['item_type_mapping']} itm, {$conf['table']['item_type']} it                   
+                  WHERE     itm.item_type_id = $input->contentTypeID
+                  AND       it.item_type_id = $input->contentTypeID";
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
@@ -237,10 +241,11 @@ var $fieldTypes;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = &SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];               
         
         //  update item type name
         if ($input->type['item_type_name'] !== $input->type['item_type_name_original']) {
-            $query = "UPDATE item_type SET item_type_name='" . $input->type['item_type_name'] . "'
+            $query = "UPDATE {$conf['table']['item_type']} SET item_type_name='" . $input->type['item_type_name'] . "'
                       WHERE item_type_id=" . $input->contentTypeID;
             $result = $dbh->query($query);
             if (DB::isError($result)) {
@@ -265,13 +270,13 @@ var $fieldTypes;
 
             //  build query
             if (!empty($fieldNameClause) && isset($fieldTypeClause)) {   //  update field_name & field_type
-                $query = "UPDATE item_type_mapping SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
+                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
                 $result = $dbh->query($query);                
             } else if (isset($fieldNameClause)) {                       //  update only field_name
-                $query = "UPDATE item_type_mapping SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
+                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
                 $result = $dbh->query($query);                                
             } else if (isset($fieldTypeClause)) {                       //  update only field_type
-                $query = "UPDATE item_type_mapping SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
+                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
                 $result = $dbh->query($query);                                
             }
 
@@ -296,9 +301,12 @@ var $fieldTypes;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $query = "SELECT it.item_type_id, it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM item_type it, item_type_mapping itm
-                  WHERE itm.item_type_id = it.item_type_id";        
+                  FROM {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
+                  WHERE itm.item_type_id = it.item_type_id";  
+              
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
@@ -314,17 +322,20 @@ var $fieldTypes;
                 case 'item_type_mapping_id':
                     $item_type_mapping_id = $value;
                     break;
+                    
                 case 'item_type_id':
                     $item_type_id = $value;
                     $data[$item_type_id]['item_type_id'] = $value;
                     break;
+                    
                 case 'item_type_name':
                     $data[$item_type_id][$key] = $value; 
                     break;
+                    
                 case 'field_name':
                     $field_name = $value;                       
                     break;
-                break;                    
+                    
                 case 'field_type':
                     $data[$item_type_id]['fields'][$item_type_mapping_id] = array($field_name => $this->fieldTypes[$value]);
                     break;
@@ -358,19 +369,21 @@ var $fieldTypes;
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];        
 
         if (is_array($input->aDelete)) {
             $dbh = & SGL_DB::singleton();
+            
             foreach ($input->aDelete as $index => $itemTypeId) {
                 //  delete item type from item_type table
-                $query = "DELETE FROM item_type WHERE item_type_id=$itemTypeId"; 
+                $query = "DELETE FROM {$conf['table']['item_type']} WHERE item_type_id=$itemTypeId"; 
                 if (DB::isError($dbh->query($query))) {
                     SGL::raiseError('Error updating item type name exiting ...', 
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 }
                 unset($query);
                 //  delete item type fields from item_type_mapping
-                $query = "DELETE FROM item_type_mapping WHERE item_type_id=$itemTypeId"; 
+                $query = "DELETE FROM {$conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId"; 
                 if (DB::isError($dbh->query($query))) {
                     SGL::raiseError('Error updating item type name exiting ...', 
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
@@ -381,8 +394,6 @@ var $fieldTypes;
             SGL::raiseError('Incorrect parameter passed to ' . 
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        
     }
-
 }
 ?>

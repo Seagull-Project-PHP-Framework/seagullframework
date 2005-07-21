@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -48,14 +48,6 @@
  * @access  public
  * @since   PHP 4.1
  */
- 
- /* *
- * HTML blocks.
- * Ori: 
- * line 157 in function _loadBlocks() - add b.content
- * line 205 in function _buildBlocks() - added trick to send block content if dynamic html.
- */
- 
 class SGL_BlockLoader
 {
     /**
@@ -152,14 +144,15 @@ class SGL_BlockLoader
     function _loadBlocks()
     {
         $dbh = & SGL_DB::singleton();
-        $query = '
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
-                b.body_class, b.is_onleft, b.content
-            FROM    block b, block_assignment ba
+                b.body_class, b.is_onleft
+            FROM    {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba
             WHERE   b.is_enabled = 1
             AND     b.block_id = ba.block_id
-            AND     ( ba.section_id = 0 OR ba.section_id = ' . 
+            AND     ( ba.section_id = 0 OR ba.section_id = " . 
                     $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';
@@ -199,14 +192,8 @@ class SGL_BlockLoader
                         SGL_ERROR_NOCLASS);
                 } else {
                     @$obj = & new $blockClass();
-                    if (isset($obj->dynamic)) {
-                        // this is a dynamic block. do the boogie.
-                        $this->_aData[$index]->content = $obj->init($oBlock);
-                    } else {
-                        // This is a standard SGL block.
                     $this->_aData[$index]->content = $obj->init($this->output);
                 }
-            }
             }
             $this->_sort();
         }

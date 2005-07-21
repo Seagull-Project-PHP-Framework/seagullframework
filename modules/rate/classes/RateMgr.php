@@ -85,7 +85,7 @@ class RateMgr extends SGL_Manager
         
         $dbh = & SGL_DB::singleton();
         
-        $query = "SELECT MAX(date) AS date FROM rate";
+        $query = "SELECT MAX(date) AS date FROM {$conf['table']['rate']}";
         $result = $dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -98,7 +98,7 @@ class RateMgr extends SGL_Manager
             return false;
         } 
        
-        $query = "SELECT * FROM rate WHERE date='".$row['date']."'";
+        $query = "SELECT * FROM {$conf['table']['rate']} WHERE date='".$row['date']."'";
         $result = $dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);

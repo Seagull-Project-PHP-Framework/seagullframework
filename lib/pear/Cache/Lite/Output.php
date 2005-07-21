@@ -7,7 +7,7 @@
 * Technical choices are described in the 'docs/technical' file
 *
 * @package Cache_Lite
-* @version $Id: Output.php,v 1.11 2005/06/23 15:56:30 demian Exp $
+* @version $Id: Output.php,v 1.3 2005/04/17 21:40:18 fab Exp $
 * @author Fabien MARTY <fab@php.net>
 */
 

@@ -15,7 +15,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Generator.php,v 1.16 2005/06/25 08:41:52 demian Exp $
+ * @version    CVS: $Id: Generator.php,v 1.96 2005/06/16 02:03:45 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
  
@@ -151,7 +151,7 @@ class DB_DataObject_Generator extends DB_DataObject
         
         // try getting a list of schema tables first. (postgres)
         $__DB->expectError(DB_ERROR_UNSUPPORTED);
-        $this->tables = $__DB->getListOf('tables');
+        $this->tables = $__DB->getListOf('schema.tables');
         $__DB->popExpect();
         
         if (empty($this->tables) || is_a($this->tables , 'PEAR_Error')) {

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -408,6 +408,7 @@ class ArticleMgr extends SGL_Manager
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
+        $dbh = & SGL_DB::singleton();        
         $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  if published flag set, only return published articles
@@ -431,7 +432,8 @@ class ArticleMgr extends SGL_Manager
                     i.start_date,
                     i.expiry_date,
                     i.status
-            FROM    item i, item_addition ia, item_type it, item_type_mapping itm, " . $conf['table']['user'] . " u
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, {$conf['table']['user']} u
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -444,7 +446,6 @@ class ArticleMgr extends SGL_Manager
             $limitByAuthorClause . "
             ORDER BY i.last_updated DESC
             ";
-        $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
@@ -467,7 +468,9 @@ class ArticleMgr extends SGL_Manager
     function retrieveAll($dataTypeID, $queryRange)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();        
 
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all') ?'' : "AND i.category_id = $catID";
@@ -479,7 +482,9 @@ class ArticleMgr extends SGL_Manager
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    item i, item_addition ia, item_type it, item_type_mapping itm, " . $conf['table']['user'] . " u 
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, {$conf['table']['user']} u
+                                
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -491,7 +496,6 @@ class ArticleMgr extends SGL_Manager
             $rangeWhereClause . "
             ORDER BY i.date_created DESC
                 ";
-        $dbh = & SGL_DB::singleton();
         $aArticles = $dbh->getAll($query);
         return $aArticles;
     }
@@ -506,9 +510,11 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $query = '  SELECT  item_type_id, item_type_name 
-                    FROM    item_type
-                ';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "  SELECT  item_type_id, item_type_name 
+                    FROM    {$conf['table']['item_type']}
+                ";
         return $dbh->getAssoc($query);
     }
 

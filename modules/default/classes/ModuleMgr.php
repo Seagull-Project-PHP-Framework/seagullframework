@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -133,9 +133,9 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = & SGL_DB::singleton();
-        $query = '  SELECT is_configurable, title, description, admin_uri, icon 
-                    FROM module
-                    ORDER BY module_id';
+        $query = "  SELECT is_configurable, title, description, admin_uri, icon 
+                    FROM {$conf['table']['module']}
+                    ORDER BY module_id";
         $aModules = $dbh->getAll($query);
         if (!DB::isError($aModules)) {
             $ret = array();
@@ -176,10 +176,12 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $newEntry = & new DataObjects_Module();
         $newEntry->setFrom($input->module);
         $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->module_id = $dbh->nextId('module');
+        $newEntry->module_id = $dbh->nextId($conf['table']['module']);
         if ($newEntry->insert()) {
             SGL::raiseMsg('Module successfully added to the manager.');
         } else {
@@ -232,9 +234,11 @@ class ModuleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $output->template = 'moduleList.html';
         $dbh = & SGL_DB::singleton();
-        $query = 'SELECT * FROM module ORDER BY name';
+        $query = "SELECT * FROM {$conf['table']['module']} ORDER BY name";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -262,20 +266,21 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         switch ($type) {
         case SGL_RET_ID_VALUE:
-            $query = '  SELECT module_id, title
-                        FROM module
-                        ORDER BY module_id';
+            $query = "  SELECT module_id, title
+                        FROM {$conf['table']['module']}
+                        ORDER BY module_id";
             $aMods = $dbh->getAssoc($query);
             break;
 
         case SGL_RET_NAME_VALUE:
         default:
-            $query = '  SELECT name, title 
-                        FROM module 
-                        ORDER BY name';
+            $query = "  SELECT name, title 
+                        FROM {$conf['table']['module']} 
+                        ORDER BY name";
             $aModules = $dbh->getAll($query);
             foreach ($aModules as $k => $oVal) {
                 if ($oVal->name == 'documentor') {
@@ -292,17 +297,15 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $permId = ($permId === null) ? 0 : $permId;
         $query = "  SELECT  module_id
-                    FROM    permission
+                    FROM    {$conf['table']['permission']}
                     WHERE   permission_id = $permId
                 ";
         $moduleId = $dbh->getOne($query);
         return $moduleId;
-    }
-
-    function getUpgrades()
-    {
     }
 }
 ?>

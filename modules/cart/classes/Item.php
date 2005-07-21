@@ -7,7 +7,7 @@
 // +---------------------------------------------------------------------------+
 // | Author: Rares Benea <rbenea@bluestardesign.ro>                            |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Rares Benea                                           |
+// | Copyright (c) 2005, Rares Benea                                           |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |

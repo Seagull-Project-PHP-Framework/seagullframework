@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -93,8 +93,8 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {
-                //  username must be at least 3 chars
-                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 3 ))) {
+                //  username must be at least 5 chars
+                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
                     $aErrors['username'] = 'username min length';
                 }
             }
@@ -216,7 +216,7 @@ class RegisterMgr extends SGL_Manager
             $oUser->is_acct_active = 1;
         }
         $dbh = $oUser->getDatabaseConnection();
-        $oUser->usr_id = $dbh->nextId('usr');
+        $oUser->usr_id = $dbh->nextId($conf['table']['user']);
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
         $oUser->date_created = $oUser->last_updated = SGL::getTime();
@@ -230,7 +230,7 @@ class RegisterMgr extends SGL_Manager
         foreach ($aRolePerms as $permId) {
             $dbh->query('   INSERT INTO ' . $conf['table']['user_permission'] . '
                             (user_permission_id, usr_id, permission_id)
-                            VALUES (' . $dbh->nextId('user_permission') . ', ' . $oUser->usr_id . ", $permId)");
+                            VALUES (' . $dbh->nextId($conf['table']['user_permission']) . ', ' . $oUser->usr_id . ", $permId)");
         }
 
         if ($success) {

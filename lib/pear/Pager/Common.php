@@ -18,7 +18,7 @@
  * @author     Richard Heyes <richard@phpguru.org>
  * @copyright  2003-2005 Lorenzo Alberton, Richard Heyes
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.15 2005/06/23 15:56:42 demian Exp $
+ * @version    CVS: $Id: Common.php,v 1.38 2005/07/04 08:18:42 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -1198,11 +1198,11 @@ class Pager_Common
         $tmp = array ();
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                array_push($tmp, $this->__http_build_query($value, sprintf('%s[%s]', $name, $key)));
+                array_push($tmp, $this->__http_build_query($value, $name.'%5B'.$key.'%5D'));
             } elseif (is_scalar($value)) {
-                array_push($tmp, sprintf('%s[%s]=%s', $name, htmlentities($key), htmlentities($value)));
+                array_push($tmp, $name.'%5B'.htmlentities($key).'%5D='.htmlentities($value));
             } elseif (is_object($value)) {
-                array_push($tmp, $this->__http_build_query(get_object_vars($value), sprintf('%s[%s]', $name, $key)));
+                array_push($tmp, $this->__http_build_query(get_object_vars($value), $name.'%5B'.$key.'%5D'));
             }
         }
         return implode(ini_get('arg_separator.output'), $tmp);

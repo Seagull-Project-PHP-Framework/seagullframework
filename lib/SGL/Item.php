@@ -4,7 +4,7 @@
 // +---------------------------------------------------------------------------+
 // | Item.php                                                                  |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004 Demian Turner                                          |
+// | Copyright (c) 2005 Demian Turner                                          |
 // |                                                                           |
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
@@ -160,7 +160,7 @@ class SGL_Item
                             it.item_type_name,
                             i.category_id,
                             i.status
-                    FROM    item i, item_type it, " . $conf['table']['user'] . " u
+                    FROM    {$conf['table']['item']} i, {$conf['table']['item_type']} it, {$conf['table']['user']} u
                     WHERE   it.item_type_id = i.item_type_id
                     AND     i.created_by_id = u.usr_id
                     AND     i.item_id = $itemID
@@ -196,11 +196,14 @@ class SGL_Item
     function addMetaItems()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $catID = $this->catID ? $this->catID : 1;
+        
         $dbh = & SGL_DB::singleton();
-        $id = $dbh->nextId('item');
+        $conf = & $GLOBALS['_SGL']['CONF']; 
+
+        $catID = $this->catID ? $this->catID : 1;        
+        $id = $dbh->nextId($conf['table']['item']);
         $query = "  
-            INSERT INTO item(
+            INSERT INTO {$conf['table']['item']}(
                 item_id,
                 created_by_id,
                 updated_by_id,
@@ -240,14 +243,16 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF']; 
+                
         for ($x=0; $x < count($itemID); $x++) {
-            $id = $dbh->nextId('item_addition');
+            $id = $dbh->nextId($conf['table']['item_addition']);
             if ($itemValue[$x] == '')
                 $itemValue[$x] = SGL_String::translate('No text entered');
             //  profanity check
             $editedTxt = $dbh->quote(SGL_String::censor($itemValue[$x]));
             $query = "
-                    INSERT INTO item_addition VALUES (
+                    INSERT INTO {$conf['table']['item_addition']} VALUES (
                         $id,
                         $parentID,
                         $itemID[$x],
@@ -272,7 +277,9 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $id = $dbh->nextId('item_addition');
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $id = $dbh->nextId($conf['table']['item_addition']);
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
         }
@@ -280,7 +287,7 @@ class SGL_Item
         //  profanity check
         $editedTxt = $dbh->quote(SGL_String::censor($itemValue));
         $query = "
-            INSERT INTO item_addition VALUES (
+            INSERT INTO {$conf['table']['item_addition']} VALUES (
                 $id,
                 $parentID,
                 $itemID,
@@ -299,8 +306,10 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "  
-            UPDATE item SET
+            UPDATE {$conf['table']['item']} SET
                 updated_by_id = $this->lastUpdatedById,
                 last_updated = " . $dbh->quote($this->lastUpdated) . ",
                 start_date = " . $dbh->quote($this->startDate) . ",
@@ -324,6 +333,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
         for ($x=0; $x < count($itemID); $x++) {
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No text entered');
@@ -331,7 +342,7 @@ class SGL_Item
             //  profanity check
             $editedTxt = $dbh->quote(SGL_String::censor($itemValue[$x]));
             $query = "
-                UPDATE  item_addition
+                UPDATE  {$conf['table']['item_addition']}
                 SET     addition = $editedTxt
                 WHERE   item_addition_id = $itemID[$x]
                      ";
@@ -353,6 +364,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
         }
@@ -360,7 +373,7 @@ class SGL_Item
         //  profanity check
         $editedTxt = $dbh->quote(SGL_String::censor($itemValue));
         $query = "
-                UPDATE  item_addition
+                UPDATE  {$conf['table']['item_addition']}
                 SET     addition = $editedTxt
                 WHERE   item_addition_id = $itemID
                 ";
@@ -383,7 +396,7 @@ class SGL_Item
 
         //  if safeDelete is enabled, just set item status to 0, don't delete
         if ($conf['site']['safeDelete']) {
-            $sth = $dbh->prepare("  UPDATE item
+            $sth = $dbh->prepare("  UPDATE {$conf['table']['item']}
                                     SET status = " . SGL_STATUS_DELETED . "
                                     WHERE item_id = ?");
             foreach ($aItems as $row) {
@@ -392,11 +405,11 @@ class SGL_Item
         //  else delete the bugger
         } else {
             foreach ($aItems as $row) {
-                $sql = "DELETE FROM item WHERE item_id = " . $row;
+                $sql = "DELETE FROM {$conf['table']['item']} WHERE item_id = " . $row;
                 $dbh->query($sql);
             }
             foreach ($aItems as $row) {
-                $sql = "DELETE FROM item_addition WHERE item_id = " . $row;
+                $sql = "DELETE FROM {$conf['table']['item_addition']} WHERE item_id = " . $row;
                 $dbh->query($sql);
             }
         }
@@ -417,10 +430,12 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
                     itm.field_type, itm.item_type_mapping_id
-            FROM    item_addition ia, item_type it, item_type_mapping itm
+            FROM    {$conf['table']['item_addition']} ia, {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $itemID
@@ -462,15 +477,17 @@ class SGL_Item
         }
         //  get template specific form fields
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
             SELECT  itm.item_type_mapping_id, itm.field_name, itm.field_type
-            FROM    item_type_mapping itm
+            FROM    {$conf['table']['item_type_mapping']} itm
             WHERE   itm.item_type_id = $typeID
             ORDER BY itm.item_type_mapping_id
                     ";
         $result = $dbh->query($query);
 
-        //  display dynamic form fields (changed default object output to standard array
+        //  display dynamic form fields (changed default object output to standard array)
         $fieldsString = '';
         while (list($itemMappingID, $fieldName, $fieldType) 
             = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
@@ -528,11 +545,15 @@ class SGL_Item
     function changeStatus($status)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        
         switch($status) {
         case 'delete':
                //   mark item as deleted
             $query = "
-                        UPDATE  item
+                        UPDATE  {$conf['table']['item']}
                         SET     status = " . SGL_STATUS_DELETED . "
                         WHERE   item_id = $this->id
                         ";
@@ -541,7 +562,7 @@ class SGL_Item
         case 'approve':
                //   mark item as approved
             $query = "
-                        UPDATE  item
+                        UPDATE  {$conf['table']['item']}
                         SET     status = " . SGL_STATUS_APPROVED . "
                         WHERE   item_id = $this->id
                         ";
@@ -550,7 +571,7 @@ class SGL_Item
         case 'publish':
                //   mark item as published
             $query = "
-                        UPDATE  item
+                        UPDATE  {$conf['table']['item']}
                         SET     status = " . SGL_STATUS_PUBLISHED . "
                         WHERE   item_id = $this->id
                         ";
@@ -559,13 +580,12 @@ class SGL_Item
         case 'archive':
                //   mark item as published
             $query = "
-                        UPDATE  item
+                        UPDATE  {$conf['table']['item']}
                         SET     status = " . SGL_STATUS_ARCHIVED . "
                         WHERE   item_id = $this->id
                         ";
             break;
         }
-        $dbh = & SGL_DB::singleton();
         $result = $dbh->query($query);
     }
 
@@ -581,10 +601,13 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition
-            FROM    item i, item_addition ia, item_type it, item_type_mapping itm
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     i.item_id = ia.item_id
@@ -618,9 +641,11 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
-            FROM    item_addition ia, item_type it, item_type_mapping itm
+            FROM    {$conf['table']['item_addition']} ia, {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $this->id
@@ -812,7 +837,9 @@ class SGL_Item
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    item i, item_addition ia, item_type it, item_type_mapping itm, " . $conf['table']['user'] . " u, " . $conf['table']['category'] . " c
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, 
+                    {$conf['table']['user']} u, {$conf['table']['category']} c
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id

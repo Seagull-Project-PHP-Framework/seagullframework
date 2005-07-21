@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -168,6 +168,8 @@ class PermissionMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         require_once SGL_ENT_DIR . '/Permission.php';
         $oPerm = & new DataObjects_Permission();
 
@@ -177,7 +179,7 @@ class PermissionMgr extends SGL_Manager
             $oPerm->free(); 
             $oPerm->setFrom($input->perm);
             $dbh = & $oPerm->getDatabaseConnection();
-            $oPerm->permission_id = $dbh->nextId('permission');
+            $oPerm->permission_id = $dbh->nextId($conf['table']['permission']);
             $success = $oPerm->insert();
 
             //  update perms superset cache
@@ -205,6 +207,8 @@ class PermissionMgr extends SGL_Manager
         $input->template = 'permScan.html';
 
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         //  let's go transactional
         $dbh->autocommit();
 
@@ -213,15 +217,15 @@ class PermissionMgr extends SGL_Manager
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
             
-            $query = "  INSERT INTO permission (permission_id, name, module_id)
-                        VALUES (" . $dbh->nextId('permission') . ",'{$p[0]}',{$p[1]} )";
+            $query = "  INSERT INTO {$conf['table']['permission']} (permission_id, name, module_id)
+                        VALUES (" . $dbh->nextId($conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
             if (is_a($dbh->query($query), 'PEAR_Error')) {
                 $errors++;
             }
         }
         if ($errors > 0) {
             $dbh->rollBack();   
-               SGL::raiseError('There was a problem inserting the record(s)', 
+            SGL::raiseError('There was a problem inserting the record(s)', 
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
             $dbh->commit();
@@ -317,6 +321,7 @@ class PermissionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get limit and totalNumRows
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -332,7 +337,7 @@ class PermissionMgr extends SGL_Manager
 
         $query = "
             SELECT  permission_id, name, module_id
-            FROM    permission
+            FROM    {$conf['table']['permission']}
             $whereClause
             ORDER BY permission_id
         ";
@@ -455,10 +460,11 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $dbh = & SGL_DB::singleton();        
+        $dbh = & SGL_DB::singleton();    
+        $conf = & $GLOBALS['_SGL']['CONF'];    
         
         //  get a list of modules in db
-        $query = 'SELECT module_id,name FROM module';
+        $query = "SELECT module_id, name FROM {$conf['table']['module']}";
 		$modules = $dbh->getAssoc($query);
 		 
 		if (is_a($modules, 'PEAR_Error')) {
@@ -469,7 +475,7 @@ class PermissionMgr extends SGL_Manager
         $permsFound = array();
 
         //  scan
-        require_once (SGL_LIB_PEAR_DIR . '/System.php');
+        require_once  'System.php';
         $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
 
         foreach ($files as $k => $v) {

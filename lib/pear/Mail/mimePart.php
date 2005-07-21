@@ -87,7 +87,7 @@
 *    re-build the message.
 *
 * @author  Richard Heyes <richard@phpguru.org>
-* @version $Revision: 1.7 $
+* @version $Revision: 1.13 $
 * @package Mail
 */
 

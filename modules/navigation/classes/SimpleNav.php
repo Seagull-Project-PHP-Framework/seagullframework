@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -170,9 +170,9 @@ class SimpleNav
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = & SGL_DB::singleton();
-        $query = '
-            SELECT * FROM section 
-            WHERE parent_id = ' . $sectionId . '
+        $query = "
+            SELECT * FROM {$conf['table']['section']}
+            WHERE parent_id = " . $sectionId . '
             ORDER BY order_id';
 
         $result = $dbh->query($query);
@@ -384,24 +384,11 @@ class SimpleNav
                 //  place anchor at end
                 $url .= $namedAnchor;
             }
-            
-            $anchor = '<a' . ' href="' . $url . '"';
-            
-			if (!empty($section->access_key)) {
-				$anchor .= ' accesskey="' . $section->access_key . '"';    	
-			}
-			
-			if (!empty($section->rel)) {
-				$anchor .= ' rel="' . $section->rel . '"';    
-			}                        
-            
-            $anchor .= '>' . $section->title . '</a>';
-            
+            $anchor      = '<a' . ' href="' . $url . '">' . $section->title . '</a>';
             $listItems  .= "<li" . $liAtts . '>' . $anchor;
             if ($section->children) {
                $listItems .= $this->_toHtml($section->children);
             }
-            
             $listItems  .= "</li>\n";
         }
         $output = (isset($listItems)) ? "\n<ul>" . $listItems . "</ul>\n":false;

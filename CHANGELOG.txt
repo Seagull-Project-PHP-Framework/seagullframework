@@ -6,14 +6,22 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
-17-07-05    Added the ability to add custom html blocks (uprooter)
+10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
+10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+21-07-05    Fixed inability to edit org types
+20-07-05    Implemented boundary checks for section edit
+20-07-05    Removed shop-related sections from mysql data
+17-07-05    Fixed sections listed in blocks mgr, 'none' now correctly reads
+            'all sections'
 
 IMPROVEMENTS
+21-07-05    Database password field in Config changed to 'password' type (Paul Vickers)
+17-07-05    All table names are now config driven
 15-07-05    Articles now editable in situ
 14-07-05    Improved w3c compliance by removing 'name' attribute from some forms
 13-07-05    Related documents only displayed next to articles if they exist
@@ -21,8 +29,6 @@ IMPROVEMENTS
             cleaned up article listing - ArticleViewMgr::summary()
 13-07-05    Added 'recent articles' block (Werner Krauss)
 10-07-05    Usernames can now be as short as 3 chars (Michael Heuberger)
-10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
-10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
 | VERSION: 0.4.4        |

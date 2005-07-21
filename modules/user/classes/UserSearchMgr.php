@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -266,7 +266,7 @@ class UserSearchMgr extends SGL_Manager
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    usr u, organisation o, role r
+                FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id
                 $criteria
@@ -274,7 +274,7 @@ class UserSearchMgr extends SGL_Manager
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
-                FROM    usr u, role r
+                FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
                 WHERE   r.role_id = u.role_id
                 $criteria
                 ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;

@@ -33,7 +33,7 @@ require_once 'HTML/TreeMenu.php';
  *
  * @package
  * @author daniel
- * @copyright Copyright (c) 2004
+ * @copyright Copyright (c) 2005
  * @version $Id: TreeMenu.php,v 1.10 2004/10/25 06:39:22 cvsroot Exp $
  * @access public
  **/
