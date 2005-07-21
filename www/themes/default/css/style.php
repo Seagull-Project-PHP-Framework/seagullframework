@@ -173,7 +173,7 @@ body {
 #sgl #login a:hover {
     text-decoration: underline;
 }
-#sgl #login #LogAction {
+#sgl #login #logAction {
     float: left;
     margin-left: 1em;
     padding: 0.2em;
@@ -181,11 +181,11 @@ body {
     border-color: <?php echo $buttonBorderColors ?>;
     background-color: <?php echo $primaryLight ?>;
 }
-#sgl #login #UserInfo {
+#sgl #login #userInfo {
     float: left;
     padding-top: 0.35em;
 }
-#sgl #login #UserInfo .guest {
+#sgl #login #userInfo .guest {
     font-weight: bold;
 }
 #sgl #bugReporter {
