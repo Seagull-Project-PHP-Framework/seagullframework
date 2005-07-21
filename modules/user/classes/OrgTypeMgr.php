@@ -99,6 +99,8 @@ class OrgTypeMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $orgType = & new DataObjects_Organisation_type();
         $orgType->setFrom($input->orgTypes);
         $dbh = $orgType->getDatabaseConnection();

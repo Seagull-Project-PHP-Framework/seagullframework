@@ -19,14 +19,14 @@
         <th><a class="header" href="{makeUrl(#list#,#orgType#,#user#,##,#frmSortBy|id||frmSortOrder|sortOrder#)}">{translate(#Org Type ID#)}</a></th>
         <th><a class="header" href="{makeUrl(#list#,#orgType#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Org Type Name#)}</a></th>
         <th>Edit</th>
-    </tr>   
+    </tr>
     <tr class="{switchRowClass()}" flexy:foreach="orgTypes,id,name">
         <td align="center">
             <input class="noBorder" type="checkbox" name="frmDelete[]" value="{id}" />
         </td>
         <td align="center">{id}</td>
         <td>{name}</td>
-        <td align="center"><a href="{makeUrl(#edit#,#orgType#,#user#,##,#frmOrgTypeID|id#)}">
+        <td align="center"><a href="{makeUrl(#edit#,#orgType#,#user#,orgTypes,#frmOrgTypeID#,id)}">
             <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" /></a>
         </td>
     </tr>
