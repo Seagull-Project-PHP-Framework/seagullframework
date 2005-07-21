@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+21-07-05    Fixed inability to edit org types
 20-07-05    Implemented boundary checks for section edit
 20-07-05    Removed shop-related sections from mysql data
 17-07-05    Fixed sections listed in blocks mgr, 'none' now correctly reads

@@ -302,13 +302,13 @@ class SGL_Output
     //  return true if role id  denotes admin (1)
     function isAdmin($rid)
     {
-        return ($rid == 1) ? true : false;
+        return ($rid == SGL_ADMIN) ? true : false;
     }
 
     //  return true if $rid is 1 or -1
     function isAdminOrUnassigned($rid)
     {
-        return (abs($rid) == 1) ? true : false;
+        return (abs($rid) == SGL_ADMIN) ? true : false;
     }
 
     function addOnLoadEvent($event)
