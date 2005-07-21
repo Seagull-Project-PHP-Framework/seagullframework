@@ -39,6 +39,7 @@
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
 require_once SGL_MOD_DIR . '/block/classes/BlockForm.php';
+require_once SGL_MOD_DIR . '/block/classes/BlockFormDynamic.php';
 require_once SGL_MOD_DIR . '/block/classes/Block.php';
 require_once SGL_ENT_DIR . '/Block_assignment.php';
 
@@ -60,6 +61,7 @@ class BlockMgr extends SGL_Manager
         $this->template     = 'blockList.html';
 
         $this->_aActionsMapping =  array(
+            'addDynamic' => array('addDynamic'),
             'add'       => array('add'), 
             'edit'      => array('edit'), 
             'reorder'   => array('reorder'), 
@@ -99,13 +101,41 @@ class BlockMgr extends SGL_Manager
         $input->totalItems  = $req->get('totalItems');
     }
 
-    function display(&$output)
+    
+    function _addDynamic(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $output->template = 'blockFormdynamic.html';
+        $output->mode = 'New block';
+        $output->wysiwyg = true;
+        // Build form
+        $myForm = & new BlockFormDynamic('addDynamic');
+        $output->form = $myForm->init();
+               
+        // If form has been submitted, validate it
+        if ($this->submitted) {
+            if ($output->form->validate()) {
+                $oBlock = (object)$output->form->getSubmitValue('block');
+                $block = & new Block();
+                $block->setFrom($oBlock);
 
-        //  format form output if any
-        if ($output->form) {
-            $output->form = $output->form->toHtml();
+                // Find next available blk_order for targetted column
+                $dbh = $block->getDatabaseConnection();
+
+                $dbh->autocommit();
+                $query = 'SELECT MAX( blk_order ) FROM block WHERE is_onleft = ' . $oBlock->is_onleft;
+                $next_order = (int)$dbh->getOne($query) + 1;
+                $block->blk_order = $next_order;
+                $block->insert(); // This takes into account block assignments as well
+                $dbh->commit();
+
+                //  clear cache so a new cache file is built reflecting changes
+                SGL::clearCache('blocks');
+                SGL::raiseMsg('Block successfully added');
+                SGL_HTTP::redirect(array());
+            }
         }
     }
 
@@ -113,11 +143,11 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         $output->template = 'blockForm.html';
         $output->mode = 'New block';
 
-        // Build form from
+        // Build form
         $myForm = & new BlockForm('add');
         $output->form = $myForm->init();
 
@@ -132,7 +162,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = "SELECT MAX( blk_order ) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
+                $query = 'SELECT MAX( blk_order ) FROM block WHERE is_onleft = ' . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
@@ -149,15 +179,48 @@ class BlockMgr extends SGL_Manager
         }
     }
 
+    /**
+     * Returns true if 'content' field has a string length greater than
+     * zero or it is not NULL.
+     *
+     * @param unknown_type $blockId
+     * @return unknown
+     */
+    function isHtmlBlock($blockId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $query = "
+            SELECT content FROM {$conf['table']['block']}
+            WHERE block_id = " . $blockId;
+        $res = $dbh->getOne($query);
+        if (!strlen($res) || $res == 'NULL') {
+            return false;   
+        } else {
+            return true;   
+        }
+    }
+    
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        //  determine block type
+        if ($this->isHtmlBlock($input->block_id)) {
+            $output->template = 'blockFormdynamic.html';
+            $output->wysiwyg = true;
+            $blockForm = & new BlockFormDynamic('edit');            
+        } else {
+            $output->template = 'blockForm.html';
+            $blockForm = & new BlockForm('edit');    
+        }
+        
         $output->mode = 'Edit block';
-        $output->template = 'blockForm.html';
+
         //  get block data
         $block = & new Block();
-        // Build form
-        $blockForm = & new BlockForm('edit');
+        
         if ($this->submitted) {
             $block->get($input->block['block_id']);
         } else {
@@ -171,10 +234,9 @@ class BlockMgr extends SGL_Manager
             $block->setFrom($oBlock);
             // Update record in DB
             $block->update(false, true); // This takes into account block assignments as well
+
             //clear cache so a new cache file is built reflecting changes
             SGL::clearCache('blocks');
-
-            // Redirect on success
             SGL::raiseMsg('Block details successfully updated');
             SGL_HTTP::redirect(array());
         }
@@ -296,6 +358,15 @@ class BlockMgr extends SGL_Manager
         }
     }
 
+    function display(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  format form output if any
+        if ($output->form) {
+            $output->form = $output->form->toHtml();
+        }
+    }
     
     function _rebuildPagedData(&$aPagedData)
     {
