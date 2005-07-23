@@ -354,6 +354,11 @@ h3 {
 h4 {
     font-size: 1em;
 }
+.pageTitle {
+    color: <?php echo $secondaryDark ?>;
+    font-size: 1.75em;
+    font-weight: normal;
+}
 
 /***************************** CONTENT : ANCHORS ******************************/
 

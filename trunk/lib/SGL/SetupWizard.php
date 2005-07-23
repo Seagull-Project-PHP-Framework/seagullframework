@@ -361,7 +361,7 @@ class SGL_SetupWizard
     {
         if ($id == 'status') {
             $msg = $displayHtml;
-            $displayHtml = '<h1 class=\\"pageTitle\\">' . $msg . '</h1>';
+            $displayHtml = '<span class=\\"pageTitle\\">' . $msg . '</span>';
         }
         echo "<script>
               document.getElementById('$id').innerHTML=\"$displayHtml\";
