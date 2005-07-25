@@ -88,9 +88,11 @@ class MenuBuilder
         switch ($menuType) {
 
         case 'menu_explorer':
+
             //  cannot cache at this level because output is sent to blocks
             //  which are cacheable
             $ret = $this->GUI->render($this->_startId);
+
             //  add closing js script tags
             $ret .= 'document.write(tree);}';
             $ret .= '</script>';

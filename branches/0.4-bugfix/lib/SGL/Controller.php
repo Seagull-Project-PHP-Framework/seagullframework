@@ -592,7 +592,7 @@ class SGL_Controller
             $navClass = $this->conf['navigation']['driver'];
             $navDriver = $navClass . '.php';
             if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
-                include_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
+                require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
             } else {
                 SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
             }
@@ -623,7 +623,7 @@ class SGL_Controller
 
         //  load blocks
         if ($this->conf['site']['blocksEnabled'] && $this->conf['navigation']['enabled']) {
-            include_once SGL_CORE_DIR . '/BlockLoader.php';
+            require_once SGL_CORE_DIR . '/BlockLoader.php';
             $blockLoader = & new SGL_BlockLoader($sectionId);
             $aBlocks = $blockLoader->render($output);
             $output->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
