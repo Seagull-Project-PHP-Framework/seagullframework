@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+26-07-05    Fixed notices related to PHP 4.4.0
 24-07-05    Missing form name added, without which it was impossible to create new articles
 21-07-05    Fixed inability to edit org types
 20-07-05    Implemented boundary checks for section edit

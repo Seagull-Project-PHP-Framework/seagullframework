@@ -139,8 +139,8 @@ class BlockForm
         $this->form->addRule('block[title]', SGL_String::translate('You must enter a title for your block'), 'required');
 
         // Buttons
-        $buttons[] = &HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );
-        $buttons[] = &HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'), 
+        $buttons[] = HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );
+        $buttons[] = HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'), 
             array( 'onClick' => "document.location.href='".SGL_URL::makeLink('list', 'block', 'block')."'" ) );
         $this->form->addGroup($buttons);
 
