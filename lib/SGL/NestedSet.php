@@ -163,7 +163,7 @@ class SGL_NestedSet
         $groupBy  = $this->_addSQL($addSQL, 'groupBy');
         $where    = $this->_addSQL($addSQL, 'where', 'AND');
 
-        $roots =& $this->getRoots($addSQL);
+        $roots = $this->getRoots($addSQL);
         //  Get all descendants of each node (rootid = $rootid).
         $r = '';
         if (is_array($roots) && count($roots)) {
