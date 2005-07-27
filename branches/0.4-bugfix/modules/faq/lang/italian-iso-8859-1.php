@@ -2,6 +2,9 @@
 $words['FAQs'] = 'Domande frequenti';
 $words['FAQ Manager'] = 'Gestore Domande frequenti';
 $words['FAQ Manager :: Browse'] = 'Gestore Domande frequenti :: Elenco';
+$words['FAQ Manager :: Reorder'] = 'Gestore Domande frequenti :: Riordina';
+$words['FAQ Manager :: Add'] = 'Gestore Domande frequenti :: Aggiungi';
+$words['FAQ Manager :: Edit'] = 'Gestore Domande frequenti :: Modifica';
 $words['Please fill in a question'] = 'Inserisci la domanda';
 $words['Please fill in an answer'] = 'Inserisci la risposta';
 $words['Question'] = 'Domanda';
