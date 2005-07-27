@@ -94,4 +94,9 @@ $words['Navigation menu preview as displayed to the following role'] = 'Anteprim
 $words['Note'] = 'Nota';
 $words['Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.'] = 'I permessi sono impostati di default per permettere a tutti gli utenti di accedere a tutte le categorie. Se volete impedire a certi gruppi di accedere a delle categorie, indicare "no" nel campo "Permessi" per il relativo gruppo';
 $words['return to category manager'] = 'ritorna al gestore categorie';
+$words['AccessKey'] = 'Scorciatoia';
+$words['Rel Marker'] = '*Rel Marker*';
+$words['Any number, which can be pressed with the ALT-key to load the page.'] = 'Tasto che premuto assieme ad ALT avvia il caricamento della pagina';
+$words['Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".'] = 'Aiuto addizionale alla navigazione. Usa valori tipo "home", "precedente" o "successivo".';
+
 ?>
