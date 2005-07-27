@@ -1,10 +1,6 @@
--- ==========================================================================
--- Seagull PHP Framework: Default Data for PostgreSQL 
--- ==========================================================================
+-- Last edited: Pierpaolo Toniolo 26-07-2005
+-- Data for /etc
 
--- Begin a transaction
--- This is not really necessary, but is very useful in developing phase. ;-)
---
 BEGIN;
 
 --
@@ -40,9 +36,5 @@ INSERT INTO item_type_mapping VALUES (6, 4, 'newsHtml', 2);
 INSERT INTO item_type_mapping VALUES (7, 5, 'title', 0);
 INSERT INTO item_type_mapping VALUES (8, 5, 'bodyHtml', 2);
 
---
--- committing transaction: if there were errors the transaction rollback so the database is still empty
--- ready to be filled with the correct versions of records. ;-)
---
 COMMIT;
 

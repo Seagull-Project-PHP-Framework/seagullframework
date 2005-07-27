@@ -1,13 +1,6 @@
--- ==============================================================
---  DBMS name:      PostgreSQL 7.3                               
---  Created on:     2004-04-13 23:45:57                          
--- ==============================================================
-
+-- Last edited: Pierpaolo Toniolo 26-07-2005
 -- Constraints for /etc
 
-
--- Begin a transaction-- This is not really necessary, but is very useful in developing phase. ;-)
---
 BEGIN;
 
 alter table item add constraint FK_item_item_type foreign key (item_type_id)
