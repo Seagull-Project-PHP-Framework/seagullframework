@@ -1,13 +1,6 @@
--- ==========================================================================
--- Seagull PHP Framework: Default Data for PostgreSQL 
--- ==========================================================================
-
+-- Last edited: Pierpaolo Toniolo 26-07-2005
 -- Schema for /modules/messaging
 
-
--- Begin a transaction
--- This is not really necessary, but is very useful in developing phase. ;-)
---
 BEGIN;
 
 -- ==============================================================

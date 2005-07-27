@@ -1,13 +1,6 @@
--- ==========================================================================
--- Seagull PHP Framework: Default Data for PostgreSQL 
--- ==========================================================================
-
+-- Last edited: Pierpaolo Toniolo 26-07-2005
 -- Schema for /modules/navigation
 
-
--- Begin a transaction
--- This is not really necessary, but is very useful in developing phase. ;-)
---
 BEGIN;
 
 -- ==============================================================
@@ -151,4 +144,13 @@ create index AK_category_key_level_id on category
     level_id
 );
 
+-- ==============================================================
+--  Index: parent_id
+-- ==============================================================
+create index AK_category_key_parent_fk on category
+(
+    parent_id
+);
+
 COMMIT;
+
