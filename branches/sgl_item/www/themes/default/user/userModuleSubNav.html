@@ -1,0 +1,12 @@
+<form id="frmUserMgrChooser" flexy:ignore>
+    <div class="pager">
+        {translate(#Manage#)}: 
+        <input type="button" class="narrowButton" name="users" value="{translate(#users#)}" onClick="javascript:document.location.href='{makeUrl(#list#,#user#,#user#)}'" />
+        {if:GLOBALS[_SGL][CONF][OrgMgr][enabled]}
+            <input type="button" class="narrowButton" name="orgs" value="{translate(#organisations#)}" onClick="javascript:document.location.href='{makeUrl(#list#,#org#,#user#)}'" />
+        {end:}
+        <input type="button" class="narrowButton" name="roles" value="{translate(#roles#)}" onClick="javascript:document.location.href='{makeUrl(#list#,#role#,#user#)}'" />
+        <input type="button" class="narrowButton" name="perms" value="{translate(#perms#)}" onClick="javascript:document.location.href='{makeUrl(#list#,#permission#,#user#)}'" />
+        <input type="button" class="narrowButton" name="prefs" value="{translate(#prefs#)}" onclick="javascript:document.location.href='{makeUrl(#list#,#preference#,#user#)}'" />
+    </div>
+</form>
