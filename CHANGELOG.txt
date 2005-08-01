@@ -14,9 +14,9 @@ IMPROVEMENTS
 +-----------------------+
 BUGFIXES
 01-08-05    Added php5 workaround in SGL_Wizard because strict call by reference
-            behaviour
+            behaviour (Tobias Kuckuck)
 01-08-05    SGL_Item::getDynamicFields now returns a string of html representing
-            the fields, or alternatively an array of just the data.
+            the fields, or alternatively an array of just the data. (Fabio Bacigalupo)
 01-08-05    Removed obselete stylesheets
 26-07-05    Fixed notices related to PHP 4.4.0
 24-07-05    Missing form name added, without which it was impossible to create new articles
