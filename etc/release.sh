@@ -192,7 +192,7 @@ EOF
 ##############################
 function scpChangelogToSglSite()
 {
-    scp -1 $PROJECT_NAME-$VERSION/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
+    scp $PROJECT_NAME-$VERSION/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
 }
 
 ##############################
