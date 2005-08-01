@@ -89,9 +89,9 @@ class SGL_Wizard extends SGL_Manager
         if (isset($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']) 
                 && !(SGL_Wizard::isObjEmpty($_SESSION['wiz_sequence'][$this->_getCurrent()]['data'])) 
                 &&   SGL_Wizard::isObjEmpty($obj)) {
-            $obj = $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'];
+            $obj = clone($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']);
         } else {
-            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = $obj;
+            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = clone($obj);
         }
     }
 
@@ -235,5 +235,10 @@ class SGL_Wizard extends SGL_Manager
             return true;
         }
     }    
+}
+
+if (!function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
 }
 ?>
