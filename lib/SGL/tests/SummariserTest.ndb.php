@@ -44,8 +44,6 @@ EOF;
             (?!.*<body>)
            #six';
         $ret = preg_replace($regex, 'foo', $this->html);
-        echo '<pre>'; print_r($ret).'\n';
-        
     }
 }
 ?>
