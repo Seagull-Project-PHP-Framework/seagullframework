@@ -215,9 +215,11 @@
         define('SGL_DSN_ARRAY',                 0);
         define('SGL_DSN_STRING',                1);
         
+        //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
+        define('SGL_RET_STRING',                4); 
 
         //  role sync constants
         define('SGL_ROLESYNC_ADD',     1);
