@@ -1,0 +1,30 @@
+.tableHeader {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333399;
+}
+.tableHeader td {
+    border-bottom: 1px solid #e7e7e7;
+}
+.productName {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333399;
+}
+.productDescKey {
+    font-size: 12px;
+    font-weight: bold;
+}
+table.productText {
+    font-size: 12px;
+    width: 100%;
+}
+.productText td {
+    border-bottom: 1px solid #e7e7e7;
+}
+.productFastList {
+    font-size: 11px;
+}
+.productFastList td {
+    border-bottom: 1px solid #e7e7e7;
+}
