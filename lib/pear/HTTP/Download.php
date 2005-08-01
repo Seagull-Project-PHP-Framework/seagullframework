@@ -17,7 +17,7 @@
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Download.php,v 1.69 2005/07/18 09:38:36 mike Exp $
+ * @version    CVS: $Id: Download.php,v 1.74 2005/07/19 10:15:48 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -92,7 +92,7 @@ define('HTTP_DOWNLOAD_E_INVALID_ARCHIVE_TYPE',  -9);
  * if you want to send already gzipped data!
  * 
  * @access   public
- * @version  $Revision: 1.69 $
+ * @version  $Revision: 1.74 $
  */
 class HTTP_Download
 {
@@ -201,6 +201,14 @@ class HTTP_Download
      * @var     float
      */
     var $throttleDelay = 0;
+    
+    /**
+     * Sent Bytes
+     * 
+     * @access  public
+     * @var     int
+     */
+    var $sentBytes = 0;
     // }}}
     
     // {{{ constructor
@@ -225,7 +233,7 @@ class HTTP_Download
      *                  o 'contentdisposition'  => content disposition
      *                  o 'buffersize'          => amount of bytes to buffer
      *                  o 'throttledelay'       => amount of secs to sleep
-     *                  o 'cachecontrol'        => public/private
+     *                  o 'cachecontrol'        => cache privacy and validity
      * 
      * <br />
      * 'Content-Disposition' is not HTTP compliant, but most browsers 
@@ -258,24 +266,17 @@ class HTTP_Download
     function setParams($params)
     {
         foreach((array) $params as $param => $value){
-            if (!method_exists($this, 'set' . $param)) {
+            $method = 'set'. $param;
+            
+            if (!method_exists($this, $method)) {
                 return PEAR::raiseError(
-                    "Method 'set$param' doesn't exist.",
+                    "Method '$method' doesn't exist.",
                     HTTP_DOWNLOAD_E_INVALID_PARAM
                 );
             }
-            if (strToLower($param) == 'contentdisposition') {
-                if (is_array($value)) {
-                    $disp   = $value[0];
-                    $fname  = @$value[1];
-                } else {
-                    $disp   = $value;
-                    $fname  = null;
-                }
-                $e = $this->setContentDisposition($disp, $fname);
-            } else {
-                $e = $this->{'set' . $param}($value);
-            }
+            
+            $e = call_user_func_array(array(&$this, $method), (array) $value);
+            
             if (PEAR::isError($e)) {
                 return $e;
             }
@@ -419,7 +420,7 @@ class HTTP_Download
             case 'private':
             case 'public':
                 $this->headers['Cache-Control'] = 
-                    $cache .', must-revalidate, max-age='. $maxage;
+                    $cache .', must-revalidate, max-age='. abs($maxage);
                 return true;
             break;
         }
@@ -459,12 +460,12 @@ class HTTP_Download
      */
     function setBufferSize($bytes = 2097152)
     {
-        if (0 >= (int) $bytes) {
+        if (0 >= $bytes) {
             return PEAR::raiseError(
                 'Buffer size must be greater than 0 bytes ('. $bytes .' given)',
                 HTTP_DOWNLOAD_E_INVALID_PARAM);
         }
-        $this->bufferSize = (int) $bytes;
+        $this->bufferSize = abs($bytes);
         return true;
     }
     
@@ -665,6 +666,8 @@ class HTTP_Download
         } else {
             ob_start();
         }
+        
+        $this->sentBytes = 0;
         
         if ($this->isRangeRequest()) {
             $this->HTTP->sendStatusCode(206);
@@ -1007,7 +1010,10 @@ class HTTP_Download
      */
     function flush($data = '')
     {
-        echo $data;
+        if ($dlen = strlen($data)) {
+            $this->sentBytes += $dlen;
+            echo $data;
+        }
         ob_flush();
         flush();
     }
