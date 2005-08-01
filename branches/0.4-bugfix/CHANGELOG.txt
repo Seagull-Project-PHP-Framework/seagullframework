@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+01-08-05    Added php5 workaround in SGL_Wizard because strict call by reference
+            behaviour
 01-08-05    SGL_Item::getDynamicFields now returns a string of html representing
             the fields, or alternatively an array of just the data.
 01-08-05    Removed obselete stylesheets
