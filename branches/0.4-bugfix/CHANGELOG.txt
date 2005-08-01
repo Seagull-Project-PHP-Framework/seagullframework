@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+01-08-05    Removed obselete stylesheets
 26-07-05    Fixed notices related to PHP 4.4.0
 24-07-05    Missing form name added, without which it was impossible to create new articles
 21-07-05    Fixed inability to edit org types
@@ -226,7 +227,7 @@ BUGFIXES
 27-03-05    Fixed bug where error_log default file was set incorrectly
 17-03-05    Updated Wizard to work with front controller urls (Tobias Kuckuck)
 17-03-05    Fixed bug where links in OrgMgr were not working correctly
-17-03-05    Modified locale setting to work for windows (Jürgen Mutz)
+17-03-05    Modified locale setting to work for windows (Jï¿½rgen Mutz)
 17-03-05    Fixed bug where users couldn't register due to a missing perm
             (Dustin Rottmann)
 17-03-05    Fixed a data loading bug in postgres (Pierpaolo Toniolo)
