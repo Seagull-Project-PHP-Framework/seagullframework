@@ -301,4 +301,7 @@ $words['aSecurityQuestions'][2] = 'Data importante (gg/mm/aaaa)';
 $words['aSecurityQuestions'][3] = 'Luogo importante';
 $words['aSecurityQuestions'][4] = 'Cognome da nubile di tua madre';
 $words['(each user\\\'s current)'] = '(ogni rispettivo ruolo)';
+$words['manage organisation types'] = 'gestisce tipi di organizzazione';
+$words['list organisations'] = 'lista organizzazioni';
+$words['clear search'] = 'reset';
 ?>

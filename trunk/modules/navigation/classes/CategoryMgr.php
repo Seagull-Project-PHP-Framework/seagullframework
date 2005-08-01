@@ -404,8 +404,8 @@ class CategoryMgr extends SGL_Manager
     function isBranch($id)
     {
         $nestedSet = new SGL_NestedSet($this->_params);
-        $ns = &$nestedSet->_getNestedSet();
-        $node = &$ns->pickNode($id, $keepAsArray = true, $alias = true);
+        $ns = $nestedSet->_getNestedSet();
+        $node = $ns->pickNode($id, $keepAsArray = true, $alias = true);
         if ($node) {
             if (($node['r'] - $node['l']) > 1) {
                 return true;
