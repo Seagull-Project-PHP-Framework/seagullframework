@@ -190,6 +190,16 @@ class DA_User
            return SGL::raiseError('There was a problem retrieving perms', 
                 SGL_ERROR_NODATA);
 		}
+		
+        //  in case of LU
+		if ($this->conf['permission']['driver'] == 'liveuser') {
+		    $perm = &SGL_Perm::singletonPerm('liveuser');
+            $rights = $perm->readRights($force = true, $userId);
+            $aRightsPerms = $perm->getPermsByRights($rights);
+		    if(!empty($aRightsPerms)) {
+		        $aUserPerms = array_merge($aUserPerms, $aRightsPerms);
+		    }
+		}		
         return $aUserPerms;
     }
 

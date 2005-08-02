@@ -211,6 +211,40 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
+        <th colspan="3">Permission Handling</th>
+    </tr>
+    <tr>
+        <td class="fieldName">Permission type (driver)</td>
+        <td class="fieldValue">
+            <select name="conf[permission][driver]">
+                {generateSelect(aPermDrivers,conf[permission][driver]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">Select the relevant permissions driver</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">Constants file</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[permission][constantsFile]" value="{conf[permission][constantsFile]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">Name of file that contains perms constants</span>
+            </span>
+        </td>
+    </tr>
+    
+    
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
         <th colspan="3">{translate(#Navigation Options#)}</th>
     </tr>
     <tr>
