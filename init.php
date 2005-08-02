@@ -108,6 +108,11 @@
 	        $eh = & new SGL_ErrorHandler();
 	        $eh->startHandler();
         }
+        
+        // include permission package constants
+        if (isset($conf['permission']['constantsFile'])) {
+	        require_once SGL_CACHE_DIR . '/' .$conf['permission']['constantsFile'];
+        }
 
         //  set PEAR error handler
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');

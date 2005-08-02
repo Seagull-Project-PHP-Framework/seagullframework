@@ -1,4 +1,8 @@
-<flexy:include src="userModuleSubNav.html" />
+{if:liveUserEnabled}
+    <flexy:include src="userModuleSubNavLiveuser.html" />
+{else:}
+    <flexy:include src="userModuleSubNavSgl.html" />
+{end:}
 <form name="users" method="post" flexy:ignore id="users">
 
     <h1 class="pageTitle">{translate(pageTitle)}</h1>

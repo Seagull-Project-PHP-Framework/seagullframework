@@ -29,6 +29,10 @@ defaultArticleViewType  = 1
 defaultParams           =
 wysiwyg_editor          = fck ;Available: htmlarea, xinha, fck
 
+[permission]
+driver                  =liveuser
+constantsFile           =liveuserConstants.php
+
 [cache]
 ; enable file caching of navigation and blocks
 enabled                 = false

@@ -41,6 +41,7 @@
 require_once SGL_CORE_DIR . '/Util.php';
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Url.php';
+require_once SGL_CORE_DIR . '/Perm/Perm.php';
 require_once SGL_LIB_DIR  . '/SGL.php';
 
 /**
@@ -317,6 +318,15 @@ class SGL_HTTP_Session
 
         //  user object is passed only during login
         if (is_object($oUser)) {
+            
+            // login to liveuser and check user rights
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            
+#FIXME - remove
+//            if($conf['permission']['driver'] == 'liveuser') {
+//                SGL_Perm::singletonUsr($oUser);
+//                $perm = &SGL_Perm::singletonPerm('liveuser');
+//            }
 
             $aSessVars = array(
                 'uid'               => $oUser->usr_id,

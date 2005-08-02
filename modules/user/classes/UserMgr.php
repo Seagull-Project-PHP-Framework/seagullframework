@@ -330,9 +330,13 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $input->template = 'userManager.html';
         $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        //  set appropriate navigation
+        $output->liveUserEnabled = ($conf['permission']['driver'] == 'liveuser') ? true : false;
+        $output->template = 'userManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
+        
         $dbh = & SGL_DB::singleton();
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
@@ -356,6 +360,16 @@ class UserMgr extends RegisterMgr
             'totalItems'=> $input->totalItems,
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        
+        if($conf['permission']['driver'] == 'liveuser') {
+            require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
+            foreach ($aPagedData['data'] as $key => $user) {
+
+                // find groups for every user
+                $aPagedData['data'][$key]['groups'] = LUAdmin::getGroupsByUserId($user['usr_id']);
+            }
+            $output->groupsEnabled = true;
+        }
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {

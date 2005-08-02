@@ -1,0 +1,50 @@
+
+x www
+x core\Perm
+- HTTP_Session - integrating with permissions system
+x output - method to easy right checks in templates
+- config
+x manager
+  x liveuser_admin
+  x listing righhts
+  x adding rights
+      x upper case
+  x editing rights
+  x substract description in table
+  x rights to rights manager
+  x deleting rights (lib\pear\liveuser\admin\perm\medium.php line: 230)
+    x deleting all associated data (perms)
+  x listing groups (lib\pear\liveuser\admin\perm\complex.php line: 469) $parentGroups = parent::getGroups($params);
+  x adding groups
+  x editing groups
+  x deleting groups
+    x all associated data
+  x lang dir
+  x managing rights in groups
+    x delete rights after deleting group...
+    x throw away group constants (at least only developer user could edit it)
+    - add rights commets to manager
+  x managing users in groups
+    x list: how many users are in each group
+    x managing user groups (from user point of view)
+    - add groups comments to manager
+  x managing right permissions
+    x delete permissions after deleting right
+x rights as constans
+  x including constants rights if permission package is a liveuser
+x liveuser sequences should use seagull "sequence" table
+x group is_active - change default value to 'Y'
+x remove all user data from liveuser after deleting user account
+x add user data to liveuser table while adding new user
+x remove old managers
+
+- problem with error: AddList has no properties
+  bug:  var TempAddList = AddList.value; in mainAdmin.js - has no properties
+
+- seagull bug: Notice: Undefined offset: 1182 in c:\reactor\seagull\lib\SGL\ErrorHandler.php on line 254
+repair: elseif(isset($lines[$i])
+
+
+all time todo list:
+- error handling
+- integrating with seagull
