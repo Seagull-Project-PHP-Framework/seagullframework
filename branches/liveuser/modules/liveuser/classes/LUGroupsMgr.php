@@ -125,7 +125,7 @@ class LUGroupsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        if(empty($input->group_id)) {
+        if (empty($input->group_id)) {
             LUAdmin::noRecordRedirect();
         }
         
@@ -184,7 +184,6 @@ class LUGroupsMgr extends SGL_Manager
         $groups = &$admin->perm->getGroups();
         
         // get members quantity
-        
         foreach($groups as $key => $group) {
             $liveuserGroupUsers = &DB_DataObject::factory('liveuser_groupusers');
             $liveuserGroupUsers->group_id = $group['group_id'];
