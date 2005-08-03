@@ -361,7 +361,7 @@ class UserMgr extends RegisterMgr
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         
-        if($conf['permission']['driver'] == 'liveuser') {
+        if ($conf['permission']['driver'] == 'liveuser') {
             require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
             foreach ($aPagedData['data'] as $key => $user) {
 
