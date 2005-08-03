@@ -76,7 +76,7 @@ class LUAdmin
 //            $dsn['phptype'] = 'mysql';
 //        }
         
-
+        $dsn = SGL_DB::getDsn();
         $dbSingleton = &SGL_DB::singleton(); // get as a copy
         
         // clone it - because we are changing assocMode
@@ -102,14 +102,14 @@ class LUAdmin
                 'logout' => array(
                     'destroy'  => true,
                 ),
-                'authContainers' => array(
+                'authContainers' => array( 'DB' => 
                     array(
                         'type'          => 'DB',
-                        'name'          => 'DB_Local',
+//                        'name'          => 'DB_Local',
                         'loginTimeout'  => 0,
                         'expireTime'    => 3600,
                         'idleTime'      => 1800,
-                        'dsn'           => SGL_DB::getDsn(),
+                        'dsn'           => $dsn,
                         'allowDuplicateHandles' => false,
                         'authTable'     => 'liveuser_users',
                             'authTableCols' => array(
@@ -127,9 +127,28 @@ class LUAdmin
                                 'custom' => array (
                                     'name'  => array('type' => 'text',    'name' => 'name'),
                                     'email' => array('type' => 'text',    'name' => 'email'),
-                                )
-                            )
-                    )
+                                ),
+                            ),
+                       'storage' => array(
+                            'dsn' => $dsn,
+                            'alias' => array(
+                                'lastlogin' => 'lastlogin',
+                                'is_active' => 'is_active',
+                            ),
+                            'fields' => array(
+                                'lastlogin' => 'timestamp',
+                                'is_active' => 'boolean',
+                            ),
+                            'tables' => array(
+                                'users' => array(
+                                    'fields' => array(
+                                        'lastlogin' => false,
+                                        'is_active' => false,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 'permContainer' => array(
                     'type'  => 'Complex',

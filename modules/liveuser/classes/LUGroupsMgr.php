@@ -179,7 +179,7 @@ class LUGroupsMgr extends SGL_Manager
         $output->template = 'luGroupsList.html';
         
         $admin = &LUAdmin::singleton();
-        if (!is_a($admin, 'LUAdmin')) {
+        if (!is_a($admin, 'liveuser_admin')) {
             print '<pre>'; print_r($admin);die();
         }
         $aparams['fields'] = array('name', 'description');
@@ -192,6 +192,7 @@ class LUGroupsMgr extends SGL_Manager
             $groups[$key]['members_quantity'] = $liveuserGroupUsers->find();
         }
         $output->groups = &$groups;
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').groups.disabled = true");
     }
 
    /**

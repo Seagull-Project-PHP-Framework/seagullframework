@@ -100,6 +100,7 @@
         'Forgot Password' => 'Forgot Your Password',
         'Not Registered' => 'Not Registered?',
         'Email' => 'Email',
+        'rights' => 'rights',
         
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',

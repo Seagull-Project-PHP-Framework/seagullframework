@@ -1,0 +1,59 @@
+<flexy:include src="banner.html" />
+
+<style type="text/css">
+handLabel {
+ cursor: pointer;
+ cursor: hand;
+}
+</style>
+
+<div align="center">
+
+<div class="pageTitle">Dodaj u¿ytkownika do grup</div>
+
+<span flexy:if="t.msgGet()">{t.msgGet()}</span>
+
+    <form method="post" flexy:ignore>
+        <input type="hidden" name="action" value="{action}">
+        <table>
+            <tr>
+                <td align="center">
+                    <input type="button" value="powrót do listy" onClick="javascript:document.location.href='userMgr.php'" />
+                </td>
+            </tr>
+            <tr>
+                <td style="white-space: nowrap; background-color: #CCCCCC;" align="left" valign="top" colspan="2"><b>Detale</b></td>
+            </tr>
+            <tr>                                           
+                <td align='right'><b>Nazwa</b><br/><br/><br/></td>
+                <td>
+                {user.username} - {user.first_name} {user.last_name}
+                    <br/><br/><br/>
+                </td>
+            </tr>
+            <tr>
+                <td style="white-space: nowrap; background-color: #CCCCCC;" align="left" valign="top" colspan="2"><b>Grupy</b></td>
+            </tr>
+            <tr flexy:foreach="groups,key,val">
+                <td align='right' width="15">
+                    <input type="checkbox"
+                    	flexy:raw="{val.checked}"
+                    	flexy:ignore="yes"
+	                    name="group[{key}]" />
+                </td>
+                <td width="50%" align="left">                                            
+                    <label for="group[{key}]" class="handLabel">{val.name}</label>
+                </td>
+            </tr>
+            
+            <tr>
+                <td valign="top" align="center" colspan="2">
+                    <span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;">  pola wymagane</span>
+                </td>
+            </tr>
+        </table>
+        <input type=submit name="submitted" value='Zapisz'/>
+        &nbsp;<input value="Anuluj" type="reset" onClick="javascript:document.location.href='userMgr.php'"/>
+    </form>
+
+<flexy:include src="footer.html" />

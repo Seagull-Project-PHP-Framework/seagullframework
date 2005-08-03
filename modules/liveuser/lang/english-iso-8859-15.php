@@ -13,7 +13,6 @@
         
         'users' => 'users',
         'roles' => 'roles',
-        'rights' => 'rights',
         'groups' => 'groups',
         'perms' => 'perms',
         'prefs' => 'prefs',
