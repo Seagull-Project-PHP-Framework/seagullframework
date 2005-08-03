@@ -527,7 +527,6 @@ class LUGroupsMgr extends SGL_Manager
             'description'       => $input->group['description'],
             'is_active'         => 'Y',
         );
-        
         return $data;
     }
     
