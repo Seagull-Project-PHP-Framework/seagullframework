@@ -1,7 +1,6 @@
 <?php
 
 require_once 'DB/DataObject.php';
-
 require_once 'LUAdmin.php';
 
 define('SGL_LIVEUSER_RIGHT_ADD', 1);
