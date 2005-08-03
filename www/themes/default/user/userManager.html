@@ -30,6 +30,9 @@
             {end:}
             <th>{translate(#Email#)}</th>
             <th>{translate(#Role#)}</th>
+            {if:liveUserEnabled}
+                <th>{translate(#Group(s)#)}</th>
+            {end:}
             <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a></th>
             <th>{translate(#Edit#)}</th>
             <th>{translate(#Password#)}</th>
@@ -45,6 +48,14 @@
             {end:}
             <td>{aValue[email]}</td>
             <td>{aValue[role_name]}</td>
+            {if:liveUserEnabled}
+                <td align="center">
+                    {foreach:aValue[groups],group}{group}<br />{end:}
+                    <input type="button" name="frmReset" value="change"
+                        onClick="javascript:document.location.href='{makeUrl(#editGroups#,#luusers#,#user#)}user_id/{aValue[usr_id]}/'" />  
+                        
+                </td>
+            {end:}
             <td align="center">{if:aValue[is_acct_active]} {translate(#Active#)} {else:} {translate(#Disabled#)} {end:}</td>
             <td align="center">
                 <a href="{makeUrl(#edit#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">

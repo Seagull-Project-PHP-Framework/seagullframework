@@ -668,14 +668,17 @@ class SGL_Controller
 			}
 			
 			switch($output->wysiwyg_editor) {
+			    
             case 'fck':
             	$output->wysiwyg_fck = true;
             	$output->addOnLoadEvent('fck_init()');
             	break;
+            	
             case 'xinha':
             	$output->wysiwyg_xinha = true;
             	$output->addOnLoadEvent('xinha_init()');
             	break;
+            	
             case 'htmlarea':
             	$output->wysiwyg_htmlarea = true;
             	$output->addOnLoadEvent('HTMLArea.init()');	
@@ -683,6 +686,9 @@ class SGL_Controller
 		}
         //  get all html onLoad events
         $output->onLoad = $output->getAllOnLoadEvents();
+        
+        //  setup perms mode
+        $output->liveUserEnabled = ($this->conf['permission']['driver'] == 'liveuser') ? true : false;        
 
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');

@@ -1,6 +1,6 @@
 <?php
-require_once 'LUAdmin.php';
 require_once 'DB/DataObject.php';
+require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_PERM_ADD', 1);
 define('SGL_LIVEUSER_PERM_REMOVE', 2);
@@ -127,7 +127,7 @@ class LURightsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        if(empty($input->right_id)) {
+        if (empty($input->right_id)) {
             LUAdmin::noRecordRedirect();
         }
         
@@ -202,7 +202,7 @@ class LURightsMgr extends SGL_Manager
         $params['filters'] = array('right_id' => $input->right_id);
         $admin = &LUAdmin::singleton();
         $rights = &$admin->perm->getRights($params);
-        if(empty($rights[$input->right_id])) {
+        if (empty($rights[$input->right_id])) {
             LUAdmin::noRecordRedirect();
         }
         $output->right = (object) $rights[$input->right_id];
@@ -330,9 +330,7 @@ class LURightsMgr extends SGL_Manager
             'name' => $input->right['name'],
             'description' => $input->right['description'],
         );
-        
         return $data;
     }
-     
 }
 ?>
