@@ -367,7 +367,7 @@ class LUGroupsMgr extends SGL_Manager
         $output->pageTitle = $this->pageTitle . ' :: Members';
         
         $group = $this->getGroup($input->group_id);
-        if($group === false) {
+        if ($group === false) {
             LUAdmin::noRecordRedirect();
         }
         $output->group = &$group;
