@@ -1,5 +1,4 @@
 <?php
-
 require_once 'LUAdmin.php';
 require_once 'DB/DataObject.php';
 
@@ -53,7 +52,7 @@ class LURightsMgr extends SGL_Manager
         $input->permsToAdd      = $req->get('AddfrmRightPerms');
         $input->permsToRemove   = $req->get('RemovefrmRightPerms');
             
-        if($input->submit && ($input->action == 'insert' || $input->action == 'update')) {
+        if ($input->submit && ($input->action == 'insert' || $input->action == 'update')) {
             if(empty($input->right['name'])) {
                 $aErrors['name'] = 'You must enter a name';
             }
