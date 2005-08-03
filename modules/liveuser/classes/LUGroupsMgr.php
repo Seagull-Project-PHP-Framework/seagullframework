@@ -509,7 +509,6 @@ class LUGroupsMgr extends SGL_Manager
                 break;
             }
         }
-        
         return $foundGroup;
     }
     
