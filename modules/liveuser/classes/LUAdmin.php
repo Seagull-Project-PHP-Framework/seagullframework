@@ -27,7 +27,7 @@ class LUAdmin
         static $admin;
         static $staticConf;
         
-        if(isset($admin) && isset($staticConf) && ($staticConf === $conf || $conf === null)) {
+        if (isset($admin) && isset($staticConf) && ($staticConf === $conf || $conf === null)) {
             return $admin;
         }
         
@@ -313,22 +313,4 @@ class LUAdmin
     }
 
 }
-
-//if (!function_exists('clone')) {
-//    eval('function clone($t) { return $t; }');
-//}
-
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (file_exists($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
-    }
-}
-
 ?>
