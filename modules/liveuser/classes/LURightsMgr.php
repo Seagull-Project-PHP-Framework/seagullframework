@@ -104,7 +104,7 @@ class LURightsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        if(empty($input->right_id)) {
+        if (empty($input->right_id)) {
             LUAdmin::noRecordRedirect();
         }
         
