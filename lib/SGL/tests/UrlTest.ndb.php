@@ -109,5 +109,13 @@ EOF;
         $ret = preg_replace($pattern, $replace, $foo);
         $this->assertEqual($ret, 'this is foo  ');     
     }
+    
+    function testIsSetAndEmpty()
+    {
+        $this->assertFalse(@$foo);
+        $this->assertNull(@$foo);
+        $this->assertFalse(isset($foo));
+        $this->assertTrue(empty($foo));
+    }
 }
 ?>

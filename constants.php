@@ -95,7 +95,7 @@
         $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
      
         //  it's apache
-        if (isset($_SERVER['PHP_SELF']) && !empty($_SERVER['PHP_SELF'])) {
+        if (!empty($_SERVER['PHP_SELF'])) {
         
             //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
             if (strpos(php_sapi_name(), 'cgi') !== false) {
