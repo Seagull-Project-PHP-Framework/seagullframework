@@ -116,7 +116,7 @@ class LURightsMgr extends SGL_Manager
         $admin = &LUAdmin::singleton();
         $rights = &$admin->perm->getRights($params);
         
-        if(empty($rights[$input->right_id])) {
+        if (empty($rights[$input->right_id])) {
             LUAdmin::noRecordRedirect();
         }
         
