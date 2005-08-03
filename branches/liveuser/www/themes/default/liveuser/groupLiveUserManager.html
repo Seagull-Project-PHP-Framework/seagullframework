@@ -1,0 +1,71 @@
+<flexy:include src="banner.html" />
+
+<style type="text/css">
+handLabel {
+ cursor: pointer;
+ cursor: hand;
+}
+</style>
+
+<div align="center">
+
+{if:edit}
+<div class="pageTitle">Edycja grupy</div>
+{else:}
+<div class="pageTitle">Tworzenie grupy</div>
+{end:}
+
+<span flexy:if="t.msgGet()">{t.msgGet()}</span>
+
+    <form method="post" flexy:ignore>
+        <input type="hidden" name="action" value="{action}">
+        <input type="hidden" name="group[group_id]" value="{group.group_id}">
+        <table>
+            <tr>
+                <td align="center">
+                    <input type="button" value="powrót do listy" onClick="javascript:document.location.href='liveuserGroupMgr.php'" />
+                </td>
+            </tr>
+            <tr>
+                <td style="white-space: nowrap; background-color: #CCCCCC;" align="left" valign="top" colspan="2"><b>Detale</b></td>
+            </tr>
+            <tr>                                           
+                <td align='right'><b><span style="color: #ff0000">*</span>Nazwa</b></td>
+                <td>
+                    <div style="color:red" flexy:if="error[group_define_name]">{error[group_define_name]}</div>
+                    <input type=text name='group[group_define_name]' value="{group.group_define_name}">
+                </td>
+            </tr>
+            <tr>                                           
+                <td align='right'><b>Opis</b></td>
+                <td>
+                    <div style="color:red" flexy:if="error[description]">{error[description]}</div>
+                    <TEXTAREA NAME="group[description]" cols="40" rows="5">{group.description}</TEXTAREA>
+                </td>
+            </tr>
+            <tr>
+                <td style="white-space: nowrap; background-color: #CCCCCC;" align="left" valign="top" colspan="2"><b>Uprawnienia</b></td>
+            </tr>
+            <tr flexy:foreach="rights,key,val">
+                <td align='right'>
+                    <input type="checkbox"
+                    	flexy:raw="{val.checked}"
+                    	flexy:ignore="yes"
+	                    name="right[{key}]" />
+                </td>
+                <td>                                            
+                    <label for="right[{key}]" class="handLabel">{val.name}</label>
+                </td>
+            </tr>
+            
+            <tr>
+                <td valign="top" align="center" colspan="2">
+                    <span style="font-size:80%; color:#ff0000;">*</span><span style="font-size:80%;">  pola wymagane</span>
+                </td>
+            </tr>
+        </table>
+        <input type=submit name="submitted" value='Zapisz'/>
+        &nbsp;<input value="Reset" type="reset">
+    </form>
+
+<flexy:include src="footer.html" />

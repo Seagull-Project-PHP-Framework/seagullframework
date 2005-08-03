@@ -156,6 +156,7 @@ class LURightsMgr extends SGL_Manager
         
         $admin = &LUAdmin::singleton();
         $output->rights = &$admin->perm->getRights();
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').rights.disabled = true");        
     }
 
     function _delete(&$input, &$output)
