@@ -1,8 +1,6 @@
 <?php
-
 require_once 'DB/DataObject.php';
-
-require_once 'LUAdmin.php';
+require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_ADD', 1);
 define('SGL_LIVEUSER_REMOVE', 2);

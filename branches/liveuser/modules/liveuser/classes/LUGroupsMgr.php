@@ -1,7 +1,6 @@
 <?php
-
 require_once 'DB/DataObject.php';
-require_once 'LUAdmin.php';
+require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_RIGHT_ADD', 1);
 define('SGL_LIVEUSER_RIGHT_REMOVE', 2);
@@ -180,16 +179,18 @@ class LUGroupsMgr extends SGL_Manager
         $output->template = 'luGroupsList.html';
         
         $admin = &LUAdmin::singleton();
+        if (!is_a($admin, 'LUAdmin')) {
+            print '<pre>'; print_r($admin);die();
+        }
         $aparams['fields'] = array('name', 'description');
-        $groups = &$admin->perm->getGroups();
+        $groups = $admin->perm->getGroups();
         
         // get members quantity
-        foreach($groups as $key => $group) {
+        foreach ($groups as $key => $group) {
             $liveuserGroupUsers = &DB_DataObject::factory('liveuser_groupusers');
             $liveuserGroupUsers->group_id = $group['group_id'];
             $groups[$key]['members_quantity'] = $liveuserGroupUsers->find();
         }
-        
         $output->groups = &$groups;
     }
 

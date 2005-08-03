@@ -1,6 +1,5 @@
 <?php
 
-//require_once 'MDB2.php';
 require_once 'LiveUser/Admin.php';
 
 define('OPC_DEFAULT_APPLICATION', 1);
@@ -34,7 +33,10 @@ class LUAdmin
         $staticConf = &LUAdmin::getConfig();
         
         $admin = &LUAdmin::factory($staticConf);
-        $admin->setAdminContainers();
+        $ok = $admin->setAdminContainers();
+        if (!$ok) {
+            return $admin->getErrors();  
+        }
         $admin->perm->init($staticConf['permContainer']);
         $admin->perm->setCurrentApplication(OPC_DEFAULT_APPLICATION);
         
@@ -67,17 +69,17 @@ class LUAdmin
     function &getConfig() {
         
         $conf = &$GLOBALS['_SGL']['CONF'];
-        
-        $dsn = SGL_DB::getDsn();
+
         // seagull specific mysql container
-        if($dsn['phptype'] == 'mysql_SGL') {
-            $dsn['phptype'] = 'mysql';
-        }
+#FIXME remove
+//        if ($dsn['phptype'] == 'mysql_SGL') {
+//            $dsn['phptype'] = 'mysql';
+//        }
         
-        //$db = &MDB2::connect($dsn);
+
         $dbSingleton = &SGL_DB::singleton(); // get as a copy
         
-        // lone it - because we are changing assocMode
+        // clone it - because we are changing assocMode
         $db = clone($dbSingleton);
         
         if (PEAR::isError($db)) {
@@ -91,7 +93,7 @@ class LUAdmin
             array(
                 'autoInit' => false,
                 'session'  => array(
-                    'name'     => 'PHPSESSION',
+                    'name'     => $conf['cookie']['name'],
                     'varname'  => 'ludata'
                 ),
                 'login' => array(
@@ -107,7 +109,7 @@ class LUAdmin
                         'loginTimeout'  => 0,
                         'expireTime'    => 3600,
                         'idleTime'      => 1800,
-                        'dsn'           => $dsn,
+                        'dsn'           => SGL_DB::getDsn(),
                         'allowDuplicateHandles' => false,
                         'authTable'     => 'liveuser_users',
                             'authTableCols' => array(

@@ -329,11 +329,9 @@ class UserMgr extends RegisterMgr
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $conf = & $GLOBALS['_SGL']['CONF'];
         
         //  set appropriate navigation
-        $output->liveUserEnabled = ($conf['permission']['driver'] == 'liveuser') ? true : false;
         $output->template = 'userManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         
@@ -368,7 +366,6 @@ class UserMgr extends RegisterMgr
                 // find groups for every user
                 $aPagedData['data'][$key]['groups'] = LUAdmin::getGroupsByUserId($user['usr_id']);
             }
-            $output->groupsEnabled = true;
         }
 
         $output->aPagedData = $aPagedData;
