@@ -91,6 +91,8 @@ class PermissionMgr extends SGL_Manager
         $input->scannedPerms    = (array) $req->get('scannedPerms');
         $input->aDelete         = $req->get('frmDelete');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $aErrors = array();
         if ($input->submit) {
@@ -335,12 +337,24 @@ class PermissionMgr extends SGL_Manager
             $disabled = false;
         }
 
+        $allowedSortFields = array('permission_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY role_id ASC ';
+        }
+        $query = "  SELECT
+                        role_id, name, description, date_created,
+                        created_by, last_updated, updated_by
+                    FROM {$conf['table']['role']} " .$orderBy_query;
+
         $query = "
             SELECT  permission_id, name, module_id
             FROM    {$conf['table']['permission']}
             $whereClause
-            ORDER BY permission_id
-        ";
+            {$orderBy_query} ";
         $pagerOptions = array(
             'mode'      => 'Sliding',
             'delta'     => 3,
