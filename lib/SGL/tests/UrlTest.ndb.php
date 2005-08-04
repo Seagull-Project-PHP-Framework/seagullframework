@@ -116,6 +116,13 @@ EOF;
         $this->assertNull(@$foo);
         $this->assertFalse(isset($foo));
         $this->assertTrue(empty($foo));
+        
+        //  test for null and non-null values
+        $foo = null;
+        $this->assertFalse(isset($foo));
+        $this->assertFalse(!empty($foo));        
+        $foo = 'up';
+        $this->assertTrue(!empty($foo));
     }
 }
 ?>
