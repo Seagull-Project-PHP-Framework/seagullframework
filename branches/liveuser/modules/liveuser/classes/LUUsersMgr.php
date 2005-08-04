@@ -35,11 +35,8 @@ class LUUsersMgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = $req->get('action');
-        
         $input->submit      = $req->get('submitted');
-        
-        $input->user_id = $req->get('user_id');
-        
+        $input->user_id     = $req->get('user_id');
         $input->groupsToAdd      = $req->get('AddfrmUserGroups');
         $input->groupsToRemove   = $req->get('RemovefrmUserGroups');
     }
@@ -53,7 +50,7 @@ class LUUsersMgr extends SGL_Manager
         
         $user = &DB_DataObject::factory('usr');
         $ret = $user->get($input->user_id);
-        if(!$ret || PEAR::isError($ret)) {
+        if (!$ret || PEAR::isError($ret)) {
             LUAdmin::noRecordRedirect();
         }
         $output->user = &$user;

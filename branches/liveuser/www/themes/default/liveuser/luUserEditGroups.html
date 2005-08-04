@@ -49,8 +49,10 @@
     </tr>
     <tr>
         <td width="100%" colspan="2" align="center" nowrap>
-            <input class="wideButton" name="submitted" value="Submit" type="submit" onclick="lockChanges();" />
-    		<input class="wideButton" type="button" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='userMgr.php?{sessID}'" />
+            <input class="wideButton" name="submitted" 
+                value="Submit" type="submit" onclick="lockChanges();" />
+    		<input class="wideButton" type="button" 
+                value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#list#,#user#,#user#)}'" />
         </td>
     </tr>
   </table>
