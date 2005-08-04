@@ -182,9 +182,9 @@ class LUGroupsMgr extends SGL_Manager
         if (!is_a($admin, 'liveuser_admin')) {
             print '<pre>'; print_r($admin);die();
         }
-        $aparams['fields'] = array('name', 'description');
+//        $aParams['fields'] = array('name', 'description');
         $groups = $admin->perm->getGroups();
-        
+
         // get members quantity
         foreach ($groups as $key => $group) {
             $liveuserGroupUsers = &DB_DataObject::factory('liveuser_groupusers');
