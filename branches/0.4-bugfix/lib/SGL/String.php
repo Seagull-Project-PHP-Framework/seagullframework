@@ -328,8 +328,8 @@ class SGL_String
         $sizeList = array( 
            '1073741824' => 'GB',
            '1048576'    => 'MB',
-           '1024'       => 'kb',
-           '0'          => 'b'
+           '1024'       => 'KB',
+           '0'          => 'B'
            );
 
         foreach ($sizeList as $bytes => $unit) {
