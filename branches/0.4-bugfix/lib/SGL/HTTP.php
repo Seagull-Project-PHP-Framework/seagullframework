@@ -61,11 +61,10 @@ class SGL_HTTP
      * @access  public
      * @static
      * @param   mixed   $url    target URL
-     * @param   array   $param  params to be appended to URL
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = null, $param = false)
+    function redirect($url = null)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
