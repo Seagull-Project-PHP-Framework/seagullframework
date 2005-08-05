@@ -46,6 +46,7 @@ require_once SGL_LIB_DIR . '/SGL.php';
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
+require_once SGL_CORE_DIR . '/Translation.php';
 require_once 'HTML/Template/Flexy.php';
 
 /**
@@ -447,27 +448,26 @@ class SGL_Controller
         require_once SGL_DAT_DIR . '/ary.languages.php';
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
+        //  fetch installed languages
+        $GLOBALS['_SGL']['INSTALLED_LANGUAGES'] = parse_ini_file(SGL_PATH .'/var/'. SGL_SERVER_NAME .'.languages.ini.php');
+        
         //  if lang var passed in request
         if (isset($lang) && array_key_exists($lang, $aLanguages)) {
-            include SGL_MOD_DIR . '/default/lang/' . $aLanguages[$lang][1] . '.php';
+            //  set language in user preferences                        
             $_SESSION['aPrefs']['language'] = $lang;
         } else {
-            //  get it from session
-            $currLang = $_SESSION['aPrefs']['language'];
-            $globalLangFile = $aLanguages[$currLang][1] . '.php';
-
-            //  if file exists, load global lang file
-            if (is_readable(SGL_MOD_DIR . '/default/lang/' . $globalLangFile)) {
-                include SGL_MOD_DIR . '/default/lang/' . $globalLangFile;
-            } else {
-                SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
-            }
+            //  fetch language from session
+            $lang = $_SESSION['aPrefs']['language'];                        
         }
         //  resolve current language from GET or session, assign to $language
         $language = (isset($lang)) ? @$aLanguages[$lang][1] : $aLanguages[$currLang][1];
         if (empty($language)) {
             $language = 'english-iso-8859-15';
         }
+        
+        //  fetch default translation
+        $langID = str_replace('-', '_', $lang);
+        $defaultWords = SGL_Translation::getTranslations('default', $langID);
         
         //  if $process->init(new SGL_HTTP_Request()) is called directly, as in testing,
         //  there will be no page object, so create a dummy object
@@ -476,11 +476,10 @@ class SGL_Controller
             $this->page->module = 'default';
         }
         
-        $path = SGL_MOD_DIR . '/' . $this->page->module . '/lang/';
-
-        //  attempt to merge global language file with module's lang file
-        if (is_readable($path . $language . '.php')) {
-            include $path . $language . '.php';
+        //  fetch module translations
+        if ($this->page->module !== 'default') {
+            $words = SGL_Translation::getTranslations($this->page->module, $langID);
+        }
 
             //  if current module is not the default module
             if (isset($words)) {
@@ -490,12 +489,7 @@ class SGL_Controller
             } else {
                 $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
             }
-        } else {
-            SGL::raiseError('Could not open module\'s language file in ' .
-                __CLASS__ . '::' . __FUNCTION__ . 
-                ', maybe it does not exist or the query parameter is incorrect', 
-                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
+
         //  extract charset from current language string
         $aTmp = split('-', $language);
         array_shift($aTmp);
