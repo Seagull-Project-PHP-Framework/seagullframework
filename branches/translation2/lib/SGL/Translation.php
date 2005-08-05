@@ -58,7 +58,7 @@ class SGL_Translation
      *  o translation (default)
      *  o admin - translation2_admin
      * Storage drivers: (Set in global config under site)
-     *  o single - all translation in single table (translations)
+     *  o single - all translations in a single table (translations)
      *  o multiple (default) - all translations in a seperate table (translation_en, translation_pl, translation_de)
      * 
      * @access  public 
@@ -102,25 +102,27 @@ class SGL_Translation
             
             //  set params
             foreach ($langs as $aKey => $aValue) {
-                   $params['strings_tables'][$aKey] = $prefix . $aKey;
+                $params['strings_tables'][$aKey] = $prefix . $aKey;
             }
 
         } else {
-            SGL::raiseError('translation table not specified check global config ', SGL_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE);
+            SGL::raiseError('translation table not specified check global config ', 
+                SGL_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE);
         }
                            
         //  instantiate selected translation2 object
         switch (strtolower($type)) {
-            case 'admin':
-                require_once 'Translation2/Admin.php';
-                $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
-                break;
-            case 'translation':
-            default:
-                $oTranslation = &Translation2::factory($driver, $dsn, $params);
-                break;
+            
+        case 'admin':
+            require_once 'Translation2/Admin.php';
+            $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
+            break;
+            
+        case 'translation':
+        
+        default:
+            $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }        
-
         return $oTranslation;                
     }
     
@@ -135,6 +137,7 @@ class SGL_Translation
             $words = unserialize($serialized);
             SGL::logMessage('translations from cache', PEAR_LOG_DEBUG);
             return $words;
+            
         } else {
 
             //  fetch available languages
@@ -154,7 +157,8 @@ class SGL_Translation
                 $cache->save($serialized, $module, 'translation_'. $lang);
                 SGL::logMessage('translations from file', PEAR_LOG_DEBUG);  
                 return $words;
-            } else if ($module == 'default') {
+                
+            } elseif ($module == 'default') {
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
             }
         }
@@ -164,6 +168,7 @@ class SGL_Translation
     function getTranslations($module, $lang, $fallbackLang = false) 
     {
         if (!empty($module) && !empty($lang)) {
+            
             //  fetch translations from database and cache
             $cache = &SGL::cacheSingleton();
             
@@ -172,6 +177,7 @@ class SGL_Translation
                 $words = unserialize($serialized);
                 SGL::logMessage('translations from cache '. $module, PEAR_LOG_DEBUG);
                 return $words;
+                
             } else {
                 $conf = &$GLOBALS['_SGL']['CONF'];
                 
@@ -183,7 +189,7 @@ class SGL_Translation
                     $lang = $fallbackLang;
                 }
                                 
-                //  instantaite translation2 object
+                //  instantiate translation2 object
                 $translation = &SGL_Translation::singleton();
                                
                 //  set language
@@ -192,7 +198,7 @@ class SGL_Translation
                 //  set translation group
                 $translation->setPageID($module);
                 
-                //  instantaite cachelite decorator and set options
+                //  instantiate cachelite decorator and set options
                 if ($conf['cache']['enabled']) {
                     $translation = &$translation->getDecorator('CacheLiteFunction');
                     $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
@@ -220,13 +226,11 @@ class SGL_Translation
         } else {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);    
         }
-    
     }
     
     function getLangs($lang)
     {
         $translation = &SGL_Translation::singleton();
-        
     }
 
 }
