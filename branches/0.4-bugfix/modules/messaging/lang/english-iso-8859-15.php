@@ -9,10 +9,12 @@
         'admin cannot save contacts' => 'Admin is not allowed to save contacts',
         'Message sent successfully' => 'Message sent successfully',
         'message deleted successfully' => 'Message(s) deleted successfully',
+        'Messages did not reach all recipients' => 'Messages did not reach all recipients',
         'Inbox'=>'Inbox',
         'In order to send an instant message, you must select recipients from the contacts tab'=>'In order to send an instant message, you must select recipients from the contacts tab',
         'Sender'=>'Sender',
         'Date'=>'Date',
+        'Reply' => 'Reply',
         'No messages in inbox'=>'No messages in inbox',
         'check for new messages'=>'check for new messages',
         'go to outbox'=>'go to outbox',
@@ -28,5 +30,6 @@
         'From'=>'From',
         'cancel'=>'cancel',
         'Read'=>'Read',
+        'Compose Message' => 'Compose Message',
     );
 ?>
