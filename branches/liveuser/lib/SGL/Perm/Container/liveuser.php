@@ -25,6 +25,7 @@ class Perm_LiveUser
     {
           
         $dbh = &SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         
         $this->options = array(
             'autoInit'       => true,
@@ -60,7 +61,7 @@ class Perm_LiveUser
                                     'type'  => 'Complex',
                                     'storage' => array('DB' => array('connection' => $dbh, 'prefix'     => 'liveuser_')),
                                 ),
-            'session'        => array('name' => session_name()),
+            'session'        => array('name' => $conf['cookie']['name']),
             'handle'         => $options['handle'],
             'password'       => $options['password'],
         );
@@ -72,11 +73,11 @@ class Perm_LiveUser
      */ 
     function init($options = null)
     {
-        if($options === null) {
+        if ($options === null) {
             $options = &$this->options;
         }
         $this->container = &LiveUser::factory($options, $options['handle'], $options['password']);
-        if(!empty($this->container)) {
+        if (!empty($this->container)) {
             $this->initialized = true;
         } else {
             // todo: add error handling
@@ -93,17 +94,17 @@ class Perm_LiveUser
     {
         static $rightIds;
         
-        if(isset($rightIds) && !$forceReload) {
+        if (isset($rightIds) && !$forceReload) {
             return $rightIds;
         }
-        if(isset($_SESSION['liveuserRights']) && is_array($_SESSION['liveuserRights']) && !$forceReload) {
+        if (isset($_SESSION['liveuserRights']) && is_array($_SESSION['liveuserRights']) && !$forceReload) {
             $rightIds = $_SESSION['liveuserRights'];
             return $rightIds;
         }
-        if(!$this->initialized) {
+        if (!$this->initialized) {
             $this->init();
         }
-        if($userId !== null) {
+        if ($userId !== null) {
             $this->container->_perm->permUserId = $userId;
         }
         $rightIds = $this->container->_perm->readRights();
@@ -123,9 +124,10 @@ class Perm_LiveUser
      */ 
     function checkRight($rightId)
     {
-        if(!is_int($rightId)) {
+        if (!is_int($rightId)) {
+            
             // try retrieve as constant (define name)
-            if(defined($rightId)) {
+            if (defined($rightId)) {
                 eval("\$rightId = \$\$rightId");
             } else {
                 SGL::raiseError('There is no constant: ' . $rightId,
@@ -146,10 +148,10 @@ class Perm_LiveUser
      */ 
     function getPermsByRights($rights = null)
     {
-        if($rights === null) {
+        if ($rights === null) {
             $rights = &$this->readRights();
         }
-        if(empty($rights)) {
+        if (empty($rights)) {
             return array();
         }
         

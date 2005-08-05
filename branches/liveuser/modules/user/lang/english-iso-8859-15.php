@@ -173,6 +173,7 @@ $words['Organisation Manager :: Edit'] = 'Organisation Manager :: Edit';
 $words['Organisation Manager :: New Organisation'] = 'Organisation Manager :: New Organisation';
 $words['groups'] = 'groups';
 $words['Group'] = 'Group';
+$words['Group(s)'] = 'Group(s)';
 $words['Organisation'] = 'Organisation';
 $words['organisation'] = 'organisation';
 $words['organisations'] = 'organisations';
