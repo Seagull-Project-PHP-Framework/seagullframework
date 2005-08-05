@@ -39,6 +39,7 @@
 // $Id: ArticleMgr.php,v 1.52 2005/05/23 23:29:12 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
+#require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_ENT_DIR . '/Category.php';
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
@@ -102,6 +103,7 @@ class ArticleMgr extends SGL_Manager
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
+        $input->articleLangs    = $req->get('frmArticleLangs');
 
         //  new article form vars
         $input->createdByID     = $req->get('frmCreatedByID');
@@ -165,7 +167,10 @@ class ArticleMgr extends SGL_Manager
         $output->dateSelectorExpiry = 
             SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
         $item = & new SGL_Item();
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID);
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $input->articleLangs);
+
+        //  output languages
+        $output->aLanguages = $input->articleLangs;
 
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
@@ -207,11 +212,13 @@ class ArticleMgr extends SGL_Manager
         $insertID = $item->addMetaItems();
 
         //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue);
+        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, $input->articleLangs);
 
         //  addBody
-        $body = SGL_String::tidy($input->bodyValue);
-        $item->addBody($insertID, $input->bodyItemID, $body);
+        if ($input->bodyValue != '') {
+            $body = SGL_String::tidy($input->bodyValue);
+            $item->addBody($insertID, $input->bodyItemID, $body, $input->articleLangs);
+        }
         $output->masterTemplate = 'masterBlank.html';
         $output->template = 'articleMgrAdd.html';
         $output->article = $item;
@@ -239,9 +246,14 @@ class ArticleMgr extends SGL_Manager
             SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate), 
                 'frmExpiryDate');
 
-        //  get dynamic content
-        $output->dynaContent = $item->getDynamicContent($input->articleID);
+        //  fetch current language
+        $langID = $GLOBALS['_SGL']['INSTALLED_LANGUAGES']; 
 
+        //  get dynamic content
+        $output->dynaContent = $item->getDynamicContent($input->articleID, $langID);
+
+        $output->aLanguages = $langID;
+        
         //  generate flesch html link
         $output->fleschLink = $conf['site']['baseUrl'] . '/flesch.' . $_SESSION['aPrefs']['language'] . '.html';
 
@@ -317,11 +329,13 @@ class ArticleMgr extends SGL_Manager
         $item->updateMetaItems();
 
         //  updateDataItems
-        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue);
+        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->articleLangs);
 
         //  addBody
-        $body = SGL_String::tidy($input->bodyValue);
-        $item->updateBody($input->bodyItemID, $body);
+        if (is_array($input->bodyValue) && !empty($input->bodyValue)) {
+            $body = SGL_String::tidy($input->bodyValue);
+            $item->updateBody($input->bodyItemID, $input->bodyValue, $input->articleLangs);
+        }
         $output->article = $item;
         SGL::raiseMsg('Article successfully updated');
     }
@@ -357,13 +371,21 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  fetch installed languages
+        $trans = &SGL_Translation::singleton('admin');
+        $output->aLanguages = $trans->getLangs();
+        
+        //  fetch current language
+        $langID = str_replace('-', '_', SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET']);
+        
         //  grab article with template type from session preselected
         $aResult = $this->retrievePaginated(
             $input->catID,
             $bPublished = false,
             $input->dataTypeID,
             $input->queryRange,
-            $input->from);
+            $input->from,
+            $langID);
 
         //  generate action links for each article
         for ($n = 0; $n < count($aResult['data']); $n++) {
@@ -401,7 +423,7 @@ class ArticleMgr extends SGL_Manager
      * @see     retrieveAll()
      */
     function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
-                                $queryRange = 'thisCategory', $from = '')
+                                $queryRange = 'thisCategory', $from = '', $lang)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
@@ -453,6 +475,13 @@ class ArticleMgr extends SGL_Manager
             'perPage'  => $limit,
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+
+        //  fetch title translation
+        $trans = &SGL_Translation::singleton();
+        foreach ($aPagedData['data'] as $aKey => $aValues) {
+            $aPagedData['data'][$aKey]['addition'] = $trans->get($aValues['addition'], 'content', $lang);                           
+        }
+
         return $aPagedData;
     }
 

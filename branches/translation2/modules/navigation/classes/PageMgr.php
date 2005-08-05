@@ -251,6 +251,10 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
+        
+        // fetch installed langs
+        $trans = &SGL_Translation::singleton();
+        $output->aLanguages = $trans->getLangs();
     }
 
     function _insert(&$input, &$output)
@@ -294,6 +298,18 @@ class PageMgr extends SGL_Manager
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
+        //  fetch next id
+        $dbh = &SGL_DB::singleton();
+        $titleID = $dbh->nextID('translation');
+        
+        //  add translations
+        $trans = &SGL_Translation::singleton('admin');        
+        $trans->add($titleID, 'nav', $input->section['title']);
+        
+        //  set translation id for nav title
+        unset($input->section['title']);
+        $input->section['title'] = $titleID;
+        
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
                     
@@ -323,10 +339,25 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
+        $output->isEdit = true;
 
+        // fetch installed langs
+        $trans = &SGL_Translation::singleton();
+        $output->aLanguages = $trans->getLangs();
+        
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
+
+        //  FIXME only replaces numberic title with translation
+        //  fetch title translation for all installed languages
+        if (is_numeric($section['title'])) {    
+            $section['title_id'] = $section['title'];
+            unset($section['title']);
+            foreach ($output->aLanguages as $aKey => $aValue) {                
+                $section['title'][$aKey] = $trans->get($section['title_id'], 'nav', $aKey);        
+            }
+        }
         
         //  passing a non-existent section id results in null or false $section
         if ($section) {
@@ -412,6 +443,20 @@ class PageMgr extends SGL_Manager
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
+
+        //  create translation containers and unset in input object
+        $titleID    = $input->section['title_id']; unset($input->section['title_id']);
+        $title      = $input->section['title']; unset($input->section['title']);
+        $titleOrig  = $input->section['title_original']; unset($input->section['title_original']);
+        
+        //  update translations
+        $trans = &SGL_Translation::singleton('admin');
+        $trans->remove($titleID, 'nav');
+        $trans->add($titleID, 'nav', $title);
+        
+        //  assign title id for update
+        $input->section['title'] = $titleID;
+
         $nestedSet = new SGL_NestedSet($this->_params);
 
         //  attempt to update section values
@@ -474,7 +519,12 @@ class PageMgr extends SGL_Manager
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around
             foreach ($input->aDelete as $index => $sectionId) {
-                if ($nestedSet->getNode($sectionId)){
+                if ($section = $nestedSet->getNode($sectionId)){
+                    //  remove translations
+                    $trans = &SGL_Translation::singleton('admin');
+                    $trans->remove($section['title'], 'nav');
+                    
+                    //  remove page
                     $nestedSet->deleteNode($sectionId);
                 }
             }
@@ -524,6 +574,24 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $sectionNodes = $nestedSet->getTree();
+
+        //  fetch available languages
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];                
+
+        //  fetch current languag
+        $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
+
+        //  fetch fallback language
+        $fallbackLang = $GLOBALS['_SGL']['CONF']['translation']['fallbackLang'];
+        //  fetch translations title
+        $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);        
+        
+        //  FIXME currently only set translation if numeric
+        foreach ($sectionNodes as $aKey => $aValues) {
+            if (is_numeric($aValues['title'])) {
+                $sectionNodes[$aKey]['title'] = $translations[$aValues['title']];
+            }
+        }
 
         //  remove first element of array which serves as a 'no section' fk
         //  for joins from the block_assignment table

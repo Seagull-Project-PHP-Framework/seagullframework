@@ -184,7 +184,7 @@ class RegisterMgr extends SGL_Manager
             $output->countries = $countries;
             $GLOBALS['_SGL']['COUNTRIES'] = &$countries;
             $GLOBALS['_SGL']['STATES'] = &$states;
-            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
+            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
         }
     }
 

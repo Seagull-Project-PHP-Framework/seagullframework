@@ -146,7 +146,7 @@ class UserMgr extends RegisterMgr
             $output->states = $states;
             $output->countries = $countries;
             $GLOBALS['_SGL']['COUNTRIES'] = &$countries;
-            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
+            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
         }
         if (!in_array($output->action, array(
                 'requestPasswordReset', 'resetPassword', 

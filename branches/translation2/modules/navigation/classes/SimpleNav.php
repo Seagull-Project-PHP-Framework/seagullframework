@@ -113,6 +113,14 @@ class SimpleNav
      */
     var $_aParentsOfCurrentPage = array();
     
+    /**
+     * Holds section title translations
+     * 
+     * @access  private
+     * @var     array
+     */
+    var $_aTranslations = array();
+    
     function SimpleNav()
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
@@ -145,6 +153,12 @@ class SimpleNav
             $html = $aUnserialized['html'];
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
         } else {
+            //  fetch current lang
+            $lang = str_replace('-', '_', SGL::getCurrentLang() . '-' . $GLOBALS['_SGL']['CHARSET']);
+            
+            //  retreive nav translation
+            $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);
+                                    
             $this->_aSectionNodes = $this->getTabsByRid();
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($this->_aSectionNodes);
@@ -216,6 +230,11 @@ class SimpleNav
             $section->isCurrent = false;
             $section->childIsCurrent = false;
 
+            //  retreive translation
+            if (is_numeric($section->title)) {
+                $titleID = $section->title; unset($section->title);
+                $section->title = $this->aTranslations[$titleID];
+            }            
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
             if ($section->right_id - $section->left_id > 1) {

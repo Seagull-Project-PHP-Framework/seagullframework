@@ -17,6 +17,9 @@
     <input type="hidden" name="action" value="insert" /> 
     <input type="hidden" name="frmCatID" value="{catID}" /> 
     <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
+    {foreach:aLanguages,key,value}
+    <input type="hidden" name="frmArticleLangs[{key}]" value="{value}" />    
+    {end:}
 
     <table class="wide">
         <tr>

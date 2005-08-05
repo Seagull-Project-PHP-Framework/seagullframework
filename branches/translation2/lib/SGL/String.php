@@ -234,18 +234,42 @@ class SGL_String
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
+     * @param boolen $array     is string an array
      * @return string
      */
-    function translate($key, $filter = false)
+    function translate($key, $filter = false, $isArray = false)
     {
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
+            if ($isArray) {
+                $queryString = $trans[$key];
+                $pieces = explode('||', $queryString);
+                foreach ($pieces as $values) {
+                    if (!empty($values)) {
+                        list($aKey, $aValue) = explode('|', $values);
+                        $ret[$aKey] = $aValue;
+                    }
+                }
+            } else {
             $ret = $trans[$key];
+            }
+  
             if ($filter && function_exists($filter)) {
                 $ret = $filter($ret);
             }
             return $ret;
         } else {
+            /*//  get a reference to the request object
+            $req = & SGL_HTTP_Request::singleton();
+            $moduleName = $req->get('moduleName');
+
+            //  fetch fallback lang
+            $fallbackLang = $GLOBALS['_SGL']['CONF']['translation']['fallbackLang'];
+
+            //  add translation
+            $trans = &SGL_Translation::singleton('admin');
+            $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+            */
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
             return '>' . $key . '<';
         }
@@ -543,7 +567,7 @@ class SGL_Date
     function getMonthFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aMonths = SGL_String::translate('aMonths');
+        $aMonths = SGL_String::translate('aMonths', false, true);
         $monthOptions = '';
         if (empty($selected)) {
             $selected = date('m',time());
@@ -708,7 +732,7 @@ class SGL_Date
      * @param   bool    $asc
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
-*/
+     */
     function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

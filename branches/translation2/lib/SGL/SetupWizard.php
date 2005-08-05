@@ -58,6 +58,7 @@ require_once 'Config.php';
 class SGL_SetupWizard
 {
     var $conf;
+    var $installedLanguages;
 
     function SGL_SetupWizard($conf)
     {
@@ -185,27 +186,36 @@ class SGL_SetupWizard
                         <th class="alignCenter">Module</th>
                         <th class="alignCenter">Create Table</th>
                         <th class="alignCenter">Load Data</th>
-                        <th class="alignCenter">Add Constraints</th>
-                    </tr>
+                        <th class="alignCenter">Add Constraints</th>';
+                foreach ($data['langs'] as $aKey => $aValues) {
+                    echo '<th class="alignCenter">Load Language: '. str_replace('-', '_', $aValues) .'</th>';   
+                }                     
+                echo '</tr>
                     <tr>
                         <td class="title">Main</td>
                         <td id="etc_schema" class="alignCenter"></td>
                         <td id="etc_data" class="alignCenter"></td>
-                        <td id="etc_constraints" class="alignCenter"></td>
-                    </tr>            
-                ';
+                        <td id="etc_constraints" class="alignCenter"></td>';
+                foreach ($data['langs'] as $aKey => $aValues) {
+                    echo '<td id="etc_language_'. str_replace('-', '_', $aValues) .'" class="alignCenter"></td>';   
+                }                     
+                echo '</tr>';
                 foreach ($aModuleList as $module) {
                     echo '<tr>
                             <td class="title">' . ucfirst($module) . '</td>
                             <td id="' . $module . '_schema" class="alignCenter"></td>
                             <td id="' . $module . '_data" class="alignCenter"></td>
                             <td id="' . $module . '_constraints" class="alignCenter"></td>
-                        </tr>';
+					';
+                    foreach ($data['langs'] as $aKey => $aValues) {                            
+                            echo '<td id="' . $module . '_language_'. str_replace('-', '_', $aValues) .'" class="alignCenter"></td>';
+                    }
+                    echo '</tr>';
                 }
                 echo '</table>';
                 flush();
 
-                set_time_limit(60);
+                set_time_limit(300);
 
                 //  these hold what to display in results grid, depending on outcome
                 $success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
@@ -299,6 +309,84 @@ class SGL_SetupWizard
                     $query = 'SET FOREIGN_KEY_CHECKS=1;';
                     $res = $dbh->query($query);
                 }
+                $statusText .= ', loading languages';
+                $this->updateHtml('status', $statusText);
+                
+                //  Go back and load selected languages
+                require_once 'Translation2/Admin.php';                
+
+                //  fetch available languages
+                $aLangOptions = SGL_SetupWizard::getLangOptions();
+                $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
+                
+                //  get dsn
+                $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
+                
+                //  set translation2 params
+                $params = array(
+                    'langs_avail_table' => 'langs',
+                    'lang_id_col'       => 'lang_id',
+                    'string_id_col'      => 'translation_id',
+                );
+
+                //  set tranlsation2 driver
+                $driver = 'DB';
+                
+                //  instantiate translation2_admin object
+                $translation = & Translation2_Admin::factory($driver, $dsn, $params);
+                
+                //  interate through languages adding to langs table
+                foreach ($data['langs'] as $aKey => $aLang) {
+                    $globalLangFile = $availableLanguages[$aLang][1] .'.php';                                            
+                    $langID = str_replace('-', '_', $aLang);                    
+                    $encoding       = substr($aLang, strpos('-', $aLang));
+                    $langData       = array(
+                                        'lang_id' => $langID,
+                                        'table_name' => $conf['table']['translation'] .'_'. $langID,
+                                        'meta' => '',
+                                        'name' => $aLangOptions[$aLang],
+                                        'error_text' => 'not available',
+                                        'encoding' => $encoding
+                                        );
+                    $result = $translation->addLang($langData);
+
+                    //  add languaged to inifile container
+                    $this->installedLanguages[$langID] = $langID;
+                    
+                    //  interate through modules                    
+                    foreach ($aModuleList as $module) {
+                        $modulePath = SGL_MOD_DIR . '/' . $module  . '/lang';                    
+
+                        if (file_exists($modulePath .'/'. $globalLangFile)) {
+                            //  load current module lang file
+                            require $modulePath .'/'. $globalLangFile;
+                
+                            //  defaultWords clause
+                            $words = ($module == 'default') ? $defaultWords : $words;                            
+                            
+                            //  add current translation to db
+                            foreach ($words as $tKey => $tValue) {                                                                                          
+                                if (is_array($tValue) && $tKey) { // if an array
+                                    //  create key|value|| string
+                                    $value = '';
+                                    foreach ($tValue as $aKey => $aValue) {
+                                        $value .= $aKey . '|' . $aValue .'||';                                        
+                                    }
+                                    $string = array($langID => $value);
+                                    $translation->add($tKey, $module, $string);
+                                } elseif ($tKey && $tValue) {
+                                    $string = array($langID => $tValue);
+                                    $translation->add($tKey, $module, $string);                                    
+                                }                                    
+                            }
+                            $displayHtml = $result ? $success : $failure;
+                            $this->updateHtml($module . '_language_'. $langID, $displayHtml);
+                            unset($words);                            
+                        } else {
+                            $this->updateHtml($module . '_language_'. $langID, $noFile);                            
+                        }
+                    }
+				}
 
                 //  note: must all be on one line for DOM text replacement
                 $message = 'Database initialisation complete!';
@@ -348,6 +436,14 @@ class SGL_SetupWizard
             $c2->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
             
             SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+
+            //  write installed language ini
+            $c3 = new Config();
+            $c3->parseConfig($this->installedLanguages, 'phparray');
+            $c3->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.languages.ini.php', 'inifile');
+
+            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.languages.ini.php');
+
         }
     }
     
@@ -418,6 +514,10 @@ class SGL_SetupWizard
             SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
         }
 
+        //  fetch available languages
+        $aLangOptions = SGL_SetupWizard::getLangOptions();
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];        
+
         //  clear session cookie so theme comes from DB and not session
         setcookie(  $this->conf['cookie']['name'], null, 0, $this->conf['cookie']['path'], 
                     $this->conf['cookie']['domain'], $this->conf['cookie']['secure']);
@@ -472,6 +572,7 @@ EOF;
         $form->addElement('radio', 'port',     '',"7210 (MaxDB default)",3);
         $form->addElement('text',  'user',     'Database username: ');
         $form->addElement('password', 'pass', 'Database password: ');
+        $form->addElement('select', 'langs', 'Language', $aLangOptions, 'multiple');
 
         $form->addElement('header','MyHeader', 'Setup');
         
@@ -545,6 +646,21 @@ EOF;
             SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini');
     }
 
+    function getLangOptions()
+    {
+        //  fetch available languages
+        require_once SGL_DAT_DIR . '/ary.languages.php';
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        
+        //  sort and return                
+        uasort($availableLanguages, 'SGL_cmp');
+        foreach ($availableLanguages as $id => $tmplang) {
+            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangOptions[$id] =  $lang_name .' -  ('. $id .')';
+        }       
+        return $aLangOptions;
+    }
+        
     function getModuleList() 
     {
         $dir =  SGL_MOD_DIR;
