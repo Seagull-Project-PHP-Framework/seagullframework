@@ -21,10 +21,12 @@
         'add group' => 'add group',
         'Liveuser Groups Manager :: Members' => 'Liveuser Groups Manager :: Members',
         'Liveuser Groups Manager :: Rights' => 'Liveuser Groups Manager :: Rights',
+        'Group Manager :: Change assignments' => 'Group Manager :: Change assignments',
         'Group ID' => 'Group ID',
         
         'add right' => 'add right',
         'Right Constant' => 'Right Constant',
+        'Group Constant' => 'Group Constant',
         'Right ID' => 'Right ID',
         'Liveuser Rights Manager :: Permissions' => 'Liveuser Rights Manager :: Permissions',
         

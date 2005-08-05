@@ -16,7 +16,7 @@ class LUGroupsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->module       = 'liveuser';
-        $this->pageTitle    = 'Liveuser Groups Manager';
+        $this->pageTitle    = 'Groups Manager';
         $this->template     = 'luGroupsList.html';
 
         $this->_aActionsMapping =  array(
@@ -505,8 +505,8 @@ class LUGroupsMgr extends SGL_Manager
         $groups = &$admin->perm->getGroups($params);
         $foundGroup = false;
         
-        foreach($groups as $group) {
-            if($group['group_id'] == $groupId) {
+        foreach ($groups as $group) {
+            if ($group['group_id'] == $groupId) {
                 $foundGroup = (object)$group;
                 break;
             }

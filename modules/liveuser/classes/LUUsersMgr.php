@@ -16,7 +16,7 @@ class LUUsersMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->module       = 'liveuser';
-        $this->pageTitle    = 'Liveuser User Groups Manager';
+        $this->pageTitle    = 'Group Manager';
 
         $this->_aActionsMapping =  array(
             'editGroups'    => array('editGroups'),
@@ -46,7 +46,7 @@ class LUUsersMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'luUserEditGroups.html';
-        $output->pageTitle = $this->pageTitle . ' :: Groups';
+        $output->pageTitle = $this->pageTitle . ' :: Change assignments';
         
         $user = &DB_DataObject::factory('usr');
         $ret = $user->get($input->user_id);
