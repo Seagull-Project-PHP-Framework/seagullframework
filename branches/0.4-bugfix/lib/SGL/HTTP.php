@@ -122,7 +122,7 @@ class SGL_HTTP
 class SGL_HTTP_Request
 {
     /**
-     * Sets GET/POST/FILES to gpcVars attribute.
+     * Parses raw request into SGL format.
      *
      * @access  public
      * @return  void
@@ -133,12 +133,18 @@ class SGL_HTTP_Request
 
         //  merge REQUEST AND FILES superglobal arrays
         $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
-
-        //  parse $_GET and transpose values to $GLOBALS['_SGL']['REQUEST']
-        SGL_Url::dirify();
         
         //  remove slashes if necessary
         SGL_String::dispelMagicQuotes($GLOBALS['_SGL']['REQUEST']);
+
+        //  get all URL parts after domain and TLD as an array
+        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        
+        //  parse URL segments into SGL request structure
+        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
+        
+        //  merge results with cleaned $_REQUEST values and $_POST
+        $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
     }
 
     /**

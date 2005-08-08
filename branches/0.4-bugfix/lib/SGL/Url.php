@@ -155,7 +155,7 @@ class SGL_Url
     }    
 
     /**
-     * Converts querystring into/se/friendly/format.
+     * Ensures URL is fully qualified.
      *
      * @access  public
      * @param   string  $url    The relative URL string
@@ -170,7 +170,11 @@ class SGL_Url
     }
     
     /**
-     * Parse string stored in resource_uri field in section table
+     * Parse string stored in resource_uri field in section table.
+     *
+     * This will always contain URL elements after the frontScriptName (index.php), never
+     * a FQDN, and never simplified names, ie section table must specify module name and 
+     * manager name explicitly, even if they are the same, ie user/user
      *
      * @param string $str
      * @return array  A hash containing URL info
@@ -229,12 +233,12 @@ class SGL_Url
      *
      * @access  public
      * @return  void
+     * @todo    this data structure should be more similar to the one parsed in 
+     *              SGL_Url::parseResourceUri()
      */
-    function dirify()
+    function makeSearchEngineFriendly($aUriParts)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
-
-        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
 
         //  remap
         $aParsedUri['frontScriptName'] = array_shift($aUriParts);
@@ -243,14 +247,14 @@ class SGL_Url
 
         //  if frontScriptName empty, get from config
         $default = false;
-        if (empty($aParsedUri['frontScriptName'])) {
+        if (empty($aParsedUri['frontScriptName'])
+                || $aParsedUri['frontScriptName'] != $conf['site']['frontScriptName']) {
             $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
         }
 
         //  if no module name present, get from config
         //  catch case where debugging with Zend supplies querystring params
         if (empty(  $aParsedUri['moduleName'])
-                || ($aParsedUri['moduleName'] == 'staticId')
                 || (preg_match('/start_debug/', $aParsedUri['moduleName']))) {
             $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
             $default = true;
@@ -259,21 +263,25 @@ class SGL_Url
         //  if no manager name, must be default manager, ie, has same name as module
         //  the exception is when the moduleName comes from the conf
         if ((empty( $aParsedUri['managerName']) && !$default)
-                || ($aParsedUri['managerName'] == 'staticid')             
                 || (preg_match('/start_debug/', $aParsedUri['managerName']))) {
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
 
         //  we are here because we're using defaults from config
         } elseif ($default) {
             $aParsedUri['managerName'] = $conf['site']['defaultManager'];
-            $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];            
+            if (!empty($conf['site']['defaultParams'])) {
+                $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];
+            }
         }
         
         //  catch case where when manger + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
-        if (($aParsedUri['managerName'] == strtolower($conf['cookie']['name']))) {
+        if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
+            list(,$cookieValue) = split('=', $aParsedUri['managerName']);
+            $cookieValue = substr($cookieValue, 0, -1);
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
-            array_unshift($aUriParts, $conf['cookie']['name']);            
+            array_unshift($aUriParts, $cookieValue);
+            array_unshift($aUriParts, $conf['cookie']['name']);
         }
 
         //  if 'action' is in manager slot, move it to querystring array, and replace 
@@ -293,11 +301,13 @@ class SGL_Url
         //  if varName/varValue don't match, assign a null varValue to the last varName
         if ($numParts % 2) {
             array_push($aUriParts, null);
-            ++$numParts;
+            ++ $numParts;
         }
 
-        //  add fc params to request
-        for ($i=0; $i<$numParts; $i+=2) {
+        //  parse FC querystring params
+        $aQsParams = array();
+        
+        for ($i = 0; $i < $numParts; $i += 2) {
             $varName  = urldecode($aUriParts[$i]);
             $varValue = urldecode($aUriParts[$i+1]);
 
@@ -308,20 +318,20 @@ class SGL_Url
                 //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
                 preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
                 if (!array_key_exists($matches[1], $GLOBALS['_SGL']['REQUEST'])) {
-                    $GLOBALS['_SGL']['REQUEST'][$matches[1]] = array();
+                    $aQsParams[$matches[1]] = array();
                 }
                 //  no key given => append to array                
                 if (empty($matches[2])) {
-                    array_push($GLOBALS['_SGL']['REQUEST'][$matches[1]], $varValue);
+                    array_push($aQsParams[$matches[1]], $varValue);
                 } else {
-                    $GLOBALS['_SGL']['REQUEST'][$matches[1]][$matches[2]] = $varValue;
+                    $aQsParams[$matches[1]][$matches[2]] = $varValue;
                 }
-                $tmpArrays[] = array($varName, $varValue);
             } else {
-                $GLOBALS['_SGL']['REQUEST'][$varName] = $varValue;
+                $aQsParams[$varName] = $varValue;
             }
         }
-        $GLOBALS['_SGL']['REQUEST'] = array_merge($aParsedUri, $GLOBALS['_SGL']['REQUEST'], $_POST);
+        //  merge the default request fields with extracted param k/v pairs
+        return array_merge($aParsedUri, $aQsParams);
     }
 
     /**
