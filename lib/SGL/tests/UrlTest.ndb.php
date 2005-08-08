@@ -109,7 +109,325 @@ class UrlTest extends UnitTestCase {
     
     function testIsSimplified()
     {
+        //  basic example
+        $url = 'example.com/index.php/faq';
+        $sectionName = 'example.com/index.php/faq/faq';
+        $this->assertTrue($this->url->isSimplified($url, $sectionName));
         
+        //  minimal
+        $url = 'index.php/faq';
+        $sectionName = 'index.php/faq/faq';
+        $this->assertTrue($this->url->isSimplified($url, $sectionName));
+    }
+    
+    function testGetManagerNameFromSimplifiedName()
+    {
+        $url = 'foobar';
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $this->assertEqual($ret, 'FoobarMgr');
+        
+        //  test case sensitivity
+        $this->assertNotEqual($ret, 'Foobarmgr');
+        
+        //  cannot deal with arbitrary bumpy caps
+        $url = 'foobarbaz';
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $this->assertNotEqual($ret, 'FooBarBazMgr'); //  returns FoobarbazMgr
+        
+        //  does not fix incorrect case
+        $url = 'FoObArMGr';
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $this->assertNotEqual($ret, 'FoobarMgr'); // returns FoObArMGr
+        
+        $url = 'FooBarMgr';
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $this->assertEqual($ret, 'FooBarMgr');
+    }
+    
+    function testGetSimplifiedNameFromManagerName()
+    {
+        $url = 'FooBarMgr';
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $this->assertEqual($ret, 'foobar');
+        
+        $url = 'FooBar';
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $this->assertEqual($ret, 'foobar');
+        
+        $url = 'FooBarMgr.php';
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $this->assertEqual($ret, 'foobar');
+        
+        $url = 'FooBar.php';
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $this->assertEqual($ret, 'foobar');
+    }
+    
+    function testToAbsolute()
+    {
+        $url = 'example.com/index.php/Foo/Bar';
+        $this->url->toAbsolute($url);
+        $this->assertTrue(preg_match('/^http[s]?/', $url));
+        
+        //  if you supply an FQDN, 'secure' will not be checked
+        $url = 'https://example.com/index.php/Foo/Bar';
+        $this->url->toAbsolute($url);
+        $this->assertTrue(preg_match('/^https/', $url));
+        
+        //  otherwise, 'secure' will be checked
+        $url = 'example.com/index.php/Foo/Bar';
+        $this->url->toAbsolute($url);
+        $this->assertFalse(preg_match('/^https/', $url));
+    }
+    
+    function testParseResourceUri()
+    {
+        //  empty URL returns default values
+        $url = '';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertEqual($ret['module'], 'default');
+        $this->assertEqual($ret['manager'], 'default');
+        
+        //  less than 2 elements returns default values
+        $url = 'foo';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertEqual($ret['module'], 'default');
+        $this->assertEqual($ret['manager'], 'default');
+        
+        //  basic module/manager names
+        $url = 'publisher/articleview';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('actionMapping', $ret));
+        $this->assertEqual($ret['module'], 'publisher');
+        $this->assertEqual($ret['manager'], 'articleview');
+        $this->assertNull($ret['actionMapping']);
+        
+        //  with one set of params
+        $url = 'publisher/articleview/frmArticleID/1';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('actionMapping', $ret));
+        $this->assertEqual($ret['module'], 'publisher');
+        $this->assertEqual($ret['manager'], 'articleview');
+        $this->assertNull($ret['actionMapping']);
+        $this->assertTrue(is_array($ret['parsed_params']));
+        $this->assertTrue(array_key_exists('frmArticleID', $ret['parsed_params']));
+        $this->assertEqual($ret['parsed_params']['frmArticleID'], 1);
+        
+        //  with action and params, returns following:
+        
+        //    Array
+        //    (
+        //        [module] => publisher
+        //        [manager] => articleview
+        //        [actionMapping] => foo
+        //        [parsed_params] => Array
+        //            (
+        //                [bar] => baz
+        //            )
+        //    
+        //    )
+        $url = 'publisher/articleview/action/foo/bar/baz';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('actionMapping', $ret));
+        $this->assertEqual($ret['module'], 'publisher');
+        $this->assertEqual($ret['manager'], 'articleview');
+        $this->assertEqual($ret['actionMapping'], 'foo');
+        $this->assertTrue(is_array($ret['parsed_params']));
+        $this->assertTrue(array_key_exists('bar', $ret['parsed_params']));
+        $this->assertEqual($ret['parsed_params']['bar'], 'baz');
+       
+        //  test removing URL encoding
+        $url = 'contactus/contactus/action/list/enquiry_type/Get+a+quote';
+        $ret = $this->url->parseResourceUri($url);
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('actionMapping', $ret));
+        $this->assertEqual($ret['module'], 'contactus');
+        $this->assertEqual($ret['manager'], 'contactus');
+        $this->assertEqual($ret['actionMapping'], 'list');
+        $this->assertTrue(is_array($ret['parsed_params']));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret['parsed_params']));
+        $this->assertEqual($ret['parsed_params']['enquiry_type'], 'Get a quote');
+    }
+    
+    function testMakeSearchEngineFriendlyBasic()
+    {
+        $aUrlSegments = array (
+          0 => 'index.php',
+          1 => 'contactus',
+          2 => 'contactus',
+          3 => 'action',
+          4 => 'list',
+          5 => 'enquiry_type',
+          6 => 'Hosting+info',
+        );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('action', $ret));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'contactus');
+        $this->assertEqual($ret['managerName'], 'contactus');
+        $this->assertEqual($ret['action'], 'list');
+        $this->assertEqual($ret['enquiry_type'], 'Hosting info');
+    }
+    
+    //  remove explicit contactus/contactus module/mgr mapping, see if FC can deduce
+    function testMakeSearchEngineFriendlySimplified()
+    {
+        $aUrlSegments = array (
+          0 => 'index.php',
+          1 => 'contactus',
+          2 => 'action',
+          3 => 'list',
+          4 => 'enquiry_type',
+          5 => 'Hosting+info',
+        );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('action', $ret));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'contactus');
+        $this->assertEqual($ret['managerName'], 'contactus');
+        $this->assertEqual($ret['action'], 'list');
+        $this->assertEqual($ret['enquiry_type'], 'Hosting info');
+    }
+    
+    //  test Zend debug GET noise [position 1]
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInFrontScriptNamePosition()
+    {
+        $aUrlSegments = array (
+            '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
+          );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'default');
+        $this->assertEqual($ret['managerName'], 'default');
+    }
+    
+    //  test Zend debug GET noise [position 2]
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInModulePosition()
+    {
+        $aUrlSegments = array (
+            'index.php',
+            '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
+          );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'default');
+        $this->assertEqual($ret['managerName'], 'default');
+    }
+    
+    //  test Zend debug GET noise [position 3]
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInMgrPosition()
+    {
+        $aUrlSegments = array (
+            'index.php',
+            'user',
+            '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
+          );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'user');
+        $this->assertEqual($ret['managerName'], 'user');
+    }
+    
+    function testMakeSearchEngineFriendlyWithSessionInfo()
+    {
+        $aUrlSegments = array (
+            'index.php',
+            'user',
+            '?SGLSESSID=4294a4bf7ac84738a60a85dafa70ae33&',
+            '1',
+          );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'user');
+        $this->assertEqual($ret['managerName'], 'user');
+    }
+    
+    function testMakeSearchEngineFriendlyWithArrayParams()
+    {
+        $aUrlSegments = array (
+            'index.php',
+            'user',
+            'action',
+            'list',
+            'foo[foo1]',
+            'bar[bar1]',
+            'baz[]',
+            'quux'
+          );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('action', $ret));
+        $this->assertTrue(array_key_exists('foo', $ret));
+        $this->assertTrue(array_key_exists('foo1', $ret['foo']));
+        $this->assertTrue(array_key_exists('baz', $ret));
+        $this->assertTrue(is_array($ret['baz']));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'user');
+        $this->assertEqual($ret['managerName'], 'user');
+        $this->assertEqual($ret['action'], 'list');
+        $this->assertEqual($ret['foo'], array('foo1' => 'bar[bar1]'));
+        $this->assertEqual($ret['baz'][0], 'quux');
     }
 }
 ?>
