@@ -14,12 +14,16 @@ class UrlTest extends UnitTestCase {
     {
         $this->UnitTestCase('Url Test');
     }
+    
+    function setup()
+    {
+        $this->url = new SGL_Url();
+    }
 
     function testParseResourceUriFullString()
     {
         $url = 'contactus/contactus/action/list/enquiry_type/Hosting info';
-        $obj = new SGL_Url();
-        $ret = $obj->parseResourceUri($url);
+        $ret = $this->url->parseResourceUri($url);
         $this->assertTrue(is_array($ret));
         $this->assertTrue(array_key_exists('module', $ret));
         $this->assertTrue(array_key_exists('manager', $ret));
@@ -31,8 +35,7 @@ class UrlTest extends UnitTestCase {
     function testParseResourceUriSlash()
     {
         $url = '/';
-        $obj = new SGL_Url();
-        $ret = $obj->parseResourceUri($url);
+        $ret = $this->url->parseResourceUri($url);
         $this->assertTrue(is_array($ret));
         $this->assertTrue(array_key_exists('module', $ret));
         $this->assertTrue(array_key_exists('manager', $ret));
@@ -41,11 +44,72 @@ class UrlTest extends UnitTestCase {
     function testParseResourceUriEmpty()
     {
         $url = '';
-        $obj = new SGL_Url();
-        $ret = $obj->parseResourceUri($url);
+        $ret = $this->url->parseResourceUri($url);
         $this->assertTrue(is_array($ret));
         $this->assertTrue(array_key_exists('module', $ret));
         $this->assertTrue(array_key_exists('manager', $ret));
+    }
+    
+    function testGetSignificantSegments()
+    {
+        //  test random string
+        $url = 'foo/bar/baz/quux';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertEqual($ret, array());
+        
+        //  test with valid frontScriptName, should return 4 elements
+        $url = 'index.php/bar/baz/quux';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertTrue(count($ret), 4);
+        
+        //  test with valid frontScriptName + leading slash, should return 4 elements
+        $url = '/index.php/bar/baz/quux';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertTrue(count($ret), 4);
+        
+        //  test with valid frontScriptName + trailing slash, should return 4 elements
+        $url = '/index.php/bar/baz/quux/';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertTrue(count($ret), 4);
+        
+        //  test with valid frontScriptName, should return 3 elements
+        $url = '/bar/index.php/baz/quux/';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertTrue(count($ret), 3);
+        
+        //  test with valid frontScriptName, should return 1 element
+        $url = '/foo/bar/baz/index.php/';
+        $ret = $this->url->getSignificantSegments($url);
+        $this->assertTrue(count($ret), 1);
+    }
+    
+    function testContainsDuplicates()
+    {
+        $url = '/index.php/faq/faq/';
+        $this->assertTrue($this->url->containsDuplicates($url));
+        
+        $url = 'http://example.com/index.php/foo/foo';
+        $this->assertTrue($this->url->containsDuplicates($url));
+        
+        //  ignores whitespace
+        $url = 'http://example.com/index.php/foo/foo /';
+        $this->assertTrue($this->url->containsDuplicates($url));
+        
+        $url = 'http://example.com/index.php/foo/fooo';
+        $this->assertFalse($this->url->containsDuplicates($url));
+        
+        //  case sensitive
+        $url = 'FOO/foo';
+        $this->assertFalse($this->url->containsDuplicates($url));
+        
+        //  minimal
+        $url = 'baz/baz';
+        $this->assertTrue($this->url->containsDuplicates($url));
+    }
+    
+    function testIsSimplified()
+    {
+        
     }
 }
 ?>
