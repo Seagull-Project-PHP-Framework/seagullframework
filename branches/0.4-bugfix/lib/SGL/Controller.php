@@ -425,7 +425,7 @@ class SGL_Controller
         }
         //  prepare headers during setup, can be overridden later
         header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-        header('Content-Type: text/html; charset="' . $GLOBALS['_SGL']['CHARSET'] . '"');
+        header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
         header('X-Powered-By: Seagull ' . $GLOBALS['_SGL']['VERSION']);
         return true;
     }
