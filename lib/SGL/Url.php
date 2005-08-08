@@ -235,6 +235,8 @@ class SGL_Url
      * @return  void
      * @todo    this data structure should be more similar to the one parsed in 
      *              SGL_Url::parseResourceUri()
+     * @todo    use same method for SGL_Url::parseResourceUri()
+     * @todo    implement file-based caching or url combinations, simple hashmap
      */
     function makeSearchEngineFriendly($aUriParts)
     {
