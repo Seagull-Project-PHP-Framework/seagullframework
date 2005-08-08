@@ -51,6 +51,8 @@ class SGL_Url
     /**
      * Converts querystring into/se/friendly/format.
      *
+     * Returns an array of all elements after the front script name
+     * 
      * @access  public
      * @param   $url    Url to be parsed
      * @return  array   $aUriParts  An array of all significant parts of the URL, ie
