@@ -343,18 +343,15 @@ class PermissionMgr extends SGL_Manager
            && in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
-            $orderBy_query = 'ORDER BY role_id ASC ';
+            $orderBy_query = 'ORDER BY permission_id ASC ';
         }
-        $query = "  SELECT
-                        role_id, name, description, date_created,
-                        created_by, last_updated, updated_by
-                    FROM {$conf['table']['role']} " .$orderBy_query;
 
         $query = "
             SELECT  permission_id, name, module_id
             FROM    {$conf['table']['permission']}
             $whereClause
-            {$orderBy_query} ";
+            $orderBy_query ";
+        
         $pagerOptions = array(
             'mode'      => 'Sliding',
             'delta'     => 3,
