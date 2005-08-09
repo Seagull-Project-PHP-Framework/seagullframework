@@ -378,13 +378,17 @@ class SGL_Url
             $aParams = explode('||', $params);
             $qs = '';
             foreach ($aParams as $param) {
-                list($qsParamName, $listKey) = explode('|', $param);
+                @list($qsParamName, $listKey) = explode('|', $param);
 
+                //  regarding $aList:
                 //  if we have an array of arrays (we're interating through a resultset)
                 //  or no resulset was passed (qs params are literals)
-                //  - empty array if from manager
+                //  - empty array if invoked from manager (default arg)
                 //  - string equal to 0 if ## passed from template
-                if (is_array(end($aList)) || (is_array($aList) && !is_object(end($aList))) || !(count($aList)) || $aList == 0) {
+                if (is_array(end($aList)) 
+                    || (is_array($aList) && !is_object(end($aList))) 
+                    || !(count($aList)) 
+                    || $aList == 0) {
                 
                     //  determine type of param value
                     if (isset($aList[$idx][$listKey]) && !is_null($listKey)) { // pass referenced array element
@@ -402,17 +406,18 @@ class SGL_Url
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
-                            $elems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
+                            $aElems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
                                 
                                 //  variable is of type $output->org['organisation_id'] = 'foo';
-                                $qsParamValue = $output->{$elems[0]}[$elems[1]];
+                                $qsParamValue = $output->{$aElems[0]}[$aElems[1]];
                             } else {
-                                $qsParamValue = $aList[$idx][$elems[0]][$elems[1]];
+                                $qsParamValue = $aList[$idx][$aElems[0]][$aElems[1]];
                             }
                         } elseif (is_a($output, 'SGL_Output') && isset($output->{$listKey})) {
                             $qsParamValue = $output->{$listKey}; // pass $output property 
-                        } else {                        
+                        } else {
+                            //  see blocks/SiteNews, not called from template                            
                             $qsParamValue = $listKey; // pass literal                        
                         }
                     }

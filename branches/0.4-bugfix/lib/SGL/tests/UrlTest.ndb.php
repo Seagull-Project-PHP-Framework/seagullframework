@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/../Url.php';
+require_once dirname(__FILE__) . '/../Output.php';
 
 /**
  * Test suite.
@@ -474,14 +475,223 @@ class UrlTest extends UnitTestCase {
         $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aList = array(), 
             $params = '', $idx = 0, $output = '');
         $this->assertEqual($target, $ret);
+    }
+    
+    function testMakeLinkCollections()
+    {
+        $user1 = new Usr();
+        $user1->usr_id = 1;
+        $user1->username = 'foo';
+        $user1->array_field = array('sub_element' => 'sub_foo');
         
-        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/
-        $target = $this->baseUrlString . 'baz/bar/action/foo/';
-        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aList = array(), 
-            $params = '', $idx = 0, $output = '');
+        $user2 = new Usr();
+        $user2->usr_id = 2;
+        $user2->username = 'bar';
+        $user2->array_field = array('sub_element' => 'sub_bar');
+        
+        $user3 = new Usr();
+        $user3->usr_id = 3;
+        $user3->username = 'baz';
+        $user3->array_field = array('sub_element' => 'sub_baz');
+
+        //  single k/v pair
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserID/3/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserID/3/';
+        
+        $aCollection = array(
+            (array)$user1, 
+            (array)$user2, 
+            (array)$user3, 
+            );
+        
+        foreach ($aCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aCollection, 
+                'frmUserID|usr_id', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+        
+        //  multiple k/v pairs
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserID/3/frmUsername/baz/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserID/3/frmUsername/baz/';
+        
+        foreach ($aCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aCollection, 
+                'frmUserID|usr_id||frmUsername|username', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+        
+        //  simple integer indexed array
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserType/2/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserType/2/';
+        
+        $aSimpleCollection = array(
+            'foo', 
+            'bar', 
+            'baz', 
+            );
+        
+        foreach ($aSimpleCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aSimpleCollection, 
+                'frmUserType', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+
+        //  random integer indexed array
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserType/916/
+        $randIdx1 = rand(1, 999);
+        $randIdx2 = rand(1, 999);
+        $randIdx3 = rand(1, 999);
+        
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserType/'.$randIdx3.'/';
+        
+        $aRandomCollection = array(
+            $randIdx1 => 'foo', 
+            $randIdx2 => 'bar', 
+            $randIdx3 => 'baz', 
+            );
+        
+        foreach ($aRandomCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aRandomCollection, 
+                'frmUserType', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+        
+        //  a collection of 3d arrays, eg:
+        
+        /*    [2] => Array
+                (
+                    [__table] => usr
+                    [usr_id] => 3
+                    [organisation_id] => 
+                    [role_id] => 
+                    [username] => baz
+                    [passwd] => 
+                    [first_name] => 
+                    [last_name] => 
+                    [telephone] => 
+                    [mobile] => 
+                    [email] => 
+                    [addr_1] => 
+                    [addr_2] => 
+                    [addr_3] => 
+                    [city] => 
+                    [region] => 
+                    [country] => 
+                    [post_code] => 
+                    [is_email_public] => 
+                    [is_acct_active] => 
+                    [security_question] => 
+                    [security_answer] => 
+                    [date_created] => 
+                    [created_by] => 
+                    [last_updated] => 
+                    [updated_by] => 
+                    [array_field] => Array
+                        (
+                            [sub_element] => sub_baz
+                        )
+        
+                )*/
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserId/3/targetId/sub_baz/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserId/3/targetId/sub_baz/';
+
+        foreach ($aCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aCollection, 
+                'frmUserId|usr_id||targetId|array_field[sub_element]', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+        //  an array of objects
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserId/3/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserId/3/';
+
+        $aCollection = array(
+            $user1, 
+            $user2, 
+            $user3, 
+            );
+        foreach ($aCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aCollection, 
+                'frmUserId|usr_id', $k);
+        }
+        $this->assertEqual($target, $ret);
+    }
+        
+        
+    function testMakeLinkDirectFromManagers()
+    {
+        //  when method is invoked from a manager, ie, no $aList arg
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmNewsId/23/
+        $obj = new stdClass();
+        $obj->item_id = 23;
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmNewsId/23/';
+
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', array(), 
+            "frmNewsId|$obj->item_id");
+        $this->assertEqual($target, $ret);
+    }
+    
+    function testMakeLinkUsingOutputObject()
+    {
+        //  when method is invoked from a template, but with no $aList arg, and a hash element
+        //  in this case a category array has been assigned to the $output object
+        //  see: categoryMgr.html
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmCatID/123/
+        $output = new SGL_Output();
+        $category = array('category_id' => 123);
+        $output->category = $category;
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmCatID/123/';
+
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', array(), 
+            "frmCatID|category[category_id]", 0, $output);
         $this->assertEqual($target, $ret);
 
-print '<pre>'; print_r($ret);
-    }
+        
+        //  accessing an $output object property, no collection
+        //  see banner.html
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserID/456/
+        $output = new SGL_Output();
+        $output->loggedOnUserID = 456;
+        $target = $this->baseUrlString . 'baz/bar/action/foo/frmUserID/456/';
+
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', array(), 
+            "frmUserID|loggedOnUserID", 0, $output);
+        $this->assertEqual($target, $ret);
+    }    
+}
+
+class Usr
+{
+    var $usr_id;                          // int(11)  not_null primary_key
+    var $organisation_id;                 // int(11)  not_null
+    var $role_id;                         // int(11)  not_null
+    var $username;                        // string(64)  multiple_key
+    var $passwd;                          // string(32)  
+    var $first_name;                      // string(128)  
+    var $last_name;                       // string(128)  
+    var $telephone;                       // string(16)  
+    var $mobile;                          // string(16)  
+    var $email;                           // string(128)  multiple_key
+    var $addr_1;                          // string(128)  
+    var $addr_2;                          // string(128)  
+    var $addr_3;                          // string(128)  
+    var $updated_by;                      // int(11) 
 }
 ?>
