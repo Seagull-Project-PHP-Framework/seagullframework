@@ -17,7 +17,9 @@ class UrlTest extends UnitTestCase {
     
     function setup()
     {
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $this->url = new SGL_Url();
+        $this->baseUrlString = SGL_BASE_URL . '/' . $conf['site']['frontScriptName'] . '/';
     }
 
     function testParseResourceUriFullString()
@@ -428,6 +430,58 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['action'], 'list');
         $this->assertEqual($ret['foo'], array('foo1' => 'bar[bar1]'));
         $this->assertEqual($ret['baz'][0], 'quux');
+    }
+    
+    function testMakeLink()
+    {
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/default/
+        $target = $this->baseUrlString . 'default/';
+        $ret = $this->url->makeLink();
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/default/action/foo/
+        $target = $this->baseUrlString . 'default/action/foo/';
+        $ret = $this->url->makeLink($action = 'foo');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/default/bar/
+        $target = $this->baseUrlString . 'default/bar/';
+        $ret = $this->url->makeLink($action = '', $mgr = 'bar');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/default/
+        $target = $this->baseUrlString . 'baz/default/';
+        $ret = $this->url->makeLink($action = '', $mgr = '', $mod = 'baz');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/
+        $target = $this->baseUrlString . 'baz/';
+        $ret = $this->url->makeLink($action = '', $mgr = 'baz', $mod = 'baz');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/';
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/default/action/foo/
+        $target = $this->baseUrlString . 'baz/default/action/foo/';
+        $ret = $this->url->makeLink($action = 'foo', $mgr = '', $mod = 'baz');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/';
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aList = array(), 
+            $params = '', $idx = 0, $output = '');
+        $this->assertEqual($target, $ret);
+        
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/
+        $target = $this->baseUrlString . 'baz/bar/action/foo/';
+        $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', $aList = array(), 
+            $params = '', $idx = 0, $output = '');
+        $this->assertEqual($target, $ret);
+
+print '<pre>'; print_r($ret);
     }
 }
 ?>
