@@ -45,6 +45,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.32 $
  * @since   PHP 4.1
+ * @see seagull/lib/SGL/tests/UrlTest.ndb.php
  */
 class SGL_Url
 {
