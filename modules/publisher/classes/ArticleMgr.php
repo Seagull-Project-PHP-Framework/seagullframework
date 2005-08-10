@@ -254,20 +254,21 @@ class ArticleMgr extends SGL_Manager
                              "'<[\/\!]*?[^<>]*?>'si",           // Strip html tags
                              "'([\r\n])[\s]+'",                 // Strip white space
                              "'\*'si");
-            #$replace = array ('','','\\1','');
             $replace = array (' ', ' ', '\1', '');
             $lines = explode("\n", preg_replace($search, $replace, $output->dynaContent));
+            
             //  body text occurs in 4th element
             if (!isset($lines[4])) {
                 $lines[4] = '';
             }
             $rawTxt = strip_tags($lines[4]);
+            
             //  detect if sufficient text to run stats
             //  minimum is one word and a full stop
             $bContainsPeriod = (boolean)preg_match("/\./", $rawTxt);
             $words = explode(' ', $rawTxt);
             if (count($words) && $bContainsPeriod) {
-                include_once 'Text/Statistics.php';
+                require_once 'Text/Statistics.php';
                 $block = & new Text_Statistics($rawTxt);
                 $output->flesch = number_format($block->flesch, 2);
             } else {
@@ -281,9 +282,9 @@ class ArticleMgr extends SGL_Manager
         $htmlOptions = $menu->toHtml();
 
         //  only display categories if 'html article' type is chosen
-        if ($input->dataTypeID == 2) {
+        if ($item->typeID == 2) {
             $output->aCategories = $htmlOptions;
-            $output->currentCat = $input->catID;
+            $output->currentCat = $item->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
     }
