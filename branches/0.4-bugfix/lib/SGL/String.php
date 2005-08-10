@@ -287,10 +287,11 @@ class SGL_String
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
      *
-     * @param string $str
-     * @param integer $lines
-     * @param string $appendString
-     * @return string
+     * @param   string $str
+     * @param   integer $lines
+     * @param   string $appendString
+     * @return  string
+     * @todo    needs to handle orphan <b> and <strong> tags
      */
     function summariseHtml($str, $lines=10)
     {

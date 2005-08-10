@@ -1,73 +1,63 @@
-/*  good for 2 levels of nav  */
-
-/*hide all sublevels*/
-ul.navLvl1 ul, ul.navLvl1 {
-    display : none;
+/* first level list */
+div#sgl-nav ul {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
 }
 
-li.childIscurPage ul, li.curPage ul {
-    position : relative;
-    left:0;
-    display : block;
-    width:100%;
+/* first level list item */
+div#sgl-nav li {
+	margin: 3px 0 3px 0;
+	padding: 3px 0 3px 0;
+	background: #9dcdfe;
+	color: #006699;
+	text-align: left;
 }
 
-ul.navLvl1 {
-   list-style:none;
-    width:100%;
-    padding:0;
-    margin:0;
-    padding-bottom:1.2em;
-    padding-left:0.2em;
-    color:#999999;
-    text-decoration:none;
-    font-family: Trebuchet MS, Verdana, Arial, Helvetica, sans-serif;
-    font-size:15px;
-    font-weight:bold;
-    position:relative;
-    margin:0px;
-    text-align:left;
-    left:0;
-    display : block;
-    border:0px solid #006699;
+/* second level list */
+div#sgl-nav ul ul {
+	list-style: disc inside;
+	background: #9dcdfe;
+	padding: 3px 0 0 0;
+	margin: 3px 0 -6px 0;
 }
 
-ul.navLvl1 li {
-    padding:0.2em 1.0em;
-}
-ul.navLvl2 li {
-    padding:0.1em 0.2em;
-}
-a {
-    color:#999999;
-    text-decoration:none;
-}
-a:hover {
-    color:#ff9900;
-    text-decoration:none;
+/* second level list item */
+#sgl-nav li li {
+	text-transform: none;
+	margin: 0 0 3px 0;
+	padding: 3px 0 3px 5px;
 }
 
-ul.navLvl2 {
-    padding-bottom:0.5em;
-    padding-top:0.2em;
-    padding-left:2.0em;
-    padding-right:0em;
-    list-style:square;
-    color:#999999;
-    left:0px;
-    text-decoration:none;
-    font-family: verdana, arial;
-    font-size:11px;
+/* menu item link */
+div#sgl-nav a:link,
+div#sgl-nav a:visited,
+div#sgl-nav a:hover,
+div#sgl-nav a:active,
+div#sgl-nav li.current li a:link,
+div#sgl-nav li.current li a:visited,
+div#sgl-nav li.current li a:active {
+	color: #006699;
+	font-size: 11px;
     font-weight: normal;
-    position:relative;
-    margin:0px;
-    text-align:left;
-    border-left:none;
-    border-right:none;
-    border-top:none;
-    border-bottom:none;
+    text-decoration: none;
+	padding: 0 5px 0 5px;
 }
-a.curPage, li.curPage, a#curPage {
-    color:#ff9900;
-    text-decoration:none;
+div#sgl-nav li a:hover {
+    color: #ffffff;
+}
+div#sgl-nav a:active,
+div#sgl-nav li.current li a:active {
+	background: #9dcdfe;
+}
+
+/* current menu item link */
+div#sgl-nav li.current a:link,
+div#sgl-nav li.current a:visited,
+div#sgl-nav li.current a:active {
+	color: #006699;
+    font-weight: bold;
+}
+div#sgl-nav li.current a:active {
+	background: #ffecec;
 }

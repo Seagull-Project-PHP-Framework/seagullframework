@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+10-08-05    Fixed verticalSimple.css to work with new CSS
 08-08-05    Removed quoting of chartset=utf-8 (Ernest Beinrohr)
 01-08-05    Added php5 workaround in SGL_Wizard because strict call by reference
             behaviour (Tobias Kuckuck)

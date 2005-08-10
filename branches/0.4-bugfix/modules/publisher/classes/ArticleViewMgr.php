@@ -80,7 +80,9 @@ class ArticleViewMgr extends SGL_Manager
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';
-        $input->articleID       = ($req->get('frmArticleID')) ? (int)$req->get('frmArticleID') : (int)SGL_HTTP_Session::get('articleID');
+        $input->articleID       = ($req->get('frmArticleID')) 
+                                    ? (int)$req->get('frmArticleID') 
+                                    : (int)SGL_HTTP_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
         $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
@@ -143,7 +145,8 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), $aResult['data'][$key]);
+            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), 
+                                            $aResult['data'][$key]);
 
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
