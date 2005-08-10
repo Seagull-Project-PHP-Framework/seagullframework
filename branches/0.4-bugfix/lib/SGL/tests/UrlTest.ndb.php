@@ -544,6 +544,44 @@ class UrlTest extends UnitTestCase {
         }
         $this->assertEqual($target, $ret);
         
+        
+        //  simple integer indexed array with no action param
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/frmUserType/2/
+        $target = $this->baseUrlString . 'baz/bar/frmUserType/2/';
+        
+        $aSimpleCollection = array(
+            'foo', 
+            'bar', 
+            'baz', 
+            );
+        
+        foreach ($aSimpleCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink('', $mgr = 'bar', $mod = 'baz', $aSimpleCollection, 
+                'frmUserType', $k);
+        }
+        $this->assertEqual($target, $ret);
+        
+        
+        //  simple integer indexed array with no action param, and mod name = mgr name
+        //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/bar/frmUserType/2/
+        $target = $this->baseUrlString . 'bar/frmUserType/2/';
+        
+        $aSimpleCollection = array(
+            'foo', 
+            'bar', 
+            'baz', 
+            );
+        
+        foreach ($aSimpleCollection as $k => $user) {
+            
+            //  only interested in last element
+            $ret = $this->url->makeLink('', $mgr = 'bar', $mod = 'bar', $aSimpleCollection, 
+                'frmUserType', $k);
+        }
+        $this->assertEqual($target, $ret);
+
 
         //  random integer indexed array
         //  http://localhost.localdomain/seagull/branches/0.4-bugfix/www/index.php/baz/bar/action/foo/frmUserType/916/
