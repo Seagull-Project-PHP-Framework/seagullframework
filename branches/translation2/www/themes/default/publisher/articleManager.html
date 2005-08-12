@@ -4,7 +4,7 @@
 <!--
     function checkNewButton()
     {
-        var buttValue = document.getElementById('newArticle').frmDataTypeID.value;
+        var buttValue = document.getElementById('frmAddArticle').frmDataTypeID.value;
         if (buttValue == 1)
             document.getElementById('newArticleButton').disabled = true;
     }
@@ -69,7 +69,7 @@
                     <td>{translate(#Article type#)}: </td>
                     <td>
                         <select name="frmDataTypeID" 
-                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmDataTypeID/' + getSelectedValue(document.getElementById('newArticle').frmDataTypeID) + '/';" />
+                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmDataTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmDataTypeID) + '/';" />
                             {generateSelect(aArticleTypes,dataTypeID):h}
                         </select>
                     </td>
@@ -93,7 +93,7 @@
         </td>
     </tr>
 </form>    
-<form name="newArticle" flexy:ignore>
+<form name="frmDeleteArticle" flexy:ignore>
 <input type="hidden" name="action" value="delete" />
     <tr>
         <th>{translate(#Select#)}</th>
@@ -135,7 +135,7 @@
     <tr>
         <td colspan="9">
         {translate(#With selected article(s)#)}: 
-        <input type="submit" name="deleteButton" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#article#)}', 'newArticle')" />
+        <input type="submit" name="deleteButton" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#article#)}', 'frmDeleteArticle')" />
         </td>
     </tr>
     {else:}
