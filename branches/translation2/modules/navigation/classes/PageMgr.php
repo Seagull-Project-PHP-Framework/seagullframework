@@ -335,6 +335,8 @@ class PageMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = &SGL_DB::singleton();
+
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
@@ -349,15 +351,21 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
 
-        //  FIXME only replaces numberic title with translation
-        //  fetch title translation for all installed languages
+        //  if title is numeric retreive translation else populate with current title
         if (is_numeric($section['title'])) {    
             $section['title_id'] = $section['title'];
             unset($section['title']);
             foreach ($output->aLanguages as $aKey => $aValue) {                
                 $section['title'][$aKey] = $trans->get($section['title_id'], 'nav', $aKey);        
             }
-        }
+        } else {
+            $section['title_id'] = $section['title'];
+            unset($section['title']);
+            foreach ($output->aLanguages as $aKey => $aValue) {                
+                $section['title'][$aKey] = $section['title_id'];                  
+            }            
+            $section['title_id'] = $dbh->nextID('translation');               
+        }       
         
         //  passing a non-existent section id results in null or false $section
         if ($section) {
@@ -444,8 +452,8 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
 
-        //  create translation containers and unset in input object
-        $titleID    = $input->section['title_id']; unset($input->section['title_id']);
+        //  create translation containers and unset in input object        
+        $titleID    = $input->section['title_id']; unset($input->section['title_id']);        
         $title      = $input->section['title']; unset($input->section['title']);
         $titleOrig  = $input->section['title_original']; unset($input->section['title_original']);
         
