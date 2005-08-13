@@ -3,52 +3,42 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
-// | CartAdminMgr.php                                                                  |
+// | CartAdminMgr.php                                                          |
 // +---------------------------------------------------------------------------+
-// | Author: Rares Benea <rbenea@bluestardesign.ro>                            |
+// | Copyright (c) 2004-2005 Rares Benea & Tomas Bagdanavicius                 |
+// |                                                                           |
+// | Authors: Rares Benea <rbenea@bluestardesign.ro>                           |
+// |          Tomas Bagdanavicius <info@lwis.net>							   |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
-// | All rights reserved.                                                      |
 // |                                                                           |
-// | Redistribution and use in source and binary forms, with or without        |
-// | modification, are permitted provided that the following conditions        |
-// | are met:                                                                  |
+// | This library is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU Library General Public               |
+// | License as published by the Free Software Foundation; either              |
+// | version 2 of the License, or (at your option) any later version.          |
 // |                                                                           |
-// | o Redistributions of source code must retain the above copyright          |
-// |   notice, this list of conditions and the following disclaimer.           |
-// | o Redistributions in binary form must reproduce the above copyright       |
-// |   notice, this list of conditions and the following disclaimer in the     |
-// |   documentation and/or other materials provided with the distribution.    |
-// | o The names of the authors may not be used to endorse or promote          |
-// |   products derived from this software without specific prior written      |
-// |   permission.                                                             |
+// | This library is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         |
+// | Library General Public License for more details.                          |
 // |                                                                           |
-// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
-// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
-// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
-// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
-// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
-// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
-// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
-// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
-// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
-// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
-// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// | You should have received a copy of the GNU Library General Public         |
+// | License along with this library; if not, write to the Free                |
+// | Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// $Id: CartAdminMgr.php,v 1.4 2005/05/09 23:51:51 demian Exp $
-
+// $Id: Produse.php,v 1.1 2004/11/24 01:07:11 cvsroot Exp $
 require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_ENT_DIR . '/Cart.php';
 require_once SGL_MOD_DIR . '/cart/classes/Order.php';
 require_once SGL_MOD_DIR . '/cart/classes/Item.php';
+require_once SGL_ENT_DIR . '/Cart_product.php';
 
 /**
  * To allow users to contact site admins.
  *
  * @package produse
  * @author  Rares Benea <rbenea@bluestardesign.ro>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  * @since   PHP 4.1
  */
 class CartAdminMgr extends SGL_Manager
@@ -65,7 +55,9 @@ class CartAdminMgr extends SGL_Manager
         $this->_aActionsMapping =  array(
             'list'      => array('list'),
             'view'      => array('view'),
+			'popular'	=> array('popular'),
             'delete'    => array('delete','list'),
+#			'update'	=> array('update','list'),
         );
             
     }
@@ -79,16 +71,23 @@ class CartAdminMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->masterTemplate = $this->masterTemplate;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->orderId     = (int) ($req->get('frmOrderID'));
-        $input->aDelete     = $req->get('frmDelete');
+        $input->orderId = (int) ($req->get('frmOrderID'));
+
+#		$input->updateStatus = $req->get('frmUpdate');
+#		$input->submit      = $req->get('submitted');
+
+        $input->aDelUpd     = $req->get('frmDelUpd');
+		$input->aUpdStatus     = $req->get('frmUpdStatus');
         
         $input->totalItems  = $req->get('totalItems');
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+                  
+       
         
         switch($input->action) {
             case 'delete':
-                //if (!isset($input->itemId))
+                //if(!isset($input->itemId))
                 //    $aErrors[] = 'No item specified';
                 break;
         }
@@ -109,42 +108,84 @@ class CartAdminMgr extends SGL_Manager
     * List orders
     *
     * @access public
-    *
+    * @modified Tomas Bagdanavicius
     */
     function _list(&$input, &$output) 
     {
+
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'listOrders.html';
-        $input->pageTitle = 'Cart Admin :: List orders';
-        
+        $output->pageTitle = 'Cart Admin :: List orders';
+
         $orderBy_query = '';
-        $allowedSortFields = array('cart_id','username','name','c.date_created','total');
-        if (isset($input->sortBy) and strlen($input->sortBy) > 0 
-           and isset($input->sortOrder) and strlen($input->sortOrder) > 0 
+        $allowedSortFields = array('cart_id','username','name','c.date_created','total','status','org_name');
+        if(isset($input->sortBy) 
+		   and strlen($input->sortBy) > 0 
+           and isset($input->sortOrder) 
+		   and strlen($input->sortOrder) > 0 
            and in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ; 
         } else {
             $orderBy_query = ' ORDER BY c.date_created DESC ';
         }
         
-        $dbh = & SGL_DB::singleton();
-        $query = "SELECT *,c.date_created as date_created, u.username as username, CONCAT(u.first_name, ' ', u.last_name) as name " .
-                " FROM {$conf['table']['cart']} as c, {$conf['table']['user']} as u WHERE c.usr_id = u.usr_id ".$orderBy_query;;
-          
+        $dbh = & SGL_DB :: singleton();
+
+		$oUser = & new DataObjects_Usr();
+		$oUser->get(SGL_HTTP_Session::getUid());
+
+		// form a query
+        $query = "
+			SELECT 
+				*,c.date_created as date_created, 
+				c.status as status_id,
+				u.username as username, 
+				CONCAT(u.first_name, ' ', u.last_name) as name " . ",
+				o.name as org_name
+			FROM 
+				{$conf['table']['cart']} as c, 
+				{$conf['table']['user']} as u,
+				{$conf['table']['organisation']} as o
+			WHERE c.usr_id = u.usr_id 
+			AND u.organisation_id = o.organisation_id ";
+
+		// check whether it is not a super member
+		if(SGL_HTTP_Session::get('rid') == 3) {
+			$query .= "
+				AND u.organisation_id = " . $oUser->organisation_id . " 
+				AND u.role_id != 1 ";
+		}
+		$query .= $orderBy_query;
+
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
-        
-        if (!DB::isError($aPagedData)) {   
 
-            if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+        if(!DB::isError($aPagedData)) {
+
+			$statuses = SGL_String::translate('aStatuses');
+
+			foreach($aPagedData['data'] as $no => $data) {
+				$originalStatus = ($data['status']-1);
+
+				$personalStatuses = $this->array_slice_key($statuses, $originalStatus, ((count($statuses))-$originalStatus));
+				$aPagedData['data'][$no]['personalStatuses'] = $personalStatuses;
+				unset($personalStatuses);
+			}
+
+            if(is_array($aPagedData['data']) && count($aPagedData['data'])) {
                 $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
             }
 
             $output->totalItems = $aPagedData['totalItems'];
+			if($aPagedData['totalItems'] == 0) 
+				SGL :: raiseMsg('There are no orders listed for this account');
+
             $output->aPagedData = $aPagedData;
+
         } 
+		$output->addOnLoadEvent('document.frmCartMgrChooser.orders.disabled = true');
     }
     
     
@@ -152,25 +193,51 @@ class CartAdminMgr extends SGL_Manager
     * View order and user details
     *
     * @access public
-    *
+    * @modified Tomas Bagdanavicius
     */
     function _view (& $input, & $output) 
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+		$conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'viewOrder.html';
-        $input->pageTitle = 'Cart Admin :: View order';
-        
+        $output->pageTitle = 'Cart Admin :: View order';
+
+		$statuses = SGL_String::translate('aStatuses');
+
+		// load cart information
         $oCart = & new DataObjects_Cart();
         $oCart->get($input->orderId);
+		$statusId = $oCart->status;
         $output->cart = $oCart;
-        $output->items = @unserialize(stripslashes($oCart->items));
-        if (!is_array($output->items) or count($output->items) < 0) {
-            SGL::raiseMsg('Invalid order ID');
+		$output->cart->status = $statuses[$statusId];
+
+
+		// load product information
+		$dbh = & SGL_DB::singleton();
+		$query = "
+			SELECT 
+				cp.product_name as name, 
+				cp.product_code as cod1, 
+				cp.product_id as id, 
+				c.total,
+				cp.quantity,
+				cp.price,
+				cp.price*cp.quantity as total
+			FROM 
+				{$conf['table']['cart']} as  c, 
+				cart_product as cp
+			WHERE c.cart_id = cp.cart_id
+			AND c.cart_id = " .$oCart->cart_id;
+
+		$aProducts = $dbh->getAll($query);
+
+		$output->items = $aProducts;
+		
+        if(!is_array($output->items) or count($output->items) < 0) {
+            SGL :: raiseMsg('Invalid order ID');
             return;
         }
-        
-        
-        
+		
         $oUser = & new DataObjects_Usr();
         $oUser->get($oCart->usr_id);
         
@@ -180,31 +247,123 @@ class CartAdminMgr extends SGL_Manager
         foreach($output->items as $item) {
             $output->itemCount = $output->itemCount + $item->quantity;
         }
+
+		$output->expand = true;
     }
     
-    
     /**
-    * Delete the order from DB
-    *
-    * @access public
-    *
+    * Delete or update order(s) from DB
+	*
+    * @access admin
+    * @author Tomas Bagdanavicius
     */
     function _delete (& $input, & $output) 
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-              
-        if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $cart_id) {
-                $oCart = & new DataObjects_Cart();
-                $oCart->whereAdd("cart_id = '".$cart_id."'");
-                $oCart->delete(DB_DATAOBJECT_WHEREADD_ONLY);
-                unset ($oCart);
-            }
-        } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }
-        
-        SGL::raiseMsg('Order deleted successfully');
-    }
-}
+        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+		$conf = & $GLOBALS['_SGL']['CONF'];
+
+		if(isset($input->aDelUpd) && count($input->aDelUpd) > 0 && is_array($input->aDelUpd)) {
+			if(isset($input->aDelUpd['delete'])) {
+			$deleted = array();
+				foreach($input->aDelUpd['delete'] as $index => $cart_id) {
+					$oCart = & new DataObjects_Cart();
+					$oCart->whereAdd("cart_id = '".$cart_id."'");
+					$oCart->delete(DB_DATAOBJECT_WHEREADD_ONLY);
+					unset($oCart);
+					$oCart_product = & new DataObjects_Cart_product();
+					$oCart_product->whereAdd("cart_id = '".$cart_id."'");
+					$oCart_product->delete(DB_DATAOBJECT_WHEREADD_ONLY);
+					unset($oCart_product);
+					$deleted[] = $cart_id;
+				}
+			}
+
+			if(isset($input->aDelUpd['update'])) {
+				$dbh = & SGL_DB::singleton();
+				foreach($input->aDelUpd['update'] as $cart_id => $status_id) {
+					$oCart = & new DataObjects_Cart();
+					$oCart->get($cart_id);
+					$primeCartStatus = $oCart->status;
+
+					// stop hack atacks, you can't return to a lower status :)
+					if($primeCartStatus > $status_id) {
+						SGL::raiseError("Unable to update orders");
+					} elseif(isset($deleted) && in_array($cart_id, $deleted)) {
+						continue;
+					} else {
+
+						if($primeCartStatus == 1 && $status_id == 2) {
+							$usr_id = $oCart->usr_id;
+							// Get Payment data
+							 $dbh = & SGL_DB::singleton();
+							 $query = "
+									SELECT credit_limit, id, debt, (credit_limit-debt) as balance
+									FROM payment
+									WHERE user_id = " . $usr_id;
+
+							 $aPayment = $dbh->getAll($query);
+							 if (DB::isError($aPayment)) {
+									SGL::raiseError('perhaps no item tables exist', SGL_ERROR_NODATA);
+									$registerOrder = false;
+							 }
+							 $oPayment = $aPayment['0'];
+
+							 $realbalance = $oPayment->balance;
+							 if($oCart->total > $realbalance) {
+								SGL::raiseMsg('Limit exceeded, could not update status',  SGL_ERROR_INVALIDPOST);
+								continue;
+							 }
+
+							 $balance = $oPayment->credit_limit;
+							 $debt = $oPayment->debt;
+							 $PaymentId = $oPayment->id;
+							 $total = $oCart->total;
+
+							 unset($query,$aPayment,$oPayment);
+								
+							require_once SGL_ENT_DIR . '/Payment.php';
+							$oPayment = & new DataObjects_Payment();
+							$oPayment->get($PaymentId);
+							$oPayment->debt = ($debt + $total);
+							$creditLimit = $oPayment->credit_limit;
+							if($debt == 0) {
+								$oPayment->debt_start_date = SGL::getTime();
+							}
+							$oPayment->payment_updated_by = SGL_HTTP_Session::getUid();
+							$success = $oPayment->update();
+
+						}
+
+						$dbh->query('UPDATE ' . $conf['table']['cart'] . '
+                               SET status = ' . $status_id . '
+                               WHERE cart_id =' . $cart_id);
+						//SGL :: raiseMsg('Order(s) modified successfully');
+
+					}
+				}
+			}
+
+		} else {
+			SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+		}
+		
+		unset($deleted,$conf);
+	}
+
+	function array_slice_key($array, $offset, $len=-1){
+
+	   if (!is_array($array))
+		   return FALSE;
+
+	   $length = $len >= 0? $len: count($array);
+	   $keys = array_slice(array_keys($array), $offset, $length);
+	   foreach($keys as $key) {
+		   $return[$key] = $array[$key];
+	   }
+	 
+	   return $return;
+   }
+
+
+} // end class CartAdminMgr
 ?>

@@ -1,0 +1,24 @@
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(#Product Categories Descriptions#)}</h1>
+<form method="post" name="article" flexy:ignore id="article">
+    <input type="hidden" name="action" value="pCatDescrUpdate" />
+    <table class="wide">
+
+  {foreach:aPagedData[data],key,cats}
+        <tr>
+            <th width="30%" nowrap="nowrap">{cats[cat_name]}</th>
+            <td width="70%">
+	        <textarea rows="5" cols="50" name="pCatId[{cats[category_id]}]">{cats[description]}</textarea>
+            </td>
+        </tr>
+  {end:}
+
+    </table>
+    <div align="center">
+  <input class="wideButton" value="{translate(#Cancel#)}" onclick="javascript:document.location.href='{makeUrl(##,#shopadmin#,#shop#)}'" type="button">
+  <input class="wideButton" name="submitted" type="submit" value="{translate(#Save#)}"/>
+  
+    </div>
+</form>
+Kategorijø apraðymai: {aPagedData[from]}-{aPagedData[to]} ið {aPagedData[totalItems]} &nbsp; &nbsp; ::</b> &nbsp; &nbsp;
+Puslapis     {aPagedData[links]:h}

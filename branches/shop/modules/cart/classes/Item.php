@@ -49,12 +49,17 @@
 class Item
 {
     var $id = 0;
+	var $cod1 = '';
     var $name = '';
     var $type = '';
     var $price = 0;
     var $quantity = 0;
+    var $sum = 0;
     var $reference = null; 
     var $_className = 'Item';
+    var $priceVAT = 0;
+    var $currency = '';
+
     
     function Item()
     {

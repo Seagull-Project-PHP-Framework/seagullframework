@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -101,7 +101,7 @@ class LoginMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->addOnLoadEvent('document.getElementById("login").frmUsername.focus()');
+        $output->addOnLoadEvent('document.getElementById("frmLogin").frmUsername.focus()');
     }
 
     function _login(&$input, &$output)

@@ -31,8 +31,8 @@
 <table class="wide">
     <tr>
         <th>{translate(#Select#)}</th>
-        <th>{translate(#Perm ID#)}</th>
-        <th>{translate(#Name#)}</th>
+        <th><a class="header" href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|permission_id||frmSortOrder|sortOrder#)}">{translate(#Perm ID#)}</a></th>
+        <th><a class="header" href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a></th>
         <th>{translate(#Edit#)}</th>
     </tr>
     <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">

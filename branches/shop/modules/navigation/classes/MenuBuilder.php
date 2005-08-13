@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -88,9 +88,11 @@ class MenuBuilder
         switch ($menuType) {
 
         case 'menu_explorer':
+
             //  cannot cache at this level because output is sent to blocks
             //  which are cacheable
             $ret = $this->GUI->render($this->_startId);
+
             //  add closing js script tags
             $ret .= 'document.write(tree);}';
             $ret .= '</script>';

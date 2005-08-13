@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -38,6 +38,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: BlockForm.php,v 1.11 2005/05/28 21:15:50 demian Exp $
 
+require_once 'HTML/QuickForm.php';
+require_once SGL_ENT_DIR . '/Section.php';
+
 /**
  * Quickform Block wrapper class.
  *
@@ -46,6 +49,7 @@
  * @version $Revision: 1.11 $
  * @since   PHP 4.1
  */
+
 
 class BlockForm
 {
@@ -56,21 +60,17 @@ class BlockForm
     function BlockForm($action = '')
     {
         $this->action = $action;
-
-        require_once 'HTML/QuickForm.php';
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
-
-        require_once SGL_ENT_DIR . '/Section.php';
         $sectionList = & new DataObjects_Section();
         $sectionList->whereAdd('parent_id = 0');        
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
-        $sections[0] = 'All sections';
         if ($result > 0) {
             while ( $sectionList->fetch() ) {
                 $sections[ $sectionList->section_id ] = $sectionList->title;
             }
         }
+        $sections[0] = 'All sections';
         $this->sections = $sections;
     }
 
@@ -85,8 +85,6 @@ class BlockForm
             //  Set default form values
             $defaultValues['block[name]']         = null;
             $defaultValues['block[title]']        = null;
-            $defaultValues['block[title_class]']  = 'sgl-blocks-left-item-title';
-            $defaultValues['block[body_class]']   = 'sgl-blocks-left-item-body';
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
@@ -134,15 +132,15 @@ class BlockForm
         // Rules
         if ($this->action == 'edit' ) {
             $this->form->registerRule( 'can_be_activated', 'function', 'classAvailable', $this );
-            $this->form->addRule( 'block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
+            $this->form->addRule('block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
         }
 
         $this->form->addRule('block[name]', SGL_String::translate('You must enter a name for your block'), 'required');
         $this->form->addRule('block[title]', SGL_String::translate('You must enter a title for your block'), 'required');
 
         // Buttons
-        $buttons[] = &HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );
-        $buttons[] = &HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'), 
+        $buttons[] = HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );
+        $buttons[] = HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'), 
             array( 'onClick' => "document.location.href='".SGL_URL::makeLink('list', 'block', 'block')."'" ) );
         $this->form->addGroup($buttons);
 

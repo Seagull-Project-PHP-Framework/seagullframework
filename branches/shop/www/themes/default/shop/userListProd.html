@@ -11,20 +11,20 @@
 <form name="users" method="post" flexy:ignore id="users">
   <input type="hidden" name="action" value="insertProd" />
   <input type="hidden" name="frmProdId" value="{frmProdId}" />
-  <table class="wide">
+  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
     <tr><th>{translate(#Username#)}</th>
 		
       <th width="100">{translate(#Price#)}</th>
     </tr>
     <tr class="{switchRowClass()}"> 
-      <td><div class="error" flexy:if="error[usr_id]">{error[usr_id]} </div>
+      <td><div style="color:red" flexy:if="error[usr_id]">{error[usr_id]} </div>
 	    <select name="usr_id" id="usr_id" size="1">
 	 	  <option value="0">Select one user...</option>
 	    	{userList:h}
 		  </select></td>
       <td width="200"> 
-        <div class="error" flexy:if="error[discount]">{error[discount]} </div>
-        <div class="error" flexy:if="error[currency]">{error[currency]} </div>
+        <div style="color:red" flexy:if="error[discount]">{error[discount]} </div>
+        <div style="color:red" flexy:if="error[currency]">{error[currency]} </div>
         <input name="price" type="text" id="price" value="{price}" size="9" maxlength="10">
         <select name="currency" id="currency" size="1" >
             {this.plugin(#currencyOptions#,product_currency):h}
@@ -40,7 +40,7 @@
  <form name="users" method="post" flexy:ignore id="users">
     <input type="hidden" name="action" value="deleteProd" />   
  
-  <table class="wide">
+  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
     <tr flexy:if="product">
 		<td colspan="9"><B>Product:</B> <a href="{makeUrl(#edit#,#shopadmin#)}frmProdId/{frmProdId}/">{product}</a></td>
 	</tr>

@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: RPC.php,v 1.11 2005/06/23 15:56:43 demian Exp $
+ * @version    CVS: $Id: RPC.php,v 1.81 2005/07/14 02:15:26 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -237,7 +237,7 @@ function XML_RPC_se($parser_resource, $name, $attrs)
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= "'";
+        $XML_RPC_xh[$parser]['st'] .= '"';
         $XML_RPC_xh[$parser]['ac'] = '';
         break;
 
@@ -320,7 +320,7 @@ function XML_RPC_ee($parser_resource, $name)
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'] . "' => ";
+        $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'] . '" => ';
         break;
 
     case 'BOOLEAN':
@@ -345,8 +345,8 @@ function XML_RPC_ee($parser_resource, $name)
             // we use double quotes rather than single so backslashification works OK
             $XML_RPC_xh[$parser]['st'] .= '"' . $XML_RPC_xh[$parser]['ac'] . '"';
         } elseif ($XML_RPC_xh[$parser]['qt'] == 2) {
-            $XML_RPC_xh[$parser]['st'] .= "base64_decode('"
-                                        . $XML_RPC_xh[$parser]['ac'] . "')";
+            $XML_RPC_xh[$parser]['st'] .= 'base64_decode("'
+                                        . $XML_RPC_xh[$parser]['ac'] . '")';
         } elseif ($name == 'BOOLEAN') {
             $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'];
         } else {
@@ -456,7 +456,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -501,7 +501,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -592,7 +592,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      * The error message, if any
      * @var string
      */
-    var $errstring = '';
+    var $errstr = '';
 
     /**
      * The current debug mode (1 = on, 0 = off)
@@ -828,7 +828,11 @@ class XML_RPC_Client extends XML_RPC_Base {
         }
 
         if ($timeout) {
-            stream_set_timeout($fp, $timeout);
+            /*
+             * Using socket_set_timeout() because stream_set_timeout()
+             * was introduced in 4.3.0, but we need to support 4.2.0.
+             */
+            socket_set_timeout($fp, $timeout);
         }
 
         // Pre-emptive BC hacks for fools calling sendPayloadHTTP10() directly
@@ -919,7 +923,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1010,7 +1014,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1246,6 +1250,7 @@ class XML_RPC_Message extends XML_RPC_Base
         $parser_resource = xml_parser_create($encoding);
         $parser = (int) $parser_resource;
 
+        $XML_RPC_xh = array();
         $XML_RPC_xh[$parser] = array();
 
         $XML_RPC_xh[$parser]['st'] = '';
@@ -1323,7 +1328,7 @@ class XML_RPC_Message extends XML_RPC_Base
             $r = new XML_RPC_Response(0, $XML_RPC_err['invalid_return'],
                                       $XML_RPC_str['invalid_return']);
         } else {
-            eval('$v=' . $XML_RPC_xh[$parser]['st'] . '; $allOK=1;');
+            @eval('$v=' . $XML_RPC_xh[$parser]['st'] . '; $allOK=1;');
             if ($XML_RPC_xh[$parser]['isf']) {
                 $f = $v->structmem('faultCode');
                 $fs = $v->structmem('faultString');
@@ -1348,7 +1353,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.0
+ * @version    Release: 1.3.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base
@@ -1559,14 +1564,13 @@ class XML_RPC_Value extends XML_RPC_Base
      */
     function serializeval($o)
     {
-        $rs = '';
+        if (!is_object($o) || empty($o->me) || !is_array($o->me)) {
+            return '';
+        }
         $ar = $o->me;
         reset($ar);
         list($typ, $val) = each($ar);
-        $rs .= '<value>';
-        $rs .= $this->serializedata($typ, $val);
-        $rs .= "</value>\n";
-        return $rs;
+        return '<value>' .  $this->serializedata($typ, $val) .  "</value>\n";
     }
 
     /**
@@ -1622,7 +1626,7 @@ class XML_RPC_Value extends XML_RPC_Base
                 $t[$id] = $cont->scalarval();
             }
             foreach ($t as $id => $cont) {
-                eval('$b->'.$id.' = $cont;');
+                @eval('$b->'.$id.' = $cont;');
             }
         }
 

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -136,7 +136,7 @@ class SGL_Controller
         SGL_Util::getUserOs();
         
         //  load relevant manager class and instantiate
-        $this->page = $this->_getPageObject();
+        $this->page = $this->_getModel();
         
         //  do general session & language initialisation and access-control check
         $this->init();
@@ -220,7 +220,7 @@ class SGL_Controller
      * @param   object  $req    the Request object
      * @return  void
      */
-    function _getPageObject()
+    function _getModel()
     {
         //  get a reference to the request object
         $req = & SGL_HTTP_Request::singleton();
@@ -425,7 +425,7 @@ class SGL_Controller
         }
         //  prepare headers during setup, can be overridden later
         header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-        header('Content-Type: text/html; charset="' . $GLOBALS['_SGL']['CHARSET'] . '"');
+        header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
         header('X-Powered-By: Seagull ' . $GLOBALS['_SGL']['VERSION']);
         return true;
     }
@@ -592,7 +592,7 @@ class SGL_Controller
             $navClass = $this->conf['navigation']['driver'];
             $navDriver = $navClass . '.php';
             if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
-                include_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
+                require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
             } else {
                 SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
             }
@@ -623,7 +623,7 @@ class SGL_Controller
 
         //  load blocks
         if ($this->conf['site']['blocksEnabled'] && $this->conf['navigation']['enabled']) {
-            include_once SGL_CORE_DIR . '/BlockLoader.php';
+            require_once SGL_CORE_DIR . '/BlockLoader.php';
             $blockLoader = & new SGL_BlockLoader($sectionId);
             $aBlocks = $blockLoader->render($output);
             $output->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';

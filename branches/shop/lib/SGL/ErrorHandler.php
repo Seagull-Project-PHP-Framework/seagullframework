@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -167,10 +167,12 @@ class SGL_ErrorHandler
 <hr />
 EOF;
                 echo $output;
+
                 //  disable block so errors can be seen
                 $conf['site']['blocksEnabled'] = false;
                 
             } else {
+                //  we're in production mode, suppress any errors from being displayed
                 @ini_set('display_errors', 0);
             }
             //  email the error to admin if threshold reached
@@ -195,7 +197,7 @@ EOF;
                 ob_end_clean();
 
                 //  rebuild error output w/out html
-                include_once SGL_CORE_DIR . '/Util.php';
+                require_once SGL_CORE_DIR . '/Util.php';
                 $crlf = SGL_String::getCrlf();
                 $output = $errStr . $crlf . 
                     'type: ' . $this->errorType[$errNo][0] . $crlf .
@@ -227,6 +229,7 @@ EOF;
         //  check that file exists
         if (!file_exists($file)) {
             $sourceContext = "Context cannot be shown - ($file) does not exist";
+
         //  check if line number is valid
         } elseif ((!is_int($line)) || ($line <= 0)) {
             $sourceContext = "Context cannot be shown - ($line) is an invalid line number";

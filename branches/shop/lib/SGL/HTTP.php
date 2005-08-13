@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -61,11 +61,10 @@ class SGL_HTTP
      * @access  public
      * @static
      * @param   mixed   $url    target URL
-     * @param   array   $param  params to be appended to URL
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = null, $param = false)
+    function redirect($url = null)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
@@ -123,7 +122,7 @@ class SGL_HTTP
 class SGL_HTTP_Request
 {
     /**
-     * Sets GET/POST/FILES to gpcVars attribute.
+     * Parses raw request into SGL format.
      *
      * @access  public
      * @return  void
@@ -134,12 +133,18 @@ class SGL_HTTP_Request
 
         //  merge REQUEST AND FILES superglobal arrays
         $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
-
-        //  parse $_GET and transpose values to $GLOBALS['_SGL']['REQUEST']
-        SGL_Url::dirify();
         
         //  remove slashes if necessary
         SGL_String::dispelMagicQuotes($GLOBALS['_SGL']['REQUEST']);
+
+        //  get all URL parts after domain and TLD as an array
+        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        
+        //  parse URL segments into SGL request structure
+        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
+        
+        //  merge results with cleaned $_REQUEST values and $_POST
+        $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
     }
 
     /**
@@ -645,12 +650,14 @@ class SGL_HTTP_Session
     function dbRead($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "SELECT data_value FROM user_session WHERE session_id = '$sessId'";
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $query = "SELECT data_value FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         if ($res->numRows() == 1) {
             return $dbh->getOne($query);
         } else {
-            $query = "INSERT INTO user_session (session_id, last_updated, data_value)
+            $query = "INSERT INTO {$conf['table']['user_session']} (session_id, last_updated, data_value)
             VALUES ('$sessId', '" . SGL::getTime(true) . "', '')";
             $dbh->query($query);
             return '';
@@ -665,7 +672,9 @@ class SGL_HTTP_Session
     function dbWrite($sessId, $value)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "  UPDATE user_session SET data_value = " . $dbh->quote($value) . ", 
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "  UPDATE {$conf['table']['user_session']} SET data_value = " . $dbh->quote($value) . ", 
                         last_updated = '" . SGL::getTime(true) . "' 
                     WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
@@ -680,7 +689,9 @@ class SGL_HTTP_Session
     function dbDestroy($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "DELETE FROM user_session WHERE session_id = '$sessId'";
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "DELETE FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         return true;
     }
@@ -693,7 +704,9 @@ class SGL_HTTP_Session
     function dbGc($expiry)
     {
         $dbh = & SGL_DB::singleton();
-        $query = "DELETE FROM user_session WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
+        $query = "DELETE FROM {$conf['table']['user_session']} WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
                 "') - UNIX_TIMESTAMP(last_updated ) > $expiry";
         $dbh->query($query);
         return true;

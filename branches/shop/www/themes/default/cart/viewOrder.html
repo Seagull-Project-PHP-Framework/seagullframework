@@ -1,32 +1,61 @@
+
+{if:expand}
 <flexy:include src="resourceChooser.html" />
+{end:}
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <span flexy:if="msgGet()">{msgGet()}</span> 
 
 {if:items}
-<strong>{translate(#Order recorded on#)}:</strong> {cart.date_created}
-<br />
-<br />
-    <table class="wide">
-    <tr> 
+	
+	
+    <p><strong>{translate(#Order information#)}:</strong></p>
+    <table class="narrow">
+	  <tr>
+		<th colspan="2">{translate(#Order data#)}</th>
+	  </tr>
+	  <tr>
+		<td class="fieldName" width="50%"><div align="right">{translate(#Order ID#)}:</div></td>
+		<td class="fieldvalue" width="50%">{cart.cart_id}</td>
+	  </tr>
+	  <tr>
+		<td class="fieldName"><div align="right">{translate(#Order recorded on#)}:</div></td>
+		<td class="fieldvalue">{cart.date_created}</td>
+	  </tr>
+	  <tr>
+		<td class="fieldName"><div align="right">{translate(#Order status#)}:</div></td>
+		<td class="fieldvalue">{cart.status}</td>
+	  </tr>
+    </table>
+
+
+	<p><strong>{translate(#Ordered product(s) information#)}:</strong></p>
+    <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
+    <tr>
+	  <th width="50">{translate(#Code#)}</th>
       <th>{translate(#Name#)}</th>
+	  <th>{translate(#Price#)}</th>
       <th width="30">{translate(#Quantity#)}</th>
-      <th width="150"><div align="right">{translate(#Price#)}</div></th>
+      <th width="150"><div align="right">{translate(#Total#)}</div></th>
     </tr>
-      <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue"> 
+    <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue">
+      <td width="50"><a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.cod1}</a></td>
       <td><a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
+	  <td width="75">{this.plugin(#formatPrice#,aValue.price):h}</td>
       <td width="30" align="center">{aValue.quantity}</td>
-      <td width="150" align="right" nowrap>{this.plugin(#formatPrice#,aValue.price):h} Lei</td>
+      <td width="75" align="right" nowrap>{this.plugin(#formatPrice#,aValue.total):h} Lei</td>
     </tr>
     <tr> 
-      <td align="right"><strong>{translate(#Total#)}:</strong></td>
+	  <td width="50">&nbsp;</td>
+      <td align="right"></td>
+	  <td width="75" align="right"><strong>{translate(#Total#)}:</strong></td>
       <td width="30" align="center"><strong>{itemCount}</strong></td>
-      <td width="150" align="right"><strong>{this.plugin(#formatPrice#,cart.total):h} Lei</strong></td>
+      <td width="75" align="right"><strong>{this.plugin(#formatPrice#,cart.total):h} Lei</strong></td>
     </tr>
   </table>
-  <br />
+  <BR>
 <strong>{translate(#User information#)}:</strong> 
-<br />
-<br />    
+<BR>
+<BR>    
         <!-- /////////////////////    STATUS     ////////////////////// -->
 
         <table class="narrow">

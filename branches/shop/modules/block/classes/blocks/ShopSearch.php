@@ -33,7 +33,7 @@ class ShopSearch
         $menu->setStartId(4);
         $htmlOptions = $menu->toHtml();
         $catSelect = SGL_Output::generateSelect($htmlOptions, $catID);
-        $url = SGL_output :: makeUrl ('','shop','shop');
+        $url = SGL_output :: makeUrl ('lister','shop','shop');
         
         $text = <<< HTML
 			<form action="$url" method="get">

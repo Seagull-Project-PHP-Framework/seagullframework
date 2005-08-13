@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -59,14 +59,9 @@ class ShopNav
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $theme = $_SESSION['aPrefs']['theme'];
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-        $options = array(
-            'action' => '',
-            'varName' => 'frmCatID',
-            );
-        
-        $menu = & new MenuBuilder('ExplorerBsd',$options);
+        $menu = & new MenuBuilder('ExplorerBsd');
         $menu->setStartId(4);
-        $html = '<link rel="stylesheet" type="text/css" href="' . SGL_BASE_URL . '/themes/' . $theme . '/css/DropDown.css" />'."\n";
+        $html = '<img src="' . SGL_BASE_URL . '/themes/' . $theme . '/images/pixel.gif" width="165" height="1" alt="" /><br />';
         $html .= $menu->toHtml();
         return $html;
     }

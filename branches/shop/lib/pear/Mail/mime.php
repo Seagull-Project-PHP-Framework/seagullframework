@@ -35,7 +35,7 @@
 // |         Tomas V.V.Cox <cox@idecnet.com> (port to PEAR)                |
 // +-----------------------------------------------------------------------+
 //
-// $Id: mime.php,v 1.7 2005/05/09 15:58:40 demian Exp $
+// $Id: mime.php,v 1.39 2005/06/13 21:24:16 cipri Exp $
 
 require_once('PEAR.php');
 require_once('Mail/mimePart.php');
@@ -289,7 +289,12 @@ class Mail_mime
         if (!$fd = fopen($file_name, 'rb')) {
             return PEAR::raiseError('Could not open ' . $file_name);
         }
-        $cont = fread($fd, filesize($file_name));
+        $filesize = filesize($file_name);
+        if ($filesize == 0){
+            $cont =  "";
+        }else{
+            $cont = fread($fd, $filesize);
+        }
         fclose($fd);
         return $cont;
     }
@@ -460,9 +465,9 @@ class Mail_mime
 
         if (!empty($this->_html_images) AND isset($this->_htmlbody)) {
             foreach ($this->_html_images as $value) {
-                $regex = '#src\s*=\s*(["\']?)' . preg_quote($value['name']) .
-                         '(["\'])?#';
-                $rep = 'src=\1cid:' . $value['cid'] .'\2';
+                $regex = '#(\s)((?i)src|background|href(?-i))\s*=\s*(["\']?)' . preg_quote($value['name'], '#') .
+                         '\3#';
+                $rep = '\1\2=\3cid:' . $value['cid'] .'\3';
                 $this->_htmlbody = preg_replace($regex, $rep,
                                        $this->_htmlbody
                                    );

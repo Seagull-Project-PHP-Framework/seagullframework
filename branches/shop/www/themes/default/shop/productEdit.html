@@ -32,178 +32,202 @@
 		
 		return true;
 	}
+	
+	
 -->
 </script>
-<h1 class="pageTitle">{pageTitle}</h1>
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
 <p><span flexy:if="msgGet()">{msgGet()}</span> </p>
-  <table width="98%">
+  <table border="0" width="98%" align="center">
   <tr> 
      <td>
-        <h2 class="sectionHeader"><strong>{translate(#Current Category#)}:</strong> {currentCat}</h2>
-        <h3 class="colHeader"><strong>{translate(#You are here#)}:</strong> {path:h}</h3>
+        <h3 class="colHeader"><strong>{translate(#Current Category#)}:</strong> {currentCat}</h3>
     </td>
   </tr>
   </table>  
-<table width="98%">
-  <tr> 
-    <td> 
-      <table class="productText">
-        <tr> 
-          <td width="50%" valign="top"><br /><img src="{product.imageUrl}" alt="{product.manufacturer} : {product.manufacturer}"></td>
-          <td width="50%" valign="top"> <table class="productText">
-              <form method="post" name="products" flexy:ignore onSubmit="return validateForm(this)">
-                <input type="hidden" name="action" value="{formAction}" />
-                <input type="hidden" name="product[product_id]" value="{product.product_id}" />
-				<input flexy:if="product.action" type="hidden" name="product[action]" value="{product.action}" />
-                <tr> 
-                  <td class="tableHeader" colspan="2" nowrap>{product.name}</td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Product#)}:</td>
-                  <td> <div class="error" flexy:if="error[name]">{error[name]} 
-                    </div>
-                    <input name="product[name]" type="text" id="product[name]" value="{product.name}" size="50"/></td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Category#)}:</td>
-                  <td> <div class="error" flexy:if="error[cat_id]">{error[cat_id]} 
-                    </div>
-                    <select name="product[cat_id]" id="product[cat_id]" size="1">{catOptions:h}
-                    </select></td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Manufacturer#)}:</td>
-                  <td> <div class="error" flexy:if="error[manufacturer]">{error[manufacturer]} </div>
-				  		<select name="product[manufacturer]" id="manufacturer" size="1" >{manufacturerOptions:h}
-                      <option value="other">{translate(#Other#)}</option>
-                    </select> </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Price#)}:</td>
-                  <td> <div class="error" flexy:if="error[price]">{error[price]} 
-                    </div>
-				  		<input name="product[price]" type="text" id="product[price]" value="{product.price}" size="16" />
-                        <select name="product[currency]" id="currency" size="1" >
-                            {this.plugin(#currencyOptions#,product.currency):h}
-                        </select>
-                     ({translate(#without VAT#)}) <br /> <a href="{makeUrl(#listProd#,#priceadmin#,#shop#)}frmProdId/{product.product_id}/">{translate(#Edit discount list for this product#)}</a></td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Status#)}:</td>
-                  <td> <div class="error" flexy:if="error[status]">{error[status]} 
-                    </div>
-				  		<select name="product[status]" id="select6" size="1" >{statusOptions:h}
-                    </select> </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Short description#)}:</td>
-                  <td>  <div class="error" flexy:if="error[short_description]">{error[short_description]} 
-                    </div> 
-				  <textarea name="product[short_description]" cols="50" rows="6" id="product[short_description]">{if:product.aShortDescription}{foreach:product.aShortDescription,key,value}{value[key]}:{value[value]}{end:}{else:}{product.short_description}{end:}</textarea>
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"><span class="error">*</span>{translate(#Cod1#)}:</td>
-                  <td> <div class="error" flexy:if="error[cod1]">{error[cod1]} 
-                    </div>
-                    <input name="product[cod1]" type="text" id="product[cod1]" value="{product.cod1}" size="12"> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Cod2#)}:</td>
-                  <td> <div class="error" flexy:if="error[cod2]">{error[cod2]}</div>
-                    <input name="product[cod2]" type="text" id="product[cod2]" value="{product.cod2}" size="12"> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Warranty#)}:</td>
-                  <td> <div class="error" flexy:if="error[garantii]">{error[warranty]}</div>
-                    <input name="product[warranty]" type="text" id="product[garantii]2" value="{product.warranty}"> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Promotion#)}:</td>
-                  <td> <div class="error" flexy:if="error[promotion]">{error[promotion]}</div>
-                    <input flexy:if="!promoOptions" name="product[promotion]" id="product[promotion]" type="checkbox" /> 
-                    <input flexy:if="promoOptions" name="product[promotion]" id="product[promotion]" type="checkbox" checked /> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Datasheet link#)}:</td>
-                  <td> <div class="error" flexy:if="error[link_datasheet]">{error[link_datasheet]}</div>
-                    <input name="product[link_datasheet]" type="text" id="product[link_datasheet]" value="{product.link_datasheet}" size="50"> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Manufacturer link#)}:</td>
-                  <td> <div  class="error" flexy:if="error[link_manufacturer]">{error[link_manufacturer]}</div>
-                    <input name="product[link_manufacturer]" type="text" id="product[link_manufacturer]" value="{product.link_manufacturer}" size="50"> 
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey">{translate(#Technical specifications#)}:</td>
-                  <td> <div  class="error" flexy:if="error[description]">{error[description]}</div>
-                    <textarea name="product[description]" cols="50" rows="20" id="product[description]">{if:product.aDescription}{foreach:product.aDescription,key,value}{value[key]}:{value[value]}{end:}{else:}{product.description}{end:}</textarea>     
-                  </td>
-                </tr>
-                <tr valign="top"> 
-                  <td width="100" nowrap class="productDescKey"></td>
-                  <td> <input class="wideButton" name="submitted" type="submit" id="submitted" value="{translate(#Save#)}"/> 
-                  </td>
-                </tr>
-              </form>
-            </table>
-                  <br />
-                <form method="post" action="" name="products" enctype="multipart/form-data"  flexy:ignore>
-              <input type="hidden" name="action" value="imageUpload" />
-              <input type="hidden" name="product[product_id]" value="{product.product_id}" />
-            <table class="productText">
 
-              <tr> 
-                <td width="100" nowrap class="productDescKey">{translate(#Upload image#)}:</td>
-                <td><div class="error" flexy:if="error[imageUpload]">{error[imageUpload]}
-                </div><input type="file" name="imageFile" size="20" /> <input  type="submit" name="submitted" value="{translate(#Upload#)}" /> </td>
-              </tr>
-            </table>
-            </form>
-            </td>
-        </tr>
-      </table>
-      <br /> 
-	  <table class="productText">
-        <tr class="tableHeader" nowrap> 
+<form method="post" name="products" flexy:ignore onSubmit="return validateForm(this)" enctype="multipart/form-data" >
+   <input type="hidden" name="action" value="{formAction}" />
+   <input type="hidden" name="product[product_id]" value="{product.product_id}" />
+   <input flexy:if="product.action" type="hidden" name="product[action]" value="{product.action}" />
+<br />
+
+<table width="98%" border="0" cellspacing="2" cellpadding="0">
+  <tr>
+    <td colspan="3" class="tableHeader" align="right">{product.name}</td>
+  </tr>
+  <tr>
+    <td width="20%" class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Product#)}:</td>
+    <td width="40%" >
+        <div style="color:red" flexy:if="error[name]">{error[name]}</div>
+        <input name="product[name]" type="text" value="{product.name}" size="50" class="textInput" />
+    </td>
+    <td width="40%" rowspan="13" align="center">
+       <img src="{product.imageUrl}" alt="{product.manufacturer} : {product.manufacturer}">
+    </td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Category#)}:</td>
+    <td><div style="color:red" flexy:if="error[cat_id]">{error[cat_id]} </div>
+      <select name="product[cat_id]" size="1">
+         {catOptions:h}
+      </select></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Manufacturer#)}:</td>
+    <td><div style="color:red" flexy:if="error[manufacturer]">{error[manufacturer]}</div>
+      <select name="product[manufacturer]" size="1">
+         {manufacturerOptions:h}
+         <option value="other">{translate(#Other#)}</option>
+      </select></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Price#)}:</td>
+    <td><div style="color:red" flexy:if="error[price]">{error[price]} </div>
+      <input name="product[price]" type="text" value="{product.price}" size="16" class="textInput" />
+      <select name="product[currency]"size="1" >
+         {this.plugin(#currencyOptions#,product.currency):h}
+      </select>
+      ({translate(#without VAT#)}) <br> <a href="{makeUrl(#listProd#,#priceadmin#,#shop#)}frmProdId/{product.product_id}/">
+      {translate(#Edit discount list for this product#)}</a></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Status#)}:</td>
+    <td><div style="color:red" flexy:if="error[status]">{error[status]}</div>
+      <select name="product[status]" size="1">
+         {statusOptions:h}
+      </select></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Short description#)}:</td>
+    <td><div style="color:red" flexy:if="error[short_description]">{error[short_description]}</div>
+      <textarea name="product[short_description]" cols="50" rows="6">{product.short_description}</textarea></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header"><span style="color: #ff0000">*</span>{translate(#Cod1#)}:</td>
+    <td><div style="color:red" flexy:if="error[cod1]">{error[cod1]}</div>
+      <input name="product[cod1]" type="text" value="{product.cod1}" size="12" class="textInput"></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Cod2#)}:</td>
+    <td><div style="color:red" flexy:if="error[cod2]">{error[cod2]}</div>
+      <input name="product[cod2]" type="text" value="{product.cod2}" size="12" class="textInput"></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Warranty#)}:</td>
+    <td><div style="color:red" flexy:if="error[garantii]">{error[warranty]}</div>
+      <input name="product[warranty]" type="text" value="{product.warranty}" size="20" class="textInput"></td>
+  </tr>
+  <tr>
+    <td class="productDescKey" id="configTable-header">{translate(#Amount in warehouses#)}:</td>
+    <td><div style="color:red" flexy:if="error[BALANCE]">{error[BALANCE]}</div>
+      <input name="product[BALANCE]" type="text" value="{product.BALANCE}" size="20" class="textInput"></td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Promotion#)}:</td>
+    <td><div style="color:red" flexy:if="error[promotion]">{error[promotion]}</div>
+      <input flexy:ignore="yes" flexy:if="!promoOptions" name="product[promotion]" type="checkbox" value="ON" />
+      <input flexy:ignore="yes" flexy:if="promoOptions" name="product[promotion]" type="checkbox" checked value="ON" /></td>
+  </tr>
+  
+  <tr>
+    <td class="productDescKey" id="configTable-header">{translate(#New product#)}:</td>
+    <td><div style="color:red" flexy:if="error[new_id]">{error[new_id]}</div>
+      <input flexy:ignore="yes" flexy:if="!newOptions" name="product[new_id]" type="checkbox" value="ON" />
+      <input flexy:ignore="yes" flexy:if="newOptions" name="product[new_id]" type="checkbox" checked value="ON" /></td>
+  </tr>
+  
+  <tr>
+    <td class="productDescKey" id="configTable-header">{translate(#Bargain#)}:</td>
+    <td><div style="color:red" flexy:if="error[bargain]">{error[bargain]}</div>
+      <input flexy:ignore="yes" flexy:if="!bargainOptions" name="product[bargain]" type="checkbox" value="ON" />
+      <input flexy:ignore="yes" flexy:if="bargainOptions" name="product[bargain]" type="checkbox" checked value="ON" /></td>
+  </tr>
+  
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Datasheet link#)}:</td>
+    <td><div style="color:red" flexy:if="error[link_datasheet]">{error[link_datasheet]}</div>
+      <input name="product[link_datasheet]" type="text" value="{product.link_datasheet}" size="50" class="textInput" ></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Manufacturer link#)}:</td>
+    <td><div style="color:red" flexy:if="error[link_manufacturer]">{error[link_manufacturer]}</div>
+      <input name="product[link_manufacturer]" type="text" value="{product.link_manufacturer}" size="50" class="textInput" /></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Upload image#)}:</td>
+    <td><div style="color:red" flexy:if="error[imageUpload]">{error[imageUpload]}</div>
+      <input type="file" name="imageFile" size="20" class="textInput" /></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
+<br />
+
+<table width="98%" border="0" cellspacing="0" cellpadding="0" >
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Description#)}:</td>
+  </tr>
+  <tr> 
+    <td><div  style="color:red" flexy:if="error[description]">{error[description]}</div>
+        <textarea style="width: 100%; height: 201px;" id="frmBodyName" name="frmBodyName">{product.aDescription:h}</textarea>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+       <input class="wideButton" name="submitted" type="submit" value="{translate(#Save#)}"/>
+       <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(##,#shopadmin#,#shop#)}'" />
+    </td>
+  </tr>
+</table>
+</form>
+
+<br />
+<br />
+<br />
+  <table width="98%" border="0" cellspacing="0" cellpadding="0" class="productText">
+        <tr class="tableHeader" nowrap>
           <td width="130" nowrap>{translate(#Manufacturer#)}</td>
           <td nowrap>{translate(#Product#)}</td>
-          <td align="right" nowrap>{translate(#Price#)}</td>
+          <td align="right" nowrap>&nbsp;</td>
         </tr>
-        <tr valign="top"> 
-          <td width="130" align="center">{product.manufacturer}<br /> <img src="{product.thumbUrl}" alt="{product.manufacturer} : {product.name}"></td>
-          <td><span class="productName">{product.name}</span><br />
+        <tr valign="top">
+          <td width="130" align="center">{product.manufacturer}<br> <img src="{product.thumbUrl}" alt="{product.manufacturer} : {product.name}"></td>
+          <td><span class="productName">{product.name}</span><br>
             {this.plugin(#nl2br#,product.short_description):h}</td>
           <td align="right">
-            {this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<br />
+            <span class="productDescKey">{translate(#Price#)}:</span>{this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<BR>
+            <span class="productDescKey">{translate(#Status#)}:</span>{product.statusString} <br>
+            <span class="productDescKey">{translate(#Manufacturer#)}:</span> {product.manufacturer} <br>
+            <span class="productDescKey">{translate(#Datasheet link#)}:</span> {product.link_datasheet} <br>
+            <span class="productDescKey">{translate(#Promotion#)}:</span> {if:product.promoOptions}YES!{else:}NO{end:}<br>
           </td>
-          <br /> <span class="productDescKey">Status:</span> {product.statusString} </td>
         </tr>
-      </table>    
-	  <br />
-	  <table class="productText">
-        <tr> 
-          <td class="tableHeader" colspan="2" nowrap>{translate(#Technical specifications#)}</td>
+      </table>
+	  <BR>
+	  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="productText">
+        <tr>
+          <td class="tableHeader" colspan="2" nowrap>{translate(#Description#)}</td>
         </tr>
-        <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
+        <tr>
           <td width="200" nowrap ><span class="productDescKey">{translate(#Name#)}:</span></td>
           <td>{product.name}</td>
         </tr>
-        <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="200" nowrap ><span class="productDescKey">{translate(#Manufacturer#)}:</span></td> 
+        <tr>
+          <td width="200" nowrap ><span class="productDescKey">{translate(#Manufacturer#)}:</span></td>
           <td>{product.manufacturer}</td>
         </tr>
-        {foreach:product.aDescription,key,value} 
-        <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-          <td width="200" nowrap ><span class="productDescKey">{value[key]}:</span></td>
-          <td>{value[value]}</td>
+        <tr>
+         <td width="200" valign="top" nowrap><span class="productDescKey">{translate(#Description#)}:</span> </td>
+         <td>{product.description:h}</td>
         </tr>
-        {end:} </table></td>
-  </tr>
+       </table>
+    </td>       
+   </tr>
 </table>
+
+
+
+

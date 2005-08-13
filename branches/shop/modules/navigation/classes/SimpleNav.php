@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -116,9 +116,12 @@ class SimpleNav
     function SimpleNav()
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
-        $aParams = explode('/', $_SERVER['REQUEST_URI']);
-        $key = array_search('staticId', $aParams);
-        $this->_staticId = ($key) ? $aParams[$key + 1] : 0;
+        
+        //  get a reference to the request object
+        $req = & SGL_HTTP_Request::singleton();
+        
+        $key = $req->get('staticId');
+        $this->_staticId = (is_null($key)) ? 0 : $key;
     }
 
     /**
@@ -167,9 +170,9 @@ class SimpleNav
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = & SGL_DB::singleton();
-        $query = '
-            SELECT * FROM section 
-            WHERE parent_id = ' . $sectionId . '
+        $query = "
+            SELECT * FROM {$conf['table']['section']}
+            WHERE parent_id = " . $sectionId . '
             ORDER BY order_id';
 
         $result = $dbh->query($query);

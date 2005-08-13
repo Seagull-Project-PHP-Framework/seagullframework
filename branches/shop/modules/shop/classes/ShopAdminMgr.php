@@ -41,7 +41,8 @@
 require_once SGL_MOD_DIR.'/shop/classes/ShopMgr.php';
 require_once SGL_MOD_DIR.'/navigation/classes/CategoryMgr.php';
 
-if ($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) {
+if (isset($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) &&
+    $GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency'] == true) {
     require_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
 }
 
@@ -64,28 +65,31 @@ class ShopAdminMgr extends ShopMgr {
         $this->masterTemplate = 'masterLeftCol.html';
         $this->_aAllowedFileTypes = array ('gif', 'jpeg', 'jpg', 'png');
         $this->_aActionsMapping = array (
-                'add' => array ('add'), 
-                'insert' => array ('insert'), 
-                'edit' => array ('edit'), 
-                'update' => array ('update'), 
-                'delete' => array ('delete'), 
-                'list' => array ('list'), 
-                'imageUpload' => array ('imageUpload'), 
-                'csvUpload' => array ('csvUpload'), 
-                'csvList' => array ('csvList'), 
-                'csvProcess' => array ('csvProcess'), 
-                'csvEdit' => array ('csvEdit'), 
-                'csvUpdate' => array ('csvUpdate'), 
-                'csvDelete' => array ('csvDelete'), 
-                'csvExport' => array ('csvExport'),);
+                'add' => array ('add'),
+                'insert' => array ('insert'),
+                'edit' => array ('edit'),
+                'update' => array ('update'),
+                'delete' => array ('delete'),
+                'list' => array ('list'),
+                'imageUpload' => array ('imageUpload'),
+                'config' => array ('config'),
+                'updateConfig' => array ('updateConfig'),
+                'pCatDecr' => array ('pCatDecr'),
+                'pCatDescrUpdate' => array ('pCatDescrUpdate'),
+                'updateOrder' => array ('updateOrder'),
+
+                );
                 
-        //TO DO: activeaza rate manager
+        //TO DO: activate rate manager
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['ShopMgr']['multiCurrency']) {
-            $rateMgr = & new RateMgr();
-        } else {
-            $conf['exchangeRate'][$conf['ShopMgr']['defaultCurrency']] = $conf['ShopMgr']['defaultExchange'];
-        }         
+        if (isset($conf['ShopMgr']['multiCurrency'])) {
+            if($conf['ShopMgr']['multiCurrency']) {
+                $rateMgr = & new RateMgr();
+            } else {
+                $conf['exchangeRate'][$conf['ShopMgr']['defaultCurrency']] = 
+                $conf['ShopMgr']['defaultExchange'];
+            }
+        }       
     }
 
     function validate($req, & $input) 
@@ -98,19 +102,36 @@ class ShopAdminMgr extends ShopMgr {
         $this->validated = true;
         $input->error = array ();
         $input->pageTitle = $this->pageTitle;
+        // restore previouse template
         $input->template = $this->template;
-        $input->masterTemplate = $this->masterTemplate;
+
+        $input->masterTemplate  = 'masterLeftCol.html';
         $input->javascriptSrc   = array('TreeMenu.js');
-        $input->action = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->productId = $req->get('frmProdId');
-        $input->catID = (int) $req->get('frmCatID') ? $req->get('frmCatID') : 0;
-        $input->aDelete = $req->get('frmDelete');
-        $input->submit = $req->get('submitted');
-        $input->product = (object) $req->get('product');
+        $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->updateOrder     = $req->get('updateOrder');
+        if (isset ($input->updateOrder)) {
+            $input->action      = 'updateOrder';
+            $input->productOrder    = $req->get('productOrder');
+        }
+        $input->productOrder    = $req->get('productOrder');
+        $input->productId       = $req->get('frmProdId');
+        $input->catID           = (int) $req->get('frmCatID') ? $req->get('frmCatID') : 0;
+        $input->aDelete         = $req->get('frmDelete');
+        $input->submit          = $req->get('submitted');
+        $input->product         = (object) $req->get('product', true);
+        $input->product->description = $req->get('frmBodyName', true);
+        $input->pCatId          = $req->get('pCatId');
         $input->product->promotion = (isset ($input->product->promotion)) ? 1 : 0;
-        $input->totalItems = $req->get('totalItems');
-        $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
-        $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+        $input->product->new_id = (isset ($input->product->new_id )) ? 1 : 0;
+        $input->product->bargain = (isset ($input->product->bargain )) ? 1 : 0;
+        $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+        $input->config          = $req->get('Shop');
+
+        //dumpr($GLOBALS["_SGL"]["REQUEST"]);
+        //dumpr($input->action);
+        //die();
 
         if ($input->action == 'csvUpdate') {
             if ($input->product->action == 'add')
@@ -125,7 +146,6 @@ class ShopAdminMgr extends ShopMgr {
                 return $input;
             }
         }
-
         if ($input->action == 'update') {
             $required = array ('product_id', 'name', 'cat_id', 'manufacturer', 'price', 'status', 'cod1');
             if (!$this->_validateProductEdit($input->product, $aErrors, $required)) {
@@ -148,13 +168,25 @@ class ShopAdminMgr extends ShopMgr {
             }
         }
 
+        if ($input->action == 'updateConfig') {
+            if (!$this->_validateConfig($input->config, $aErrors)) {
+                $input->error = $aErrors;
+                $this->validated = false;
+                $input->template = 'configEdit.html';
+                $input->formAction = 'config';
+                return $input;
+            }
+        }
+
         // imageUpload
         $input->imageFileArray = $req->get('imageFile');
+//        dumpr($input->imageFileArray);
         if (is_array($input->imageFileArray)) {
             $input->imageFileName = $input->imageFileArray['name'];
             $input->imageFileType = $input->imageFileArray['type'];
             $input->imageFileTmpName = $input->imageFileArray['tmp_name'];
             $input->imageFileSize = $input->imageFileArray['size'];
+            $input->imageFileArray['ext'] = end(explode('.', $input->imageFileName));
             $input->imageFileExtension = end(explode('.', $input->imageFileName));
         }
 
@@ -174,7 +206,6 @@ class ShopAdminMgr extends ShopMgr {
                 $aErrors['csvUpload'] = SGL_Output::translate('Invalid file size');
             }
         }
-
         if ($input->submit) {
             if ($input->action == 'imageUpload') {
                 //  if document has been uploaded 
@@ -207,9 +238,12 @@ class ShopAdminMgr extends ShopMgr {
                 $input->template = 'csvUpload.html';
             }
 
+            if ($input->action == 'configEdit') {
+                $input->template = 'configEdit.html';
+            }
             $this->validated = false;
         }
-
+        //die("numirem");
     }
 
     function display(& $output) {
@@ -217,49 +251,53 @@ class ShopAdminMgr extends ShopMgr {
 
         $conf = & $GLOBALS['_SGL']['CONF'];
 
-        if (isset ($output->product->cat_id)) {
+/*        if (isset($output->product->cat_id))
             $output->catID = $output->product->cat_id;
-            
+        else
+            $output->catID = 0;  */
+        //lets genereate this date only for appropriate form
+        if ($output->action == "add" OR $output->action == "edit" OR
+            $output->action == "update" OR $output->action == "insert") {
             // generate the category select box
             $aOptions = array ();
             $menu1 = & new MenuBuilder('SelectBox', $aOptions);
             $menu1->setStartId($conf['ShopMgr']['rootCatID']);
             $aHtmlOptions = $menu1->toHtml();
             $output->catOptions = SGL_Output::generateSelect($aHtmlOptions, @ $output->product->cat_id);
-        }
 
-        if (isset ($output->product->manufacturer)) {
             // generate the manufacturer select box
             $aManufacturer = $this->_getManufacturerList();
             $output->manufacturerOptions = SGL_Output::generateSelect($aManufacturer, @ $output->product->manufacturer);
-        }
         
-
-        if (isset ($output->product->status)) {
             // generate status select box
             $aStatus = array ();
             if ($conf['statusOpts']) {
                 $aStatus = $conf['statusOpts'];
             }
             $output->statusOptions = SGL_Output::generateSelect($aStatus, @ $output->product->status);
-
-            $output->product->statusString = $conf['statusOpts'][@ $output->product->status];
-        }
+            @$output->product->statusString = $conf['statusOpts'][@ $output->product->status];
 
         // promotion check box
-        if (isset ($output->product->promotion)) {
             $output->promoOptions = $output->product->promotion;
+        // new poduct check box
+            $output->newOptions = $output->product->new_id;
+        // new poduct check box
+            $output->bargainOptions = $output->product->bargain;
+
+            $output->wysiwyg = true;
         }
         
         // product image procces
-        // product thumb path set                   
-        if (isset ($output->product->img) AND $output->product->img != '' AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'].'/'.$output->product->img)) {
+        // product thumb path set
+        if (isset ($output->product->img) AND $output->product->img != ''
+            AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'].'/'.$output->product->img)) {
             $output->product->thumbUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$output->product->img;
         } else {
             $output->product->thumbUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$conf['imageUpload']['noImageFile'];
         }
         // product image path set
-        if (isset ($output->product->img) AND $output->product->img != '' AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'].'/'.$output->product->img)) {
+        if (isset ($output->product->img) AND $output->product->img != ''
+            AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'].'/'.$output->product->img)) {
             $output->product->imageUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['directory'].'/'.$output->product->img;
         } else {
             $output->product->imageUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['directory'].'/'.$conf['imageUpload']['noImageFile'];
@@ -277,12 +315,14 @@ class ShopAdminMgr extends ShopMgr {
         
     
         if (isset ($output->product->description)) {
-            $unser = @ $this->_descriptionToAray($output->product->description);
+            /*$unser = @ $this->_descriptionToAray($output->product->description);
             if (is_array($unser)) {
                 $output->product->aDescription = $unser;
             } else {
                 $output->product->aDescription = array ();
-            }
+            }*/
+            $output->product->aDescription = $output->product->description;
+            $output->product->description = nl2br($output->product->description);
         }
         
         // Set current category name and category path
@@ -291,7 +331,6 @@ class ShopAdminMgr extends ShopMgr {
             $output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1', true);
             $output->currentCat = $catMgr->getLabel($output->catID);
         }
-
     }
         
         
@@ -357,8 +396,16 @@ class ShopAdminMgr extends ShopMgr {
         }
         
         // Price
-        if (in_array('price', $required) and !(isset ($product->price) and $product->price >= 0)) {
+        if (in_array('price', $required) and !(isset ($product->price))) {
             $aErrors['price'] = SGL_Output::translate('Please fill in this field');
+        } else {
+            if ($product->price <= 0) {
+               $aErrors['price'] = SGL_Output::translate('Price must be > 0');
+            }
+            //if there is commas replase them with dots
+            if (strstr($product->price, ',')) {
+               $product->price = strtr($product->price, ",", ".");
+            }
         }
 
         // status
@@ -379,11 +426,15 @@ class ShopAdminMgr extends ShopMgr {
                 $aErrors['short_description'] = SGL_Output::translate('Please fill in this field');
             }
 
+
         // Product Code 1
         if (isset ($product->cod1) and strlen($product->cod1) > 1) {
-            if ($product->cod1 != addslashes($product->cod1) || preg_match("/[^A-z0-9_\-]/", $product->cod1) == 1) {
+            if ($product->cod1 != addslashes($product->cod1)) {
                 $aErrors['cod1'] = SGL_Output::translate('Invalid data');
             }
+            if (strstr($product->cod1, ',')) {
+               $product->cod1 = strtr($product->cod1, ",", ".");
+            }/////////////////////////////sita ismesti po to
 
         } else
             if (in_array('cod1', $required)) {
@@ -406,11 +457,11 @@ class ShopAdminMgr extends ShopMgr {
 
         // Full product description
         if (isset ($product->description) and strlen($product->description) > 1) {
-            $aSyntaxErrors = $this->_checkDescriptionSyntax($product->description);
-            if (count($aSyntaxErrors) != 0) {
-                $aErrors['description'] = SGL_Output::translate('Syntax error on line(s): ');
-                $aErrors['description'] .= implode(', ', $aSyntaxErrors);
-            }
+            //$aSyntaxErrors = $this->_checkDescriptionSyntax($product->description);
+            //if (count($aSyntaxErrors) != 0) {
+            //    $aErrors['description'] = SGL_Output::translate('Syntax error on line(s): ');
+            //    $aErrors['description'] .= implode(', ', $aSyntaxErrors);
+           // }
         } else
             if (in_array('description', $required)) {
                 $aErrors['description'] = SGL_Output::translate('Please fill in this field');
@@ -424,369 +475,6 @@ class ShopAdminMgr extends ShopMgr {
     }
 
 
-    /**
-     * BATCH PROCESSING FUNCTIONS
-     */
-    
-    
-    // TO DO: create a separate class with CSV inport/export functions.
-    // TO DO: create other methods Ex: xmlUpload ...
-    /**
-     * An extension of the validate() method that is called for every product
-     * record to check the fields syntax
-     *
-     * @access public
-     *
-     */
-    function _csvUpload(& $input, & $output) {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->template = 'csvUpload.html';
-        $output->pageTitle = $this->pageTitle.'::CSV Upload';
-        
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        if (!is_array($input->csvFileArray)) {
-            return;
-        }
-
-        // return if invalid CVS file or just print the upload form
-
-        $row = 0;
-        $handle = fopen($input->csvFileTmpName, "r");
-        while ($data = fgetcsv($handle, 1000, ",")) {
-            if ($row == 0) {
-                // set the columns names
-                $num = count($data);
-                $csvNames = array ();
-                $aCsv = array ();
-                for ($c = 0; $c < $num; $c ++) {
-                    if (strlen($data[$c]) > 0) {
-                        $csvNames[$c] = $data[$c];
-                        eval ("$".$data[$c]." = array();");
-                    } else {
-                        SGL_HTTP_Session::remove('csvUpload');
-                        SGL::raiseMsg('Inconsisent CSV table header');
-                        SGL_HTTP::redirect(array('action' => 'csvList'));
-                        return;
-                    }
-                }
-                $row = 1;
-            } else {
-                // insert data into table
-                if ($row > $conf['CSV']['maxUploadRec']) {
-                    break;
-                }
-                
-                $num = count($data);
-                $row ++;
-                for ($c = 0; $c < $num; $c ++) {
-                    $aRow[$csvNames[$c]] = $data[$c];
-                }
-                $aRow['product_id'] = $row -1;
-
-                // resolve \n\r problems with windows CSVs
-                if (isset ($aRow['short_description']) and strlen($aRow['short_description']) > 0) {
-                    $aRow['short_description'] = trim(ereg_replace(chr(10), chr(13).chr(10), $aRow['short_description']));
-                }
-               
-                if (isset ($aRow['description']) and strlen($aRow['description']) > 0) {
-                    $aRow['description'] = trim(ereg_replace(chr(10), chr(13).chr(10), $aRow['description']));
-                }
-
-                $aCsv[($row -1)] = (object) $aRow;
-            }
-        }
-        fclose($handle);
-
-        SGL_HTTP_Session::set('csvUpload', $aCsv);
-
-        SGL::raiseMsg('CSV file uploaded succefuly');
-        SGL_HTTP::redirect(array('action' => 'csvList'));
-    }
-
-
-     /**
-     * List the batch processing products that are stored in the session
-     *
-     * @access public
-     *
-     */
-    function _csvList(& $input, & $output) 
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->template = 'csvUpload.html';
-        $output->pageTitle = $this->pageTitle.'::CSV List';
-
-        $aCsv = SGL_HTTP_Session::get('csvUpload');
-
-        if (count($aCsv) > 0) {
-            $output->csvRows = $aCsv;
-            $output->csvUploadResult = 1;
-        } else {
-            SGL::raiseMsg('No products');
-        }
-
-    }
-
-    
-     /**
-     * Process the products from the session one by one, validate the 
-     * fields and execute the action recorded in the action column
-     *
-     * @access public
-     *
-     */
-    function _csvProcess(& $input, & $output) 
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $aCsv = SGL_HTTP_Session::get('csvUpload');
-
-        foreach ($aCsv as $index => $product) {
-            $err = array ();
-            if (isset ($aCsv[$index]->error))
-                unset ($aCsv[$index]->error);
-            
-            // execute acording to the action column    
-            switch ($product->action) {
-                case 'add' :
-                    $required = array ('name', 'cat_id', 'manufacturer', 'price', 'status', 'cod1');
-                    if (!$this->_validateProductEdit($product, $err, $required)) {
-                        $aCsv[$index]->error = SGL_Output::translate('Error: ');
-                        foreach ($err as $err_line) {
-                            $aCsv[$index]->error .= $err_line.'; '; 
-                        }
-                        break;
-                    }
-                    
-                    $oProduct = & new DataObjects_Product();
-                    $oProduct->cod1 = $product->cod1;
-                    if ($oProduct->find() != 0) {
-                        $aCsv[$index]->error = SGL_Output::translate('Duplicate found').' : '.SGL_Output::translate('Cod1');
-                        break;
-                    }
-                    unset ($oProduct);
-                    
-                    $oProduct = & new DataObjects_Product();
-                    $oProduct->setFrom($product);
-                    $dbh = $oProduct->getDatabaseConnection();
-                    $oProduct->product_id = $dbh->nextId('product');
-                    $oProduct->last_updated = SGL::getTime();
-                    $oProduct->updated_by = $_SESSION['uid'];
-                    $oProduct->date_created = SGL::getTime();
-                    $oProduct->created_by = $_SESSION['uid'];
-                    $success = $oProduct->insert();
-                    if ($success) {
-                        // On success remove the product from the session table
-                        unset ($aCsv[$index]);
-                    }
-                    else {
-                        $aCsv[$index]->error = SGL_Output::translate('data save error');
-                    }
-                    break;
-                    
-                case 'update' :
-                    $required = array ('cod1');
-                    if (!$this->_validateProductEdit($product, $err, $required)) {
-                        $aCsv[$index]->error = SGL_Output::translate('Error detected. Please edit the record');
-                        error_log(print_r($err,true));
-                        error_log(print_r($product,true));
-                        break;
-                    }
-                    
-                    $oProduct = & new DataObjects_Product();
-                    $oProduct->cod1 = $product->cod1;
-                    if ($oProduct->find(true) == 0) {
-                        $aCsv[$index]->error = SGL_Output::translate('Nu sunt produse').' : '.SGL_Output::translate('Cod1');
-                        break;
-                    }
-
-                    $prodId = $oProduct->product_id;
-                    unset ($oProduct);
-                    $oProduct = & new DataObjects_Product();
-                    $oProduct->get($prodId);
-                    $oProduct->setFrom($product);
-                    $oProduct->last_updated = SGL::getTime();
-                    $oProduct->updated_by = $_SESSION['uid'];
-                    $success = $oProduct->update();
-                    if ($success != false) {
-                        unset ($aCsv[$index]);
-                    } else {
-                        $aCsv[$index]->error = SGL_Output::translate('data save error');
-                    }
-                    break;
-                    
-                case 'delete' :
-                    if (isset ($product->cod1) and $product->cod1 > 0) {
-                        $oProduct = & new DataObjects_Product();
-                        $oProduct->cod1 = $product->cod1;
-                        if ($oProduct->find(true) == 0) {
-                            $aCsv[$index]->error = SGL_Output::translate('Nu sunt produse').' : '.SGL_Output::translate('Cod1');
-                            break;
-                        }
-                        
-                        $success = $oProduct->delete();
-                        if ($success != false) {
-                            unset ($aCsv[$index]);
-                        } else {
-                            $aCsv[$index]->error = SGL_Output::translate('Data delete error');
-                        }
-                    } else
-                        $aCsv[$index]->error = SGL_Output::translate('Invalid data').' : '.SGL_Output::translate('Cod1');
-                    break;
-                    
-                default :
-                    $aCsv[$index]->error = SGL_Output::translate('No action selected. Please delete the record.');
-                    break;
-            }
-
-        }
-
-        SGL_HTTP_Session::set('csvUpload', $aCsv);
-
-        SGL::raiseMsg('CSV file processed');
-        SGL_HTTP::redirect(array('action' => 'csvList'));
-    }
-
-
-     /**
-     * Display for editing the edit form with product data from session
-     *
-     * @access public
-     *
-     */
-    function _csvEdit(& $input, & $output) 
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->template = 'productEdit.html';
-        $output->pageTitle = $this->pageTitle.'::CSV Edit';
-        $output->formAction = 'csvUpdate';
-
-        $aCsv = SGL_HTTP_Session::get('csvUpload');
-        //  get product data
-        if (isset ($aCsv[$input->productId])) {
-            $aErrors = array ();
-            $oProduct = $aCsv[$input->productId];
-            $output->product =  clone($oProduct);
-        } else {
-            SGL::raiseMsg('Invalid product id');
-            SGL_HTTP::redirect(array('action' => 'csvList'));
-        }
-    }
-
-
-     /**
-     * Display for editing the edit form with product data from session
-     *
-     * @access public
-     *
-     */
-    function _csvUpdate(& $input, & $output) 
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $aCsv = SGL_HTTP_Session::get('csvUpload');
-        $output->formAction = 'csvUpdate';
-
-        $oProduct = (object) $input->product;
-                    
-
-        if (isset ($oProduct->product_id) AND $oProduct->product_id > 0) {
-            if ($oProduct->action != 'add') {
-                $objVars = get_object_vars($aCsv[$oProduct->product_id]);
-                foreach ($objVars as $name => $value)
-                    if (isset($oProduct->$name)) {
-                    $aCsv[$oProduct->product_id]-> $name = $oProduct->$name;
-                    }
-            } else {
-                $aCsv[$oProduct->product_id] = $oProduct;
-            }
-
-            $success = true;
-            SGL_HTTP_Session::set('csvUpload', $aCsv);
-        } else {
-            SGL::raiseError('Invalid product ID', SGL_ERROR_NOAFFECTEDROWS);
-            $output->template = 'productEdit.html';
-            return;
-        }
-
-        if ($success) {
-            //  redirect on success
-            SGL::raiseMsg('Product updated successfully');
-            SGL_HTTP::redirect(array('action' => 'csvList'));
-        } else {
-            SGL::raiseError('There was a problem updating the record', SGL_ERROR_NOAFFECTEDROWS);
-            $output->template = 'csvEdit.html';
-        }
-    }
-
-
-     /**
-     * Delete product from the session 
-     *
-     * @access public
-     *
-     */
-    function _csvDelete(& $input, & $output) 
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->template = 'csvUpload.html';
-
-        $aCsv = SGL_HTTP_Session::get('csvUpload');
-
-        if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $productId) {
-                if (isset ($aCsv[$productId]))
-                    unset ($aCsv[$productId]);
-            }
-        } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }
-
-        SGL_HTTP_Session::set('csvUpload', $aCsv);
-
-        //  redirect on success
-        SGL::raiseMsg('Product deleted successfully');
-        SGL_HTTP::redirect(array('action' => 'csvList'));
-    }
-
-    // TO DO: create other methods Ex: xmlExport ...
-     /**
-     * Export all the products from DB in CSV format
-     *
-     * @access public
-     *
-     */
-    function _csvExport(& $input, & $output) {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $aProduct = array ();
-        $query = 'SELECT * FROM product';
-        $dbh = & SGL_DB::singleton();
-        $result = $dbh->query($query);
-        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
-
-        // export headers
-        header("Content-type: application/ofx");
-        header("Content-Disposition: attachment; filename=product.csv");
-        
-        // export column names
-        unset ($row['product_id']);
-        echo $this->_genCsvLine(array_keys($row));
-        
-        // export records
-        while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-            unset ($row['product_id']);
-            echo $this->_genCsvLine($row);
-        }
-        exit();
-    }
-    
-    
     /**
     * DB PRODUCT ADMIN FUNCTIONS
     */
@@ -802,7 +490,7 @@ class ShopAdminMgr extends ShopMgr {
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'productEdit.html';
-        
+
         $output->product = & new DataObjects_Product();
         // set default category 
         $output->product->cat_id = $input->catID;
@@ -823,7 +511,6 @@ class ShopAdminMgr extends ShopMgr {
     function _insert(& $input, & $output) 
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
         //  insert record
         $oProduct = & new DataObjects_Product();
         $oProduct->setFrom($input->product);
@@ -835,6 +522,11 @@ class ShopAdminMgr extends ShopMgr {
         $oProduct->created_by = $_SESSION['uid'];
         $success = $oProduct->insert();
         
+        $input->productId = $oProduct->product_id;
+        if (!empty($input->imageFileArray['name'])) {
+            $this->_imageUpload($input, $output);
+        }
+
         // if you hit sumit again an update action will be performed
         $output->formAction = 'update';
         if ($success) {
@@ -844,8 +536,11 @@ class ShopAdminMgr extends ShopMgr {
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
             $output->product = $oProduct;
-
         }
+
+        // uzpildom laukus image upload funkcijai
+
+
     }
 
     
@@ -907,10 +602,15 @@ class ShopAdminMgr extends ShopMgr {
         }        
 
         $output->product = $oProduct;
-        
         $output->catID = $oProduct->cat_id;
         
-        if ($success) {
+        // if we have to upload a new image...
+        $input->productId = $oProduct->product_id;
+        if (!empty($input->imageFileArray['name'])) {
+            $successImage = $this->_imageUpload($input, $output);
+        }
+        
+        if ($success == true && $successImage == true) {
             //  redirect on success
             SGL::raiseMsg('Product updated successfully');
             SGL_HTTP::redirect(array ('action' => 'list', 'frmCatID' => $input->product->cat_id));
@@ -933,7 +633,10 @@ class ShopAdminMgr extends ShopMgr {
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (empty($input->productId)) {
+//            die("numirem");
+            SGL::raiseError('No product ID found', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+        }
 
         $output->template = 'productEdit.html';
         $output->formAction = 'update';
@@ -941,83 +644,128 @@ class ShopAdminMgr extends ShopMgr {
         $oProduct->get($input->productId);
         $output->product = $oProduct;
 
-        if (!is_writable(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'])) {
-            include_once 'System.php';
-            $success = System::mkDir(array (SGL_UPLOAD_DIR));
-            if (!$success) {
-                SGL::raiseError('The upload directory does not appear to be writable, please give the
-                                   webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
-            }
+        $success = $this->uploadImg($input->imageFileArray, $input->productId.'.jpg'); // not nice
+        SGL::logMessage(print_r($success,true));
+        if ($success === true) {
+            $oProduct->img = $input->productId.'.jpg';
+            $oProduct->update();
+        } else {
+            SGL::logMessage(print_r($success,true));
+            SGL::raiseError('There was a problem resizeing the product image');
         }
-
-        if (!is_writable(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'])) {
-            include_once 'System.php';
-            $success = System::mkDir(array (SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory']));
-            if (!$success) {
-                SGL::raiseError('The upload directory does not appear to be writable, please give the
-                                   webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
-            }
-        }
-
-        // Store the image
-       // $fileName = SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'].'/'.$input->productId.'.'.$input->imageFileExtension;
-       /* if (!move_uploaded_file($input->imageFileTmpName, $fileName)) {
-            SGL::raiseError('The upload directory does not appear to be writable, please give the 
-                               webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
-        } */
         
-        // resizeing images
-        require_once SGL_LIB_DIR.'/other/phpthumb/phpthumb.class.php';
-        // thumb generator
-        $phpThumb = new phpThumb();
-        $phpThumb->setSourceFilename($input->imageFileTmpName);
-        $phpThumb->aoe = 1;
-        $phpThumb->far = 1;
-        $phpThumb->bg = $conf['imageUpload']['background'];
-        $phpThumb->h = $conf['imageUpload']['thumbHeight'];
-        $phpThumb->w = $conf['imageUpload']['thumbWidth'];
-        $phpThumb->config_output_format = 'jpeg';
-        $phpThumb->config_error_die_on_error = false;
-        if ($phpThumb->GenerateThumbnail()) {
-            // generate & output thumbnail
-            $phpThumb->RenderToFile(SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'].'/'.$input->productId.'.jpg');
-        } else {
-            // do something with error message
-            SGL::raiseMsg(implode(",", $phpThumb->debugmessages));
-        }
-        unset ($phpThumb);
-        
-        // image generator
-        $phpThumb = new phpThumb();
-        $phpThumb->setSourceFilename($input->imageFileTmpName);
-        $phpThumb->aoe = 1;
-        $phpThumb->far = 1;
-        $phpThumb->bg = $conf['imageUpload']['background'];
-        $phpThumb->h = $conf['imageUpload']['imageHeight'];
-        $phpThumb->w = $conf['imageUpload']['imageWidth'];
-        $phpThumb->config_output_format = 'jpeg';
-        $phpThumb->config_error_die_on_error = false;
-        if ($phpThumb->GenerateThumbnail()) {
-            // generate & output thumbnail
-            $phpThumb->RenderToFile(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'].'/'.$input->productId.'.jpg');
-        } else {
-            // do something with error message
-            SGL::raiseMsg(implode(",", $phpThumb->debugmessages));
-        }
-        unset ($phpThumb);
-
-        //$oProduct->img = $input->productId.'.'.$input->imageFileExtension;
-        $oProduct->img = $input->productId.'.jpg';
-        $success = $oProduct->update();
-        if ($success) {
-            SGL::raiseMsg('Image uploaded successfully');
-        } else {
-            SGL::raiseError('There was a problem updating the record');
-        }
-        //SGL_HTTP::redirect( array ('action' => 'edit', 'frmProdId' => $input->productId));
-
+        return $success;
     }
 
+
+    function uploadImg($imageFileArray, $filename = '') {
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (empty ($filename)) {
+            $filename = $imageFileArray['name'];
+          //  $ext = $imageFileArray['ext'];
+        } else {
+             //lets get extension
+           // $ext = end(explode('.', $filename));
+           // $filename = substr($filename, 0, (strlen($filename) - strlen($ext) - 1));
+        }
+        $thubDir = SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'];
+        $imageDir = SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'];
+
+        //if we don't have images/shop directory, lets create it
+        if (!file_exists($imageDir)){
+            include_once 'System.php';
+            $success = System::mkDir(array ($imageDir));
+            if (!$success) {
+                return SGL::raiseError('The upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+            }
+        }
+
+        //if we don't have images/thumb directory, lets create it
+        if (!file_exists($thubDir)){
+            include_once 'System.php';
+            $success = System::mkDir(array ($thubDir));
+            if (!$success) {
+                return SGL::raiseError('The upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+            }
+        }
+        // now lets check if they are writable...
+        if (!is_writable($imageDir) OR !is_writable($thubDir)) {
+            return SGL::raiseError('The upload directory  does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+        }
+        
+        /*Dumpr($imageFileArray);
+        dumpr($conf['imageUpload']);*/
+
+        // generate image file
+        //$filename = $imageFileArray['name'];
+
+        // Get new dimensions
+        $imageSize = getimagesize($imageFileArray['tmp_name']);
+        if($imageSize === false) {
+            return SGL::raiseError('Imvalid image size returned'); 
+        }
+        $width = $imageSize[0];
+        $height = $imageSize[1];
+        error_log(print_r($height,true));
+        $new_width = $conf['imageUpload']['imageWidth'];
+        $new_height = $conf['imageUpload']['imageHeight'];
+        
+        // Resample
+        $image_p = imagecreatetruecolor($new_width, $new_height);
+        if(!$image_p) {
+            return SGL::raiseError('Cannot Initialize new GD image stream');
+        }
+        $image = imagecreatefromjpeg($imageFileArray['tmp_name']);
+        if(!$image) {
+           return SGL::raiseError('Error loading '.$imageFileArray['tmp_name']); 
+        }
+        
+        $success = imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+        if(!$success) {
+           return SGL::raiseError('Unable to resample image');
+        }
+        
+        // Output
+        $success  = imagejpeg($image_p, $imageDir.'/'.$filename, 100);
+        if(!$success) {
+           return SGL::raiseError('Unable to save image in JPEG format');
+        }
+        
+        
+        
+        //generate thumbnail
+        
+        
+        // Get new dimensions
+       /* list($width, $height) = getimagesize($imageFileArray['tmp_name']); */
+        $new_width = $conf['imageUpload']['thumbWidth'];
+        $new_height = $conf['imageUpload']['thumbHeight'];
+        
+        
+        // Resample
+        $image_p = imagecreatetruecolor($new_width, $new_height);
+        if(!$image_p) {
+            return SGL::raiseError('Cannot Initialize new GD image stream');
+        }
+        $image = imagecreatefromjpeg($imageFileArray['tmp_name']);
+        if(!$image) {
+           return SGL::raiseError('Error loading '.$imageFileArray['tmp_name']); 
+        }
+        
+        $success = imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+        if(!$success) {
+           return SGL::raiseError('Unable to resample image');
+        }
+        
+        // Output
+        $success  = imagejpeg($image_p, $thubDir.'/'.$filename, 100);
+        if(!$success) {
+           return SGL::raiseError('Unable to save thumb in JPEG format');
+        }
+
+        return true;
+    }
 
     /**
     * Delete a product from DB
@@ -1051,14 +799,15 @@ class ShopAdminMgr extends ShopMgr {
     */ 
     function _list(& $input, & $output) {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $output->template = 'productListAdmin.html';
         $output->pageTitle = 'Products::Browse';
-
         
         // Generate the orderBy query
         $orderBy_query = '';
-        $allowedSortFields = array('product_id','cod1','manufacturer','name','last_updated','promotion','price','currency');
+        $allowedSortFields = array('product_id','cod1','manufacturer',
+                                   'name','last_updated','promotion','price','currency');
         if (isset($input->sortBy) and strlen($input->sortBy) > 0 
            and isset($input->sortOrder) and strlen($input->sortOrder) > 0 
            and in_array($input->sortBy, $allowedSortFields)) {
@@ -1066,16 +815,41 @@ class ShopAdminMgr extends ShopMgr {
         }
 
         $dbh = & SGL_DB::singleton();
-        
+
         // If not valid cat ID, list all the products
-        if ($input->catID < 1) {
+        if ($input->catID < 1 OR $input->catID == $conf['ShopMgr']['rootCatID']) {
             $query = 'SELECT * FROM product '.$orderBy_query;
+            $output->catID = 0;
         } else {
-            $query = 'SELECT * FROM product WHERE cat_id = '.$input->catID.' '.$orderBy_query;
+           //here we get all sub branches
+            $query = 'SELECT left_id, right_id
+                      FROM category
+                      WHERE category_id = '.$input->catID;
+            $result = $dbh->query($query);
+            
+            $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
+            $left_id = $row['left_id'];
+            $right_id = $row['right_id'];
+
+            $query = "SELECT B.product_id, B.cod1, B.cod2, B.name, B.short_description,
+                             B.description, B.link_datasheet, B.img, B.manufacturer,
+                             B.link_manufacturer, B.price, B.currency, B.warranty,
+                             B.cat_id, B.promotion, B.status, B.date_created,
+                             B.created_by, B.last_updated, B.order_id, B.updated_by, A.label
+                      FROM product B, category A
+                      WHERE B.cat_id = A.category_id
+                            AND A.left_id >= {$left_id} AND A.right_id <={$right_id} ".
+                      $orderBy_query;
+
+            //kopijuojam tam kad meniu veiktu...
+            $output->catID = $input->catID;
         }
-        
+
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
+        $pagerOptions = array ('mode' => 'Sliding',
+                               'delta' => 3,
+                               'perPage' => $limit,
+                               'totalItems' => $input->totalItems);
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         
         if (is_array($aPagedData) && count($aPagedData['data'])) {
@@ -1083,17 +857,16 @@ class ShopAdminMgr extends ShopMgr {
                 $product = $aPagedData['data'][$key];
                 
                 // trim short_descriptin to 30 chars
-                $oldShortLen = strlen($product['short_description']);
+                /*$oldShortLen = strlen($product['short_description']);
                 $product['short_description'] = substr($product['short_description'],0,30);
                 if (strlen($product['short_description']) < $oldShortLen) {
                     $product['short_description'] .= ' ...';
-                }
-                
+                } */
+                $product['short_description'] = SGL_Output::summarise($product['short_description'],30);
                 $product['last_updated'] = SGL_Date::format( $product['last_updated']);
                 $product['promotion'] = $product['promotion'] ? 'Yes': '';
                 
                 $aPagedData['data'][$key] = $product;
-                
             }
         } else {
             SGL::raiseMsg('No products');
@@ -1104,9 +877,7 @@ class ShopAdminMgr extends ShopMgr {
         }
 
         $output->totalItems = $aPagedData['totalItems'];
-        $output->catID = $input->catID;
         $output->aPagedData = $aPagedData;
-
     }
 
     /**
@@ -1203,57 +974,270 @@ class ShopAdminMgr extends ShopMgr {
     }
 
 
-
-    /**
-    * Generates the navigation menu
-    *
-    * @access public
-    *
-    */ 
-/*
-    Not used
-    
-    function getNavigation(& $input, & $output) {
+    function _config(&$input, &$output)
+    {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template = 'configEdit.html';
+        $output->pageTitle = $this->pageTitle . ' :: Configure';
 
-        $menu = & new MenuBuilder('Explorer');
-        $menu->setStartId(1);
-        $output->menu = $menu->toHtml();
+        $path = SGL_MOD_DIR . "/{$this->module}/";
+        if (is_readable($path . 'conf.ini')) {
+            $config = parse_ini_file($path . 'conf.ini', true);
+            foreach ($config['statusOpts'] as $k => $v) {
+                @$statusOpts .= $v.";";
+            }
+            $config['statusOpts'] = $statusOpts;
+            if (isset($config['imageUpload']['noImageFile'])) {
+                $config['imageUpload']['oldNoImageFile'] = $config['imageUpload']['noImageFile'];
+            }
+        }
+
+        $output->Shop = $config;
     }
-/*
 
-    /**
-    * Generates a CSV row filled with data from one product
-    * Taken from PHP help file.
-    *
-    * @access public
-    *
-    */ 
-    function _genCsvLine($inArray, $deliminator = ",") 
+    function _updateConfig (& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $line = "";
-        foreach ($inArray as $val) {
-            # remove any windows new lines,
-            # as they interfere with the parsing at the other end
-            $val = str_replace("\r\n", "\n", $val);
+        if(!function_exists('write_ini_file')) {
+            echo "Error function Write ini does not exist";
+            die("aaaa!");
+        }else{
+            if (write_ini_file(SGL_MOD_DIR . "/{$this->module}/conf.ini", $input->config)) {
+//               dumpr($input->config);
+               //dumpr($input->imageFileArray);
+               if (!empty($input->imageFileArray)){
+                   // should check for error
+                   $this->uploadImg($input->imageFileArray,"no_image.jpg"); //extension will be added
+               }
 
-            # if a deliminator char, a double quote char or a newline
-            # are in the field, add quotes
-            if (ereg("[$deliminator\"\n\r]", $val)) {
-                $val = '"'.str_replace('"', '""', $val).'"';
-            } #end if
+               SGL::raiseMsg('Configuration is saved');
+               SGL_HTTP::redirect(array('action' => 'list'));
+            } else {
+               SGL::raiseMsg('Configuration not saved. Check file conf.ini write permissions');
+               SGL_HTTP::redirect(array('action' => 'list'));
+            }
+        }
+     }
 
-            $line .= $val.$deliminator;
+    function _validateConfig(& $config, & $aErrors){
 
-        } #end foreach
+        if (empty($config['ShopMgr']['rootCatID'])
+            OR !is_numeric($config['ShopMgr']['rootCatID'])) {
+            $aErrors['ShopMgr']['rootCatID'] = SGL_Output::translate('Please fill in this field');
+        }
 
-        # strip the last deliminator
-        $line = substr($line, 0, (strlen($deliminator) * -1));
-        # add the newline
-        $line .= "\n";
-        return $line;
+        if (empty($config['ShopMgr']['defaultVAT'])
+            OR !is_numeric($config['ShopMgr']['defaultVAT'])) {
+            $aErrors['ShopMgr']['defaultVAT'] = SGL_Output::translate('Please fill in this field');
+        }
+
+        if (!isset($config['ShopMgr']['defaultDiscount'])
+            OR !is_numeric($config['ShopMgr']['defaultDiscount'])) {
+            $aErrors['ShopMgr']['defaultDiscount'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['ShopMgr']['defaultExchange'])
+            OR !is_numeric($config['ShopMgr']['defaultExchange'])) {
+            $aErrors['ShopMgr']['defaultExchange'] = SGL_Output::translate('Please fill in this field');
+        }
+
+        if (empty($config['ShopMgr']['defaultCurrency'])
+            OR strlen($config['ShopMgr']['defaultCurrency']) != 3) {
+            $aErrors['ShopMgr']['defaultCurrency'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['statusOpts'])) {
+            $aErrors['statusOpts'] = SGL_Output::translate('Please fill in this field');
+        } else {
+           $config['statusOpts'] = explode(";", $config['statusOpts']);
+           $i = 1;
+           foreach ($config['statusOpts'] as $k => $v) {
+              if (!empty($v)) {
+                 $statusOpts[$i++] = $v;
+              }
+           }
+           $config['statusOpts'] = $statusOpts;
+        }
+
+        if (empty($config['imageUpload']['maxSize'])
+            OR !is_numeric($config['imageUpload']['maxSize'])) {
+            $aErrors['imageUpload']['maxSize'] = SGL_Output::translate('Please fill in this field');
+        }
+
+        if (empty($config['imageUpload']['imageWidth'])
+            OR !is_numeric($config['imageUpload']['imageWidth'])) {
+            $aErrors['imageUpload']['imageWidth'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['imageUpload']['imageHeight'])
+            OR !is_numeric($config['imageUpload']['imageHeight'])) {
+            $aErrors['imageUpload']['imageHeight'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['imageUpload']['thumbWidth'])
+            OR !is_numeric($config['imageUpload']['thumbWidth'])) {
+            $aErrors['imageUpload']['thumbWidth'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['imageUpload']['thumbHeight'])
+            OR !is_numeric($config['imageUpload']['thumbHeight'])) {
+            $aErrors['imageUpload']['thumbHeight'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['imageUpload']['background'])
+            OR strlen($config['imageUpload']['background']) != 6) {
+            $aErrors['imageUpload']['background'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        //we should check here can we write to that directory.
+        if (empty($config['imageUpload']['directory'])) {
+            $aErrors['imageUpload']['directory'] = SGL_Output::translate('Please fill in this field');
+        }
+
+        //we should check here can we write to that directory.
+        if (empty($config['imageUpload']['thumb'])) {
+            $aErrors['imageUpload']['thumb'] = SGL_Output::translate('Please fill in this field');
+        }
+
+        if (empty($config['price']['discountPrefId'])
+            OR !is_numeric($config['price']['discountPrefId'])) {
+            $aErrors['price']['discountPrefId'] = SGL_Output::translate('Please fill in this field');
+        }
+
+         // lets remember the filename
+        $config['imageUpload']['noImageFile'] = "no_image.jpg";
+
+        if (empty($config['price']['roleId'])
+            OR !is_numeric($config['price']['roleId'])) {
+            $aErrors['price']['roleId'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['price']['VAT'])
+            OR !is_numeric($config['price']['VAT'])) {
+            $aErrors['price']['VAT'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (empty($config['CSV']['maxUploadRec'])
+            OR !is_numeric($config['CSV']['maxUploadRec'])) {
+            $aErrors['CSV']['maxUploadRec'] = SGL_Output::translate('Please fill in this field');
+        }
+        
+        if (isset ($aErrors) && count($aErrors)) {
+            Dumpr($aErrors);
+            return false;
+        } else {
+
+            return true;
+        }
+        
+//        return $aErrors;
+    }
+
+    function _pCatDecr(& $input, & $output) {
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->template = 'productCatDescription.html';
+        $output->pageTitle = 'Products::Category Descriptions';
+        
+        $dbh = & SGL_DB::singleton();
+        $qry = "SELECT A.category_id, B.description, A.label AS cat_name
+                FROM category A LEFT JOIN category_description B ON (A.category_id = B.cat_id)
+                WHERE A.root_id = 4";  //fix this
+        $limit = 10;
+                
+        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => 34);//fix this
+        $aPagedData = SGL_DB::getPagedData($dbh, $qry, $pagerOptions);
+
+        $output->aPagedData = $aPagedData;
+        
+        if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+            $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        }
+    }
+
+    function _pCatDescrUpdate(& $input, & $output) {
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $dbh = & SGL_DB::singleton();
+
+        foreach ($input->pCatId as $k => $v) {
+            if (!empty($v)) {
+               $qry = "SELECT description
+                       FROM category_description
+                       WHERE cat_id = $k";
+               $result = $dbh->query($qry);
+
+               if ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+                   $qry = "UPDATE category_description
+                           SET description = '$v'
+                           WHERE cat_id = $k;";
+               } else {
+                   $qry = "INSERT INTO category_description (cat_id, description)
+                           VALUES ('$k', '$v')";
+               }
+               $result = $dbh->query($qry);
+            } else {
+               $qry = "DELETE 
+                       FROM category_description
+                       WHERE cat_id = $k";
+               $result = $dbh->query($qry);
+            }
+        }
+        SGL::raiseMsg('Product categories descriptions updated successfully');
+    }
+
+
+
+    function _updateOrder(& $input, & $output) {
+//        $input->productOrder = $input->productOrder
+
+        $dbh = & SGL_DB::singleton();
+       // dumpr($input->productOrder);
+        foreach ($input->productOrder as $k => $v) {
+          //  dumpr($v);
+            $qry = "UPDATE product
+                    SET order_id = {$v}
+                    WHERE product_id = $k";
+            $result = $dbh->query($qry);
+        }
+
+        SGL::raiseMsg('Product ordering updated successfully');
+        SGL_HTTP::redirect(array ('action' => 'list'));
     }
 }
+
+function write_ini_file($path, $assoc_array) {
+
+   foreach($assoc_array as $key => $item) {
+     if(is_array($item)) {
+       @$content .= "\n[{$key}]\n";
+       foreach ($item as $key2 => $item2) {
+         if(is_numeric($item2) || is_bool($item2))
+           $content .= "{$key2} = {$item2}\n";
+         else
+           $content .= "{$key2} = \"{$item2}\"\n";
+       }
+     } else {
+       if(is_numeric($item) || is_bool($item))
+         $content .= "{$key} = {$item}\n";
+       else
+         $content .= "{$key} = \"{$item}\"\n";
+     }
+   }
+
+   if(!$handle = fopen($path, 'w')) {
+     return false;
+   }
+
+   if(!fwrite($handle, $content)) {
+     return false;
+   }
+
+   fclose($handle);
+   return true;
+
+  }
 ?>

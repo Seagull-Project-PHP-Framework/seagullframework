@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -112,6 +112,8 @@ class BlockMgr extends SGL_Manager
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'blockForm.html';
         $output->mode = 'New block';
 
@@ -130,7 +132,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = 'SELECT MAX( blk_order ) FROM block WHERE is_onleft = ' . $oBlock->is_onleft;
+                $query = "SELECT MAX( blk_order ) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
@@ -142,7 +144,7 @@ class BlockMgr extends SGL_Manager
 
                 //  Redirect on success
                 SGL::raiseMsg('Block successfully added');
-                SGL_HTTP::redirect();
+                SGL_HTTP::redirect(array());
             }
         }
     }
@@ -263,17 +265,18 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $output->mode = 'Browse';
         $output->template = 'blockList.html';
         $secondarySortClause = $conf['BlockMgr']['secondarySortClause'];
-        $query = '  SELECT
+        $query = "  SELECT
                         b.block_id, b.name, b.title, b.title_class, 
                         b.body_class, b.blk_order, b.is_onleft, b.is_enabled, 
                         ba.section_id as sections, s.title as section_title
-                    FROM block b, block_assignment ba, section s 
+                    FROM {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba, {$conf['table']['section']} s 
                     WHERE ba.block_id=b.block_id
                     AND s.section_id=ba.section_id 
-                    ORDER BY ' .
+                    ORDER BY " .
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];

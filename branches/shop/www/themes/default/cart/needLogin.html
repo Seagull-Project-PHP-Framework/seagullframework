@@ -9,33 +9,37 @@
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
     <span flexy:if="msgGet()">{msgGet()}</span>
 
-    <div class="messageContainer">
-        <div class="messageHeader">
+    <div style="width:300px; margin: 0 auto;">
+        <div class="sgl-blocks-middle-title">
             {translate(#Authorisation Required#)}
-        </div>
-        <div class="messageContent">
-            <div>
+        </div>    
+        <div class="sgl-blocks-middle-body">
+            <div style="padding: 10px;">
                 <span class="error">*&nbsp;</span>{translate(#Username#)}
                 <div class="error" flexy:if="error[username]">
                     {translate(error[username])}
                 </div>
                 <input type="text" name="frmUsername" value="{username}" maxlength="36" />
             </div>
-
+    
             <div>
                 <span class="error">*&nbsp;</span>{translate(#Password#)}
-
+    
                 <div class="error" flexy:if="error[password]">
                     {translate(error[password])}
                 </div>
                 <input type="password" name="frmPassword" maxlength="24" />
             </div>
     
-            <p><input type="submit" class="formsubmit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
+            <p><input style="width: 150px" type="submit" class="formsubmit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
             <p><a href="register.php?redir={redir}">{translate(#Not Registered#)}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="passwordMgr.php">{translate(#Forgot Password#)}</a></p>
+            
         </div>
-
-        <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
+        <span class="error" style="font-size:80%;">*</span> 
+        <span style="font-size:80%;">{translate(#denotes required field#)}</span>
     </div>
-
 </form>
+
+
+
+

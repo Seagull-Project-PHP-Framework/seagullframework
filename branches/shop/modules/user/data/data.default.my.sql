@@ -196,6 +196,13 @@ INSERT INTO permission VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission VALUES (221, 'contactusmgr', '', 2);
 INSERT INTO permission VALUES (223, 'blockmgr', '', 1);
 INSERT INTO permission VALUES (224, 'bugmgr', '', 3);
+# SHOP
+INSERT INTO permission VALUES (225,'shopmgr',NULL,14);
+INSERT INTO permission VALUES (226,'cartmgr',NULL,16);
+INSERT INTO permission VALUES (227,'cartmgr_insert',NULL,16);
+INSERT INTO permission VALUES (228,'cartmgr_update',NULL,16);
+INSERT INTO permission VALUES (229,'cartmgr_list',NULL,16);
+INSERT INTO permission VALUES (230,'cartmgr_checkout',NULL,16);
 
 #
 # Dumping data for table `preference`
@@ -287,6 +294,9 @@ INSERT INTO role_permission VALUES (63, 2, 149);
 INSERT INTO role_permission VALUES (68, 0, 138);
 INSERT INTO role_permission VALUES (69, 0, 224);
 INSERT INTO role_permission VALUES (70, 0, 121);
+# Shop
+INSERT INTO role_permission VALUES (71,0,225);
+INSERT INTO role_permission VALUES (72,0,226);
 
 #
 # Dumping data for table `user_permission`
@@ -355,8 +365,7 @@ INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 # Dumping data for table `usr`
 #
 
-
-INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','webmaster@phpkitchen.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
-INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','demian@phpkitchen.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
+INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','admin@example.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
+INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','seagull@example.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
 
 

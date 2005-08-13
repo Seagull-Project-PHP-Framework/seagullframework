@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -274,20 +274,24 @@ class OrgMgr extends SGL_Manager
         }
         //  move node if needed
         switch ($aOrg['parent_id']) {
+            
         case $aOrg['original_parent_id']:
             //  usual case, no change => do nothing
             $message = 'The organisation has successfully been updated';
             break;
+            
         case $aOrg['organisation_id']:
             //  cannot be parent to self => display user error
             $message = 'The organisation has successfully been updated, no data changed';
             break;
+            
         case 0:
             //  move the org, make it into a root node, just above its own root
             $thisNode = $nestedSet->getNode($aOrg['organisation_id']);
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $thisNode['root_id'], 'BE');
             $message = 'The organisation has successfully been updated';
             break;
+            
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $aOrg['parent_id'], 'SUB');
@@ -298,24 +302,47 @@ class OrgMgr extends SGL_Manager
 
     function _delete(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);                
+        
         if (is_array($input->aDelete)) {
             $nestedSet = new SGL_NestedSet($this->_params);
             //  deleting parent nodes automatically deletes chilren nodes, but user
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
-            //  and therefore error, so test first to make sure they're still around
-            foreach ($input->aDelete as $index => $orgId) {
-                if ($nestedSet->getNode($orgId)){
-                    $nestedSet->deleteNode($orgId);
+            //  and therefore error, so test first to make sure they're still around ...
+            
+            // ... and also check if the organisation is not needed by any users. If a
+            // forein key to user exists, abort deletion to avoid bad integrity in the 
+            // database.
+            
+            $success = true;
+            
+            while ((list($index, $orgId) = each($input->aDelete)) && $success) {            	            	
+            	$org = $nestedSet->getNode($orgId);
+                if ($org) {
+                	
+                	$users = DA_User::getUsersByOrgId($orgId);
+                	
+                	if (empty($users)) {
+                		// ok, not dangerous to delete
+                    	$nestedSet->deleteNode($orgId);
+                	} else {
+                		$success = false;
+                		$orgName = $org['name'];
+                		SGL::raiseMsg(	"The selected organisation $orgName cannot be deleted because " .
+                						"there are users relating to it!");
+                	}
                 }
             }
+            
+	        if ($success) {
+	        	//  redirect on success
+	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
+	        }            
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }
-        //  redirect on success
-        SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
+        }        
     }
 
     function _list(&$input, &$output)
@@ -342,7 +369,7 @@ class OrgMgr extends SGL_Manager
             }
         }
         $output->results = $sectionNodes;
-        $output->addOnLoadEvent('document.frmUserMgrChooser.orgs.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
     }
 
     /**

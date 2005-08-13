@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/cart/cart.css" />
+
 <script language="JavaScript">
 <!--
 function selectAll(mode, i) {
@@ -22,18 +24,19 @@ function selchkAll(chk, i) {
 }
 -->
 </script>
-<flexy:include src="resourceChooser.html" />
+<div class="button-panel">
+  <flexy:include src="resourceChooser.html" />
+</div>
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <span flexy:if="msgGet()">{msgGet()}</span> 
 {if:pager}<flexy:include src="pager.html" />{end:}
 
 <form name="orders" method="post" flexy:ignore id="orders">
   <input type="hidden" name="action" value="delete" />   
-  <table class="wide">
-    <tr> 
-      <td colspan="7">
-      <strong>{translate(#Total orders#)}:</strong> {totalItems}</td>
-    <tr> 
+  <strong>{translate(#Total orders#)}:</strong> {totalItems}
+
+  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center" class="dataTable">
+    <tr>
       <th width="5"><div align="center"><input type="checkbox" name="selAll" value="checkbox" onclick="selchkAll(this, 1);"></div></th>
       <th width="10"><a class="header" href="{makeUrl()}frmSortBy/cart_id/frmSortOrder/{sortOrder}/">{translate(#ID#)}</a></th>
       <th width="100"><a class="header" href="{makeUrl()}frmSortBy/username/frmSortOrder/{sortOrder}/">{translate(#User#)}</a></th>
@@ -41,7 +44,7 @@ function selchkAll(chk, i) {
       <th width="120"><a class="header" href="{makeUrl()}frmSortBy/c.date_created/frmSortOrder/{sortOrder}/">{translate(#Created#)}</a></th>
       <th width="120"><div align="right"><a class="header" href="{makeUrl()}frmSortBy/total/frmSortOrder/{sortOrder}/">{translate(#Total#)}</a></div></th>
     </tr>
-    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue"> 
+    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
       <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[cart_id]}" /></td>
       <td>{aValue[cart_id]}</td>
       <td><a href="{makeUrl(#view#)}frmOrderID/{aValue[cart_id]}/">{aValue[username]}</a></td>
@@ -49,7 +52,7 @@ function selchkAll(chk, i) {
       <td>{aValue[date_created]}</td>
       <td align="right">{this.plugin(#formatPrice#,aValue[total]):h} Lei</td>  
     </tr>
-    <tr> 
+    <tr class="dataTable-tr-footer">
       <td colspan="7">{translate(#With selected orders(s)#)}: 
         <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('{translate(#Order#)}', 'Order')" /></td>
     </tr>

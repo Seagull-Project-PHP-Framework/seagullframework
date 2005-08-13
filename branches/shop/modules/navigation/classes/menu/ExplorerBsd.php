@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | ExplorerBsd.php                                                           |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004 Demian Turner                                          |
+// | Copyright (c) 2005 Demian Turner                                          |
 // |                                                                           |
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
@@ -85,7 +85,7 @@ class Menu_ExplorerBsd
                             'type' => 'heyes',
                             'nodeOptions' => $nodeOptions);
 
-        $menu = &HTML_TreeMenu::createFromStructure($options);
+        $menu = HTML_TreeMenu::createFromStructure($options);
 
         require_once SGL_MOD_DIR . '/navigation/classes/HTML_TreeMenu_DHTML_SGL.php';
         $theme = $_SESSION['aPrefs']['theme'];

@@ -5,7 +5,7 @@
 // +---------------------------------------------------------------------------+
 // | Emailer.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004 Demian Turner                                          |
+// | Copyright (c) 2005 Demian Turner                                          |
 // |                                                                           |
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
@@ -59,8 +59,11 @@ class SGL_Emailer
         'password'      => '',
         'siteUrl'       => SGL_BASE_URL,
         'siteName'      => '',
-        'crlf'          => ''
-    );
+        'crlf'          => '',
+        'filepath'      => '',
+        'mimetype'      => '',
+        'Cc'            => ''
+   );
 
     function SGL_Emailer($options = array())
     {
@@ -99,6 +102,13 @@ class SGL_Emailer
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
+        if (!empty($this->options['filepath'])) {
+            $mime->addAttachment($this->options['filepath'],$this->options['mimetype']);
+        }
+        // Add Cc-address
+        if(!empty($this->options['Cc'])) {
+            $mime->addCc($this->options['Cc']);
+        }
         $body = $mime->get(array(
             'html_encoding' => '7bit',
             'html_charset' => $GLOBALS['_SGL']['CHARSET'],

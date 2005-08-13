@@ -3,7 +3,7 @@
 <h1 class="pageTitle">{pageTitle}</h1>
 <p><span flexy:if="msgGet()">{msgGet()}</span> </p>
 
-<a href="{makeUrl(#csvExport#)}">Export all products to CSV<br /><br />
+<a href="{makeUrl(#csvExport#)}">Export all products to CSV<BR><BR>
 
 {if:csvUploadResult} 
 <!--<pre>{result}</pre>-->
@@ -31,7 +31,7 @@ function selchkAll(chk, i) {
 </script>
 <form name="produse" method="post" flexy:ignore id="produse">
   <input type="hidden" name="action" value="csvDelete" />
-  <table class="wide">
+  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
     <tr> 
       <td colspan="8">
 	  <input type="button" value="{translate(#CSV file upload#)}" onclick="javascript:document.location.href='{makeUrl(#csvUpload#)}'" /> 
@@ -49,7 +49,7 @@ function selchkAll(chk, i) {
     </tr>
 	{foreach:csvRows,key,rowObj}
 	<tr flexy:if=rowObj.error>
-      <td colspan="8"><div class="error">{rowObj.error}</div></td>
+      <td colspan="8"><div style="color:red">{rowObj.error}</div></td>
     </tr>
     <tr class="{switchRowClass()}"> 
       <td width="5" align="center"> <input class="noBorder" type="checkbox" name="frmDelete[]" value="{key}" /></td>
@@ -72,10 +72,10 @@ function selchkAll(chk, i) {
 <form method="post" action="" name="produse" enctype="multipart/form-data"  flexy:ignore>
   <input type="hidden" name="action" value="csvUpload" />
   <input type="hidden" name="frmCatID" value="{catID}" />
-  <table class="productText">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="productText">
     <tr> 
       <td width="150" nowrap class="productDescKey">{translate(#CSV file upload#)}:</td>
-      <td><div class="error" flexy:if="error[csvUpload]">{error[csvUpload]} </div>
+      <td><div style="color:red" flexy:if="error[csvUpload]">{error[csvUpload]} </div>
         <input type="file" name="csvFile" size="28" /> <input  type="submit" name="submitted" value="{translate(#Upload#)}" /> 
       </td>
     </tr>

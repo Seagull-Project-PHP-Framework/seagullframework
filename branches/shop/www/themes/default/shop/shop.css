@@ -1,30 +1,40 @@
 .tableHeader {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333399;
+	font-size: 15px;
+	font-weight: bold;
+	color: #333399;
 }
-.tableHeader td {
-    border-bottom: 1px solid #e7e7e7;
+.tableHeader td{
+	border-bottom: 1px solid #e7e7e7;
+}
+
+.pText {
+	font-family: Verdana, serif;
+	font-size: 10px;
+	font-weight: 600;
+	color: #757779;
+	text-decoration: none;
+	text-align: left;
 }
 .productName {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333399;
+	font-size: 15px;
+	font-weight: bold;
+	color: #333399;
 }
 .productDescKey {
-    font-size: 12px;
-    font-weight: bold;
+	font-size: 12px;
+	font-weight: bold;
 }
-table.productText {
-    font-size: 12px;
-    width: 100%;
+
+.productText {
+	font-size: 12px;
 }
-.productText td {
-    border-bottom: 1px solid #e7e7e7;
+.productText td{
+	border-bottom: 1px solid #971111;
 }
+
 .productFastList {
-    font-size: 11px;
+	font-size: 11px;
 }
-.productFastList td {
-    border-bottom: 1px solid #e7e7e7;
+.productFastList td{
+	border-bottom: 1px solid #e7e7e7;
 }

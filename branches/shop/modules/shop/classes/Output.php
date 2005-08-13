@@ -36,7 +36,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// $Id: Output.php,v 1.5 2005/05/31 23:34:23 demian Exp $
+// $Id: Output.php,v 1.4 2005/05/09 23:55:20 demian Exp $
 
 class ShopOutput 
 {
@@ -49,7 +49,7 @@ class ShopOutput
     
     function formatPrice ($price) 
     {
-    	return number_format($price, 0, ',', '.');
+    	return number_format($price, 2, ',', '.');
     }
     
     function formatLeuGreu ($price)
@@ -117,6 +117,24 @@ class ShopOutput
         return $ret;
     }
     
+    function formatChildrenCat2($aCats) {
+        $url = SGL_Url::makeLink();
+        $url .= 'frmCatID/';
+        $ret = '';
+        if (is_array($aCats) and count($aCats) > 0) {
+            // Create a table row with 3 columns
+            for($i=0;$i<count($aCats);$i++) {
+                $ret .= "<tr>\n<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                if (!empty($aCats[$i]['label'])) {
+                       $ret .= '<a class="subC" href="'.$url.$aCats[$i]['category_id'].'/">';
+                       $ret .= $aCats[$i]['label'].'</a>';
+                }
+                $ret .= "</td>\n</tr>\n";
+            }
+        }
+        return $ret;
+    }
+    
     function descriptionToHTML ($inText) 
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -131,14 +149,14 @@ class ShopOutput
                     $key = $aSplit[0];
                 }
                 if (strlen($aSplit[1]) > 0) {
-                    $aRet[$key] .= "<br />\n"+$aSplit[1];
+                    $aRet[$key] .= "<br>\n"+$aSplit[1];
                 } else {
                     $aRet[$key] = $aSplit[1];
                 }
             }
         }
         foreach($aRet as $key => $value) {
-            $ret .= '<span class="productDescKey">'.$key.'</span>'.$value."<br />\n";
+            $ret .= '<span class="productDescKey">'.$key.'</span>'.$value."<BR>\n";
         }   
     	return ($ret);
     }

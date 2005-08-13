@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -119,13 +119,19 @@ class ConfigMgr extends SGL_Manager
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
+            
+            //  filter site name for illegal chars
+            $input->conf['site']['name'] = preg_replace("/[^\sa-z]/i", "", $input->conf['site']['name']);
+            
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
             }
-            switch($input->conf['mta']['backend']) {
+            
+            switch ($input->conf['mta']['backend']) {
+                
             case 'sendmail':
                 if (empty($input->conf['mta']['sendmailPath']) ||
                     !file_exists($input->conf['mta']['sendmailPath'])) {
@@ -135,6 +141,7 @@ class ConfigMgr extends SGL_Manager
                     $aErrors['sendmailArgs'] = 'Please enter valid Sendmail arguments';
                 }
                 break;
+                
             case 'smtp':
                 if ($input->conf['mta']['smtpAuth'] == 1) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
@@ -145,10 +152,6 @@ class ConfigMgr extends SGL_Manager
                     }
                 }
                 break;
-            case 'mail':
-                break;
-            default:
-                SGL::logMessage('Unrecognised PEAR::Mail backend', PEAR_LOG_DEBUG);
             }
         }
         //  if errors have occured

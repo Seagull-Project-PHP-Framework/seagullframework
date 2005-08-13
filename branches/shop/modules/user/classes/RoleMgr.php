@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -101,6 +101,8 @@ class RoleMgr extends SGL_Manager
         $input->permsToAdd      = $req->get('AddfrmRolePerms');
         $input->permsToRemove   = $req->get('RemovefrmRolePerms');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $aErrors = array();
         if ($input->submit && $input->action =='insert') {
@@ -128,10 +130,12 @@ class RoleMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $oRole = & new DataObjects_Role();
         $oRole->setFrom($input->role);
         $dbh = & $oRole->getDatabaseConnection();
-        $oRole->role_id = $dbh->nextId('role');
+        $oRole->role_id = $dbh->nextId($conf['table']['role']);
         $oRole->date_created = $oRole->last_updated = SGL::getTime();
         $oRole->created_by = $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->insert();
@@ -243,10 +247,20 @@ class RoleMgr extends SGL_Manager
         $output->template = 'roleManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
 
-        $query = '  SELECT
+        $allowedSortFields = array('role_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY role_id ASC ';
+        }
+
+        $query = "  SELECT
                         role_id, name, description, date_created, 
                         created_by, last_updated, updated_by 
-                    FROM role';
+                    FROM {$conf['table']['role']} " .$orderBy_query;
+
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -260,7 +274,7 @@ class RoleMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        $output->addOnLoadEvent('document.frmUserMgrChooser.roles.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
     }
 
     function _duplicate(&$input, &$output)
@@ -270,12 +284,12 @@ class RoleMgr extends SGL_Manager
         $dbh = & SGL_DB::singleton();
 
         //  get role name info
-        $name = $dbh->getOne('SELECT name FROM role WHERE role_id = ' . $input->roleId);
+        $name = $dbh->getOne("SELECT name FROM {$conf['table']['role']} WHERE role_id = " . $input->roleId);
         $duplicateName = $name . ' (duplicate)';
 
         //  insert new role duplicate, wrap in transaction
         $dbh->autocommit();
-        $newRoleId = $dbh->nextId('role');
+        $newRoleId = $dbh->nextId($conf['table']['role']);
         $res1 = $dbh->query('INSERT INTO ' . $conf['table']['role'] . "
                             (role_id, name, description)
                             VALUES ($newRoleId, '$duplicateName', 'please enter description')");
@@ -287,7 +301,7 @@ class RoleMgr extends SGL_Manager
             foreach ($aRolePerms as $permId => $permName) {
                 $res2 = $dbh->query('INSERT INTO ' . $conf['table']['role_permission'] . "
                                      (role_permission_id, role_id, permission_id)
-                                     VALUES (" . $dbh->nextId('role_permission') . ", $newRoleId, $permId)");
+                                     VALUES (" . $dbh->nextId($conf['table']['role_permission']) . ", $newRoleId, $permId)");
             }
             $isError = DB::isError($res2);
         }

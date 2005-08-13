@@ -1,8 +1,75 @@
 CHANGELOG
 =========
++-----------------------+
+| VERSION: 0.5.0        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
+10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
-| VERSION: 0.4.2        |
+| VERSION: 0.4.5        |
++-----------------------+
+BUGFIXES
+10-08-05    Fixed bug where editing articles 'remembered' the GUI category, not
+            the article category
+10-08-05    Fixed verticalSimple.css to work with new CSS
+08-08-05    Removed quoting of chartset=utf-8 (Ernest Beinrohr)
+01-08-05    Added php5 workaround in SGL_Wizard because strict call by reference
+            behaviour (Tobias Kuckuck)
+01-08-05    SGL_Item::getDynamicFields now returns a string of html representing
+            the fields, or alternatively an array of just the data. (Fabio Bacigalupo)
+01-08-05    Removed obselete stylesheets
+26-07-05    Fixed notices related to PHP 4.4.0
+24-07-05    Missing form name added, without which it was impossible to create new articles
+21-07-05    Fixed inability to edit org types
+20-07-05    Implemented boundary checks for section edit
+20-07-05    Removed shop-related sections from mysql data
+17-07-05    Fixed sections listed in blocks mgr, 'none' now correctly reads
+            'all sections'
+
+IMPROVEMENTS
+04-08-05    Fixed sorting for Users, Roles and Permissions (Rolandas Burbulis)
+21-07-05    Database password field in Config changed to 'password' type (Paul Vickers)
+17-07-05    All table names are now config driven
+15-07-05    Articles now editable in situ
+14-07-05    Improved w3c compliance by removing 'name' attribute from some forms
+13-07-05    Related documents only displayed next to articles if they exist
+13-07-05    Added article summariser method that preserves HTML formatting and
+            cleaned up article listing - ArticleViewMgr::summary()
+13-07-05    Added 'recent articles' block (Werner Krauss)
+10-07-05    Usernames can now be as short as 3 chars (Michael Heuberger)
+
++-----------------------+
+| VERSION: 0.4.4        |
++-----------------------+
+BUGFIXES
+06-07-05    Fixed incorrect redirect following a 'Reset password' action invoked by
+            admin
+06-07-05    Updated PEAR xml-rpc lib with security flaw            
+05-07-05    Fixed bug where non-alpha chars in config site name would cause parse
+            error (STB Land)
+04-07-05    Adding a block redirected to a blank screen - fixed
+04-07-05    Removed stray comma that killed FCK editor for msie (Ori Shiloh)
+04-07-05    Changed use of document.all to document.getElementById in installer (Leo 
+            Lijstenmaker)
+03-07-05    Removed reference to $_SERVER['REQUEST_URI'] in SimpleNav (Tony Oliver) that
+            would cause non-Apache environments to fail
+01-07-05    Fixed bug where recordsets sent to Pager weren't working because the
+            'totalItems' key existed but was null
+
+IMPROVEMENTS
+09-07-05    Added alphanumeric constraint for DB passwd due to parse_ini_file's 
+            inability to handle non-alphanumeric chars (Leo Lijstenmaker)
+08-07-05    Fixed tooltips css for msie users (Andy Crain)
+08-07-05    Added extra lang files to FCK component
+04-07-05    Renamed SGL_Controller::_getPageObject() to _getModel()
+
+
++-----------------------+
+| VERSION: 0.4.3        |
 +-----------------------+
 BUGFIXES
 
@@ -169,7 +236,7 @@ BUGFIXES
 27-03-05    Fixed bug where error_log default file was set incorrectly
 17-03-05    Updated Wizard to work with front controller urls (Tobias Kuckuck)
 17-03-05    Fixed bug where links in OrgMgr were not working correctly
-17-03-05    Modified locale setting to work for windows (Jürgen Mutz)
+17-03-05    Modified locale setting to work for windows (Jï¿½rgen Mutz)
 17-03-05    Fixed bug where users couldn't register due to a missing perm
             (Dustin Rottmann)
 17-03-05    Fixed a data loading bug in postgres (Pierpaolo Toniolo)

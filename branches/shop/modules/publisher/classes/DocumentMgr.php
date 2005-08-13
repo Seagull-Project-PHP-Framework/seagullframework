@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -232,10 +232,12 @@ class DocumentMgr extends FileMgr
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        
         $asset = & new DataObjects_Document();
         $asset->setFrom($input->document);
         $dbh = $asset->getDatabaseConnection();
-        $asset->document_id = $dbh->nextId('document');
+        $asset->document_id = $dbh->nextId($conf['table']['document']);
         $asset->category_id = $input->docCatID;
         $asset->date_created  = SGL::getTime();
         $asset->name = SGL_String::censor($asset->name);
@@ -322,24 +324,28 @@ class DocumentMgr extends FileMgr
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
+                
         $rangeWhereClause = ($input->queryRange == 'all')
             ? ''
             : " AND c.category_id = $input->catID";
-        $query = '
+        $query = "
             SELECT document_id, c.category_id, d.document_type_id,
                 d.name, file_size, mime_type,
                 d.date_created, description,
                 dt.name AS document_type_name,
                 u.username AS document_added_by
             FROM
-                document d, '. $conf['table']['category'] . ' c, document_type dt, usr u
+                {$conf['table']['document']} d, {$conf['table']['category']} c, 
+                {$conf['table']['document_type']} dt, {$conf['table']['user']} u
             WHERE dt.document_type_id = d.document_type_id
             AND c.category_id = d.category_id
-            AND u.usr_id = d.added_by ' .
-                    $rangeWhereClause . '
-            ORDER BY d.date_created DESC';
-        $dbh = & SGL_DB::singleton();
+            AND u.usr_id = d.added_by
+                    $rangeWhereClause
+            ORDER BY d.date_created DESC";
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -354,7 +360,7 @@ class DocumentMgr extends FileMgr
         }
 
         //  prepare data for publisher subnav
-        $output->addOnLoadEvent('self.document.frmResourceChooser.documents.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
 
         //  prepare breadcrumbs
         $menu = & new MenuBuilder('SelectBox');

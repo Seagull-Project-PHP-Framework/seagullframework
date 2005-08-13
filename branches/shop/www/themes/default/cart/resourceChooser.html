@@ -1,6 +1,17 @@
-<form name="frmResourceChooser" id="frmResourceChooser" flexy:ignore>
-    <div class="pager">
-        <input type="button" name="orders" value="{translate(#Orders#)}"
-            onClick="javascript:document.location.href='{makeUrl()}'" />
+<form name="frmCartMgrChooser" id="frmCartMgrChooser" flexy:ignore>
+    <div id="resource-chooser">
+		{translate(#Manage#)}:
+        <input  type="button"
+                name="orders"
+                value="{translate(#Orders#)}"
+                onClick="javascript:document.location.href='{makeUrl(##,#cartadmin#)}'" />
+		<input  type="button"
+                name="popular"
+                value="{translate(#Popular#)}"
+                onClick="javascript:document.location.href='{makeUrl(#list#,#popular#,#cart#)}'" />
+		<input  type="button"
+                name="payment"
+                value="{translate(#Payments#)}"
+                onClick="javascript:document.location.href='{makeUrl(#list#,#payment#,#cart#)}'" />
     </div>
 </form>

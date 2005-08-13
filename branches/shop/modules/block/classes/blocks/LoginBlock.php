@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -73,7 +73,7 @@ class LoginBlock
 
     function getLoginScreen()
     {
-        $login = '<form method="post" action="login.php" id="login">
+        $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="login">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'

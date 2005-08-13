@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -73,7 +73,7 @@ class UserMgr extends RegisterMgr
             'delete'                => array('delete', 'redirectToDefault'),
             'list'                  => array('list'),
             'requestPasswordReset'  => array('requestPasswordReset'),
-            'resetPassword'         => array('resetPassword', 'redirectToEdit'),
+            'resetPassword'         => array('resetPassword', 'redirectToDefault'),
             'editPerms'             => array('editPerms'),
             'updatePerms'           => array('updatePerms', 'redirectToDefault'),
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),
@@ -98,7 +98,9 @@ class UserMgr extends RegisterMgr
         $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
         $input->user->is_email_public = (isset($input->user->is_email_public)) ? 1 : 0;
         $input->user->is_acct_active = (isset($input->user->is_acct_active)) ? 1 : 0;
-        
+        $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+//        dumpr($input);
         $input->roleSync        = $req->get('roleSync');
         if ($input->roleSync == 'null') { 
             $input->roleSync = null;
@@ -199,7 +201,7 @@ class UserMgr extends RegisterMgr
         if (@$conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
-        $oUser->usr_id = $dbh->nextId('usr');
+        $oUser->usr_id = $dbh->nextId($conf['table']['user']);
         $oUser->date_created = $oUser->last_updated = SGL::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
         $success = $oUser->insert();
@@ -330,24 +332,35 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $input->template = 'userManager.html';
+        //$input->template = 'userManager.html';
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $dbh = & SGL_DB::singleton();
+
+        $allowedSortFields = array('usr_id','username','is_acct_active');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = ' ORDER BY u.usr_id ASC ';
+        }
+
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    usr u, organisation o, role r
+                FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
-                AND     r.role_id = u.role_id
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                AND     r.role_id = u.role_id " .
+                $orderBy_query;
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
-                FROM    usr u, role r
-                WHERE   r.role_id = u.role_id
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
+                WHERE   r.role_id = u.role_id " .
+                $orderBy_query;
         }
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -362,7 +375,7 @@ class UserMgr extends RegisterMgr
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = $aPagedData['totalItems'];
-        $output->addOnLoadEvent('document.frmUserMgrChooser.users.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
     }
     
     function _requestPasswordReset(&$input, &$output)
@@ -577,7 +590,6 @@ class UserMgr extends RegisterMgr
                     $results[$userId] = 0; //log result for user
                     continue;
                 }
-
             }
             //  if we make it here, we're all good (for this user)
             $dbh->commit();

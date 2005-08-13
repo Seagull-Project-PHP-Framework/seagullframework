@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -187,18 +187,18 @@ class SGL_DB
     }
 
     /**
-     * @param object PEAR::DB instance
-     * @param string db query
-     * @param array  PEAR::Pager options
-     * @param boolean Disable pagination (get all results)
-     * @param int    fetchmode to use
-     * @param mixed  array, string or numeric data passed to DB execute
+     * @param object $db            PEAR::DB instance
+     * @param string $query         db query
+     * @param array  $pager_options PEAR::Pager options
+     * @param boolean $disabled     Disable pagination (get all results)
+     * @param int    $fetchMode     fetchmode to use
+     * @param mixed  $dbparams      array, string or numeric data passed to DB execute
      * @return array with links and paged data
      */
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 
         $fetchMode = DB_FETCHMODE_ASSOC, $dbparams = array())
     {
-        if (!array_key_exists('totalItems', $pager_options)) {
+        if (!array_key_exists('totalItems', $pager_options) || is_null($pager_options['totalItems'])) {
             //  be smart and try to guess the total number of records
             if ($countQuery = SGL_DB::rewriteCountQuery($query)) {
                 $totalItems = $db->getOne($countQuery, $dbparams);

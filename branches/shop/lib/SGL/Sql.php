@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -129,7 +129,6 @@ class SGL_Sql
         if (!(count($res))) {
             return SGL::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE);
         }
-        
         return true;
     }
 

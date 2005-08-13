@@ -3,78 +3,101 @@
 {if:product} 
 <h2 class="sectionHeader"><strong>{translate(#Current Category#)}:</strong> {currentCat}</h2>
 <h3 class="colHeader"><strong>{translate(#You are here#)}:</strong> {path:h}</h3>
-<br />
+<br>
 
-<table class="full">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr> 
     <td width="50%" valign="top"><img src="{product.img}" alt="{product.manufacturer} : {product.name}"></td>
     <td width="50%" align="right" valign="top">
-	<table class="productText">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="productText">
         <tr> 
           <td class="tableHeader" colspan="2">{product.name}</td>
         </tr>
-        <tr valign="top"> 
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
           <td width="20" nowrap class="productDescKey">{translate(#Price#)}:</td>
-          <td>{if:product.oldPriceEuro}<strong>{translate(#Old price#)}: </strong><span style="text-decoration: line-through;">{this.plugin(#currencyConverter#,product.oldPrice,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<br /></span><br />{end:}
-      {this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<br />
+          <td>{if:product.oldPriceEuro}<strong>{translate(#Old price#)}: </strong><span style="text-decoration: line-through;">{this.plugin(#currencyConverter#,product.oldPrice,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<BR></span><br>{end:}
+      {this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<BR>
           </td>
         </tr>
-        <tr valign="top"> 
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
           <td width="20" nowrap class="productDescKey">{translate(#Status#)}:</td>
           <td>{product.statusString}</td>
         </tr>
-        <tr valign="top"> 
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
           <td width="20" nowrap class="productDescKey">{translate(#Warranty#)}:</td>
           <td>{product.warranty}</td>
         </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="20" nowrap class="productDescKey">{translate(#Amount in warehouses#)}:</td>
+          <td>{product.BALANCE}</td>
+        </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="20" nowrap class="productDescKey">{translate(#Manufacturer#)}:</td>
+          <td>{product.manufacturer}</td>
+        </tr>
+  {if:product.link_manufacturer}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="20" nowrap class="productDescKey">{translate(#Manufacturer link#)}:</td>
+          <td><a href="{product.link_manufacturer}">{product.link_manufacturer}</a></td>
+        </tr>
+  {end:}
+  {if:product.link_datasheet}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+            onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="20" nowrap class="productDescKey">{translate(#Datasheet link#)}:</td>
+          <td><a href="{product.link_datasheet}">{product.link_datasheet}</a></td>
+        </tr>
+  {end:}
+  
       </table>
-      <br /> 
-	  <form action="" method="post" flexy:ignore="yes" flexy:if="showCart">
-	  	<input type="hidden" name="action" value="order" />
-		<input type="hidden" name="pid" value="{product.product_id}" />
-		<input type="submit" name="comanda" value="{translate(#Order#)}" />
-	  </form>
+      <br> 
+        <form action="" method="post" flexy:ignore="yes" flexy:if="showCart">
+        <table width="100%" height="29" border="0" cellpadding="0" cellspacing="0">
+           <tr>
+               <td align="right">
+                  {translate(#Quantity#)}:
+               </td>
+               <td align="left" valign="middle">
+                  <input class="text" name="qty" size="8" type="text" value="1"/>
+               </td>
+		       <td align="right">
+                  <input type="hidden" name="action" value="order" />
+                  <input type="submit" name="order" value="{translate(#Order#)}" />
+               </td>
+           <tr>
+           </tr>
+		       <td align="right" colspan="3">
+                  <input type="button" value="{translate(#Back#)}"
+                     onclick="document.location.href='{makeUrl(##,#shop#,#shop#)}'" />
+               </td>
+           </tr>
+        </table>
+        </form>
 	  </td>
   </tr>
 </table>
-<br />
-<table class="productText">
+<br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr> 
-    <td class="tableHeader" colspan="2" nowrap>{translate(#Technical specifications#)}</td>
+    <td class="tableHeader">{translate(#Description#)}:</td>
   </tr>
-  <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-    <td width="200" nowrap ><span class="productDescKey">{translate(#Name#)}:</span></td>
-    <td>{product.name}</td>
+  <tr> 
+    <td>{product.description:h}</td>
   </tr>
-  <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-    <td width="200" nowrap ><span class="productDescKey">{translate(#Manufacturer#)}:</span></td>
-    <td>{product.manufacturer}</td>
-  </tr>
-  {foreach:product.aDescription,key,value} 
-  <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-    <td width="200" valign="top" nowrap><span class="productDescKey">{value[key]}:</span></td>
-    <td>{this.plugin(#nl2br#,value[value]):h}</td>
-  </tr>
-  {end:}  
-  {if:product.link_manufacturer}
-  <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-    <td width="200" nowrap ><span class="productDescKey">{translate(#Manufacturer link#)}:</span></td>
-    <td><a href="{product.link_manufacturer}">{product.link_manufacturer}</a></td>
-  </tr>
-  {end:}
-  {if:product.link_datasheet}
-  <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-    <td width="200" nowrap ><span class="productDescKey">{translate(#Datasheet link#)}:</span></td>
-    <td><a href="{product.link_datasheet}">{product.link_datasheet}</a></td>
-  </tr>
-  {end:}
 </table>
-<p>&nbsp;</p>
-<table class="full">
-  {else:} 
+
+{else:}
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr valign="top"> 
     <td><strong><div align="center">{translate(#No products#)}</div></strong></td>
   </tr>
-  {end:} 
 </table>
-<p>&nbsp;</p>
+{end:}
+

@@ -17,7 +17,7 @@
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: PgLOB.php,v 1.5 2005/06/23 15:56:30 demian Exp $
+ * @version    CVS: $Id: PgLOB.php,v 1.13 2005/03/30 18:12:14 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -40,7 +40,7 @@ stream_register_wrapper('pglob', 'HTTP_Download_PgLOB');
  * </code>
  * 
  * @access  public
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.13 $
  */
 class HTTP_Download_PgLOB
 {

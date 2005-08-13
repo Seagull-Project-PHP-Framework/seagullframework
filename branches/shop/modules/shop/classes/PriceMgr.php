@@ -45,9 +45,9 @@ require_once SGL_ENT_DIR . '/Product.php';
 require_once SGL_ENT_DIR . '/Price.php';
 require_once SGL_ENT_DIR . '/User_preference.php';
 
-if ($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) {
+if (isset($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) &&
+    $GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency'] == true) {
     require_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
-    require_once SGL_MOD_DIR . '/shop/classes/Output.php';
 }
 
 
@@ -75,13 +75,16 @@ class PriceMgr extends SGL_Manager
         
         $this->catMgr		= new CategoryMgr(); 
         
-        //TO DO: activeaza rate manager
+        //TO DO: activate rate manager
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['ShopMgr']['multiCurrency']) {
-            $rateMgr = & new RateMgr();
-        } else {
-            $conf['exchangeRate'][$conf['ShopMgr']['defaultCurrency']] = $conf['ShopMgr']['defaultExchange'];
-        }  
+        if (isset($conf['ShopMgr']['multiCurrency'])) {
+            if($conf['ShopMgr']['multiCurrency']) {
+                $rateMgr = & new RateMgr();
+            } else {
+                $conf['exchangeRate'][$conf['ShopMgr']['defaultCurrency']] = 
+                $conf['ShopMgr']['defaultExchange'];
+            }
+        } 
     }
 
     function validate($req, &$input)

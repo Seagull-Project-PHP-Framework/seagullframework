@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -144,14 +144,15 @@ class SGL_BlockLoader
     function _loadBlocks()
     {
         $dbh = & SGL_DB::singleton();
-        $query = '
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
                 b.body_class, b.is_onleft
-            FROM    block b, block_assignment ba
+            FROM    {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba
             WHERE   b.is_enabled = 1
             AND     b.block_id = ba.block_id
-            AND     ( ba.section_id = 0 OR ba.section_id = ' . 
+            AND     ( ba.section_id = 0 OR ba.section_id = " . 
                     $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';

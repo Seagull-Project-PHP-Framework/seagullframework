@@ -1,4 +1,19 @@
 <?php
+//Products Browse
+$words['Products::Browse'] = 'Products :: Browse';
+$words['Ordering'] = 'Ordering';
+$words['Update ordering information'] = 'Update ordering information';
+$words['update'] = 'update';
+$words['Total products'] = 'Total products';
+$words['Quantity'] = 'Quantity';
+
+
+// Products Edit
+$words['Products::Edit'] = 'Products :: Edit';
+$words['Amount in warehouses'] = 'Amount in warehouses';
+$words['Bargain'] = 'Bargain';
+
+
 $words['Shop'] = 'Shop';
 $words['Invalid product ID'] = 'Invalid product ID';
 $words['Invalid data'] = 'Invalid data';
@@ -9,12 +24,11 @@ $words['Product'] = 'Product';
 $words['Category'] = 'Category';
 $words['Subcategories'] = 'Subcategories';
 $words['No products'] = 'There are no products in this category';
-$words['Products :: Browse'] = 'Products :: Browse';
 $words['Switch to'] = 'Switch to';
 $words['Detailed view'] = 'Detailed view';
 $words['List view'] = 'List view';
 $words['Order'] = 'Buy now';
-$words['Technical specifications'] = 'Technical specifications';
+$words['Description'] = 'Technical specifications';
 $words['Product details'] = 'Product details';
 $words['Cod1'] = 'Cod1';
 $words['Cod2'] = 'Cod2';
@@ -75,7 +89,6 @@ $words['Inconsistent CSV table header'] = 'Inconsistent CSV table header';
 $words['Action'] = 'Action';
 $words['CatID'] = 'CatID';
 $words['Current Category'] = 'Current Category';
-$words['Products :: Edit'] = 'Products :: Edit';
 $words['Batch processing'] = 'Batch processing';
 $words['Category'] = 'Category';
 $words['Upload image'] = 'Upload image';
@@ -90,6 +103,44 @@ $words['Price Manager :: Discounts'] = 'Price Manager :: Discounts';
 $words['Edit discount list for this product'] = 'Edit discount list for this product';
 $words['Price list'] = 'Price list';
 $words['The offer is valid until'] = 'The offer is valid until';
+$words['Shop configuration'] = 'Shop configuration';
+$words['Product categories description'] = 'Product categories description';
+
+// Configuration
+$words['Shop Manager :: Configure'] = 'Shop Manager :: Configure';
+$words['Shop Module Options'] = 'Shop Module Options';
+$words['Shop module autentification'] = 'Shop module autentification';
+$words['Shop Module Configuration'] = 'Shop Module Configuration';
+$words['The shop root category ID '] = 'The shop root category ID ';
+$words['Show \'order\' button: 0-no, 1-yes'] = 'Show \'order\' button: 0-no, 1-yes';
+$words['VAT if not already defined 19%'] = 'VAT if not already defined 19%';
+$words['Discount value if not already defined'] = 'Discount value if not already defined';
+$words['Set this to true if you install the rate module too'] = 'Set this to true if you install the rate module too';
+$words['Exchange rate if not already defined'] = 'Exchange rate if not already defined';
+$words['Default currency if not already defined'] = 'Default currency if not already defined';
+$words['Shop Manager Administrator Options'] = 'Shop Manager Administrator Options';
+$words['Shop Manager autentification'] = 'Shop Manager autentification';
+$words['no'] = 'no';
+$words['yes'] = 'yes';
+$words['Product status options'] = 'Product status options';
+$words['Image upload'] = 'Image upload';
+$words['Max image size'] = 'Max image size';
+$words['Max image width'] = 'Max image width';
+$words['Max image height'] = 'Max image height';
+$words['Max thumb width'] = 'Max thumb width';
+$words['Max thumb height'] = 'Max thumb height';
+$words['Background color to fill the resized picture'] = 'Background color to fill the resized picture';
+$words['Image upload directory name under WEBROOT'] = 'Image upload directory name under WEBROOT';
+$words['Thumb upload directory name under WEBROOT'] = 'Thumb upload directory name under WEBROOT';
+$words['The file that will be show when image does not exist'] = 'The file that will be show when image does not exist';
+$words['Price manager'] = 'Price manager';
+$words['Price manager autentification'] = 'Price manager autentification';
+$words['Price manager admin autentification'] = 'Price manager admin autentification';
+$words['Preferace ID of the discount preferance'] = 'Preferace ID of the discount preferance';
+$words['The role ID of the members who can have discounts'] = 'The role ID of the members who can have discounts';
+$words['Default VAT'] = 'Default VAT';
+$words['CSV configuration'] = 'CSV configuration';
+$words['Number of records to upload when CSV Upload'] = 'Number of records to upload when CSV Upload';
 $words['Value'] = 'Value';
 $words['EUR'] = 'Euro';
 $words['USD'] = 'USD';

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -312,6 +312,7 @@ EOF;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
+
         //  if fatal
         if ($behaviour > 0) {
             if ($conf['debug']['production']) {
@@ -327,7 +328,7 @@ EOF;
         //  catch error message that results for 'logout' where trans file is not loaded
         if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                     && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
-                    ||(!$getTranslation)) {
+                    || (!$getTranslation)) {
             $error = PEAR::raiseError($msg, $type, $behaviour);
         } else {
             $error = PEAR::raiseError($message, $type, $behaviour);
@@ -345,7 +346,7 @@ EOF;
             //  catch error message that results for 'logout' where trans file is not loaded
             if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                         && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
-                        ||(!$getTranslation)) {
+                        || (!$getTranslation)) {
                 SGL_HTTP_Session::set('message', $msg);
             } else {
                 SGL_HTTP_Session::set('message', $message);

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -138,7 +138,7 @@ class CategoryMgr extends SGL_Manager
     function display(&$output)
     {
         //  prepare subnav
-        $output->addOnLoadEvent('self.document.frmResourceChooser.categories.disabled = true');
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
     }
 
     function _insert(&$input, &$output)
@@ -404,8 +404,8 @@ class CategoryMgr extends SGL_Manager
     function isBranch($id)
     {
         $nestedSet = new SGL_NestedSet($this->_params);
-        $ns = &$nestedSet->_getNestedSet();
-        $node = &$ns->pickNode($id, $keepAsArray = true, $alias = true);
+        $ns = $nestedSet->_getNestedSet();
+        $node = $ns->pickNode($id, $keepAsArray = true, $alias = true);
         if ($node) {
             if (($node['r'] - $node['l']) > 1) {
                 return true;

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -163,7 +163,7 @@ class SGL_NestedSet
         $groupBy  = $this->_addSQL($addSQL, 'groupBy');
         $where    = $this->_addSQL($addSQL, 'where', 'AND');
 
-        $roots =& $this->getRoots($addSQL);
+        $roots = $this->getRoots($addSQL);
         //  Get all descendants of each node (rootid = $rootid).
         $r = '';
         if (is_array($roots) && count($roots)) {

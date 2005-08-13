@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -283,6 +283,39 @@ class SGL_String
          }
          return $str;
     }
+    
+    /**
+     * Returns a set number of lines of a block of html, for summarising articles.
+     *
+     * @param   string $str
+     * @param   integer $lines
+     * @param   string $appendString
+     * @return  string
+     * @todo    needs to handle orphan <b> and <strong> tags
+     */
+    function summariseHtml($str, $lines=10)
+    {
+        $aLines = explode("\n", $str);
+        $aSegment = array_slice($aLines, 0, $lines);
+        
+        //  close tags like <ul> so page layout doesn't break
+        $unclosedListTags = 0;
+        $aMatches = array();
+        foreach ($aSegment as $line) {
+            if (preg_match("/<[u|o]l/i", $line, $matches)) {
+                $aMatches[] = $matches;
+                $unclosedListTags++;
+            }
+            if (preg_match("/<\/[u|o]l>/i", $line)) {
+                $unclosedListTags--;
+            }
+        }
+        //  reinstate close tags
+        for ($x=0; $x < $unclosedListTags; $x++) {
+            array_push($aSegment, '</ul>');
+        }
+        return implode("\n", $aSegment);
+    }
 
     /**
      * Converts bytes to Kb or MB as appropriate.
@@ -294,11 +327,11 @@ class SGL_String
     function formatBytes($size)
     {
         $sizeList = array( 
-                       '1073741824' => 'GB',
-                       '1048576'    => 'MB',
-                       '1024'       => 'kb',
-                       '0'          => 'b'
-                       );
+           '1073741824' => 'GB',
+           '1048576'    => 'MB',
+           '1024'       => 'KB',
+           '0'          => 'B'
+           );
 
         foreach ($sizeList as $bytes => $unit) {
             if ($size > $bytes) {

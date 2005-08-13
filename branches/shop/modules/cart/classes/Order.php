@@ -93,7 +93,6 @@ class Order extends Item
     
     function delItem($itemNo) {
         SGL::logMessage(null, PEAR_LOG_DEBUG); 
-        
             
         if(array_key_exists($itemNo,$this->items)) {
             unset($this->items[$itemNo]);
@@ -108,16 +107,27 @@ class Order extends Item
     function _recalc() {
         SGL::logMessage(null, PEAR_LOG_DEBUG); 
          
-        $total = 0;
+        $total_sum = 0;
+        $total_sumVAT = 0;
         $itemCount = 0;
-        
+        $total_price = 0;
+
         foreach($this->items as $key => $item) {
-            $total = $total + $item->quantity * $item->price;
-            $itemCount = $itemCount + $item->quantity;
+            $total_sum      = $total_sum + $item->price * $item->quantity;
+            $total_sumVAT   = $total_sumVAT + $item->priceVAT * $item->quantity;
+            $this->items[$key]->sum = $item->price * $item->quantity;
+
+            $itemCount      = $itemCount + $item->quantity;
+            $total_price    = $total_price + $item->price;
         }   
-        
-        $this->total = $total;
-        $this->itemCount = $itemCount;
+
+        $this->total_price  = $total_price;
+        $this->total_sum    = $total_sum;
+        $this->itemCount    = $itemCount;
+        $this->total_sumVAT = $total_sumVAT;
+        $this->currency     = $item->currency;  //not nice but what to do ?
+                                                //we should convert currencies here...
+        $this->VATsum       = $total_sumVAT - $total_sum;
     }
 }
 ?>

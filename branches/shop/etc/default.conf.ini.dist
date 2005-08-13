@@ -50,11 +50,23 @@ driver                  = SimpleNav
 stylesheet              = SglDefault_TwoLevel
 
 [table]
+block                   = block
+block_assignment        = block_assignment
 cart                    = cart
+cart_product			= cart_product
 category                = category
+category_description	= category_description
 contact                 = contact
+contact_us              = contact_us
 document                = document
 document_type           = document_type
+faq						= faq
+guestbook               = guestbook
+instant_message         = instant_message
+item                    = item
+item_addition           = item_addition
+item_type               = item_type
+item_type_mapping       = item_type_mapping
 login                   = login
 module                  = module
 newsletter              = newsletter
@@ -66,11 +78,16 @@ preference              = preference
 price                   = price
 product                 = product
 rate					= rate
+rndmsg_message          = rndmsg_message
 role                    = role
 role_permission         = role_permission
+section                 = section
+section                 = sequence
+table_lock				= table_lock
 user                    = usr
 user_permission         = user_permission
 user_preference         = user_preference
+user_session            = user_session
 
 [log]
 ;   Should Seagull log errors and other useful information?

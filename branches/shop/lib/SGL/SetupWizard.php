@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Gerry Lachac                                          |
+// | Copyright (c) 2005, Gerry Lachac                                          |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -214,7 +214,14 @@ class SGL_SetupWizard
 
                 $statusText .= ', creating and loading tables';
                 $this->updateHtml('status', $statusText);
-
+                
+                //  disable fk constraints if mysql (>= 4.1.x)
+                if ($conf['db']['type'] == 'mysql' || $conf['db']['type'] == 'mysql_SGL') {                    
+                    $dbh = & SGL_DB::singleton();
+                    $query = 'SET FOREIGN_KEY_CHECKS=0;';
+                    $res = $dbh->query($query);
+                }
+                
                 //  Load SGL schema (/etc)
                 $sglPath = SGL_PATH . '/etc';
                 $result = SGL_Sql::parseAndExecute($sglPath . $filename1, 0);
@@ -285,6 +292,13 @@ class SGL_SetupWizard
                         $this->updateHtml($module . '_constraints', $noFile);
                     }
                 }
+                
+                //  re-enable fk constraints if mysql (>= 4.1.x)
+                if ($conf['db']['type'] == 'mysql' || $conf['db']['type'] == 'mysql_SGL') {                    
+                    $dbh = & SGL_DB::singleton();
+                    $query = 'SET FOREIGN_KEY_CHECKS=1;';
+                    $res = $dbh->query($query);
+                }
 
                 //  note: must all be on one line for DOM text replacement
                 $message = 'Database initialisation complete!';
@@ -340,7 +354,6 @@ class SGL_SetupWizard
     function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
-        #return str_replace('"', '', $version);
         return $version;
     }
 
@@ -350,9 +363,9 @@ class SGL_SetupWizard
             $msg = $displayHtml;
             $displayHtml = '<span class=\\"pageTitle\\">' . $msg . '</span>';
         }
-        echo '<script>
-              document.all.' . $id . '.innerHTML= "' . $displayHtml . '";
-              </script>';
+        echo "<script>
+              document.getElementById('$id').innerHTML=\"$displayHtml\";
+              </script>";
 
         //  echo 5K+ worth of spaces, since some browsers will buffer internally until they get 4K
         echo str_repeat(' ', 5120);
@@ -470,6 +483,9 @@ EOF;
         $form->addElement('submit', 'btnSubmit', 'Execute (pls be patient if schema creation selected)');
 
         $form->setDefaults($this->conf['db']);
+        
+        //  get around probs with parse_ini_file's inability to handle non-alphanumeric chars
+        $form->addRule('pass', 'Please use only alphanumeric chars for DB password', 'alphanumeric', null, 'client');
 
         if (!$deleteConfigFlag && $form->validate()) {
             $form->process(array(&$this, 'processSettings'));
@@ -507,6 +523,7 @@ EOF;
             'debug'                 => 0,
             'production'            => 0,
             'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema'=> 1,            
         );
 
         include_once 'System.php';
@@ -537,7 +554,7 @@ EOF;
             $currentDir = array_pop($stack);
             if ($dh = opendir($currentDir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file !== '.' AND $file !== '..' AND $file !== 'CVS') {
+                    if ($file !== '.' AND $file !== '..' AND $file !== '.svn') {
                         $currentFile = "{$currentDir}/{$file}";
                         if (is_dir($currentFile)) {
                             $fileList[] = "{$file}";
