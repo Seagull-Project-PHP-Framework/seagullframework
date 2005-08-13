@@ -1,8 +1,8 @@
-You can find here how to migrate from 40Bigfix to 40Bugfix with shop. Also by
+You can find here how to migrate from 40Bugfix to 40Bugfix with shop. Also by
 this document you can find what are the differences between the two versions.
 
-I don't advice on executing directly the SQL code becase of constrains and
-overlapping table IDs. The IDs are ok for a fresh install.
+I don't advice on executing directly the SQL code because of constrains and
+overlapping table IDs. The IDs are OK for a fresh install.
 
 1) Copy the code:
 	/modules/cart
