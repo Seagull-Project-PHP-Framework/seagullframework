@@ -1,4 +1,7 @@
 <?php
+$words['FAQ Manager :: Reorder'] = 'FAQ Manager :: Neu Ordnen';
+$words['FAQ Manager :: Add'] = 'FAQ Manager :: Hinzufügen';
+$words['FAQ Manager :: Edit'] = 'FAQ Manager :: Bearbeiten';
 $words['faq updated successfully'] = 'Ihre FAQ wurde erfolgreich aktualisiert';
 $words['faqs reordered successfully'] = 'Ihre FAQ\'s wurden erfolgreich neu geordnet';
 $words['faq saved successfully'] = 'Ihre FAQ wurde erfolgreich gespeichert';

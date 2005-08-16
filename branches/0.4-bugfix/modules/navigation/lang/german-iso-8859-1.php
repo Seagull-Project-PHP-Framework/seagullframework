@@ -94,4 +94,5 @@ $words['Style values successfully saved'] = 'Stil erfolgreich gespeichert';
 $words['new section'] = 'neue Sektion';
 $words['Reorder sections'] = 'Sektionen neu ordnen';
 $words['Page Manager'] = 'Seiten Manager';
+$words['Role Name'] = 'Rollenname';
 ?>
