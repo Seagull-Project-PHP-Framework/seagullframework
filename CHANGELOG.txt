@@ -31,6 +31,8 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+16-08-05    Added ability to customise default theme's stylesheets non-invasively
+            (Pierpaolo Toniolo, AJ Tarachanowicz)
 04-08-05    Fixed sorting for Users, Roles and Permissions (Rolandas Burbulis)
 21-07-05    Database password field in Config changed to 'password' type (Paul Vickers)
 17-07-05    All table names are now config driven
