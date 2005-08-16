@@ -364,7 +364,7 @@ class PageMgr extends SGL_Manager
             foreach ($output->aLanguages as $aKey => $aValue) {                
                 $section['title'][$aKey] = $section['title_id'];                  
             }            
-            $section['title_id'] = $dbh->nextID('translation');               
+            $section['title_id'] = $dbh->nextID($conf['table']['translation']);               
         }       
         
         //  passing a non-existent section id results in null or false $section

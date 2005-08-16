@@ -467,7 +467,7 @@ class ArticleMgr extends SGL_Manager
             $isPublishedClause .
             $limitByAuthorClause . "
             ORDER BY i.last_updated DESC
-            ";
+            ";            
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
@@ -479,7 +479,9 @@ class ArticleMgr extends SGL_Manager
         //  fetch title translation
         $trans = &SGL_Translation::singleton();
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            $aPagedData['data'][$aKey]['addition'] = $trans->get($aValues['addition'], 'content', $lang);                           
+            if (is_numeric($aValues['addition'])) {
+                $aPagedData['data'][$aKey]['addition'] = $trans->get($aValues['addition'], 'content', $lang);
+            }                           
         }
 
         return $aPagedData;
