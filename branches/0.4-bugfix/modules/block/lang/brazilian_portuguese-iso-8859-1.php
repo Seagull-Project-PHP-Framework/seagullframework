@@ -1,4 +1,5 @@
 <?php
+$words['New Html block'] = 'Novo bloco HTML';
 $words['Left'] = 'Esquerda';
 $words['Right'] = 'Direita';
 $words['With selected block(s)'] = 'Com o(s) bloco(s) selecionado(s)';
