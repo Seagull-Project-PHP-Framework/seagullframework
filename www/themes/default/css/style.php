@@ -133,7 +133,14 @@
 
     /* Button like border colors */
     $buttonBorderColors     = '#ffffff #333333 #333333 #ffffff';
+    
+    // include local style file
+    $localStyle = './style.local.php';
+    if (file_exists($localStyle)) {
+        include_once $localStyle;
+    }    
 ?>
+
 
 /******************************************************************************/
 /*                                  LAYOUT CSS                                */
