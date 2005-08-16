@@ -50,7 +50,7 @@
     header('Content-Type: text/css');
 
     // Get last modified time of file
-    $srvModTime  = getlastmod();
+    $srvModTime = getlastmod();
 
     // exit out of script if cached on client
     if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {

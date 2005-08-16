@@ -39,7 +39,7 @@ create table preference
 (
    preference_id        INT4                 not null,
    name                 VARCHAR(128)         null,
-   default_value        VARCHAR(64)          null,
+   default_value        VARCHAR(128)         null,
    constraint PK_PREFERENCE primary key (preference_id)
 );
 
