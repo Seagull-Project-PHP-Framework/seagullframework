@@ -31,7 +31,8 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
-17-08-05    upgrade to version 2.0 of FCKeditor (Werner Krauss)
+17-08-05    Updated to latest iso-3166 county list (Philippe Lhoste)
+17-08-05    Upgraded to version 2.0 of FCKeditor (Werner Krauss)
 17-08-05    Added theme switcher block
 17-08-05    Factored module config loading and merging out of SGL_Controller::_getModel
 17-08-05    Added almost 200 tests for front controller URL parsing and improved
