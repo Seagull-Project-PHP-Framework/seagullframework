@@ -31,6 +31,7 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+17-08-05    SGL_String lib updated and improved (Philippe Lhoste)
 17-08-05    Updated to latest iso-3166 county list (Philippe Lhoste)
 17-08-05    Upgraded to version 2.0 of FCKeditor (Werner Krauss)
 17-08-05    Added theme switcher block
