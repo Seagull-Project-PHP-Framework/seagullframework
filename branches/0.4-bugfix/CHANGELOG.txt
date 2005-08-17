@@ -31,6 +31,10 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+17-08-05    Added theme switcher block
+17-08-05    Factored module config loading and merging out of SGL_Controller::_getModel
+17-08-05    Added almost 200 tests for front controller URL parsing and improved
+            reliability
 16-08-05    Added ability to customise default theme's stylesheets non-invasively
             (Pierpaolo Toniolo, AJ Tarachanowicz)
 04-08-05    Fixed sorting for Users, Roles and Permissions (Rolandas Burbulis)
