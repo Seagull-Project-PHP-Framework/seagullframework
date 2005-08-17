@@ -238,6 +238,7 @@ class SGL_Url
      *              SGL_Url::parseResourceUri()
      * @todo    use same method for SGL_Url::parseResourceUri()
      * @todo    implement file-based caching or url combinations, simple hashmap
+     @ @todo    factor out config loading
      */
     function makeSearchEngineFriendly($aUriParts)
     {
@@ -246,8 +247,9 @@ class SGL_Url
         //  remap
         $aParsedUri['frontScriptName'] = array_shift($aUriParts);
         $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
-        $aParsedUri['managerName'] = strtolower(array_shift($aUriParts));
-
+        $mgrCopy = array_shift($aUriParts);
+        $aParsedUri['managerName'] = strtolower($mgrCopy);
+        
         //  if frontScriptName empty, get from config
         $default = false;
         if (empty($aParsedUri['frontScriptName'])
@@ -274,6 +276,30 @@ class SGL_Url
             $aParsedUri['managerName'] = $conf['site']['defaultManager'];
             if (!empty($conf['site']['defaultParams'])) {
                 $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];
+            }
+        }
+        
+        /////////////////////////////////////////////////////////////////
+        //  
+        //  config loading below needs to be factored out
+        //
+        /////////////////////////////////////////////////////////////////
+        
+        //  we've got module name so load and merge local and global configs
+        $aModuleConfig = SGL::getModuleConfig($aParsedUri['moduleName']);
+        if ($aModuleConfig) {
+            SGL::configMerge($aModuleConfig);
+        } else {
+            SGL::raiseError('Could not read current module\'s conf.ini file', 
+                SGL_ERROR_NOFILE);
+        }
+        
+        //  determine is moduleName is simplified, in other words, the mgr
+        //  and mod names should be the same
+        if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
+            if (SGL_Url::mgrNameOmitted($aParsedUri)) {
+                array_unshift($aUriParts, $mgrCopy);
+                $aParsedUri['managerName'] = $aParsedUri['moduleName'];                
             }
         }
         
@@ -335,6 +361,30 @@ class SGL_Url
         }
         //  merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);
+    }
+    
+    /**
+     * Determine if a simplified notation is being used.
+     *
+     * If the url was of the form example.com/index.php/contactus/contactus/
+     * and it got simplifeid too example.com/index.php/contactus/ it is important
+     * to determine if that simplification happened, so subsequent parameters
+     * don't get interpreted as 'managerName'
+     *
+     * @param array $aParsedUri
+     * @return boolean
+     */
+    function mgrNameOmitted($aParsedUri)
+    {
+        $fullMgrName = SGL_Url::getManagerNameFromSimplifiedName(
+            $aParsedUri['managerName']);
+        
+        //  compensate for case-sensitivity
+        $corrected = SGL::caseFix($fullMgrName, true);
+        $path = SGL_MOD_DIR .'/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+        
+        //  if the file exists, mgr name is valid and has not been omitted 
+        return !file_exists($path);
     }
 
     /**

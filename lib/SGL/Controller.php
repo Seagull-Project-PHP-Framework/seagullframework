@@ -230,21 +230,6 @@ class SGL_Controller
 
         if (!empty($moduleName) && !empty($managerName)) {
 
-            //  init config for this module
-            $path = SGL_MOD_DIR . '/' . $moduleName . '/';
-            if (is_readable($path . 'conf.ini')) {
-                $conf = parse_ini_file($path . 'conf.ini', true);
-
-                //  merge module config with global config, if module conf keys do not already exist
-                //  test first key
-                $firstKey = key($conf);
-                if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
-                    $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
-                }
-            } else {
-                SGL::raiseError('Could not read module\'s conf.ini file from ' .  
-                    __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_NOFILE);
-            }
             //  get manager name if $managerName not correct attempt to load default manager w/$moduleName
             $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
             $retMgrName = $this->_getClassName($managerName, $mgrPath);

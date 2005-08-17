@@ -383,12 +383,13 @@ EOF;
      *
      * @access   public
      * @static    
-     * @param    string $str classname  
-     * @return   mixed       either correct case classname or false
+     * @param    string     $str    Classname  
+     * @param    boolean    $force  Force the operation regardless of php version
+     * @return   mixed              Either correct case classname or false
      */
-    function caseFix($str)
+    function caseFix($str, $force = false)
     {
-        if (SGL::isPhp5()) {
+        if (!$force && SGL::isPhp5()) {
             return $str;
         }
         static $aConfValues;
@@ -399,6 +400,27 @@ EOF;
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
+    }
+    
+    function getModuleConfig($moduleName)
+    {
+        $path = SGL_MOD_DIR . '/' . $moduleName . '/';
+        if (is_readable($path . 'conf.ini')) {
+            $ret = parse_ini_file($path . 'conf.ini', true);
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+    
+    function configMerge($conf) 
+    {
+        //  merge module config with global config, if module conf keys do not already exist
+        //  test first key
+        $firstKey = key($conf);
+        if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
+            $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
+        }  
     }
 }
 ?>
