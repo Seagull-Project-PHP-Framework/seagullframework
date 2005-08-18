@@ -280,7 +280,8 @@ class SGL_String
      *
      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
      */
-    function char2entity($char, $encoding = 'H') {
+    function char2entity($char, $encoding = 'H') 
+    {
         $pad = 1;
         if ($encoding == 'R' || $encoding == 'E') {
             // Use random padding with zeroes

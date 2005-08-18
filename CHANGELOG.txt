@@ -31,6 +31,8 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+17-08-05    Added additional arg to SGL_Item::retrievePaginated() for specifying
+            sort column
 17-08-05    SGL_String lib updated and improved (Philippe Lhoste)
 17-08-05    Updated to latest iso-3166 county list (Philippe Lhoste)
 17-08-05    Upgraded to version 2.0 of FCKeditor (Werner Krauss)
