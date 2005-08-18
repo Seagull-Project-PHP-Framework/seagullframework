@@ -402,6 +402,14 @@ EOF;
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
     }
     
+    /**
+     * Returns an array of config value for the specified module.
+     *
+     * @param string $moduleName
+     * @return mixed    Config array on success, false on error
+     *
+     * @todo move this to the yet-to-be-created SGL_Config
+     */
     function getModuleConfig($moduleName)
     {
         $path = SGL_MOD_DIR . '/' . $moduleName . '/';
@@ -413,6 +421,14 @@ EOF;
         return $ret;
     }
     
+    /**
+     * Merges the current module's config with the global config.
+     *
+     * @param array $conf
+     * @return void
+     *
+     * @todo move this to the yet-to-be-created SGL_Config
+     */
     function configMerge($conf) 
     {
         //  merge module config with global config, if module conf keys do not already exist
