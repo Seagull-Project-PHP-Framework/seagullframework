@@ -80,7 +80,9 @@ class ArticleViewMgr extends SGL_Manager
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';
-        $input->articleID       = ($req->get('frmArticleID')) ? (int)$req->get('frmArticleID') : (int)SGL_HTTP_Session::get('articleID');
+        $input->articleID       = ($req->get('frmArticleID')) 
+                                    ? (int)$req->get('frmArticleID') 
+                                    : (int)SGL_HTTP_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
         $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
@@ -134,7 +136,8 @@ class ArticleViewMgr extends SGL_Manager
             $bPublish = true,
             $input->dataTypeID,
             '',
-            $input->from);
+            $input->from,
+            'start_date');
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -143,22 +146,24 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), $aResult['data'][$key]);
+            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), 
+                                            $aResult['data'][$key]);
 
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
+                    
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
                     $output->articleList[$key]['bodyHtml'] = 
                         SGL_String::summariseHtml($content);
-                break;
+                    break;
 
                 case 'newsHtml':
                     $content = $output->articleList[$key]['newsHtml'];
                     $output->articleList[$key]['newsHtml'] = 
                         SGL_String::summariseHtml($content);
-                break; 
+                    break; 
                 }
             }
         }

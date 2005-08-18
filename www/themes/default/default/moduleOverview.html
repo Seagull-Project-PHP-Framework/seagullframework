@@ -6,7 +6,7 @@
         {foreach:aModules,key,valueObj}
             <td class="{valueObj.bgnd}" valign="top">
                 {if:valueObj.is_configurable}
-                <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
+                <a href="{makeUrl(##,valueObj.manager,valueObj.module)}" style="text-decoration: none; color:#184A84; font-weight:normal">
                 {end:}
                 <table id="moduleOverview">
                     <tr>

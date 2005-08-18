@@ -98,7 +98,9 @@ class UserMgr extends RegisterMgr
         $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
         $input->user->is_email_public = (isset($input->user->is_email_public)) ? 1 : 0;
         $input->user->is_acct_active = (isset($input->user->is_acct_active)) ? 1 : 0;
-        
+        $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+//        dumpr($input);
         $input->roleSync        = $req->get('roleSync');
         if ($input->roleSync == 'null') { 
             $input->roleSync = null;
@@ -330,24 +332,35 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $input->template = 'userManager.html';
+        //$input->template = 'userManager.html';
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $dbh = & SGL_DB::singleton();
+
+        $allowedSortFields = array('usr_id','username','is_acct_active');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = ' ORDER BY u.usr_id ASC ';
+        }
+
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
                 FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
-                AND     r.role_id = u.role_id
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                AND     r.role_id = u.role_id " .
+                $orderBy_query;
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
                 FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
-                WHERE   r.role_id = u.role_id
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                WHERE   r.role_id = u.role_id " .
+                $orderBy_query;
         }
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',

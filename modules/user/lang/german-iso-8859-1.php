@@ -1,4 +1,26 @@
 <?php
+$words['Timezone'] = 'Zeitzone';
+$words['first login in progress'] = 'noch nicht eingeloggt';
+$words['org details successfully updated'] = 'Organsiationsdetails erfolgreich aktualisiert';
+$words['manage organisation types'] = 'Organisationstypen bearbeiten';
+$words['list organisations'] = 'Organisationen anzeigen';
+$words['clear search'] = 'Suche löschen';
+$words['user(s) found'] = 'Benutzer gefunden';
+$words['change'] = 'ändern';
+$words['Type'] = 'Typ';
+$words['Website'] = 'Homepage';
+$words['Browse'] = 'Übersicht';
+$words['With selected organisation(s)'] = 'Mit ausgewählten Organsiationen';
+$words['duplicate'] = 'kopieren';
+$words['all'] = 'alle';
+$words['With selected permission(s)'] = 'Mit ausgewählten Berechtigungen';
+$words['filter by module'] = 'nach Modul filtern';
+$words['Default Role'] = 'Standardrolle';
+$words['Organisation Manager :: Add'] = 'Organisations Manager :: Hinzufügen';
+$words['Parent Org'] = 'Eltern-Organisation';
+$words['Detected Perms'] = 'gefundene Berechtigungen';
+$words['Detected Orphaned Perms'] = 'gefundene veraltete Berechtigungen';
+$words['Permission Manager :: Detect Orphaned'] = 'Berechtigungs Manager ::  veraltete finden';
 $words['(each user\\\'s current)'] = 'derzeitige Rolle des Benutzers';
 $words['User Manager :: Search'] = 'Benutzerverwaltung :: Suchen';
 $words['sync perms with role'] = 'Rechte mit Rolle abgleichen';
@@ -107,7 +129,6 @@ $words['add user'] = 'Benutzer hinzufügen';
 $words['add group'] = 'Gruppe hinzufügen';
 $words['asset type'] = 'Dokumenttyp';
 $words['Select'] = 'Auswählen';
-$words['Email'] = 'Email';
 $words['Status'] = 'Status';
 $words['Active'] = 'Aktiv';
 $words['Disabled'] = 'Gesperrt';
@@ -188,9 +209,6 @@ $words['aSecurityQuestions'][1] = 'Name des Lieblingstieres';
 $words['aSecurityQuestions'][2] = 'Wichtiges Datum';
 $words['aSecurityQuestions'][3] = 'Wichtiger Platz';
 $words['aSecurityQuestions'][4] = 'Mädchenname der Mutter';
-$words['aSecurityQuestions'][5] = 'Name des Lieblingsfilms';
-$words['aSecurityQuestions'][6] = 'Name des Liebling-Song';
-$words['aSecurityQuestions'][7] = 'Name des Lieblings-Cocktails';
 $words['Security'] = 'Sicherheit';
 $words['Security question'] = 'Sicherheitsfrage';
 $words['Answer'] = 'Antwort';
@@ -207,7 +225,7 @@ $words['Password must be between 5 to 10 characters'] = 'Das Passwort muss zwisc
 $words['Passwords are not the same'] = 'Die Passwörter sind verschieden';
 $words['You have entered your original password incorrectly'] = 'Sie haben das Originalpasswort falsch eingegeben';
 $words['Please confirm password'] = 'Bitte bestätigen Sie das Passwort';
-$words['username min length'] = 'Der Benutzername muss aus mindestens 3 Buchstaben und Zahlen bestehen und darf keine Leerzeichen enthalten';
+$words['username min length'] = 'Der Benutzername muss aus mindestens 6 Buchstaben und Zahlen bestehen und darf keine Leerzeichen enthalten';
 $words['You must enter your first name'] = 'Bitte geben Sie Ihren Vornamen an';
 $words['You must enter your last name'] = 'Bitte geben Sie Ihren Nachnamen an';
 $words['You must enter your company name'] = 'Bitte geben Sie Ihren Firmennamen an';
@@ -262,7 +280,6 @@ $words['back to contacts'] = 'zurück zu Kontakte';
 $words['none given'] = 'k.a.';
 $words['Lives in'] = 'Lebt in';
 $words['Member Since'] = 'Mitglied seit';
-$words['not logged in yet'] = 'z.Zt. nicht eingeloggt';
 $words['Posting Stats for User'] = 'Posting-Statistiken für Benutzer';
 $words['Total Articles'] = 'Artikel gesamt';
 $words['Total Comments'] = 'Kommentare gesamt';
@@ -273,13 +290,9 @@ $words['Contacts'] = 'Kontakte';
 $words['add to contacts'] = 'zu den Kontakten hinzufügen';
 $words['You must select a user to sync'] = 'Bitte wählen Sie eine Benutzer zum Abgleichen aus';
 $words['Are you sure you want to sync this user(s)?'] = 'Wollen Sie wirklich diese Benutzer abgleichen?';
-
-/* User Import*/
 $words['User Import Manager'] = 'Benutzerimport Manager';
 $words['userfile'] = 'Datei';
 $words['process file'] = 'Datei abarbeiten';
-
-/* User Import*/
 $words['OrgType Manager'] = 'Organisationstypen Manager';
 $words['list organisation types'] = 'Organisationstypen anzeigen';
 $words['add organisation type'] = 'Organisationstypen hinzufügen';
@@ -291,5 +304,4 @@ $words['You must enter an organisation type name'] = 'Bitte geben Sie einen Name
 $words['No data was updated'] = 'Keine Daten aktualisiert';
 $words['Organisation type saved successfully'] = 'Organisationstyp erfolgreich gespeichert';
 $words['Organisation type has been updated successfully'] = 'Organisationstyp erfolgreich aktualisiert';
-
 ?>

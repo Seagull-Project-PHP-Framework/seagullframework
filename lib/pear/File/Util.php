@@ -17,7 +17,7 @@
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2004-2005 Michael Wallner
  * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: Util.php,v 1.6 2005/04/06 12:43:48 demian Exp $
+ * @version     CVS: $Id: Util.php,v 1.21 2005/08/09 07:52:13 mike Exp $
  * @link        http://pear.php.net/package/File
  */
 
@@ -69,7 +69,7 @@ class File_Util
     function buildPath($parts, $separator = DIRECTORY_SEPARATOR)
     {
         $qs = '/^'. preg_quote($separator, '/') .'+$/';
-        foreach (array_keys($parts) as $i) {
+        for ($i = 0, $c = count($parts); $i < $c; $i++) {
             if (!strlen($parts[$i]) || preg_match($qs, $parts[$i])) {
                 unset($parts[$i]);
             } elseif (0 == $i) {
@@ -176,7 +176,7 @@ class File_Util
      */
     function isAbsolute($path)
     {
-        if (preg_match('/\.\./', $path)) {
+        if (preg_match('/(?:\/|\\\)\.\.(?=\/|$)/', $path)) {
             return false;
         } 
         if (FILE_WIN32) {

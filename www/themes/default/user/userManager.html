@@ -19,14 +19,14 @@
         </tr>
         <tr>
             <th>{translate(#Select#)}</th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|usr_id||frmSortOrder|sortOrder#)}">{translate(#User ID#)}</a></th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|username||frmSortOrder|sortOrder#)}">{translate(#Username#)}</a></th>
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|usr_id||frmSortOrder|sortOrder#)}">{translate(#User ID#)}</a></th>
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|username||frmSortOrder|sortOrder#)}">{translate(#Username#)}</a></th>
             {if:GLOBALS[_SGL][CONF][OrgMgr][enabled]}
                 <th>{translate(#Organisation#)}</th>
             {end:}
             <th>{translate(#Email#)}</th>
             <th>{translate(#Role#)}</th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a></th>
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a></th>
             <th>{translate(#Edit#)}</th>
             <th>{translate(#Password#)}</th>
             <th>{translate(#Permissions#)}</th>

@@ -15,7 +15,6 @@ create table block
 	blk_order            NUMBER(5)                 	null,
 	is_onleft            NUMBER(5)                 	null,
 	is_enabled           NUMBER(5)                 	null,
-	content				 CLOB,
 	constraint PK_BLOCK primary key (block_id)
 );
 

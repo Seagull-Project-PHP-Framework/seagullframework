@@ -40,6 +40,5 @@
         'With selected block(s)'=>'With selected block(s)',
         'Left' => 'Left',
         'Right' => 'Right',
-        'New Html block' => 'New Html block',
     );
 ?>

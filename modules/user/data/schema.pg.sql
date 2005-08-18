@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Schema for /modules/user
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 -- ==============================================================
@@ -32,7 +39,7 @@ create table preference
 (
    preference_id        INT4                 not null,
    name                 VARCHAR(128)         null,
-   default_value        VARCHAR(64)          null,
+   default_value        VARCHAR(128)         null,
    constraint PK_PREFERENCE primary key (preference_id)
 );
 

@@ -14,13 +14,10 @@ class DA_UserTest extends UnitTestCase {
     function DA_UserTest()
     {
         $this->UnitTestCase('DA_User Test');
-    }
-    
-    function setup()
-    {
+        
         //  get DA_User object
         require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $this->da = & DA_User::singleton();   
+        $this->da = & DA_User::singleton();
     }
 
     function xtestAddMasterPrefs()

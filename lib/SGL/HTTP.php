@@ -61,11 +61,10 @@ class SGL_HTTP
      * @access  public
      * @static
      * @param   mixed   $url    target URL
-     * @param   array   $param  params to be appended to URL
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = null, $param = false)
+    function redirect($url = null)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
@@ -123,7 +122,7 @@ class SGL_HTTP
 class SGL_HTTP_Request
 {
     /**
-     * Sets GET/POST/FILES to gpcVars attribute.
+     * Parses raw request into SGL format.
      *
      * @access  public
      * @return  void
@@ -134,12 +133,18 @@ class SGL_HTTP_Request
 
         //  merge REQUEST AND FILES superglobal arrays
         $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
-
-        //  parse $_GET and transpose values to $GLOBALS['_SGL']['REQUEST']
-        SGL_Url::dirify();
         
         //  remove slashes if necessary
         SGL_String::dispelMagicQuotes($GLOBALS['_SGL']['REQUEST']);
+
+        //  get all URL parts after domain and TLD as an array
+        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        
+        //  parse URL segments into SGL request structure
+        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
+        
+        //  merge results with cleaned $_REQUEST values and $_POST
+        $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
     }
 
     /**
@@ -356,13 +361,25 @@ class SGL_HTTP_Session
             }
         }       
 
-        //  make session more secure if possible
+        //  make session more secure if possible      
         if  (function_exists('session_regenerate_id')) {
+            $conf = & $GLOBALS['_SGL']['CONF'];  
             $oldSessionId = session_id();
             session_regenerate_id();
-            
-            //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-            @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+
+            if ($conf['site']['sessionHandler'] == 'file') {
+                
+                //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+                @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                
+            } elseif ($conf['site']['sessionHandler'] == 'database') {
+                $value = $this->dbRead($oldSessionId);
+                $this->dbDestroy($oldSessionId);
+                $this->dbRead(session_id());          // creates new session record
+                $this->dbWrite(session_id(), $value); // store old session value in new session record
+            } else {
+                die('Internal Error: unknown session handler');
+            }
         }
         return true;
     }

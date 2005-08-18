@@ -7,19 +7,17 @@
 -- ==============================================================
 create table section (
 section_id           NUMBER(10)                 not null,
-title                VARCHAR(32)                null,
-resource_uri         VARCHAR(128)               null,
-perms                VARCHAR(16)                null,
+title                VARCHAR(32)          null,
+resource_uri         VARCHAR(128)         null,
+perms                VARCHAR(16)          null,
 parent_id            NUMBER(10)                 null,
 root_id              NUMBER(10)                 null,
 left_id              NUMBER(10)                 null,
 right_id             NUMBER(10)                 null,
 order_id             NUMBER(10)                 null,
 level_id             NUMBER(10)                 null,
-is_enabled           NUMBER(5)                  null,
-is_static            NUMBER(5)                  null,
-access_key           CHAR(1)                    null,
-rel                  VARCHAR(16)                null,
+is_enabled           NUMBER(5)                 null,
+is_static            NUMBER(5)                 null,
 constraint PK_SECTION primary key (section_id)
 );
 

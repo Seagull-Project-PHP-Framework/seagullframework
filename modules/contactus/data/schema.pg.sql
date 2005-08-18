@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Schema for /modules/contactus
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 -- ==============================================================
@@ -16,5 +23,6 @@ create table contact_us
    user_comment         TEXT                 null,
    constraint PK_CONTACT_US primary key (contact_us_id)
 );
+
 
 COMMIT;

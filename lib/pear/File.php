@@ -19,7 +19,7 @@
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2002-2005 The Authors
  * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: File.php,v 1.7 2005/04/06 12:43:48 demian Exp $
+ * @version     CVS: $Id: File.php,v 1.31 2005/07/21 07:53:09 mike Exp $
  * @link        http://pear.php.net/package/File
  */
 
@@ -39,7 +39,7 @@ if (!defined('FILE_DEFAULT_READSIZE')) {
  * The maximum number of bytes for reading lines
  */
 if (!defined('FILE_MAX_LINE_READSIZE')) {
-    define('FILE_MAX_LINE_READSIZE', 8192000, true);
+    define('FILE_MAX_LINE_READSIZE', 40960, true);
 }
 
 /**
@@ -408,6 +408,9 @@ class File extends PEAR
     {
         $filePointers = &PEAR::getStaticProperty('File', 'filePointers');
         
+        if (OS_WINDOWS) {
+            $filename = strToLower($filename);
+        }
         if (!isset($filePointers[$filename][$mode])) {
             return true;
         }

@@ -1,7 +1,3 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
-
--- contraints for /navigation
-
-ALTER TABLE category ADD CONSTRAINT FK_parent FOREIGN KEY (parent_id)
-      REFERENCES category (category_id) ON DELETE RESTRICT ON UPDATE RESTRICT;
+alter table category add constraint FK_parent foreign key (parent_id)
+      references category (category_id) on delete restrict on update restrict;
 

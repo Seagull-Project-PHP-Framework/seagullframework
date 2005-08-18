@@ -68,6 +68,8 @@ INSERT INTO permission VALUES (52, 'pagemgr_update', '', 9);
 INSERT INTO permission VALUES (53, 'pagemgr_delete', '', 9);
 INSERT INTO permission VALUES (54, 'pagemgr_reorder', '', 9);
 INSERT INTO permission VALUES (55, 'pagemgr_list', '', 9);
+INSERT INTO permission VALUES (56, 'newslettermgr_send', '', 10);
+INSERT INTO permission VALUES (57, 'newslettermgr_addressBook', '', 10);
 INSERT INTO permission VALUES (58, 'articleviewmgr_view', '', 11);
 INSERT INTO permission VALUES (59, 'articleviewmgr_summary', '', 11);
 INSERT INTO permission VALUES (60, 'articlemgr_add', '', 11);
@@ -170,6 +172,7 @@ INSERT INTO permission VALUES (171, 'userimportmgr', '', 12);
 INSERT INTO permission VALUES (172, 'userimportmgr_list', '', 12);
 INSERT INTO permission VALUES (173, 'userimportmgr_insertImportedUsers', '', 12);
 INSERT INTO permission VALUES (175, 'usermgr', '', 12);
+INSERT INTO permission VALUES (177, 'usersearchmgr_search', '', 12);
 INSERT INTO permission VALUES (178, 'usermgr_syncToRole', '', 12);
 INSERT INTO permission VALUES (179, 'userpreferencemgr', '', 12);
 INSERT INTO permission VALUES (181, 'rndmsgmgr', '', 13);
@@ -372,8 +375,8 @@ INSERT INTO user_preference VALUES (8, 0, 8, 'en_GB');
 --
 
 INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-INSERT INTO usr VALUES (1, 1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'User', '', '', 'webmaster@phpkitchen.com', '1 Seagull Drive', '', '', 'London', '', 'GB', '55555', 0, 1, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-INSERT INTO usr VALUES (2, 1, 2, 'seagull', '21232f297a57a5a743894a0e4a801fc3', 'Test', 'User', '', '', 'demian@phpkitchen.com', '17 Daver Court', 'Mount Avenue', '', 'Ealing', '', 'GB', '55555', 0, 1, 1, 'rover', '2004-06-10 18:04:06', 1, '2004-06-10 18:04:06', 1);
+INSERT INTO usr VALUES (1, 1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'User', '', '', 'admin@example.com', '1 Seagull Drive', '', '', 'London', '', 'GB', '55555', 0, 1, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+INSERT INTO usr VALUES (2, 1, 2, 'seagull', '21232f297a57a5a743894a0e4a801fc3', 'Test', 'User', '', '', 'seagull@example.com', '17 Daver Court', 'Mount Avenue', '', 'Ealing', '', 'GB', '55555', 0, 1, 1, 'rover', '2004-06-10 18:04:06', 1, '2004-06-10 18:04:06', 1);
 
 --
 -- Creating sequences

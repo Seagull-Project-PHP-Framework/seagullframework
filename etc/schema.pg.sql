@@ -1,5 +1,10 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==============================================================
+--  DBMS name:      PostgreSQL 7.3                               
+--  Created on:     2004-04-13 23:45:57                          
+-- ==============================================================
+
 -- Schema for /etc
+
 
 -- ==============================================================
 --  Table: item                                                  
@@ -107,17 +112,6 @@ create table log_table
 );
 
 -- ==============================================================
---  Table: table_lock                                            
--- ==============================================================
-create table table_lock 
-(
-   lockID               CHAR(32)             not null,
-   lockTable            CHAR(32)             not null,
-   lockStamp            INT4                 null,
-   constraint PK_TABLE_LOCK primary key (lockID, lockTable)
-);
-
--- ==============================================================
 --  Table: session
 -- ==============================================================
 create table user_session 
@@ -126,5 +120,16 @@ create table user_session
    last_updated                  TIMESTAMP       null,
    data_value                    TEXT            null,
    constraint PK_SESSION primary key (session_id)
+);
+
+-- ==============================================================
+--  Table: table_lock                                            
+-- ==============================================================
+create table table_lock 
+(
+   lockID               CHAR(32)             not null,
+   lockTable            CHAR(32)             not null,
+   lockStamp            INT4                 null,
+   constraint PK_TABLE_LOCK primary key (lockID, lockTable)
 );
 

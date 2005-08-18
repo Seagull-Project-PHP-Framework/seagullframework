@@ -14,10 +14,6 @@
         'Navigation Style Manager' => 'Navigation Style Manager',
         'new style' => 'new style',
         'edit navigation template' => 'edit navigation template',
-        'AccessKey' => 'AccessKey',
-        'Rel Marker' => 'Rel Marker',
-        'Any number, which can be pressed with the ALT-key to load the page.' => 'Any number, which can be pressed with the ALT-key to load the page.',
-        'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".' => 'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".',
 
 /* Add / Edit template */
         
@@ -95,6 +91,7 @@
         'Current Category' => 'Current Category',
         'Current' => 'Current',
         'Group Name' => 'Group Name',
+        'Role Name' => 'Role Name',
         'Has Permissions' => 'Has Permissions',
         'Yes' => 'Yes',
         'No' => 'No',

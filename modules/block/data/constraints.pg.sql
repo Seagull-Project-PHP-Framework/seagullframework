@@ -1,6 +1,14 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==============================================================
+--  DBMS name:      PostgreSQL 7.3                               
+--  Created on:     2004-04-13 23:45:57                          
+-- ==============================================================
+
 -- Constraints for /block
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 alter table block_assignment add constraint FK_block_assignment_block foreign key (block_id)

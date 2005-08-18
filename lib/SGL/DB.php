@@ -187,12 +187,12 @@ class SGL_DB
     }
 
     /**
-     * @param object PEAR::DB instance
-     * @param string db query
-     * @param array  PEAR::Pager options
-     * @param boolean Disable pagination (get all results)
-     * @param int    fetchmode to use
-     * @param mixed  array, string or numeric data passed to DB execute
+     * @param object $db            PEAR::DB instance
+     * @param string $query         db query
+     * @param array  $pager_options PEAR::Pager options
+     * @param boolean $disabled     Disable pagination (get all results)
+     * @param int    $fetchMode     fetchmode to use
+     * @param mixed  $dbparams      array, string or numeric data passed to DB execute
      * @return array with links and paged data
      */
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 
