@@ -361,13 +361,25 @@ class SGL_HTTP_Session
             }
         }       
 
-        //  make session more secure if possible
+        //  make session more secure if possible      
         if  (function_exists('session_regenerate_id')) {
+            $conf = & $GLOBALS['_SGL']['CONF'];  
             $oldSessionId = session_id();
             session_regenerate_id();
-            
-            //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-            @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+
+            if ($conf['site']['sessionHandler'] == 'file') {
+                
+                //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+                @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                
+            } elseif ($conf['site']['sessionHandler'] == 'database') {
+                $value = $this->dbRead($oldSessionId);
+                $this->dbDestroy($oldSessionId);
+                $this->dbRead(session_id());          // creates new session record
+                $this->dbWrite(session_id(), $value); // store old session value in new session record
+            } else {
+                die('Internal Error: unknown session handler');
+            }
         }
         return true;
     }

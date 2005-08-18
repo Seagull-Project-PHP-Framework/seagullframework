@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+18-08-05    Longtime outstanding bug where db session handling was broken has
+            been fixed (Louay Gammo)
 10-08-05    Fixed bug where editing articles 'remembered' the GUI category, not
             the article category
 10-08-05    Fixed verticalSimple.css to work with new CSS
