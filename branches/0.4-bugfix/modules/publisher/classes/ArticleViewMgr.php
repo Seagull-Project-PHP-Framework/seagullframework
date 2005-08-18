@@ -136,7 +136,8 @@ class ArticleViewMgr extends SGL_Manager
             $bPublish = true,
             $input->dataTypeID,
             '',
-            $input->from);
+            $input->from,
+            'start_date');
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -151,17 +152,18 @@ class ArticleViewMgr extends SGL_Manager
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
+                    
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
                     $output->articleList[$key]['bodyHtml'] = 
                         SGL_String::summariseHtml($content);
-                break;
+                    break;
 
                 case 'newsHtml':
                     $content = $output->articleList[$key]['newsHtml'];
                     $output->articleList[$key]['newsHtml'] = 
                         SGL_String::summariseHtml($content);
-                break; 
+                    break; 
                 }
             }
         }
