@@ -34,6 +34,11 @@ PHP     4.1.x
 MySQL   3.23.x
 Apache  1.3.x
 
+NOTE: Apache 2.x will probably work but is not recommended, same is true 
+    for the PHP 4.4.x branch though previous and later version are fine. Also,
+    MySQL 4.1 branch can be difficult to get to work with PHP's mysql client libs,
+    therefore 4.0.x is recommended.
+
 
 Documentation
 -------------
