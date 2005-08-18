@@ -461,8 +461,6 @@ class SGL_Item
      * Builds a HTML form with the input types built using the data in the
      * item_type and item_type_mapping tables.
      * 
-     * @todo	Make return array to build form in template.
-     * 
      * @access  public
      * @param   int   	$typeID			Item Type ID
      * @param   int     $type           data type to return, can be SGL_RET_STRING

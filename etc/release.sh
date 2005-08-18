@@ -212,14 +212,14 @@ function scpChangelogToSglSite()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvnAndPackage
 
 #uploadToSfWholePackage
 
