@@ -11,21 +11,21 @@ class ThemeSwitcher
 {
     function init()
     {
-        $aThemes = SGL_Util::getAllThemes();
+        $this->aThemes = SGL_Util::getAllThemes();
         $req = & SGL_HTTP_Request::singleton();
         
         $theme = $req->get('frmThemeSwitcher');
         if (!is_null($theme)) {
-            if (in_array($theme, $aThemes)) {
+            if (in_array($theme, $this->aThemes)) {
                 $_SESSION['aPrefs']['theme'] = $theme;
             }
         }
-        return $this->getBlockContent($aThemes);
+        return $this->getBlockContent();
     }
 
-    function getBlockContent($aThemes)
+    function getBlockContent()
     {
-        $options = SGL_Output::generateSelect($aThemes, $_SESSION['aPrefs']['theme']);
+        $options = SGL_Output::generateSelect($this->aThemes, $_SESSION['aPrefs']['theme']);
 
         $req = & SGL_HTTP_Request::singleton();        
         $url = SGL_Url::makeLink() . 'frmThemeSwitcher/';
