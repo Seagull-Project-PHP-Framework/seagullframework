@@ -1,0 +1,50 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<p><span flexy:if="msgGet()">{msgGet()}</span></p>
+
+<form name="frmCategoryMgr" method="post" flexy:ignore id="frmCategoryMgr">
+    <input type="hidden" name="action" value="delete" />
+
+    <table class="wide">
+
+        <tr>
+            <td align="center" colspan="5">
+                <input type="button" value="{translate(#return to category manager#)}" 
+                    onclick="javascript:document.location.href='{makeUrl(#list#,#category#,#navigation#)}'" />
+            </td>
+        </tr>
+    
+        <tr>
+            <th>{translate(#ID#)}</th>
+            <th>{translate(#Label#)}</th>
+            <th>{translate(#Move/Edit#)}</th>
+            <th>{translate(#Parent ID#)}</th>
+            <th>{translate(#Order#)}</th>
+        </tr>
+
+        <tr class="{switchRowClass()}" flexy:foreach="categoryTree,k,category">
+            <td align="center">{category[category_id]}</td>
+            <td width="1%"><nobr>{foreach:category[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" border="0" alt="{category[label]}" />{end:} <strong>{category[label]}</strong></nobr></td>
+            <td align="center">&nbsp; 
+                {if:category[images][moveDownTarget]}
+                <a href="{makeUrl(#reorderUpdate#,#category#,#navigation#)}frmCatID/{category[category_id]}/targetId/{category[images][moveDownTarget]}/move/down/">
+                    <img src="{webRoot}/themes/{theme}/{category[images][moveDownImg]:h}" width="10" height="9" border="0" alt="Move {category[label]} down" />
+                </a> 
+                {else:} <img src="{webRoot}/themes/{theme}/{category[images][moveDownImg]:h}" width="10" height="9" border="0" /> 
+                {end:} 
+                
+                {if:category[images][moveUpTarget]} 
+                <a href="{makeUrl(#reorderUpdate#,#category#,#navigation#)}frmCatID/{category[category_id]}/targetId/{category[images][moveUpTarget]}/move/up/">
+                    <img src="{webRoot}/themes/{theme}/{category[images][moveUpImg]:h}" width="10" height="9" border="0" alt="Move {category[label]} up" />
+                </a> 
+                {else:} <img src="{webRoot}/themes/{theme}/{category[images][moveUpImg]:h}" width="10" height="9" border="0" /> 
+                {end:}
+                
+                &nbsp;&nbsp; 
+                <a href="{makeUrl(#list#,#category#,#navigation#,categoryTree,#frmCatID|category_id#,k)}">{translate(#Edit#)}</a>
+            </td>
+            <td align="center">{category[parent_id]}</td>
+            <td align="center">{category[order_id]}</td>
+        </tr>
+
+    </table>
+</form>

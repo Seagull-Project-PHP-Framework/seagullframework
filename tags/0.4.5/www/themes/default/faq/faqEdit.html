@@ -1,0 +1,43 @@
+<form method="post" flexy:ignore>
+    <input type="hidden" name="action" value="{action}" />
+    {if:faq.faq_id}
+        <input type="hidden" name="faq[faq_id]" value="{faq.faq_id}" />
+    {end:}
+
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="wide">
+        <tr>
+            <td align="center">
+                <table>
+                    <tr>
+                        <th align="left">{translate(#Question#)}:</th>
+                        <td>
+                            <div class="error" flexy:if="error[question]">
+                                {translate(error[question])}
+                            </div><textarea cols="40" rows="4" name="faq[question]">{faq.question}</textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th align="left">{translate(#Answer#)}:</th>
+                        <td>
+                            <div class="error" flexy:if="error[answer]">
+                                {translate(error[answer])}
+                            </div><textarea cols="40" rows="7" name="faq[answer]">{faq.answer}</textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" align="center">
+                            <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />
+                            <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                                    onclick="document.location.href='{makeUrl(##,#faq#)}'" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</form>
