@@ -61,7 +61,7 @@ FCKConfig.UseBROnCarriageReturn = false ;
 FCKConfig.ToolbarStartExpanded  = true ;
 FCKConfig.ToolbarCanCollapse    = true ;
 FCKConfig.IEForceVScroll = false ;
-FCKConfig.IgnoreEmptyParagraphValue = true ;
+FCKConfig.IgnoreEmptyParagraphValue = false ;
 
 FCKConfig.ToolbarSets["Default"] = [
 //  ['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],

@@ -36,6 +36,7 @@ class ThemeSwitcher
         $options
         </select>
         </form>
+        <p>&nbsp;</p>
 HTML;
         return $html;
     }

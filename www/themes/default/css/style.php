@@ -506,7 +506,7 @@ img {
 .newsItem {
     border: 1px solid <?php echo $tertiaryDark ?>;
     margin: 0 auto;
-    padding: 0 0 0 10px;
+    padding: 0 10px 10px 10px;
     background-color: <?php echo $errorTextLight ?>;
 }
 fieldset {
