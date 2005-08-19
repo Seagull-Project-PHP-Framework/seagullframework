@@ -47,8 +47,8 @@ FCKConfig.IncludeGreekEntities  = true ;
 
 FCKConfig.FillEmptyBlocks   = true ;
 
-FCKConfig.FormatSource      = false ;
-FCKConfig.FormatOutput      = false ;
+FCKConfig.FormatSource      = true ;
+FCKConfig.FormatOutput      = true ;
 FCKConfig.FormatIndentator  = '    ' ;
 
 FCKConfig.GeckoUseSPAN  = true ;
@@ -67,18 +67,18 @@ FCKConfig.ToolbarSets["Default"] = [
 //  ['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
     ['Source','-'],
 //  ['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
-    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+    ['Undo','Redo','-','Find','Replace','-','RemoveFormat'],
 //  ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
     ['Bold','Italic','Underline','StrikeThrough','-'],
     ['OrderedList','UnorderedList','-','Outdent','Indent'],
     ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
     ['Link','Unlink','Anchor'],
 //  ['Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
-    ['Image','Rule','Smiley','SpecialChar']
+    ['Image','Rule','Smiley','SpecialChar'],
 //  ['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
 //  '/',
-//  ['Style','FontFormat','FontName','FontSize'],
-//  ['TextColor','BGColor'],
+    ['TextColor','BGColor'],
+    ['Style','FontFormat','FontName','FontSize'],
 //  ['About']
 ] ;
 
