@@ -302,7 +302,7 @@ th {
     width: auto;
     min-width: 20%;
     font-size: 0.9em;
-    z-index: 2;
+    /*z-index: 2;*/
     padding: 0 20px;
 }
 #sgl-blocks-middle #options {
