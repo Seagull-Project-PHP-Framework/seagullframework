@@ -10,6 +10,15 @@ IMPROVEMENTS
 10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
+| VERSION: 0.4.6        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+19-08-05    Routine to get page execution time was improved to be more accurate, it    
+            it now reports the same times as ZDE (Jochem Gugelot).
+
++-----------------------+
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
