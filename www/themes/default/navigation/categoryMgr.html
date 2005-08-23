@@ -32,6 +32,7 @@
             <strong>{translate(#You are here#)}:</strong><br />{breadCrumbs:h}<br /><br />
             </td>
         </tr>
+
         <tr>
             <td colspan="2">
                 <input type="button"  name="category" value="{translate(#Add Category#)}" 
@@ -63,7 +64,7 @@
         </tr>
         <tr>
             <th>{translate(#Has Permissions#)} ?</th>
-            <th>{translate(#Group Name#)}</th>
+            <th>{translate(#Role Name#)}</th>
         </tr>
         {this.plugin(#generatePermsRadioList#,perms,#category_id#):h}
         <tr>

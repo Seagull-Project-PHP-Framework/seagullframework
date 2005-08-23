@@ -25,7 +25,7 @@ create table if not exists preference
 (
    preference_id                  int                            not null,
    name                           varchar(128),
-   default_value                  varchar(64),
+   default_value                  varchar(128),
    primary key (preference_id)
 );
 

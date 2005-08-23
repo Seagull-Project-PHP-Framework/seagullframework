@@ -3,7 +3,7 @@
 
 /**
  * File::CSV
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.0 of the PHP license
@@ -15,10 +15,10 @@
  * @category    File
  * @package     File
  * @author      Tomas V.V.Cox <cox@idecnet.com>
- * @author      Helgi ?ormar <dufuz@php.net>
+ * @author      Helgi Þormar <dufuz@php.net>
  * @copyright   2004-2005 The Authors
  * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: CSV.php,v 1.4 2005/04/06 12:43:48 demian Exp $
+ * @version     CVS: $Id: CSV.php,v 1.24 2005/08/09 08:16:02 dufuz Exp $
  * @link        http://pear.php.net/package/File
  */
 
@@ -48,6 +48,7 @@ require_once 'File.php';
 *    is a field with a separator inside, the parser will throw the "wrong count" error
 *
 * @author Tomas V.V.Cox <cox@idecnet.com>
+* @author      Helgi Þormar <dufuz@php.net>
 * @package File
 */
 class File_CSV
@@ -122,15 +123,20 @@ class File_CSV
     * @param string $file The name of the file
     * @param array  &$conf The configuration
     * @param string $mode The open node (ex: FILE_MODE_READ or FILE_MODE_WRITE)
+    * @param boolean $reset if passed as true and resource for the file exists
+    *                       than the file pointer will be moved to the beginning
     *
     * @return mixed A file resource or false
     */
-    function getPointer($file, &$conf, $mode = FILE_MODE_READ)
+    function getPointer($file, &$conf, $mode = FILE_MODE_READ, $reset = false)
     {
         static $resources  = array();
         static $config;
         if (isset($resources[$file])) {
             $conf = $config;
+            if ($reset) {
+                fseek($resources[$file], 0);
+            }
             return $resources[$file];
         }
         File_CSV::_conf($error, $conf);
@@ -409,7 +415,7 @@ class File_CSV
         $matches = array();
 
         // Set auto detect line ending for Mac EOL support if < PHP 4.3.0.
-        $phpver = version_compare('4.1.0', phpversion(), '<');
+        $phpver = version_compare('4.3.0', phpversion(), '<');
         if ($phpver) {
             $oldini = ini_get('auto_detect_line_endings');
             ini_set('auto_detect_line_endings', '1');
@@ -470,7 +476,7 @@ class File_CSV
                     break;
                 }
             }
-            if (preg_match("|^([$quotes]).*([$quotes])$sep|", $line, $match)
+            if (preg_match("|^([$quotes]).*([$quotes])$sep{0,1}|", $line, $match)
                 || preg_match("|([$quotes]).*([$quotes])$sep\s$|Us", $line, $match))
             {
                 if ($match[1] == $match[2]) {
@@ -483,6 +489,26 @@ class File_CSV
         fclose($fp);
         // XXX What about trying to discover the "header"?
         return $conf;
+    }
+
+    /**
+     * Front to call getPointer and moving the resource to the
+     * beginning of the file
+     * Reset it if you like.
+     *
+     * @param string $file The name of the file
+     * @param array  &$conf The configuration
+     * @param string $mode The open node (ex: FILE_MODE_READ or FILE_MODE_WRITE)
+     *
+     * @return boolean true on success false on failure
+     */
+    function resetPointer($file, &$conf, $mode)
+    {
+        if (!File_CSV::getPointer($file, $conf, $mode, true)) {
+            return false;
+        }
+
+        return true;
     }
 }
 ?>

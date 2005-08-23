@@ -73,7 +73,7 @@ class LoginBlock
 
     function getLoginScreen()
     {
-        $login = '<form method="post" action="login.php" id="login">
+        $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="login">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'

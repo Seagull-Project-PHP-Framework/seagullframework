@@ -170,6 +170,8 @@ class IMessageMgr extends SGL_Manager
         $uid = SGL_HTTP_Session::getUid();
 
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+                
         $query = 
             " SELECT * 
               FROM {$conf['table']['instant_message']} AS im, {$conf['table']['user']} AS u 
@@ -313,7 +315,7 @@ class IMessageMgr extends SGL_Manager
         $output->messageToIds = $hiddenFields;
         $output->messageToUsernames = $user->username;
         $output->sectionTitle = 'Reply';
-        $output->cancelRedirect = SGL_Url::makeLink('inbox', 'instantmessage', 'messaging');
+        $output->cancelRedirect = SGL_Url::makeLink('inbox', 'imessage', 'messaging');
 
         //  prepare reply message
         $origMsg = & new DataObjects_Instant_message();
@@ -423,7 +425,7 @@ class IMessageMgr extends SGL_Manager
             $message->msg_time = SGL::getTime();
             $message->subject = $subject;
             if ($message->subject == '') {
-                $message->subject = 'No subject';
+                $message->subject = SGL_Output::translate('no subject');
             }
             $message->body = $body;
 
@@ -464,15 +466,16 @@ class IMessageMgr extends SGL_Manager
         if ($message->find() != 1 || $message->fetch() == false) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 
+        $message->getLinks('link_%s');        
         $res = $this->verifyUserAccess($message);
         if (empty($res)) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 
@@ -484,7 +487,7 @@ class IMessageMgr extends SGL_Manager
             // user IS a ...
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 

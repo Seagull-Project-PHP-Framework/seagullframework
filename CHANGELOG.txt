@@ -10,9 +10,32 @@ IMPROVEMENTS
 10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
+| VERSION: 0.4.6        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+23-08-05    Added ability to view login history for a given user (Rolandas Burbulis)
+23-08-05    Release script now uploads API docs to sgl site for browsing
+19-08-05    Changed CSS z-index in style.php so FCK downdowns are not hidden
+19-08-05    Routine to get page execution time was improved to be more accurate, it    
+            it now reports the same times as ZDE (Jochem Gugelot).
+
++-----------------------+
 | VERSION: 0.4.5        |
 +-----------------------+
 BUGFIXES
+18-08-05    Longtime outstanding bug where db session handling was broken has
+            been fixed (Louay Gammo)
+10-08-05    Fixed bug where editing articles 'remembered' the GUI category, not
+            the article category
+10-08-05    Fixed verticalSimple.css to work with new CSS
+08-08-05    Removed quoting of chartset=utf-8 (Ernest Beinrohr)
+01-08-05    Added php5 workaround in SGL_Wizard because strict call by reference
+            behaviour (Tobias Kuckuck)
+01-08-05    SGL_Item::getDynamicFields now returns a string of html representing
+            the fields, or alternatively an array of just the data. (Fabio Bacigalupo)
+01-08-05    Removed obselete stylesheets
 26-07-05    Fixed notices related to PHP 4.4.0
 24-07-05    Missing form name added, without which it was impossible to create new articles
 21-07-05    Fixed inability to edit org types
@@ -22,6 +45,19 @@ BUGFIXES
             'all sections'
 
 IMPROVEMENTS
+17-08-05    Updated pear libs included recently patched XML_RPC
+17-08-05    Added additional arg to SGL_Item::retrievePaginated() for specifying
+            sort column
+17-08-05    SGL_String lib updated and improved (Philippe Lhoste)
+17-08-05    Updated to latest iso-3166 country list (Philippe Lhoste)
+17-08-05    Upgraded to version 2.0 of FCKeditor (Werner Krauss)
+17-08-05    Added theme switcher block
+17-08-05    Factored module config loading and merging out of SGL_Controller::_getModel
+17-08-05    Added almost 200 tests for front controller URL parsing and improved
+            reliability
+16-08-05    Added ability to customise default theme's stylesheets non-invasively
+            (Pierpaolo Toniolo, AJ Tarachanowicz)
+04-08-05    Fixed sorting for Users, Roles and Permissions (Rolandas Burbulis)
 21-07-05    Database password field in Config changed to 'password' type (Paul Vickers)
 17-07-05    All table names are now config driven
 15-07-05    Articles now editable in situ
@@ -226,7 +262,7 @@ BUGFIXES
 27-03-05    Fixed bug where error_log default file was set incorrectly
 17-03-05    Updated Wizard to work with front controller urls (Tobias Kuckuck)
 17-03-05    Fixed bug where links in OrgMgr were not working correctly
-17-03-05    Modified locale setting to work for windows (Jürgen Mutz)
+17-03-05    Modified locale setting to work for windows (Jï¿½rgen Mutz)
 17-03-05    Fixed bug where users couldn't register due to a missing perm
             (Dustin Rottmann)
 17-03-05    Fixed a data loading bug in postgres (Pierpaolo Toniolo)

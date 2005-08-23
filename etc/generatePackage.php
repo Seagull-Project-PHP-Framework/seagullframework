@@ -86,12 +86,6 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
-$e = $packagexml->addDependency('Benchmark', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
 $e = $packagexml->addDependency('Cache_Lite', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();

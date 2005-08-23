@@ -274,20 +274,24 @@ class OrgMgr extends SGL_Manager
         }
         //  move node if needed
         switch ($aOrg['parent_id']) {
+            
         case $aOrg['original_parent_id']:
             //  usual case, no change => do nothing
             $message = 'The organisation has successfully been updated';
             break;
+            
         case $aOrg['organisation_id']:
             //  cannot be parent to self => display user error
             $message = 'The organisation has successfully been updated, no data changed';
             break;
+            
         case 0:
             //  move the org, make it into a root node, just above its own root
             $thisNode = $nestedSet->getNode($aOrg['organisation_id']);
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $thisNode['root_id'], 'BE');
             $message = 'The organisation has successfully been updated';
             break;
+            
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $aOrg['parent_id'], 'SUB');

@@ -356,8 +356,8 @@ INSERT INTO user_preference VALUES (8, 0, 8, 'en_GB');
 --
 
 INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','webmaster@phpkitchen.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
-INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','demian@phpkitchen.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
+INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','admin@example.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
+INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','seagull@example.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
 
 
 COMMIT;
