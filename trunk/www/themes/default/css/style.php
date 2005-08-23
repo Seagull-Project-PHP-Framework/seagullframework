@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2004, Demian Turner                                         |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -50,7 +50,7 @@
     header('Content-Type: text/css');
 
     // Get last modified time of file
-    $srvModTime  = getlastmod();
+    $srvModTime = getlastmod();
 
     // exit out of script if cached on client
     if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -133,6 +133,12 @@
 
     /* Button like border colors */
     $buttonBorderColors     = '#ffffff #333333 #333333 #ffffff';
+    
+    // include local style file
+    $localStyle = './style.local.php';
+    if (file_exists($localStyle)) {
+        include_once $localStyle;
+    }    
 ?>
 
 /******************************************************************************/
@@ -294,7 +300,7 @@ th {
     width: auto;
     min-width: 20%;
     font-size: 0.9em;
-    z-index: 2;
+    /*z-index: 2;*/
     padding: 0 20px;
 }
 #sgl #content #options {
@@ -506,7 +512,7 @@ img {
 .newsItem {
     border: 1px solid <?php echo $tertiaryDark ?>;
     margin: 0 auto;
-    padding: 0 0 0 10px;
+    padding: 0 10px 10px 10px;
     background-color: <?php echo $errorTextLight ?>;
 }
 fieldset {

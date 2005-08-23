@@ -185,7 +185,7 @@ class SGL_String
     function removeJs(&$html)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $search = "/<script[^>]*?>.*?<\/script>/i";
+        $search = "/<script[^>]*?>.*?<\/script\s*>/i";
         $replace = '';
         $html = preg_replace($search, $replace, $html);
         SGL_String::trimWhitespace($html);
@@ -253,10 +253,11 @@ class SGL_String
 
     /**
      * Primarily used for obfuscating email addresses to prevent spam
-     * harvesting.
+     * harvesting. Since it is URL-encoded, this can be used only in the href
+     * part of a <a> tag (mailto: scheme).
      *
-     * @param string $str
-     * @return string
+     * @param string $str String to encode
+     * @return string $encoded Encoded string
      */
     function obfuscate($str)
     {
@@ -265,6 +266,82 @@ class SGL_String
         $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
         return $encoded;
     }
+
+    /**
+     * Encode a given character to a decimal or hexadecimal HTML entity or
+     * to an hexadecimal URL-encoded symbol.
+     *
+     * @param string $char Char to encode
+     * @param mixed $encoding 1 or D for decimal entity, 2 or H for hexa entity,
+     *        3 or U for URL-encoding,
+     *        R for a random choice of any of the above,
+     *        E for a random choice of any of the HTML entities.
+     * @return string $encoded Encoded character (or raw char if unknown encoding)
+     *
+     * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+     */
+    function char2entity($char, $encoding = 'H') 
+    {
+        $pad = 1;
+        if ($encoding == 'R' || $encoding == 'E') {
+            // Use random padding with zeroes
+            // Unicode stops at 0x10FFFF, ie. at 1114111 (7 digits)
+            $pad = rand(2, 7);
+            if ($encoding == 'R') {
+                // Full random
+                $encoding = rand(1, 3);
+            } else {
+                // Random only to entity
+                $encoding = rand(1, 2);
+            }
+        }
+        $asc = ord($char);
+
+        switch ($encoding) {
+        case 1: // Decimal entity
+        case 'D':
+            return sprintf("&#%0{$pad}d;", $asc);
+            break;
+        case 2: // Hexadecimal entity
+        case 'H':
+            return sprintf("&#x%0{$pad}X;", $asc);
+            break;
+        case 3: // URL-encoding
+        case 'U':
+            return sprintf("%%%02X", $asc);
+            break;
+        default:
+            return $char;
+        }
+    }
+
+    /**
+     * Primarily used for obfuscating email addresses to prevent spam
+     * harvesting.
+     *
+     * @param string $str String to encode
+     * @param bool $bForLink true if used in the href part of a <a> tag, false to be used in HTML
+     * @return string $encoded Encoded string
+     *
+     * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+     */
+    function obfuscate2($str, $bForLink = true)
+    {
+        if ($bForLink) {
+            $e = "'R'";
+        } else {
+            $e = "'E'";
+        }
+        $encoded = preg_replace_callback(
+                '|([-?=@._emailto:])|',	// Mostly arbitrary, to mix encoded and unencoded chars...
+                create_function(
+                        '$matches',
+                        "return char2entity(\$matches[0], $e);"
+                ),
+                $str
+        );
+        return $encoded;
+     }
 
     /**
      * Returns a shortened version of text string.
@@ -283,20 +360,21 @@ class SGL_String
          }
          return $str;
     }
-    
+
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
      *
-     * @param string $str
-     * @param integer $lines
-     * @param string $appendString
-     * @return string
+     * @param   string $str
+     * @param   integer $lines
+     * @param   string $appendString
+     * @return  string
+     * @todo    needs to handle orphan <b> and <strong> tags
      */
     function summariseHtml($str, $lines=10)
     {
         $aLines = explode("\n", $str);
         $aSegment = array_slice($aLines, 0, $lines);
-        
+
         //  close tags like <ul> so page layout doesn't break
         $unclosedListTags = 0;
         $aMatches = array();
@@ -317,32 +395,36 @@ class SGL_String
     }
 
     /**
-     * Converts bytes to Kb or MB as appropriate.
+     * Converts bytes to KB/MB/GB as appropriate.
      *
      * @access  public
      * @param   int $bytes
-     * @return  int kb/MB
+     * @return  int B/KB/MB/GB
      */
-    function formatBytes($size)
+     function formatBytes($size, $decimals = 1, $lang = '--')
     {
-        $sizeList = array( 
-           '1073741824' => 'GB',
-           '1048576'    => 'MB',
-           '1024'       => 'kb',
-           '0'          => 'b'
-           );
-
-        foreach ($sizeList as $bytes => $unit) {
-            if ($size > $bytes) {
+        $aSizeList = array(1073741824, 1048576, 1024, 0);
+		// Should check if string is in an array, other languages may use octets
+        if ($lang == 'FR') {
+            $aSizeNameList = array('&nbsp;Go', '&nbsp;Mo', '&nbsp;Ko', '&nbsp;octets');
+            // Note: should also use French decimal separator (coma)
+        } else {
+            $aSizeNameList = array('GB', 'MB', 'KB', 'B');
+        }
+        $i = 0;
+        foreach ($aSizeList as $bytes) {
+            if ($size >= $bytes) {
                 if ($bytes == 0) {
                     // size 0 override
                     $bytes = 1;
+                    $decimals = 0;
                 }
-
-                $format = "(%.1f $unit)";
-                return sprintf($format, $size / $bytes);                
+                $formated = sprintf("%.{$decimals}f{$aSizeNameList[$i]}", $size / $bytes);
+                break;
             }
+            $i++;
         }
+        return $formated;
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
@@ -351,23 +433,27 @@ class SGL_String
          $s = SGL_String::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
          $s = strip_tags($s);                       ## remove HTML tags.
-         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
-         $s = preg_replace('![^\w\s]!','',$s);      ## remove non-word/space chars.
-         $s = preg_replace('!\s+!','_',$s);         ## change space chars to underscores.
+         // Note that &nbsp (for example) is legal in HTML 4, ie. semi-colon is optional if it is followed
+         // by a non-alphanumeric character (eg. space, tag...).
+//         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
+         $s = preg_replace('!&#?[A-Za-z0-9]{1,7};?!', '', $s);    ## remove HTML entities.
+         $s = preg_replace('![^\w\s]!', '', $s);      ## remove non-word/space chars.
+         $s = preg_replace('!\s+!', '_', $s);         ## change space chars to underscores.
          return $s;
     }
 
     function convertHighAscii($s)
     {
-         $HighASCII = array(
+        // Seems to be for Latin-1 (ISO-8859-1) and quite limited (no ae/oe, no y:/Y:, etc.)
+         $aHighAscii = array(
            "!\xc0!" => 'A',    # A`
            "!\xe0!" => 'a',    # a`
            "!\xc1!" => 'A',    # A'
            "!\xe1!" => 'a',    # a'
            "!\xc2!" => 'A',    # A^
            "!\xe2!" => 'a',    # a^
-           "!\xc4!" => 'Ae',   # A:
-           "!\xe4!" => 'ae',   # a:
+           "!\xc4!" => 'A',   # A:
+           "!\xe4!" => 'a',   # a:
            "!\xc3!" => 'A',    # A~
            "!\xe3!" => 'a',    # a~
            "!\xc8!" => 'E',    # E`
@@ -376,45 +462,45 @@ class SGL_String
            "!\xe9!" => 'e',    # e'
            "!\xca!" => 'E',    # E^
            "!\xea!" => 'e',    # e^
-           "!\xcb!" => 'Ee',   # E:
-           "!\xeb!" => 'ee',   # e:
+           "!\xcb!" => 'E',   # E:
+           "!\xeb!" => 'e',   # e:
            "!\xcc!" => 'I',    # I`
            "!\xec!" => 'i',    # i`
            "!\xcd!" => 'I',    # I'
            "!\xed!" => 'i',    # i'
            "!\xce!" => 'I',    # I^
            "!\xee!" => 'i',    # i^
-           "!\xcf!" => 'Ie',   # I:
-           "!\xef!" => 'ie',   # i:
+           "!\xcf!" => 'I',   # I:
+           "!\xef!" => 'i',   # i:
            "!\xd2!" => 'O',    # O`
            "!\xf2!" => 'o',    # o`
            "!\xd3!" => 'O',    # O'
            "!\xf3!" => 'o',    # o'
            "!\xd4!" => 'O',    # O^
            "!\xf4!" => 'o',    # o^
-           "!\xd6!" => 'Oe',   # O:
-           "!\xf6!" => 'oe',   # o:
+           "!\xd6!" => 'O',   # O:
+           "!\xf6!" => 'o',   # o:
            "!\xd5!" => 'O',    # O~
            "!\xf5!" => 'o',    # o~
-           "!\xd8!" => 'Oe',   # O/
-           "!\xf8!" => 'oe',   # o/
+           "!\xd8!" => 'O',   # O/
+           "!\xf8!" => 'o',   # o/
            "!\xd9!" => 'U',    # U`
            "!\xf9!" => 'u',    # u`
            "!\xda!" => 'U',    # U'
            "!\xfa!" => 'u',    # u'
            "!\xdb!" => 'U',    # U^
            "!\xfb!" => 'u',    # u^
-           "!\xdc!" => 'Ue',   # U:
-           "!\xfc!" => 'ue',   # u:
+           "!\xdc!" => 'U',   # U:
+           "!\xfc!" => 'u',   # u:
            "!\xc7!" => 'C',    # ,C
            "!\xe7!" => 'c',    # ,c
            "!\xd1!" => 'N',    # N~
            "!\xf1!" => 'n',    # n~
            "!\xdf!" => 'ss'
          );
-         $find = array_keys($HighASCII);
-         $replace = array_values($HighASCII);
-         $s = preg_replace($find,$replace,$s);
+         $find = array_keys($aHighAscii);
+         $replace = array_values($aHighAscii);
+         $s = preg_replace($find, $replace, $s);
          return $s;
     }
 }
@@ -488,10 +574,9 @@ class SGL_Date
             require_once 'Date.php';
             $date = & new Date($date);
             if ($_SESSION['aPrefs']['dateFormat'] == 'FR') {
-                $output = $date->format('%d %B, %Y %H:%M');
-            }
-            // Brazilian date format
-            elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+                $output = $date->format('%d %B %Y, %H:%M');
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+				// Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
             } else {
                 //  else UK and US
@@ -505,25 +590,31 @@ class SGL_Date
     }
 
     /**
-     * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into dd.mm.yyyy.
+     * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into locale dependent form.
      *
      * @access  public
      * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
-     * @return  string  $output user-friendly format (european)
+     * @return  string  $output user-friendly format (locale dependent)
      */
     function format($date)
     {
         if (is_string($date)) {
             include_once 'Date.php';
             $date = & new Date($date);
+			// Neither elegant nor efficient way of doing that
+			// (what if we have 30 formats/locales?).
+			// We should move that to a language/locale dependent file.
             if ($_SESSION['aPrefs']['dateFormat'] == 'UK') {
                 $output = $date->format('%d.%m.%Y');
-            // Brazilian date format
-            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR'
+                     || $_SESSION['aPrefs']['dateFormat'] == 'FR') {
+				// Brazilian/French date format
                 $output = $date->format('%d/%m/%Y');
-            } else {
-                //  else display US format, MM.DD.YYYY
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
                 $output = $date->format('%m.%d.%Y');
+            } else {
+                //  else display ISO (international, unambiguous) format, YYYY-MM-DD
+                $output = $date->format('%Y-%m-%d');
             }
             return $output;
         } else {

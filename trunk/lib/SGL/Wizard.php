@@ -89,9 +89,9 @@ class SGL_Wizard extends SGL_Manager
         if (isset($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']) 
                 && !(SGL_Wizard::isObjEmpty($_SESSION['wiz_sequence'][$this->_getCurrent()]['data'])) 
                 &&   SGL_Wizard::isObjEmpty($obj)) {
-            $obj = $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'];
+            $obj = clone($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']);
         } else {
-            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = $obj;
+            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = clone($obj);
         }
     }
 
@@ -151,16 +151,15 @@ class SGL_Wizard extends SGL_Manager
         $max = count($this->sequence) -1;
         //  beginning
         if (isset($this->sequence[0]['current']) && $this->sequence[0]['current'] == true) {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;';
         //  end
         } elseif (isset($this->sequence[$max]['current']) && $this->sequence[$max]['current'] == true) {
-            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
-                    
+            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         //  middle
         } else {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         }
         return $html;
     }
@@ -235,5 +234,10 @@ class SGL_Wizard extends SGL_Manager
             return true;
         }
     }    
+}
+
+if (!function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
 }
 ?>

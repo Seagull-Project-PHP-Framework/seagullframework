@@ -34,8 +34,16 @@
                 {else:}
         <tr class="{switchRowClass()}">
                 {end:}
-            <td class="fieldName2" align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" /></td>
-            <td class="fieldName2">{valueObj[username]}</td>
+            <td class="fieldName2">
+                <input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" />
+            </td>
+            <td class="fieldName2">
+                {if:valueObj[first_name]}
+                {valueObj[first_name]} {valueObj[last_name]}
+                {else:}
+                {valueObj[username]}
+                {end:}
+            </td>
             <td class="fieldName2">
                 <a href="{makeUrl(#read#,#imessage#,#messaging#,aPagedData[data],#frmMessageID|instant_message_id#,key)}">{valueObj[subject]}</a>
             </td>

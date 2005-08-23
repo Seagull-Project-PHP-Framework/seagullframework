@@ -16,7 +16,7 @@
 // | Authors: Tal Peer <tal@php.net>                                      |
 // |          Pierre-Alain Joye <paj@pearfr.org>                          |
 // +----------------------------------------------------------------------+
-// $Id: Javascript.php,v 1.6 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Javascript.php,v 1.37 2005/08/18 08:52:50 alan_k Exp $
 
 /**
  * A class for performing basic JavaScript operations
@@ -70,6 +70,11 @@ define('HTML_JAVASCRIPT_ERROR_NOEND', 501, true);
  */
 define('HTML_JAVASCRIPT_ERROR_NOFILE', 505, true);
 
+/**
+ * Cannot open file in write mode
+ */
+define('HTML_JAVASCRIPT_ERROR_WRITEFILE', 506, true);
+
 //Output modes
 /**
  * Just return the results (default mode)
@@ -95,7 +100,7 @@ if(!defined('HTML_JAVASCRIPT_NL')){
 }
 
 /** Convertion tools */
-require_once('HTML/Javascript/Convert.php');
+require_once 'HTML/Javascript/Convert.php';
 
 /**
  * Main Javascript class
@@ -130,18 +135,7 @@ class HTML_Javascript
      */
     var $_file = '';
 
-    // {{{ HTML_Javascript
-
-    /**
-     * Constructor - creates a new HTML_Javascript object
-     *
-     * @access public
-     */
-    function HTML_Javascript()
-    {
-    }
-
-    // }}} HTML_Javascript
+      
     // {{{ setOutputMode
 
     /**
@@ -200,7 +194,7 @@ class HTML_Javascript
     function raiseError($code)
     {
         $ret = null;
-        include_once('PEAR.php');
+        require_once 'PEAR.php';
         switch ($code) {
             case HTML_JAVASCRIPT_ERROR_NOSTART:
                 $ret = PEAR::raiseError(
@@ -208,20 +202,23 @@ class HTML_Javascript
                         HTML_JAVASCRIPT_ERROR_NOSTART
                         );
                 break;
+                
             case HTML_JAVASCRIPT_ERROR_NOEND:
                 $ret = PEAR::raiseError(
                         'Last script was not ended',
                         HTML_JAVASCRIPT_ERROR_NOEND
                         );
                 break;
+                
             case HTML_JAVASCRIPT_ERROR_NOFILE:
                 $ret = PEAR::raiseError(
                         'A filename must be specified for setoutputMode()',
                         HTML_JAVASCRIPT_ERROR_NOFILE
                         );
                 break;
+                
             default:
-                return HTML_Javascript_Convert::raiseError(
+                return PEAR::raiseError(
                         'Unknown Error',
                         HTML_JAVASCRIPT_ERROR_UNKNOWN
                         );
@@ -250,7 +247,6 @@ class HTML_Javascript
     {
         $this->_started = true;
         $s      = $defer ? 'defer="defer"' : '';
-        //$s      = $defer ? 'defer' : '';
         $ret    = "<script type=\"text/javascript\" ".$s.">".
                     HTML_JAVASCRIPT_NL;
         return $ret;
@@ -298,27 +294,30 @@ class HTML_Javascript
             return $str;
         }
         switch($mode) {
-            case HTML_JAVASCRIPT_OUTPUT_RETURN: {
+            case HTML_JAVASCRIPT_OUTPUT_RETURN:  
                 return $str;
                 break;
-            }
+             
 
-            case HTML_JAVASCRIPT_OUTPUT_ECHO: {
+            case HTML_JAVASCRIPT_OUTPUT_ECHO: 
                 echo $str;
                 return true;
                 break;
-            }
+             
 
-            case HTML_JAVASCRIPT_OUTPUT_FILE: {
-                $fp = fopen($file, 'ab');
-                fwrite($fp, $str);
+            case HTML_JAVASCRIPT_OUTPUT_FILE:  
+                if ($fp = @fopen($file, 'ab')){
+                    fwrite($fp, $str);
+                } else {
+                    HTML_Javascript::raiseError(HTML_JAVASCRIPT_ERROR_WRITEFILE);
+                }
                 return true;
                 break;
-            }
-            default: {
+             
+            default:  
                 HTML_Javascript::raiseError('Invalid output mode');
                 break;
-            }
+             
         }
     }
 
@@ -364,17 +363,17 @@ class HTML_Javascript
     function writeLine($str, $var = false)
     {
         if ($var) {
-            $ret = HTML_Javascript::_out(
+            return HTML_Javascript::_out(
                     'document.writeln('.$str.'+"<br />")'.HTML_JAVASCRIPT_NL
                     );
-        } else {
-            $ret = HTML_Javascript::_out(
-                        'document.writeln("'.
-                        HTML_Javascript_Convert::escapeString($str).
-                        '"+"<br />")'.HTML_JAVASCRIPT_NL
-                    );
         }
-        return $ret;
+        
+        return HTML_Javascript::_out(
+                    'document.writeln("'.
+                    HTML_Javascript_Convert::escapeString($str).
+                    '"+"<br />")'.HTML_JAVASCRIPT_NL
+                );
+        
     }
 
     // }}} writeLine
@@ -412,7 +411,7 @@ class HTML_Javascript
      * @param  bool   $var      whether $str is a JS var or not
      * @return string the processed string
      */
-    function confirm($assign, $str, $var = false)
+    function confirm($str,$assign, $var = false)
     {
         if($var) {
             $confirm = 'confirm(' . $str . ')' . HTML_JAVASCRIPT_NL;
@@ -471,8 +470,8 @@ class HTML_Javascript
      *                          status, location.
      *                          Can be also a boolean, and then all the attributes
      *                          are set to yes or no, according to the boolean value.
-     * @param  int   $top       the distance from the top, in pixels.
-     * @param  int   $left      the distance from the left, in pixels.
+     * @param  int   $top       the distance from the top, in pixels (only used if attr=false|true).
+     * @param  int   $left      the distance from the left, in pixels (only used if attr=false|true).
      * @return mixed PEAR_Error on error or the processed string.
      */
     function popup(
@@ -486,7 +485,7 @@ class HTML_Javascript
                 if($attr) {
                     $attr = array('yes', 'yes', 'yes', 'yes', 'yes', 'yes', $top, $left);
                 } else {
-                    $attr = array('no', 'no', 'no', 'no', 'no', 'no', $top, $height);
+                    $attr = array('no', 'no', 'no', 'no', 'no', 'no', $top, $left);
                 }
             }
         }

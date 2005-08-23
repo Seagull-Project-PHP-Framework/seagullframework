@@ -101,6 +101,8 @@ class RoleMgr extends SGL_Manager
         $input->permsToAdd      = $req->get('AddfrmRolePerms');
         $input->permsToRemove   = $req->get('RemovefrmRolePerms');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $aErrors = array();
         if ($input->submit && $input->action =='insert') {
@@ -245,10 +247,20 @@ class RoleMgr extends SGL_Manager
         $output->template = 'roleManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
 
+        $allowedSortFields = array('role_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY role_id ASC ';
+        }
+
         $query = "  SELECT
                         role_id, name, description, date_created, 
                         created_by, last_updated, updated_by 
-                    FROM {$conf['table']['role']}";
+                    FROM {$conf['table']['role']} " .$orderBy_query;
+
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(

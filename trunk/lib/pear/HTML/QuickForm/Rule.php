@@ -16,7 +16,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Rule.php,v 1.6 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Rule.php,v 1.2 2003/11/03 16:08:22 avb Exp $
 
 class HTML_QuickForm_Rule
 {
