@@ -15,6 +15,7 @@ IMPROVEMENTS
 BUGFIXES
 
 IMPROVEMENTS
+23-08-05    Release script now uploads API docs to sgl site for browsing
 19-08-05    Changed CSS z-index in style.php so FCK downdowns are not hidden
 19-08-05    Routine to get page execution time was improved to be more accurate, it    
             it now reports the same times as ZDE (Jochem Gugelot).

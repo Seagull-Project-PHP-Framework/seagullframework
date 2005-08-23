@@ -197,6 +197,14 @@ EOF
 }
 
 ##############################
+# scp api docs to sgl site
+##############################
+function uploadToSglSiteApiDocs()
+{
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_files/web/
+}
+
+##############################
 # scp changelog to sgl site
 ##############################
 function scpChangelogToSglSite()
@@ -223,12 +231,14 @@ exportSvnAndPackage
 
 uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
 packageApiDocs
 
 uploadToSfApiDocs
 
-scpChangelogToSglSite
+uploadToSglSiteApiDocs
+
+#scpChangelogToSglSite
 
 exit 0
