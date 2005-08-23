@@ -315,4 +315,13 @@ $words['Parent Org']='Parent Org';
 $words['Detected Perms']='Detected Perms';
 $words['Detected Orphaned Perms']='Detected Orphaned Perms';
 $words['Permission Manager :: Detect Orphaned']='Permission Manager :: Detect Orphaned';
+
+/* Login Data */
+$words['User Manager :: Login Data']='User Manager :: Login Data';
+$words['Login Time']='Login Time';
+$words['Remote IP']='Remote IP';
+$words['Deleted successfully']='Deleted successfully';
+$words['Are you sure?']='Are you sure?';
+$words['Logins']='Logins';
+
 ?>
