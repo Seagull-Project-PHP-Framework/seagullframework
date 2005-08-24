@@ -17,7 +17,7 @@
 // | Based on HTML_Common by: Adam Daniel <adaniel1@eesus.jnj.com>        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Element.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+// $Id: Element.php,v 1.36 2005/05/18 06:05:12 alan_k Exp $
 
 /**
  * Lightweight HTML Element builder and render
@@ -167,7 +167,9 @@ class HTML_Template_Flexy_Element {
                     $strAttr .= ' ' . $key;
                 }
             } else {
-                $strAttr .= ' ' . $key . '="' . htmlspecialchars($value) . '"';
+                // dont replace & with &amp;
+                $strAttr .= ' ' . $key . '="' . 
+                    str_replace('&amp;','&',htmlspecialchars($value)) . '"';
             }
             
         }
@@ -332,6 +334,17 @@ class HTML_Template_Flexy_Element {
                             isset($this->attributes['flexy:xhtml']) ? 'selected' : true;;
                         continue;
                     }
+                    // no value attribute try and use the contents.
+                    if (!isset($child->attributes['value'])
+                        && is_string($child->children[0])
+                        && in_array((string) $child->children[0], $value))
+                    {
+                        
+                        $this->children[$i]->attributes['selected'] =
+                            isset($this->attributes['flexy:xhtml']) ? 'selected' : true;
+                        continue;
+                    }
+                     
                     if (isset($child->attributes['value']) && 
                         isset($this->children[$i]->attributes['selected'])) 
                     {
