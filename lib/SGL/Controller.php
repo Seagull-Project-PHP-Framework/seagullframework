@@ -603,7 +603,8 @@ class SGL_Controller
         }
 
         //  prepare query count
-        if ($_SESSION['aPrefs']['showExecutionTimes']) {
+        if (!empty($_SESSION['aPrefs']['showExecutionTimes']) 
+                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
             $output->queryCount =  $GLOBALS['_SGL']['QUERY_COUNT'];            
         }
         //  send sitewide variables to page output
