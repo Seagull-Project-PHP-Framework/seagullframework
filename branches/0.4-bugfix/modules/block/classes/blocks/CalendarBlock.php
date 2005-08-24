@@ -19,7 +19,7 @@ class CalendarBlock
     function getBlockContent()
     {
     	$theme = $_SESSION['aPrefs']['theme'];
-    	$cssUrl = SGL_BASE_URL . '/js/jscal/calendar-small.css';
+    	$cssUrl = SGL_BASE_URL . '/js/jscal/calendar-win2k-cold-1.css';
     	$jsUrl = SGL_BASE_URL . '/js/jscal/calendar.js';
     	$langUrl = SGL_BASE_URL . '/js/jscal/lang/calendar-' . SGL::getCurrentLang() . '.js';
     	$setupUrl = SGL_BASE_URL . '/js/jscal/calendar-setup.js';
