@@ -1,6 +1,6 @@
 -- this was incorrectly called configmgr_insert before
 UPDATE `permission`
-   SET `name` = `configmgr_update` WHERE `permission_id` = 9;
+   SET `name` = 'configmgr_update' WHERE `permission_id` = 9;
 
 -- adding some new permission descriptions
 UPDATE `permission`
@@ -27,7 +27,7 @@ UPDATE `permission`
 UPDATE `permission`
   SET `description` = 'Permission to view Contact Us screen' WHERE `name` = 'contactusmgr_list';
 
-   UPDATE `permission`
+UPDATE `permission`
   SET `description` = 'Permission to view and edit config settings' WHERE `name` = 'configmgr_edit';
   
 UPDATE `permission`
