@@ -15,7 +15,7 @@ IMPROVEMENTS
 BUGFIXES
 
 IMPROVEMENTS
-29-08-05    Renamed ConfigMgr's 'insert' method to update to correctly reflect action, 
+29-08-05    Renamed ConfigMgr's '_insert' method to '_update' to correctly reflect action, 
             sql upgrade file provided in etc/sql_upgrades
 29-08-05    Added some permission descriptions (Rolandas Burbulis)
 23-08-05    Added ability to view login history for a given user (Rolandas Burbulis)
