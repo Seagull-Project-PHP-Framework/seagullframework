@@ -347,7 +347,7 @@ class PermissionMgr extends SGL_Manager
         }
 
         $query = "
-            SELECT  permission_id, name, module_id
+            SELECT  permission_id, name, module_id, description
             FROM    {$conf['table']['permission']}
             $whereClause
             $orderBy_query ";

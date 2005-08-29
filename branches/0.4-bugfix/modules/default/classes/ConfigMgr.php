@@ -94,7 +94,7 @@ class ConfigMgr extends SGL_Manager
 
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'), 
-            'insert' => array('insert', 'redirectToDefault'), 
+            'update' => array('update', 'redirectToDefault'), 
         );
     }
 
@@ -185,7 +185,7 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _insert(&$input, &$output)
+    function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();

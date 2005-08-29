@@ -15,6 +15,9 @@ IMPROVEMENTS
 BUGFIXES
 
 IMPROVEMENTS
+29-08-05    Renamed ConfigMgr's 'insert' method to update to correctly reflect action, 
+            sql upgrade file provided in etc/sql_upgrades
+29-08-05    Added some permission descriptions (Rolandas Burbulis)
 23-08-05    Added ability to view login history for a given user (Rolandas Burbulis)
 23-08-05    Release script now uploads API docs to sgl site for browsing
 19-08-05    Changed CSS z-index in style.php so FCK downdowns are not hidden
