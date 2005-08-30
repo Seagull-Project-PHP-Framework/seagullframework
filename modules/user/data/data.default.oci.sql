@@ -15,15 +15,15 @@ INSERT INTO organisation_type VALUES (0,'Default');
 -- Permission table
 --
 
-INSERT INTO permission VALUES (1, 'blockmgr_add', '', 1);
-INSERT INTO permission VALUES (2, 'blockmgr_edit', '', 1);
-INSERT INTO permission VALUES (3, 'blockmgr_delete', '', 1);
-INSERT INTO permission VALUES (4, 'blockmgr_reorder', '', 1);
-INSERT INTO permission VALUES (5, 'blockmgr_list', '', 1);
-INSERT INTO permission VALUES (6, 'contactusmgr_send', '', 2);
-INSERT INTO permission VALUES (7, 'contactusmgr_list', '', 2);
-INSERT INTO permission VALUES (8, 'configmgr_edit', '', 3);
-INSERT INTO permission VALUES (9, 'configmgr_insert', '', 3);
+INSERT INTO permission VALUES (1, 'blockmgr_add', 'Permission to add new block', 1);
+INSERT INTO permission VALUES (2, 'blockmgr_edit', 'Permission to edit existing block', 1);
+INSERT INTO permission VALUES (3, 'blockmgr_delete', 'Permission to remove block', 1);
+INSERT INTO permission VALUES (4, 'blockmgr_reorder', 'Permission to reorder blocks', 1);
+INSERT INTO permission VALUES (5, 'blockmgr_list', 'Permission to view block listing', 1);
+INSERT INTO permission VALUES (6, 'contactusmgr_send', 'Permission to submit contact info', 2);
+INSERT INTO permission VALUES (7, 'contactusmgr_list', 'Permission to view Contact Us screen', 2);
+INSERT INTO permission VALUES (8, 'configmgr_edit', 'Permission to view and edit config settings', 3);
+INSERT INTO permission VALUES (9, 'configmgr_update', 'Permission to update config values', 3);
 INSERT INTO permission VALUES (10, 'defaultmgr_list', '', 3);
 INSERT INTO permission VALUES (11, 'defaultmgr_showNews', '', 3);
 INSERT INTO permission VALUES (12, 'modulemgr_add', '', 3);
@@ -68,8 +68,6 @@ INSERT INTO permission VALUES (52, 'pagemgr_update', '', 9);
 INSERT INTO permission VALUES (53, 'pagemgr_delete', '', 9);
 INSERT INTO permission VALUES (54, 'pagemgr_reorder', '', 9);
 INSERT INTO permission VALUES (55, 'pagemgr_list', '', 9);
-INSERT INTO permission VALUES (56, 'newslettermgr_send', '', 10);
-INSERT INTO permission VALUES (57, 'newslettermgr_addressBook', '', 10);
 INSERT INTO permission VALUES (58, 'articleviewmgr_view', '', 11);
 INSERT INTO permission VALUES (59, 'articleviewmgr_summary', '', 11);
 INSERT INTO permission VALUES (60, 'articlemgr_add', '', 11);
@@ -173,7 +171,6 @@ INSERT INTO permission VALUES (171, 'userimportmgr', '', 12);
 INSERT INTO permission VALUES (172, 'userimportmgr_list', '', 12);
 INSERT INTO permission VALUES (173, 'userimportmgr_insertImportedUsers', '', 12);
 INSERT INTO permission VALUES (175, 'usermgr', '', 12);
-INSERT INTO permission VALUES (177, 'usersearchmgr_search', '', 12);
 INSERT INTO permission VALUES (178, 'usermgr_syncToRole', '', 12);
 INSERT INTO permission VALUES (179, 'userpreferencemgr', '', 12);
 INSERT INTO permission VALUES (181, 'rndmsgmgr', '', 13);
@@ -205,21 +202,8 @@ INSERT INTO permission VALUES (217, 'modulemgr', '', 3);
 INSERT INTO permission VALUES (219, 'modulemgr_edit', '', 3);
 INSERT INTO permission VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission VALUES (221, 'contactusmgr', '', 2);
-INSERT INTO permission VALUES (223, 'blockmgr', '', 1);
+INSERT INTO permission VALUES (223, 'blockmgr', 'Permission to use block manager', 1);
 INSERT INTO permission VALUES (224, 'bugmgr', '', 3);
-INSERT INTO permission VALUES (225, 'orgtypemgr_add', '', 12);
-INSERT INTO permission VALUES (226, 'orgtypemgr_insert', '', 12);
-INSERT INTO permission VALUES (227, 'orgtypemgr_edit', '', 12);
-INSERT INTO permission VALUES (228, 'orgtypemgr_update', '', 12);
-INSERT INTO permission VALUES (229, 'orgtypemgr_delete', '', 12);
-INSERT INTO permission VALUES (230, 'orgtypemgr_list', '', 12);
-INSERT INTO permission VALUES (232, 'usersearchmgr_add', '', 12);
-INSERT INTO permission VALUES (233, 'contenttypemgr_add', '', 11);
-INSERT INTO permission VALUES (234, 'contenttypemgr_insert', '', 11);
-INSERT INTO permission VALUES (235, 'contenttypemgr_edit', '', 11);
-INSERT INTO permission VALUES (236, 'contenttypemgr_update', '', 11);
-INSERT INTO permission VALUES (237, 'contenttypemgr_delete', '', 11);
-INSERT INTO permission VALUES (238, 'contenttypemgr_list', '', 11);
 
 --
 -- Dumping data for table preference

@@ -2,6 +2,7 @@
 -- Dumping data for table category
 --
 
+INSERT INTO category VALUES (0,'HiddenRoot','',0,0,0,0,0,0);
 INSERT INTO category VALUES (1,'PublisherRoot',NULL,0,1,1,4,1,1);
 INSERT INTO category VALUES (2,'example',NULL,1,1,2,3,1,2);
 INSERT INTO category VALUES (3,'OtherRoot',NULL,0,3,1,2,1,1);
