@@ -115,6 +115,7 @@ INSERT INTO permission (permission_id, name, description, module_id) VALUES (101
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (102, 'orgmgr_update', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (103, 'orgmgr_delete', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (104, 'orgmgr_list', '', 12);
+INSERT INTO permission (permission_id, name, description, module_id) VALUES (239, 'passwordmgr_redirecttoedit', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (105, 'passwordmgr_edit', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (106, 'passwordmgr_update', '', 12);
 INSERT INTO permission (permission_id, name, description, module_id) VALUES (107, 'passwordmgr_retrieve', '', 12);
@@ -280,6 +281,7 @@ INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES 
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (45, 2, 121);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (46, 2, 105);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (47, 2, 106);
+INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (35, 2, 239);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (48, 2, 142);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (49, 2, 143);
 INSERT INTO role_permission (role_permission_id, role_id, permission_id) VALUES (50, 2, 67);
@@ -334,6 +336,7 @@ INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (31, 2, 121);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (32, 2, 105);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (33, 2, 106);
+INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (43, 2, 239);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (34, 2, 142);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (35, 2, 143);
 INSERT INTO user_permission (user_permission_id, usr_id, permission_id) VALUES (36, 2, 67);
