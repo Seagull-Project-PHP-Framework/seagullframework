@@ -1,5 +1,5 @@
 <flexy:include src="userModuleSubNav.html" />
-<form name="users" method="post" flexy:ignore id="users">
+<form name="users" method="post" flexy:ignore id="users" action="{makeUrl(##,#user#,##)}">
 
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
     <span flexy:if="msgGet()">{msgGet()}</span>
