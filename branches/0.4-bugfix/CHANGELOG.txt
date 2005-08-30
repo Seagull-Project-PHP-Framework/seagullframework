@@ -15,6 +15,7 @@ IMPROVEMENTS
 BUGFIXES
 
 IMPROVEMENTS
+30-08-05    Turkish translation added (Metin Tinay)
 30-08-05    Added the db function unix_timestamp for oracle and postgres (Tobias Kuckuck)
 30-08-05    Added missing passwordmgr_redirecttoedit permission (Tobias Kuckuck)
 29-08-05    Renamed ConfigMgr's '_insert' method to '_update' to correctly reflect action, 
