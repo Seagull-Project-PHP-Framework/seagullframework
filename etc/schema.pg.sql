@@ -133,3 +133,11 @@ create table table_lock
    constraint PK_TABLE_LOCK primary key (lockID, lockTable)
 );
 
+-- ==============================================================
+--  Function: unix_timestamp
+-- ==============================================================
+-- for this to work, you have to activate the language plpgsql by calling
+-- "createlang plpgsql <dbname>" from commandline.
+
+CREATE or replace FUNCTION unix_timestamp (timestamp)
+RETURNS integer AS ' DECLARE datum ALIAS FOR $1; BEGIN RETURN EXTRACT (EPOCH FROM datum); END; ' LANGUAGE plpgsql;
