@@ -1,8 +1,5 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 
-<h2 class="sectionHeader">{translate(#Current Category#)}: {currentCat:h}</h2>
-<h3 class="colHeader">{translate(#You are here#)}: {path:h}</h3>
-
 {if:pager}<flexy:include src="pager.html" />{end:}
 
 {if:articleList}   
