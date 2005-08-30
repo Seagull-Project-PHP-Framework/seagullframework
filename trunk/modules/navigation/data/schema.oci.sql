@@ -74,7 +74,7 @@ right_id
 CREATE TABLE category (
   category_id NUMBER(10) 	NOT NULL,
   label VARCHAR(32) 		DEFAULT NULL,
-  perms VARCHAR(16) 		DEFAULT NULL,
+  perms VARCHAR(32) 		DEFAULT NULL,
   parent_id NUMBER(10) 		DEFAULT NULL,
   root_id NUMBER(10) 		DEFAULT NULL,
   left_id NUMBER(10) 		DEFAULT NULL,

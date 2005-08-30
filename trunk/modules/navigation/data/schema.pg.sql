@@ -82,7 +82,7 @@ create index AK_section_id_root_l_r on section
 create table category (
   category_id      INT4            NOT NULL default '0',
   label            VARCHAR(32)     default NULL,
-  perms            VARCHAR(16)     default NULL,
+  perms            VARCHAR(32)     default NULL,
   parent_id        INT4            default NULL,
   root_id          INT4            default NULL,
   left_id          INT4            default NULL,
