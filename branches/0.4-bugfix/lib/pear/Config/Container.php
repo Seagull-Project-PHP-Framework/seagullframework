@@ -122,7 +122,8 @@ class Config_Container {
             return PEAR::raiseError('Config_Container::addItem must be called on a section type object.', null, PEAR_ERROR_RETURN);
         }
         if (is_null($target)) {
-            $target =& $this;
+            //$target =& $this; - replaced w/sgl patch:
+            $target = clone($this);
         }
         if (strtolower(get_class($target)) != 'config_container') {
             return PEAR::raiseError('Target must be a Config_Container object in Config_Container::addItem.', null, PEAR_ERROR_RETURN);
