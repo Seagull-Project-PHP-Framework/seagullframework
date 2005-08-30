@@ -32,7 +32,7 @@ create table if not exists section
 create table if not exists category (
   category_id int(11) NOT NULL default '0',
   label varchar(32) default NULL,
-  perms varchar(16) default NULL,
+  perms varchar(32) default NULL,
   parent_id int(11) default NULL,
   root_id int(11) default NULL,
   left_id int(11) default NULL,
