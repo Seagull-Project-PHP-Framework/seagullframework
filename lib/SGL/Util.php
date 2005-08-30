@@ -222,7 +222,7 @@ class SGL_Util
         //  match files with php extension
         $classDir = $moduleDir . '/classes';
         $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME, 
-                create_function('$a', 'return preg_match("/.*Mgr\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Mgr\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Mgr/", $a, $matches); $a =  $matches[0]; return true;'));
@@ -276,7 +276,7 @@ class SGL_Util
 
         //  match files with *Nav.php format
         $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE, 
-                create_function('$a', 'return preg_match("/.*Nav\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Nav\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));
