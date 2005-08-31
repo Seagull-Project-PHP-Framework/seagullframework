@@ -90,4 +90,8 @@
 <!-- /////////////////////////////////////  END NAVIGATION STYLESHEET   //////////////////////////////-->
 </head>
 
+{if:GLOBALS.empty(onLoad)}
+<body>
+{else:}
 <body onload="{onLoad}">
+{end:}
