@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.23 2005/06/23 15:56:32 demian Exp $
+ * @version    CVS: $Id: Config.php,v 1.115 2005/08/21 22:48:38 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -216,7 +216,7 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -541,7 +541,7 @@ class PEAR_Config extends PEAR
         if (!$ftp_file) {
             $ftp_file = $this->get('remote_config');
         }
-        if ($ftp_file) {
+        if ($ftp_file && defined('PEAR_REMOTEINSTALL_OK')) {
             $this->readFTPConfigFile($ftp_file);
         }
         foreach ($this->configuration_info as $key => $info) {
@@ -653,7 +653,8 @@ class PEAR_Config extends PEAR
                     include_once 'Net/FTP.php';
                 }
             }
-            if (class_exists('Net_FTP')) {
+            if (class_exists('Net_FTP') &&
+                  (class_exists('PEAR_FTP') || PEAR_Common::isIncludeable('PEAR/FTP.php'))) {
                 require_once 'PEAR/FTP.php';
                 $this->_ftp = &new PEAR_FTP;
                 $this->_ftp->pushErrorHandling(PEAR_ERROR_RETURN);

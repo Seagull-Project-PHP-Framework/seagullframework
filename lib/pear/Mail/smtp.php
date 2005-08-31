@@ -21,7 +21,7 @@
  * SMTP implementation of the PEAR Mail interface. Requires the Net_SMTP class.
  * @access public
  * @package Mail
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 class Mail_smtp extends Mail {
 
@@ -267,7 +267,6 @@ class Mail_smtp extends Mail {
 
         /* If persistent connections are disabled, destroy our SMTP object. */
         if ($this->persist === false) {
-            echo "Disconnecting\n";
             $this->_smtp->disconnect();
             $this->_smtp = null;
         }

@@ -19,7 +19,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Exception.php,v 1.9 2005/06/23 15:56:34 demian Exp $
+ * @version    CVS: $Id: Exception.php,v 1.20 2005/08/07 15:30:49 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -99,7 +99,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  *
@@ -342,7 +342,9 @@ class PEAR_Exception extends Exception
             }
             $html .= '(' . implode(', ',$args) . ')'
                    . '</td>'
-                   . '<td>' . $v['file'] . ':' . $v['line'] . '</td></tr>' . "\n";
+                   . '<td>' . (isset($v['file']) ? $v['file'] : 'unknown')
+                   . ':' . (isset($v['line']) ? $v['line'] : 'unknown')
+                   . '</td></tr>' . "\n";
         }
         $html .= '<tr><td align="center">' . ($k+1) . '</td>'
                . '<td>{main}</td>'

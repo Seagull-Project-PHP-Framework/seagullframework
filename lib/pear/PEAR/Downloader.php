@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.16 2005/06/23 15:56:33 demian Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.89 2005/08/22 02:11:28 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -329,7 +329,7 @@ class PEAR_Downloader extends PEAR_Common
             $a = array();
             return $a;
         }
-        if (!isset($this->_options['nodeps'])) {
+        if (!isset($this->_options['nodeps']) && !isset($this->_options['offline'])) {
             $reverify = true;
             while ($reverify) {
                 $reverify = false;
@@ -346,6 +346,9 @@ class PEAR_Downloader extends PEAR_Common
                     }
                 }
             }
+        }
+        if (isset($this->_options['offline'])) {
+            $this->log(3, 'Skipping dependency download check, --offline specified');
         }
         if (!count($params)) {
             $a = array();

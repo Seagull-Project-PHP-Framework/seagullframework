@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.7 2005/06/23 15:56:40 demian Exp $
+// $Id: Validator.php,v 1.71 2005/08/21 05:24:31 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -105,6 +105,9 @@ class PEAR_PackageFile_v2_Validator
         }
         if (array_key_exists('_lastmodified', $test)) {
             unset($test['_lastmodified']);
+        }
+        if (array_key_exists('#binarypackage', $test)) {
+            unset($test['#binarypackage']);
         }
         if (array_key_exists('old', $test)) {
             unset($test['old']);
@@ -950,19 +953,14 @@ class PEAR_PackageFile_v2_Validator
                 '*dir->name->?baseinstalldir',
                 '*file->name->role->?baseinstalldir->?md5sum'
             );
-            // do a quick test for better error message
             if (isset($list['dir']) && isset($list['file'])) {
-                $first = false;
-                foreach ($list as $key => $tag) {
-                    if ($key == 'attribs') {
-                        continue;
-                    }
-                    $first = $key;
-                    break;
+                // stave off validation errors without requiring a set order.
+                $_old = $list;
+                if (isset($list['attribs'])) {
+                    $list = array('attribs' => $_old['attribs']);
                 }
-                if ($first == 'file') {
-                    $this->_dirMustBeFirst($dirs);
-                }
+                $list['dir'] = $_old['dir'];
+                $list['file'] = $_old['file'];
             }
         }
         if (!isset($list['attribs']) || !isset($list['attribs']['name'])) {
@@ -1578,15 +1576,6 @@ class PEAR_PackageFile_v2_Validator
             '%tag% cannot conflict with all OSes');
     }
 
-    function _dirsMustBeFirst($dir)
-    {
-        if (!$dir) {
-            $dir = '/';
-        }
-        $this->_stack->push(__FUNCTION__, 'error', array('dir' => $dir),
-            'In <dir name="%dir%">, child <dir> tags must precede child <file> tags');
-    }
-
     function _analyzeBundledPackages()
     {
         if (!$this->_isValid) {
@@ -1723,7 +1712,13 @@ class PEAR_PackageFile_v2_Validator
             if (!$fp = @fopen($file, "r")) {
                 return false;
             }
-            $contents = @fread($fp, filesize($file));
+            if (function_exists('file_get_contents')) {
+                fclose($fp);
+                $contents = file_get_contents($file);
+            } else {
+                $contents = @fread($fp, filesize($file));
+                fclose($fp);
+            }
         }
         $tokens = token_get_all($contents);
 /*

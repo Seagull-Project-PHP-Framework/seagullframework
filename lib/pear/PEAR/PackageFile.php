@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: PackageFile.php,v 1.7 2005/06/23 15:56:34 demian Exp $
+ * @version    CVS: $Id: PackageFile.php,v 1.29 2005/08/14 07:58:16 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -41,7 +41,7 @@ define('PEAR_PACKAGEFILE_ERROR_INVALID_PACKAGEVERSION', 2);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -74,22 +74,11 @@ class PEAR_PackageFile
         $this->_logger = &$l;
     }
 
-    function &parserFactory($version, $phpversion = false)
+    function &parserFactory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
             $a = false;
             return $a;
-        }
-        if ($phpversion) {
-            if (!in_array((int) $phpversion, array(4, 5))) {
-                $phpversion = 'PHP4';
-            }
-        } else {
-            $v = phpversion();
-            if (!in_array((int) $v{0}, array(4, 5))) {
-                $v = 5;
-            }
-            $phpversion = 'PHP' . $v{0};
         }
         include_once 'PEAR/PackageFile/Parser/v' . $version{0} . '.php';
         $version = $version{0};
@@ -107,22 +96,11 @@ class PEAR_PackageFile
         return 'PEAR_PackageFile_v';
     }
 
-    function &factory($version, $phpversion = false)
+    function &factory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
             $a = false;
             return $a;
-        }
-        if ($phpversion) {
-            if (!in_array((int) $phpversion, array(4, 5))) {
-                $phpversion = 'PHP4';
-            }
-        } else {
-            $v = phpversion();
-            if (!in_array((int) $v{0}, array(4, 5))) {
-                $v = 5;
-            }
-            $phpversion = 'PHP' . $v{0};
         }
         include_once 'PEAR/PackageFile/v' . $version{0} . '.php';
         $version = $version{0};
@@ -202,6 +180,15 @@ class PEAR_PackageFile
                 }
                 return $pf;
             } else {
+                if ($this->_config->get('verbose') > 0) {
+                    if ($this->_logger) {
+                        if ($pf->getValidationWarnings(false)) {
+                            foreach ($pf->getValidationWarnings(false) as $warning) {
+                                $this->_logger->log(0, 'ERROR: ' . $warning['message']);
+                            }
+                        }
+                    }
+                }
                 $a = PEAR::raiseError('Parsing of package.xml from file "' . $file . '" failed',
                     2, null, null, $pf->getValidationWarnings());
                 return $a;
@@ -339,12 +326,22 @@ class PEAR_PackageFile
         if (is_string($descfile) && strlen($descfile) < 255 &&
              !@is_file($descfile) || !is_readable($descfile) ||
              (!$fp = @fopen($descfile, 'r'))) {
-            return PEAR::raiseError("Unable to open $descfile");
+            $a = PEAR::raiseError("Unable to open $descfile");
+            return $a;
         }
 
         // read the whole thing so we only get one cdata callback
         // for each block of cdata
-        $data = @fread($fp, filesize($descfile));
+        if (function_exists('file_get_contents')) {
+            @fclose($fp);
+            $data = file_get_contents($descfile);
+        } else {
+            $data = '';
+            while (!feof($fp)) {
+                $data .= @fread($fp, 8192);
+            }
+            fclose($fp);
+        }
         $ret = &PEAR_PackageFile::fromXmlString($data, $state, $descfile, $archive);
         return $ret;
     }
@@ -384,7 +381,8 @@ class PEAR_PackageFile
                 }
             }
         } else {
-            return PEAR::raiseError("Cannot open '$info' for parsing");
+            $info = PEAR::raiseError("Cannot open '$info' for parsing");
+            return $info;
         }
         return $info;
     }

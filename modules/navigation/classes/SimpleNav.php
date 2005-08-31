@@ -374,7 +374,7 @@ class SimpleNav
             if (stristr($url, '#')) {
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
-                $anchorOffset = (strpos($anchorFragment, '&')) + 1;
+                $anchorOffset = (strpos($anchorFragment, '&amp;')) + 1;
                 $anchorEnd = $anchorStart + $anchorOffset; 
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 
