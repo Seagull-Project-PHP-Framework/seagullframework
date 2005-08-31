@@ -15,7 +15,7 @@
     if ($_SESSION['aPrefs']['showExecutionTimes']) {
         echo 'Execution Time = ' .$parseTime. ' ms, ' . $GLOBALS['_SGL']['QUERY_COUNT'] .' queries';
     }
-    echo '</div></body></html>';
+    echo '</div></div></body></html>';
     
     /**
      * Returns systime in ms.
