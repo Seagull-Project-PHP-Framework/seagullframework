@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+31-08-05    Some magic_quotes_gpc scenarios weren't dealt with correctly, now
+            fixed (Eric Persson)
 30-08-05    UserMgr Search/Sort/Pager fixes (Tobias Kuckuck)
 30-08-05    Moved clone() emulation into constants.php
 30-08-05    Added workaround in lib/pear/Config/Container.php for php 5.1 $this 
