@@ -509,8 +509,8 @@ class SGL_Url
         if (!empty($sessionInfo)) {
 
             //  determine glue
-            $glue = (preg_match("/\?pageID/i", $url)) ? '&' : '?';
-            $url .= $glue . $sessionInfo . '&/1/';
+            $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
+            $url .= $glue . $sessionInfo . '&amp;/1/';
         }
     }
     
