@@ -162,9 +162,12 @@ class SGL_Util
                     continue;
                 }
                 //  and anything without css extension
-                if (($ext = end(explode('.', $file))) != 'css') {
+                $parts = explode('.', $file);
+                $ext = end($parts);
+                if ($ext != 'css') {
                     continue;
                 }
+
                 $filename = substr($file, 0, strpos($file, '.'));
 
                 //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
