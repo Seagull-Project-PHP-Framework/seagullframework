@@ -79,6 +79,7 @@ rndmsg_message          = rndmsg_message
 role                    = role
 role_permission         = role_permission
 section                 = section
+sequence                = sequence
 user                    = usr
 user_permission         = user_permission
 user_preference         = user_preference
