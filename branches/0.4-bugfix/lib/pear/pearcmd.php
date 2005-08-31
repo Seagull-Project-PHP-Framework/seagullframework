@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.23 2005/06/23 15:56:28 demian Exp $
+// $Id: pearcmd.php,v 1.24 2005/03/21 14:59:31 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -29,8 +29,8 @@ define('PEAR_IGNORE_BACKTRACE', 1);
 /**
  * @nodep Gtk
  */
-if ('/var/www/html/seagull_dev/HEAD/seagull/lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', '/var/www/html/seagull_dev/HEAD/seagull/lib/pear');
+if ('/var/www/html/seagull/branches/0.4-bugfix/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/var/www/html/seagull/branches/0.4-bugfix/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0a12";
+$pear_package_version = "1.4.0b1";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';

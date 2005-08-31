@@ -18,13 +18,13 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: peclcmd.php,v 1.6 2005/06/23 15:56:28 demian Exp $
+// $Id: peclcmd.php,v 1.1 2005/02/21 05:30:56 cellog Exp $
 
 /**
  * @nodep Gtk
  */
-if ('/var/www/html/seagull_dev/HEAD/seagull/lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', '/var/www/html/seagull_dev/HEAD/seagull/lib/pear');
+if ('/var/www/html/seagull/branches/0.4-bugfix/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/var/www/html/seagull/branches/0.4-bugfix/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro

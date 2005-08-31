@@ -16,7 +16,7 @@
 // | Author: Sterling Hughes <sterling@php.net>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Find.php,v 1.3 2005/06/23 15:56:30 demian Exp $
+// $Id: Find.php,v 1.15 2005/08/11 07:38:53 tuupola Exp $
 //
 
 require_once 'PEAR.php';
@@ -25,7 +25,7 @@ require_once 'PEAR.php';
 *  Commonly needed functions searching directory trees
 *
 * @access public
-* @version $Id: Find.php,v 1.3 2005/06/23 15:56:30 demian Exp $
+* @version $Id: Find.php,v 1.15 2005/08/11 07:38:53 tuupola Exp $
 * @package File
 * @author Sterling Hughes <sterling@php.net>
 */
@@ -107,8 +107,13 @@ class File_Find
      */
     function &maptree($directory)
     {
-        /* TODO: make mapTree() statically callable */
 
+        /* if called statically */
+        if (!isset($this)  || !is_a($this, "File_Find")) {
+            $obj = &new File_Find();
+            return $obj->maptree($directory);
+        }
+      
         /* clear the results just in case */
         $this->files       = array();
         $this->directories = array();

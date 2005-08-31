@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: rw.php,v 1.3 2005/06/23 15:56:42 demian Exp $
+ * @version    CVS: $Id: rw.php,v 1.3 2005/08/13 22:53:27 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a10
  */
@@ -30,7 +30,7 @@ require_once 'PEAR/Task/Postinstallscript.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a10
  */
@@ -54,16 +54,20 @@ class PEAR_Task_Postinstallscript_rw extends PEAR_Task_Postinstallscript
         return 'postinstallscript';
     }
 
-    function addParamGroup($id, $params)
+    function addParamGroup($id, $params, $instructions = false)
     {
         if (isset($params[0]) && !isset($params[1])) {
             $params = $params[0];
         }
-        $this->_params[] =
+        $stuff =
             array(
                 'id' => $id,
-                'param' => $params,
             );
+        if ($instructions) {
+            $stuff['instructions'] = $instructions;
+        }
+        $stuff['param'] = $params;
+        $this->_params[] = $stuff;
     }
 
     function addConditionTypeGroup($id, $oldgroup, $param, $value, $conditiontype = '=')

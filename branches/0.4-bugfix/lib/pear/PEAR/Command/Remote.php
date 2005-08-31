@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.23 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Remote.php,v 1.79 2005/07/30 04:25:33 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -248,7 +248,8 @@ parameter.
             $data = '(no packages available yet)';
         } else {
             foreach ($available as $name => $info) {
-                $data['data'][] = array($name, isset($info['stable']) ? $info['stable'] : '-n/a-');
+                $data['data'][] = array($name, (isset($info['stable']) && $info['stable'])
+                    ? $info['stable'] : '-n/a-');
             }
         }
         $this->ui->outputData($data, $command);
@@ -327,6 +328,9 @@ parameter.
                 unset($local_pkgs[$pos]);
             }
 
+            if (isset($info['stable']) && !$info['stable']) {
+                $info['stable'] = null;
+            }
             $data['data'][$info['category']][] = array(
                 $reg->channelAlias($channel) . '/' . $name,
                 @$info['stable'],
