@@ -21,6 +21,7 @@ BUGFIXES
             issues.
 
 IMPROVEMENTS
+31-08-05    onload element attribute only included if event is non-empty (Philippe Lhoste)
 30-08-05    Turkish translation added (Metin Tinay)
 30-08-05    Added the db function unix_timestamp for oracle and postgres (Tobias Kuckuck)
 30-08-05    Added missing passwordmgr_redirecttoedit permission (Tobias Kuckuck)
