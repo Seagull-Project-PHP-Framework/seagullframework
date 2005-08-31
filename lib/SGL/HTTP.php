@@ -144,12 +144,11 @@ class SGL_HTTP_Request
         $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
         
         //  merge results with cleaned $_REQUEST values and $_POST
-        $sanitisedPost = SGL_String::dispelMagicQuotes($_POST);
-        $GLOBALS['_SGL']['REQUEST'] = is_array($_POST) 
-            ? array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $sanitisedPost)
-            : array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST']);
-        //$GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], 
-          //  SGL_String::dispelMagicQuotes($_POST));
+//        $sanitisedPost = SGL_String::dispelMagicQuotes($_POST);
+//        $GLOBALS['_SGL']['REQUEST'] = is_array($_POST) 
+//            ? array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $sanitisedPost)
+//            : array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST']);
+        $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
     }
 
     /**
