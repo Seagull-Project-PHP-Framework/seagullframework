@@ -78,7 +78,7 @@ FCKConfig.ToolbarSets["Default"] = [
 //  ['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
 //  '/',
     ['TextColor','BGColor'],
-    ['Style','FontFormat','FontName','FontSize'],
+    ['Style','FontFormat','FontName','FontSize']
 //  ['About']
 ] ;
 
