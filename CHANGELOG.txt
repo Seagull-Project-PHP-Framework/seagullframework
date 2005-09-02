@@ -21,6 +21,7 @@ BUGFIXES
             issues.
 
 IMPROVEMENTS
+02-08-05    Added postgres user and database creation script (Pierpaolo Toniolo)
 31-08-05    onload element attribute only included if event is non-empty (Philippe Lhoste)
 30-08-05    Turkish translation added (Metin Tinay)
 30-08-05    Added the db function unix_timestamp for oracle and postgres (Tobias Kuckuck)
