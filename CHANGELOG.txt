@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+02-08-05    Language problems causing js errors in FCK fixed again
 31-08-05    Some magic_quotes_gpc scenarios weren't dealt with correctly, now
             fixed (Eric Persson)
 30-08-05    UserMgr Search/Sort/Pager fixes (Tobias Kuckuck)
