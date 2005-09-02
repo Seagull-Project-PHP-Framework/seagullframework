@@ -187,7 +187,8 @@ class UserMgr extends RegisterMgr
      */
     function &_createUser()
     {
-        return new DataObjects_Usr();
+        $usr = new DataObjects_Usr();
+        return $usr;
     }
 
     function _insert(&$input, &$output)

@@ -18,8 +18,8 @@ BUGFIXES
             fixed (Eric Persson)
 30-08-05    UserMgr Search/Sort/Pager fixes (Tobias Kuckuck)
 30-08-05    Moved clone() emulation into constants.php
-30-08-05    Added workaround in lib/pear/Config/Container.php for php 5.1 $this 
-            issues.
+30-08-05    Seagull is not PHP5.1 compliant, this involved some local as
+            well as PEAR modifications.
 
 IMPROVEMENTS
 02-08-05    Static articles can now be edited inline
