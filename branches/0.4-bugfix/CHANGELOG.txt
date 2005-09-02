@@ -18,7 +18,7 @@ BUGFIXES
             fixed (Eric Persson)
 30-08-05    UserMgr Search/Sort/Pager fixes (Tobias Kuckuck)
 30-08-05    Moved clone() emulation into constants.php
-30-08-05    Seagull is not PHP5.1 compliant, this involved some local as
+30-08-05    Seagull is now PHP5.1 compliant, this involved some local as
             well as PEAR modifications.
 
 IMPROVEMENTS
