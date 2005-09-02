@@ -159,11 +159,13 @@ body {
     background-color: <?php echo $primary ?>;
     height: 50px;
 }
-#sgl #logo * {
+#sgl #logo {
     float: left;
     margin: 5px 5px 5px 10px;
     font-size: 2em;
+    font-weight: normal;
     color: <?php echo $primaryTextLight ?>;
+    text-decoration: none;
 }
 #sgl #login {
     float: right;
