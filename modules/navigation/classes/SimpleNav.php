@@ -215,6 +215,11 @@ class SimpleNav
             $section->children = false;
             $section->isCurrent = false;
             $section->childIsCurrent = false;
+            
+            //  if we're scraping a wikipage, put the title in globals
+            if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
+                $GLOBALS['_SGL']['REQUEST']['articleTitle'] = $section->title;
+            }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.

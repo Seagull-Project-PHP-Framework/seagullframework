@@ -46,7 +46,7 @@
                     <a href="{makeUrl(#edit#,#page#,#navigation#,results,#frmSectionId|section_id#,key)}">{translate(#Edit#)}</a>
                 </td>
                 <td align="center">{section[section_id]}</td>
-                <td>{section[resource_uri]}</td>
+                <td>{summarise(section[resource_uri])}</td>
                 <td align="center">{section[parent_id]}</td>
                 <td align="center">{section[order_id]}</td>
                 <td align="center">{if:section[is_enabled]} {translate(#Enabled#)} {else:} {translate(#Disabled#)} {end:}</td>
