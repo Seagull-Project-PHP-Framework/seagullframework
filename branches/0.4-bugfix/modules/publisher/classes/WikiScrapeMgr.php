@@ -99,14 +99,16 @@ class WikiScrapeMgr extends SGL_Manager
             'clean' => false,
         ); 
     
-        $tidy = new Tidy();
-        $tidy->parseString(implode("\n", $aLines), $options, 'utf8');
-        $tidy->cleanRepair();
-    
-        $tree = $tidy->body();
-    
-        $this->traverseTree($tree);
-        $output->wikiHtml = $this->html;
+        if (count($aLines)) {
+            $tidy = new Tidy();
+            $tidy->parseString(implode("\n", $aLines), $options, 'utf8');
+            $tidy->cleanRepair();
+        
+            $tree = $tidy->body();
+        
+            $this->traverseTree($tree);
+            $output->wikiHtml = $this->html;
+        }
     }
 
     function traverseTree($node) 
