@@ -255,8 +255,11 @@ class SGL_Util
         $filePath = $moduleDir . '/classes/' . $managerFileName;
         
         if (file_exists($filePath)) {
-            include_once($filePath);
-            $className = substr(array_pop(explode('/', $filePath)), 0, -4);
+            require_once $filePath;
+            $aElems = explode('/', $filePath);
+            $last = array_pop($aElems);
+            $className = substr($last, 0, -4);
+            
             $obj = new $className(); // extract classname
             $vars = get_object_vars($obj);
             $actions = array_keys($vars['_aActionsMapping']);
