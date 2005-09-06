@@ -77,9 +77,9 @@ class LoginBlock
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'
-                    <input name="frmUsername" value="" maxlength="36" type="text" />
+                    <input name="frmUsername" size="15" value="" maxlength="36" type="text" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Password').'
-                    <input name="frmPassword" maxlength="24" type="password" />
+                    <input name="frmPassword" size="15" maxlength="24" type="password" />
                     <p><input style="width: 150px;" class="formsubmit" name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
                     <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
                     <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>            
