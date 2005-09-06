@@ -74,6 +74,8 @@ class UserMgr extends RegisterMgr
             'list'                  => array('list'),
             'requestPasswordReset'  => array('requestPasswordReset'),
             'resetPassword'         => array('resetPassword', 'redirectToDefault'),
+            'requestChangeUserStatus'  => array('requestChangeUserStatus'),
+            'changeUserStatus'      => array('changeUserStatus', 'redirectToDefault'),
             'editPerms'             => array('editPerms'),
             'updatePerms'           => array('updatePerms', 'redirectToDefault'),
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),
@@ -98,6 +100,7 @@ class UserMgr extends RegisterMgr
         $input->moduleId        = $req->get('frmModuleId');
         $input->from            = ($req->get('pageID'))? $req->get('pageID'):0;
         $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
+        $input->changeStatusNotify = ($req->get('frmChangeStatusNotify') == 'on') ? 1 : 0;
         $input->user->is_email_public = (isset($input->user->is_email_public)) ? 1 : 0;
         $input->user->is_acct_active = (isset($input->user->is_acct_active)) ? 1 : 0;
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
@@ -440,6 +443,60 @@ class UserMgr extends RegisterMgr
         SGL :: raiseMsg('Deleted successfully');
         SGL_HTTP :: redirect(array ('action' => 'viewLogin', 'frmUserID' => "{$input->userID}"));
 
+    }
+    
+    function _requestChangeUserStatus(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->pageTitle = $this->pageTitle . ' :: Change status';
+        $output->template = 'userStatusChange.html';
+        $oUser = & $this->_createUser();
+        $oUser->get($input->userID);
+        $output->user = $oUser;
+    }
+    
+    function _changeUserStatus(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $oUser = & $this->_createUser();
+        $oUser->get($input->userID);
+        $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
+        $success = $oUser->update();
+        if ($input->changeStatusNotify && $success) {
+            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
+        }
+        //  redirect on success
+        if ($success) {
+            SGL::raiseMsg('Status changed successfully');
+        } else {
+            $output->template = 'userManager.html';
+            SGL::raiseError('There was a problem modifying the record', 
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
+    }
+    
+    function _sendStatusNotification($oUser, $isEnabled)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR . '/Emailer.php';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $realName = $oUser->first_name . ' ' . $oUser->last_name;
+        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
+        $options = array(
+                'toEmail'   => $oUser->email,
+                'toRealName' => $recipientName,
+                'isEnabled' => $isEnabled,
+                'fromEmail' => $conf['email']['admin'],
+                'replyTo'   => $conf['email']['admin'],
+                'subject'   => 'Account Status Notification from ' . $conf['site']['name'],
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                    $this->module . '/email_status_notification.php',
+                'username'  => $oUser->username,
+        );
+        $message = & new SGL_Emailer($options);
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
     
     function _requestPasswordReset(&$input, &$output)

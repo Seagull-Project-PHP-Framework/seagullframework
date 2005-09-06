@@ -22,6 +22,8 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+06-08-05    Admins now notified of new registrations, separate screen for activating/
+            disabling accounts
 06-08-05    Added shell script to symlink templates into modules
 06-08-05    Updated country fields in all DB schemas to CHAR(2) (Philippe Lhoste)
 05-08-05    Added ability to scrape and include wiki pages, requires php5 + tidy
