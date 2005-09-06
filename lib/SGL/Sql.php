@@ -167,6 +167,8 @@ class SGL_Sql
     function rebuildSequences($tables = null)
     {
         $db =& SGL_DB::singleton();
+        $conf = $GLOBALS['_SGL']['CONF'];
+        
         switch ($db->phptype) {
 
         case 'mysql':
@@ -181,7 +183,7 @@ class SGL_Sql
             foreach ($aTables as $table) {
                 $primary_field = '';
                 //  we only build sequences for tables that are not sequences themselves
-                if ($table == 'sequence' || substr($table, $suffixRawStart) == $suffixRaw) {
+                if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
                     continue;
                 }
                     
@@ -215,7 +217,7 @@ class SGL_Sql
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> 'sequence') {
+                if ($table <> $conf['table']['sequence']) {
                     $info = $db->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -231,7 +233,7 @@ class SGL_Sql
                     }
                 }
             }
-            $sth = $db->prepare('REPLACE INTO sequence (name, id) VALUES(?,?)');
+            $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
             $db->executeMultiple($sth, $data);
             break;            
            
@@ -240,7 +242,7 @@ class SGL_Sql
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> 'sequence') {
+                if ($table <> $conf['table']['sequence']) {
                     $info = $db->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -256,6 +258,7 @@ class SGL_Sql
             }
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
             $suffix = $db->getOption('seqname_format');
+            
             //  we'll just create the sequences manually...why not?
             foreach ($data as $k) {
                 $tableName = $k[0];
