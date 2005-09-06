@@ -42,7 +42,11 @@
             {end:}
             <td>{aValue[email]}</td>
             <td>{aValue[role_name]}</td>
-            <td align="center">{if:aValue[is_acct_active]} {translate(#Active#)} {else:} {translate(#Disabled#)} {end:}</td>
+            <td align="center">
+                {if:aValue[is_acct_active]}<a href="{makeUrl(#requestChangeUserStatus#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#Active#)} </a>
+                {else:} <a href="{makeUrl(#requestChangeUserStatus#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#Disabled#)}</a>
+                {end:}
+            </td>
             <td align="center">
                 <a href="{makeUrl(#edit#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">
                     <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#edit#)}" />

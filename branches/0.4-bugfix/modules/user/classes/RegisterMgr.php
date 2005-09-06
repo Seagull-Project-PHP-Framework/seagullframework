@@ -235,7 +235,7 @@ class RegisterMgr extends SGL_Manager
 
         if ($success) {
             //  send email confirmation according to config
-            if ($conf['RegisterMgr']['sendEmailConf']) {
+            if ($conf['RegisterMgr']['sendEmailConfUser']) {
                 $bEmailSent = $this->_sendEmail($oUser);
                 if (!$bEmailSent) {
                     SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
@@ -273,6 +273,10 @@ class RegisterMgr extends SGL_Manager
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
+        if ($conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options['Cc'] = $conf['email']['admin'];
+        }
+                
         $message = & new SGL_Emailer($options);
         $message->prepare();
         return $message->send();
