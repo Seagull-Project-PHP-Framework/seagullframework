@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+07-09-05    Refactored Category functionality into SGL_Category (Aymerick Jehanne)
 30-08-05    Modified category.perms field to take 32 chars (Tobias Kuckuck)
 10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
 10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)

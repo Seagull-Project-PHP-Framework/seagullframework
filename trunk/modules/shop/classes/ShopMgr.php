@@ -40,7 +40,7 @@
 
 require_once SGL_ENT_DIR . '/Product.php';
 require_once SGL_ENT_DIR . '/Price.php';
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 if ($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) {
     require_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
@@ -70,7 +70,7 @@ class ShopMgr extends SGL_Manager
             'order' => array ('order'),);
             
        
-        $this->catMgr = & new CategoryMgr();
+        $this->cat = & new SGL_Category();
         
         //TO DO: activate rate manager
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -107,9 +107,9 @@ class ShopMgr extends SGL_Manager
         
         if ($input->action == 'list' or $input->action == 'fastList') {
             if (!empty ($input->catId) and $input->catId != $conf['ShopMgr']['rootCatID']) {
-                $input->childrenCat = $this->catMgr->getChildren($input->catId);    
+                $input->childrenCat = $this->cat->getChildren($input->catId);    
             } else {
-                $input->childrenCat = $this->catMgr->getChildren($conf['ShopMgr']['rootCatID']);
+                $input->childrenCat = $this->cat->getChildren($conf['ShopMgr']['rootCatID']);
             }
         }
 
@@ -136,8 +136,8 @@ class ShopMgr extends SGL_Manager
         
         // generate the path and current category name from the top page.
         if (isset($output->catID) and !empty($output->catID)) {
-            $output->path = $this->catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1', true);
-            $output->currentCat = $this->catMgr->getLabel($output->catID);
+            $output->path = $this->cat->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1', true);
+            $output->currentCat = $this->cat->getLabel($output->catID);
         }
     }
     
@@ -232,7 +232,7 @@ class ShopMgr extends SGL_Manager
             $category_query = '(product.cat_id='.$input->catId;
             foreach($input->childrenCat as $subCat) {
                 $category_query .= ' OR product.cat_id='.$subCat['category_id'];
-                $subSub = $this->catMgr->getChildren($subCat['category_id']);
+                $subSub = $this->cat->getChildren($subCat['category_id']);
                 foreach($subSub as $subSubCat) {
                     $category_query .= ' OR product.cat_id='.$subSubCat['category_id'];
                 }

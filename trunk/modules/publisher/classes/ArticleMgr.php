@@ -42,7 +42,6 @@ require_once SGL_CORE_DIR . '/Item.php';
 require_once SGL_ENT_DIR . '/Category.php';
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
 
 /**
  * For performing operations on Article objects.

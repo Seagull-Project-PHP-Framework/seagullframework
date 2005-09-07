@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: PriceMgr.php,v 1.4 2005/05/09 23:55:20 demian Exp $
 
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 require_once 'Spreadsheet/Excel/Writer.php';
 
 require_once SGL_ENT_DIR . '/Product.php';
@@ -73,7 +73,7 @@ class PriceMgr extends SGL_Manager
             'export'       => array('export'),
         );
         
-        $this->catMgr		= new CategoryMgr(); 
+        $this->cat  		= new SGL_Category(); 
         
         //TO DO: activeaza rate manager
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -221,7 +221,7 @@ class PriceMgr extends SGL_Manager
 		    		// export category path
 		    		$worksheet->write($xlsRow,0,'');
 		    		$xlsRow++;
-		    		$worksheet->write($xlsRow,0,$this->catMgr->getBreadCrumbs($catItem['id'],false),$format_path);
+		    		$worksheet->write($xlsRow,0,$this->cat->getBreadCrumbs($catItem['id'],false),$format_path);
 		    		$worksheet->write($xlsRow,1,'',$format_path);
 		    		$worksheet->write($xlsRow,2,'',$format_path);
 		    		$worksheet->write($xlsRow,3,'',$format_path);
@@ -275,17 +275,17 @@ class PriceMgr extends SGL_Manager
     function _getCatTree($id = 0, $level = 1) {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $result = $this->catMgr->getChildren($id); 
+        $result = $this->cat->getChildren($id); 
         $categoryList = array();
         for ($x = 0; $x < count($result); $x++) {
             //  only generate link if node if leaf
-            if ($this->catMgr->isBranch($result[$x]['category_id'])) {
+            if ($this->cat->isBranch($result[$x]['category_id'])) {
                 $categoryList[] =  array('level' => $level, 'label' => $result[$x]['label'], 'id'=> $result[$x]['category_id']);
             } else {
                 $categoryList[] =  array('level' => $level, 'label' => $result[$x]['label'], 'id'=> $result[$x]['category_id']);
             }
             // if branch then recurse
-            if ($this->catMgr->isBranch($result[$x]['category_id'])) {
+            if ($this->cat->isBranch($result[$x]['category_id'])) {
                 $branch = $this->_getCatTree($result[$x]['category_id'], $level+1);
                 foreach($branch as $catItem)        
                     $categoryList[] = $catItem; 
