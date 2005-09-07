@@ -25,7 +25,7 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 //
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 /**
  * Menu_AnchorTOC class
@@ -38,14 +38,14 @@ require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
  * @access  public
  * @since   PHP 4.1
  */
-class Menu_AnchorTOC extends CategoryMgr
+class Menu_AnchorTOC extends SGL_Category
 {
     var $module = 'navigation';
 
     function Menu_AnchorTOC()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::CategoryMgr();
+        parent::SGL_Category();
     }
 
     function render($id = 0)

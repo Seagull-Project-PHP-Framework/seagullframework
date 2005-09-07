@@ -39,7 +39,7 @@
 // $Id: ShopAdminMgr.php,v 1.4 2005/05/09 23:55:20 demian Exp $
 
 require_once SGL_MOD_DIR.'/shop/classes/ShopMgr.php';
-require_once SGL_MOD_DIR.'/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 if ($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) {
     require_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
@@ -287,9 +287,9 @@ class ShopAdminMgr extends ShopMgr {
         
         // Set current category name and category path
         if (isset($output->catID) and isset($output->catID) > 0) {
-            $catMgr = & new CategoryMgr();
-            $output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1', true);
-            $output->currentCat = $catMgr->getLabel($output->catID);
+            $cat = & new SGL_Category();
+            $output->path = $cat->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1', true);
+            $output->currentCat = $cat->getLabel($output->catID);
         }
 
     }
@@ -338,7 +338,7 @@ class ShopAdminMgr extends ShopMgr {
         // Product category
         if (in_array('cat_id', $required)) {
             if (isset ($product->cat_id) and $product->cat_id > 0) {
-                $oCategory = new CategoryMgr();
+                $oCategory = new SGL_Category();
                 if (strlen($oCategory->getLabel($product->cat_id)) < 1)
                     $aErrors['cat_id'] = SGL_Output::translate('Invalid data');
             } else
