@@ -335,6 +335,7 @@ class PageMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = &SGL_DB::singleton();
 
         $output->mode = 'Edit section';
@@ -619,6 +620,11 @@ class PageMgr extends SGL_Manager
             foreach ($sectionNodesArray as $k => $sectionNode) {
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
+                if (is_numeric($sectionNode['title'])) {
+                    $trans = & SGL_Translation::singleton();
+                    $trans->setLang(SGL_Translation::getLangID());
+                    $sectionNode['title'] = $trans->get($sectionNode['title'], 'nav');
+                }
                 $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer . $sectionNode['title'] . "</option>\n";
             }
         }

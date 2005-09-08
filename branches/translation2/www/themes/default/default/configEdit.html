@@ -697,6 +697,28 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
+        <th colspan="3">{translate(#Translation options#)}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Container#)}</td>
+        <td class="fieldValue">
+            <select name="conf[translation][container]">
+                {generateSelect(aTranslationContainers,conf[translation][container]):h}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Fallback Language#)}</td>
+        <td class="fieldValue">
+            <select name="conf[translation][fallbackLang]">
+                {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
         <th colspan="3">{translate(#Cookie options#)}</th>
     </tr>
     <tr>

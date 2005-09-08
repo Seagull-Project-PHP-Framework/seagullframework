@@ -123,6 +123,7 @@ class SGL_Translation
         default:
             $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }        
+
         return $oTranslation;                
     }
     
@@ -168,69 +169,53 @@ class SGL_Translation
     function getTranslations($module, $lang, $fallbackLang = false) 
     {
         if (!empty($module) && !empty($lang)) {
+            $conf = &$GLOBALS['_SGL']['CONF'];
             
-            //  fetch translations from database and cache
-            $cache = &SGL::cacheSingleton();
-            
-            //  returned cached translations else fetch from db and cache
-            if ($serialized = $cache->get($module, 'translation_'. $lang)) {
-                $words = unserialize($serialized);
-                SGL::logMessage('translations from cache '. $module, PEAR_LOG_DEBUG);
-                return $words;
-                
-            } else {
-                $conf = &$GLOBALS['_SGL']['CONF'];
-                
-                //  fallback lang clause
-                $fallbackLang = ($fallbackLang) ? $fallbackLang : $conf['translation']['fallbackLang'];            
+            //  fallback lang clause
+            $fallbackLang = ($fallbackLang) ? $fallbackLang : $conf['translation']['fallbackLang'];            
 
-                //  if langauge not installed resort to fallback
-                if (!array_key_exists($lang, $GLOBALS['_SGL']['INSTALLED_LANGUAGES'])) {
-                    $lang = $fallbackLang;
-                }
-                                
-                //  instantiate translation2 object
-                $translation = &SGL_Translation::singleton();
-                               
-                //  set language
-                $langInstalled = $translation->setLang($lang);
-                                
-                //  set translation group
-                $translation->setPageID($module);
-                
-                //  instantiate cachelite decorator and set options
-                if ($conf['cache']['enabled']) {
-                    $translation = &$translation->getDecorator('CacheLiteFunction');
-                    $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
-                    $translation->setOption('lifeTime', $conf['cache']['lifetime']);
-                }
-                                    
-                //  create decorator for fallback language
-                if ($lang !== $fallbackLang && $fallbackLang) {
-                    $translation = & $translation->getDecorator('Lang');
-                    $translation->setOption('fallbackLang', $fallbackLang);
-                }
-                
-                //  fetch translations
-                $words = $translation->getPage();
-                
-                //  serialize and cache
-                $serialized = serialize($words);
-                $cache->save($serialized, $module, 'translation_'. $lang);
+            //  if langauge not installed resort to fallback
+            if (!array_key_exists($lang, $GLOBALS['_SGL']['INSTALLED_LANGUAGES'])) {
+                $lang = $fallbackLang;
+            }
+                            
+            //  instantiate translation2 object
+            $translation = &SGL_Translation::singleton();
+                           
+            //  set language
+            $langInstalled = $translation->setLang($lang);
+                            
+            //  set translation group
+            $translation->setPageID($module);
+                                               
+            //  create decorator for fallback language
+            if ($lang !== $fallbackLang && $fallbackLang) {
+                $translation = & $translation->getDecorator('Lang');
+                $translation->setOption('fallbackLang', $fallbackLang);
+            }
 
-                SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
-
-                return $words;
+            //  instantiate cachelite decorator and set options
+            if ($conf['cache']['enabled']) {
+                $translation = &$translation->getDecorator('CacheLiteFunction');
+                $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
+                $translation->setOption('lifeTime', $conf['cache']['lifetime']);
             }
             
+            //  fetch translations
+            $words = $translation->getPage();
+            
+            SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
+
+            return $words;
+           
         } else {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);    
         }
     }
     
-    function getLangs($lang)
+    function getLangID()
     {
-        $translation = &SGL_Translation::singleton();
+        return str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET']);
     }
 
 }

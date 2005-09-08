@@ -57,7 +57,8 @@ class ConfigMgr extends SGL_Manager
     var $aMtaBackends;
     var $aCensorModes;
     var $aNavDrivers;
-
+    var $aTranslationContainers;
+    
     function ConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -96,6 +97,7 @@ class ConfigMgr extends SGL_Manager
             'edit'   => array('edit'), 
             'insert' => array('insert', 'redirectToDefault'), 
         );
+        $this->aTranslationContainers = array('file' => 'file', 'db' => 'database');         
     }
 
     function validate($req, &$input)
@@ -178,6 +180,8 @@ class ConfigMgr extends SGL_Manager
         $output->aNavDrivers = $this->aNavDrivers;
         $output->aStyleFiles = $this->aStyleFiles;
         $output->aSessHandlers = $this->aSessHandlers;
+        $output->aTranslationContainers = $this->aTranslationContainers;
+        $output->aInstalledLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
     }
 
     function _edit(&$input, &$output)

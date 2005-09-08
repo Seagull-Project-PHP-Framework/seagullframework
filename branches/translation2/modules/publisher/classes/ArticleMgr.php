@@ -376,7 +376,7 @@ class ArticleMgr extends SGL_Manager
         $output->aLanguages = $trans->getLangs();
         
         //  fetch current language
-        $langID = str_replace('-', '_', SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET']);
+        $langID = SGL_Translation::getLangID();
         
         //  grab article with template type from session preselected
         $aResult = $this->retrievePaginated(

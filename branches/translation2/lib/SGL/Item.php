@@ -863,7 +863,7 @@ class SGL_Item
         }
         if ($itemID) {
             $item = & new SGL_Item($itemID);
-            $langID = str_replace('-', '_', SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET']);            
+            $langID = SGL_Translation::getLangID();            
             $ret = $item->preview($bPublished, $langID);
             if (!is_a($ret, 'PEAR_Error')) {
                 $ret['creatorName'] = $item->creatorName;
@@ -943,8 +943,8 @@ class SGL_Item
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
 
-        $languageID = str_replace('-', '_', SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET']);
         $trans = &SGL_Translation::singleton();
+        $languageID = SGL_Translation::getLangID();
         $trans->setLang($languageID);
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             $aPagedData['data'][$aKey]['addition'] = $trans->get($aValues['addition'], 'content');   
