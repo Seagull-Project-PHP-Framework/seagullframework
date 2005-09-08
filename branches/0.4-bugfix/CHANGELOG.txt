@@ -27,6 +27,8 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+08-09-05    Cleaned up implementation of alternating row colours with switchRowClass
+            (Riccardo Magliocchetti)
 08-09-05    Cleaned up stylesheet importing
 08-09-05    DA_User::getPermsByModuleId() now returns perms sorted by perm name
             for easier management
