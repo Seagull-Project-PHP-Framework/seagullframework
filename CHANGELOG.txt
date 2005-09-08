@@ -29,6 +29,7 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+08-09-05    Added new RSS exporter module (Fabio Bacigalupo)
 08-09-05    Cleaned up implementation of alternating row colours with switchRowClass
             (Riccardo Magliocchetti)
 08-09-05    Cleaned up stylesheet importing
