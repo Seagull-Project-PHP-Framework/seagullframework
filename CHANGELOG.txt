@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+08-09-05    The 'passwordmgr_redirectToEdit' failed because of case-sensitivity,
+            now fixed
 02-09-05    Fallback to auto-detected language causing js errors in 
             FCK, fixed again
 31-08-05    Some magic_quotes_gpc scenarios weren't dealt with correctly, now
@@ -23,6 +25,7 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+08-09-05    Cleaned up stylesheet importing
 08-09-05    DA_User::getPermsByModuleId() now returns perms sorted by perm name
             for easier management
 08-09-05    getDefaultPageParams() factored out into SGL_Manager, all forced logouts

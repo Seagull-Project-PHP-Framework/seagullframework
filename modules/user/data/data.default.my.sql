@@ -104,7 +104,7 @@ INSERT INTO permission VALUES (101, 'orgmgr_edit', '', 12);
 INSERT INTO permission VALUES (102, 'orgmgr_update', '', 12);
 INSERT INTO permission VALUES (103, 'orgmgr_delete', '', 12);
 INSERT INTO permission VALUES (104, 'orgmgr_list', '', 12);
-INSERT INTO permission VALUES (239, 'passwordmgr_redirecttoedit', '', 12);
+INSERT INTO permission VALUES (239, 'passwordmgr_redirectToEdit', '', 12);
 INSERT INTO permission VALUES (105, 'passwordmgr_edit', '', 12);
 INSERT INTO permission VALUES (106, 'passwordmgr_update', '', 12);
 INSERT INTO permission VALUES (107, 'passwordmgr_retrieve', '', 12);
