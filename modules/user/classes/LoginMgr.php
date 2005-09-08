@@ -136,38 +136,9 @@ class LoginMgr extends SGL_Manager
         SGL_HTTP_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out');
         
-        //  get logout page
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $moduleName = $conf['site']['defaultModule'];
-        $managerName = $conf['site']['defaultManager'];
-        $defaultParams = $conf['site']['defaultParams'];
-        $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
-        
-        $aParams = array(
-            'moduleName'    => $moduleName,
-            'managerName'   => $managerName,
-            );
-        
-        //  convert string into hash and merge with $aParams
-        $aRet = array();            
-        if ($numElems = count($aDefaultParams)) {
-            $aTmp = array();
-            for ($x = 0; $x < $numElems; $x++) {
-                if ($x % 2) { // if index is odd
-                    $aTmp['varValue'] = urldecode($aDefaultParams[$x]);
-                } else {
-                    // parsing the parameters
-                    $aTmp['varName'] = urldecode($aDefaultParams[$x]);
-                }
-                //  if a name/value pair exists, add it to request
-                if (count($aTmp) == 2) {
-                    $aRet[$aTmp['varName']] = $aTmp['varValue'];
-                    $aTmp = array();                
-                }
-            }
-        }
-        $aMergedParams = array_merge($aParams, $aRet);   
-        SGL_HTTP::redirect($aMergedParams);
+        //  get default params for logout page
+        $aParams = $this->getDefaultPageParams();
+        SGL_HTTP::redirect($aParams);
     }
 
     function _list(&$input, &$output)
@@ -186,6 +157,7 @@ class LoginMgr extends SGL_Manager
             WHERE   username = " . $dbh->quote($username) . "
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
+        
         $aResult = $dbh->getRow($query, DB_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];
