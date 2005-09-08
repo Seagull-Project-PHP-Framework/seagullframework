@@ -238,11 +238,14 @@ th {
 .narrow {
     width: 60%;
 }
-.sgl-row-light {
+.sgl-row-light, .sgl-row-light-bold {
     background-color: <?php echo $tableRowLight ?>;
 }
-.sgl-row-dark {
+.sgl-row-dark, .sgl-row-dark-bold {
     background-color: <?php echo $tableRowDark ?>;
+}
+.sgl-row-light-bold, .sgl-row-dark-bold {
+    font-weight: bold;
 }
 
 /****************************** LAYOUT : MAIN *********************************/
