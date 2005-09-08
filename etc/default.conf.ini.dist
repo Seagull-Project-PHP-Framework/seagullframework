@@ -125,6 +125,7 @@ sendmailPath            = /usr/sbin/sendmail
 sendmailArgs            = -t -i
 ; SMTP backend params
 smtpHost                = 127.0.0.1
+smtpLocalHost           = seagull.phpkitchen.com
 smtpPort                = 25
 smtpAuth                = 0
 smtpUsername            =
