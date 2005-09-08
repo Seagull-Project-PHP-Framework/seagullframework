@@ -215,7 +215,7 @@ class DA_User
                 FROM {$this->conf['table']['permission']} p, {$this->conf['table']['module']} m
                 WHERE p.module_id = m.module_id
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
             break;
 
@@ -228,7 +228,7 @@ class DA_User
                 SELECT permission_id, name
                 FROM {$this->conf['table']['permission']}
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAssoc($query);
         }
 

@@ -195,9 +195,9 @@ class SGL_Manager
                             PEAR::raiseError('infinite loop detected, clear cookies and check perms', 
                                 SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
                         }
-                        $redirect = array(  'moduleName'    => 'default', 
-                                            'managerName'   => 'default');
-                        SGL_HTTP::redirect($redirect);
+                        //  get default params for logout page
+                        $aParams = $this->getDefaultPageParams();
+                        SGL_HTTP::redirect($aParams);
                     }
                 }
             }
@@ -236,6 +236,47 @@ class SGL_Manager
         } else {
             $output->template = 'docBlank.html';
         }
+    }
+    
+    /**
+     * Returns details of the module/manager/params defaults
+     * set in configuration, used for logouts and redirects.
+     *
+     * @return array
+     */
+    function getDefaultPageParams()
+    {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $moduleName = $conf['site']['defaultModule'];
+        $managerName = $conf['site']['defaultManager'];
+        $defaultParams = $conf['site']['defaultParams'];
+        $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
+        
+        $aParams = array(
+            'moduleName'    => $moduleName,
+            'managerName'   => $managerName,
+            );
+            
+        //  convert string into hash and merge with $aParams
+        $aRet = array();            
+        if ($numElems = count($aDefaultParams)) {
+            $aTmp = array();
+            for ($x = 0; $x < $numElems; $x++) {
+                if ($x % 2) { // if index is odd
+                    $aTmp['varValue'] = urldecode($aDefaultParams[$x]);
+                } else {
+                    // parsing the parameters
+                    $aTmp['varName'] = urldecode($aDefaultParams[$x]);
+                }
+                //  if a name/value pair exists, add it to request
+                if (count($aTmp) == 2) {
+                    $aRet[$aTmp['varName']] = $aTmp['varValue'];
+                    $aTmp = array();                
+                }
+            }
+        }
+        $aMergedParams = array_merge($aParams, $aRet);
+        return $aMergedParams;
     }
 }
 ?>
