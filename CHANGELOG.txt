@@ -31,6 +31,9 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+09-09-05    Improved session management so now it is possible to search sessions
+            with more meaningful results and single sessions per user can be enforced.
+            Also new "who's online" block added (Louay Gammo)
 09-09-05    Organisations disabled by default, makes the system easier to 
             understand hopefully
 09-09-05    Updated perms and perms and assignments to reflect new modules

@@ -117,6 +117,32 @@
         </td>
     </tr>
     <tr>
+        <td class="fieldName">{translate(#Extended Session#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[extended_session]">{error[extended_session]}</div>
+            {generateRadioPair(#conf[site][extended_session]#,conf[site][extended_session]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Enforce Single User#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[single_user]">{error[single_user]}</div>
+            {generateRadioPair(#conf[site][single_user]#,conf[site][single_user]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
         <td class="fieldName">{translate(#Enable left/right columns#)}</td>
         <td class="fieldValue">
             {generateRadioPair(#conf[site][blocksEnabled]#,conf[site][blocksEnabled]):h}

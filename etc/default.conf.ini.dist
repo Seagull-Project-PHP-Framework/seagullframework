@@ -10,6 +10,9 @@ name                    = seagull
 
 [site]
 sessionMaxLifetime      = 0 ; until the browser is closed
+extended_session        = 0;
+single_user             = false;
+sessionHandler          = file
 name                    = Seagull Framework
 showLogo                = false
 
@@ -19,7 +22,6 @@ compression             = false
 outputBuffering         = false
 banIpEnabled            = false
 tidyhtml                = true
-sessionHandler          = file
 blocksEnabled           = true
 safeDelete              = true
 frontScriptName         = index.php
