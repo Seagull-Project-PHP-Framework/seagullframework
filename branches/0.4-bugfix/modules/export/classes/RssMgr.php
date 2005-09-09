@@ -31,7 +31,7 @@ class RssMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $this->module   = 'export';        
+        $this->module   = 'export';
         $this->masterTemplate  = 'masterFeed.html';
         $this->template = 'masterRss.xml';
         
@@ -100,8 +100,8 @@ class RssMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $output->template = 'masterRss.xml';
-        $this->feed->title = SGL_String::translate("news");
-        $this->feed->description = SGL_String::translate("news");
+        $this->feed->title = 'RSS Title';
+        $this->feed->description = 'here is the description';
         $this->feed->category[]["content"] = "News";
         
         $limit = $this->normalizeLimit($input->limit);
