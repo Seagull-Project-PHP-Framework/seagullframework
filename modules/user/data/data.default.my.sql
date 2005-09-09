@@ -104,7 +104,6 @@ INSERT INTO permission VALUES (101, 'orgmgr_edit', '', 12);
 INSERT INTO permission VALUES (102, 'orgmgr_update', '', 12);
 INSERT INTO permission VALUES (103, 'orgmgr_delete', '', 12);
 INSERT INTO permission VALUES (104, 'orgmgr_list', '', 12);
-INSERT INTO permission VALUES (239, 'passwordmgr_redirectToEdit', '', 12);
 INSERT INTO permission VALUES (105, 'passwordmgr_edit', '', 12);
 INSERT INTO permission VALUES (106, 'passwordmgr_update', '', 12);
 INSERT INTO permission VALUES (107, 'passwordmgr_retrieve', '', 12);
@@ -197,6 +196,53 @@ INSERT INTO permission VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission VALUES (221, 'contactusmgr', '', 2);
 INSERT INTO permission VALUES (223, 'blockmgr', 'Permission to use block manager', 1);
 INSERT INTO permission VALUES (224, 'bugmgr', '', 3);
+INSERT INTO permission VALUES (225, 'rssmgr_news', '', 14);
+INSERT INTO permission VALUES (239, 'passwordmgr_redirectToEdit', '', 12);
+INSERT INTO permission VALUES (240, 'orgtypemgr', NULL, 12);
+INSERT INTO permission VALUES (241, 'orgtypemgr_add', NULL, 12);
+INSERT INTO permission VALUES (242, 'orgtypemgr_insert', NULL, 12);
+INSERT INTO permission VALUES (243, 'orgtypemgr_edit', NULL, 12);
+INSERT INTO permission VALUES (244, 'orgtypemgr_update', NULL, 12);
+INSERT INTO permission VALUES (245, 'orgtypemgr_delete', NULL, 12);
+INSERT INTO permission VALUES (246, 'orgtypemgr_list', NULL, 12);
+INSERT INTO permission VALUES (247, 'userimportmgr_redirectToUserMgr', NULL, 12);
+INSERT INTO permission VALUES (248, 'usermgr_requestChangeUserStatus', NULL, 12);
+INSERT INTO permission VALUES (249, 'usermgr_changeUserStatus', NULL, 12);
+INSERT INTO permission VALUES (250, 'usermgr_viewLogin', NULL, 12);
+INSERT INTO permission VALUES (251, 'usermgr_truncateLoginTbl', NULL, 12);
+INSERT INTO permission VALUES (252, 'usersearchmgr', NULL, 12);
+INSERT INTO permission VALUES (253, 'usersearchmgr_add', NULL, 12);
+INSERT INTO permission VALUES (254, 'usersearchmgr_search', NULL, 12);
+INSERT INTO permission VALUES (255, 'contenttypemgr', NULL, 11);
+INSERT INTO permission VALUES (256, 'contenttypemgr_add', NULL, 11);
+INSERT INTO permission VALUES (257, 'contenttypemgr_insert', NULL, 11);
+INSERT INTO permission VALUES (258, 'contenttypemgr_edit', NULL, 11);
+INSERT INTO permission VALUES (259, 'contenttypemgr_update', NULL, 11);
+INSERT INTO permission VALUES (260, 'contenttypemgr_delete', NULL, 11);
+INSERT INTO permission VALUES (261, 'contenttypemgr_list', NULL, 11);
+INSERT INTO permission VALUES (262, 'wikiscrapemgr', NULL, 11);
+INSERT INTO permission VALUES (263, 'wikiscrapemgr_list', NULL, 11);
+INSERT INTO permission VALUES (264, 'listmgr', NULL, 10);
+INSERT INTO permission VALUES (265, 'listmgr_list', NULL, 10);
+INSERT INTO permission VALUES (266, 'listmgr_send', NULL, 10);
+INSERT INTO permission VALUES (267, 'listmgr_addressBook', NULL, 10);
+INSERT INTO permission VALUES (268, 'listmgr_listSubscribers', NULL, 10);
+INSERT INTO permission VALUES (269, 'listmgr_editSubscriber', NULL, 10);
+INSERT INTO permission VALUES (270, 'listmgr_updateSubscriber', NULL, 10);
+INSERT INTO permission VALUES (271, 'listmgr_deleteSubscriber', NULL, 10);
+INSERT INTO permission VALUES (272, 'listmgr_listLists', NULL, 10);
+INSERT INTO permission VALUES (273, 'listmgr_addList', NULL, 10);
+INSERT INTO permission VALUES (274, 'listmgr_editList', NULL, 10);
+INSERT INTO permission VALUES (275, 'listmgr_updateList', NULL, 10);
+INSERT INTO permission VALUES (276, 'listmgr_deleteLists', NULL, 10);
+INSERT INTO permission VALUES (277, 'newslettermgr_subscribe', NULL, 10);
+INSERT INTO permission VALUES (278, 'newslettermgr_unsubscribe', NULL, 10);
+INSERT INTO permission VALUES (279, 'newslettermgr_authorize', NULL, 10);
+INSERT INTO permission VALUES (280, 'categorymgr_reorder', NULL, 9);
+INSERT INTO permission VALUES (281, 'categorymgr_reorderUpdate', NULL, 9);
+INSERT INTO permission VALUES (282, 'rssmgr', NULL, 14);
+INSERT INTO permission VALUES (283, 'bugmgr_list', NULL, 3);
+INSERT INTO permission VALUES (284, 'bugmgr_send', NULL, 3);
 
 #
 # Dumping data for table `preference`
@@ -260,6 +306,7 @@ INSERT INTO role_permission VALUES (31, 2, 38);
 INSERT INTO role_permission VALUES (32, 2, 84);
 INSERT INTO role_permission VALUES (33, 2, 85);
 INSERT INTO role_permission VALUES (34, 2, 86);
+INSERT INTO role_permission VALUES (35, 2, 239);
 INSERT INTO role_permission VALUES (36, 2, 41);
 INSERT INTO role_permission VALUES (37, 2, 40);
 INSERT INTO role_permission VALUES (38, 2, 46);
@@ -272,7 +319,6 @@ INSERT INTO role_permission VALUES (44, 2, 118);
 INSERT INTO role_permission VALUES (45, 2, 121);
 INSERT INTO role_permission VALUES (46, 2, 105);
 INSERT INTO role_permission VALUES (47, 2, 106);
-INSERT INTO role_permission VALUES (35, 2, 239);
 INSERT INTO role_permission VALUES (48, 2, 142);
 INSERT INTO role_permission VALUES (49, 2, 143);
 INSERT INTO role_permission VALUES (50, 2, 67);
@@ -289,6 +335,12 @@ INSERT INTO role_permission VALUES (63, 2, 149);
 INSERT INTO role_permission VALUES (68, 0, 138);
 INSERT INTO role_permission VALUES (69, 0, 224);
 INSERT INTO role_permission VALUES (70, 0, 121);
+INSERT INTO role_permission VALUES (71, 0, 225);
+INSERT INTO role_permission VALUES (72, 0, 263);
+INSERT INTO role_permission VALUES (73, 2, 224);
+INSERT INTO role_permission VALUES (74, 2, 150);
+INSERT INTO role_permission VALUES (75, 2, 225);
+INSERT INTO role_permission VALUES (76, 2, 263);
 
 #
 # Dumping data for table `user_permission`
@@ -328,7 +380,6 @@ INSERT INTO user_permission VALUES (30, 2, 118);
 INSERT INTO user_permission VALUES (31, 2, 121);
 INSERT INTO user_permission VALUES (32, 2, 105);
 INSERT INTO user_permission VALUES (33, 2, 106);
-INSERT INTO user_permission VALUES (43, 2, 239);
 INSERT INTO user_permission VALUES (34, 2, 142);
 INSERT INTO user_permission VALUES (35, 2, 143);
 INSERT INTO user_permission VALUES (36, 2, 67);
@@ -338,7 +389,12 @@ INSERT INTO user_permission VALUES (39, 2, 61);
 INSERT INTO user_permission VALUES (40, 2, 63);
 INSERT INTO user_permission VALUES (41, 2, 66);
 INSERT INTO user_permission VALUES (42, 2, 147);
+INSERT INTO user_permission VALUES (43, 2, 239);
 INSERT INTO user_permission VALUES (46, 2, 149);
+INSERT INTO user_permission VALUES (47, 2, 224);
+INSERT INTO user_permission VALUES (48, 2, 150);
+INSERT INTO user_permission VALUES (49, 2, 225);
+INSERT INTO user_permission VALUES (50, 2, 263);
 
 #
 # Dumping data for table `user_preference`
@@ -360,5 +416,3 @@ INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 
 INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','admin@example.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
 INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','seagull@example.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
-
-
