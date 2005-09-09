@@ -96,6 +96,5 @@ $words['more info'] = 'altre info';
 $words['Contributed by'] = 'Autore';
 $words['contributed by'] = 'autore';
 $words['full story'] = 'leggi';
-
-
+$words['WikiScrape Manager'] = 'WikiScrape Manager';
 ?>
