@@ -111,6 +111,21 @@ class LoginMgr extends SGL_Manager
         $conf = & $GLOBALS['_SGL']['CONF'];
         if ($res = $this->_doLogin($input->username, $input->password)) {
 
+            // Get the user id from the current session
+            $uid = SGL_HTTP_Session::getUid();
+
+            // Check for multiple user sessions: allow one only excluding current one.
+            $multiple = SGL_HTTP_Session::getUserSessionCount($uid, session_id());
+            if ($multiple > 0) {
+                if ($conf['site']['single_user']) {
+                    SGL_HTTP_Session::destroyUserSessions($uid, session_id());
+                    SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
+                } else {
+                    // Issue warning only
+                    SGL::raiseMsg('You have multiple sessions on this site!');
+                }
+            }
+
             //  if redirect captured
             if (!empty($input->redir)) {
                 SGL_HTTP::redirect(urldecode($input->redir));
