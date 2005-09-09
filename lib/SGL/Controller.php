@@ -674,6 +674,7 @@ class SGL_Controller
             'flexyIgnore'       => SGL_FLEXY_IGNORE,
             'globals'           => true,
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
+            
         );
 
         // Configure Flexy to use SGL ModuleOutput Plugin 
@@ -692,6 +693,7 @@ class SGL_Controller
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
         $templ = & new HTML_Template_Flexy();
         $templ->compile($output->masterTemplate);
+#$templ->compile('masterRssTmp.html');
 
         //  if some Flexy 'elements' exist in the output object, send them as
         //  2nd arg to Flexy::bufferedOutputObject()

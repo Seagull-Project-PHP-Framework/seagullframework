@@ -1,5 +1,3 @@
 <?php
-$words = array(
-);
+$words = array();
 ?>
-
