@@ -602,11 +602,6 @@ class SGL_Controller
             $output->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
 
-        //  prepare query count
-        if (!empty($_SESSION['aPrefs']['showExecutionTimes']) 
-                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
-            $output->queryCount =  $GLOBALS['_SGL']['QUERY_COUNT'];            
-        }
         //  send sitewide variables to page output
         $output->siteName     = $this->conf['site']['name'];
         $output->newWinHeight = $this->conf['popup']['winHeight'];
@@ -653,7 +648,18 @@ class SGL_Controller
 		}
         //  get all html onLoad events
         $output->onLoad = $output->getAllOnLoadEvents();
-
+        
+        //  get performance info
+        if (!empty($_SESSION['aPrefs']['showExecutionTimes']) 
+                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
+                    
+            //  prepare query count
+            $output->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
+            
+            //  and execution time
+            $output->executionTime = getSystemTime() - $GLOBALS['_SGL']['START_TIME'];
+        }
+        
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
@@ -674,7 +680,6 @@ class SGL_Controller
             'flexyIgnore'       => SGL_FLEXY_IGNORE,
             'globals'           => true,
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
-            
         );
 
         // Configure Flexy to use SGL ModuleOutput Plugin 
@@ -693,7 +698,6 @@ class SGL_Controller
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
         $templ = & new HTML_Template_Flexy();
         $templ->compile($output->masterTemplate);
-#$templ->compile('masterRssTmp.html');
 
         //  if some Flexy 'elements' exist in the output object, send them as
         //  2nd arg to Flexy::bufferedOutputObject()
