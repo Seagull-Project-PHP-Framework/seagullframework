@@ -435,7 +435,9 @@ class UrlTest extends UnitTestCase {
             'foo[foo1]',
             'bar[bar1]',
             'baz[]',
-            'quux'
+            'quux',
+            'baz[]',
+            'quux2',
           );
         $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
         
@@ -456,6 +458,7 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['action'], 'list');
         $this->assertEqual($ret['foo'], array('foo1' => 'bar[bar1]'));
         $this->assertEqual($ret['baz'][0], 'quux');
+        $this->assertEqual($ret['baz'][1], 'quux2');
     }
     
     function testMakeLink()
