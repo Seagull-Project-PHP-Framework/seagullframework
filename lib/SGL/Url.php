@@ -346,8 +346,9 @@ class SGL_Url
             {
                 //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
                 preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
-                if (!array_key_exists($matches[1], $GLOBALS['_SGL']['REQUEST'])) {
-                    $aQsParams[$matches[1]] = array();
+                if (    !array_key_exists($matches[1], $GLOBALS['_SGL']['REQUEST'])
+                    &&  !array_key_exists($matches[1], $aQsParams)) {
+                        $aQsParams[$matches[1]] = array();
                 }
                 //  no key given => append to array                
                 if (empty($matches[2])) {

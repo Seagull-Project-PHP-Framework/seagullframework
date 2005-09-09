@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+09-09-05    Fixed a bug where non-indexed arrays could be overwritten
+            (Lorenzo Alberton)
 08-09-05    Some SMTP servers had problems with Mail_smtp's localhost default
             value, this is now catered for (Chris McKay)
 08-09-05    Server vars now interpreted correctly on IIS 6.0, note:
