@@ -20,6 +20,7 @@
 /*  FOOTER  */
         'Execution Time' => 'Execution Time',
         'seconds' => 'seconds',
+        'ms' => 'ms',
         'queries'=>'queries',
         'allocated'=>'allocated',
         'Powered by' => 'Powered by',
