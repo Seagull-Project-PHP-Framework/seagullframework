@@ -33,7 +33,7 @@
     <tr>
         <td>
             <h3>{translate(pageTitle)}
-                <span style="font-size: 0.5em">[<a href="#" onClick="toggleDisplay('articleHelp')">{translate(#more info#)}</a>]</span>
+                <span class="small">[<a href="#" onClick="toggleDisplay('articleHelp')">{translate(#more info#)}</a>]</span>
             </h3>
         </td>
         <span flexy:if="msgGet()">{msgGet()}</span> 
@@ -44,7 +44,7 @@
     </tr>
 </table>
 
-<div id="articleHelp" style="display:none;">
+<div id="articleHelp" class="hide">
 <table class="wide">
     <tr>
         <td colspan="2"><p>{translate(#Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:#)}

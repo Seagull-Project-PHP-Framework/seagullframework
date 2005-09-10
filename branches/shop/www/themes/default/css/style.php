@@ -50,7 +50,7 @@
     header('Content-Type: text/css');
 
     // Get last modified time of file
-    $srvModTime  = getlastmod();
+    $srvModTime = getlastmod();
 
     // exit out of script if cached on client
     if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
@@ -133,6 +133,12 @@
 
     /* Button like border colors */
     $buttonBorderColors     = '#ffffff #333333 #333333 #ffffff';
+    
+    // include local style file
+    $localStyle = './style.local.php';
+    if (file_exists($localStyle)) {
+        include_once $localStyle;
+    }    
 ?>
 
 /******************************************************************************/
@@ -149,32 +155,33 @@ body {
 
 /******************************* LAYOUT : HEADER ******************************/
 
-#sgl-header {
+#sgl #header {
     background-color: <?php echo $primary ?>;
     height: 50px;
 }
-#sgl-header-left {
+#sgl #logo {
     float: left;
     margin: 5px 5px 5px 10px;
     font-size: 2em;
+    font-weight: normal;
     color: <?php echo $primaryTextLight ?>;
+    text-decoration: none;
 }
-#sgl-header-right {
+#sgl #login {
     float: right;
-    margin: 10px;
-    margin-left: 0;
+    margin: 10px 20px 10px 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl-header-right a {
+#sgl #login a {
     padding: 0 5px;
     text-decoration: none;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl-header-right a:hover {
+#sgl #login a:hover {
     text-decoration: underline;
 }
-#sgl-header-right #headerLogAction {
+#sgl #login #logAction {
     float: left;
     margin-left: 1em;
     padding: 0.2em;
@@ -182,17 +189,17 @@ body {
     border-color: <?php echo $buttonBorderColors ?>;
     background-color: <?php echo $primaryLight ?>;
 }
-#sgl-header-right #headerUserInfo {
+#sgl #login #userInfo {
     float: left;
     padding-top: 0.35em;
 }
-#sgl-header-right #headerUserInfo .guest {
+#sgl #login #userInfo .guest {
     font-weight: bold;
 }
-#sgl-header-right #bugReporter {
-    float: left;
-    margin: 4px; 
-    background: url('<?php echo $baseUrl ?>/images/bug.png') no-repeat;
+#sgl #bugReporter {
+    position: absolute;
+    right: 4px;
+    top: 12px;
 }
 
 /***************************** LAYOUT : TABLES ********************************/
@@ -240,23 +247,23 @@ th {
 
 /****************************** LAYOUT : MAIN *********************************/
 
-#sgl-main {
+#sgl #container {
     top: <?php echo $blocksMarginTop ?>;
 }
 
 /************************ LAYOUT : LEFT & RIGHT BLOCKS ************************/
 
-#sgl-blocks-left, #sgl-blocks-right {
+#sgl #leftSidebar, #sgl #rightSidebar {
     position: absolute;
     margin-top: <?php echo $blocksMarginTop ?>;
     top: 0;
-    z-index:1;
+    z-index: 1;
 }
-#sgl-blocks-left {
+#sgl #leftSidebar {
     width: <?php echo $blocksWidthLeft ?>;
     left: 0;
 }
-#sgl-blocks-right {
+#sgl #rightSidebar {
     width: <?php echo $blocksWidthRight ?>;
     right: 0;
 }
@@ -266,10 +273,10 @@ th {
 .options-block {
     margin: 20px 0;
 }
-#sgl-blocks-left .blockContainer, #sgl-blocks-right .blockContainer {
+#sgl .blockContainer {
     margin: 4px 1px 0 1px;
 }
-.blockHeader {
+#sgl .blockHeader {
     background-color: <?php echo $blocksBackgroundTitle ?>;
     color: <?php echo $blocksColorTitle ?>;
     line-height: 1.5em;
@@ -278,7 +285,7 @@ th {
     border: 1px solid <?php echo $blocksBorderTitle ?>;
     margin: 0;
 }
-.blockContent {
+#sgl .blockContent {
     background-color: <?php echo $blocksBackgroundBody ?>;
     color: <?php echo $blocksColorBody ?>;
     font-size: 0.9em;
@@ -289,39 +296,39 @@ th {
 
 /*************************** LAYOUT : MIDDLE BLOCKS ***************************/
 
-#sgl-blocks-middle, #sgl-blocks-middle-nocols, #sgl-blocks-middle-leftcol, #sgl-blocks-middle-rightcol {
+#sgl #content, #sgl #content-nocols, #sgl #content-leftcol, #sgl #content-rightcol {
     position: relative;
     margin: 0 <?php echo $blocksWidthRight; ?> 0 <?php echo $blocksWidthLeft ?>;
     width: auto;
     min-width: 20%;
     font-size: 0.9em;
-    z-index: 2;
+    /*z-index: 2;*/
     padding: 0 20px;
 }
-#sgl-blocks-middle #options {
+#sgl #content #options {
     float: right;
     width: 28%;
 }
-#sgl-blocks-middle-nocols {
+#sgl #content-nocols {
     margin: 0;
 }
-#sgl-blocks-middle-leftcol {
+#sgl #content-leftcol {
     margin: 0 0 0 <?php echo $blocksWidthLeft ?>;
 }
-#sgl-blocks-middle-rightcol {
+#sgl #content-rightcol {
     margin: 0 <?php echo $blocksWidthRight ?> 0 0;
 }
 /* Holly Hack here so that tooltips don't act screwy:
  * http://www.positioniseverything.net/explorer/threepxtest.html */
 /* Hide next from Mac IE plus non-IE \*/
-* html #sgl-blocks-middle {
+* html #sgl #content {
     height: 1%;
 }
 /* End hide from IE5/mac plus non-IE */
 
 /******************************* LAYOUT : FOOTER ******************************/
 
-#sgl-footer {
+#sgl #footer {
     position: relative;
     float: middle;
     clear: both;
@@ -404,6 +411,9 @@ img {
 .error {
     color: <?php echo $errorTextMedium ?>;
 }
+.hide {
+    display: none;
+}
 .small {
     font-size: 0.8em;
 }
@@ -450,6 +460,11 @@ img {
     font-weight: bold;
     text-align: right;
     line-height: 18px;
+}
+.uploadLayer {
+    position: relative;
+    left: 10px;
+    top: 0;
 }
     
 /* /////////////// Article Manager /////////////// */
@@ -499,7 +514,7 @@ img {
 .newsItem {
     border: 1px solid <?php echo $tertiaryDark ?>;
     margin: 0 auto;
-    padding: 0 0 0 10px;
+    padding: 0 10px 10px 10px;
     background-color: <?php echo $errorTextLight ?>;
 }
 fieldset {
@@ -632,6 +647,13 @@ ul.bullets li {
 .bgnd {
     background-color: <?php echo $secondaryLight ?>;
     border: 1px solid <?php echo $tertiaryDark ?>;
+}
+.bgnd a, a.noDecoration {
+    text-decoration: none;
+}
+.bgnd a {
+    color: <?php echo $secondaryDark ?>;
+    font-weight: normal;
 }
 .treeMenuDefault {
     font-size: 11px;

@@ -1,33 +1,31 @@
-<!-- left column -->
-<div id="sgl-blocks-left">
+<div id="leftSidebar">
 
-<div id="sgl-nav" flexy:if="isVerticalNav(GLOBALS[_SGL][CONF][navigation][stylesheet])">
+<div id="nav" flexy:if="isVerticalNav(GLOBALS[_SGL][CONF][navigation][stylesheet])">
     {navigation:h}
 </div>
 
 {foreach:blocksLeft,key,valueObj}
-<div id="sgl-blocks-left-item{key}" class="blockContainer">
+<div class="blockContainer">
     {if:valueObj.title_class}
-    <div id="sgl-blocks-left-item-title{key}" class="{valueObj.title_class}">
+    <div class="{valueObj.title_class}">
         {valueObj.title}
     </div>
     {else:}
-    <div id="sgl-blocks-left-item-title{key}" class="blockHeader">
+    <div class="blockHeader">
         {valueObj.title}
     </div>
     {end:} 
 
     {if:valueObj.body_class}
-    <div id="sgl-blocks-left-item-body{key}" class="{valueObj.body_class}">
+    <div class="{valueObj.body_class}">
         {valueObj.content:h}
     </div>
     {else:}
-    <div id="sgl-blocks-left-item-body{key}" class="blockContent">
+    <div class="blockContent">
         {valueObj.content:h}
     </div>
     {end:}
 </div>
 {end:}
 
-</div>
-   
+</div>   
