@@ -1,0 +1,9 @@
+CHANGELOG SHOP
+==============
++-----------------------+
+| VERSION: 0.0.1        |
++-----------------------+
+BUGFIXES
+10-09-05	Updated code to work with SGL_Category
+
+IMPROVEMENTS
