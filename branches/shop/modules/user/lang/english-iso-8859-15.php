@@ -122,6 +122,9 @@ $words['aSecurityQuestions'][1] = 'Favourite pet\'s name';
 $words['aSecurityQuestions'][2] = 'Memorable date (dd/mm/yyyy)';
 $words['aSecurityQuestions'][3] = 'Memorable place';
 $words['aSecurityQuestions'][4] = 'Your mother\'s maiden name';
+$words['aSecurityQuestions'][5] = 'Favourite movie\'s name';
+$words['aSecurityQuestions'][6] = 'Favourite song\'s name';
+$words['aSecurityQuestions'][7] = 'Favourite cocktail\'s name';
 $words['return to browse'] = 'return to browse';
 $words['back to Account'] = 'back to Account';
 $words['change password'] = 'change password';
@@ -135,7 +138,7 @@ $words['Password must be between 5 to 10 characters'] = 'Password must be betwee
 $words['Passwords are not the same'] = 'Passwords are not the same';
 $words['You have entered your original password incorrectly'] = 'You have entered your original password incorrectly';
 $words['Please confirm password'] = 'Please confirm password';
-$words['username min length'] = 'Your username must be alphanumeric with at least 6 characters and no spaces';
+$words['username min length'] = 'Your username must be alphanumeric with at least 3 characters and no spaces';
 $words['You must enter your first name'] = 'You must enter your first name';
 $words['You must enter your last name'] = 'You must enter your last name';
 $words['You must enter your company name'] = 'You must enter your company name';
@@ -206,7 +209,7 @@ $words['none given'] = 'none given';
 $words['Real Name'] = 'Real Name';
 $words['Lives in'] = 'Lives in';
 $words['Member Since'] = 'Member Since';
-$words['first login in progress'] = 'first login in progress';
+$words['first login in progress'] = 'first session in progress';
 $words['Posting Stats for User'] = 'Posting Stats for User';
 $words['Total Articles'] = 'Total Articles';
 $words['Total Comments'] = 'Total Comments';
@@ -315,4 +318,13 @@ $words['Parent Org']='Parent Org';
 $words['Detected Perms']='Detected Perms';
 $words['Detected Orphaned Perms']='Detected Orphaned Perms';
 $words['Permission Manager :: Detect Orphaned']='Permission Manager :: Detect Orphaned';
+
+/* Login Data */
+$words['User Manager :: Login Data']='User Manager :: Login Data';
+$words['Login Time']='Login Time';
+$words['Remote IP']='Remote IP';
+$words['Deleted successfully']='Deleted successfully';
+$words['Are you sure?']='Are you sure?';
+$words['Logins']='Logins';
+
 ?>

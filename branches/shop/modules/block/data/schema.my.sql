@@ -11,6 +11,7 @@ create table if not exists block
    blk_order                      smallint,
    is_onleft                      smallint,
    is_enabled                     smallint,
+   content longtext,
    primary key (block_id)
 );
 

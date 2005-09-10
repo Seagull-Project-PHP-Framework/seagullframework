@@ -114,7 +114,7 @@
         'Passwords are not the same' => 'Passwords are not the same',
         'You have entered your original password incorrectly' => 'You have entered your original password incorrectly',
         'Please confirm password' => 'Please confirm password',
-        'username min length' => 'Your username must be alphanumeric with at least 6 characters and no spaces',
+        'username min length' => 'Your username must be alphanumeric with at least 3 characters and no spaces',
         'You must enter your first name' => 'You must enter your first name',
         'You must enter your last name' => 'You must enter your last name',
         'You must enter your company name' => 'You must enter your company name',

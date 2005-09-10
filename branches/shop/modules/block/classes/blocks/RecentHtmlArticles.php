@@ -87,7 +87,7 @@ class RecentHtmlArticles
                 AND     itm.field_name = 'title'
                 AND     it.item_type_id  = 2
                 AND     i.status  = " . SGL_STATUS_PUBLISHED . "
-                ORDER BY i.date_created DESC
+                ORDER BY i.start_date DESC
                 ";
         $aArticles = $dbh->getAll($query);
         if (!DB::isError($aArticles)) {

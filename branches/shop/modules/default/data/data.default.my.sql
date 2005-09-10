@@ -17,6 +17,6 @@ INSERT INTO module VALUES (13, 1, 'randommsg', 'Random Messages', 'Allows you to
 
 
 # The shop modules
-INSERT INTO module VALUES (14,1,'shop','Shop','This is the Shop Manager. Add and edit your products, prices and discounts here.','shop/shopadmin','default.png');
-INSERT INTO module VALUES (15,1,'rate','Currency','Here you can edit and update the currency rates.','rate/rateAdmin','default.png');
-INSERT INTO module VALUES (16,1,'cart','Cart','Universal cart module with basket and order management.','cart/cartAdmin','default.png');
+INSERT INTO module VALUES (14, 1, 'shop', 'Shop', 'This is the Shop Manager. Add and edit your products, prices and discounts here.', 'shop/shopadmin', 'default.png');
+INSERT INTO module VALUES (15, 1, 'rate', 'Currency', 'Here you can edit and update the currency rates.', 'rate/rateadmin', 'default.png');
+INSERT INTO module VALUES (16, 1, 'cart', 'Cart', 'Universal cart module with basket and order management.', 'cart/cartadmin', 'default.png');
