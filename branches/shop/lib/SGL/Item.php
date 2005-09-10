@@ -420,13 +420,13 @@ class SGL_Item
      * input types are built using the data in the item_type and
      * item_type_mapping tables.
      * 
-     * @todo	Make return array to build form in template.
-     * 
      * @access	public
      * @param	int		$itemID			Item ID
+     * @param   int     $type           data type to return, can be SGL_RET_STRING
+     *                                  or SGL_RET_ARRAY     
      * @return	mixed	$fieldsString	HTML Form
      */
-    function getDynamicContent($itemID)
+    function getDynamicContent($itemID, $type = SGL_RET_STRING)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
@@ -443,25 +443,40 @@ class SGL_Item
                 ";
         $result = $dbh->query($query);
 
-        //  display dynamic form fields (changed default object output to standard array
-        $fieldsString = '';
-        while (list($fieldID, $fieldName, $fieldValue, $fieldType)
-            = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $fieldsString .= "<tr>\n";
-            $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
-            $fieldsString .= '<td>' . $this->generateFormFields(
-                                      $fieldID, $fieldName, $fieldValue, $fieldType) 
-                                    . "</td>\n";
-            $fieldsString .= "</tr>\n";
+        switch ($type) {
+            
+        case SGL_RET_ARRAY:
+            $aFields = array();
+            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                    $aFields[ucfirst($fieldName)] = 
+                        $this->generateFormFields(
+                        $fieldID, $fieldName, $fieldValue, $fieldType);
+            }
+            $res = $aFields;
+                       
+        case SGL_RET_STRING: 
+        default:
+        
+            //  display dynamic form fields (changed default object output to standard array
+            $fieldsString = '';
+            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                $fieldsString .= "<tr>\n";
+                $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
+                $fieldsString .= '<td>' . $this->generateFormFields(
+                                          $fieldID, $fieldName, $fieldValue, $fieldType) 
+                                        . "</td>\n";
+                $fieldsString .= "</tr>\n";
+            }
+            $res = $fieldsString;
         }
-        return $fieldsString;
+        return $res;
     }
 
     /**
      * Builds a HTML form with the input types built using the data in the
      * item_type and item_type_mapping tables.
-     * 
-     * @todo	Make return array to build form in template.
      * 
      * @access  public
      * @param   int   	$typeID			Item Type ID
@@ -821,15 +836,16 @@ class SGL_Item
      * Gets paginated list of articles.
      *
      * @access  public
-     * @param   int     $dataTypeID template ID of article, ie, new article, weather article, etc.
+     * @param   int     $dataTypeID template ID of article, ie, news article, weather article, etc.
      * @param   string  $queryRange flag to indicate if results limited to specific category
      * @param   int     $catID      optional cat ID to limit results to
      * @param   int     $from       row ID offset for pagination
+     * @param   string  $orderBy    column to sort on
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
      * @see     retrieveAll()
      */
     function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
-        $queryRange = 'thisCategory', $from = '')
+        $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -869,7 +885,7 @@ class SGL_Item
             $isPublishedClause . "
             AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
-            ORDER BY i.last_updated DESC
+            ORDER BY i.$orderBy DESC
             ";
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];

@@ -319,6 +319,31 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['enquiry_type'], 'Hosting info');
     }
     
+    //  simplified mod/mgr name, no action + params
+    function testMakeSearchEngineFriendlySimplifiedWithParams()
+    {
+        $aUrlSegments = array (
+          0 => 'index.php',
+          1 => 'contactus',
+          2 => 'foo',
+          3 => 'bar',
+
+        );
+        $ret = $this->url->makeSearchEngineFriendly($aUrlSegments);
+        
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('frontScriptName', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('foo', $ret));
+        
+        //  assert expected values present
+        $this->assertEqual($ret['frontScriptName'], 'index.php');
+        $this->assertEqual($ret['moduleName'], 'contactus');
+        $this->assertEqual($ret['managerName'], 'contactus');
+        $this->assertEqual($ret['foo'], 'bar');
+    }
+    
     //  test Zend debug GET noise [position 1]
     function testMakeSearchEngineFriendlyWithZendDebugInfoInFrontScriptNamePosition()
     {

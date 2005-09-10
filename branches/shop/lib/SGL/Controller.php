@@ -59,14 +59,6 @@ require_once 'HTML/Template/Flexy.php';
 class SGL_Controller
 {
     /**
-     * Timer object for benchmarking.
-     *
-     * @access  public
-     * @var     object
-     */
-    var $timer = null;
-
-    /**
      * Model object passed in from start file, corresponds
      * to one of the module's manager classes.
      *
@@ -189,12 +181,7 @@ class SGL_Controller
         //  check if user is authenticated
         $this->_checkSession();
 
-        //  start clock 
-        if ((bool)$_SESSION['aPrefs']['showExecutionTimes']) {
-            include_once 'Benchmark/Timer.php';
-            $this->timer = & new Benchmark_Timer();
-            $this->timer->start();
-        }
+        //  set headers and locale
         $this->_setHeaders();
         $this->_setLocale();
 
@@ -230,21 +217,6 @@ class SGL_Controller
 
         if (!empty($moduleName) && !empty($managerName)) {
 
-            //  init config for this module
-            $path = SGL_MOD_DIR . '/' . $moduleName . '/';
-            if (is_readable($path . 'conf.ini')) {
-                $conf = parse_ini_file($path . 'conf.ini', true);
-
-                //  merge module config with global config, if module conf keys do not already exist
-                //  test first key
-                $firstKey = key($conf);
-                if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
-                    $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
-                }
-            } else {
-                SGL::raiseError('Could not read module\'s conf.ini file from ' .  
-                    __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_NOFILE);
-            }
             //  get manager name if $managerName not correct attempt to load default manager w/$moduleName
             $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
             $retMgrName = $this->_getClassName($managerName, $mgrPath);
@@ -630,11 +602,8 @@ class SGL_Controller
             $output->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
 
-        //  stop clock execution time
+        //  prepare query count
         if ($_SESSION['aPrefs']['showExecutionTimes']) {
-            $this->timer->stop();
-            $output->executionTime = number_format($this->timer->timeElapsed(), 5);
-            $output->showTimes = true;
             $output->queryCount =  $GLOBALS['_SGL']['QUERY_COUNT'];            
         }
         //  send sitewide variables to page output

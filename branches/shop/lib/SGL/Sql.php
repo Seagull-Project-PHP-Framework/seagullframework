@@ -116,6 +116,13 @@ class SGL_Sql
         return true;
     }
     
+    /**
+     * Returns true if database was setup correctly.
+     *
+     * Checks for existence of permission table and that records were inserted 
+     *
+     * @return mixed    True on success, PEAR error on failure
+     */
     function verifyDbSetup()
     {
         $conf = $GLOBALS['_SGL']['CONF'];
@@ -131,8 +138,12 @@ class SGL_Sql
         }
         return true;
     }
-
-    //    regenerate dataobject entity files
+   
+    /**
+     * Regenerates dataobject entity files.
+     *
+     * @return string   Error message if any
+     */
     function generateDataObjectEntities()
     {
         require_once 'DB/DataObject/Generator.php';
