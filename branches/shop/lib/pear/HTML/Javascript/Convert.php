@@ -16,7 +16,7 @@
 // | Authors: Tal Peer <tal@php.net>                                      |
 // |          Pierre-Alain Joye <paj@pearfr.org>                          |
 // +----------------------------------------------------------------------+
-// $Id: Convert.php,v 1.2 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Convert.php,v 1.15 2005/08/18 08:55:07 alan_k Exp $
 /**
  * A class for converting PHP variables into JavaScript variables
  *
@@ -54,9 +54,6 @@ if(!defined('HTML_JAVASCRIPT_NL')){
     define('HTML_JAVASCRIPT_NL',"\n");
 }
 
-/** requires PEAR_Error */
-require_once('PEAR.php');
-
 /**
  * PHP to Javascript conversion classes
  *
@@ -67,17 +64,6 @@ require_once('PEAR.php');
  */
 class HTML_Javascript_Convert
 {
-    // {{{ HTML_Javscript_Convert
-
-    /**
-     * Constructor - creates a new HTML_Javascript_Convert object
-     *
-     */
-    function HTML_Javscript_Convert()
-    {
-    }
-
-    // }}} HTML_Javscript_Convert
     // {{{ escapeString
 
     /**
@@ -127,7 +113,7 @@ class HTML_Javascript_Convert
                 return HTML_Javascript_Convert::convertBoolean(
                             $var, $varname, $global
                         );
-                break;
+                        
             case 'integer':
             case 'double':
                 $ret = '';
@@ -136,22 +122,26 @@ class HTML_Javascript_Convert
                 }
                 $ret .= $varname.' = '.$var;
                 return $ret.';'.HTML_JAVASCRIPT_NL;
-                break;
+                
             case 'string':
                 return HTML_Javascript_Convert::convertString(
                             $var, $varname, $global
                         );
-                break;
+                        
             case 'array':
                 return HTML_Javascript_Convert::convertArray(
                             $var, $varname, $global
                         );
-                break;
+                        
+            case 'NULL':
+                return HTML_Javascript_Convert::convertNull(
+                            $varname, $global
+                        );
+                        
             default:
                 return HTML_Javascript_Convert::raiseError(
-                        HTML_JAVASCRIPT_ERROR_INVVAR
+                        HTML_JAVASCRIPT_ERROR_CONVERT_INVVAR, __FUNCTION__.':'.$var_type
                     );
-                break;
         }
     }
 
@@ -166,22 +156,20 @@ class HTML_Javascript_Convert
      * @return mixed   false if the error code is invalid,
      *                 or a PEAR_Error otherwise
      */
-    function raiseError($code)
+    function raiseError($code,$str='')
     {
-        $ret = null;
+        require_once 'PEAR.php';
         switch ($code) {
-            case HTML_JAVASCRIPT_ERROR_INVVAR:
-                $ret = HTML_Javascript::raiseError(
-                        'Invalid variable', HTML_JAVASCRIPT_ERROR_INVVAR
-                        );
-                break;
+            case HTML_JAVASCRIPT_CONVERT_ERROR_INVVAR:
+                return PEAR::raiseError(
+                    'Invalid variable:'.$str, $code 
+                );
+                
             default:
-                $ret = HTML_Javascript::raiseError(
-                    'Unknown Error', HTML_JAVASCRIPT_ERROR_INVVAR
-                    );
-                break;
+                return PEAR::raiseError(
+                    'Unknown Error:'.$str, $code 
+                );
         }
-        return $ret;
     }
 
     // }}} raiseError
@@ -200,7 +188,7 @@ class HTML_Javascript_Convert
     function convertString($str, $varname, $global = false)
     {
         $var = '';
-        if($global) {
+        if ($global) {
             $var = 'var ';
         }
         $str = HTML_Javascript_Convert::escapeString($str);
@@ -213,19 +201,19 @@ class HTML_Javascript_Convert
 
     /**
      * Converts a PHP boolean variable into a JS boolean variable.
-     * Note this function does not check the type of $book, only if
+     * Note this function does not check the type of $bool, only if
      * the expression $bool is true or false.
      *
      * @access public
      * @param  boolean $bool    the boolean variable
      * @param  string  $varname the variable name to declare
      * @param  boolean $global  set to true to make the JS variable global
-     * @return mixed   a PEAR_Error on error or a string  with the declaration
+     * @return string  the value as javascript 
      */
     function convertBoolean($bool, $varname, $global = false)
     {
         $var = '';
-        if($global) {
+        if ($global) {
             $var = 'var ';
         }
         $var    .= $varname.' = ';
@@ -234,6 +222,27 @@ class HTML_Javascript_Convert
     }
 
     // }}} convertBoolean
+    // {{{ convertNull
+
+    /**
+     * Converts a PHP null variable into a JS null value.
+     *
+     * @access public
+     * @param  string  $varname the variable name to declare
+     * @param  boolean $global  set to true to make the JS variable global
+     * @return string  the value as javascript 
+     */
+    function convertNull($varname, $global = false)
+    {
+        $var = '';
+        if($global) {
+            $var = 'var ';
+        }
+        return $varname.' = null;'.HTML_JAVASCRIPT_NL;
+    }
+
+    // }}} convertNull
+    
     // {{{ convertArray
 
     /**
@@ -281,8 +290,8 @@ class HTML_Javascript_Convert
             }
             return $var;
         } else {
-            return HTML_Javascript::raiseError(
-                        HTML_JAVASCRIPT_ERROR_INVVAR
+            return HTML_Javascript_Convert::raiseError(
+                        HTML_JAVASCRIPT_CONVERT_ERROR_INVVAR, __FUNCTION__.':'.gettype($arr)
                     );
         }
     }
@@ -301,9 +310,7 @@ class HTML_Javascript_Convert
      * @param  boolean $new     if true, the JS var will be set
      * @return mixed   a PEAR_Error or the converted array
      */
-    function convertArrayToProperties(
-        $array, $varname, $global=false, $new=true
-    )
+    function convertArrayToProperties( $array, $varname, $global=false, $new=true )
     {
         if(is_array($array)){
             $cnt = sizeof($array)-1;
@@ -344,22 +351,27 @@ class HTML_Javascript_Convert
     {
         switch ( gettype($val) ) {
             case 'boolean':
-                return $val?'true':'false';
+                return $val ? 'true' : 'false';
+                
             case 'integer':
             case 'double':
                 return $val;
+                
             case 'string':
                 return "'".HTML_Javascript_Convert::escapeString($val)."'";
+                
             case 'array':
                 return HTML_Javascript_Convert::convertArray(
                             $val, $varname, $global
                         );
-                break;
+                        
+            case 'NULL':
+                return 'null';
+                
             default:
                 return HTML_Javascript_Convert::raiseError(
-                        HTML_JAVASCRIPT_ERROR_INVVAR
+                        HTML_JAVASCRIPT_ERROR_CONVERT_INVVAR, __FUNCTION__.':'.gettype($val)
                     );
-                break;
         }
     }
 
