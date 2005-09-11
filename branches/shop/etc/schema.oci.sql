@@ -118,3 +118,65 @@ last_updated                  DATE       null,
 data_value                    CLOB            null,
 constraint PK_SESSION primary key (session_id)
 );
+
+-- ==============================================================
+-- Table: category                                       
+-- ==============================================================
+
+CREATE TABLE category (
+  category_id NUMBER(10) 	NOT NULL,
+  label VARCHAR(32) 		DEFAULT NULL,
+  perms VARCHAR(32) 		DEFAULT NULL,
+  parent_id NUMBER(10) 		DEFAULT NULL,
+  root_id NUMBER(10) 		DEFAULT NULL,
+  left_id NUMBER(10) 		DEFAULT NULL,
+  right_id NUMBER(10) 		DEFAULT NULL,
+  order_id NUMBER(10) 		DEFAULT NULL,
+  level_id NUMBER(10) 		DEFAULT NULL,
+  CONSTRAINT PK_CATEGORY PRIMARY KEY (category_id)
+);
+
+-- ==============================================================
+--  Index: root_id                                               
+-- ==============================================================
+create  index AK_category_root_id on category (
+root_id
+);
+
+-- ==============================================================
+--  Index: left_id                                               
+-- ==============================================================
+create  index AK_category_left_id on category (
+left_id
+);
+
+-- ==============================================================
+--  Index: ritgh_id                                              
+-- ==============================================================
+create  index AK_category_right_id on category (
+right_id
+);
+
+-- ==============================================================
+--  Index: order_id                                              
+-- ==============================================================
+create  index AK_category_order_id on category (
+order_id
+);
+
+-- ==============================================================
+--  Index: level_id                                              
+-- ==============================================================
+create  index AK_category_level_id on category (
+level_id
+);
+
+-- ==============================================================
+--  Index: id_root_l_r                                           
+-- ==============================================================
+create  index AK_category_id_root_l_r on category (
+category_id,
+root_id,
+left_id,
+right_id
+);
