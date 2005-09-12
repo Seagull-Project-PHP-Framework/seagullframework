@@ -95,4 +95,5 @@ $words['The asset has successfully been deleted'] = 'Das Dokument wurde erfolgre
 $words['Please wait while document uploads'] = 'Bitte warten Sie während das Dokument hochgeladen wird';
 $words['Please wait until upload is finished'] = 'Bitte warten Sie bis das Dokument vollständig hochgeladen ist';
 $words['You must select a file to upload'] = 'Sie müssen eine Datei auswählen, um Sie hochzuladen';
+$words['WikiScrape Manager'] = 'WikiScrape Manager';
 ?>
