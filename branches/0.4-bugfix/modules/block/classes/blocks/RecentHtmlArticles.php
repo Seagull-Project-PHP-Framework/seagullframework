@@ -88,6 +88,7 @@ class RecentHtmlArticles
                 AND     it.item_type_id  = 2
                 AND     i.status  = " . SGL_STATUS_PUBLISHED . "
                 ORDER BY i.start_date DESC
+                LIMIT 5
                 ";
         $aArticles = $dbh->getAll($query);
         if (!DB::isError($aArticles)) {
@@ -107,6 +108,7 @@ class RecentHtmlArticles
                             . SGL_Url::makeLink('view', 'articleview', 'publisher', array(), "frmArticleID|$obj->item_id") . '">'
                             . $obj->addition . "</a></li>\n";
             }
+            $newItems   .= '<li><a href="'.SGL_Url::makeLink('summary', 'articleview', 'publisher').'">more ...</a></li>';
             $newItems   .= "</ul>";
             return $newItems;
         } else {
