@@ -5,7 +5,7 @@
 
 INSERT INTO block VALUES (1, 'SiteNews', 'Site News', '', '', 2, 1, 1);
 INSERT INTO block VALUES (2, 'DirectoryNav', 'Navigation', '', 'navWidget', 1, 1, 1);
-INSERT INTO block VALUES (3, 'SampleBlock1', 'SourceForge', '', '', 3, 1, 1);
+INSERT INTO block VALUES (3, 'SampleBlock1', 'SourceForge Site', '', '', 3, 1, 1);
 INSERT INTO block VALUES (4, 'SampleBlock2', 'Syndication', '', '', 4, 1, 1);
 INSERT INTO block VALUES (5, 'CategoryNav', 'Categories', '', 'navWidget', 1, 1, 1);
 INSERT INTO block VALUES (10, 'SampleRightBlock1', 'Sample Right Block', '', '', 1, 0, 1);
