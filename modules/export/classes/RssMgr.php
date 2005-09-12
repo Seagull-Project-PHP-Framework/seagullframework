@@ -111,9 +111,13 @@ class RssMgr extends SGL_Manager
             foreach ($res as $article) {
                 $item = array();
                 $item["title"]           = $article["title"];
-                $item["link"]            = SGL_Output::makeUrl('list','default','default',array(),"frmItemID|{$article["id"]}");
-                $item["description"]     = SGL_String::summariseHtml($article["description"]) . " " . SGL_String::translate("Full text available online");
-                $author_name             = (!empty($article["fullname"])) ? " (" . $article["fullname"] . ")" :  " (" . $article["username"] . ")";
+                $item["link"]            = SGL_Output::makeUrl('list','default','default', array(),
+                                            "frmItemID|{$article["id"]}");
+                $item["description"]     = SGL_String::summariseHtml($article["description"]) . 
+                                            " " . SGL_String::translate("Read more");
+                $author_name             = (!empty($article["fullname"])) 
+                                            ? " (" . $article["fullname"] . ")" 
+                                            : " (" . $article["username"] . ")";
                 $item["author"]          = SGL_FEED_EMAIL . $author_name;
                 $item["source"]["url"]   = '';
                 $item["source"]["content"]   = '';
