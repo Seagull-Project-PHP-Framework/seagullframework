@@ -1,26 +1,54 @@
 <?php
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | Copyright (c) 2005, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.4                                                               |
+// +---------------------------------------------------------------------------+
+// | RssMgr.php                                                                |
+// +---------------------------------------------------------------------------+
+// | Author: Fabio Bacigalupo <Fabio Bacigalupo <seagull@open-haus.de>         |
+// +---------------------------------------------------------------------------+
+// $Id: RssMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
+
 require_once SGL_CORE_DIR . '/Item.php';
 
-define('SGL_FEED_RSS_VERSION', "1.0");
-define('SGL_FEED_COPYRIGHT', 'Seagull Systems');
-define('SGL_FEED_EMAIL', 'seagull@phpkitchen.com');
-define('SGL_FEED_EDITOR', 'Demian Turner');
-define('SGL_FEED_WEBMASTER', 'demian@phpkitchen.com');
-define('SGL_FEED_RSS_TTL', 21600); //   4 times/day
-define('SGL_PODCAST_URL', 'http://example.com');
+define('SGL_FEED_RSS_VERSION', '1.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
-define('ITEM_TYPE_ARTICLE_HTML', 2);
-define('CATEGORY_NEWS_ID', 1);
+define('SGL_ITEM_TYPE_ARTICLE_HTML', 2);
+define('SGL_CATEGORY_NEWS_ID', 1);
 
 /**
- *
- *
+ * A class to build RSS 1.0 compliant export.
  * @author Fabio Bacigalupo
- *
- *
- *
- * @todo Things that are commented out need to be checked for reasonable values
  * 
  */
 class RssMgr extends SGL_Manager 
@@ -37,25 +65,24 @@ class RssMgr extends SGL_Manager
         
         $this->_aActionsMapping = array(
             'news' => array('news'),
-            );       
+            );  
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $this->feed = new SGL_Feed();
         $this->feed->xml_version    = "1.0";
         $this->feed->xml_encoding   = "utf-8";
         $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
-        $this->feed->docs = 'http://blogs.law.harvard.edu/tech/rss';
-        $this->feed->title          = "RSS Feed";
-        $this->feed->description    = null;
-        $this->feed->copyright      = SGL_FEED_COPYRIGHT;
-        $this->feed->managingeditor = SGL_FEED_EMAIL . " (" . SGL_FEED_EDITOR . ")";
-        $this->feed->webmaster      = SGL_FEED_EMAIL . " (" . SGL_FEED_WEBMASTER . ")";
-        $this->feed->category[]["content"] = "Podcasting";
-        $this->feed->ttl            = SGL_FEED_RSS_TTL;
-        $this->feed->link           = SGL_PODCAST_URL;
-        $this->feed->syndicationurl = SGL_PODCAST_URL . "/" . $_SERVER["PHP_SELF"];
+        $this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
+        $this->feed->title          = $conf['RssMgr']['feedTitle'];
+        $this->feed->description    = $conf['RssMgr']['feedDescription'];
+        $this->feed->copyright      = $conf['RssMgr']['feedCopyright'];
+        $this->feed->managingeditor = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedEditor'] . ")";
+        $this->feed->webmaster      = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedWebmaster'] . ")";
+        $this->feed->ttl            = $conf['RssMgr']['feedRssTtl'];
+        $this->feed->link           = $conf['RssMgr']['feedUrl'];
+        $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
         $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
         $this->feed->pubdate        = $this->datetime2Rfc2822();
-        
 
 /*        $image               = new stdClass();
         $image->url          = ;
@@ -78,7 +105,7 @@ class RssMgr extends SGL_Manager
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate    = $this->masterTemplate;
+        $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'news';
         $input->limit       = ($req->get('limit')) ? $req->get('limit') : 10;
@@ -99,9 +126,8 @@ class RssMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'masterRss.xml';
-        $this->feed->title = 'RSS Title';
-        $this->feed->description = 'here is the description';
         $this->feed->category[]["content"] = "News";
         
         $limit = $this->normalizeLimit($input->limit);
@@ -118,7 +144,7 @@ class RssMgr extends SGL_Manager
                 $author_name             = (!empty($article["fullname"])) 
                                             ? " (" . $article["fullname"] . ")" 
                                             : " (" . $article["username"] . ")";
-                $item["author"]          = SGL_FEED_EMAIL . $author_name;
+                $item["author"]          = $conf['RssMgr']['feedEmail'] . $author_name;
                 $item["source"]["url"]   = '';
                 $item["source"]["content"]   = '';
                 $item["guid"]["bool"]    = "true";
@@ -149,16 +175,15 @@ class RssMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ((strtolower($limit) == "all") 
-           or ($limit > SGL_FEED_ITEM_LIMIT_MAXIMUM)) {
-            $limit = SGL_FEED_ITEM_LIMIT_MAXIMUM; 
-           //   Keep the transferred data limited
+        if ((strtolower($limit) == "all") || ($limit > SGL_FEED_ITEM_LIMIT_MAXIMUM)) {
+            
+            //   Keep the transferred data limited
+            $limit = SGL_FEED_ITEM_LIMIT_MAXIMUM;
         } elseif (is_int($limit) === true) {
             $limit = $limit;
         } else {
             $limit = SGL_FEED_ITEM_LIMIT;
         }
-
         return $limit;
     }
     
@@ -209,8 +234,8 @@ class RssMgr extends SGL_Manager
 
          $dbh = & SGL_DB::singleton();
          $aRes = $dbh->getAll($query,
-            array(ITEM_TYPE_ARTICLE_HTML, SGL::getTime(), 
-                SGL::getTime(), SGL_STATUS_PUBLISHED, CATEGORY_NEWS_ID, $limit),
+            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL::getTime(), 
+                SGL::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
                 DB_FETCHMODE_ASSOC);
 
          if (DB::isError($aRes)) {

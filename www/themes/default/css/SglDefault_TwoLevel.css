@@ -59,7 +59,7 @@
 }
 #sgl-nav ul li.current li a {
     /* hide first pipe */
-    left: -0.1em;
+    left: -0.1px;
     padding: 0 1em;
     font-weight: normal;
     font-size: 1.1em;
