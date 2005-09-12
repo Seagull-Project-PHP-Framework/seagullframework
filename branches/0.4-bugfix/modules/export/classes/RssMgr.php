@@ -83,7 +83,8 @@ class RssMgr extends SGL_Manager
         $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
         $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
         $this->feed->pubdate        = $this->datetime2Rfc2822();
-
+        $this->feed->generator      = 'Seagull RSS Manager';
+        
 /*        $image               = new stdClass();
         $image->url          = ;
         $image->title        = ;
@@ -263,6 +264,7 @@ class SGL_Feed
     var $ttl;
     var $link;
     var $syndicationurl;
+    var $generator;
     var $lastbuilddate;
     var $pubdate;
     var $image;
