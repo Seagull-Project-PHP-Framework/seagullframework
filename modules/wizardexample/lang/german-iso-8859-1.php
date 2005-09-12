@@ -5,7 +5,7 @@
         'First Name' => 'Vorname',
         'Last Name' => 'Nachname',
         'Email' => 'Email',
-        'contact intro' => 'Fï¿½llen Sie bitte die folgenden Felder aus und drï¿½cken Sie auf "Absenden"',
+        'contact intro' => 'Füllen Sie bitte die folgenden Felder aus und drücken Sie auf "Absenden"',
         'Type of enquiry' => 'Art der Anfrage',
         'Comment' => 'Kommentar',
         'Contact Enquiry from' => 'Kontaktanfrage von',
