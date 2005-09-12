@@ -136,7 +136,7 @@ class SimpleNav
     function render(&$sectionId, &$html)
     {
         $cache = & SGL::cacheSingleton();
-        //  get a unique token by considering startfile, group ID, and if page
+        //  get a unique token by considering url, group ID and if page
         //  is static or not
         $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
