@@ -138,8 +138,8 @@ class RssMgr extends SGL_Manager
             foreach ($res as $article) {
                 $item = array();
                 $item["title"]           = $article["title"];
-                $item["link"]            = SGL_Output::makeUrl('list','default','default', array(),
-                                            "frmItemID|{$article["id"]}");
+                $item["link"]            = SGL_Output::makeUrl('view','articleview','publisher', array(),
+                                            "frmArticleID|{$article["id"]}");
                 $item["description"]     = SGL_String::summariseHtml($article["description"]);# . 
                                             #" " . SGL_String::translate("Read more");
                 $author_name             = (!empty($article["fullname"])) 
