@@ -137,6 +137,8 @@ class ContactUsMgr extends SGL_Manager
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         //  require Contact entity
         require_once SGL_ENT_DIR . '/Contact_us.php';
 
