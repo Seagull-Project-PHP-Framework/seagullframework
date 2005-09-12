@@ -129,7 +129,7 @@ class RssMgr extends SGL_Manager
         
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'masterRss.xml';
-        $this->feed->category[]["content"] = "News";
+        $this->feed->category[]["content"] = $conf['RssMgr']['feedCategory'];
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
