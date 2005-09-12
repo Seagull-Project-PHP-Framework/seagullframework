@@ -6,7 +6,7 @@ create table if not exists section
    section_id                     int                            not null,
    title                          varchar(32),
    resource_uri                   varchar(128),
-   perms                          varchar(16),
+   perms                          varchar(32),
    parent_id                      int,
    root_id                        int,
    left_id                        int,
