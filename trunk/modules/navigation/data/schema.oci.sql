@@ -9,7 +9,7 @@ create table section (
 section_id           NUMBER(10)                 not null,
 title                VARCHAR(32)                null,
 resource_uri         VARCHAR(128)               null,
-perms                VARCHAR(16)                null,
+perms                VARCHAR(32)                null,
 parent_id            NUMBER(10)                 null,
 root_id              NUMBER(10)                 null,
 left_id              NUMBER(10)                 null,
