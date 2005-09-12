@@ -7,7 +7,7 @@ define('SGL_FEED_EMAIL', 'seagull@phpkitchen.com');
 define('SGL_FEED_EDITOR', 'Demian Turner');
 define('SGL_FEED_WEBMASTER', 'demian@phpkitchen.com');
 define('SGL_FEED_RSS_TTL', 21600); //   4 times/day
-define('SGL_PODCAST_URL', 'example.com');
+define('SGL_PODCAST_URL', 'http://example.com');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
 define('ITEM_TYPE_ARTICLE_HTML', 2);
@@ -113,8 +113,8 @@ class RssMgr extends SGL_Manager
                 $item["title"]           = $article["title"];
                 $item["link"]            = SGL_Output::makeUrl('list','default','default', array(),
                                             "frmItemID|{$article["id"]}");
-                $item["description"]     = SGL_String::summariseHtml($article["description"]) . 
-                                            " " . SGL_String::translate("Read more");
+                $item["description"]     = SGL_String::summariseHtml($article["description"]);# . 
+                                            #" " . SGL_String::translate("Read more");
                 $author_name             = (!empty($article["fullname"])) 
                                             ? " (" . $article["fullname"] . ")" 
                                             : " (" . $article["username"] . ")";
