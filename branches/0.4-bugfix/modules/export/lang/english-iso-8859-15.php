@@ -1,3 +1,5 @@
 <?php
-$words = array();
+$words = array(
+    'Read more' => 'Read more',
+    );
 ?>
