@@ -225,9 +225,10 @@ class SGL
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &cacheSingleton()
+    function &cacheSingleton($cacheEnabled = false)
     {
         static $instance;
+        
         // If the instance is not there, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';

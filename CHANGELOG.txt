@@ -31,6 +31,7 @@ BUGFIXES
             well as PEAR modifications.
 
 IMPROVEMENTS
+12-09-05    Added RSS aggregator block
 09-09-05    Improved session management so now it is possible to search sessions
             with more meaningful results and single sessions per user can be enforced.
             Also new "who's online" block added (Louay Gammo)
