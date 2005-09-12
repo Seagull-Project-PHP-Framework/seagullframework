@@ -12,10 +12,6 @@ require_once SGL_MOD_DIR . '/newsletter/classes/Output.php';
 
 class NewsletterBlock
 {
-    function NewsletterBlock()
-    {
-    }
-
     function init($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
