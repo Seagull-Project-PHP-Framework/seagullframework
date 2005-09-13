@@ -220,11 +220,16 @@ class UserMgr extends RegisterMgr
         $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
 
         //  assign preferences associated with org user belongs to
-        //  first get all prefs associated with user's org
-        $aOrgPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if ($conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->da->getMasterPrefs();
+        }
 
         //  then assign them to the user_preference table
-        $ret = $this->da->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
+        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
 
         //  check global error stack for any error that might have occurred
         if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
