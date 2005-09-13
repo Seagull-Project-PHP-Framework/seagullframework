@@ -20,37 +20,37 @@
 --       references usr (usr_id) on delete restrict on update restrict;
 
 
-ALTER TABLE role_permission ADD constraint FK_role_role_id
-    FOREIGN KEY (role_id) REFERENCES role (role_id) ON DELETE cascade;
+ALTER TABLE role_permission ADD constraint FK_role_role_id FOREIGN KEY (role_id) 
+    REFERENCES role (role_id) ON DELETE cascade;
 
-ALTER TABLE role_permission ADD constraint FK_permission_permission_id
-    FOREIGN KEY (permission_id) REFERENCES permission (permission_id) ON DELETE cascade;
-
- 
-
-ALTER TABLE user_permission ADD constraint FK_usr_usr_id
-    FOREIGN KEY (usr_id) REFERENCES usr (usr_id) ON DELETE cascade;
-
-ALTER TABLE user_permission ADD constraint FK_permission_permission_id
-    FOREIGN KEY (permission_id) REFERENCES permission (permission_id) ON DELETE cascade;
+ALTER TABLE role_permission ADD constraint FK_permission_permission_id FOREIGN KEY (permission_id) 
+    REFERENCES permission (permission_id) ON DELETE cascade;
 
  
 
-ALTER TABLE user_preference ADD constraint FK_preference_preference_id
-    FOREIGN KEY (preference_id) REFERENCES preference (preference_id) ON DELETE cascade;
+ALTER TABLE user_permission ADD constraint FK_usr_usr_id FOREIGN KEY (usr_id) 
+    REFERENCES usr (usr_id) ON DELETE cascade;
 
-ALTER TABLE user_preference ADD constraint FK_usr_usr_id
-    FOREIGN KEY (usr_id) REFERENCES usr (usr_id) ON DELETE cascade;
-
- 
-
-ALTER TABLE org_preference ADD constraint FK_organisation_organisation_id     
-    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id) ON DELETE cascade;
-
-ALTER TABLE org_preference ADD constraint FK_preference_preference_id
-    FOREIGN KEY (preference_id) REFERENCES preference (preference_id) ON DELETE cascade;
+ALTER TABLE user_permission ADD constraint FK_permission_permission_id FOREIGN KEY (permission_id) 
+    REFERENCES permission (permission_id) ON DELETE cascade;
 
  
 
-ALTER TABLE login ADD constraint FK_usr_usr_id
-    FOREIGN KEY (usr_id) REFERENCES usr (usr_id) ON DELETE restrict ON UPDATE restrict;
+ALTER TABLE user_preference ADD constraint FK_preference_preference_id FOREIGN KEY (preference_id) 
+    REFERENCES preference (preference_id) ON DELETE cascade;
+
+ALTER TABLE user_preference ADD constraint FK_usr_usr_id FOREIGN KEY (usr_id) 
+    REFERENCES usr (usr_id) ON DELETE cascade;
+
+ 
+
+ALTER TABLE org_preference ADD constraint FK_organisation_organisation_id FOREIGN KEY (organisation_id) 
+    REFERENCES organisation (organisation_id) ON DELETE cascade;
+
+ALTER TABLE org_preference ADD constraint FK_preference_preference_id FOREIGN KEY (preference_id) 
+    REFERENCES preference (preference_id) ON DELETE cascade;
+
+ 
+
+ALTER TABLE login ADD constraint FK_usr_usr_id FOREIGN KEY (usr_id) 
+    REFERENCES usr (usr_id) ON DELETE restrict ON UPDATE restrict;
