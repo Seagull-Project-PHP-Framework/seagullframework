@@ -523,7 +523,7 @@ class DA_User
             INSERT INTO {$this->conf['table']['user_preference']} 
                 (   user_preference_id, 
                     usr_id, 
-                    preference_id, 
+                    preference_id,
                     value)
             VALUES(" . 
                     $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' .
