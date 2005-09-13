@@ -13,7 +13,9 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
-12-09-05    Fixed bug where prefs where not being correctly added for new
+13-09-05    Disabled FK constraints from MySQL as there appears to be a bug
+            in the implementation.  Same SQL works fine in PgSQL ;-)
+13-09-05    Fixed bug where prefs where not being correctly added for new
             registrants
 09-09-05    Fixed a bug where non-indexed arrays could be overwritten
             (Lorenzo Alberton)

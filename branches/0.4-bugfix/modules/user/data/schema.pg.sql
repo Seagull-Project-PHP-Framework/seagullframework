@@ -210,7 +210,7 @@ create  index preference_org_preference_fk on org_preference
 create table usr 
 (
    usr_id               INT4                 not null,
-   organisation_id      INT4                 not null,
+   organisation_id      INT4                 null,
    role_id              INT4                 not null,
    username             VARCHAR(64)          null,
    passwd               VARCHAR(32)          null,

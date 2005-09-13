@@ -169,7 +169,7 @@ create index preference_org_preference_fk on org_preference
 /*==============================================================*/
 CREATE TABLE if not exists usr (
   usr_id int(11) NOT NULL default '0',
-  organisation_id int(11) NOT NULL default '0',
+  organisation_id int(11) NULL default '0',
   role_id int(11) NOT NULL default '0',
   username varchar(64) default NULL,
   passwd varchar(32) default NULL,
