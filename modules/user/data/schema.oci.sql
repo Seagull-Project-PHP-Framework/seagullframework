@@ -183,7 +183,7 @@ preference_id
 -- ==============================================================
 create table usr (
 usr_id               NUMBER(10)                 not null,
-organisation_id      NUMBER(10)                 not null,
+organisation_id      NUMBER(10)                 null,
 role_id              NUMBER(10)                 not null,
 username             VARCHAR(64)          null,
 passwd               VARCHAR(32)          null,
