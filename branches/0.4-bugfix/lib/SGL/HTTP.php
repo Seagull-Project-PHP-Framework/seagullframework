@@ -871,8 +871,9 @@ class SGL_HTTP_Session
         // For extended sessions, enforce session deletion per user expiry setting
         if (!empty($conf['site']['extended_session'])) {
             $query = "
-                DELETE FROM {$user_session} 
-                WHERE (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > GREATEST($max_expiry, expiry)";
+                DELETE  FROM {$user_session} 
+                WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry
+                AND     (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) >  expiry";
         } else {
             $query = "
                 DELETE FROM {$user_session} 
