@@ -235,7 +235,7 @@ class RegisterMgr extends SGL_Manager
         if ($conf['OrgMgr']['enabled']) {
             $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
         } else {
-            $aPrefs = $this->da->getMasterPrefs();
+            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
         }
 
         //  then assign them to the user_preference table
