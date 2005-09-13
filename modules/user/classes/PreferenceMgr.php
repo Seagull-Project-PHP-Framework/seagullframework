@@ -210,7 +210,7 @@ class PreferenceMgr extends SGL_Manager
 
         //  propagate changes to user_preference table
         if ($changed) {
-            $ret = $this->da->syncDefaultPrefs(SGL_RET_ID_VALUE);
+            $ret = $this->da->syncDefaultPrefs();
         }
         SGL::raiseMsg('pref successfully updated');
     }
