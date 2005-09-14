@@ -217,7 +217,8 @@ class ShopMgr extends SGL_Manager
 
         while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
            $arr[] = array(
-              'img' => SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$row['img'],
+//              'img' => SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$row['img'],
+              'img' => $row['img'],
               'short_description' => $row['short_description'],
               'cat_id' => SGL_BASE_URL.'/index.php/shop/action/list/frmCatID/'.$row['cat_id'],
               'name' => $row['name'],
@@ -457,12 +458,20 @@ class ShopMgr extends SGL_Manager
             : $conf['ShopMgr']['defaultVAT'];
 
         $dbh = & SGL_DB::singleton();
-        $query = 'SELECT product.price as default_price, product.name, product.cod1,
+/*        $query = 'SELECT product.price as default_price, product.name, product.cod1,
                          IFNULL(price.price, product.price*(100-'.$discount.')/100) AS price,
                          IFNULL(price.currency, product.currency) AS currency
                   FROM product LEFT JOIN price ON price.product_id = product.product_id
                                                AND price.usr_id = ? 
-                  WHERE  product.product_id = ? '; // '.$uid.' .$product_id;
+                  WHERE  product.product_id = ? '; // '.$uid.' .$product_id;*/
+
+        $query = 'SELECT product.price as default_price, product.name, product.cod1,
+                         IF (price.price, price.price, product.price*(100-'.$discount.')/100 ) AS price,
+                         IF (price.currency, price.currency, product.currency) AS currency
+                  FROM product LEFT JOIN price ON price.product_id=product.product_id
+                       AND price.usr_id = ?
+                  WHERE  product.product_id = ?';
+
 
         $sth = $dbh->prepare($query);
         $aQueryData = array ($uid, $product_id);
@@ -497,7 +506,7 @@ class ShopMgr extends SGL_Manager
              $priceVAT = $price * $vat;
 
              // create old price value if discount is applied
-            if (isset($default_price) AND $price != $default_price) {
+            if (isset($default_price) && $price != $default_price) {
                 $oldPriceVAT = $default_price * $vat;
                 $oldPrice = (float)$default_price;
              } else {
@@ -540,9 +549,30 @@ class ShopMgr extends SGL_Manager
 
         $dbh = & SGL_DB::singleton();
 
-        $query = 'SELECT product.*,product.price as default_price, IFNULL(price.price, product.price*(100-'.$discount.')/100) AS price, 
-                  IFNULL(price.currency, product.currency) AS currency   
+        $query = 'SELECT product.*,product.price as default_price,
+                         IFNULL(price.price, product.price*(100-'.$discount.')/100) AS price,
+                         IFNULL(price.currency, product.currency) AS currency
                   FROM product LEFT JOIN price ON price.product_id=product.product_id AND price.usr_id = ? 
+                  WHERE  product.product_id = ?';
+                  
+        $query = 'SELECT product.*,product.price as default_price,
+                         CASE WHEN price.price IS NOT NULL
+                             THEN price.price
+                             ELSE product.price*(100-'.$discount.')/100
+                         END AS price,
+                         CASE WHEN price.currency IS NOT NULL
+                             THEN price.currency
+                             ELSE product.currency 
+                         END AS currency
+                  FROM product LEFT JOIN price ON price.product_id=product.product_id
+                       AND price.usr_id = ?
+                  WHERE  product.product_id = ?';
+
+        $query = 'SELECT product.*,product.price as default_price,
+                         IF (price.price, price.price, product.price*(100-'.$discount.')/100 ) AS price,
+                         IF (price.currency, price.currency, product.currency) AS currency
+                  FROM product LEFT JOIN price ON price.product_id=product.product_id
+                       AND price.usr_id = ?
                   WHERE  product.product_id = ?';
 
         $sth = $dbh->prepare($query);
@@ -554,14 +584,15 @@ class ShopMgr extends SGL_Manager
             SGL::logMessage(print_r($query,true));
             return;
         }
+        
+        $prices = $this->GetPrice($usrId, $input->productId);
 
         // return if product not found
         if ($result->numRows() == 0) {
             return;
         } 
             
-        
-        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);          
+        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
         
         $product = (object) $row;
         // product thumb path set                   
@@ -582,7 +613,7 @@ class ShopMgr extends SGL_Manager
             $product->aDescription =$product->description;
         }
 
-        // Price computation
+/*        // Price computation
         if (isset ($product->price)) {
             $product->priceVAT = $product->price * $vat;
             
@@ -590,7 +621,11 @@ class ShopMgr extends SGL_Manager
             if (isset($product->default_price) and $product->price != $product->default_price) {
                 $product->oldPrice = $product->default_price;
             }
-        }
+        } */
+        $product->priceVAT = $prices["priceVAT"];
+        $product->price    = $prices["price"];
+        $product->oldPrice = $prices["oldPrice"];
+        $product->currency = $prices["currency"];
 
         $product->statusString = ''; 
         if (isset ($product->status) AND @ $product->status > 0) {
