@@ -18,10 +18,15 @@ $words['Your cart is empty'] = 'Jûsø krepðelis tuðèias';
 $words['Code'] = 'Kodas';
 
 // Statuses
-$words['aStatuses'][1] = 'Pateiktas';
-$words['aStatuses'][2] = 'Planuojamas';
-$words['aStatuses'][3] = 'Vykdomas';
-$words['aStatuses'][4] = 'Uþbaigtas';
+$words['aStatuses'][1] = 'Naujas';
+$words['aStatuses'][2] = 'Patvirtintas';
+$words['aStatuses'][3] = 'Atmestas';
+$words['aStatuses'][4] = 'Vykdomas';
+$words['aStatuses'][5] = 'Ávykdytas';
+$words['aStatuses'][6] = 'Apmokëjimas gautas';
+
+$words['aStatuses'][10] = 'Patvirtinti';
+$words['aStatuses'][11] = 'Atmesti';
 
 // Mail form
 $words['Order received'] = 'Uþsakymas priimtas';
@@ -103,6 +108,24 @@ $words['Debt'] = 'Ásiskolinimas';
 $words['Last payment date'] = 'Paskutinio apmokëjimo data';
 
 // my orders
-$words['My Orders :: View Order'] = 'Mano uþsakymai :: Perþiûra';
+$words['My Orders'] = 'Mano uþsakymai'; //where is this used?
+$words['My Orders :: View order'] = 'My Orders :: View order';
+
+//list cart
+$words['Product was added to your cart'] = 'Produktas ádëtas á Jûsø krepðelá';
+$words['Unit price w/o VAT'] = 'Vieneto kaina be PVM';
+$words['Sum price w/o VAT'] = 'Suma be PVM';
+$words['VAT'] = 'PVM';
+$words['Total with VAT'] = 'Viso su PVM';
+$words['Recalculate'] = 'Perskaièiuoti';
+
+//Cart :: Checkout
+$words['Cart :: Checkout'] = 'Krepðelis :: Uþsisakyti';
+
+//currency
+$words['Cart :: List cart'] = 'Krepðelis :: Perþiûra';
+$words['LIT'] = 'Lt';
+
+
 
 ?>

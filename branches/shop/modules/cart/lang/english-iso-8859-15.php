@@ -16,12 +16,21 @@ $words['You are currently not logged in.'] = 'You are currently not logged in. P
 $words['Order saved successfully'] = 'Thank you! The order was recorded successfully. We will contact you back as soon as possible.';
 $words['Your cart is empty'] = 'Your cart is empty';
 $words['Code'] = 'Code';
+$words['EUR'] = 'Euro';
+$words['USD'] = 'USD';
+$words['ROL'] = 'Lei';
+$words['RON'] = 'New Lei';
 
 // Statuses
-$words['aStatuses'][1] = 'Proposed';
-$words['aStatuses'][2] = 'In planning';
-$words['aStatuses'][3] = 'In progress';
-$words['aStatuses'][4] = 'Complete';
+$words['aStatuses'][1] = 'New';
+$words['aStatuses'][2] = 'Approved';
+$words['aStatuses'][3] = 'Denied';
+$words['aStatuses'][4] = 'In progress';
+$words['aStatuses'][5] = 'Complete';
+$words['aStatuses'][6] = 'Payment recieved';
+
+$words['aStatuses'][10] = 'Approve';
+$words['aStatuses'][11] = 'Deny';
 
 // Mail form
 $words['Order received'] = 'Order received';
@@ -104,5 +113,20 @@ $words['Last payment date'] = 'Last payment date';
 // my orders
 $words['My Orders'] = 'My Orders';
 $words['My Orders :: View order'] = 'My Orders :: View order';
+
+//list cart
+$words['Product was added to your cart'] = 'Product was added to your cart';
+$words['Unit price w/o VAT'] = 'Unit price w/o VAT';
+$words['Sum price w/o VAT'] = 'Sum price w/o VAT';
+$words['VAT'] = 'VAT';
+$words['Total with VAT'] = 'Total with VAT';
+$words['Recalculate'] = 'Recalculate';
+
+//Cart :: Checkout
+$words['Cart :: Checkout'] = 'Cart :: Checkout';
+
+//currency
+$words['Cart :: List cart'] = 'Cart :: List cart';
+$words['LIT'] = 'Lt';
 
 ?>
