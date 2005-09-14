@@ -4,6 +4,19 @@ CHANGELOG SHOP
 | VERSION: 0.0.1        |
 +-----------------------+
 BUGFIXES
+14-09-05	Shop: All prices have 2 decimal prices
+14-09-05	CartMgr: disabled payment manager for the moment
+14-09-05	CartAdminMgr: now order status works ok
 10-09-05	Updated code to work with SGL_Category
 
 IMPROVEMENTS
+14-09-05	Shop, Cart Templates: Added more translation, modified templates to
+			reflect code changes and little HTML cleanup.
+14-09-05	Shop, Cart: Added missing default perms for guest and member group
+14-09-05	CSV Upload: Some code improvements and cleanup
+14-09-05	Shop: Improved the price calculation algorithm
+14-09-05	ShopAdmin: Modified to work with SGL_Category, an extra check on
+			imageUpload success status and some minor code standardization
+14-09-05	Cart: little code cleanup and added missing translation
+14-09-05	CartMgr: corrected some page titles
+14-09-05	Shop related block are enabled by default
