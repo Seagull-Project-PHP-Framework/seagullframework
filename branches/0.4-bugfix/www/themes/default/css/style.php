@@ -196,11 +196,6 @@ body {
 #sgl-header-right #headerUserInfo .guest {
     font-weight: bold;
 }
-#sgl-header-right #bugReporter {
-    float: left;
-    margin: 4px; 
-    background: url('<?php echo $baseUrl ?>/images/bug.png') no-repeat;
-}
 
 /***************************** LAYOUT : TABLES ********************************/
 
