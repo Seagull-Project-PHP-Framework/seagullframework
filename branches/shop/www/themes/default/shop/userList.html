@@ -34,19 +34,19 @@ function selchkAll(chk, i) {
 
 <form name="users_add" method="post" flexy:ignore id="users_add">
   <input type="hidden" name="action" value="insert" />
-  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
+  <table class="wide">
   	<tr><th>{translate(#Username#)}</th>
 		
       <th width="60">{translate(#Discount#)}</th>
     </tr>
     <tr class="{switchRowClass()}"> 
-      <td><div style="color:red" flexy:if="error[usr_id]">{error[usr_id]} </div>
+      <td><div class="error" flexy:if="error[usr_id]">{error[usr_id]} </div>
 	    <select name="usr_id" id="usr_id" size="1">
 	 	  <option value="0">Select one user...</option>
 	    	{userList:h}
 		  </select></td>
       <td width="60"> 
-        <div style="color:red" flexy:if="error[discount]">{error[discount]} </div>
+        <div class="error" flexy:if="error[discount]">{error[discount]} </div>
         <input name="discount" type="text" value="0" size="4" maxlength="3">
         %</td>
     </tr>
@@ -59,7 +59,7 @@ function selchkAll(chk, i) {
 
  <form name="users" method="post" flexy:ignore id="users">
     <input type="hidden" name="action" value="delete" />   
-  <table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
+  <table class="wide">
     <tr> 
       <th width="5"><div align="center"><input type="checkbox" name="selAll" value="checkbox" onclick="selchkAll(this, 1);"></div></th>
       <th width="10"><a class="header" href="{makeUrl(##)}frmSortBy/usr_id/frmSortOrder/{sortOrder}/">{translate(#ID#)}</a></th>

@@ -13,47 +13,54 @@
         <tr> 
           <td class="tableHeader" colspan="2">{product.name}</td>
         </tr>
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
-            onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Price#)}:</td>
-          <td>{if:product.oldPriceEuro}<strong>{translate(#Old price#)}: </strong><span style="text-decoration: line-through;">{this.plugin(#currencyConverter#,product.oldPrice,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<BR></span><br>{end:}
-      {this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h} {translate(#EUR#)} {translate(#without VAT#)}<BR>
+{if:product.oldPrice}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td nowrap class="productDescKey">{translate(#Old Price without VAT#)}:</td>
+          <td>
+	    <span style="text-decoration: line-through;">{this.plugin(#formatPrice#,product.oldPrice)}</span>{product.currency}
           </td>
         </tr>
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
-            onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Status#)}:</td>
+{end:}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" 
+        	onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td  width="100" nowrap class="productDescKey">{translate(#Price without VAT#)}:</td>
+          <td>{this.plugin(#formatPrice#,product.price)} {product.currency}</td>
+        </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" 
+        	onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td nowrap class="productDescKey">{translate(#Price with VAT#)}:</td>
+          <td>{this.plugin(#formatPrice#,product.priceVAT)} {product.currency}</td>
+        </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'" 
+        	onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td nowrap class="productDescKey">{translate(#Status#)}:</td>
           <td>{product.statusString}</td>
         </tr>
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+        <tr flexy:if="product.warranty" valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
             onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Warranty#)}:</td>
+          <td nowrap class="productDescKey">{translate(#Warranty#)}:</td>
           <td>{product.warranty}</td>
-        </tr>
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+        </tr>	        
+        <tr flexy:if="product.BALANCE" valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
             onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Amount in warehouses#)}:</td>
+          <td nowrap class="productDescKey">{translate(#Amount in warehouses#)}:</td>
           <td>{product.BALANCE}</td>
         </tr>
         <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
             onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Manufacturer#)}:</td>
+          <td nowrap class="productDescKey">{translate(#Manufacturer#)}:</td>
           <td>{product.manufacturer}</td>
         </tr>
-  {if:product.link_manufacturer}
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+        <tr flexy:if="product.link_manufacturer" valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
             onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Manufacturer link#)}:</td>
+          <td nowrap class="productDescKey">{translate(#Manufacturer link#)}:</td>
           <td><a href="{product.link_manufacturer}">{product.link_manufacturer}</a></td>
         </tr>
-  {end:}
-  {if:product.link_datasheet}
-        <tr valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
+        <tr flexy:if="product.link_datasheet" valign="top" onmouseover="this.style.backgroundColor='#E6E6FF'"
             onmouseout="this.style.backgroundColor='#FFFFFF'">
-          <td width="20" nowrap class="productDescKey">{translate(#Datasheet link#)}:</td>
+          <td nowrap class="productDescKey">{translate(#Datasheet link#)}:</td>
           <td><a href="{product.link_datasheet}">{product.link_datasheet}</a></td>
         </tr>
-  {end:}
   
       </table>
       <br> 
@@ -72,9 +79,8 @@
                </td>
            <tr>
            </tr>
-		       <td align="right" colspan="3">
-                  <input type="button" value="{translate(#Back#)}"
-                     onclick="document.location.href='{makeUrl(##,#shop#,#shop#)}'" />
+	       <td align="right" colspan="3">
+                  <input type="button" value="{translate(#Back#)}" onclick="history.go(-1)" />
                </td>
            </tr>
         </table>

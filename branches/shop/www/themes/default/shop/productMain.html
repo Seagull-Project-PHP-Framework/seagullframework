@@ -3,52 +3,69 @@
     <div id="text">{description}</div>
 <br />
 
-<table width="98%" border="0" cellpadding="0" cellspacing="5">
-     <tr>
-       <td style="background-color: #FBF5B4; height: 10px; width: 140px;">
-         <span style="font-size: 120%; color: #D71B1D; font-weight: 800; text-transform: uppercase;">&nbsp;New products</span></td>
-       <td style="background-color: #FBF5B4; height: 10px; width: 140px;">
-         <span style="font-size: 120%; color: #D71B1D; font-weight: 800; text-transform: uppercase;">&nbsp;Promo products</span></td>
-       <td style="background-color: #FBF5B4; height: 10px; width: 140px;">
-         <span style="font-size: 120%; color: #D71B1D; font-weight: 800; text-transform: uppercase;">&nbsp;Discount products</span></td>
-     </tr>
-    <tr>
+{if:out}
+<table border="1" cellpadding="0" cellspacing="5">
+   <tr>
 {foreach:out,key,value}
-       <td valign="top">
+       <td valign="top" align="left">
+	 <div style="width: 20em; border: 1px red solid">
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0" width="98%">
     <tr>
         <td width="11" height="10" nowrap="nowrap"></td>
         <td width="2" height="10" background="{webRoot}/themes/{theme}/images/r/mvertical.gif"></td>
-        <td width="114" height="10" nowrap="nowrap"></td>
+        <td height="10" nowrap="nowrap"></td>
         <td width="13" height="148" rowspan="3" nowrap="nowrap"></td>
     </tr>
     <tr>
-        <td width="11" height="2" background="{webRoot}/themes/{theme}/images/r/mhorizontal.gif"></td>
-        <td width="2" height="2"></td>
-        <td width="114" height="2" background="{webRoot}/themes/{theme}/images/r/mhorizontal.gif"></td>
+        <td height="2" background="{webRoot}/themes/{theme}/images/r/mhorizontal.gif" colspan="3"></td>
     </tr>
     <tr>
         <td width="11" height="136" nowrap="nowrap"></td>
-        <td width="2" height="136"  background="{webRoot}/themes/{theme}/images/r/mvertical.gif"></td>
-        <td width="114" height="136" valign="top">
-	  <div style="margin: 0 5px;">
-            <div style="font-face: verdana; color: black; font-weight: 600; font-size: x-small; text-align: left">
-                {value[name]}
-            </div>
-            <img src="{value[img]}" alt="{value[name]}" border="0">
-            <div style="font-face: verdana; color: black; font-weight: 300; font-size: x-small; text-align: left">
-                {value[short_description]}
-            </div>
-            <a href="{value[cat_id]}" style="font-family: Verdana; font-size: xx-small; color: red; text-decoration: none;">More >></a>
-          </div>
+        <td width="2" height="136" background="{webRoot}/themes/{theme}/images/r/mvertical.gif"></td>
+        <td valign="top" align="left">
+        
+<table border="0" cellpadding="3" cellspacing="3" width="98%">
+  <tr>
+      <td colspan="2">
+          <span style="font-face: verdana; color: black; font-weight: 600; font-size: x-small; text-align: center;">
+               {value[name]}  <br />
+          </span>
+      </td>
+  </tr>
+  <tr>
+      <td width="79px" height="79px"><img src="{value[img]}" alt="{value[name]}" border="0" align="left" width="75px" height="75px" /></td>
+      <td><span style="font-face: verdana; color: black; font-weight: 300; font-size: x-small; text-align: left;">
+          {value[short_description]}
+          </span>
+      </td>
+  </tr>
+  <tr>
+      <td colspan="2">Kaina: <strong>{this.plugin(#formatPrice#,value[priceVAT])} </strong>{translate(value[currency])}</td>
+  </tr>
+  <tr>
+      <td colspan="2">
+      {if:value[oldPriceVAT]}
+          Sena kaina: <strong style="text-decoration: line-through">{this.plugin(#formatPrice#,value[oldPriceVAT])} </strong>{translate(value[currency])}<br />
+      {end:}
+      </td>
+  </tr>
+  <tr>
+      <td colspan="2" align="right">
+          <span style="font-family: Verdana; font-size: xx-small; color: red; text-decoration: none; text-align: right;">
+              <a href="{value[cat_id]}" >Plaèiau >></a>  <br />
+          </span>
+     </td>
+  </tr>
+</table>
 	</td>
     </tr>
     <tr>
-        <td width="140" height="11" colspan="4" nowrap="nowrap"></td>
+        <td colspan="4">&nbsp;</td>
     </tr>
 </table>
 
+       </div>
       </td>
     {if:value[breakRow]}
       </tr>
@@ -57,3 +74,13 @@
 {end:}
  </tr>
 </table>
+  {else:}
+<table border="0" cellspacing="1" cellpadding="5" width="100%" align="center" class="productText">
+  <tr valign="top">
+    <td align="center" style="border: none">
+        {translate(#No products#)}
+    </td>
+  </tr>
+</table>
+{end:}
+  

@@ -17,42 +17,54 @@
 {if:keywords}<strong>Rezultatele cautarii dupa:</strong> {keywords}{end:}
 <br>
 <!-- END header -->
-
-<table border="0" cellspacing="1" cellpadding="5" width="100%" align="center" class="productText">
 {if:aPagedData[data]}
-    <tr> 
-      <td width="20">
-         <a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|manufacturer||frmSortOrder|sortOrder#)}">{translate(#Manufacturer#)}</a>
+<table border="0" cellspacing="1" cellpadding="5" width="100%" align="center" class="productText">
+    <tr bgcolor="#bcbcbc">
+      <td width="20em">
+         <strong><a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Product#)}</a></strong>
       </td>
-      <td width="30%">
-         <a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Product#)}</a></td>
-      <td width="70%">
-         <strong>{translate(#Short description#)}</strong></td>
-      <td width="10">
-         <a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|price||frmSortOrder|sortOrder#)}">{translate(#Price#)}</a></td>
+      <td width="60em">
+         <strong>{translate(#Short description#)}</strong>
+      </td>
+      <td width="4em">
+         <strong>{translate(#Amount in warehouses#)}</strong>
+      </td>
+      <td width="10em">
+         <strong><a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|price||frmSortOrder|sortOrder#)}">{translate(#Price#)}</a></strong>
+      </td>
+      <td align="right">
+         <strong>{translate(#Buy#)}</strong>
+      </td>
     </tr>
     {foreach:aPagedData[data],key,product}
-    <tr onmouseover="this.style.backgroundColor='#E6E6FF'" onmouseout="this.style.backgroundColor='#FFFFFF'"> 
-      <td valign="top">{product.manufacturer}</td>
-      <td valign="top"><a href="{makeUrl(#details#)}pid/{product.product_id}/">{product.name}</a></td>
-      <td>{product.short_description}</td>
-      <td valign="top" align="right">{this.plugin(#currencyConverter#,product.price,product.currency,#EUR#):h}</td>
+    <tr onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+      <td valign="top"><a href="{makeUrl(#details#)}pid/{product.product_id}/" style="color: #636363">{product.name}</a></td>
+      <td style="font-size: 10px">{product.short_description}</td>
+      <td>{product.BALANCE}</td>
+      <td valign="top" align="right">{this.plugin(#formatPrice#,product.priceVAT):h} {translate(product.currency)}</td>
+      <td align="right">
+            <form action="" method="post" flexy:ignore="yes" flexy:if="showCart">
+            <input type="hidden" name="action" value="order" />
+            <input type="hidden" name="pid" value="{product.product_id}" />
+            <input class="text" name="qty" style="width: 38px; height: 10px;" type="text">
+            <input src="{webRoot}/themes/{theme}/images/r/krepselis2.gif" type="image">
+            </form>
+      </td>
     </tr> 
     {end:}
   {if:pager}
   <tr valign="top"> 
-    <td colspan="4" style="border: none">
-       <b>{translate(#Products#)}: {aPagedData[from]}-{aPagedData[to]} din {aPagedData[totalItems]} &nbsp; &nbsp; ::</b> &nbsp; &nbsp;
+    <td colspan="5" style="border: none">
+       <b>{translate(#Products#)}: {aPagedData[from]}-{aPagedData[to]} {translate(#from#)} {aPagedData[totalItems]} &nbsp; &nbsp; ::</b> &nbsp; &nbsp;
         {aPagedData[links]:h} 
     </td>
   </tr>
   {end:}
-  {else:}
-  <tr valign="top">
-    <td colspan="4" align="center" style="border: none">
-        {translate(#No products#)}
-    </td>
-  </tr>
-  {end:}
 </table>
-
+{else:}
+<div align="center">
+	<br />
+	{translate(#No products#)}
+	<br />
+</div>
+{end:}

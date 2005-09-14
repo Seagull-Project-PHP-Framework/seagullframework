@@ -45,12 +45,12 @@
     border: 1px solid #666666;
 }
 
-.dataTable thead th{
-    background: #D4D0C8;
-    border-top: 1px solid white;
+.dataTable th {
+    background: #FDE802;
+/*    border-top: 1px solid white;
     border-left: 1px solid white;
     border-right: 1px solid #666666;
-    border-bottom: 1px solid #666666;
+    border-bottom: 1px solid #666666;*/
     font-family: Verdana, serif;
     font-size: 10px;
 }
@@ -92,7 +92,7 @@
 .dataTable-tr-footer {
     color: black;
     padding: 1px 5px;
-    background: #D4D0C8;
+    background: #FDE802;
     vertical-align: middle;
 }
 

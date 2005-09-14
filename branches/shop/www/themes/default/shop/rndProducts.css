@@ -8,27 +8,22 @@ div.rndProducts {
     border-left: 1px solid #bbbbbb;
     border-bottom: 1px solid #bbbbbb;
 }
-
 div.rndProducts img {
     border: 1px solid #bbbbbb;
 }
-
 div.rndProducts a {
-    text-decoration:none;
+    text-decoration: none;
 }
-
-div.rndProducts a:hover img{
+div.rndProducts a:hover img {
     border: 1px solid #184a84;
 }
-
 div.rndProducts h5 {
-    margin: 0em 0;
+    margin: 0;
     font-size: 1.1em;
     white-space: nowrap;
 }
-
 div.rndProducts h6 {
-    margin: 0em 0;
+    margin: 0;
     font-size: 1em;
     color: #184a84;
 }

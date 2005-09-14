@@ -33,8 +33,8 @@ function newwindow(link){
 {if:keywords}<strong>Rezultatele cautarii dupa:</strong> {keywords}{end:}
 <br>
 <!-- END header -->
-
-<table width="100%" height="122" border="0" cellpadding="0" cellspacing="0" class="productText">
+{if:aPagedData[data]}
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="productText">
 {foreach:aPagedData[data],key,product}
     <tr>
         <td width="20%" height="108"align="center">
@@ -81,7 +81,13 @@ function newwindow(link){
 <br />
 
 <div align="left">
-<b>Produktai: {aPagedData[from]}-{aPagedData[to]} ið {aPagedData[totalItems]} &nbsp; &nbsp; ::</b> &nbsp; &nbsp;
-      {aPagedData[links]:h}
+<b>{translate(#Products#)}: {aPagedData[from]}-{aPagedData[to]} {translate(#of#)} {aPagedData[totalItems]} 
+	  {if:aPagedData[links]}&nbsp; &nbsp; ::</b> &nbsp; &nbsp;  {aPagedData[links]:h}{end:}
 </div>
-
+{else:}
+<div align="center">
+	<br />
+	{translate(#No products#)}
+	<br />
+</div>
+{end:}

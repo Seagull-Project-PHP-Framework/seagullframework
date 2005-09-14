@@ -5,6 +5,7 @@
 }
 .tableHeader td{
 	border-bottom: 1px solid #e7e7e7;
+	background-color: red;
 }
 
 .pText {
@@ -29,7 +30,7 @@
 	font-size: 12px;
 }
 .productText td{
-	border-bottom: 1px solid #971111;
+	border-bottom: 1px solid #bcbcbc;
 }
 
 .productFastList {
