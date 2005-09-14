@@ -1,3 +1,8 @@
+/*
+To work correctly in MSIE you need to specify the valid path for the behaviour element in
+#sgl-nav ul li, in other words, either the correct absolute or relative path.
+*/
+
 #sgl-nav {
     height: 50px;
     font-size: 0.75em;
@@ -16,7 +21,7 @@
     float: left;
     margin: 0;
     /* IE :hover silly javascript workaround */
-    behavior: url(themes/default/css/listItemHover.htc);
+    behavior: url(/themes/default/css/listItemHover.htc);
 }
 #sgl-nav ul li a {
     display: block;
