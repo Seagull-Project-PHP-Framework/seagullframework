@@ -121,7 +121,7 @@ class ConfigMgr extends SGL_Manager
             }
             
             //  filter site name for chars not suited to ini files
-            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']));
+            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']);
             
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
