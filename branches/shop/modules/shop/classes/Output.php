@@ -80,7 +80,7 @@ class ShopOutput
         $price = $amount * $conf['exchangeRate'][$from] / $conf['exchangeRate'][$to];
         
         if ($format) {
-           $price = number_format($price, 0, ',', '.');
+           $price = number_format($price, 2, ',', '.');
         } 
         
         return $price;
