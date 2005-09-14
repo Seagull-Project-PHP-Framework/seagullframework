@@ -43,12 +43,12 @@ require_once SGL_ENT_DIR . '/Cart_product.php';
  */
 class CartAdminMgr extends SGL_Manager
 {
-    
+
     var $_order;
-    
+
     function CartAdminMgr()
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);    
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->module		= 'cart';
         $this->pageTitle    = 'Cart Admin';
         $this->template     = 'itemList.html';
@@ -59,12 +59,12 @@ class CartAdminMgr extends SGL_Manager
             'delete'    => array('delete','list'),
 #			'update'	=> array('update','list'),
         );
-            
+
     }
 
     function validate($req, &$input)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);   
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -78,39 +78,39 @@ class CartAdminMgr extends SGL_Manager
 
         $input->aDelUpd     = $req->get('frmDelUpd');
 		$input->aUpdStatus     = $req->get('frmUpdStatus');
-        
+
         $input->totalItems  = $req->get('totalItems');
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
-                  
-       
-        
+
+
+
         switch($input->action) {
             case 'delete':
                 //if(!isset($input->itemId))
                 //    $aErrors[] = 'No item specified';
                 break;
         }
-        
+
         //  if errors have occured
-       
+
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseError('Please fill in the indicated fields');
             $input->error = $aErrors;
             $input->template = 'itemList.html';
             $this->validated = false;
         }
-       
+
     }
-    
-    
+
+
     /**
     * List orders
     *
     * @access public
     * @modified Tomas Bagdanavicius
     */
-    function _list(&$input, &$output) 
+/*    function _list(&$input, &$output)
     {
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -120,16 +120,16 @@ class CartAdminMgr extends SGL_Manager
 
         $orderBy_query = '';
         $allowedSortFields = array('cart_id','username','name','c.date_created','total','status','org_name');
-        if(isset($input->sortBy) 
-		   and strlen($input->sortBy) > 0 
-           and isset($input->sortOrder) 
-		   and strlen($input->sortOrder) > 0 
+        if(isset($input->sortBy)
+		   and strlen($input->sortBy) > 0
+           and isset($input->sortOrder)
+		   and strlen($input->sortOrder) > 0
            and in_array($input->sortBy, $allowedSortFields)) {
-                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ; 
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
             $orderBy_query = ' ORDER BY c.date_created DESC ';
         }
-        
+
         $dbh = & SGL_DB :: singleton();
 
 		$oUser = & new DataObjects_Usr();
@@ -137,23 +137,23 @@ class CartAdminMgr extends SGL_Manager
 
 		// form a query
         $query = "
-			SELECT 
-				*,c.date_created as date_created, 
+			SELECT
+				*,c.date_created as date_created,
 				c.status as status_id,
-				u.username as username, 
+				u.username as username,
 				CONCAT(u.first_name, ' ', u.last_name) as name " . ",
 				o.name as org_name
-			FROM 
-				{$conf['table']['cart']} as c, 
+			FROM
+				{$conf['table']['cart']} as c,
 				{$conf['table']['user']} as u,
 				{$conf['table']['organisation']} as o
-			WHERE c.usr_id = u.usr_id 
+			WHERE c.usr_id = u.usr_id
 			AND u.organisation_id = o.organisation_id ";
 
 		// check whether it is not a super member
 		if(SGL_HTTP_Session::get('rid') == 3) {
 			$query .= "
-				AND u.organisation_id = " . $oUser->organisation_id . " 
+				AND u.organisation_id = " . $oUser->organisation_id . "
 				AND u.role_id != 1 ";
 		}
 		$query .= $orderBy_query;
@@ -179,23 +179,175 @@ class CartAdminMgr extends SGL_Manager
             }
 
             $output->totalItems = $aPagedData['totalItems'];
-			if($aPagedData['totalItems'] == 0) 
+			if($aPagedData['totalItems'] == 0)
+				SGL :: raiseMsg('There are no orders listed for this account');
+
+            $output->aPagedData = $aPagedData;
+           // dumpr($aPagedData['data']);
+
+        }
+		$output->addOnLoadEvent('document.frmCartMgrChooser.orders.disabled = true');
+    }*/
+
+
+    function _list(&$input, &$output)
+    {
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $output->template = 'listOrders.html';
+        $output->pageTitle = 'Cart Admin :: List orders';
+
+        $orderBy_query = '';
+        $allowedSortFields = array('cart_id','username','name','c.date_created','total','status','org_name');
+        if(isset($input->sortBy)
+		   and strlen($input->sortBy) > 0
+           and isset($input->sortOrder)
+		   and strlen($input->sortOrder) > 0
+           and in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = ' ORDER BY c.date_created DESC ';
+        }
+
+        $dbh = & SGL_DB :: singleton();
+
+		$oUser = & new DataObjects_Usr();
+		$oUser->get(SGL_HTTP_Session::getUid());
+
+		// form a query
+        $query = "
+			SELECT
+				*,c.date_created as date_created,
+				c.status as status_id,
+				u.username as username,
+				CONCAT(u.first_name, ' ', u.last_name) as name " . ",
+				o.name as org_name
+			FROM
+				{$conf['table']['cart']} as c,
+				{$conf['table']['user']} as u,
+				{$conf['table']['organisation']} as o
+			WHERE c.usr_id = u.usr_id
+			AND u.organisation_id = o.organisation_id ";
+
+		// check whether it is not a super member
+		if(SGL_HTTP_Session::get('rid') == 3) {
+			$query .= "
+				AND u.organisation_id = " . $oUser->organisation_id . "
+				AND u.role_id != 1 ";
+		}
+		$query .= $orderBy_query;
+
+        $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
+        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
+        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+
+        if(!DB::isError($aPagedData)) {
+
+			$statuses = SGL_String::translate('aStatuses');
+
+			foreach($aPagedData['data'] as $no => $data) {
+				$originalStatus = ($data['status']);
+                //dumpr($data['status']);
+				//$personalStatuses = $this->array_slice_key($statuses, $originalStatus, ((count($statuses))-$originalStatus));
+				//echo $originalStatus;
+				//dumpr($this->GetStatusList(SGL_HTTP_Session::get('rid'),$originalStatus));
+			$personalStatuses = $this->GetStatusList(SGL_HTTP_Session::get('rid'),$originalStatus);
+				$aPagedData['data'][$no]['personalStatuses'] = $personalStatuses;
+				unset($personalStatuses);
+			}
+
+            if(is_array($aPagedData['data']) && count($aPagedData['data'])) {
+                $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+            }
+
+            $output->totalItems = $aPagedData['totalItems'];
+			if($aPagedData['totalItems'] == 0)
 				SGL :: raiseMsg('There are no orders listed for this account');
 
             $output->aPagedData = $aPagedData;
 
-        } 
+        }
 		$output->addOnLoadEvent('document.frmCartMgrChooser.orders.disabled = true');
     }
-    
-    
+
+    function GetStatusList($rid, $status) {
+        //if extended member
+        $statuses = SGL_String::translate('aStatuses');
+        if($rid == 3) {
+            if ($status == 1) {
+              return array(
+                "1" => $statuses[1],
+                "10" => $statuses[10],
+                "11" => $statuses[11],
+              );
+            } elseif ($status == 2 || $status == 10 || $status == 11) {
+              //should be able to view changes in read only mode ....
+              return array(
+                "2" => $statuses[2],
+                "10" => $statuses[10],
+                "11" => $statuses[11],
+              );
+            }
+        } elseif($rid == 1){
+            if ($status == 1) {
+              return array(
+                "1" => $statuses[1],
+                "4" => $statuses[4],
+                "10" => $statuses[10],
+                "11" => $statuses[11],
+              );
+            } elseif ($status == 2) {
+              return array(
+                "2" => $statuses[2],
+                "4" => $statuses[4],
+                "5" => $statuses[5],
+                "6" => $statuses[6],
+                "11" => $statuses[11],
+              );
+            } elseif ($status == 3) {
+              return array(
+                "3" => $statuses[3],
+              );
+            } elseif ($status == 4) {
+              return array(
+                "4" => $statuses[4],
+                "5" => $statuses[5],
+                "6" => $statuses[6],
+              );
+            } elseif ($status == 5) {
+              return array(
+                "5" => $statuses[5],
+                "6" => $statuses[6],
+              );
+            } elseif ($status == 6) {
+              return array(
+                "6" => $statuses[6],
+              );
+            } elseif ($status == 10) {
+              return array(
+                "2" => $statuses[2],
+                "4" => $statuses[4],
+                "5" => $statuses[5],
+                "6" => $statuses[6],
+                "11" => $statuses[11],
+              );
+            } elseif ($status == 11) {
+              return array(
+                "3" => $statuses[3],
+              );
+            }
+        }
+    }
+
+
     /**
     * View order and user details
     *
     * @access public
     * @modified Tomas Bagdanavicius
     */
-    function _view (& $input, & $output) 
+    function _view (& $input, & $output)
     {
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
 		$conf = & $GLOBALS['_SGL']['CONF'];
@@ -214,35 +366,36 @@ class CartAdminMgr extends SGL_Manager
 
 		// load product information
 		$dbh = & SGL_DB::singleton();
+
 		$query = "
-			SELECT 
-				cp.product_name as name, 
-				cp.product_code as cod1, 
-				cp.product_id as id, 
+			SELECT
+				cp.product_name as name,
+				cp.product_code as cod1,
+				cp.product_id as id,
 				c.total,
 				cp.quantity,
 				cp.price,
 				cp.price*cp.quantity as total
-			FROM 
-				{$conf['table']['cart']} as  c, 
-				cart_product as cp
+			FROM
+				{$conf['table']['cart']} as  c,
+				{$conf['table']['cart_product']} as cp
 			WHERE c.cart_id = cp.cart_id
 			AND c.cart_id = " .$oCart->cart_id;
 
 		$aProducts = $dbh->getAll($query);
 
 		$output->items = $aProducts;
-		
+
         if(!is_array($output->items) or count($output->items) < 0) {
             SGL :: raiseMsg('Invalid order ID');
             return;
         }
-		
+
         $oUser = & new DataObjects_Usr();
         $oUser->get($oCart->usr_id);
-        
+
         $output->user = $oUser;
-        
+
         $output->itemCount = 0;
         foreach($output->items as $item) {
             $output->itemCount = $output->itemCount + $item->quantity;
@@ -250,14 +403,14 @@ class CartAdminMgr extends SGL_Manager
 
 		$output->expand = true;
     }
-    
+
     /**
     * Delete or update order(s) from DB
 	*
     * @access admin
     * @author Tomas Bagdanavicius
     */
-    function _delete (& $input, & $output) 
+    function _delete (& $input, & $output)
     {
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
 		$conf = & $GLOBALS['_SGL']['CONF'];
@@ -320,7 +473,7 @@ class CartAdminMgr extends SGL_Manager
 							 $total = $oCart->total;
 
 							 unset($query,$aPayment,$oPayment);
-								
+
 							require_once SGL_ENT_DIR . '/Payment.php';
 							$oPayment = & new DataObjects_Payment();
 							$oPayment->get($PaymentId);
@@ -346,7 +499,7 @@ class CartAdminMgr extends SGL_Manager
 		} else {
 			SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
 		}
-		
+
 		unset($deleted,$conf);
 	}
 
@@ -360,7 +513,7 @@ class CartAdminMgr extends SGL_Manager
 	   foreach($keys as $key) {
 		   $return[$key] = $array[$key];
 	   }
-	 
+
 	   return $return;
    }
 
