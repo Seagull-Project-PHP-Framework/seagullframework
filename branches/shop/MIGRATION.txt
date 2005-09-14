@@ -13,7 +13,9 @@ overlapping table IDs. The IDs are OK for a fresh install.
 	/www/themes/default/shop
 	/modules/block/classes/blocks/ShopNav.php
 	/modules/block/classes/blocks/ShoppingCart.php
-	/modules/block/classes/blocks/Exchange.php
+	/modules/block/classes/blocks/ShopSearch
+	/modules/block/classes/blocks/RndMsgBlock.php
+	/modules/block/classes/blocks/Exchange.php 
 
 2) Add modules
 INSERT INTO module VALUES (14,1,'shop','Shop','This is the Shop Manager. Add and edit your products, prices and discounts here.','shop/shopadmin','default.png');
@@ -31,21 +33,25 @@ INSERT INTO permission VALUES (230,'cartmgr_checkout',NULL,16);
 4) Assign the permissions to roles
 INSERT INTO role_permission VALUES (71,0,225);
 INSERT INTO role_permission VALUES (72,0,226);
+INSERT INTO role_permission VALUES (73,2,225);
+INSERT INTO role_permission VALUES (74,2,226);
 
 5) Add shop to navigation menu
 INSERT INTO section VALUES (20,'Shop','shop/shop','1,2,0',0,20,1,4,15,1,1,NULL);
 INSERT INTO section VALUES (21,'Shop Admin','shop/shopadmin','1',20,20,2,3,1,2,1,NULL);
 
 6) Activate blocks, last columnt set to 1
-INSERT INTO block VALUES (13, 'ShopNav', 'Products', '', 'sgl-dropdown', 1, 1, 1);
-INSERT INTO block VALUES (14, 'ShoppingCart', 'Cart', '', '', 1, 0, 1);
-INSERT INTO block VALUES (16, 'ShopSearch', 'Search', '', '', 7, 1, 1);
-INSERT INTO block VALUES (18, 'Exchange', 'Exchange', '', '', 9, 1, 1);
+INSERT INTO block VALUES (13, 'ShopNav', 'Products', '', 'sgl-dropdown', 1, 1, 1, NULL);
+INSERT INTO block VALUES (14, 'ShoppingCart', 'Cart', '', '', 1, 0, 1, NULL);
+INSERT INTO block VALUES (15, 'RndProducts', 'Promotions', '', 'rndProducts', 5, 0, 1, NULL);
+INSERT INTO block VALUES (16, 'ShopSearch', 'Search', '', '', 7, 1, 1, NULL);
+INSERT INTO block VALUES (18, 'Exchange', 'Exchange', '', '', 9, 1, 1, NULL);
 
 7) Show blocks for different sections
 INSERT INTO block_assignment VALUES (13, 20);
 INSERT INTO block_assignment VALUES (13, 21);
 INSERT INTO block_assignment VALUES (14, 0);
+INSERT INTO block_assignment VALUES (15, 0);
 INSERT INTO block_assignment VALUES (16, 0);
 INSERT INTO block_assignment VALUES (18, 0);
 
