@@ -11,8 +11,8 @@ $words['Subcategories'] = 'Subkategorijos';
 $words['No products'] = 'Ðioje kategorijoje produktø nëra';
 $words['Products::Browse'] = 'Produktai :: Narðyti';
 $words['Switch to'] = 'Pereiti prie';
-$words['Detailed view'] = 'Detali perþiûra';
-$words['List view'] = 'Sàraðas';
+$words['Detailed view'] = 'Detali perþiûra'; // Ar naudojam???
+$words['List view'] = 'Su paveiksliukais';
 $words['Order'] = 'Uþsakyti';
 $words['Description'] = 'Apraðymas';
 $words['Product details'] = 'Informacija apie produktà';
@@ -132,4 +132,29 @@ $words['EUR'] = 'EUR';
 $words['USD'] = 'USD';
 $words['ROL'] = 'Lei';
 $words['RON'] = 'New Lei';
+$words['LIT'] = 'Lt';
+
+$words['Price without VAT'] = 'Kaina be PVM';
+$words['Price with VAT'] = 'Kaina su PVM';
+$words['Ammount in warehouses'] = 'Kiekis sandeliuose';
+$words['Back'] = 'Atgal';
+$words['Total products'] = 'Viso';
+$words['Ordering'] = 'Rûðavimas';
+
+
+$words['Update ordering information'] = 'Iðrûðiuoti';
+$words['update'] = 'atnaujinti';
+$words['Bargain'] = 'Iðpardavimas';
+$words['Products::Edit'] = 'Produktai::Redaguoti';
+$words['Quantity'] = 'Kiekis';
+$words['Fast view'] = 'Be paveiksliukø';
+$words['Amount in warehouses'] = 'Kiekis sandeliuose';
+
+$words['Product Categories Descriptions'] = 'Produktø kategorijø apraðymai';
+
+//product fast list template
+$words['Buy'] = 'Pirkti';
+
+
+
 ?>

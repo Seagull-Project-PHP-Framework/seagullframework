@@ -6,6 +6,8 @@ $words['Update ordering information'] = 'Update ordering information';
 $words['update'] = 'update';
 $words['Total products'] = 'Total products';
 $words['Quantity'] = 'Quantity';
+$words['of'] = 'of';
+$words['Buy'] = 'Buy';
 
 
 // Products Edit
@@ -34,6 +36,8 @@ $words['Cod1'] = 'Cod1';
 $words['Cod2'] = 'Cod2';
 $words['Name'] = 'Name';
 $words['Price'] = 'Price';
+$words['Price with VAT'] = 'Price with VAT';
+$words['Price without VAT'] = 'Price without VAT';
 $words['Old price'] = 'Old price';
 $words['Short description'] = 'Short description';
 $words['Description'] = 'Description';
@@ -77,6 +81,8 @@ $words['Role'] = 'Role';
 $words['Add user'] = 'Add user';
 $words['Discount'] = 'Discount';
 $words['Discounts'] = 'Discounts';
+
+
 $words['Discounts :: Browse'] = 'Discounts :: Browse';
 $words['With selected user(s)'] = 'With selected user(s)';
 $words['Shop Manager'] = 'Shop Manager';
