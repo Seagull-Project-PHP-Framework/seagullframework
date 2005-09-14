@@ -31,6 +31,7 @@ CREATE TABLE cart_product (
 /*==============================================================*/
 /* Table: payment                                               */
 /*==============================================================*/
+/*
 CREATE TABLE payment (
   id int(11) NOT NULL auto_increment,
   user_id int(11) NOT NULL default '0',
@@ -43,3 +44,4 @@ CREATE TABLE payment (
   last_updated datetime default NULL,
   PRIMARY KEY  (id)
 );
+*/
