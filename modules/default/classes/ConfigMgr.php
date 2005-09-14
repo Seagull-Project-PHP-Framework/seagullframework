@@ -119,7 +119,6 @@ class ConfigMgr extends SGL_Manager
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
-            
             //  filter site name for chars not suited to ini files
             $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']);
             
@@ -152,6 +151,13 @@ class ConfigMgr extends SGL_Manager
                     }
                 }
                 break;
+            }
+            
+            //  extended session stuff for mysql only
+            if ((  !empty($input->conf['site']['single_user']) 
+                || !empty($input->conf['site']['extended_session'])) 
+                && !preg_match("/mysql/", $input->conf['db']['type'])) {
+                    $aErrors['single_user'] = 'This feature is currently only available for MySQL users';
             }
 
             //  session validations
