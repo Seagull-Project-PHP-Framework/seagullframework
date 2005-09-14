@@ -266,6 +266,10 @@ class SGL_Sql
                 $maxVal   = $k[1] + 1;
                 $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
                 $result = $db->query($sql);
+                if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
+                    $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
+                    $result = $db->query($sql);
+                }
             }
             break;
 

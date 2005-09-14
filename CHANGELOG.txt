@@ -13,6 +13,9 @@ IMPROVEMENTS
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+14-09-05    Fixed bug where new sequences for pgsql were correctly created but existing 
+            ones weren't updated when triggering the "Rebuild Sequences Now"
+            action in the Maintenance Mgr (Lorenzo Alberton)
 13-09-05    Disabled FK constraints from MySQL as there appears to be a bug
             in the implementation.  Same SQL works fine in PgSQL ;-)
 13-09-05    Fixed bug where prefs where not being correctly added for new
