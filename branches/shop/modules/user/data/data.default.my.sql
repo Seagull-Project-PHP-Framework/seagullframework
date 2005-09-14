@@ -196,6 +196,7 @@ INSERT INTO permission VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission VALUES (221, 'contactusmgr', '', 2);
 INSERT INTO permission VALUES (223, 'blockmgr', '', 1);
 INSERT INTO permission VALUES (224, 'bugmgr', '', 3);
+# SHOP
 INSERT INTO permission VALUES (225,'shopmgr',NULL,14);
 INSERT INTO permission VALUES (226,'cartmgr',NULL,16);
 INSERT INTO permission VALUES (227,'cartmgr_insert',NULL,16);
@@ -293,8 +294,11 @@ INSERT INTO role_permission VALUES (63, 2, 149);
 INSERT INTO role_permission VALUES (68, 0, 138);
 INSERT INTO role_permission VALUES (69, 0, 224);
 INSERT INTO role_permission VALUES (70, 0, 121);
+# Shop
 INSERT INTO role_permission VALUES (71,0,225);
 INSERT INTO role_permission VALUES (72,0,226);
+INSERT INTO role_permission VALUES (73,2,225);
+INSERT INTO role_permission VALUES (74,2,226);
 
 #
 # Dumping data for table `user_permission`
@@ -344,6 +348,8 @@ INSERT INTO user_permission VALUES (40, 2, 63);
 INSERT INTO user_permission VALUES (41, 2, 66);
 INSERT INTO user_permission VALUES (42, 2, 147);
 INSERT INTO user_permission VALUES (46, 2, 149);
+INSERT INTO user_permission VALUES (47, 2, 225);
+INSERT INTO user_permission VALUES (48, 2, 226);
 
 #
 # Dumping data for table `user_preference`
