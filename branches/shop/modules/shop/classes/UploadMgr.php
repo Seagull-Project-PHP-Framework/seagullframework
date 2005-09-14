@@ -74,6 +74,7 @@ class UploadMgr extends SGL_Manager {  ///?
                 'csvExport'   => array ('csvExport'),
                 'updateOrder' => array ('updateOrder'),
                 'genCsvLine'  => array ('genCsvLine'),
+                'csvUploadProducts' => array('csvUploadProducts'),
                 );
                 
         //TO DO: activate rate manager
@@ -122,15 +123,16 @@ class UploadMgr extends SGL_Manager {  ///?
         $input->totalItems      = $req->get('totalItems');
         $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
-        $input->config          = $req->get('Shop');
+        $input->csvType         = $req->get('csvType');
 
+        
         if ($input->action == 'csvUpdate') {
             if ($input->product->action == 'add')
                 $required = array ('product_id', 'name', 'cat_id', 'manufacturer',
                                    'price', 'status', 'cod1');
             else
                 $required = array ('cod1');
-            if (!$this->_validateProductEdit($input->product, $aErrors, $required)) {
+            if (!ShopAdminMgr::_validateProductEdit($input->product, $aErrors, $required)) {
                 $input->error = $aErrors;
                 $this->validated = false;
                 $input->template = 'productEdit.html';
@@ -151,33 +153,21 @@ class UploadMgr extends SGL_Manager {  ///?
             if (!(($input->csvFileExtension == 'csv') and $input->csvFileExtension == 'csv')) {
                 $aErrors['csvUpload'] = SGL_Output::translate('Invalid file type');
             }
-            if ($input->csvFileSize < 1) {
-                $aErrors['csvUpload'] = SGL_Output::translate('Invalid file size');
+            if (empty($input->csvFileName)) {
+                $aErrors['csvUpload'] = SGL_Output::translate('Invalid file');
             }
         }
 
         //  if errors have occured
         if (isset ($aErrors) && count($aErrors)) {
-/*            SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
-            if ($input->action == 'add' || $input->action == 'insert') {
-                $input->template = 'productAdd.html';
-            }
-
-            if ($input->action == 'edit' || $input->action == 'update'
-               || $input->action == 'imageUpload' || $input->action == 'csvEdit') {
-                $input->template = 'productEdit.html';
-            }
             if ($input->action == 'csvUpload') {
+
                 $input->template = 'csvUpload.html';
             }
-
-            if ($input->action == 'configEdit') {
-                $input->template = 'configEdit.html';
-            } */
+            $input->error = $aErrors;
             $this->validated = false;
         }
-        //die("numirem");
+
     }
 
     function display(& $output) {
@@ -333,9 +323,17 @@ class UploadMgr extends SGL_Manager {  ///?
      * @access public
      *
      */
-    function _csvUpload(& $input, & $output) {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+    function _csvUpload(& $input, & $output){
 
+
+        if ($input->csvType == "products") {
+            $this->_csvUploadProducts($input,$output);
+        }
+
+    }
+
+    function _csvUploadProducts(& $input, & $output){
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'csvUpload.html';
         $output->pageTitle = $this->pageTitle.'::CSV Upload';
         
@@ -486,7 +484,7 @@ class UploadMgr extends SGL_Manager {  ///?
                     
                 case 'update' :
                     $required = array ('cod1');
-                    if (!$this->_validateProductEdit($product, $err, $required)) {
+                    if (!ShopAdminMgr::_validateProductEdit($product, $err, $required)) {
                         $aCsv[$index]->error = SGL_Output::translate('Error detected. Please edit the record');
                         error_log(print_r($err,true));
                         error_log(print_r($product,true));
@@ -508,10 +506,11 @@ class UploadMgr extends SGL_Manager {  ///?
                     $oProduct->last_updated = SGL::getTime();
                     $oProduct->updated_by = $_SESSION['uid'];
                     $success = $oProduct->update();
-                    if ($success != false) {
+//ToThink what we should report if few errors found?
+                    if ($success != 1 && empty($aCsv[$index]->notice)) {
                         unset ($aCsv[$index]);
-                    } else {
-                        $aCsv[$index]->error = SGL_Output::translate('data save error');
+                    } elseif($success != 1) {
+                        $aCsv[$index]->error = SGL_Output::translate('data save error'.$success);
                     }
                     break;
                     
