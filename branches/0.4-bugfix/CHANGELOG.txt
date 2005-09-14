@@ -10,6 +10,12 @@ IMPROVEMENTS
 10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
+| VERSION: 0.4.7        |
++-----------------------+
+BUGFIXES
+IMPROVEMENTS
+
++-----------------------+
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
