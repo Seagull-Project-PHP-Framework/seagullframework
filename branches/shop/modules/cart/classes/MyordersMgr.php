@@ -91,7 +91,7 @@ class MyordersMgr extends SGL_Manager
            and isset($input->sortOrder) 
 		   and strlen($input->sortOrder) > 0 
            and in_array($input->sortBy, $allowedSortFields)) {
-                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ; 
+                $orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
             $orderBy_query = ' ORDER BY date_created DESC ';
         }
@@ -103,12 +103,12 @@ class MyordersMgr extends SGL_Manager
 		$oUser->get(SGL_HTTP_Session::getUid());
 
 		// form a query
-        $query = " 
+        $query = "
 			SELECT 
 				*,date_created as date_created, 
 				status as status_id
 			FROM 
-				{$conf['table']['cart']}
+				{$conf['table']['cart']} as c
 			WHERE usr_id = ". SGL_HTTP_Session::getUid() . $orderBy_query;
 
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];

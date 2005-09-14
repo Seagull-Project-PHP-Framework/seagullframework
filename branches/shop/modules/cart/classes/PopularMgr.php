@@ -55,7 +55,7 @@ class PopularMgr extends SGL_Manager
 
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
-        $input->masterTemplate  = 'masterMinimal.html';
+        $input->masterTemplate  = $this->masterTemplate;
         $input->template        = $this->template;
 		$input->action          = ($req->get('action')) ? $req->get('action') : 'list';
 
@@ -130,7 +130,7 @@ class PopularMgr extends SGL_Manager
 				AND u.organisation_id = " . $oUser->organisation_id . " ";
 		}
 
-		$prime_query .= "GROUP BY cp.product_id ";
+	    $prime_query .= "GROUP BY cp.product_id ";
 
 		
 		/* build two queries:

@@ -47,7 +47,7 @@ class CartOutput
     }
     
     
-    function formatPrice ($price) 
+    function formatPrice ($price)
     {
     	return number_format($price, 2, ',', '.');
     }
