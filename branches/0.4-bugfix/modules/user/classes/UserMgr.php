@@ -389,7 +389,8 @@ class UserMgr extends RegisterMgr
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
     }
 
-    function _viewLogin(&$input, &$output){
+    function _viewLogin(&$input, &$output)
+    {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -403,7 +404,7 @@ class UserMgr extends RegisterMgr
            && in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
-            $orderBy_query = ' ORDER BY date_time ASC ';
+            $orderBy_query = ' ORDER BY date_time DESC ';
         }
         if (!empty($input->userID) ){
             $query = "
@@ -429,7 +430,8 @@ class UserMgr extends RegisterMgr
 
     }
 
-    function _truncateLoginTbl(&$input, &$output){
+    function _truncateLoginTbl(&$input, &$output)
+    {
 
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
