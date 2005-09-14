@@ -1,4 +1,4 @@
-<h1 class="pageTitle">{pageTitle}</h1>
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
 <span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
 
 {if:items}
@@ -18,26 +18,26 @@
       <td>{key}. <a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
       <td width="50">
          <input type="text" class="textInput" name="qth[{key}]" value="{aValue.quantity}" size="3" maxlength="3"/></td>
-      <td width="100" align="right">{this.plugin(#formatPrice#,aValue.price):h} {currency}</td>
-      <td width="100" align="right">{this.plugin(#formatPrice#,aValue.sum):h} {currency}</td>
+      <td width="100" align="right">{this.plugin(#formatPrice#,aValue.price):h} {translate(currency)}</td>
+      <td width="100" align="right">{this.plugin(#formatPrice#,aValue.sum):h} {translate(currency)}</td>
     </tr>
     <tr> 
       <td colspan="2" align="center">Total:</td>
       <td><strong>{itemCount}</strong></td>
-      <td align="right"><strong>{this.plugin(#formatPrice#,total_price):h} {currency}</strong></td>
-      <td align="right"><strong>{this.plugin(#formatPrice#,total_sum):h} {currency}</strong></td>
+      <td align="right"><strong>{this.plugin(#formatPrice#,total_price):h} {translate(currency)}</strong></td>
+      <td align="right"><strong>{this.plugin(#formatPrice#,total_sum):h} {translate(currency)}</strong></td>
     </tr>
     
     <tr>
       <td colspan="3"></td>
-      <td align="center"><strong>VAT {vat}%:</strong></td>
-      <td align="right"><strong>{this.plugin(#formatPrice#,VATsum):h} {currency}</strong></td>
+      <td align="center"><strong>{translate(#VAT#)} {vat}%:</strong></td>
+      <td align="right"><strong>{this.plugin(#formatPrice#,VATsum):h}  {translate(currency)}</strong></td>
     </tr>
     <tr>
       <td colspan="3">{translate(#With selected item(s)#)}:
         <input type="submit" class="narrowButton" name="delete" value="{translate(#Recalculate#)}" /></td>
-      <td align="center"><strong>Total with VAT:</strong></td>
-      <td align="right"><strong>{this.plugin(#formatPrice#,total_sumVAT):h} {currency}</strong></td>
+      <td align="center"><strong>{translate(#Total with VAT#)}:</strong></td>
+      <td align="right"><strong>{this.plugin(#formatPrice#,total_sumVAT):h} {translate(currency)}</strong></td>
     </tr>
   </table>
 </form>

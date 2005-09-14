@@ -6,7 +6,7 @@
       <th width="30">{translate(#Quantity#)}</th>
       <th width="150"><div align="right">{translate(#Price#)}</div></th>
     </tr>
-      <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue"> 
+    <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue">
       <td><a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
       <td width="30" align="center">{aValue.quantity}</td>
       <td width="150" align="right" nowrap>{this.plugin(#formatPrice#,aValue.price):h} Lei</td>
