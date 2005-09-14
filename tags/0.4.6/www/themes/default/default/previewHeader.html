@@ -1,0 +1,16 @@
+<flexy:include src="header.html" />
+
+<div id="sgl-header">
+    {if:showLogo} 
+        <span><img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} logo" /></span> 
+    {else:}
+        <h1 id="sgl-header-left">{siteName}</h1>
+    {end:}
+</div>
+
+<div class="navigator">
+    return to main screen: <input type="button" value="close preview" onclick="self.parent.window.close();" />
+</div>
+
+<div id="sgl-main">
+
