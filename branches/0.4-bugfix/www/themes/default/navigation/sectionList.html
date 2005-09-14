@@ -29,7 +29,7 @@
 
             <tr class="{switchRowClass()}" flexy:foreach="results,key,section">
                 <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[{section[section_id]}]" value="{section[section_id]}" /></td>
-                <td width="1%"><nobr>{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="{section[title]:h}" />{end:} <strong>{section[title]:h}</strong></nobr></td>
+                <td><nobr>{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="{section[title]:h}" />{end:} <strong>{section[title]:h}</strong></nobr></td>
                 <td align="center">&nbsp;
                     {if:section[images][moveDownTarget]}
                         <a href="{makeUrl(#reorder#,#page#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveDownTarget]||move|down#,key)}">
