@@ -13,7 +13,11 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+
 IMPROVEMENTS
+14-09-05    Unit test runner added, currently works with pear-installable version of
+            SimpleTest, many thanks to m3 Media Services Limited for granting us the
+            right to distribute this under BSD (http://www.m3.net/)
 
 +-----------------------+
 | VERSION: 0.4.6        |
