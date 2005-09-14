@@ -154,7 +154,7 @@ class SimpleNav
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
         } else {
             //  fetch current lang
-            $lang = str_replace('-', '_', SGL::getCurrentLang() . '-' . $GLOBALS['_SGL']['CHARSET']);
+            $lang = SGL_Translation::getLangID();
             
             //  retreive nav translation
             $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);

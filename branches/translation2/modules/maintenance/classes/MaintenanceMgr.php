@@ -119,7 +119,6 @@ class MaintenanceMgr extends SGL_Manager
             if (is_array($input->aTranslation)) {
                 foreach ($input->aTranslation as $k => $v) {
                     if (is_array($v)) {
-                        //array_map('addslashes', $v);
                         array_map('addslashes', $v);
                     } else {
                         $input->aTranslation[$k] = addslashes($v);
@@ -152,26 +151,11 @@ class MaintenanceMgr extends SGL_Manager
             $this->validated = false;
         }
 
-        //  setup lang arrays - get source array
-        require SGL_MOD_DIR . '/' . $input->currentModule . '/lang/english-iso-8859-15.php';
-        $aSourceLang = isset($defaultWords) ? $defaultWords : $words;
+        //  retreive source array
+        $aSourceLang = SGL_Translation::getTranslations($input->currentModule, 'en_iso_8859_15');
 
-        //  hack to remove sub arrays from translations which cannot be handled by current system
-        unset($defaultWords, $words, $aTmp);
-
-        //  get target array
-        $target = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' . $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
-
-        if (file_exists($target)){
-            @include $target;
-            $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
-        } else {
-        //  if the target lang file does not exist
-            SGL::raiseMsg('the target lang file '.$target.'does not exist, please create it now',
-                SGL_ERROR_NOFILE);
-        }
-        //  remove empty array elements
-        $aTargetLang = @array_filter($aTargetLang, 'strlen');
+        //  retreive target array
+        $aTargetLang = SGL_Translation::getTranslations($input->currentModule, $input->currentLang);
 
         if ($input->action != 'checkAllModules') {
 
@@ -208,11 +192,17 @@ class MaintenanceMgr extends SGL_Manager
         foreach ($availableLanguages as $id => $tmplang) {
             $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
             $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-            if ($id == $output->currentLang) {
+            if ($id == str_replace('_', '-', $output->currentLang)) {
                 $output->currentLangLong = $lang_name;
             }
         }
-        $output->aLangs = $aLangOptions;
+
+        //  load installed languages
+        $aInstalledLanguages = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
+        foreach ($aInstalledLanguages as $aKey => $aValue) {
+            $key = str_replace('_', '-', $aKey);
+            $output->aLangs[$aKey] = $aLangOptions[$key];               
+        }
 
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
@@ -221,30 +211,23 @@ class MaintenanceMgr extends SGL_Manager
     function _verify(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-            $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
 
         if ($input->aTargetLang) {
             $aDiff = array_diff(array_keys($input->aSourceLang), array_keys($input->aTargetLang));
             if (count($aDiff)) {
-                if (is_writeable($filename)) {
-                    $output->sourceElements = count($input->aSourceLang);
-                    $output->targetElements = count($input->aTargetLang);
-                    $output->template = 'langDiff.html';
-                    $output->aTargetLang = $aDiff;
-                    $output->currentModuleName = ucfirst($output->currentModule);
+                $output->sourceElements = count($input->aSourceLang);
+                $output->targetElements = count($input->aTargetLang);
+                $output->template = 'langDiff.html';
+                $output->aTargetLang = $aDiff;
+                $output->currentModuleName = ucfirst($output->currentModule);
 
-                    //  bypass redirection
-                    $this->redirect = false;
-                } else {
-                    SGL::raiseMsg('The target lang file '.$filename.' is not up to date and not writeable. Please change file permissions before editing.',
-                        SGL_ERROR_NOFILE);
-                }
+                //  bypass redirection
+                $this->redirect = false;
             } else {
                 SGL::raiseMsg('Congratulations, the target translation appears to be up to date');
             }
         } else {
-            SGL::raiseMsg('The target lang file '.$filename.' does not exist. Please create it.',
+            SGL::raiseMsg('The target lang does not exist.',
                 SGL_ERROR_NOFILE);
         }
     }
@@ -278,7 +261,7 @@ class MaintenanceMgr extends SGL_Manager
 
         //  ok, now check each module
         $status['1'] = 'ok';
-        $status['2'] = 'no file';
+        $status['2'] = 'language not installed';
         $status['3'] = 'new strings';
         $status['4'] = 'old strings';
 
@@ -292,21 +275,12 @@ class MaintenanceMgr extends SGL_Manager
             unset($defaultWords);
 
             //get source array
-            $aModules[$name]['orig'] = SGL_MOD_DIR . '/' . $name . '/lang/english-iso-8859-15.php';
-            require $aModules[$name]['orig'];
-
-            $aSourceLang = isset($defaultWords) ? $defaultWords : $words;
-            //  hack to remove sub arrays from translations which cannot be handled by current system
-            unset($defaultWords, $words, $aTmp);
+            $aModules[$name]['orig'] = $aSourceLang = SGL_Translation::getTranslations($name, 'en_iso_8859_15');
 
             //  get target array
-            $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
-                $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
+            $aModules[$name]['src'] = $aTargetLang = SGL_Translation::getTranslations($name, $input->currentLang);
 
-            if (file_exists($aModules[$name]['src'])) {
-                @include $aModules[$name]['src'];
-                $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
-
+            if (isset($aTargetLang)) {
                 //  remove empty array elements
                 $aTargetLang = @array_filter($aTargetLang, 'strlen');
                 $aSourceLang = @array_filter($aSourceLang, 'strlen');
@@ -322,32 +296,33 @@ class MaintenanceMgr extends SGL_Manager
             // 4: target has more entries than source
 
             //  if the target lang file does not exist
-            if (!file_exists($aModules[$name]['src'])){
+            if (!isset($aModules[$name]['src'])) {
                 $aModules[$name]['status'] = $status['2'];
-             }
-
-            //  if target has less keys than source
-            elseif (array_diff($aSourceLang,$aTargetLang)) {
+             } elseif (array_diff($aSourceLang,$aTargetLang)) {     //  if target has less keys than source
                 $aModules[$name]['status'] = $status['3'];
                 $aModules[$name]['action'] = 'verify';
                 $aModules[$name]['actionTitle'] = 'Validate';
-                if (is_writeable($aModules[$name]['src']) ?
-                    $aModules[$name]['diff'] = true : $aModules[$name]['msg'] = "File not writeable" );
-            }
-
-            //  if target has more keys than source
-            elseif (array_diff($aTargetLang,$aSourceLang)) {
+                if (isset($aModules[$name]['src'])) {
+                    $aModules[$name]['diff'] = true;
+                } else {
+                    $aModules[$name]['msg'] = "File not writeable";
+                }
+            } elseif (array_diff($aTargetLang,$aSourceLang)) {      //  if target has more keys than source
                 $aModules[$name]['status'] = $status['4'];
                 $aModules[$name]['action']= 'edit';
-                if (is_writeable($aModules[$name]['src']) ?
-                    $aModules[$name]['edit'] = true : $aModules[$name]['msg'] = "File not writeable" );
-             }
-            //  so if there are no differences, everything should be ok
-            else {
+                if (isset($aModules[$name]['src'])) {
+                    $aModules[$name]['edit'] = true;
+                } else {
+                    $aModules[$name]['msg'] = "File not writeable";
+                }
+             } else {                                               //  so if there are no differences, everything should be ok
                 $aModules[$name]['status'] = $status['1'];
                 $aModules[$name]['action']= 'edit';
-                if (is_writeable($aModules[$name]['src']) ?
-                    $aModules[$name]['edit'] = true : $aModules[$name]['msg'] = "File not writeable" );
+                if (isset($aModules[$name]['src'])) {
+                    $aModules[$name]['edit'] = true;
+                } else {
+                    $aModules[$name]['msg'] = "Lang not installed.";
+                }
             }
         }
         $output->modules = $aModules;
@@ -356,16 +331,15 @@ class MaintenanceMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-            $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
-
-        if (is_writeable($filename)) {
+        $trans = &SGL_Translation::singleton();
+        
+        if ($input->aTargetLang) {
             $output->template = 'langEdit.html';
             $output->currentModuleName = ucfirst($output->currentModule);
             $output->aTargetLang = $input->aTargetLang;
 
         } else {
-            SGL::raiseMsg('The target lang file '.$filename.' is not writeable. Please change file permissions before editing.',
+            SGL::raiseMsg('The target lang is not installed.',
                 SGL_ERROR_NOFILE);
         }
     }
@@ -373,73 +347,25 @@ class MaintenanceMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = new Config();
-        //  read translation data and get reference to root
-        $root = & $c->parseConfig($input->aTranslation, 'phparray');
-        //  write translation to file
-        $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-            $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
-        $arrayName = ($input->currentModule == 'default') ? 'defaultWords' : 'words';
-        $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
-        if (!is_a($result, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated');
-        } else {
-            SGL::raiseError('There was a problem updating the translation',
-                SGL_ERROR_FILEUNWRITABLE);
-        }
-    }
+        $trans = &SGL_Translation::singleton();
+        $transAdmin = &SGL_Translation::singleton('admin');
 
-    //  for amended translations that were diffed
-    function _append(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //escape apostrophes in KEYS of aTargetLang. To Values it's added magically by PEAR::Config
-        //note: in edit() this is done automatically by Flexy...
-        /*
-        foreach ($input->aTargetLang as $k => $v) {
-            if (is_array($input->aTargetLang[$k])) {
-                foreach ($input->aTargetLang[$k] as $kk => $vv) {
-                    $aTargetLang[addslashes($k)][addslashes($kk)] = $vv;
+        foreach ($input->aTranslation as $aKey => $aValue) {
+            if (!empty($aValue)) {
+                //  retreive all translations for current string
+                foreach ($GLOBALS['_SGL']['INSTALLED_LANGUAGES'] as $key) {
+                    if ($key != $input->currentLang) {
+                        $currentStrings[$key] = $trans->get($aKey, $input->currentModule, $key);
+                    }
                 }
-            } else {
-                $aTargetLang[addslashes($k)] = $v;
+    
+                //  remove all translations for current string
+                $transAdmin->remove($aKey, $input->currentModule);
+                
+                //  add translations
+                $currentStrings[$input->currentLang] = $aValue;
+                $transAdmin->add($aKey, $input->currentModule, $currentStrings);
             }
-        }
-        */
-        //this should be better but makes problems, too...
-        //$aUpdatedTrans = array_merge($input->aTranslation,$aTargetLang);
-
-        //old version:
-        $aUpdatedTrans = array_merge($input->aTranslation,$input->aTargetLang);
-
-        //debugging only
-        /*
-        echo "<pre>aTranslation<br />";
-        print_r($input->aTranslation);
-        echo "<hr>input->aTargetLang<br />";
-        print_r($aTargetLang);
-        echo "<hr>aUpdatedTrans<br />";
-        print_r($aUpdatedTrans);
-        echo "</pre>";
-        */
-
-        //FIXME: make seperate method for saving with config, theese lines are very similar with those in update();
-        $c = new Config();
-        //  read translation data and get reference to root
-
-        //FIXME: config seems to have problems with sub-arrays!
-        $root = & $c->parseConfig($aUpdatedTrans, 'phparray');
-        //  write translation to file
-        $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-            $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
-        $arrayName = ($input->currentModule == 'default') ? 'defaultWords' : 'words';
-        $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
-        if (!is_a($result, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated');
-        } else {
-            SGL::raiseError('There was a problem updating the translation',
-                SGL_ERROR_FILEUNWRITABLE);
         }
     }
 

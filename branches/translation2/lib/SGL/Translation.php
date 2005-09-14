@@ -111,17 +111,15 @@ class SGL_Translation
         }
                            
         //  instantiate selected translation2 object
-        switch (strtolower($type)) {
-            
-        case 'admin':
-            require_once 'Translation2/Admin.php';
-            $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
-            break;
-            
-        case 'translation':
-        
-        default:
-            $oTranslation = &Translation2::factory($driver, $dsn, $params);
+        switch (strtolower($type)) {           
+            case 'admin':
+                require_once 'Translation2/Admin.php';
+                $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
+                break;
+                
+            case 'translation':            
+            default:
+                $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }        
 
         return $oTranslation;                
