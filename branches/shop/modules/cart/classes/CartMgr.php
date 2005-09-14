@@ -213,7 +213,8 @@ class CartMgr extends SGL_Manager
     */
     function _list(&$input, &$output) {
          SGL::logMessage(null, PEAR_LOG_DEBUG);   
-         
+
+         $output->pageTitle = 'Cart :: List cart';
          $this->_initCart();
          if (!empty($this->_order->items)) {
              $output->itemCount = $this->_order->itemCount;
@@ -253,7 +254,8 @@ class CartMgr extends SGL_Manager
      */ // reiktu pachekinti kai perkasi adminas ir pasakyti jam
         // kad adminui priktis negalima, nes erorus meta.
     function _checkout(&$input, &$output) {
-         SGL::logMessage(null, PEAR_LOG_DEBUG);   
+         SGL::logMessage(null, PEAR_LOG_DEBUG);
+         $output->pageTitle = 'Cart :: Checkout';
          $input->template = 'checkOut.html';
          
          $conf = & $GLOBALS['_SGL']['CONF'];
@@ -265,7 +267,8 @@ class CartMgr extends SGL_Manager
              SGL :: raiseMsg('Your cart is empty');
              return;
          }
-                 
+         
+         /*        
          //$order = $this->_order;
          if (SGL_HTTP_Session :: getUserType() != SGL_ADMIN) {
 		 // Get Payment data
@@ -292,7 +295,8 @@ class CartMgr extends SGL_Manager
 			return;
 		 }
 		 unset($dbh,$query,$aPayment,$oPayment);
-
+		*/
+		
          // Write order to Cart DB
          $oOrder = & new DataObjects_Cart();
          $dbh = $oOrder->getDatabaseConnection();
