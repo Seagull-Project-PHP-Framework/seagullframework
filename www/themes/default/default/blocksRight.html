@@ -1,25 +1,26 @@
-<div id="rightSidebar">
+<!-- right column -->
+<div id="sgl-blocks-right">
 
 {foreach:blocksRight,key,valueObj}
 
-<div class="blockContainer">
+<div id="sgl-blocks-right-item{key}" class="blockContainer">
     {if:valueObj.title_class}
 
-    <div class="{valueObj.title_class}">
+    <div id="sgl-blocks-right-item-title{key}" class="{valueObj.title_class}">
         {valueObj.title}
     </div>
     {else:}
-    <div class="blockHeader">
+    <div id="sgl-blocks-right-item-title{key}" class="blockHeader">
         {valueObj.title}
     </div>
     {end:} 
 
     {if:valueObj.body_class}
-    <div class="{valueObj.body_class}">
+    <div id="sgl-blocks-right-item-body{key}" class="{valueObj.body_class}">
         {valueObj.content:h}
     </div>
     {else:}
-    <div class="blockContent">
+    <div id="sgl-blocks-right-item-body{key}" class="blockContent">
         {valueObj.content:h}
     </div>
     {end:}
@@ -27,3 +28,4 @@
 {end:}
 
 </div>
+

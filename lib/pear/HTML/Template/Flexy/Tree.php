@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome.com>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Tree.php,v 1.7 2005/02/09 11:03:44 demian Exp $
+// $Id: Tree.php,v 1.5 2005/01/31 06:57:44 alan_k Exp $
 //
 // The Html Tree Component of Flexy
 // Designed to be used on it's own
@@ -114,7 +114,6 @@ class HTML_Template_Flexy_Tree {
             return $r;
         }
         
-        $t->makeSprintf();
         $t->matchClosers();
         $t->buildChildren(0);
         //new Gtk_VarDump($_HTML_TEMPLATE_FLEXY_TOKEN['tokens'][0]);
@@ -181,50 +180,7 @@ class HTML_Template_Flexy_Tree {
     }
     
     
-    /**
-    * Replace blocks of text which have {tags} in them with place holders
-    * for use with sprintf.
-    *
-    * This is to enable translation tools to grab the content.
-    *
-    * This is a little out of place here as it depends on the existance of token_text.
-    *
-    *
-    * @return   none
-    * @access   public
-    */
-  
-    function makeSprintf()
-    {
-        $res = &$this->tokens;
-       
-        // DEBUG DUMPTING : foreach($res as $k) {  $k->dump(); }
-        
-        
-        $stack = array();
-        $total = count($this->tokens);
-        
-        
-        // merge variables into strings. so printf && gettext work.
-        // adds a $element->argVars[] to the Object
-        // ??? should this be in here!!!!
-        
-        for($i=1;$i<$total;$i++) {
-            if (!isset($res[$i])) {
-                continue;
-            }
-            if (!is_a($res[$i],'HTML_Template_Flexy_Token_Text')) {
-                continue;
-            }
-            if (!$res[$i]->isWord()) {
-                continue;
-            }
-            $res[$i]->backSearch($this->tokens);
-            $i = $res[$i]->forwardSearch($this->tokens);
-        }
-         
-        
-    }
+     
     
     /**
     * Match the opening and closing tags eg. </B> is the closer of <B>

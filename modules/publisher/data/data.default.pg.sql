@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Data dump for /modules/publisher
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 --

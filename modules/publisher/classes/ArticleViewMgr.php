@@ -40,7 +40,7 @@
 
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_CORE_DIR . '/Item.php';
-require_once SGL_CORE_DIR . '/Category.php';
+require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
 
 /**
  * Class for browsing articles.
@@ -105,9 +105,9 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  get category info
-        $cat = & new SGL_Category();
-        $output->path = $cat->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
-        $output->currentCat = $cat->getLabel($output->catID);
+        $catMgr = & new CategoryMgr();
+        $output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
+        $output->currentCat = $catMgr->getLabel($output->catID);
     }
 
     function _view(&$input, &$output)

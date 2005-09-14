@@ -10,6 +10,9 @@ name                    = seagull
 
 [site]
 sessionMaxLifetime      = 0 ; until the browser is closed
+extended_session        = 0;
+single_user             = false;
+sessionHandler          = file
 name                    = Seagull Framework
 showLogo                = false
 
@@ -18,8 +21,7 @@ showLogo                = false
 compression             = false
 outputBuffering         = false
 banIpEnabled            = false
-tidyhtml                = true
-sessionHandler          = file
+tidyhtml                = false
 blocksEnabled           = true
 safeDelete              = true
 frontScriptName         = index.php
@@ -79,6 +81,7 @@ rndmsg_message          = rndmsg_message
 role                    = role
 role_permission         = role_permission
 section                 = section
+sequence                = sequence
 user                    = usr
 user_permission         = user_permission
 user_preference         = user_preference
@@ -124,6 +127,7 @@ sendmailPath            = /usr/sbin/sendmail
 sendmailArgs            = -t -i
 ; SMTP backend params
 smtpHost                = 127.0.0.1
+smtpLocalHost           = seagull.phpkitchen.com
 smtpPort                = 25
 smtpAuth                = 0
 smtpUsername            =

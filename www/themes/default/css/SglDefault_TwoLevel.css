@@ -1,20 +1,20 @@
-#nav {
+#sgl-nav {
     height: 50px;
     font-size: 0.75em;
 }
-#nav ul {
+#sgl-nav ul {
     position: absolute;
     width: 100%;
     padding: 0;
     margin: 0;
     background-color: #99cc00;
 }
-#nav ul li {
+#sgl-nav ul li {
     float: left;
     display: inline;
     margin: 0;
 }
-#nav ul li a {
+#sgl-nav ul li a {
     display: block;
     position: relative;
     padding: 0.2em 1.5em;
@@ -27,22 +27,22 @@
     letter-spacing: 0.05em;
     border-right: 0.1em solid #99cc00;
 }
-#nav ul li a:hover {
+#sgl-nav ul li a:hover {
     color: #006699;
     text-decoration: underline;
 }
-#nav ul li.current a {
+#sgl-nav ul li.current a {
     color: #006699;
     background-color: #e5f1ff;
 }
-#nav ul li.current a:visited {
+#sgl-nav ul li.current a:visited {
     color: #006699;
 }
 /* hide the sublevels */
-#nav ul ul {
+#sgl-nav ul ul {
     display: none;
 }
-#nav ul li.current ul {
+#sgl-nav ul li.current ul {
     position: absolute;
     left: 0;
     display: block;
@@ -54,12 +54,12 @@
     padding: 0;
     background-color: #e5f1ff;
 }
-#nav ul li.current li {
+#sgl-nav ul li.current li {
     padding: 0.4em 0;
 }
-#nav ul li.current li a {
+#sgl-nav ul li.current li a {
     /* hide first pipe */
-    left: -0.1em;
+    left: -1px;
     padding: 0 1em;
     font-weight: normal;
     font-size: 1.1em;
@@ -68,6 +68,6 @@
     border-left: 0.1em solid #006699;
 }
 /* hide 3rd or more levels */
-#nav ul ul ul li {
+#sgl-nav ul ul ul li {
     display: none;
 }

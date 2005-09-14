@@ -84,7 +84,8 @@ class Config_Container_PHPArray {
             }
             $this->_parseArray(${$this->options['name']}, $obj->container);
         }
-        return true;
+        $ret =  true;
+        return $ret;
     } // end func parseDatasrc
 
     /**

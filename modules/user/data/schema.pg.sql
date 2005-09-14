@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Schema for /modules/user
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 -- ==============================================================
@@ -57,7 +64,7 @@ create table organisation
    addr_3 varchar(128) default NULL,
    city varchar(32) NOT NULL default '',
    region varchar(32) default NULL,
-   country varchar(32) default NULL,
+   country char(2) default NULL,
    post_code varchar(16) default NULL,
    telephone varchar(32) default NULL,
    website varchar(128) default NULL,
@@ -203,7 +210,7 @@ create  index preference_org_preference_fk on org_preference
 create table usr 
 (
    usr_id               INT4                 not null,
-   organisation_id      INT4                 not null,
+   organisation_id      INT4                 null,
    role_id              INT4                 not null,
    username             VARCHAR(64)          null,
    passwd               VARCHAR(32)          null,
@@ -217,7 +224,7 @@ create table usr
    addr_3               VARCHAR(128)         null,
    city                 VARCHAR(64)          null,
    region               VARCHAR(32)          null,
-   country              VARCHAR(64)          null,
+   country              CHAR(2)              null,
    post_code            VARCHAR(16)          null,
    is_email_public      INT2                 null,
    is_acct_active       INT2                 null,

@@ -1,5 +1,10 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==============================================================
+--  DBMS name:      PostgreSQL 7.3                               
+--  Created on:     2004-04-13 23:45:57                          
+-- ==============================================================
+
 -- Schema for /etc
+
 
 -- ==============================================================
 --  Table: item                                                  
@@ -107,17 +112,6 @@ create table log_table
 );
 
 -- ==============================================================
---  Table: table_lock                                            
--- ==============================================================
-create table table_lock 
-(
-   lockID               CHAR(32)             not null,
-   lockTable            CHAR(32)             not null,
-   lockStamp            INT4                 null,
-   constraint PK_TABLE_LOCK primary key (lockID, lockTable)
-);
-
--- ==============================================================
 --  Table: session
 -- ==============================================================
 create table user_session 
@@ -129,77 +123,21 @@ create table user_session
 );
 
 -- ==============================================================
--- Table: category
+--  Table: table_lock                                            
 -- ==============================================================
-create table category (
-  category_id      INT4            NOT NULL default '0',
-  label            VARCHAR(32)     default NULL,
-  perms            VARCHAR(32)     default NULL,
-  parent_id        INT4            default NULL,
-  root_id          INT4            default NULL,
-  left_id          INT4            default NULL,
-  right_id         INT4            default NULL,
-  order_id         INT4            default NULL,
-  level_id         INT4            default NULL,
-  constraint PK_category PRIMARY KEY (category_id)
-);
-
--- ==============================================================
---  Index: root_id                                               
--- ==============================================================
-create index AK_category_key_root_id on category
+create table table_lock 
 (
-    root_id
-);
-
-
--- ==============================================================
---  Index: order_id
--- ==============================================================
-create index AK_category_key_order_id on category
-(
-    order_id
+   lockID               CHAR(32)             not null,
+   lockTable            CHAR(32)             not null,
+   lockStamp            INT4                 null,
+   constraint PK_TABLE_LOCK primary key (lockID, lockTable)
 );
 
 -- ==============================================================
---  Index: left_id
+--  Function: unix_timestamp
 -- ==============================================================
-create index AK_category_key_left_id on category
-(
-    left_id
-);
+-- for this to work, you have to activate the language plpgsql by calling
+-- "createlang plpgsql <dbname>" from commandline.
 
--- ==============================================================
---  Index: right_id
--- ==============================================================
-create index AK_category_key_right_id on category
-(
-    right_id
-);
-
--- ==============================================================
---  Index: root_l_r
--- ==============================================================
-create index AK_category_id_root_l_r on category
-(
-    category_id,
-    root_id,
-    left_id,
-    right_id
-);
-
--- ==============================================================
---  Index: level_id
--- ==============================================================
-create index AK_category_key_level_id on category
-(
-    level_id
-);
-
--- ==============================================================
---  Index: parent_id
--- ==============================================================
-create index AK_category_key_parent_fk on category
-(
-    parent_id
-);
+CREATE or replace FUNCTION unix_timestamp (timestamp)
+RETURNS integer AS ' DECLARE datum ALIAS FOR $1; BEGIN RETURN EXTRACT (EPOCH FROM datum); END; ' LANGUAGE plpgsql;

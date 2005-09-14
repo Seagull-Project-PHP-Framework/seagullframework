@@ -34,7 +34,7 @@ FCKConfig.PluginsPath = FCKConfig.BasePath + 'plugins/' ;
 
 // FCKConfig.Plugins.Add( 'placeholder', 'en,it' ) ;
 
-FCKConfig.AutoDetectLanguage    = true ;
+FCKConfig.AutoDetectLanguage    = false ;
 FCKConfig.DefaultLanguage       = 'en' ;
 FCKConfig.ContentLangDirection  = 'ltr' ;
 
@@ -78,7 +78,7 @@ FCKConfig.ToolbarSets["Default"] = [
 //  ['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
 //  '/',
     ['TextColor','BGColor'],
-    ['Style','FontFormat','FontName','FontSize'],
+    ['Style','FontFormat','FontName','FontSize']
 //  ['About']
 ] ;
 

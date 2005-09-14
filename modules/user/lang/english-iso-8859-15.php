@@ -15,6 +15,7 @@ $words['User Manager :: Edit permissions'] = 'User Manager :: Edit permissions';
 $words['User Manager :: Add'] = 'User Manager :: Add';
 $words['User Manager :: Reset password'] = 'User Manager :: Reset password';
 $words['User Manager :: Search'] = 'User Manager :: Search';
+$words['User Manager :: Change status'] = 'User Manager :: Change status';
 $words['My Profile :: Edit'] = 'My Profile :: Edit';
 $words['Change Password'] = 'Change Password';
 $words['User ID'] = 'User ID';
@@ -122,9 +123,6 @@ $words['aSecurityQuestions'][1] = 'Favourite pet\'s name';
 $words['aSecurityQuestions'][2] = 'Memorable date (dd/mm/yyyy)';
 $words['aSecurityQuestions'][3] = 'Memorable place';
 $words['aSecurityQuestions'][4] = 'Your mother\'s maiden name';
-$words['aSecurityQuestions'][5] = 'Favourite movie\'s name';
-$words['aSecurityQuestions'][6] = 'Favourite song\'s name';
-$words['aSecurityQuestions'][7] = 'Favourite cocktail\'s name';
 $words['return to browse'] = 'return to browse';
 $words['back to Account'] = 'back to Account';
 $words['change password'] = 'change password';
@@ -138,7 +136,7 @@ $words['Password must be between 5 to 10 characters'] = 'Password must be betwee
 $words['Passwords are not the same'] = 'Passwords are not the same';
 $words['You have entered your original password incorrectly'] = 'You have entered your original password incorrectly';
 $words['Please confirm password'] = 'Please confirm password';
-$words['username min length'] = 'Your username must be alphanumeric with at least 3 characters and no spaces';
+$words['username min length'] = 'Your username must be alphanumeric with at least 6 characters and no spaces';
 $words['You must enter your first name'] = 'You must enter your first name';
 $words['You must enter your last name'] = 'You must enter your last name';
 $words['You must enter your company name'] = 'You must enter your company name';
@@ -326,5 +324,15 @@ $words['Remote IP']='Remote IP';
 $words['Deleted successfully']='Deleted successfully';
 $words['Are you sure?']='Are you sure?';
 $words['Logins']='Logins';
+
+/* status notifications */
+$words['You are being sent this email because your new account status is now']='You are being sent this email because your new account status is now';
+$words['active']='active';
+$words['disabled']='disabled';
+$words['Changing status for']='Changing status for';
+$words['Current status is']='Current status is';
+$words['Disable Now']='Disable Now';
+$words['Enable Now']='Enable Now';
+$words['Status changed successfully']='Status changed successfully';
 
 ?>

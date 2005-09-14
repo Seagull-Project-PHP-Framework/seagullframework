@@ -10,7 +10,11 @@
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework v{versionAPI}" />
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/style.php" />
+    
+    <style type="text/css" media="screen">
+        @import url("{webRoot}/themes/{theme}/css/style.php");
+        @import url("{webRoot}/themes/{theme}/css/{navStylesheet}.css");
+    </style>
 
     {scriptOpen:h}
         var SGL_JS_WEBROOT="{webRoot}";
@@ -82,11 +86,10 @@
     </script>
     {end:}
     {end:}
-
-    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/{navStylesheet}.css" />
-
 </head>
 
+{if:GLOBALS.empty(onLoad)}
+<body>
+{else:}
 <body onload="{onLoad}">
-
-<div id="sgl">
+{end:}

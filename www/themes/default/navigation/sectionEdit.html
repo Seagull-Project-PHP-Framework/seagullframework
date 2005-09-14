@@ -69,13 +69,18 @@ function addFormValue(myElement, form)
                 <option value="dynamic" flexy:raw="{dynamicSelected}">
                     {translate(#dynamic pages#)}
                 </option>  
+                
+                <option value="wiki" flexy:raw="{wikiSelected}">
+                    wiki
+                </option>  
                 </select>
 
                 {if:staticSelected}
                     <select size="1" name="page[staticArticleId]">
                         {generateSelect(aStaticArticles,section[resource_uri]):h}
                     </select>
-                {else:}<br />
+                {end:}<br />
+                {if:dynamicSelected}
                     <select size="1" name="page[module]"
                         onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                         {generateSelect(aModules,section[module]):h}
@@ -89,6 +94,9 @@ function addFormValue(myElement, form)
                         {generateSelect(aActions,section[actionMapping]):h}
                     </select> action                                       
                 {end:}
+                {if:wikiSelected}
+                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> wiki page URL
+                {end:}               
             </td>
         </tr>
 
@@ -100,16 +108,6 @@ function addFormValue(myElement, form)
         <tr>
             <th align="left">{translate(#Anchor#)}:</th>
             <td><input type="text" name="page[anchor]" value="{section[anchor]}" /> {translate(#just the anchor name#)}</td>
-        </tr>
-
-		 <tr>
-            <th align="left">{translate(#AccessKey#)}:</th>
-            <td><input type="text" name="page[acces_key]" value="{section[acces_key]}" /> {translate(#Any number, which can be pressed with the ALT-key to load the page.#)}</td>
-        </tr>
-
-        <tr>
-            <th align="left">{translate(#Rel Marker#)}:</th>
-            <td><input type="text" name="page[rel]" value="{section[rel]}" /> {translate(#Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".#)}</td>
         </tr>
 
         <tr>

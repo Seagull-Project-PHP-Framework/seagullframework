@@ -31,8 +31,8 @@ class ThemeSwitcher
         $url = SGL_Url::makeLink() . 'frmThemeSwitcher/';
         $html = <<< HTML
         <p>Change the current theme:</p>
-        <form id="frmSwitcher">
-        <select id="frmThemeSwitcher" onChange="document.location.href='$url' + getSelectedValue(document.getElementById('frmSwitcher').frmThemeSwitcher) + '/';"">
+        <form id="frmSwitcher" action="">
+        <select id="frmThemeSwitcher" onChange="document.location.href='$url' + getSelectedValue(document.getElementById('frmSwitcher').frmThemeSwitcher) + '/';">
         $options
         </select>
         </form>

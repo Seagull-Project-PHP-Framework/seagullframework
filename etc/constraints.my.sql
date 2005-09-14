@@ -12,6 +12,3 @@ alter table item_addition add constraint FK_item_type_mapping_item_addition fore
 
 alter table item_type_mapping add constraint FK_item_type_item_type_mapping foreign key (item_type_id)
       references item_type (item_type_id) on delete restrict on update restrict;
-
-alter table category add constraint FK_parent foreign key (parent_id)
-      references category (category_id) on delete restrict on update restrict;

@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require_once SGL_CORE_DIR . '/Category.php';
+require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
 
 /**
  * Basic Permission object.
@@ -48,7 +48,7 @@ require_once SGL_CORE_DIR . '/Category.php';
  * @version $Revision: 1.5 $
  * @since   PHP 4.1
  */
-class Permissions extends SGL_Category
+class Permissions extends CategoryMgr
 {
     var $sPerms = '';
     var $aPerms = array();
@@ -63,7 +63,7 @@ class Permissions extends SGL_Category
         } else {
             SGL::raiseError('No category ID passed', SGL_ERROR_INVALIDARGS);
         }
-        parent::SGL_Category();
+        parent::CategoryMgr();
     }
 
     function init($catID)

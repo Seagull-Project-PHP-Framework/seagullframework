@@ -141,6 +141,7 @@
     }    
 ?>
 
+
 /******************************************************************************/
 /*                                  LAYOUT CSS                                */
 /******************************************************************************/
@@ -155,33 +156,32 @@ body {
 
 /******************************* LAYOUT : HEADER ******************************/
 
-#sgl #header {
+#sgl-header {
     background-color: <?php echo $primary ?>;
     height: 50px;
 }
-#sgl #logo {
+#sgl-header-left {
     float: left;
     margin: 5px 5px 5px 10px;
     font-size: 2em;
-    font-weight: normal;
     color: <?php echo $primaryTextLight ?>;
-    text-decoration: none;
 }
-#sgl #login {
+#sgl-header-right {
     float: right;
-    margin: 10px 20px 10px 0;
+    margin: 10px;
+    margin-left: 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl #login a {
+#sgl-header-right a {
     padding: 0 5px;
     text-decoration: none;
     color: <?php echo $primaryTextLight ?>;
 }
-#sgl #login a:hover {
+#sgl-header-right a:hover {
     text-decoration: underline;
 }
-#sgl #login #logAction {
+#sgl-header-right #headerLogAction {
     float: left;
     margin-left: 1em;
     padding: 0.2em;
@@ -189,17 +189,12 @@ body {
     border-color: <?php echo $buttonBorderColors ?>;
     background-color: <?php echo $primaryLight ?>;
 }
-#sgl #login #userInfo {
+#sgl-header-right #headerUserInfo {
     float: left;
     padding-top: 0.35em;
 }
-#sgl #login #userInfo .guest {
+#sgl-header-right #headerUserInfo .guest {
     font-weight: bold;
-}
-#sgl #bugReporter {
-    position: absolute;
-    right: 4px;
-    top: 12px;
 }
 
 /***************************** LAYOUT : TABLES ********************************/
@@ -238,32 +233,35 @@ th {
 .narrow {
     width: 60%;
 }
-.sgl-row-light {
+.sgl-row-light, .sgl-row-light-bold {
     background-color: <?php echo $tableRowLight ?>;
 }
-.sgl-row-dark {
+.sgl-row-dark, .sgl-row-dark-bold {
     background-color: <?php echo $tableRowDark ?>;
+}
+.sgl-row-light-bold, .sgl-row-dark-bold {
+    font-weight: bold;
 }
 
 /****************************** LAYOUT : MAIN *********************************/
 
-#sgl #container {
+#sgl-main {
     top: <?php echo $blocksMarginTop ?>;
 }
 
 /************************ LAYOUT : LEFT & RIGHT BLOCKS ************************/
 
-#sgl #leftSidebar, #sgl #rightSidebar {
+#sgl-blocks-left, #sgl-blocks-right {
     position: absolute;
     margin-top: <?php echo $blocksMarginTop ?>;
     top: 0;
-    z-index: 1;
+    z-index:1;
 }
-#sgl #leftSidebar {
+#sgl-blocks-left {
     width: <?php echo $blocksWidthLeft ?>;
     left: 0;
 }
-#sgl #rightSidebar {
+#sgl-blocks-right {
     width: <?php echo $blocksWidthRight ?>;
     right: 0;
 }
@@ -273,10 +271,10 @@ th {
 .options-block {
     margin: 20px 0;
 }
-#sgl .blockContainer {
+#sgl-blocks-left .blockContainer, #sgl-blocks-right .blockContainer {
     margin: 4px 1px 0 1px;
 }
-#sgl .blockHeader {
+.blockHeader {
     background-color: <?php echo $blocksBackgroundTitle ?>;
     color: <?php echo $blocksColorTitle ?>;
     line-height: 1.5em;
@@ -285,7 +283,7 @@ th {
     border: 1px solid <?php echo $blocksBorderTitle ?>;
     margin: 0;
 }
-#sgl .blockContent {
+.blockContent {
     background-color: <?php echo $blocksBackgroundBody ?>;
     color: <?php echo $blocksColorBody ?>;
     font-size: 0.9em;
@@ -296,7 +294,7 @@ th {
 
 /*************************** LAYOUT : MIDDLE BLOCKS ***************************/
 
-#sgl #content, #sgl #content-nocols, #sgl #content-leftcol, #sgl #content-rightcol {
+#sgl-blocks-middle, #sgl-blocks-middle-nocols, #sgl-blocks-middle-leftcol, #sgl-blocks-middle-rightcol {
     position: relative;
     margin: 0 <?php echo $blocksWidthRight; ?> 0 <?php echo $blocksWidthLeft ?>;
     width: auto;
@@ -305,30 +303,30 @@ th {
     /*z-index: 2;*/
     padding: 0 20px;
 }
-#sgl #content #options {
+#sgl-blocks-middle #options {
     float: right;
     width: 28%;
 }
-#sgl #content-nocols {
+#sgl-blocks-middle-nocols {
     margin: 0;
 }
-#sgl #content-leftcol {
+#sgl-blocks-middle-leftcol {
     margin: 0 0 0 <?php echo $blocksWidthLeft ?>;
 }
-#sgl #content-rightcol {
+#sgl-blocks-middle-rightcol {
     margin: 0 <?php echo $blocksWidthRight ?> 0 0;
 }
 /* Holly Hack here so that tooltips don't act screwy:
  * http://www.positioniseverything.net/explorer/threepxtest.html */
 /* Hide next from Mac IE plus non-IE \*/
-* html #sgl #content {
+* html #sgl-blocks-middle {
     height: 1%;
 }
 /* End hide from IE5/mac plus non-IE */
 
 /******************************* LAYOUT : FOOTER ******************************/
 
-#sgl #footer {
+#sgl-footer {
     position: relative;
     float: middle;
     clear: both;
@@ -411,9 +409,6 @@ img {
 .error {
     color: <?php echo $errorTextMedium ?>;
 }
-.hide {
-    display: none;
-}
 .small {
     font-size: 0.8em;
 }
@@ -460,11 +455,6 @@ img {
     font-weight: bold;
     text-align: right;
     line-height: 18px;
-}
-.uploadLayer {
-    position: relative;
-    left: 10px;
-    top: 0;
 }
     
 /* /////////////// Article Manager /////////////// */
@@ -647,13 +637,6 @@ ul.bullets li {
 .bgnd {
     background-color: <?php echo $secondaryLight ?>;
     border: 1px solid <?php echo $tertiaryDark ?>;
-}
-.bgnd a, a.noDecoration {
-    text-decoration: none;
-}
-.bgnd a {
-    color: <?php echo $secondaryDark ?>;
-    font-weight: normal;
 }
 .treeMenuDefault {
     font-size: 11px;

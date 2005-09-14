@@ -263,21 +263,28 @@ class UserSearchMgr extends SGL_Manager
             }
         }
         
+        $allowedSortFields = array('usr_id','username','is_acct_active');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = ' ORDER BY u.usr_id ASC ';
+        }
+
         if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
                 FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id
-                $criteria
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                $criteria " . $orderBy_query;
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
                 FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
                 WHERE   r.role_id = u.role_id
-                $criteria
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                $criteria " . $orderBy_query;
         }
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -285,6 +292,8 @@ class UserSearchMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
+            'path'      => SGL_Output::makeUrl('search'),
+            'append'    => true,            
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         if (PEAR::isError($aPagedData)) {

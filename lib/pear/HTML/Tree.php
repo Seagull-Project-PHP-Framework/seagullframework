@@ -557,7 +557,7 @@ class Tree_Node
     function depth()
     {
         $depth = 0;
-        $currLevel = &$this;
+        $currLevel = $this;
 
         while ($currLevel->parent) {
             $depth++;

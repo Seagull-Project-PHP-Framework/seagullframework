@@ -1,8 +1,13 @@
-#nav {
+/*
+To work correctly in MSIE you need to specify the valid path for the behaviour element in
+#sgl-nav ul li, in other words, either the correct absolute or relative path.
+*/
+
+#sgl-nav {
     height: 50px;
     font-size: 0.75em;
 }
-#nav ul {
+#sgl-nav ul {
     position: absolute;
     width: 100%;
     padding: 0;
@@ -11,14 +16,14 @@
     background-color: #99cc00;
     z-index: 3;
 }
-#nav ul li {
+#sgl-nav ul li {
     position: relative;
     float: left;
     margin: 0;
     /* IE :hover silly javascript workaround */
-    behavior: url(themes/default/css/listItemHover.htc);
+    behavior: url(/themes/default/css/listItemHover.htc);
 }
-#nav ul li a {
+#sgl-nav ul li a {
     display: block;
     position: relative;
     padding: 0.2em 1.5em;
@@ -31,18 +36,18 @@
     letter-spacing: 0.05em;
     border-right: 0.1em solid #99cc00;
 }
-#nav ul li a:hover {
+#sgl-nav ul li a:hover {
     color: #006699;
     text-decoration: underline;
 }
 /* This one doesn't affect IE */
-#nav ul li:hover > ul {
+#sgl-nav ul li:hover > ul {
     display: block;
 }
-#nav ul ul li {
+#sgl-nav ul ul li {
     width: 100%;
 }
-#nav ul ul li a {
+#sgl-nav ul ul li a {
     border: 1px solid #006699;
     border-top: none;
     padding: 0.2em;
@@ -51,18 +56,18 @@
     background-color: #e5f1ff;
     width: 100%;
 }
-#nav ul ul li a:hover {
+#sgl-nav ul ul li a:hover {
     background-color: #e5f1ff;
     text-decoration: none;
 }
-#nav ul ul li:first-child > a {
+#sgl-nav ul ul li:first-child > a {
     border-top: 1px solid #006699;
 }
 /*hide all sublevels*/
-#nav ul ul {
+#sgl-nav ul ul {
     display: none;
 }
-#nav ul ul ul {
+#sgl-nav ul ul ul {
     top: 0.6em;
     left: 100%;
 }

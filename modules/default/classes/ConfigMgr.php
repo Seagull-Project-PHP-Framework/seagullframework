@@ -94,7 +94,7 @@ class ConfigMgr extends SGL_Manager
 
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'), 
-            'insert' => array('insert', 'redirectToDefault'), 
+            'update' => array('update', 'redirectToDefault'), 
         );
     }
 
@@ -119,9 +119,8 @@ class ConfigMgr extends SGL_Manager
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
-            
-            //  filter site name for illegal chars
-            $input->conf['site']['name'] = preg_replace("/[^\sa-z]/i", "", $input->conf['site']['name']);
+            //  filter site name for chars not suited to ini files
+            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']);
             
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
@@ -152,6 +151,23 @@ class ConfigMgr extends SGL_Manager
                     }
                 }
                 break;
+            }
+            
+            //  extended session stuff for mysql only
+            if ((  !empty($input->conf['site']['single_user']) 
+                || !empty($input->conf['site']['extended_session'])) 
+                && !preg_match("/mysql/", $input->conf['db']['type'])) {
+                    $aErrors['single_user'] = 'This feature is currently only available for MySQL users';
+            }
+
+            //  session validations
+            if (  !empty($input->conf['site']['single_user']) 
+                && empty($input->conf['site']['extended_session'])) {
+                    $aErrors['single_user'] = 'Single session per user requires extended session';
+            }
+            if (   !empty($input->conf['site']['extended_session']) 
+                && $input->conf['site']['sessionHandler'] != 'database') {
+                    $aErrors['extended_session'] = 'Extended session requires database session handling';
             }
         }
         //  if errors have occured
@@ -185,10 +201,41 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _insert(&$input, &$output)
+    function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();
+        
+        $user_session = $input->conf['table']['user_session'];
+
+        $dbh = & SGL_DB::singleton();
+        if ($input->conf['site']['sessionHandler'] == 'database') {
+            
+            // First check if the mods are not there
+            $query = "DESCRIBE {$user_session} usr_id";
+            $extended = $dbh->getOne($query);
+
+            // Apply the extended session stuff
+            if (!empty($input->conf['site']['extended_session'])) {
+                if (empty($extended)) {
+                    $query = "
+                        ALTER TABLE {$user_session} 
+                            ADD usr_id INT NOT NULL, 
+                            ADD INDEX ( usr_id ), 
+                            ADD username VARCHAR(64), 
+                            ADD INDEX ( username ), 
+                            ADD expiry INT NOT NULL
+                    ";
+                    $res = $dbh->query($query);
+                }
+            } else {
+                if (!empty($extended)) {
+                    // drops indexes automatically
+                    $query = "ALTER TABLE {$user_session} DROP usr_id, DROP username, DROP expiry";
+                    $res = $dbh->query($query);
+                }
+            }
+        }
         
         //  add version info which is not available in form
         $input->conf['tuples']['version'] = $GLOBALS['_SGL']['VERSION'];

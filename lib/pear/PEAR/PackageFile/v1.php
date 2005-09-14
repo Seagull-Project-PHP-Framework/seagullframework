@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.7 2005/06/23 15:56:38 demian Exp $
+ * @version    CVS: $Id: v1.php,v 1.57 2005/08/14 06:49:23 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -266,7 +266,7 @@ define('PEAR_PACKAGEFILE_ERROR_NON_ISO_CHARS', 49);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -384,6 +384,11 @@ class PEAR_PackageFile_v1
         if (isset($this->_packageInfo['_lastversion'])) {
             return $this->_packageInfo['_lastversion'];
         }
+        return false;
+    }
+
+    function getInstalledBinary()
+    {
         return false;
     }
 
@@ -1300,7 +1305,13 @@ class PEAR_PackageFile_v1
         if (!$fp = @fopen($file, "r")) {
             return false;
         }
-        $contents = @fread($fp, filesize($file));
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $contents = file_get_contents($file);
+        } else {
+            $contents = @fread($fp, filesize($file));
+            fclose($fp);
+        }
         $tokens = token_get_all($contents);
 /*
         for ($i = 0; $i < sizeof($tokens); $i++) {

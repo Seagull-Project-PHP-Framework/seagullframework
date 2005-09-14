@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.7 2005/06/23 15:56:39 demian Exp $
+ * @version    CVS: $Id: v1.php,v 1.60 2005/08/21 21:18:34 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -52,7 +52,7 @@ class PEAR_PackageFile_Generator_v1
 
     function getPackagerVersion()
     {
-        return '1.4.0a12';
+        return '1.4.0b1';
     }
 
     /**
@@ -186,7 +186,7 @@ class PEAR_PackageFile_Generator_v1
             );
         $ret = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\n";
         $ret .= "<!DOCTYPE package SYSTEM \"http://pear.php.net/dtd/package-1.0\">\n";
-        $ret .= "<package version=\"1.0\" packagerversion=\"1.4.0a12\">\n" .
+        $ret .= "<package version=\"1.0\" packagerversion=\"1.4.0b1\">\n" .
 " <name>$pkginfo[package]</name>";
         if (isset($pkginfo['extends'])) {
             $ret .= "\n<extends>$pkginfo[extends]</extends>";
@@ -654,7 +654,7 @@ class PEAR_PackageFile_Generator_v1
     function _convertDependencies2_0(&$release, $internal = false)
     {
         $peardep = array('pearinstaller' =>
-            array('min' => '1.4.0a1')); // this is a lot safer
+            array('min' => '1.4.0b1')); // this is a lot safer
         $required = $optional = array();
         $release['dependencies'] = array();
         if ($this->_packagefile->hasDeps()) {
@@ -1002,13 +1002,13 @@ class PEAR_PackageFile_Generator_v1
         }
         if (count($min)) {
             // get the highest minimum
-            $min = array_pop(array_flip($min));
+            $min = array_pop($a = array_flip($min));
         } else {
             $min = false;
         }
         if (count($max)) {
             // get the lowest maximum
-            $max = array_shift(array_flip($max));
+            $max = array_shift($a = array_flip($max));
         } else {
             $max = false;
         }
@@ -1075,13 +1075,13 @@ class PEAR_PackageFile_Generator_v1
             }
             if (count($min)) {
                 // get the highest minimum
-                $min = array_pop(array_flip($min));
+                $min = array_pop($a = array_flip($min));
             } else {
                 $min = false;
             }
             if (count($max)) {
                 // get the lowest maximum
-                $max = array_shift(array_flip($max));
+                $max = array_shift($a = array_flip($max));
             } else {
                 $max = false;
             }

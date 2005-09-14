@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.23 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Package.php,v 1.105 2005/04/13 04:31:42 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -788,7 +788,7 @@ used for automated conversion or learning the format.
         if (isset($options['spec-template'])) {
             $spec_template = $options['spec-template'];
         } else {
-            $spec_template = '/var/www/html/tmp_install/PEAR/template.spec';
+            $spec_template = '/usr/local/lib/php/data/PEAR/template.spec';
         }
         $info['possible_channel'] = '';
         if (isset($options['rpm-pkgname'])) {

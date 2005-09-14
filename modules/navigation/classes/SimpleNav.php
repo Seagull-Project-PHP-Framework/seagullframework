@@ -136,7 +136,7 @@ class SimpleNav
     function render(&$sectionId, &$html)
     {
         $cache = & SGL::cacheSingleton();
-        //  get a unique token by considering startfile, group ID, and if page
+        //  get a unique token by considering url, group ID and if page
         //  is static or not
         $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
@@ -215,6 +215,11 @@ class SimpleNav
             $section->children = false;
             $section->isCurrent = false;
             $section->childIsCurrent = false;
+            
+            //  if we're scraping a wikipage, put the title in globals
+            if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
+                $GLOBALS['_SGL']['REQUEST']['articleTitle'] = $section->title;
+            }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
@@ -374,7 +379,7 @@ class SimpleNav
             if (stristr($url, '#')) {
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
-                $anchorOffset = (strpos($anchorFragment, '&')) + 1;
+                $anchorOffset = (strpos($anchorFragment, '&amp;')) + 1;
                 $anchorEnd = $anchorStart + $anchorOffset; 
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 

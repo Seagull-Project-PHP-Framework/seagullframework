@@ -16,7 +16,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Guess.php,v 1.23 2005/06/23 15:56:31 demian Exp $
+ * @version    CVS: $Id: Guess.php,v 1.18 2005/05/15 04:38:16 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since PEAR 0.1
  */
@@ -93,7 +93,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */

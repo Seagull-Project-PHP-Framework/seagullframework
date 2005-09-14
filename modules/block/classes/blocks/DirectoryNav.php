@@ -49,10 +49,6 @@
  */
 class DirectoryNav
 {
-    function DirectoryNav()
-    {
-    }
-
     function init()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

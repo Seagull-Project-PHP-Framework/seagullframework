@@ -110,6 +110,8 @@ class UserImportMgr extends UserMgr
         $output->aRoles = $aRoles;
         if ($conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
+        } else {
+            $output->aOrgs = array(1 => 'default');
         }
 
         $output->aFiles = $this->_getCsvFiles();

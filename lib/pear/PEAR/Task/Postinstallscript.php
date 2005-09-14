@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Postinstallscript.php,v 1.7 2005/06/23 15:56:41 demian Exp $
+ * @version    CVS: $Id: Postinstallscript.php,v 1.13 2005/08/13 22:52:06 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Task/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0b1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -146,6 +146,13 @@ class PEAR_Task_Postinstallscript extends PEAR_Task_Common
                         return array(PEAR_TASK_ERROR_INVALID, 'Post-install script "' .
                             $fileXml['name'] . '" <paramgroup> id "' . $param['id'] .
                             '" must have a <value> tag containing expected parameter value');
+                    }
+                }
+                if (isset($param['instructions'])) {
+                    if (!is_string($param['instructions'])) {
+                        return array(PEAR_TASK_ERROR_INVALID, 'Post-install script "' .
+                            $fileXml['name'] . '" <paramgroup> id "' . $param['id'] .
+                            '" <instructions> must be simple text');
                     }
                 }
                 if (!isset($param['param'])) {
