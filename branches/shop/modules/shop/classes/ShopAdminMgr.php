@@ -39,6 +39,7 @@
 // $Id: ShopAdminMgr.php,v 1.4 2005/05/09 23:55:20 demian Exp $
 
 require_once SGL_MOD_DIR.'/shop/classes/ShopMgr.php';
+require_once SGL_MOD_DIR.'/navigation/classes/MenuBuilder.php';
 require_once SGL_CORE_DIR . '/Category.php';
 
 if (isset($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) &&
@@ -610,7 +611,9 @@ class ShopAdminMgr extends ShopMgr {
             $successImage = $this->_imageUpload($input, $output);
         }
         
-        if ($success == true && $successImage == true) {
+        if ($success == true
+            && (@$successImage == true && !empty($input->imageFileArray['name'])
+            || empty($input->imageFileArray['name']))) {
             //  redirect on success
             SGL::raiseMsg('Product updated successfully');
             SGL_HTTP::redirect(array ('action' => 'list', 'frmCatID' => $input->product->cat_id));
@@ -690,7 +693,7 @@ class ShopAdminMgr extends ShopMgr {
             }
         }
         // now lets check if they are writable...
-        if (!is_writable($imageDir) OR !is_writable($thubDir)) {
+        if (!is_writable($imageDir) || !is_writable($thubDir)) {
             return SGL::raiseError('The upload directory  does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
         }
         
@@ -1004,46 +1007,42 @@ class ShopAdminMgr extends ShopMgr {
             die("aaaa!");
         }else{
             if (write_ini_file(SGL_MOD_DIR . "/{$this->module}/conf.ini", $input->config)) {
-//               dumpr($input->config);
-               //dumpr($input->imageFileArray);
                if (!empty($input->imageFileArray)){
                    // should check for error
                    $this->uploadImg($input->imageFileArray,"no_image.jpg"); //extension will be added
                }
-
                SGL::raiseMsg('Configuration is saved');
-               SGL_HTTP::redirect(array('action' => 'list'));
             } else {
                SGL::raiseMsg('Configuration not saved. Check file conf.ini write permissions');
-               SGL_HTTP::redirect(array('action' => 'list'));
             }
+            SGL_HTTP::redirect(array('action' => 'list'));
         }
      }
 
     function _validateConfig(& $config, & $aErrors){
 
         if (empty($config['ShopMgr']['rootCatID'])
-            OR !is_numeric($config['ShopMgr']['rootCatID'])) {
+            || !is_numeric($config['ShopMgr']['rootCatID'])) {
             $aErrors['ShopMgr']['rootCatID'] = SGL_Output::translate('Please fill in this field');
         }
 
         if (empty($config['ShopMgr']['defaultVAT'])
-            OR !is_numeric($config['ShopMgr']['defaultVAT'])) {
+           || !is_numeric($config['ShopMgr']['defaultVAT'])) {
             $aErrors['ShopMgr']['defaultVAT'] = SGL_Output::translate('Please fill in this field');
         }
 
         if (!isset($config['ShopMgr']['defaultDiscount'])
-            OR !is_numeric($config['ShopMgr']['defaultDiscount'])) {
+           || !is_numeric($config['ShopMgr']['defaultDiscount'])) {
             $aErrors['ShopMgr']['defaultDiscount'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['ShopMgr']['defaultExchange'])
-            OR !is_numeric($config['ShopMgr']['defaultExchange'])) {
+           || !is_numeric($config['ShopMgr']['defaultExchange'])) {
             $aErrors['ShopMgr']['defaultExchange'] = SGL_Output::translate('Please fill in this field');
         }
 
         if (empty($config['ShopMgr']['defaultCurrency'])
-            OR strlen($config['ShopMgr']['defaultCurrency']) != 3) {
+           || strlen($config['ShopMgr']['defaultCurrency']) != 3) {
             $aErrors['ShopMgr']['defaultCurrency'] = SGL_Output::translate('Please fill in this field');
         }
         
@@ -1061,32 +1060,32 @@ class ShopAdminMgr extends ShopMgr {
         }
 
         if (empty($config['imageUpload']['maxSize'])
-            OR !is_numeric($config['imageUpload']['maxSize'])) {
+           || !is_numeric($config['imageUpload']['maxSize'])) {
             $aErrors['imageUpload']['maxSize'] = SGL_Output::translate('Please fill in this field');
         }
 
         if (empty($config['imageUpload']['imageWidth'])
-            OR !is_numeric($config['imageUpload']['imageWidth'])) {
+           || !is_numeric($config['imageUpload']['imageWidth'])) {
             $aErrors['imageUpload']['imageWidth'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['imageUpload']['imageHeight'])
-            OR !is_numeric($config['imageUpload']['imageHeight'])) {
+           || !is_numeric($config['imageUpload']['imageHeight'])) {
             $aErrors['imageUpload']['imageHeight'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['imageUpload']['thumbWidth'])
-            OR !is_numeric($config['imageUpload']['thumbWidth'])) {
+           || !is_numeric($config['imageUpload']['thumbWidth'])) {
             $aErrors['imageUpload']['thumbWidth'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['imageUpload']['thumbHeight'])
-            OR !is_numeric($config['imageUpload']['thumbHeight'])) {
+           || !is_numeric($config['imageUpload']['thumbHeight'])) {
             $aErrors['imageUpload']['thumbHeight'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['imageUpload']['background'])
-            OR strlen($config['imageUpload']['background']) != 6) {
+           || strlen($config['imageUpload']['background']) != 6) {
             $aErrors['imageUpload']['background'] = SGL_Output::translate('Please fill in this field');
         }
         
@@ -1101,7 +1100,7 @@ class ShopAdminMgr extends ShopMgr {
         }
 
         if (empty($config['price']['discountPrefId'])
-            OR !is_numeric($config['price']['discountPrefId'])) {
+           || !is_numeric($config['price']['discountPrefId'])) {
             $aErrors['price']['discountPrefId'] = SGL_Output::translate('Please fill in this field');
         }
 
@@ -1109,25 +1108,27 @@ class ShopAdminMgr extends ShopMgr {
         $config['imageUpload']['noImageFile'] = "no_image.jpg";
 
         if (empty($config['price']['roleId'])
-            OR !is_numeric($config['price']['roleId'])) {
+           || !is_numeric($config['price']['roleId'])) {
             $aErrors['price']['roleId'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['price']['VAT'])
-            OR !is_numeric($config['price']['VAT'])) {
+           || !is_numeric($config['price']['VAT'])) {
             $aErrors['price']['VAT'] = SGL_Output::translate('Please fill in this field');
         }
         
         if (empty($config['CSV']['maxUploadRec'])
-            OR !is_numeric($config['CSV']['maxUploadRec'])) {
+           || !is_numeric($config['CSV']['maxUploadRec'])) {
             $aErrors['CSV']['maxUploadRec'] = SGL_Output::translate('Please fill in this field');
         }
+
+        $config['UploadMgr'] = "";
+
         
         if (isset ($aErrors) && count($aErrors)) {
             Dumpr($aErrors);
             return false;
         } else {
-
             return true;
         }
         
