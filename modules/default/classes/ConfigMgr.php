@@ -120,8 +120,8 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
             
-            //  filter site name for illegal chars
-            $input->conf['site']['name'] = preg_replace("/[^\sa-z]/i", "", $input->conf['site']['name']);
+            //  filter site name for chars not suited to ini files
+            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']));
             
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
