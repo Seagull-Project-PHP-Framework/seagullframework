@@ -39,7 +39,8 @@
 // $Id: ShopAdminMgr.php,v 1.4 2005/05/09 23:55:20 demian Exp $
 
 require_once SGL_MOD_DIR.'/shop/classes/ShopAdminMgr.php';
-require_once SGL_MOD_DIR.'/navigation/classes/CategoryMgr.php';
+require_once SGL_MOD_DIR.'/navigation/classes/MenuBuilder.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 if (isset($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) &&
     $GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency'] == true) {
@@ -172,6 +173,41 @@ class UploadMgr extends SGL_Manager {  ///?
 
     function display(& $output) {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
+
+        //lets genereate this date only for appropriate form
+        if ($output->action == "csvEdit" || $output->action == "csvUpdate") {
+            // generate the category select box
+            $aOptions = array ();
+            $menu1 = & new MenuBuilder('SelectBox', $aOptions);
+            $menu1->setStartId($conf['ShopMgr']['rootCatID']);
+            $aHtmlOptions = $menu1->toHtml();
+            $output->catOptions = SGL_Output::generateSelect($aHtmlOptions, @ $output->product->cat_id);
+
+            // generate the manufacturer select box
+            $aManufacturer = ShopAdminMgr::_getManufacturerList();
+            $output->manufacturerOptions = SGL_Output::generateSelect($aManufacturer, @ $output->product->manufacturer);
+        
+            // generate status select box
+            $aStatus = array ();
+            if ($conf['statusOpts']) {
+                $aStatus = $conf['statusOpts'];
+            }
+            $output->statusOptions = SGL_Output::generateSelect($aStatus, @ $output->product->status);
+            @$output->product->statusString = $conf['statusOpts'][@ $output->product->status];
+
+        // promotion check box
+            $output->promoOptions = (isset ($output->product->promotion)) ? $output->product->promotion : 0;
+        // new poduct check box
+            $output->newOptions = (isset ($output->product->new_id)) ? $output->product->new_id : 0;
+        // new poduct check box
+            $output->bargainOptions = (isset ($output->product->bargain)) ? $output->product->bargain : 0;
+
+            $output->wysiwyg = true;
+        }
+        
+        error_log(print_r($output,true));
     }
         
         
