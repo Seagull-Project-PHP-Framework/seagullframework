@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+15-09-05    Html title element value is now correctly drawn from the current article 
+            title, or the section name if none exists
 
 IMPROVEMENTS
 14-09-05    Unit test runner added, currently works with pear-installable version of

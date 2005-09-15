@@ -203,24 +203,25 @@ var $fieldTypes;
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             foreach ($aValues as $key => $value) {                              
                 switch ($key) {
-                    case 'item_type_id':
-                        $item_type_id = $value;
-                        break;
-                    case 'item_type_name':
-                        $data[$key] = $value; 
-                        break;
-                    case 'item_type_mapping_id':
-                        $item_type_mapping_id = $value;
-                        break;
-                    case 'field_name':
-                        $field_name = $value;                       
-                        break;
-                    break;                    
-                    case 'field_type':
-                        $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
-                        $data['fields'][$item_type_mapping_id]['field_type'] = $value;
-                        $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;                        
-                        break;
+                    
+                case 'item_type_id':
+                    $item_type_id = $value;
+                    break;
+                case 'item_type_name':
+                    $data[$key] = $value; 
+                    break;
+                case 'item_type_mapping_id':
+                    $item_type_mapping_id = $value;
+                    break;
+                case 'field_name':
+                    $field_name = $value;                       
+                    break;
+                break;                    
+                case 'field_type':
+                    $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
+                    $data['fields'][$item_type_mapping_id]['field_type'] = $value;
+                    $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;                        
+                    break;
                 }
                 
             }

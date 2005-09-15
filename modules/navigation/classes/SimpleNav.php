@@ -399,6 +399,24 @@ class SimpleNav
         $output = (isset($listItems)) ? "\n<ul>" . $listItems . "</ul>\n":false;
         return $output;
     }
+    
+    /**
+     * Returns section name give the section id.
+     *
+     * @return string
+     */
+    function getCurrentSectionName()
+    {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
+        $query = " 
+            SELECT  title
+            FROM    {$conf['table']['section']}
+            WHERE   section_id = " . $this->_currentSectionId;
+
+        $sectionName = $dbh->getOne($query);
+        return $sectionName;
+    }
 
     /**
      * Sets private var _disableLinks to [true (default) | false]. If links are disabled, the

@@ -577,6 +577,7 @@ class SGL_Controller
             //  the method
             $nav->render($sectionId, $html);
             $output->navigation = $html;
+            $output->currentSectionName = $nav->getCurrentSectionName();
         }
 
         //  set isAdmin flag

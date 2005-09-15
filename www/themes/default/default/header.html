@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}">
 <head>
-    <title flexy:if="!GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {translate(pageTitle)}</title>
-    <title flexy:if="GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {GLOBALS[_SGL][REQUEST][articleTitle]}</title>
+    <title flexy:if="!leadArticle[title]">{siteName} :: {currentSectionName}</title>
+    <title flexy:if="leadArticle[title]">{siteName} :: {leadArticle[title]}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
     <meta http-equiv="Content-Language" content="{currLang}" />
     <meta name="ROBOTS" content="ALL" />
