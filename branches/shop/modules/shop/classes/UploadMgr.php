@@ -197,6 +197,21 @@ class UploadMgr extends SGL_Manager {  ///?
             $output->statusOptions = SGL_Output::generateSelect($aStatus, @ $output->product->status);
             @$output->product->statusString = $conf['statusOpts'][@ $output->product->status];
 
+			if (isset ($output->product->img) AND $output->product->img != ''
+	            AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'].'/'.$output->product->img)) {
+	            $output->product->thumbUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$output->product->img;
+	        } else {
+	            $output->product->thumbUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['thumb'].'/'.$conf['imageUpload']['noImageFile'];
+	        }
+	        // product image path set
+	        if (isset ($output->product->img) AND $output->product->img != ''
+	            AND file_exists(SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'].'/'.$output->product->img)) {
+	            $output->product->imageUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['directory'].'/'.$output->product->img;
+	        } else {
+	            $output->product->imageUrl = SGL_BASE_URL.'/'.$conf['imageUpload']['directory'].'/'.$conf['imageUpload']['noImageFile'];
+	        }
+
+
         // promotion check box
             $output->promoOptions = (isset ($output->product->promotion)) ? $output->product->promotion : 0;
         // new poduct check box
@@ -205,9 +220,9 @@ class UploadMgr extends SGL_Manager {  ///?
             $output->bargainOptions = (isset ($output->product->bargain)) ? $output->product->bargain : 0;
 
             $output->wysiwyg = true;
+            $output->csvEdit = true;
         }
         
-        error_log(print_r($output,true));
     }
         
         

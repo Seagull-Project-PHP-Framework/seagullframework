@@ -156,12 +156,21 @@
       <input name="product[link_manufacturer]" type="text" value="{product.link_manufacturer}" size="50" class="textInput" /></td>
     <td>&nbsp;</td>
   </tr>
+  {if:csvEdit}
+  <tr> 
+    <td class="productDescKey" id="configTable-header">{translate(#Image file#)}:</td>
+    <td><div style="color:red" flexy:if="error[imageUpload]">{error[imageUpload]}</div>
+      <input name="product[img]" type="text" value="{product.img}" size="50" class="textInput" ></td>
+    <td>&nbsp;</td>
+  </tr>
+  {else:}
   <tr> 
     <td class="productDescKey" id="configTable-header">{translate(#Upload image#)}:</td>
     <td><div style="color:red" flexy:if="error[imageUpload]">{error[imageUpload]}</div>
       <input type="file" name="imageFile" size="20" class="textInput" /></td>
     <td>&nbsp;</td>
   </tr>
+  {end:}
 </table>
 
 <br />
