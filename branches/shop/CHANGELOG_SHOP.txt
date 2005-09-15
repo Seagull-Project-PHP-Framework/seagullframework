@@ -4,12 +4,15 @@ CHANGELOG SHOP
 | VERSION: 0.0.1        |
 +-----------------------+
 BUGFIXES
+16-09-05	CSVUpload: the category, manufacturer and status fields are working
 14-09-05	Shop: All prices have 2 decimal prices
 14-09-05	CartMgr: disabled payment manager for the moment
 14-09-05	CartAdminMgr: now order status works ok
 10-09-05	Updated code to work with SGL_Category
 
 IMPROVEMENTS
+16-09-05    CSVUpload: Upload image field is replaced with a text field so you
+			can edit the image file name.
 14-09-05	Shop, Cart Templates: Added more translation, modified templates to
 			reflect code changes and little HTML cleanup.
 14-09-05	Shop, Cart: Added missing default perms for guest and member group
