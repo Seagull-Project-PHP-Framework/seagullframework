@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome.com>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: SmartyConvertor.php,v 1.14 2005/02/09 11:03:44 demian Exp $
+// $Id: SmartyConvertor.php,v 1.3 2004/07/03 03:46:43 alan_k Exp $
 //
 //  Smarty Conversion compiler
 //  takes a smarty template, and converts it to a flexy one.
@@ -60,7 +60,7 @@ require_once 'HTML/Template/Flexy/Compiler.php';
 * however it could be used inline to convert simple smarty templates into 
 * flexy ones - then compile them on the fly.
 *
-* @version    $Id: SmartyConvertor.php,v 1.14 2005/02/09 11:03:44 demian Exp $
+* @version    $Id: SmartyConvertor.php,v 1.3 2004/07/03 03:46:43 alan_k Exp $
 */
 class HTML_Template_Flexy_Compiler_SmartyConvertor extends HTML_Template_Flexy_Compiler {
     
