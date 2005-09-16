@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome>                               |
 // +----------------------------------------------------------------------+
 //
-// $Id: Token.php,v 1.23 2005/02/09 11:03:44 demian Exp $
+// $Id: Token.php,v 1.51 2005/05/14 03:44:26 alan_k Exp $
 //
 //  This is the master Token file for The New Token driver Engine.
 //  All the Token output, and building routines are in here.
@@ -323,12 +323,13 @@ class HTML_Template_Flexy_Token {
         //
         //
         //echo '<PRE>' . htmlspecialchars(print_R($res,true));//exit;
-       
+        //echo '<PRE>';
         for($i=1;$i<$total;$i++) {
-            //echo "Checking TAG $i\n";
+            
             if (empty($res[$i]->tag)) {
                 continue;
             }
+            //echo "Checking TAG $i {$res[$i]->tag}\n";
             if ($res[$i]->tag{0} == '/') { // it's a close tag..
                 //echo "GOT END TAG: {$res[$i]->tag}\n";
                 $tag = strtoupper(substr($res[$i]->tag,1));

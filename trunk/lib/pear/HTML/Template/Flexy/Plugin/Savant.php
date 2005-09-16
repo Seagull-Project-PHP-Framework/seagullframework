@@ -57,7 +57,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -118,7 +118,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -230,7 +230,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -265,7 +265,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -314,7 +314,7 @@ class HTML_Template_Flexy_Plugin_Savant {
 
     function numberformat($number, $dec=false,$point=false,$thousands=false)
     {
-        if (!strlen(trim($datestring))) {
+        if (!strlen(trim($number))) {
             return;
         }
         // numberformat int decimals, string dec_point, string thousands_sep
@@ -344,7 +344,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -440,7 +440,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -476,7 +476,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -513,7 +513,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -568,7 +568,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -624,7 +624,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -698,7 +698,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 
@@ -727,7 +727,7 @@ class HTML_Template_Flexy_Plugin_Savant {
     * 
     * @package Savant
     * 
-    * @version $Id: Savant.php,v 1.10 2005/02/09 11:03:44 demian Exp $
+    * @version $Id: Savant.php,v 1.7 2005/05/14 03:39:11 alan_k Exp $
     * 
     * @access public
     * 

@@ -16,15 +16,19 @@
 // | Authors: Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: Standard.php,v 1.23 2005/02/09 11:03:44 demian Exp $
+// $Id: Standard.php,v 1.43 2005/02/08 05:35:27 alan_k Exp $
 //
 //  Base Compiler Class
 //  Standard 'Original Flavour' Flexy compiler
 
-// this does the main conversion, (eg. for {vars and methods}) 
-// it relays into Compiler/Tag & Compiler/Flexy for tags and namespace handling.
+/*------------------------------------------------------------------------------------------
+                                        NOTICE: 
+                             THIS COMPILER IS DEPRECIATED 
+                                USE THE FLEXY COMPILER 
+     
+                      The Flexy Compiler should be Compatible
 
-
+------------------------------------------------------------------------------------------*/
 
 require_once 'HTML/Template/Flexy/Tokenizer.php';
 require_once 'HTML/Template/Flexy/Token.php';
