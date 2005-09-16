@@ -103,8 +103,9 @@ class ArticleMgr extends SGL_Manager
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
-        $input->articleLangs    = $req->get('frmArticleLangs');
-
+        $input->articleLang    = $req->get('frmArticleLang');
+        $input->availableLangs  = $req->get('frmAvailableLangs');
+        
         //  new article form vars
         $input->createdByID     = $req->get('frmCreatedByID');
         $input->aStartDate      = $req->get('frmStartDate');
@@ -114,6 +115,19 @@ class ArticleMgr extends SGL_Manager
         $input->bodyValue       = $req->get('frmBodyName', $allowTags = true);
         $input->bodyItemID      = $req->get('frmBodyItemID');
         $input->queryRange      = $req->get('frmQueryRange');
+
+        if ($input->action == 'add') {
+            if ($input->articleLang == '0' || empty($input->articleLang)) {
+                $aErrors['articleLang'] = 'Please select an article language';
+            }
+        }
+
+        //  if errors have occured
+        if (isset($aErrors) && count($aErrors)) {
+            SGL::raiseMsg('Please fill in the indicated fields');
+            $input->error = $aErrors;
+            $this->validated = false;
+        }
 
         //  session var persistence
         PublisherBase::maintainState($input);
@@ -132,6 +146,11 @@ class ArticleMgr extends SGL_Manager
         //  generate template type options for article type chooser
         //  returns an assoc array: typeID => typeName
         $output->aArticleTypes = $this->getTemplateTypes();
+        
+        $trans = &SGL_Translation::singleton();
+        $output->aLanguages = array(0 => 'select a language');
+        $output->aLanguages = array_merge($output->aLanguages, $trans->getLangs());
+        
     }
 
     function _add(&$input, &$output)
@@ -167,11 +186,11 @@ class ArticleMgr extends SGL_Manager
         $output->dateSelectorExpiry = 
             SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
         $item = & new SGL_Item();
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $input->articleLangs);
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $input->articleLang);
 
         //  output languages
-        $output->aLanguages = $input->articleLangs;
-
+        $output->aLanguages = $input->articleLang;
+        
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
         $htmlOptions = $menu->toHtml();
@@ -207,17 +226,18 @@ class ArticleMgr extends SGL_Manager
         $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
+        $item->set('languages', $input->articleLang);
 
         //  addMetaInfo
         $insertID = $item->addMetaItems();
 
         //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, $input->articleLangs);
+        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, $input->articleLang);
 
         //  addBody
         if ($input->bodyValue != '') {
             $body = SGL_String::tidy($input->bodyValue);
-            $item->addBody($insertID, $input->bodyItemID, $body, $input->articleLangs);
+            $item->addBody($insertID, $input->bodyItemID, $body, $input->articleLang);
         }
         $output->masterTemplate = 'masterBlank.html';
         $output->template = 'articleMgrAdd.html';
@@ -228,6 +248,7 @@ class ArticleMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = &SGL_DB::singleton();
         $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $output->template = 'articleMgrEdit.html';
@@ -246,14 +267,41 @@ class ArticleMgr extends SGL_Manager
             SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate), 
                 'frmExpiryDate');
 
-        //  fetch current language
-        $langID = $GLOBALS['_SGL']['INSTALLED_LANGUAGES']; 
+        //  fetch available languages
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        foreach ($availableLanguages as $id => $tmplang) {
+            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
+        }
+
+        $query = "SELECT languages FROM ". $conf['table']['item'] . " WHERE item_id='". $input->articleID ."'";
+        $results = $dbh->getOne($query);
+        $langs = explode('|', $results);
+        foreach ($langs as $id => $lang) {
+            $key = str_replace('_', '-', $lang);
+            $output->availableLangs[$lang] = $aLangOptions[$key];   
+        }
+
+        //  add language if adding new translation
+        if (!array_key_exists($input->articleLang, $output->availableLangs)) {
+            $key = str_replace('_', '-', $input->articleLang);
+            $output->availableLangs[$input->articleLang] = $aLangOptions[$key];   
+        }
+        
+        //  find unavailable languages
+        $installedLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
+        foreach ($installedLangs as $uKey => $uValue) {
+            if (!array_key_exists($uKey, $output->availableLangs)) {
+                $key = str_replace('_', '-', $uKey);
+                $output->availableAddLangs[$uKey] = $aLangOptions[$key];
+            }   
+        }
 
         //  get dynamic content
-        $output->dynaContent = $item->getDynamicContent($input->articleID, $langID);
-
-        $output->aLanguages = $langID;
-        
+        $output->dynaContent = (isset($input->articleLang)) ? 
+                                    $item->getDynamicContent($input->articleID, $input->articleLang) : 
+                                    $item->getDynamicContent($input->articleID, $langs[0]);
+       
         //  generate flesch html link
         $output->fleschLink = $conf['site']['baseUrl'] . '/flesch.' . $_SESSION['aPrefs']['language'] . '.html';
 
@@ -324,17 +372,18 @@ class ArticleMgr extends SGL_Manager
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
         $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('statusID', SGL_STATUS_FOR_APPROVAL);
+        $item->set('languages', implode('|', array_merge($input->availableLangs, $input->articleLang)));
 
         //  updateMetaItems
         $item->updateMetaItems();
 
         //  updateDataItems
-        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->articleLangs);
+        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->articleLang);
 
         //  addBody
-        if (is_array($input->bodyValue) && !empty($input->bodyValue)) {
+        if (isset($input->bodyValue) && !empty($input->bodyValue)) {
             $body = SGL_String::tidy($input->bodyValue);
-            $item->updateBody($input->bodyItemID, $input->bodyValue, $input->articleLangs);
+            $item->updateBody($input->bodyItemID, $input->bodyValue, $input->articleLang);
         }
         $output->article = $item;
         SGL::raiseMsg('Article successfully updated');
@@ -370,11 +419,7 @@ class ArticleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  fetch installed languages
-        $trans = &SGL_Translation::singleton('admin');
-        $output->aLanguages = $trans->getLangs();
-        
+       
         //  fetch current language
         $langID = SGL_Translation::getLangID();
         
@@ -478,9 +523,18 @@ class ArticleMgr extends SGL_Manager
 
         //  fetch title translation
         $trans = &SGL_Translation::singleton();
+        $installedLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES']; 
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             if (is_numeric($aValues['addition'])) {
-                $aPagedData['data'][$aKey]['addition'] = $trans->get($aValues['addition'], 'content', $lang);
+                if ($title = $trans->get($aValues['addition'], 'content', $lang)) { //  get translation by language set in users' preference                
+                    $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
+                } else {    //  get first available translation any installed language
+                    foreach ($installedLangs as $lang) {
+                        if ($title = $trans->get($aValues['addition'], 'content', $lang)) {   
+                            $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
+                        }
+                    }
+                }
             }                           
         }
 

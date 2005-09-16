@@ -1,12 +1,22 @@
 <h1 class="pageTitle">{translate(#Editing Article#)}</h1>
+<form method="post" name="frmAddTrans" id="frmAddTrans" flexy:ignore>
+    <input type="hidden" name="action" value="edit" /> 
+    <input type="hidden" name="frmArticleCatID" value="{article.catID}" /> 
+    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />    
+    <input type="hidden" name="frmArticleID" value="{articleID}" />
+    <input type="hidden" name="frmAddLang" value="true" />       
+    <select name="frmarticleLang">
+        {generateSelect(availableAddLangs):h}</select>        
+    <input type="submit" name="submitted" value="{translate(#Add Translation#)}"/>  
+</form>
+
 <form method="post" name="article" flexy:ignore id="article">
     <input type="hidden" name="action" value="update" /> 
     <input type="hidden" name="frmArticleCatID" value="{article.catID}" /> 
-    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
-    {foreach:aLanguages,key,value}
-    <input type="hidden" name="frmArticleLangs[{key}]" value="{value}" />    
+    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />   
+    {foreach:availableLangs,langID,langName}
+    <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
     {end:}
-
     <table class="wide">
         <tr>
             <th width="30%" nowrap="nowrap">{translate(#Article type#)}</th>
@@ -47,6 +57,12 @@
         <tr>
             <th width="30%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
             <td width="70%">{dateSelectorExpiry:h}</td>
+        </tr>
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Language#)}</th>
+            <td width="70%"><select name="frmArticleLang"
+                                    onChange="javascript:document.location.href='{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}frmArticleLang/' + getSelectedValue(document.getElementById('article').frmArticleLang) + '/';">
+                {generateSelect(availableLangs,articleLang):h}</select> ({translate(#switching language will cause changes to be lost#)})</td>        
         </tr>
         {dynaContent:h}
         <tr>

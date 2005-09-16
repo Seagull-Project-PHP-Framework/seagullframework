@@ -14,12 +14,10 @@
 
 <h1 class="pageTitle">{translate(#New Article#)}</h1>
 <form method="post" name="article" flexy:ignore id="article">
-    <input type="hidden" name="action" value="insert" /> 
+    <input type="hidden" name="action" value="insert" />
     <input type="hidden" name="frmCatID" value="{catID}" /> 
     <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
-    {foreach:aLanguages,key,value}
-    <input type="hidden" name="frmArticleLangs[{key}]" value="{value}" />    
-    {end:}
+    <input type="hidden" name="frmArticleLang" value="{articleLang}" />    
 
     <table class="wide">
         <tr>

@@ -217,7 +217,8 @@ class SGL_Item
                 expiry_date,
                 item_type_id,
                 status,
-                category_id
+                category_id,
+                languages
             ) VALUES (
                 $id,
                 $this->createdByID,
@@ -228,7 +229,8 @@ class SGL_Item
                 $dbh->quote($this->expiryDate) . ",
                 $this->typeID," .
                 SGL_STATUS_FOR_APPROVAL . ",
-                $catID
+                $catID, ".
+                $dbh->quote($this->languages) ."
             )";
         $result = $dbh->query($query);
         return $id;
@@ -243,28 +245,26 @@ class SGL_Item
      * @param	mixed	$itemValue	Item Value
      * @return	void
      */
-    function addDataItems($parentID, $itemID, $itemValue, $aLanguages)
+    function addDataItems($parentID, $itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $trans = &SGL_Translation::singleton('admin');        
         $conf = & $GLOBALS['_SGL']['CONF']; 
                 
         for ($x=0; $x < count($itemID); $x++) {
             $id = $dbh->nextId($conf['table']['item_addition']);
             $transID = $dbh->nextID($conf['table']['translation']);
-
-            foreach ($aLanguages as $aKey => $aValue) {    
-                if ($itemValue[$aValue][$x] == '') {
-                    $itemValue[$aValue][$x] = SGL_String::translate('No other text entered');
-                }
-	
-                //  profanity check
-                $editedTxt = SGL_String::censor($itemValue[$aValue][$x]);
-
-                //  build strings array
-                $strings[$aValue] = $editedTxt;
-                unset($editedTxt);
+            
+            if ($itemValue[$x] == '') {
+                $itemValue[$x] = SGL_String::translate('No other text entered');
             }
+
+            //  profanity check
+            $editedTxt = SGL_String::censor($itemValue[$x]);
+
+            //  build strings array
+            $strings[$language] = $editedTxt;
     
             //  insert into item_addition
             $query = "
@@ -278,7 +278,6 @@ class SGL_Item
             unset($query);
 
             //  insert translation
-            $trans = &SGL_Translation::singleton('admin');
             $trans->add($transID, 'content', $strings);
             unset($strings);
         }
@@ -293,26 +292,26 @@ class SGL_Item
      * @param	mixed	$itemValue	Item Value
      * @return	void
      */
-    function addBody($parentID, $itemID, $itemValue, $aLanguages)
+    function addBody($parentID, $itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
+        $trans = &SGL_Translation::singleton('admin');
+
         $conf = & $GLOBALS['_SGL']['CONF'];
 
         $id = $dbh->nextId($conf['table']['item_addition']);
         $transID = $dbh->nextID($conf['table']['translation']);
 
-        foreach ($aLanguages as $aKey => $aValue) {
-            if ($itemValue[$aValue] == '') {
-                $itemValue[$aValue] = SGL_String::translate('No body text entered');
-            }
-    
-            //  profanity check
-            $editedTxt = SGL_String::censor($itemValue[$aValue]);
-            
-            $strings[$aValue] = $editedTxt;
-            unset($editedTxt);
+        if ($itemValue == '') {
+            $itemValue = SGL_String::translate('No body text entered');
         }
+
+        //  profanity check
+        $editedTxt = SGL_String::censor($itemValue);
+        
+        $strings[$language] = $editedTxt;
+
         $query = "
             INSERT INTO {$conf['table']['item_addition']} VALUES (
                 $id,
@@ -322,7 +321,6 @@ class SGL_Item
             )";
         $result = $dbh->query($query);
 
-        $trans = &SGL_Translation::singleton('admin');
         $trans->add($transID, 'content', $strings);
     }
 
@@ -345,7 +343,8 @@ class SGL_Item
                 start_date = " . $dbh->quote($this->startDate) . ",
                 expiry_date = " . $dbh->quote($this->expiryDate) . ",
                 status = $this->statusID,
-                category_id = $this->catID
+                category_id = $this->catID,
+                languages = ". $dbh->quote($this->languages) . "
             WHERE item_id = $this->id
                  ";
         $result = $dbh->query($query);
@@ -359,35 +358,42 @@ class SGL_Item
      * @param	mixed	$itemValue	Item Value
      * @return	void
      */
-    function updateDataItems($itemID, $itemValue, $aLanguages)
+    function updateDataItems($itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $trans = &SGL_Translation::singleton('admin');
+        $trans = &SGL_Translation::singleton();
+        $transAdmin = &SGL_Translation::singleton('admin');
 
         for ($x=0; $x < count($itemID); $x++) {
-            foreach ($aLanguages as $aKey => $aValue) {    
 
-                if ($itemValue[$aValue][$x] == '') {
-                    $itemValue[$aValue][$x] = SGL_String::translate('No text entered');
-                }
-                //  profanity check
-                $editedTxt = SGL_String::censor($itemValue[$aValue][$x]);
-
-                //  fetch current translations
-                $strings[$aValue] = $trans->get($itemID[$x], 'content', $aValue);
-                
-                //  merge translations
-                if ($editedTxt !== $strings[$aValue]) {
-                    $strings[$aValue]= $editedTxt;   
-                }        
-                unset($editedTxt);
+            if ($itemValue[$x] == '') {
+                $itemValue[$x] = SGL_String::translate('No text entered');
             }
+            //  profanity check
+            $editedTxt = SGL_String::censor($itemValue[$x]);
+
+            //  fetch current translations
+            $strings[$language] = $trans->get($itemID[$x], 'content', $language);
             
-            //  remove current translations
-            $trans->remove($itemID[$x], 'content');
+            //  merge translations
+            if ($editedTxt != $strings[$language]) {
+                $strings[$language] = $editedTxt;   
+            }        
+            unset($editedTxt);
+
+            foreach ($GLOBALS['_SGL']['INSTALLED_LANGUAGES'] as $key) {
+                if ($key != $language) {
+                    if ($content = $trans->get($itemID[$x], 'content', $key)) {
+                        $strings[$key] =  $content;
+                    }
+                }
+            }
+
+            //  remove all translations for current string
+            $transAdmin->remove($itemID[$x], 'content');
             
-            //  add updated translations
-            $trans->add($itemID[$x], 'content', $strings);            
+            //  add translations
+            $transAdmin->add($itemID[$x], 'content', $strings);            
         }
     }
 
@@ -399,32 +405,43 @@ class SGL_Item
      * @param	mixed	$itemValue	Item Value
      * @return	void
      */
-    function updateBody($itemID, $itemValue, $aLanguages)
+    function updateBody($itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $trans = &SGL_Translation::singleton('admin');
+        $trans = &SGL_Translation::singleton();
+        $transAdmin = &SGL_Translation::singleton('admin');
         
-        foreach ($aLanguages as $aKey => $aValue) {                
-            if ($itemValue[$aValue] == '') {
-                $itemValue[$aValue] = SGL_String::translate('No text entered');
-            }   
-            
-            $itemValue[$aValue] = SGL_String::tidy($itemValue[$aValue]);
-    
-            //  profanity check
-            $editedTxt = SGL_String::censor($itemValue[$aValue]);
-            
-            //  fetch current translation
-            $strings[$aValue] = $trans->get($itemID, 'content', $aValue);
-            
-            //  merge translations
-            if ($editedTxt !== $strings[$aValue]) {
-                $strings[$aValue] = $editedTxt;
-            }
-            
+        if ($itemValue == '') {
+            $itemValue = SGL_String::translate('No text entered');
+        }   
+        
+        $itemValue = SGL_String::tidy($itemValue);
+
+        //  profanity check
+        $editedTxt = SGL_String::censor($itemValue);
+        
+        //  fetch current translation
+        $strings[$language] = $trans->get($itemID, 'content', $language);
+        
+        //  merge translations
+        if ($editedTxt !== $strings[$language]) {
+            $strings[$language] = $editedTxt;
         }
-        $trans->remove($itemID, 'content');
-        $trans->add($itemID, 'content', $strings);
+
+
+        foreach ($GLOBALS['_SGL']['INSTALLED_LANGUAGES'] as $key) {
+            if ($key != $language) {
+                if ($content = $trans->get($itemID, 'content', $key)) {
+                    $strings[$key] = $content;
+                }
+            }
+        }
+
+        //  remove all translations for current string
+        $transAdmin->remove($itemID, 'content');
+        
+        //  add translations
+        $transAdmin->add($itemID, 'content', $strings);            
     }
 
     /**
@@ -482,7 +499,7 @@ class SGL_Item
      * @param	int		$itemID			Item ID
      * @return	mixed	$fieldsString	HTML Form
      */
-    function getDynamicContent($itemID, $aLanguages)
+    function getDynamicContent($itemID, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
@@ -501,23 +518,24 @@ class SGL_Item
 
         $trans = &SGL_Translation::singleton();
 
+        //  get language name
+        $langID = str_replace('_', '-', $language);
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
+        $languageName =  '('. $lang_name . ' - ' . $langID . ')';
+
         //  display dynamic form fields (changed default object output to standard array
         $fieldsString = '';
         while (list($fieldID, $fieldName, $fieldValue, $fieldType)
             = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $firstRun = true;
             $fieldID = $fieldValue;
-            foreach($aLanguages as $aKey => $aValue) {
-                $fieldValue = $trans->get($fieldID, 'content', $aValue);
-                $fieldsString .= "<tr>\n";
-                $fieldsString .= '<th>' . ucfirst($fieldName) ." ". $aValue ."</th>\n";
-                $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $fieldID, $fieldName, $fieldValue, $fieldType, $aValue, $firstRun) 
-                                    . "</td>\n";
-                $fieldsString .= "</tr>\n";
-                $firstRun = false;
-                unset($fieldValue);
-            }
+            $fieldValue = $trans->get($fieldValue, 'content', $language);
+            $fieldsString .= "<tr>\n";
+            $fieldsString .= '<th>' . ucfirst($fieldName) ." ". $languageName ."</th>\n";
+            $fieldsString .= '<td>' . $this->generateFormFields(
+                                      $fieldID, $fieldName, $fieldValue, $fieldType, $language) 
+                                . "</td>\n";
+            $fieldsString .= "</tr>\n";
         }
         return $fieldsString;
     }
@@ -533,7 +551,7 @@ class SGL_Item
      * @param   array   $aLanguages      Languages to build fields from
      * @return  mixed   $fieldsString	HTML Form
      */
-    function getDynamicFields($typeID, $aLanguages)
+    function getDynamicFields($typeID, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -553,20 +571,22 @@ class SGL_Item
                     ";
         $result = $dbh->query($query);
 
+        //  get language name
+        $langID = str_replace('_', '-', $language);
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
+        $languageName =  '('. $lang_name . ' - ' . $langID . ')';
+
         //  display dynamic form fields (changed default object output to standard array)
         $fieldsString = '';
         while (list($itemMappingID, $fieldName, $fieldType) 
             = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $firstRun = true;
-            foreach ($aLanguages as $aKey => $aValue) {
-                $fieldsString .= "<tr>\n";
-                $fieldsString .= '<th>' . ucfirst($fieldName) . " ". $aValue ."</th>\n";
-                $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $itemMappingID, $fieldName, null, $fieldType, $aValue, $firstRun) 
-                                    . "</td>\n";
-                $fieldsString .= "</tr>\n";
-                $firstRun = false;
-            }
+            $fieldsString .= "<tr>\n";
+            $fieldsString .= '<th>' . ucfirst($fieldName) .' '. $languageName ."</th>\n";
+            $fieldsString .= '<td>' . $this->generateFormFields(
+                                      $itemMappingID, $fieldName, null, $fieldType, $language) 
+                                . "</td>\n";
+            $fieldsString .= "</tr>\n";
         }
         return $fieldsString;
     }
@@ -582,23 +602,23 @@ class SGL_Item
      * @param	int		$fieldType	Field Type
      * @return	mixed	$formHTML	HTML Form
      */
-    function generateFormFields($fieldID, $fieldName, $fieldValue='', $fieldType, $language, $firstRun = false)
+    function generateFormFields($fieldID, $fieldName, $fieldValue='', $fieldType, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' name='frmFieldName[$language][]' value='$fieldValue' size='75'>";
-            $formHTML .= ($firstRun) ? "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />" : '';
+            $formHTML = "<input type='text' name='frmFieldName[]' value='$fieldValue' size='75'>";
+            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 1:     // field type = textarea paragraph
-            $formHTML = "<textarea name='frmFieldName[$language][]' rows='10' cols='60'>$fieldValue</textarea>";
-            $formHTML .= ($firstRun) ? "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />" : '';
+            $formHTML = "<textarea name='frmFieldName[]' rows='10' cols='60'>$fieldValue</textarea>";
+            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 2:     // field type = html paragraph
-            $formHTML = "<textarea id='frmBodyName' cols='75' rows='20' name='frmBodyName[$language]'>$fieldValue</textarea>";
-            $formHTML .= ($firstRun) ? "<input type='hidden' name='frmBodyItemID' value='$fieldID' />" : '';
+            $formHTML = "<textarea id='frmBodyName' cols='75' rows='20' name='frmBodyName'>$fieldValue</textarea>";
+            $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID' />";
             break;
         }
         return $formHTML;
@@ -855,7 +875,7 @@ class SGL_Item
      * @param	boolean	$bPublished	Item Published
      * @return	array	$ret		Array containg an Item's Details or false
      */
-    function getItemDetail($itemID = null, $bPublished = null)
+    function getItemDetail($itemID = null, $bPublished = null, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ((!$itemID) && (SGL_HTTP_Session::get('articleID'))) {
@@ -863,8 +883,10 @@ class SGL_Item
         }
         if ($itemID) {
             $item = & new SGL_Item($itemID);
-            $langID = SGL_Translation::getLangID();            
-            $ret = $item->preview($bPublished, $langID);
+            if (!isset($language) || empty($language) ) {
+                $language = SGL_Translation::getLangID();
+            }            
+            $ret = $item->preview($bPublished, $language);            
             if (!is_a($ret, 'PEAR_Error')) {
                 $ret['creatorName'] = $item->creatorName;
                 $ret['createdByID'] = $item->createdByID;

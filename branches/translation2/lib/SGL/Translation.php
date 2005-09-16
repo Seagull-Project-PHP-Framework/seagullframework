@@ -213,7 +213,11 @@ class SGL_Translation
     
     function getLangID()
     {
-        return str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET']);
+        if ($langID = str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET'])) {
+            return $langID;   
+        } else {
+            return $GLOBALS['_SGL']['CONF']['translation']['fallbackLang'];
+        }
     }
 
 }

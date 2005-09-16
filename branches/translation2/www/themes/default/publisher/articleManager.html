@@ -60,7 +60,7 @@
 
 {if:pager}<flexy:include src="pager.html" />{end:}
 
-<form name="frmAddArticle" action="{makeUrl(#add#,#article#,#publisher#)}" method="post" id="frmAddArticle" flexy:ignore>
+<form name="frmAddArticle" id="frmAddArticle" action="{makeUrl(#add#,#article#,#publisher#)}" method="post" flexy:ignore>
 <table class="wide">
     <tr>
         <td colspan="10">
@@ -77,23 +77,23 @@
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
-                    <td>
-                        <select name="frmArticleLangs[]" multiple="multiple">
-                            {generateSelect(aLanguages):h}</select> &nbsp;
+                    <td><div class="error" flexy:if="error[articleLang]">{error[articleLang]}</div>
+                        <select name="frmArticleLang">
+                            {generateSelect(aLanguages,articleLang):h}</select> &nbsp;
                     </td>
                     <td>({translate(#select languages of new article#)})</td>                    
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td colspan="2">
-                        <input type="submit" name="newArticleButton" value="{translate(#New Article#)}" />                         
+                        <input type="submit" id="newArticleButton" name="newArticleButton" value="{translate(#New Article#)}" />                         
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 </form>    
-<form name="frmDeleteArticle" flexy:ignore>
+<form name="frmDeleteArticle" id="frmDeleteArticle" flexy:ignore>
 <input type="hidden" name="action" value="delete" />
     <tr>
         <th>{translate(#Select#)}</th>

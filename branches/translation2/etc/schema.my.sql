@@ -18,6 +18,7 @@ create table if not exists item
    start_date                     datetime,
    expiry_date                    datetime,
    status                         smallint,
+   languages                      text,
    primary key (item_id)
 );
 
