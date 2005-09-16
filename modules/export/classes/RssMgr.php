@@ -40,7 +40,7 @@
 
 require_once SGL_CORE_DIR . '/Item.php';
 
-define('SGL_FEED_RSS_VERSION', '1.0');
+define('SGL_FEED_RSS_VERSION', '2.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
 define('SGL_ITEM_TYPE_ARTICLE_HTML', 2);
