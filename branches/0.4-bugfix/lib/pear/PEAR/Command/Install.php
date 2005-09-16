@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.101 2005/08/19 19:45:38 cellog Exp $
+ * @version    CVS: $Id: Install.php,v 1.102 2005/08/30 22:09:50 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -427,7 +427,7 @@ Run post-installation scripts in package <package>, if any exist.
                 $oldinfo = $info;
                 $pkg = &$param->getPackageFile();
                 if ($info->getCode() != PEAR_INSTALLER_NOBINARY) {
-                    if (!($info = &$pkg->installBinary($this->installer))) {
+                    if (!($info = $pkg->installBinary($this->installer))) {
                         $this->ui->outputData('ERROR: ' .$oldinfo->getMessage());
                         continue;
                     }

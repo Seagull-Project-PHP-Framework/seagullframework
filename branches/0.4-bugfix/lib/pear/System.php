@@ -15,7 +15,7 @@
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: System.php,v 1.49 2005/08/23 00:36:17 cellog Exp $
+ * @version    CVS: $Id: System.php,v 1.50 2005/09/11 17:46:55 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -55,7 +55,7 @@ $GLOBALS['_System_temp_files'] = array();
 * @author     Tomas V.V. Cox <cox@idecnet.com>
 * @copyright  1997-2005 The PHP Group
 * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
-* @version    Release: 1.4.0b1
+* @version    Release: 1.4.0RC2
 * @link       http://pear.php.net/package/PEAR
 * @since      Class available since Release 0.1
 */
@@ -461,6 +461,9 @@ class System
             // Honor safe mode
             if (!ini_get('safe_mode') || !$path = ini_get('safe_mode_exec_dir')) {
                 $path = getenv('PATH');
+                if (!$path) {
+                    $path = getenv('Path'); // some OSes are just stupid enough to do this
+                }
             }
             $path_elements = explode($path_delim, $path);
         }

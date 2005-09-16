@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.106 2005/08/23 17:08:44 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.107 2005/08/30 22:09:05 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/ErrorStack.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -180,7 +180,7 @@ class PEAR_PackageFile_v2
      * @param PEAR_Installer
      * @return array|false
      */
-    function &installBinary(&$installer)
+    function installBinary(&$installer)
     {
         if (!OS_WINDOWS) {
             $a = false;

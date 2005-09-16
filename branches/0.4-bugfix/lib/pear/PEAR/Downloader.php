@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.89 2005/08/22 02:11:28 cellog Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.90 2005/09/15 20:10:11 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -414,6 +414,26 @@ class PEAR_Downloader extends PEAR_Common
             foreach ($params as $i => $param) {
                 $deps = $param->getDeps();
                 if (!$deps) {
+                    $depchecker = &$this->getDependency2Object($this->config, $this->getOptions(),
+                        $param->getParsedPackage(), PEAR_VALIDATE_DOWNLOADING);
+                    if ($param->getType() == 'xmlrpc') {
+                        $send = $param->getDownloadURL();
+                    } else {
+                        $send = $param->getPackageFile();
+                    }
+                    $installcheck = $depchecker->validatePackage($send, $this);
+                    if (PEAR::isError($installcheck)) {
+                        if (!isset($this->_options['soft'])) {
+                            $this->log(0, $installcheck->getMessage());
+                        }
+                        $hasfailed = true;
+                        $params[$i] = false;
+                        $reset = true;
+                        $redo = true;
+                        $failed = false;
+                        PEAR_Downloader_Package::removeDuplicates($params);
+                        continue 2;
+                    }
                     continue;
                 }
                 if (!$reset && $param->alreadyValidated()) {

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CLI.php,v 1.53 2005/08/11 03:47:25 cellog Exp $
+ * @version    CVS: $Id: CLI.php,v 1.54 2005/09/11 19:13:08 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Frontend.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -357,6 +357,9 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 if (version_compare(phpversion(), '5.0.0', '<')) {
                     $line = fgets($fp, 2048);
                 } else {
+                    if (!defined('STDIN')) {
+                        define('STDIN', fopen('php://stdin', 'r'));
+                    }
                     $line = fgets(STDIN, 2048);
                 }
                 if ($type == 'password') {

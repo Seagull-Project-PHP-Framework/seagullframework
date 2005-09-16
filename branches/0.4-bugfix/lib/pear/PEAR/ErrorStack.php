@@ -23,7 +23,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  2004-2005 Greg Beaver
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ErrorStack.php,v 1.20 2005/08/06 23:29:16 pajoye Exp $
+ * @version    CVS: $Id: ErrorStack.php,v 1.21 2005/09/04 23:29:50 cellog Exp $
  * @link       http://pear.php.net/package/PEAR_ErrorStack
  */
 
@@ -132,12 +132,12 @@ define('PEAR_ERRORSTACK_ERR_OBJTOSTRING', 2);
  * $local_stack = new PEAR_ErrorStack('MyPackage');
  * </code>
  * @author     Greg Beaver <cellog@php.net>
- * @version    1.4.0b1
+ * @version    1.4.0RC2
  * @package    PEAR_ErrorStack
  * @category   Debugging
  * @copyright  2004-2005 Greg Beaver
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ErrorStack.php,v 1.20 2005/08/06 23:29:16 pajoye Exp $
+ * @version    CVS: $Id: ErrorStack.php,v 1.21 2005/09/04 23:29:50 cellog Exp $
  * @link       http://pear.php.net/package/PEAR_ErrorStack
  */
 class PEAR_ErrorStack {
@@ -269,7 +269,7 @@ class PEAR_ErrorStack {
                 false, $trace);
         }
         $GLOBALS['_PEAR_ERRORSTACK_SINGLETON'][$package] =
-            &new $stackClass($package, $msgCallback, $contextCallback, $throwPEAR_Error);
+            new $stackClass($package, $msgCallback, $contextCallback, $throwPEAR_Error);
 
         return $GLOBALS['_PEAR_ERRORSTACK_SINGLETON'][$package];
     }

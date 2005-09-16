@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
+// | Copyright (c) 1997-2005 The PHP Group                                |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.02 of the PHP license,      |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -16,16 +16,18 @@
 // | Author: Sterling Hughes <sterling@php.net>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Find.php,v 1.15 2005/08/11 07:38:53 tuupola Exp $
+// $Id: Find.php,v 1.19 2005/09/11 10:03:30 techtonik Exp $
 //
 
 require_once 'PEAR.php';
+
+define('FILE_FIND_VERSION', '@package_version@');
 
 /**
 *  Commonly needed functions searching directory trees
 *
 * @access public
-* @version $Id: Find.php,v 1.15 2005/08/11 07:38:53 tuupola Exp $
+* @version $Id: Find.php,v 1.19 2005/09/11 10:03:30 techtonik Exp $
 * @package File
 * @author Sterling Hughes <sterling@php.net>
 */
@@ -68,6 +70,7 @@ class File_Find
      *
      * @author Sterling Hughes <sterling@php.net>
      * @access public
+     * @static
      */
     function &glob($pattern, $dirpath, $pattern_type = 'php')
     {
@@ -118,8 +121,10 @@ class File_Find
         $this->files       = array();
         $this->directories = array();
 
-        /* strip out tailing / to be consistent */
-        $directory = ereg_replace(DIRECTORY_SEPARATOR.'$', '', $directory);
+        /* consistency rules - strip out trailing slashes */
+        $directory = preg_replace('![\\/]+$!', '', $directory);
+        /* use only native system directory delimiters */
+        $directory = preg_replace("![\\/]+!", DIRECTORY_SEPARATOR, $directory);
 
         $this->_dirs = array($directory);
 
@@ -155,6 +160,7 @@ class File_Find
      *
      * @author Mika Tuupola <tuupola@appelsiini.net>
      * @access public
+     * @static
      */
     function &mapTreeMultiple($directory, $maxrecursion = 0, $count = 0)
     {   
@@ -180,7 +186,7 @@ class File_Find
             if (!is_array($val) && is_dir($path)) {
                 unset($retval[$key]);
                 if ($maxrecursion == 0 || $count < $maxrecursion) {
-                    $retval[$val] = File_Find::mapTreeMultiple($path, 
+                    $retval[$val] = &File_Find::mapTreeMultiple($path, 
                                     $maxrecursion, $count);
                 }
             }
@@ -203,31 +209,37 @@ class File_Find
      * @param bool $fullpath whether the regex should be matched against the
      * full path or only against the filename
      *
+     * @param string $match can be either 'files', 'dirs' or 'both' to specify
+     * the kind of list to return
+     *
      * @return array a list of files matching the pattern parameter in the the
      * directory path specified by the directory parameter
      *
      * @author Sterling Hughes <sterling@php.net>
      * @access public
+     * @static
      */
-    function &search($pattern, $directory, $type = 'php', $fullpath = true)
+    function &search($pattern, $directory, $type = 'php', $fullpath = true, $match = 'files')
     {
 
-        /* if called statically */
-        if (!isset($this)  || !is_a($this, "File_Find")) {
-            $obj = &new File_Find();
-            return $obj->search($pattern, $directory, $type, $fullpath);
-        } else {
+        $matches = array();
+        list ($directories,$files)  = File_Find::maptree($directory);
+        switch($match) {
+            case 'directories': $data = $directories; break;
+            case 'both': $data = array_merge($directories, $files); break;
+            case 'files':
+            default:
+                $data = $files;
+        }
+        unset($files, $directories);
 
-            $matches = array();
-            list (,$files)  = File_Find::maptree($directory);
-            $match_function = File_Find::_determineRegex($pattern, $type);
+        $match_function = File_Find::_determineRegex($pattern, $type);
 
-            reset($files);
-            while (list(,$entry) = each($files)) {
-                if ($match_function($pattern, 
-                                    $fullpath ? $entry : basename($entry))) {
-                    $matches[] = $entry;
-                }
+        reset($data);
+        while (list(,$entry) = each($data)) {
+            if ($match_function($pattern, 
+                                $fullpath ? $entry : basename($entry))) {
+                $matches[] = $entry;
             }
         }
 
