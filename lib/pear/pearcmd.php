@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.24 2005/03/21 14:59:31 cellog Exp $
+// $Id: pearcmd.php,v 1.26 2005/09/14 19:27:16 pajoye Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0b1";
+$pear_package_version = "1.4.0RC2";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -103,6 +103,24 @@ foreach ($opts as $opt) {
 PEAR_Command::setFrontendType($fetype);
 $ui = &PEAR_Command::getFrontendObject();
 $config = &PEAR_Config::singleton($pear_user_config, $pear_system_config);
+
+if (PEAR::isError($config)) {
+    $_file = '';
+    if ($pear_user_config !== false) {
+       $_file .= $pear_user_config;
+    }
+    if ($pear_system_config !== false) {
+       $_file .= '/' . $pear_system_config;
+    }
+    if ($_file == '/') {
+        $_file = 'The default config file';
+    }
+    $config->getMessage();
+    $ui->outputData("ERROR: $_file is not a valid config file or is corrupted.");
+    // We stop, we have no idea where we are :)
+    exit();    
+}
+
 // this is used in the error handler to retrieve a relative path
 $_PEAR_PHPDIR = $config->get('php_dir');
 $ui->setConfig($config);
@@ -346,7 +364,12 @@ function cmdHelp($command)
 
 function error_handler($errno, $errmsg, $file, $line, $vars) {
     if ((defined('E_STRICT') && $errno & E_STRICT) || !error_reporting()) {
-        return; // @silenced error
+        if (defined('E_STRICT') && $errno & E_STRICT) {
+            return; // E_STRICT
+        }
+        if ($GLOBALS['config']->get('verbose') < 4) {
+            return; // @silenced error, show all if debug is high enough
+        }
     }
     $errortype = array (
         E_ERROR   =>  "Error",

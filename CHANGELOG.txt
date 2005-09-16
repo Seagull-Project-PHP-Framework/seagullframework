@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
+            an infinite Flexy loop
 15-09-05    Html title element value is now correctly drawn from the current article 
             title, or the section name if none exists
 

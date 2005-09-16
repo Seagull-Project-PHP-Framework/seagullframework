@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.105 2005/04/13 04:31:42 cellog Exp $
+ * @version    CVS: $Id: Package.php,v 1.108 2005/09/13 15:20:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -288,7 +288,7 @@ used for automated conversion or learning the format.
         return $a;
     }
 
-    function getPackageFile($config, $debug = false, $tmpdir = null)
+    function &getPackageFile($config, $debug = false, $tmpdir = null)
     {
         if (!class_exists('PEAR_Common')) {
             require_once 'PEAR/Common.php';
@@ -310,13 +310,11 @@ used for automated conversion or learning the format.
         $pkginfofile = isset($params[0]) ? $params[0] : 'package.xml';
         $pkg2 = isset($params[1]) ? $params[1] : null;
         if (!$pkg2 && !isset($params[0])) {
-            if (@file_exists('package2.xml')) {
+            if (file_exists('package2.xml')) {
                 $pkg2 = 'package2.xml';
             }
         }
         $packager = &$this->getPackager();
-        $reg = &$this->config->getRegistry();
-        $dir = dirname($pkginfofile);
         $compress = empty($options['nocompress']) ? true : false;
         $result = $packager->package($pkginfofile, $compress, $pkg2);
         if (PEAR::isError($result)) {
@@ -979,9 +977,15 @@ used for automated conversion or learning the format.
             }
         }
 
-        $spec_contents = preg_replace('/@([a-z0-9_-]+)@/e', '$info["\1"]',
-            fread($fp, filesize($spec_template)));
-        fclose($fp);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $spec_contents = preg_replace('/@([a-z0-9_-]+)@/e', '$info["\1"]',
+                file_get_contents($spec_template));
+        } else {
+            $spec_contents = preg_replace('/@([a-z0-9_-]+)@/e', '$info["\1"]',
+                fread($fp, filesize($spec_template)));
+            fclose($fp);
+        }
         $spec_file = "$info[rpm_package]-$info[version].spec";
         $wp = fopen($spec_file, "wb");
         if (!$wp) {

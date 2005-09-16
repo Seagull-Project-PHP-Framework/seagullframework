@@ -128,10 +128,11 @@ class SGL_Item
     function SGL_Item($itemID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'item';
+        $this->module = 'item'; //FIXME, do we need this?
         if ($itemID >= 0) {
             $this->_init($itemID);
         }
+        
     }
 
     /**
@@ -149,25 +150,30 @@ class SGL_Item
 
         //  get default fields
         $query = "
-                    SELECT  u.username,
-                            i.created_by_id,
-                            i.updated_by_id,
-                            i.date_created,
-                            i.last_updated,
-                            i.start_date,
-                            i.expiry_date,
-                            i.item_type_id,
-                            it.item_type_name,
-                            i.category_id,
-                            i.status
-                    FROM    {$conf['table']['item']} i, {$conf['table']['item_type']} it, {$conf['table']['user']} u
-                    WHERE   it.item_type_id = i.item_type_id
-                    AND     i.created_by_id = u.usr_id
-                    AND     i.item_id = $itemID
+            SELECT  u.username,
+                    i.created_by_id,
+                    i.updated_by_id,
+                    i.date_created,
+                    i.last_updated,
+                    i.start_date,
+                    i.expiry_date,
+                    i.item_type_id,
+                    it.item_type_name,
+                    i.category_id,
+                    i.status
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_type']} it, {$conf['table']['user']} u
+            WHERE   it.item_type_id = i.item_type_id
+            AND     i.created_by_id = u.usr_id
+            AND     i.item_id = $itemID
                 ";
         $result = $dbh->query($query);
         if (!DB::isError($result)) {
             $itemObj = $result->fetchRow();
+            
+            //  catch null results
+            if (is_null($itemObj)) {
+                return false;
+            }
             //  set object properties
             $this->set('id', $itemID);
             $this->set('creatorName', $itemObj->username);
@@ -816,6 +822,10 @@ class SGL_Item
         }
         if ($itemID) {
             $item = & new SGL_Item($itemID);
+            if (is_null($item->id)) {
+                return SGL::raiseError('No article found for that ID', 
+                    SGL_ERROR_NODATA); 
+            }
             $ret = $item->preview($bPublished);
             if (!is_a($ret, 'PEAR_Error')) {
                 $ret['creatorName'] = $item->creatorName;

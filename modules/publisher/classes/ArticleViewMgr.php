@@ -115,7 +115,12 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'articleView.html';
-        $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
+        $ret = SGL_Item::getItemDetail($input->articleID);
+        
+        if (PEAR::isError($ret)) {
+            return false;
+        }
+        $output->leadArticle = $ret;
         
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.73 2005/08/18 09:58:04 pajoye Exp $
+ * @version    CVS: $Id: Remote.php,v 1.74 2005/09/11 18:00:20 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -40,7 +40,7 @@ require_once 'PEAR/Config.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0b1
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -91,8 +91,13 @@ class PEAR_Remote extends PEAR
         if (!$fp) {
             return null;
         }
-        $content  = fread($fp, filesize($filename));
-        fclose($fp);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $content = file_get_contents($filename);
+        } else {
+            $content  = fread($fp, filesize($filename));
+            fclose($fp);
+        }
         $result   = array(
             'age'        => time() - filemtime($filename),
             'lastChange' => filemtime($filename),
