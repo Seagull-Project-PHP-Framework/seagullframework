@@ -19,12 +19,11 @@
         <a id="logAction" href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a>
     {end:}
     </div>
-    {if:GLOBALS[_SGL][CONF][debug][showBugReporterLink]}
-    <a href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
-        <img src="{webRoot}/themes/{theme}/images/bug.png" alt="{translate(#send bug report#)}" />
-    </a>
-    {end:}
-       <!-- <div id="bugReporter" flexy:if="GLOBALS[_SGL][CONF][debug][showBugReporterLink]">-->
+    <div id="bugReporter" flexy:if="GLOBALS[_SGL][CONF][debug][showBugReporterLink]">
+        <a href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
+            <img src="{webRoot}/themes/{theme}/images/bug.png" alt="{translate(#send bug report#)}" />
+        </a>
+    </div>
 </div>
 
 <!-- tab navigation -->
