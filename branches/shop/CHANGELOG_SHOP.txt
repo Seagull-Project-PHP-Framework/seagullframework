@@ -11,6 +11,9 @@ BUGFIXES
 10-09-05	Updated code to work with SGL_Category
 
 IMPROVEMENTS
+17-09-05	ImageUpload: we use PEAR::Image_Transform instead of phpthumb
+			* support for GD, ImageMagick, Imagick and NetPBM
+			* a lot of image types can be uploaded (function of selected driver)
 16-09-05    CSVUpload: Upload image field is replaced with a text field so you
 			can edit the image file name.
 14-09-05	Shop, Cart Templates: Added more translation, modified templates to
