@@ -16,7 +16,7 @@
 // | Author: Leandro Lucarella <llucax@php.net>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Span.php,v 1.6 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Span.php,v 1.4 2003/04/30 03:56:26 llucax Exp $
 //
 
 require_once 'Date.php';
@@ -63,7 +63,7 @@ $_DATE_SPAN_INPUT_FORMAT = DATE_SPAN_INPUT_FORMAT_NNSV;
  *
  * @package Date
  * @author  Leandro Lucarella <llucax@php.net>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.4 $
  * @since   1.4
  * @todo    Get and set default local input and output formats?
  * @access  public

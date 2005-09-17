@@ -15,6 +15,7 @@ $words['User Manager :: Edit permissions'] = 'User Manager :: Edit permissions';
 $words['User Manager :: Add'] = 'User Manager :: Add';
 $words['User Manager :: Reset password'] = 'User Manager :: Reset password';
 $words['User Manager :: Search'] = 'User Manager :: Search';
+$words['User Manager :: Change status'] = 'User Manager :: Change status';
 $words['My Profile :: Edit'] = 'My Profile :: Edit';
 $words['Change Password'] = 'Change Password';
 $words['User ID'] = 'User ID';
@@ -326,5 +327,15 @@ $words['Remote IP']='Remote IP';
 $words['Deleted successfully']='Deleted successfully';
 $words['Are you sure?']='Are you sure?';
 $words['Logins']='Logins';
+
+/* status notifications */
+$words['You are being sent this email because your new account status is now']='You are being sent this email because your new account status is now';
+$words['active']='active';
+$words['disabled']='disabled';
+$words['Changing status for']='Changing status for';
+$words['Current status is']='Current status is';
+$words['Disable Now']='Disable Now';
+$words['Enable Now']='Enable Now';
+$words['Status changed successfully']='Status changed successfully';
 
 ?>

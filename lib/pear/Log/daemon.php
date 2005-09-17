@@ -1,5 +1,5 @@
 <?php
-// $Id: daemon.php,v 1.1 2005/01/01 19:00:57 demian Exp $
+// $Id: daemon.php,v 1.1 2004/12/21 06:55:38 jon Exp $
 
 /**
  * The Log_daemon class is a concrete implementation of the Log::

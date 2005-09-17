@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
 
-// $Id: DB.php,v 1.11 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: DB.php,v 1.17 2004/07/29 11:31:04 datenpunk Exp $
 
 require_once 'DB.php';
 // {{{ DB_NestedSet_DB:: class
@@ -25,7 +25,7 @@ require_once 'DB.php';
  *
  * @author Daniel Khan <dk@webcluster.at>
  * @package DB_NestedSet
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.17 $
  * @access public
  */
 // }}}
@@ -44,7 +44,7 @@ class DB_NestedSet_DB extends DB_NestedSet {
      * @param mixed $dsn DSN as PEAR dsn URI or dsn Array
      * @param array $params Database column fields which should be returned
      */
-    function DB_NestedSet_DB($dsn, $params = array()) {
+    function & DB_NestedSet_DB($dsn, $params = array()) {
         $this->_debugMessage('DB_NestedSet_DB($dsn, $params = array())');
         $this->DB_NestedSet($params);
         $this->db = & $this->_db_Connect($dsn);

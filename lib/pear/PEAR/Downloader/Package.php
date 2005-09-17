@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.7 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Package.php,v 1.83 2005/08/21 22:33:46 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -44,7 +44,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -355,7 +355,9 @@ class PEAR_Downloader_Package
                             if (!isset($options['soft'])) {
                                 $param->_downloader->log(1, 'Skipping package "' .
                                     $param->getShortName() .
-                                    '", already installed as version ' . $param->getVersion());
+                                    '", already installed as version ' .
+                                    $param->_registry->packageInfo($param->getPackage(),
+                                        'version', $param->getChannel()));
                             }
                             $params[$i] = false;
                         }
@@ -364,7 +366,9 @@ class PEAR_Downloader_Package
                         $info = $param->getParsedPackage();
                         $param->_downloader->log(1, 'Skipping package "' .
                             $param->getShortName() .
-                            '", already installed as version ' . $param->getVersion());
+                            '", already installed as version ' .
+                            $param->_registry->packageInfo($param->getPackage(), 'version',
+                                $param->getChannel()));
                         $params[$i] = false;
                     }
                 }
@@ -1156,7 +1160,7 @@ class PEAR_Downloader_Package
                 }
                 $obj = &new PEAR_Downloader_Package($params[$i]->getDownloader());
                 PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-                $e = $obj->_fromFile($dl->getDownloadDir() . DIRECTORY_SEPARATOR . $file);
+                $e = $obj->_fromFile($a = $dl->getDownloadDir() . DIRECTORY_SEPARATOR . $file);
                 PEAR::popErrorHandling();
                 if (PEAR::isError($e)) {
                     if (!isset($options['soft'])) {
@@ -1257,8 +1261,24 @@ class PEAR_Downloader_Package
         return $a;
     }
 
-    function _fromFile($param)
+
+    /**
+     * This will retrieve from a local file if possible, and parse out
+     * a group name as well.  The original parameter will be modified to reflect this.
+     * @param string|array can be a parsed package name as well
+     * @access private
+     */
+    function _fromFile(&$param)
     {
+        if (is_string($param) && !@is_file($param)) {
+            $test = explode('#', $param);
+            $group = array_pop($test);
+            if (@is_file(implode('#', $test))) {
+                $this->setGroup($group);
+                $param = implode('#', $test);
+                $this->_explicitGroup = true;
+            }
+        }
         if (@is_file($param)) {
             $this->_type = 'local';
             $options = $this->_downloader->getOptions();
@@ -1277,7 +1297,9 @@ class PEAR_Downloader_Package
                 return $pf;
             }
             $this->_packagefile = &$pf;
-            $this->setGroup('default'); // install the default dependency group
+            if (!$this->getGroup()) {
+                $this->setGroup('default'); // install the default dependency group
+            }
             return $this->_valid = true;
         }
         return $this->_valid = false;

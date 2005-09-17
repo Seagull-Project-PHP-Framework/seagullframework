@@ -1,0 +1,23 @@
+;------------------------------------------------------------------------------------------;
+; Test Environment Settings - Make Sure The Following Are Correct!                         ;
+;------------------------------------------------------------------------------------------;
+
+[database]
+type                = mysql_SGL
+host                = localhost
+port                = 3306
+username            = root
+password            = 
+name                = simpletest ; Don't set this to be your project database - the test
+                                     ; database is often dropped during testing!
+[project]
+name                = My Project
+projectMnemonic     = 
+
+[general]
+directoriesToScan   = 
+initBridge          = 
+                                     
+; Path should be relative to the tests install directory
+[schemaFiles]
+file1               = 

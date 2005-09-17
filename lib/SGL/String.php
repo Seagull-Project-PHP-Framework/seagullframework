@@ -503,6 +503,17 @@ class SGL_String
          $s = preg_replace($find, $replace, $s);
          return $s;
     }
+    
+    /**
+     * Removes chars that are illegal in ini files.
+     *
+     * @param string $string
+     * @return string
+     */
+    function stripIniFileIllegalChars($string)
+    {
+        return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
+    }
 }
 
 /**

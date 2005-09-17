@@ -18,7 +18,7 @@
  * @author     Stig Bakken <stig@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: storage.php,v 1.16 2005/04/21 06:34:10 demian Exp $
+ * @version    CVS: $Id: storage.php,v 1.21 2005/02/02 02:54:51 danielc Exp $
  * @link       http://pear.php.net/package/DB
  */
 

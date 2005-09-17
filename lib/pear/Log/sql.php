@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/sql.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/sql.php,v 1.34 2004/08/19 06:35:57 jon Exp $
  * $Horde: horde/lib/Log/sql.php,v 1.12 2000/08/16 20:27:34 chuck Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.34 $
  * @package Log
  */
 

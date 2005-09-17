@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.7 2005/06/23 15:56:38 demian Exp $
+ * @version    CVS: $Id: v1.php,v 1.58 2005/09/11 12:17:48 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -266,7 +266,7 @@ define('PEAR_PACKAGEFILE_ERROR_NON_ISO_CHARS', 49);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -387,6 +387,11 @@ class PEAR_PackageFile_v1
         return false;
     }
 
+    function getInstalledBinary()
+    {
+        return false;
+    }
+
     function listPostinstallScripts()
     {
         return false;
@@ -428,8 +433,8 @@ class PEAR_PackageFile_v1
 
     function packageInfo($field)
     {
-        if (!isset($this->_packageInfo[$field]) ||
-              !is_string($this->_packageInfo[$field])) {
+        if (!is_string($field) || empty($field) ||
+            !isset($this->_packageInfo[$field])) {
             return false;
         }
         return $this->_packageInfo[$field];
@@ -1300,7 +1305,13 @@ class PEAR_PackageFile_v1
         if (!$fp = @fopen($file, "r")) {
             return false;
         }
-        $contents = @fread($fp, filesize($file));
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $contents = file_get_contents($file);
+        } else {
+            $contents = @fread($fp, filesize($file));
+            fclose($fp);
+        }
         $tokens = token_get_all($contents);
 /*
         for ($i = 0; $i < sizeof($tokens); $i++) {

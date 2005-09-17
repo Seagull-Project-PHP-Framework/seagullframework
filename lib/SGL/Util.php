@@ -162,9 +162,12 @@ class SGL_Util
                     continue;
                 }
                 //  and anything without css extension
-                if (($ext = end(explode('.', $file))) != 'css') {
+                $parts = explode('.', $file);
+                $ext = end($parts);
+                if ($ext != 'css') {
                     continue;
                 }
+
                 $filename = substr($file, 0, strpos($file, '.'));
 
                 //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
@@ -222,7 +225,7 @@ class SGL_Util
         //  match files with php extension
         $classDir = $moduleDir . '/classes';
         $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME, 
-                create_function('$a', 'return preg_match("/.*Mgr\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Mgr\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Mgr/", $a, $matches); $a =  $matches[0]; return true;'));
@@ -252,8 +255,11 @@ class SGL_Util
         $filePath = $moduleDir . '/classes/' . $managerFileName;
         
         if (file_exists($filePath)) {
-            include_once($filePath);
-            $className = substr(array_pop(explode('/', $filePath)), 0, -4);
+            require_once $filePath;
+            $aElems = explode('/', $filePath);
+            $last = array_pop($aElems);
+            $className = substr($last, 0, -4);
+            
             $obj = new $className(); // extract classname
             $vars = get_object_vars($obj);
             $actions = array_keys($vars['_aActionsMapping']);
@@ -276,7 +282,7 @@ class SGL_Util
 
         //  match files with *Nav.php format
         $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE, 
-                create_function('$a', 'return preg_match("/.*Nav\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Nav\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));

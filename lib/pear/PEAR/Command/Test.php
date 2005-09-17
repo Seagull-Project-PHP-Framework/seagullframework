@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Test.php,v 1.3 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Test.php,v 1.5 2005/08/31 07:18:46 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -134,7 +134,7 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
                 }
                 $filelist = $package->getFilelist();
                 foreach ($filelist as $name => $atts) {
-                    if ($atts['role'] != 'test') {
+                    if (isset($atts['role']) && $atts['role'] != 'test') {
                         continue;
                     }
                     if (!preg_match('/\.phpt$/', $name)) {

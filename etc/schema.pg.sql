@@ -152,7 +152,6 @@ create index AK_category_key_root_id on category
     root_id
 );
 
-
 -- ==============================================================
 --  Index: order_id
 -- ==============================================================
@@ -203,3 +202,12 @@ create index AK_category_key_parent_fk on category
 (
     parent_id
 );
+
+-- ==============================================================
+--  Function: unix_timestamp
+-- ==============================================================
+-- for this to work, you have to activate the language plpgsql by calling
+-- "createlang plpgsql <dbname>" from commandline.
+
+CREATE or replace FUNCTION unix_timestamp (timestamp)
+RETURNS integer AS ' DECLARE datum ALIAS FOR $1; BEGIN RETURN EXTRACT (EPOCH FROM datum); END; ' LANGUAGE plpgsql;

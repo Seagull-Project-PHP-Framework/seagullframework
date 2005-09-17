@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
 //
-// $Id: TigraMenu.php,v 1.10 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: TigraMenu.php,v 1.8 2003/10/07 00:11:27 datenpunk Exp $
 //
 
 // {{{ DB_NestedSet_TigraMenu:: class
@@ -31,7 +31,7 @@
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.10 $
+* @version      $Revision: 1.8 $
 * @access       public
 */
 // }}}
