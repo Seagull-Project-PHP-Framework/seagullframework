@@ -42,4 +42,4 @@ a:17:{s:8:"provides";a:0:{}s:8:"filelist";a:8:{s:8:"Mail.php";a:3:{s:4:"role";s:
 
 ";}i:11;a:4:{s:7:"version";s:3:"1.0";s:12:"release_date";s:10:"2002-06-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:33:"Initial release as PEAR package
 
-";}}s:12:"_lastversion";s:5:"1.1.8";s:7:"dirtree";a:3:{s:50:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear";b:1;s:55:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear/Mail";b:1;s:35:"/usr/local/lib/php/tests/Mail/tests";b:1;}s:13:"_lastmodified";i:1126872311;}
+";}}s:12:"_lastversion";N;s:7:"dirtree";a:3:{s:50:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear";b:1;s:55:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear/Mail";b:1;s:35:"/usr/local/lib/php/tests/Mail/tests";b:1;}s:13:"_lastmodified";i:1126946620;}

@@ -71,4 +71,4 @@ interface for handling CSV files.
 
 ";}i:13;a:5:{s:7:"version";s:5:"0.9.1";s:12:"release_date";s:10:"2002-04-09";s:15:"release_license";s:3:"PHP";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:17:"Initial release
 
-";}}s:12:"_lastversion";s:5:"1.2.1";s:7:"dirtree";a:4:{s:50:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear";b:1;s:55:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear/File";b:1;s:35:"/usr/local/lib/php/tests/File/tests";b:1;s:39:"/usr/local/lib/php/tests/File/tests/CSV";b:1;}s:13:"_lastmodified";i:1126872311;}
+";}}s:12:"_lastversion";N;s:7:"dirtree";a:4:{s:50:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear";b:1;s:55:"/var/www/html/seagull/branches/0.4-bugfix/lib/pear/File";b:1;s:35:"/usr/local/lib/php/tests/File/tests";b:1;s:39:"/usr/local/lib/php/tests/File/tests/CSV";b:1;}s:13:"_lastmodified";i:1126946477;}
