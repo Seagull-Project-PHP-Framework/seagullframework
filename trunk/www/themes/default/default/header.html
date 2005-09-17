@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}">
 <head>
-    <title flexy:if="!GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {translate(pageTitle)}</title>
-    <title flexy:if="GLOBALS[_SGL][REQUEST][articleTitle]">{siteName} :: {GLOBALS[_SGL][REQUEST][articleTitle]}</title>
+    <title flexy:if="!leadArticle[title]">{siteName} :: {currentSectionName}</title>
+    <title flexy:if="leadArticle[title]">{siteName} :: {leadArticle[title]}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
     <meta http-equiv="Content-Language" content="{currLang}" />
     <meta name="ROBOTS" content="ALL" />
@@ -10,7 +10,11 @@
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework v{versionAPI}" />
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/style.php" />
+    
+    <style type="text/css" media="screen">
+        @import url("{webRoot}/themes/{theme}/css/style.php");
+        @import url("{webRoot}/themes/{theme}/css/{navStylesheet}.css");
+    </style>
 
     {scriptOpen:h}
         var SGL_JS_WEBROOT="{webRoot}";
@@ -82,11 +86,10 @@
     </script>
     {end:}
     {end:}
-
-    <link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/css/{navStylesheet}.css" />
-
 </head>
-
+{if:GLOBALS.empty(onLoad)}
+<body>
+{else:}
 <body onload="{onLoad}">
-
+{end:}
 <div id="sgl">

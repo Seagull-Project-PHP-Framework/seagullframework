@@ -33,9 +33,10 @@ class RndProducts
         return $this->getBlockContent();
     }
     
-    function currencyConverter ($amount, $from, $to, $format = true) {
+    function currencyConverter ($amount, $from, $to, $format = true) 
+    {
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!(array_key_exists($from,$conf['exchangeRate']) and array_key_exists($to,$conf['exchangeRate']))) {
+        if (!(array_key_exists($from,$conf['exchangeRate']) && array_key_exists($to,$conf['exchangeRate']))) {
             return '';    
         } 
         

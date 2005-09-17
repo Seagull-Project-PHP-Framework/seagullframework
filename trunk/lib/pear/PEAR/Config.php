@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.23 2005/06/23 15:56:32 demian Exp $
+ * @version    CVS: $Id: Config.php,v 1.117 2005/09/14 19:24:30 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -216,7 +216,7 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -301,6 +301,14 @@ class PEAR_Config extends PEAR
      * @access private
      */
     var $_noRegistry = false;
+
+    /**
+     * amount of errors found while parsing config
+     * @var integer
+     * @access private
+     */
+    var $_errorsFound = 0;
+    var $_lastError = null;
 
     /**
      * Information about the configuration data.  Stores the type,
@@ -529,24 +537,37 @@ class PEAR_Config extends PEAR
                 $system_file = PEAR_CONFIG_SYSCONFDIR . $sl . 'pear.conf';
             }
         }
+
         $this->layers = array_keys($this->configuration);
         $this->files['user'] = $user_file;
         $this->files['system'] = $system_file;
         if ($user_file && @file_exists($user_file)) {
             $this->readConfigFile($user_file);
+            if ($this->_errorsFound > 0) {
+                return;
+            }
         }
+
         if ($system_file && @file_exists($system_file)) {
             $this->mergeConfigFile($system_file, false, 'system');
+            if ($this->_errorsFound > 0) {
+                return;
+            }
+
         }
+
         if (!$ftp_file) {
             $ftp_file = $this->get('remote_config');
         }
-        if ($ftp_file) {
+
+        if ($ftp_file && defined('PEAR_REMOTEINSTALL_OK')) {
             $this->readFTPConfigFile($ftp_file);
         }
+
         foreach ($this->configuration_info as $key => $info) {
             $this->configuration['default'][$key] = $info['default'];
         }
+
         $this->_registry['default'] = &new PEAR_Registry($this->configuration['default']['php_dir']);
         $this->_registry['default']->setConfig($this);
         $this->_regInitialized['default'] = false;
@@ -576,16 +597,19 @@ class PEAR_Config extends PEAR
         if (is_object($GLOBALS['_PEAR_Config_instance'])) {
             return $GLOBALS['_PEAR_Config_instance'];
         }
-        $GLOBALS['_PEAR_Config_instance'] =
-             &new PEAR_Config($user_file, $system_file);
+
+        $t_conf = &new PEAR_Config($user_file, $system_file);
+        if ($t_conf->_errorsFound > 0) {
+             return $t_conf->lastError;
+        }
+
+        $GLOBALS['_PEAR_Config_instance'] = &$t_conf;
         return $GLOBALS['_PEAR_Config_instance'];
     }
 
     // }}}
-    // {{{ readConfigFile([file], [layer])
-
-    // }}}
     // {{{ validConfiguration()
+
     /**
      * Determine whether any configuration files have been detected, and whether a
      * registry object can be retrieved from this configuration.
@@ -599,6 +623,9 @@ class PEAR_Config extends PEAR
         }
         return false;
     }
+
+    // }}}
+    // {{{ readConfigFile([file], [layer])
 
     /**
      * Reads configuration data from a file.  All existing values in
@@ -614,15 +641,22 @@ class PEAR_Config extends PEAR
         if (empty($this->files[$layer])) {
             return $this->raiseError("unknown config layer `$layer'");
         }
+
         if ($file === null) {
             $file = $this->files[$layer];
         }
+
         $data = $this->_readConfigDataFrom($file);
+
         if (PEAR::isError($data)) {
+            $this->_errorsFound++;
+            $this->lastError = $data;
+
             return $data;
         } else {
             $this->files[$layer] = $file;
         }
+
         $this->_decodeInput($data);
         $this->configuration[$layer] = $data;
         $this->_setupChannels();
@@ -653,7 +687,8 @@ class PEAR_Config extends PEAR
                     include_once 'Net/FTP.php';
                 }
             }
-            if (class_exists('Net_FTP')) {
+            if (class_exists('Net_FTP') &&
+                  (class_exists('PEAR_FTP') || PEAR_Common::isIncludeable('PEAR/FTP.php'))) {
                 require_once 'PEAR/FTP.php';
                 $this->_ftp = &new PEAR_FTP;
                 $this->_ftp->pushErrorHandling(PEAR_ERROR_RETURN);
@@ -766,6 +801,9 @@ class PEAR_Config extends PEAR
         }
         $data = $this->_readConfigDataFrom($file);
         if (PEAR::isError($data)) {
+            $this->_errorsFound++;
+            $this->lastError = $data;
+
             return $data;
         }
         $this->_decodeInput($data);
@@ -889,27 +927,54 @@ class PEAR_Config extends PEAR
         $size = filesize($file);
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
-        $contents = @fread($fp, $size);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $contents = file_get_contents($file);
+        } else {
+            $contents = @fread($fp, $size);
+            fclose($fp);
+        }
+        
         set_magic_quotes_runtime($rt);
-        fclose($fp);
-        $version = '0.1';
+
+        $version = false;
         if (preg_match('/^#PEAR_Config\s+(\S+)\s+/si', $contents, $matches)) {
             $version = $matches[1];
             $contents = substr($contents, strlen($matches[0]));
+        } else {
+            // Museum config file
+            if (substr($contents,0,2) == 'a:') {
+                $version = '0.1';
+            }
         }
-        if (version_compare("$version", '1', '<')) {
-            $data = @unserialize($contents);
+        if ($version && version_compare("$version", '1', '<')) {
+
+            // no '@', it is possible that unserialize
+            // raises a notice but it seems to block IO to
+            // STDOUT if a '@' is used and a notice is raise
+            $data = unserialize($contents);
+
+            if (!$data) {
+                if ($contents == serialize(false)) {
+                    $data = array();
+                } else {
+                    $err = $this->raiseError("PEAR_Config: bad data in $file");
+                    return $err;
+                }
+            }
             if (!is_array($data)) {
                 if (strlen(trim($contents)) > 0) {
                     $error = "PEAR_Config: bad data in $file";
-                    return $this->raiseError($error);
+                    $err = $this->raiseError($error);
+                    return $err;
                 } else {
                     $data = array();
                 }
             }
         // add parsing of newer formats here...
         } else {
-            return $this->raiseError("$file: unknown version `$version'");
+            $err = $this->raiseError("$file: unknown version `$version'");
+            return $err; 
         }
         return $data;
     }

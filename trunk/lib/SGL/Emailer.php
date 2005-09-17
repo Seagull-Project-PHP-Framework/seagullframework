@@ -144,6 +144,10 @@ class SGL_Emailer
             
         case 'smtp':
             $backend = 'smtp';
+            if (isset($conf['mta']['smtpLocalHost'])) {
+                $aParams['localhost'] = $conf['mta']['smtpLocalHost'];
+            }
+
             $aParams['host'] = (isset($conf['mta']['smtpHost']))
                 ? $conf['mta']['smtpHost']
                 : '127.0.0.1';

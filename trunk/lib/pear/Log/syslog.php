@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/syslog.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/syslog.php,v 1.22 2004/01/19 08:02:40 jon Exp $
  * $Horde: horde/lib/Log/syslog.php,v 1.6 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.22 $
  * @package Log
  */
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Basic lang file structure - borrowed from phpMyAdmin.
+ * Basic lang file structure - borrowed from phpMyAdmin, lib/select_lang.lib.php.
  *
  * @package default
  * @author  phpMyAdmin group
@@ -53,6 +53,8 @@
                     'pt-iso-8859-1'=> array('pt([-_][[:alpha:]]{2})?|portuguese', 'portuguese-iso-8859-1', 'pt'),
                     'pl-iso-8859-2'=> array('pl|polish', 'polish-iso-8859-2', 'pl'),
                     'ru-win1251'   => array('ru|russian', 'russian-windows-1251', 'ru'),
+                    'tr-iso-8859-9'=> array('tr|turkish', 'turkish-iso-8859-9', 'tr'),
+                    'tr-utf-8'     => array('tr|turkish', 'turkish-utf-8', 'tr'),                    
                     'zh-tw-utf-8'  => array('zh[-_]tw|chinese traditional', 'chinese_traditional-utf-8', 'zh-TW'),
                     'zh-tw'        => array('zh[-_]tw|chinese traditional', 'chinese-big5', 'zh-TW'),
                     'zh-utf-8'     => array('zh|chinese simplified', 'chinese_simplified-utf-8', 'zh'),

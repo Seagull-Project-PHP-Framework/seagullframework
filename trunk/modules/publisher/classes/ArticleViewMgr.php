@@ -114,11 +114,15 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'articleView.html';
-        $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
+        $ret = SGL_Item::getItemDetail($input->articleID);
         
-        //  make article title available for <title> tag
-        $GLOBALS['_SGL']['REQUEST']['articleTitle'] = $output->leadArticle['title'];
+        if (PEAR::isError($ret)) {
+            return false;
+        }
+        $output->leadArticle = $ret;
+        
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);

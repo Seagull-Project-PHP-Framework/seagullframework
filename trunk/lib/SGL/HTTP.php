@@ -144,6 +144,7 @@ class SGL_HTTP_Request
         $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
         
         //  merge results with cleaned $_REQUEST values and $_POST
+        SGL_String::dispelMagicQuotes($_POST);
         $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
     }
 
@@ -629,6 +630,117 @@ class SGL_HTTP_Session
 
         $sess = & new SGL_HTTP_Session();
     }
+    
+    /**
+     * Returns active session count for a particular user.
+     *
+     * @return integer
+     */
+    function getUserSessionCount($uid, $sessId = -1)
+    {
+        $dbh = & SGL_DB::singleton();
+        $timeStamp = SGL::getTime(true);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!empty($conf['site']['extended_session'])) {
+            if ($sessId == -1) {
+                $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+            } else {
+                $query = "
+                    SELECT count(*) 
+                    FROM {$conf['table']['user_session']} 
+                    WHERE usr_id = $uid 
+                    AND session_id != '$sessId'";
+            }
+            $res = $dbh->getOne($query);
+            return $res;
+        }
+        return 0;
+    }
+    
+    /**
+     * Destroys all active sessions for a particular user.
+     *
+     * If a session Id is passed, spare it from deletion. Sigh!
+     *
+     * @return integer
+     */
+    function destroyUserSessions($uid, $sessId = -1)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = & SGL_DB::singleton();
+        $timeStamp = SGL::getTime(true);
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!empty($conf['site']['extended_session'])) {
+            if ($sessId == -1) {
+                $query = "DELETE FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+            } else {
+                $query = "
+                    DELETE FROM {$conf['table']['user_session']} 
+                    WHERE usr_id = $uid AND session_id != '$sessId'";
+            }
+            $dbh->query($query);
+        }
+        return true;
+    }
+    
+    /**
+     * Returns all active guest session count.
+     *
+     * @return integer
+     */
+    function getGuestSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $timeStamp = SGL::getTime(true);
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!empty($conf['site']['extended_session'])) {
+            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
+            $res = $dbh->getOne($query);
+            return $res;
+        }
+        return 0;
+    }
+    
+    /**
+     * Returns all active members session count.
+     *
+     * @return integer
+     */
+    function getMemberSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $timeStamp = SGL::getTime(true);
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!empty($conf['site']['extended_session'])) {
+            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username != 'guest'";
+            $res = $dbh->getOne($query);
+            return $res;
+        }
+        return 0;
+    }
+
+    /**
+     * Returns all active subscribed users session count.
+     *
+     * @return integer
+     */
+    function getSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $timeStamp = SGL::getTime(true);
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!empty($conf['site']['extended_session'])) {
+            $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
+            $res = $dbh->getOne($query);
+            return $res;
+        }
+        return 0;
+    }
 
     /**
      * Callback method for DB session start.
@@ -664,13 +776,27 @@ class SGL_HTTP_Session
         $dbh = & SGL_DB::singleton();
         $conf = & $GLOBALS['_SGL']['CONF'];
         
-        $query = "SELECT data_value FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
+        $user_session = $conf['table']['user_session'];
+        $query = "SELECT data_value FROM {$user_session} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         if ($res->numRows() == 1) {
             return $dbh->getOne($query);
         } else {
-            $query = "INSERT INTO {$conf['table']['user_session']} (session_id, last_updated, data_value)
-            VALUES ('$sessId', '" . SGL::getTime(true) . "', '')";
+            $timeStamp = SGL::getTime(true);
+            if (!empty($conf['site']['extended_session'])) {
+                $uid = $_SESSION['uid'];
+                $username = $_SESSION['username'];
+                $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
+                    ? $_SESSION['aPrefs']['sessionTimeout'] 
+                    : 900;
+                $query = "
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value, usr_id, username, expiry) 
+                    VALUES ('$sessId', '$timeStamp', '', '$uid', '$username', '$timeout')";
+            } else {
+                $query = "
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value) 
+                    VALUES ('$sessId', '$timeStamp', '')";
+            }
             $dbh->query($query);
             return '';
         }
@@ -685,10 +811,31 @@ class SGL_HTTP_Session
     {
         $dbh = & SGL_DB::singleton();
         $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        $query = "  UPDATE {$conf['table']['user_session']} SET data_value = " . $dbh->quote($value) . ", 
-                        last_updated = '" . SGL::getTime(true) . "' 
-                    WHERE session_id = '$sessId'";
+
+        $timeStamp = SGL::getTime(true);
+        $qval = $dbh->quote($value);
+        $user_session = $conf['table']['user_session'];
+        if (!empty($conf['site']['extended_session'])) {
+            $uid = $_SESSION['uid'];
+            $username = $_SESSION['username'];
+            $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
+                ? $_SESSION['aPrefs']['sessionTimeout'] 
+                : 900;
+            $query = "
+                UPDATE {$user_session} 
+                SET data_value = $qval, 
+                    last_updated = '$timeStamp', 
+                    usr_id='$uid', 
+                    username='$username', 
+                    expiry='$timeout' 
+                WHERE session_id = '$sessId'";
+        } else {
+            $query = "
+            UPDATE {$user_session} 
+            SET data_value = $qval, 
+                last_updated = '$timeStamp' 
+                WHERE session_id = '$sessId'";
+        }
         $res = $dbh->query($query);
         return true;
     }
@@ -713,13 +860,25 @@ class SGL_HTTP_Session
      *
      * @return  boolean
      */
-    function dbGc($expiry)
+    function dbGc($max_expiry)
     {
         $dbh = & SGL_DB::singleton();
         $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        $query = "DELETE FROM {$conf['table']['user_session']} WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
-                "') - UNIX_TIMESTAMP(last_updated ) > $expiry";
+
+        $timeStamp = SGL::getTime(true);
+        $user_session = $conf['table']['user_session'];
+
+        // For extended sessions, enforce session deletion per user expiry setting
+        if (!empty($conf['site']['extended_session'])) {
+            $query = "
+                DELETE  FROM {$user_session} 
+                WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry
+                AND     (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) >  expiry";
+        } else {
+            $query = "
+                DELETE FROM {$user_session} 
+                WHERE UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated ) > $max_expiry";
+        }
         $dbh->query($query);
         return true;
     }

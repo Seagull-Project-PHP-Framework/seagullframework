@@ -15,7 +15,7 @@
  * @author     Alexander Merz <alexmerz@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Mirror.php,v 1.25 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Mirror.php,v 1.15 2005/05/04 04:39:04 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.2.0
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Alexander Merz <alexmerz@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.2.0
  */

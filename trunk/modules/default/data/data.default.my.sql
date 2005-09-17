@@ -14,6 +14,7 @@ INSERT INTO module VALUES (10, 1, 'newsletter', 'Newsletter', 'The ''Newsletter'
 INSERT INTO module VALUES (11, 1, 'publisher', 'Publisher', 'The ''Publisher'' module allows you to create content and publish it to your site.  Currently you can create various types of articles and upload and categorise any filetype, matching the two together in a browsable archive format.', 'publisher/article', 'publisher.png');
 INSERT INTO module VALUES (12, 1, 'user', 'Users and Security', 'The ''Users and Security'' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.', 'user/user', 'users.png');
 INSERT INTO module VALUES (13, 1, 'randommsg', 'Random Messages', 'Allows you to create a list of messages and display them randomly (fortune).', 'randommsg/rndmsg', 'rndmsg.png');
-#INSERT INTO module VALUES (14, 1, 'shop', 'Shop', 'This is the Shop Manager. Add and edit your products, prices and discounts here.', 'shop/shopadmin', 'default.png');
-#INSERT INTO module VALUES (15, 1, 'rate', 'Currency', 'Here you can edit and update the currency rates.', 'rate/rateadmin', 'default.png');
-#INSERT INTO module VALUES (16, 1, 'cart', 'Cart', 'Universal cart module with basket and order management.', 'cart/cartadmin', 'default.png');
+INSERT INTO module VALUES (14, 0, 'export', 'Export Data', 'Used for exporting to various formats, ie RSS, OPML, etc.', 'export/rss', 'rndmsg.png');
+#INSERT INTO module VALUES (15, 1, 'shop', 'Shop', 'This is the Shop Manager. Add and edit your products, prices and discounts here.', 'shop/shopadmin', 'default.png');
+#INSERT INTO module VALUES (16, 1, 'rate', 'Currency', 'Here you can edit and update the currency rates.', 'rate/rateadmin', 'default.png');
+#INSERT INTO module VALUES (17, 1, 'cart', 'Cart', 'Universal cart module with basket and order management.', 'cart/cartadmin', 'default.png');

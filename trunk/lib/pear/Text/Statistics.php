@@ -16,7 +16,7 @@
 // | Author: George Schlossnagle <george@omniti.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Statistics.php,v 1.6 2004/10/27 09:46:09 cvsroot Exp $
+// $Id$
 
 /*
  * Text_Statistics calculates some basic readability metrics on a 
@@ -156,7 +156,7 @@ class Text_Statistics {
             $w_obj = new Text_Word($word);
             $this->numSyllables += $w_obj->numSyllables();
             $this->numWords++;
-            if (@$this->_uniques[strtolower($word)]++ == 0) {
+            if($this->_uniques[strtolower($word)]++ == 0) {
                $this->uniqWords++;
             }
         }

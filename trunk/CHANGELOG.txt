@@ -12,11 +12,79 @@ IMPROVEMENTS
 10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
 
 +-----------------------+
+| VERSION: 0.4.7        |
++-----------------------+
+BUGFIXES
+16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
+            an infinite Flexy loop
+15-09-05    Html title element value is now correctly drawn from the current article 
+            title, or the section name if none exists
+
+IMPROVEMENTS
+14-09-05    Unit test runner added, currently works with pear-installable version of
+            SimpleTest, many thanks to m3 Media Services Limited for granting us the
+            right to distribute this under BSD (http://www.m3.net/)
+
++-----------------------+
 | VERSION: 0.4.6        |
 +-----------------------+
 BUGFIXES
+14-09-05    Fixed missing bug icon in msie
+14-09-05    Fixed bug where new sequences for pgsql were correctly created but existing 
+            ones weren't updated when triggering the "Rebuild Sequences Now"
+            action in the Maintenance Mgr (Lorenzo Alberton)
+13-09-05    Disabled FK constraints from MySQL as there appears to be a bug
+            in the implementation.  Same SQL works fine in PgSQL ;-)
+13-09-05    Fixed bug where prefs where not being correctly added for new
+            registrants
+09-09-05    Fixed a bug where non-indexed arrays could be overwritten
+            (Lorenzo Alberton)
+08-09-05    Some SMTP servers had problems with Mail_smtp's localhost default
+            value, this is now catered for (Chris McKay)
+08-09-05    Server vars now interpreted correctly on IIS 6.0, note:
+            frontScriptName in config file MUST end with "?" (Miha Vrhovnik)
+08-09-05    The 'passwordmgr_redirectToEdit' failed because of case-sensitivity,
+            now fixed
+02-09-05    Fixed bug where FCK editor would not display correctly
+02-09-05    Fallback to auto-detected language causing js errors in 
+            FCK, fixed again
+31-08-05    Some magic_quotes_gpc scenarios weren't dealt with correctly, now
+            fixed (Eric Persson)
+30-08-05    UserMgr Search/Sort/Pager fixes (Tobias Kuckuck)
+30-08-05    Moved clone() emulation into constants.php
+30-08-05    Seagull is now PHP5.1 compliant, this involved some local as
+            well as PEAR modifications.
 
 IMPROVEMENTS
+12-09-05    Added RSS aggregator block
+09-09-05    Improved session management so now it is possible to search sessions
+            with more meaningful results and single sessions per user can be enforced.
+            Also new "who's online" block added (Louay Gammo)
+09-09-05    Organisations disabled by default, makes the system easier to 
+            understand hopefully
+09-09-05    Updated perms and perms and assignments to reflect new modules
+08-09-05    Added new RSS exporter module (Fabio Bacigalupo)
+08-09-05    Cleaned up implementation of alternating row colours with switchRowClass
+            (Riccardo Magliocchetti)
+08-09-05    Cleaned up stylesheet importing
+08-09-05    DA_User::getPermsByModuleId() now returns perms sorted by perm name
+            for easier management
+08-09-05    getDefaultPageParams() factored out into SGL_Manager, all forced logouts
+            now go to preferred screen set in config
+06-09-05    Admins now notified of new registrations, separate screen for activating/
+            disabling accounts
+06-09-05    Added shell script to symlink templates into modules
+06-09-05    Updated country fields in all DB schemas to CHAR(2) (Philippe Lhoste)
+05-09-05    Added ability to scrape and include wiki pages, requires php5 + tidy
+02-09-05    Static articles can now be edited inline
+02-09-05    Added postgres user and database creation script (Pierpaolo Toniolo)
+31-08-05    onload element attribute only included if event is non-empty (Philippe Lhoste)
+30-08-05    Turkish translation added (Metin Tinay)
+30-08-05    Added the db function unix_timestamp for oracle and postgres (Tobias Kuckuck)
+30-08-05    Added missing passwordmgr_redirecttoedit permission (Tobias Kuckuck)
+29-08-05    Renamed ConfigMgr's '_insert' method to '_update' to correctly reflect action, 
+            sql upgrade file provided in etc/sql_upgrades
+29-08-05    Added some permission descriptions (Rolandas Burbulis)
 23-08-05    Added ability to view login history for a given user (Rolandas Burbulis)
 23-08-05    Release script now uploads API docs to sgl site for browsing
 19-08-05    Changed CSS z-index in style.php so FCK downdowns are not hidden

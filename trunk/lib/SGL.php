@@ -225,9 +225,10 @@ class SGL
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &cacheSingleton()
+    function &cacheSingleton($cacheEnabled = false)
     {
         static $instance;
+        
         // If the instance is not there, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';
@@ -438,5 +439,10 @@ EOF;
             $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
         }  
     }
+}
+
+if (!SGL::isPhp5() && !function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
 }
 ?>

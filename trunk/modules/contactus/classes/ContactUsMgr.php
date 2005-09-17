@@ -137,6 +137,8 @@ class ContactUsMgr extends SGL_Manager
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         //  require Contact entity
         require_once SGL_ENT_DIR . '/Contact_us.php';
 
@@ -213,7 +215,7 @@ class ContactUsMgr extends SGL_Manager
         $options = array(
                 'toEmail'       => $conf['email']['info'],
                 'toRealName'    => 'Admin',
-                'fromEmail'     => $oContact->email,
+                'fromEmail'     => "\"{$contacterName}\" <{$oContact->email}>",
                 'fromRealName'  => $contacterName,
                 'replyTo'       => $oContact->email,
                 'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $conf['site']['name'],

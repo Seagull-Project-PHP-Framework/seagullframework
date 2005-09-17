@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/composite.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/composite.php,v 1.23 2004/08/09 06:04:11 jon Exp $
  * $Horde: horde/lib/Log/composite.php,v 1.2 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.23 $
  * @package Log
  */
 

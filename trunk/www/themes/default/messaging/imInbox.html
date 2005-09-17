@@ -28,12 +28,8 @@
             <th>{translate(#Date#)}</th>
         </tr>
         {if:aPagedData[data]}
-            {foreach:aPagedData[data],key,valueObj} 
-                {if:valueObj[read_status]}
-        <tr class="{switchRowClass()}" style="font-weight:bold">
-                {else:}
-        <tr class="{switchRowClass()}">
-                {end:}
+            {foreach:aPagedData[data],key,valueObj}
+        <tr class="{switchRowClass(valueObj[read_status])}">
             <td class="fieldName2">
                 <input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" />
             </td>

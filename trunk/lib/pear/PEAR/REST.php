@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: REST.php,v 1.7 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: REST.php,v 1.14 2005/09/07 17:02:47 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -34,7 +34,7 @@ require_once 'PEAR/XMLParser.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -79,13 +79,13 @@ class PEAR_REST
      */
     function retrieveData($url, $accept = false, $forcestring = false)
     {
-        if ($ret = $this->useLocalCache($url)) {
+        $cacheId = $this->getCacheId($url);
+        if ($ret = $this->useLocalCache($url, $cacheId)) {
             return $ret;
         }
-        $cacheId = $this->getCacheId($url);
         if (!isset($this->_options['offline'])) {
             $trieddownload = true;
-            $file = $this->downloadHttp($url, $cacheId, $accept);
+            $file = $this->downloadHttp($url, $cacheId ? $cacheId['lastChange'] : false, $accept);
         } else {
             $trieddownload = false;
             $file = false;
@@ -102,7 +102,7 @@ class PEAR_REST
             $ret = $this->getCache($url);
             if (!PEAR::isError($ret) && $trieddownload) {
                 // reset the age of the cache if the server says it was unmodified
-                $this->saveCache($url, $ret, null, true);
+                $this->saveCache($url, $ret, null, true, $cacheId);
             }
             return $ret;
         }
@@ -110,7 +110,7 @@ class PEAR_REST
         $lastmodified = $file[1];
         $content = $file[0];
         if ($forcestring) {
-            $this->saveCache($url, $content, $lastmodified);
+            $this->saveCache($url, $content, $lastmodified, false, $cacheId);
             return $content;
         }
         if (isset($headers['content-type'])) {
@@ -136,22 +136,24 @@ class PEAR_REST
             $parser->parse($file);
             $content = $parser->getData();
         }
-        $this->saveCache($url, $content, $lastmodified);
+        $this->saveCache($url, $content, $lastmodified, false, $cacheId);
         return $content;
     }
 
-    function useLocalCache($url)
+    function useLocalCache($url, $cacheid = null)
     {
-        $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
-            md5($url) . 'rest.cacheid';
-        if (@file_exists($cacheidfile)) {
-            $ret = unserialize(implode('', file($cacheidfile)));
-        } else {
-            return false;
+        if ($cacheid === null) {
+            $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
+                md5($url) . 'rest.cacheid';
+            if (@file_exists($cacheidfile)) {
+                $cacheid = unserialize(implode('', file($cacheidfile)));
+            } else {
+                return false;
+            }
         }
         $cachettl = $this->config->get('cache_ttl');
         // If cache is newer than $cachettl seconds, we use the cache!
-        if ($ret['age'] < $cachettl) {
+        if (time() - $cacheid['age'] < $cachettl) {
             return $this->getCache($url);
         }
         return false;
@@ -163,7 +165,7 @@ class PEAR_REST
             md5($url) . 'rest.cacheid';
         if (@file_exists($cacheidfile)) {
             $ret = unserialize(implode('', file($cacheidfile)));
-            return $ret['lastChange'];
+            return $ret;
         } else {
             return false;
         }
@@ -180,27 +182,36 @@ class PEAR_REST
         }
     }
 
-    function saveCache($url, $contents, $lastmodified, $nochange = false)
+    /**
+     * @param string full URL to REST resource
+     * @param string original contents of the REST resource
+     * @param array  HTTP Last-Modified and ETag headers
+     * @param bool   if true, then the cache id file should be regenerated to
+     *               trigger a new time-to-live value
+     */
+    function saveCache($url, $contents, $lastmodified, $nochange = false, $cacheid = null)
     {
         $cacheidfile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
             md5($url) . 'rest.cacheid';
         $cachefile = $this->config->get('cache_dir') . DIRECTORY_SEPARATOR .
             md5($url) . 'rest.cachefile';
+        if ($cacheid === null && $nochange) {
+            $cacheid = unserialize(implode('', file($cacheidfile)));
+        }
         $fp = @fopen($cacheidfile, 'wb');
         if (!$fp) {
             return false;
         }
         if ($nochange) {
-            $contents = unserialize(implode('', file($cacheidfile)));
             fwrite($fp, serialize(array(
-                'age'        => time() - filemtime($cachefile),
-                'lastChange' => $contents['lastChange'],
+                'age'        => time(),
+                'lastChange' => $cacheid['lastChange'],
                 )));
             fclose($fp);
             return true;
         } else {
             fwrite($fp, serialize(array(
-                'age'        => 0,
+                'age'        => time(),
                 'lastChange' => $lastmodified,
                 )));
         }
@@ -245,9 +256,15 @@ class PEAR_REST
         if (!isset($info['host'])) {
             return PEAR::raiseError('Cannot download from non-URL "' . $url . '"');
         } else {
-            $host = @$info['host'];
-            $port = @$info['port'];
-            $path = @$info['path'];
+            $host = $info['host'];
+            if (!array_key_exists('port', $info)) {
+                $info['port'] = null;
+            }
+            if (!array_key_exists('path', $info)) {
+                $info['path'] = null;
+            }
+            $port = $info['port'];
+            $path = $info['path'];
         }
         $proxy_host = $proxy_port = $proxy_user = $proxy_pass = '';
         if ($this->config->get('http_proxy')&& 
@@ -271,7 +288,12 @@ class PEAR_REST
                 $port = 80;
             }
         }
-        $request = "GET $path HTTP/1.1\r\n";
+        If (isset($proxy['host'])) {
+            $request = "GET $url HTTP/1.1\r\n";
+        } else {
+            $request = "GET $path HTTP/1.1\r\n";
+        }
+
         $ifmodifiedsince = '';
         if (is_array($lastmodified)) {
             if (isset($lastmodified['Last-Modified'])) {

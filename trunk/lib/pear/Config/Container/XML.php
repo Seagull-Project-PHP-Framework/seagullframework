@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: XML.php,v 1.7 2005/02/27 10:00:27 demian Exp $
+// $Id: XML.php,v 1.12 2004/08/07 10:11:27 mansion Exp $
 
 require_once('XML/Parser.php');
 require_once('XML/Util.php');

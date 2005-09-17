@@ -117,18 +117,9 @@ function exportSvnAndPackage()
     rm -f $PROJECT_NAME/etc/generatePackage.php
     rm -f $PROJECT_NAME/etc/phpDocWeb.ini
     rm -f $PROJECT_NAME/etc/release.sh
-    rm -rf $PROJECT_NAME/lib/other/phpthumb
-    rm -rf $PROJECT_NAME/lib/pear/Spreadsheet
-    rm -rf $PROJECT_NAME/lib/SGL/tests       
-    rm -rf $PROJECT_NAME/modules/cart
-    rm -rf $PROJECT_NAME/modules/rate
-    rm -rf $PROJECT_NAME/modules/shop
+    rm -rf $PROJECT_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME/modules/user/tests
-    rm -f $PROJECT_NAME/www/errorTests.php     
-    rm -rf $PROJECT_NAME/www/images/shop
-    rm -rf $PROJECT_NAME/www/themes/default/cart
-    rm -rf $PROJECT_NAME/www/themes/default/rate
-    rm -rf $PROJECT_NAME/www/themes/default/shop
+    rm -f $PROJECT_NAME/www/errorTests.php
     
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME

@@ -577,6 +577,7 @@ class SGL_Controller
             //  the method
             $nav->render($sectionId, $html);
             $output->navigation = $html;
+            $output->currentSectionName = $nav->getCurrentSectionName();
         }
 
         //  set isAdmin flag
@@ -602,10 +603,6 @@ class SGL_Controller
             $output->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
 
-        //  prepare query count
-        if ($_SESSION['aPrefs']['showExecutionTimes']) {
-            $output->queryCount =  $GLOBALS['_SGL']['QUERY_COUNT'];            
-        }
         //  send sitewide variables to page output
         $output->siteName     = $this->conf['site']['name'];
         $output->newWinHeight = $this->conf['popup']['winHeight'];
@@ -652,7 +649,18 @@ class SGL_Controller
 		}
         //  get all html onLoad events
         $output->onLoad = $output->getAllOnLoadEvents();
-
+        
+        //  get performance info
+        if (!empty($_SESSION['aPrefs']['showExecutionTimes']) 
+                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
+                    
+            //  prepare query count
+            $output->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
+            
+            //  and execution time
+            $output->executionTime = getSystemTime() - $GLOBALS['_SGL']['START_TIME'];
+        }
+        
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
