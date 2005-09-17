@@ -606,14 +606,13 @@ class ShopAdminMgr extends ShopMgr {
         $output->catID = $oProduct->cat_id;
         
         // if we have to upload a new image...
+        $successImage = true;
         $input->productId = $oProduct->product_id;
         if (!empty($input->imageFileArray['name'])) {
             $successImage = $this->_imageUpload($input, $output);
         }
         
-        if ($success == true
-            && (@$successImage == true && !empty($input->imageFileArray['name'])
-            || empty($input->imageFileArray['name']))) {
+        if ($success === true && $successImage === true) {
             //  redirect on success
             SGL::raiseMsg('Product updated successfully');
             SGL_HTTP::redirect(array ('action' => 'list', 'frmCatID' => $input->product->cat_id));
@@ -637,7 +636,6 @@ class ShopAdminMgr extends ShopMgr {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (empty($input->productId)) {
-//            die("numirem");
             SGL::raiseError('No product ID found', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
 
@@ -648,7 +646,6 @@ class ShopAdminMgr extends ShopMgr {
         $output->product = $oProduct;
 
         $success = $this->uploadImg($input->imageFileArray, $input->productId.'.jpg'); // not nice
-        SGL::logMessage(print_r($success,true));
         if ($success === true) {
             $oProduct->img = $input->productId.'.jpg';
             $oProduct->update();
@@ -662,15 +659,11 @@ class ShopAdminMgr extends ShopMgr {
 
 
     function uploadImg($imageFileArray, $filename = '') {
+    	require_once 'Image/Transform.php';
 
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (empty ($filename)) {
             $filename = $imageFileArray['name'];
-          //  $ext = $imageFileArray['ext'];
-        } else {
-             //lets get extension
-           // $ext = end(explode('.', $filename));
-           // $filename = substr($filename, 0, (strlen($filename) - strlen($ext) - 1));
         }
         $thubDir = SGL_WEB_ROOT.'/'.$conf['imageUpload']['thumb'];
         $imageDir = SGL_WEB_ROOT.'/'.$conf['imageUpload']['directory'];
@@ -680,7 +673,7 @@ class ShopAdminMgr extends ShopMgr {
             include_once 'System.php';
             $success = System::mkDir(array ($imageDir));
             if (!$success) {
-                return SGL::raiseError('The upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+                return SGL::raiseError('The image upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
             }
         }
 
@@ -689,84 +682,108 @@ class ShopAdminMgr extends ShopMgr {
             include_once 'System.php';
             $success = System::mkDir(array ($thubDir));
             if (!$success) {
-                return SGL::raiseError('The upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+                return SGL::raiseError('The thumb upload directory does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
             }
         }
         // now lets check if they are writable...
         if (!is_writable($imageDir) || !is_writable($thubDir)) {
-            return SGL::raiseError('The upload directory  does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+            return SGL::raiseError('The imge or thumb upload directory  does not appear to be writable, please give the webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+        }
+         
+        $imageDriver = $conf['imageUpload']['imageDriver'];
+        $magnify	 = $conf['imageUpload']['magnify'];
+        $im = Image_Transform::factory($imageDriver);
+        if(is_a($im, 'PEAR_Error')) {
+        	return $im;
         }
         
-        /*Dumpr($imageFileArray);
-        dumpr($conf['imageUpload']);*/
-
-        // generate image file
-        //$filename = $imageFileArray['name'];
-
-        // Get new dimensions
-        $imageSize = getimagesize($imageFileArray['tmp_name']);
-        if($imageSize === false) {
-            return SGL::raiseError('Imvalid image size returned'); 
-        }
-        $width = $imageSize[0];
-        $height = $imageSize[1];
-        error_log(print_r($height,true));
-        $new_width = $conf['imageUpload']['imageWidth'];
-        $new_height = $conf['imageUpload']['imageHeight'];
-        
-        // Resample
-        $image_p = imagecreatetruecolor($new_width, $new_height);
-        if(!$image_p) {
-            return SGL::raiseError('Cannot Initialize new GD image stream');
-        }
-        $image = imagecreatefromjpeg($imageFileArray['tmp_name']);
-        if(!$image) {
-           return SGL::raiseError('Error loading '.$imageFileArray['tmp_name']); 
-        }
-        
-        $success = imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-        if(!$success) {
-           return SGL::raiseError('Unable to resample image');
-        }
-        
-        // Output
-        $success  = imagejpeg($image_p, $imageDir.'/'.$filename, 100);
-        if(!$success) {
-           return SGL::raiseError('Unable to save image in JPEG format');
-        }
-        
-        
-        
-        //generate thumbnail
-        
-        
-        // Get new dimensions
-       /* list($width, $height) = getimagesize($imageFileArray['tmp_name']); */
-        $new_width = $conf['imageUpload']['thumbWidth'];
-        $new_height = $conf['imageUpload']['thumbHeight'];
-        
-        
-        // Resample
-        $image_p = imagecreatetruecolor($new_width, $new_height);
-        if(!$image_p) {
-            return SGL::raiseError('Cannot Initialize new GD image stream');
-        }
-        $image = imagecreatefromjpeg($imageFileArray['tmp_name']);
-        if(!$image) {
-           return SGL::raiseError('Error loading '.$imageFileArray['tmp_name']); 
-        }
-        
-        $success = imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-        if(!$success) {
-           return SGL::raiseError('Unable to resample image');
-        }
-        
-        // Output
-        $success  = imagejpeg($image_p, $thubDir.'/'.$filename, 100);
-        if(!$success) {
-           return SGL::raiseError('Unable to save thumb in JPEG format');
+        // Generate image
+        $ret = $im->load($imageFileArray['tmp_name']);
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
         }
 
+        $size = $im->getImageSize();
+        if(isset($size['0']) && isset($size['1'])) {
+        	$width = $size['0'];
+        	$height = $size['1'];
+        } else {
+        	return SGL::raiseError('Unable to get image size');
+        }
+        
+        $newWidth = $conf['imageUpload']['imageWidth'];
+        $newHeight = $conf['imageUpload']['imageHeight'];
+        
+        // Mignify if necessary
+        if($width < $newWidth && $height < $newHeight && $magnify) {
+        	$height = $height * ($newWidth / $width);
+        	$width = $newWidth;
+        }
+        
+    	// We make sure to keep the image aspect ratio
+    	if($width >= $height && $newHeight <= $height){
+      		$newHeight = $height / ($width / $newWidth);
+    	} else if ($width < $height && $newWidth < $width) {
+      		$newWidth = $width / ($height / $newHeight);    
+    	} else {
+      		$newWidth = $width;
+      		$newHeight = $height;
+   		}
+        
+        $ret = $im->resize($newWidth, $newHeight);
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
+        }
+        
+        $ret = $im->save($imageDir.'/'.$filename,'jpeg');
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
+        }
+        
+        
+        // Generate thumb
+        $ret = $im->load($imageFileArray['tmp_name']);
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
+        }
+        
+        $size = $im->getImageSize();
+        if(isset($size['0']) && isset($size['1'])) {
+        	$width = $size['0'];
+        	$height = $size['1'];
+        } else {
+        	return SGL::raiseError('Unable to get image size');
+        }
+        
+        $newWidth = $conf['imageUpload']['thumbWidth'];
+        $newHeight = $conf['imageUpload']['thumbHeight'];
+        
+        // Mignify if necessary
+        if($width < $newWidth && $height < $newHeight && $magnify) {
+        	$height = $height * ($newWidth / $width);
+        	$width = $newWidth;
+        }
+        
+    	// We make sure to keep the image aspect ratio
+    	if($width >= $height && $newHeight <= $height){
+      		$newHeight = $height / ($width / $newWidth);
+    	} else if ($width < $height && $newWidth < $width) {
+      		$newWidth = $width / ($height / $newHeight);    
+    	} else {
+      		$newWidth = $width;
+      		$newHeight = $height;
+   		}
+        
+        $ret = $im->resize($newWidth, $newHeight);
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
+        }
+        
+        $ret = $im->save($thubDir.'/'.$filename,'jpeg');
+        if(is_a($ret, 'PEAR_Error')) {
+        	return $im;
+        }
+		
         return true;
     }
 
