@@ -251,5 +251,15 @@ $defaultWords['Use SMTP authentication'] = 'SMTP Anmeldung verwenden';
 $defaultWords['SMTP username'] = 'SMTP Benutzername';
 $defaultWords['SMTP password'] = 'SMTP Passwort';
 $defaultWords['Mandatory if you use SMTP as Backend and SMTP authentication is enabled'] = 'Zwingend bei SMTP als Backend verwendet und SMTP Anmeldung';
+$defaultWords['ms'] = 'ms';
+$defaultWords['Extended Session'] = 'Erweiterte Session';
+$defaultWords['Enforce Single User'] = 'Einzelbenutzer erzwingen';
+$defaultWords['You are allowed to connect from one computer at a time, other sessions were terminated!'] = 'Sie können Sich nur von einem Computer gleichzeitig einloggen. Die anderen Sessions wurden beendet.';
+$defaultWords['You have multiple sessions on this site!'] = 'Sie haben mehrere Sessions gleichzeitig bei dieser Seite';
+$defaultWords['Enables extended session API when using database sessions. This allows the site to enforce one session per user.'] = 'Erlaubt erweiterte Sessions wenn datenbankbasierte Sessions verwendet werden. Dies erlaubt eine Session pro Benutzer zu erzwingen.';
+$defaultWords['Enforces one session per user on this site (requires database session handling, and extended session to be on).'] = 'Erzwingt eine Session pro Benutzer. Benötigt Datenbankbasierte Sessions und Erweiterte Sessions.';
+$defaultWords['Guests'] = 'Gäste';
+$defaultWords['Members'] = 'Benutzer';
+$defaultWords['Total'] = 'Gesamt';
 
 ?>

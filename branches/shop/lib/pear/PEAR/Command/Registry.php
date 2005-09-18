@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.23 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Registry.php,v 1.67 2005/08/23 18:15:45 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -378,7 +378,7 @@ installed package.'
             if ($obj->getPackagexmlVersion() == '1.0') {
                 $info = $obj->toArray();
             } else {
-                return $this->_doList2($command, $options, $params, $obj, false);
+                return $this->_doInfo2($command, $options, $params, $obj, false);
             }
         } else {
             $parsed = $reg->parsePackageName($params[0], $this->config->get('default_channel'));
@@ -390,7 +390,7 @@ installed package.'
             $info = $reg->packageInfo($package, null, $channel);
             if (isset($info['old'])) {
                 $obj = $reg->getPackage($package, $channel);
-                return $this->_doList2($command, $options, $params, $obj, true);
+                return $this->_doInfo2($command, $options, $params, $obj, true);
             }
         }
         if (PEAR::isError($info)) {
@@ -458,7 +458,12 @@ installed package.'
                             } else {
                                 $version = '';
                             }
-                            $dstr .= "$type $name$rel $version\n";
+                            if (isset($d['optional']) && $d['optional'] == 'yes') {
+                                $optional = ' (optional)';
+                            } else {
+                                $optional = '';
+                            }
+                            $dstr .= "$type $name$rel $version$optional\n";
                         }
                         $info[$key] = $dstr;
                         break;
@@ -542,8 +547,9 @@ installed package.'
     /**
      * @access private
      */
-    function _doList2($command, $options, $params, &$obj, $installed)
+    function _doInfo2($command, $options, $params, &$obj, $installed)
     {
+        $reg = &$this->config->getRegistry();
         $caption = 'About ' . $obj->getChannel() . '/' .$obj->getPackage() . '-' .
             $obj->getVersion();
         $data = array(
@@ -631,9 +637,51 @@ installed package.'
                 }
             }
         }
+        $usesrole = $obj->getUsesrole();
+        if ($usesrole) {
+            if (!isset($usesrole[0])) {
+                $usesrole = array($usesrole);
+            }
+            foreach ($usesrole as $roledata) {
+                if (isset($info['Uses Custom Roles'])) {
+                    $info['Uses Custom Roles'] .= "\n";
+                } else {
+                    $info['Uses Custom Roles'] = '';
+                }
+                if (isset($roledata['package'])) {
+                    $rolepackage = $reg->parsedPackageNameToString($roledata, true);
+                } else {
+                    $rolepackage = $roledata['uri'];
+                }
+                $info['Uses Custom Roles'] .= $roledata['role'] . ' (' . $rolepackage . ')';
+            }
+        }
+        $usestask = $obj->getUsestask();
+        if ($usestask) {
+            if (!isset($usestask[0])) {
+                $usestask = array($usestask);
+            }
+            foreach ($usestask as $taskdata) {
+                if (isset($info['Uses Custom Tasks'])) {
+                    $info['Uses Custom Tasks'] .= "\n";
+                } else {
+                    $info['Uses Custom Tasks'] = '';
+                }
+                if (isset($taskdata['package'])) {
+                    $taskpackage = $reg->parsedPackageNameToString($taskdata, true);
+                } else {
+                    $taskpackage = $taskdata['uri'];
+                }
+                $info['Uses Custom Tasks'] .= $taskdata['task'] . ' (' . $taskpackage . ')';
+            }
+        }
         $deps = $obj->getDependencies();
-        $info['Required Dependencies'] = 'PHP version ' . $deps['required']['php']['min'] .
-            '-' . $deps['required']['php']['max'] . "\n";
+        $info['Required Dependencies'] = 'PHP version ' . $deps['required']['php']['min'];
+        if (isset($deps['required']['php']['max'])) {
+            $info['Required Dependencies'] .= '-' . $deps['required']['php']['max'] . "\n";
+        } else {
+            $info['Required Dependencies'] .= "\n";
+        }
         if (isset($deps['required']['php']['exclude'])) {
             if (!isset($info['Not Compatible with'])) {
                 $info['Not Compatible with'] = '';
@@ -676,7 +724,7 @@ installed package.'
                     $deps['required'][$index] = array($deps['required'][$index]);
                 }
                 foreach ($deps['required'][$index] as $package) {
-                    if (isset($package['conflicts']) && $package['conflicts'] == 'yes') {
+                    if (isset($package['conflicts'])) {
                         $infoindex = 'Not Compatible with';
                         if (!isset($info['Not Compatible with'])) {
                             $info['Not Compatible with'] = '';
@@ -701,10 +749,6 @@ installed package.'
                         $info[$infoindex] .= "\n  Download URI: $package[uri]";
                         continue;
                     }
-                    if ($infoindex == 'Not Compatible with') {
-                        // conflicts is only used to say that all versions conflict
-                        continue;
-                    }
                     if (isset($package['max']) && isset($package['min'])) {
                         $info[$infoindex] .= " \n  Versions " .
                             $package['min'] . '-' . $package['max'];
@@ -713,7 +757,7 @@ installed package.'
                             $package['min'] . ' or newer';
                     } elseif (isset($package['max'])) {
                         $info[$infoindex] .= " \n  Version " .
-                            $package['min'] . ' or older';
+                            $package['max'] . ' or older';
                     }
                     if (isset($package['recommended'])) {
                         $info[$infoindex] .= "\n  Recommended version: $package[recommended]";
@@ -727,8 +771,13 @@ installed package.'
                         if (is_array($package['exclude'])) {
                             $package['exclude'] = implode(', ', $package['exclude']);
                         }
-                        $info['Not Compatible with'] .= "Package $package\n  Versions " .
-                            $package['exclude'];
+                        $package['package'] = $package['name']; // for parsedPackageNameToString
+                         if (isset($package['conflicts'])) {
+                            $info['Not Compatible with'] .= '=> except ';
+                        }
+                       $info['Not Compatible with'] .= 'Package ' .
+                            $reg->parsedPackageNameToString($package, true);
+                        $info['Not Compatible with'] .= "\n  Versions " . $package['exclude'];
                     }
                 }
             }

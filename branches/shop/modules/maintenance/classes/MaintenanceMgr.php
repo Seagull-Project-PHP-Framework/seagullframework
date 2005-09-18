@@ -595,7 +595,8 @@ EOF;
         //  you can edit this file
         @chmod($targetMgrName, 0666);
         if (isset($input->createModule->createIniFile)){
-        //create conf.ini
+        
+            //  create conf.ini
             $confIniName = $aDirectories['module'] . '/conf.ini';
             $confTemplate = '['.$mgrLongName.']'."\n";
             $confTemplate .= 'requiresAuth    = false';

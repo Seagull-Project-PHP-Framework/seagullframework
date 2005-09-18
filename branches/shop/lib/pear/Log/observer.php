@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/observer.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/observer.php,v 1.12 2004/01/11 20:49:49 jon Exp $
  * $Horde: horde/lib/Log/observer.php,v 1.5 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.12 $
  * @package Log
  */
 

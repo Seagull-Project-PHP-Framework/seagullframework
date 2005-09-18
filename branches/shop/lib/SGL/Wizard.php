@@ -235,9 +235,4 @@ class SGL_Wizard extends SGL_Manager
         }
     }    
 }
-
-if (!function_exists('clone')) {
-    // emulate clone  - as per php_compact, slow but really the correct behaviour..
-    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
-}
 ?>

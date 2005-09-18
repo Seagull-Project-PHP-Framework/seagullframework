@@ -227,15 +227,24 @@ class RegisterMgr extends SGL_Manager
         $aRolePerms = $this->da->getPermsByRoleId($defaultRoleId);
 
         //  then assign them to the user_permission table
-        foreach ($aRolePerms as $permId) {
-            $dbh->query('   INSERT INTO ' . $conf['table']['user_permission'] . '
-                            (user_permission_id, usr_id, permission_id)
-                            VALUES (' . $dbh->nextId($conf['table']['user_permission']) . ', ' . $oUser->usr_id . ", $permId)");
+        $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
+        
+        //  assign preferences associated with org user belongs to
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if ($conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
         }
 
-        if ($success) {
+        //  then assign them to the user_preference table
+        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
+
+        //  check global error stack for any error that might have occurred
+        if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
             //  send email confirmation according to config
-            if ($conf['RegisterMgr']['sendEmailConf']) {
+            if ($conf['RegisterMgr']['sendEmailConfUser']) {
                 $bEmailSent = $this->_sendEmail($oUser);
                 if (!$bEmailSent) {
                     SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
@@ -273,6 +282,10 @@ class RegisterMgr extends SGL_Manager
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
+        if ($conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options['Cc'] = $conf['email']['admin'];
+        }
+                
         $message = & new SGL_Emailer($options);
         $message->prepare();
         return $message->send();

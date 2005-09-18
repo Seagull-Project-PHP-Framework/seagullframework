@@ -95,7 +95,7 @@
         $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
      
         //  it's apache
-        if (!empty($_SERVER['PHP_SELF'])) {
+        if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
         
             //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
             if (strpos(php_sapi_name(), 'cgi') !== false) {
@@ -110,7 +110,12 @@
             }
         //  it's IIS
         } else {
-            $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'];
+            if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($conf['site']['frontScriptName'], -1, 1)) {
+                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . '?' . @$_SERVER['QUERY_STRING'];
+            } else {
+                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
+            }
+
         }
         //  set baseUrl
         if (!(isset($conf['site']['baseUrl']))) {

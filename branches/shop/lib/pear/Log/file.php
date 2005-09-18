@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/file.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/file.php,v 1.37 2004/01/19 08:02:40 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.37 $
  * @package Log
  */
 

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.1 2005/06/23 15:56:41 demian Exp $
+ * @version    CVS: $Id: 10.php,v 1.30 2005/07/30 05:22:43 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -119,7 +119,7 @@ class PEAR_REST_10
             return PEAR::raiseError('Package "' . $deppackage['channel'] . '/' . $deppackage['package']
                 . '" dependency "' . $channel . '/' . $package . '" has no releases');
         }
-        if (!isset($info['r'])) {
+        if (!is_array($info) || !isset($info['r'])) {
             return false;
         }
         $exclude = array();
@@ -176,11 +176,21 @@ class PEAR_REST_10
             }
             // allow newer releases to say "I'm OK with the dependent package"
             if ($xsdversion == '2.0' && isset($release['co'])) {
-                if (isset($release['co'][$deppackage['channel']]
-                      [$deppackage['p']]) && in_array($release['v'],
-                        $release['co'][$deppackage['channel']]
-                        [$deppackage['package']])) {
-                    $recommended = $release['v'];
+                if (!is_array($release['co'])) {
+                    $release['co'] = array($release['co']);
+                }
+                foreach ($release['co'] as $entry) {
+                    if (isset($entry['x']) && !is_array($entry['x'])) {
+                        $entry['x'] = array($entry['x']);
+                    }
+                    if ($entry['c'] == $deppackage['channel'] &&
+                          $entry['p'] == $deppackage['package'] &&
+                          version_compare($release['v'], $entry['min'], '>=') &&
+                          version_compare($release['v'], $entry['max'], '<=') &&
+                          !in_array($release['v'], $entry['x'])) {
+                        $recommended = $release['v'];
+                        break;
+                    }
                 }
             }
             if ($recommended) {

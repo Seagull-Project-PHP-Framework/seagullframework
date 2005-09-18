@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/mcal.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/mcal.php,v 1.17 2004/01/19 08:02:40 jon Exp $
  * $Horde: horde/lib/Log/mcal.php,v 1.2 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.17 $
  * @package Log 
  */
 

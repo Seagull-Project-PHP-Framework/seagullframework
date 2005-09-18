@@ -19,7 +19,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Exception.php,v 1.9 2005/06/23 15:56:34 demian Exp $
+ * @version    CVS: $Id: Exception.php,v 1.22 2005/09/13 04:56:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -27,10 +27,6 @@
 
 /**
  * Base PEAR_Exception Class
- *
- * WARNING: This code should be considered stable, but the API is
- * subject to immediate and drastic change, so API stability is
- * at best alpha
  *
  * 1) Features:
  *
@@ -99,7 +95,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  *
@@ -245,11 +241,21 @@ class PEAR_Exception extends Exception
         $causes[] = $cause;
         if ($this->cause instanceof PEAR_Exception) {
             $this->cause->getCauseMessage($causes);
-        }
-        if (is_array($this->cause)) {
+        } elseif ($this->cause instanceof Exception) {
+            $causes[] = array('class'   => get_class($cause),
+                           'message' => $cause->getMessage(),
+                           'file' => $cause->getFile(),
+                           'line' => $cause->getLine());
+
+        } elseif (is_array($this->cause)) {
             foreach ($this->cause as $cause) {
                 if ($cause instanceof PEAR_Exception) {
                     $cause->getCauseMessage($causes);
+                } elseif ($cause instanceof Exception) {
+                    $causes[] = array('class'   => get_class($cause),
+                                   'message' => $cause->getMessage(),
+                                   'file' => $cause->getFile(),
+                                   'line' => $cause->getLine());
                 } elseif (is_array($cause) && isset($cause['message'])) {
                     // PEAR_ErrorStack warning
                     $causes[] = array(
@@ -342,7 +348,9 @@ class PEAR_Exception extends Exception
             }
             $html .= '(' . implode(', ',$args) . ')'
                    . '</td>'
-                   . '<td>' . $v['file'] . ':' . $v['line'] . '</td></tr>' . "\n";
+                   . '<td>' . (isset($v['file']) ? $v['file'] : 'unknown')
+                   . ':' . (isset($v['line']) ? $v['line'] : 'unknown')
+                   . '</td></tr>' . "\n";
         }
         $html .= '<tr><td align="center">' . ($k+1) . '</td>'
                . '<td>{main}</td>'

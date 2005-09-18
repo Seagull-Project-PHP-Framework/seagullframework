@@ -82,6 +82,7 @@ $words['Role'] = 'Role';
 $words['Add user'] = 'Add user';
 $words['Discount'] = 'Discount';
 $words['Discounts'] = 'Discounts';
+$words['Export all products to CSV'] = 'Export all products to CSV';
 
 
 $words['Discounts :: Browse'] = 'Discounts :: Browse';

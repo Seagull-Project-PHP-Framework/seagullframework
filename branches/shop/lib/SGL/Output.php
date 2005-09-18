@@ -235,13 +235,10 @@ class SGL_Output
      * Generates alternate classes for rows in tables, used to switch
      * row colors.
      *
-     * usage:
-     * <tr class="{switchRowClass()}" flexy:foreach="...">
-     *
      * @access  public
      * @return  string  $curRowClass string representing class found in stylesheet
     */
-    function switchRowClass($id = 'default')
+    function switchRowClass($isBold, $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -253,11 +250,16 @@ class SGL_Output
         }
 
         //  choose the next color
-        if ($curRowClass == 'sgl-row-dark') {
+        if ($curRowClass == 'sgl-row-dark' && $isBold ) {
+            $curRowClass = 'sgl-row-light-bold';
+        } elseif ($curRowClass == 'sgl-row-dark') {
             $curRowClass = 'sgl-row-light';
+        } elseif ($isBold) {
+            $curRowClass = 'sgl-row-dark-bold';
         } else {
             $curRowClass = 'sgl-row-dark';
         }
+
         return $curRowClass;
     }
 

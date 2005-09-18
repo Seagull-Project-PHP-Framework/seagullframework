@@ -21,7 +21,7 @@
  * SMTP implementation of the PEAR Mail interface. Requires the Net_SMTP class.
  * @access public
  * @package Mail
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.25 $
  */
 class Mail_smtp extends Mail {
 
@@ -153,9 +153,7 @@ class Mail_smtp extends Mail {
      */
     function _Mail_smtp()
     {
-        if (is_object($this->_smtp)) {
-            $this->_smtp->disconnect();
-        }
+        $this->disconnect();
     }
 
     /**
@@ -218,6 +216,7 @@ class Mail_smtp extends Mail {
                                                             $method))) {
                     $error = $this->_error("$method authentication failure",
                                            $res);
+                    $this->_smtp->rset();
                     return PEAR::raiseError($error);
                 }
             }
@@ -225,6 +224,7 @@ class Mail_smtp extends Mail {
 
         $headerElements = $this->prepareHeaders($headers);
         if (PEAR::isError($headerElements)) {
+            $this->_smtp->rset();
             return $headerElements;
         }
         list($from, $textHeaders) = $headerElements;
@@ -237,17 +237,20 @@ class Mail_smtp extends Mail {
         }
 
         if (!isset($from)) {
+            $this->_smtp->rset();
             return PEAR::raiseError('No From: address has been provided');
         }
 
         $args['verp'] = $this->verp;
         if (PEAR::isError($res = $this->_smtp->mailFrom($from, $args))) {
             $error = $this->_error("Failed to set sender: $from", $res);
+            $this->_smtp->rset();
             return PEAR::raiseError($error);
         }
 
         $recipients = $this->parseRecipients($recipients);
         if (PEAR::isError($recipients)) {
+            $this->_smtp->rset();
             return $recipients;
         }
 
@@ -255,6 +258,7 @@ class Mail_smtp extends Mail {
             if (PEAR::isError($res = $this->_smtp->rcptTo($recipient))) {
                 $error = $this->_error("Failed to add recipient: $recipient",
                                        $res);
+                $this->_smtp->rset();
                 return PEAR::raiseError($error);
             }
         }
@@ -262,17 +266,35 @@ class Mail_smtp extends Mail {
         /* Send the message's headers and the body as SMTP data. */
         if (PEAR::isError($res = $this->_smtp->data("$textHeaders\r\n$body"))) {
             $error = $this->_error('Failed to send data', $res);
+            $this->_smtp->rset();
             return PEAR::raiseError($error);
         }
 
         /* If persistent connections are disabled, destroy our SMTP object. */
         if ($this->persist === false) {
-            echo "Disconnecting\n";
-            $this->_smtp->disconnect();
-            $this->_smtp = null;
+            $this->disconnect();
         }
 
         return true;
+    }
+
+    /**
+     * Disconnect and destroy the current SMTP connection.
+     *
+     * @return boolean True if the SMTP connection no longer exists.
+     *
+     * @since  1.1.9
+     * @access public
+     */
+    function disconnect()
+    {
+        /* If we have an SMTP object, disconnect and destroy it. */
+        if (is_object($this->_smtp) && $this->_smtp->disconnect()) {
+            $this->_smtp = null;
+        }
+
+        /* We are disconnected if we no longer have an SMTP object. */
+        return ($this->_smtp === null);
     }
 
     /**

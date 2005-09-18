@@ -14,7 +14,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
-// $Id: Menu.php,v 1.8 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Menu.php,v 1.5 2004/07/25 11:55:22 datenpunk Exp $
 // {{{ DB_NestedSet_Menu:: class
 /**
  * Simple helper class which takes a node array create by DB_NestedSet and transforms it
@@ -23,7 +23,7 @@
  * @see docs/Menu_example.php
  * @author Daniel Khan <dk@webcluster.at>
  * @package DB_NestedSet
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.5 $
  * @access public
  */
 // }}}
@@ -32,8 +32,8 @@
  *
  * @package
  * @author daniel
- * @copyright Copyright (c) 2005
- * @version $Id: Menu.php,v 1.8 2004/10/25 06:39:22 cvsroot Exp $
+ * @copyright Copyright (c) 2004
+ * @version $Id: Menu.php,v 1.5 2004/07/25 11:55:22 datenpunk Exp $
  * @access public
  */
 class DB_NestedSet_Menu extends DB_NestedSet_Output {

@@ -74,6 +74,8 @@ class UserMgr extends RegisterMgr
             'list'                  => array('list'),
             'requestPasswordReset'  => array('requestPasswordReset'),
             'resetPassword'         => array('resetPassword', 'redirectToDefault'),
+            'requestChangeUserStatus'  => array('requestChangeUserStatus'),
+            'changeUserStatus'      => array('changeUserStatus', 'redirectToDefault'),
             'editPerms'             => array('editPerms'),
             'updatePerms'           => array('updatePerms', 'redirectToDefault'),
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),
@@ -98,6 +100,7 @@ class UserMgr extends RegisterMgr
         $input->moduleId        = $req->get('frmModuleId');
         $input->from            = ($req->get('pageID'))? $req->get('pageID'):0;
         $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
+        $input->changeStatusNotify = ($req->get('frmChangeStatusNotify') == 'on') ? 1 : 0;
         $input->user->is_email_public = (isset($input->user->is_email_public)) ? 1 : 0;
         $input->user->is_acct_active = (isset($input->user->is_acct_active)) ? 1 : 0;
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
@@ -187,7 +190,8 @@ class UserMgr extends RegisterMgr
      */
     function &_createUser()
     {
-        return new DataObjects_Usr();
+        $usr = new DataObjects_Usr();
+        return $usr;
     }
 
     function _insert(&$input, &$output)
@@ -216,11 +220,16 @@ class UserMgr extends RegisterMgr
         $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
 
         //  assign preferences associated with org user belongs to
-        //  first get all prefs associated with user's org
-        $aOrgPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if ($conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
+        }
 
         //  then assign them to the user_preference table
-        $ret = $this->da->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
+        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
 
         //  check global error stack for any error that might have occurred
         if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
@@ -380,7 +389,8 @@ class UserMgr extends RegisterMgr
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
     }
 
-    function _viewLogin(&$input, &$output){
+    function _viewLogin(&$input, &$output)
+    {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -394,7 +404,7 @@ class UserMgr extends RegisterMgr
            && in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
-            $orderBy_query = ' ORDER BY date_time ASC ';
+            $orderBy_query = ' ORDER BY date_time DESC ';
         }
         if (!empty($input->userID) ){
             $query = "
@@ -420,7 +430,8 @@ class UserMgr extends RegisterMgr
 
     }
 
-    function _truncateLoginTbl(&$input, &$output){
+    function _truncateLoginTbl(&$input, &$output)
+    {
 
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
@@ -439,6 +450,60 @@ class UserMgr extends RegisterMgr
         SGL :: raiseMsg('Deleted successfully');
         SGL_HTTP :: redirect(array ('action' => 'viewLogin', 'frmUserID' => "{$input->userID}"));
 
+    }
+    
+    function _requestChangeUserStatus(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->pageTitle = $this->pageTitle . ' :: Change status';
+        $output->template = 'userStatusChange.html';
+        $oUser = & $this->_createUser();
+        $oUser->get($input->userID);
+        $output->user = $oUser;
+    }
+    
+    function _changeUserStatus(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $oUser = & $this->_createUser();
+        $oUser->get($input->userID);
+        $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
+        $success = $oUser->update();
+        if ($input->changeStatusNotify && $success) {
+            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
+        }
+        //  redirect on success
+        if ($success) {
+            SGL::raiseMsg('Status changed successfully');
+        } else {
+            $output->template = 'userManager.html';
+            SGL::raiseError('There was a problem modifying the record', 
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
+    }
+    
+    function _sendStatusNotification($oUser, $isEnabled)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR . '/Emailer.php';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $realName = $oUser->first_name . ' ' . $oUser->last_name;
+        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
+        $options = array(
+                'toEmail'   => $oUser->email,
+                'toRealName' => $recipientName,
+                'isEnabled' => $isEnabled,
+                'fromEmail' => $conf['email']['admin'],
+                'replyTo'   => $conf['email']['admin'],
+                'subject'   => 'Account Status Notification from ' . $conf['site']['name'],
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                    $this->module . '/email_status_notification.php',
+                'username'  => $oUser->username,
+        );
+        $message = & new SGL_Emailer($options);
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
     
     function _requestPasswordReset(&$input, &$output)

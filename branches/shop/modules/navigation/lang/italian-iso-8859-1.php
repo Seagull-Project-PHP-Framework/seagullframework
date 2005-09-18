@@ -98,4 +98,5 @@ $words['AccessKey'] = 'Scorciatoia';
 $words['Rel Marker'] = '*Rel Marker*';
 $words['Any number, which can be pressed with the ALT-key to load the page.'] = 'Tasto che premuto assieme ad ALT avvia il caricamento della pagina';
 $words['Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".'] = 'Aiuto addizionale alla navigazione. Usa valori tipo "home", "precedente" o "successivo".';
+$words['Role Name'] = 'Nome Ruolo';
 ?>
