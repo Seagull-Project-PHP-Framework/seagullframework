@@ -71,8 +71,8 @@ class BlockFormDynamic
             $this->form->setDefaults( $this->data );
         } else {
             //  Set default form values
-            $defaultValues['block[name]']         = 'Dynamic1';
-            $defaultValues['block[title]']        =  null;
+            $defaultValues['block[name]']         = 'DbHtmlBlock';
+            $defaultValues['block[title]']        = null;
             $defaultValues['block[content]']      = null;
             $defaultValues['block[title_class]']  = '';
             $defaultValues['block[body_class]']   = '';
