@@ -8,14 +8,14 @@ INSERT INTO block VALUES (3, 'SampleBlock1', 'SourceForge Site', '', '', 3, 1, 1
 INSERT INTO block VALUES (4, 'SampleBlock2', 'Syndication', '', '', 4, 1, 1, NULL);
 INSERT INTO block VALUES (5, 'CategoryNav', 'Categories', '', 'navWidget', 1, 1, 1, NULL);
 INSERT INTO block VALUES (10, 'SampleRightBlock1', 'Sample Right Block', '', '', 1, 0, 1, NULL);
-INSERT INTO block VALUES (11, 'CalendarBlock', 'Calendar', 'blockHeader', 'blockContent', 2, 0, 0, NULL);
-INSERT INTO block VALUES (12, 'LoginBlock', 'Login', 'blockHeader', 'blockContent', 3, 0, 0, NULL);
+INSERT INTO block VALUES (11, 'CalendarBlock', 'Calendar', '', '', 2, 0, 0, NULL);
+INSERT INTO block VALUES (12, 'LoginBlock', 'Login', '', '', 3, 0, 0, NULL);
 INSERT INTO block VALUES (13, 'ShopNav', 'Products', '', 'sgl-dropdown', 1, 1, 0, NULL);
-INSERT INTO block VALUES (14, 'ShoppingCart', 'Cart', 'blockHeader', 'blockContent', 1, 0, 0, NULL);
-INSERT INTO block VALUES (15, 'RndProducts', 'Promotions', 'blockHeader', 'rndProducts', 5, 0, 0, NULL);
-INSERT INTO block VALUES (16, 'ShopSearch', 'Search', 'blockHeader', 'blockContent', 7, 1, 0, NULL);
-INSERT INTO block VALUES (17, 'NewsletterBlock', 'Newsletter', 'blockHeader', 'blockContent', 5, 0, 0, NULL);
-INSERT INTO block VALUES (18, 'Exchange', 'Exchange', 'blockHeader', 'blockContent', 9, 1, 0, NULL);
+INSERT INTO block VALUES (14, 'ShoppingCart', 'Cart', '', '', 1, 0, 0, NULL);
+INSERT INTO block VALUES (15, 'RndProducts', 'Promotions', '', 'rndProducts', 5, 0, 0, NULL);
+INSERT INTO block VALUES (16, 'ShopSearch', 'Search', '', '', 7, 1, 0, NULL);
+INSERT INTO block VALUES (17, 'NewsletterBlock', 'Newsletter', '', '', 5, 0, 0, NULL);
+INSERT INTO block VALUES (18, 'Exchange', 'Exchange', '', '', 9, 1, 0, NULL);
 
 --
 -- Dumping data for table block_assignment
