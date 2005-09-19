@@ -11,6 +11,7 @@ require_once "XML/RSS.php";
 class SampleRss
 {
     var $rssSource = 'http://rss.gmane.org/messages/excerpts/gmane.comp.php.seagull.general';
+    
     function init()
     {   
         return $this->getBlockContent();
