@@ -5,4 +5,4 @@ alter table item_type_mapping add constraint FK_item_type_item_type_mapping fore
 alter table item add constraint FK_category_item foreign key (category_id) references category (category_id);
 alter table item add foreign key (created_by_id) references usr (usr_id) on delete set null;
 alter table item add foreign key (updated_by_id) references usr (usr_id) on delete set null;
--- alter table category add constraint FK_parent foreign key (parent_id) references category (category_id);
+alter table category add constraint FK_parent foreign key (parent_id) references category (category_id);
