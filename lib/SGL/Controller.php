@@ -386,7 +386,7 @@ class SGL_Controller
         if ($this->conf['p3p']['policies']) {
             $p3pHeader = '';
             if ($this->conf['p3p']['policy_location'] != '') {
-                $p3p_header .= " policyref=\"" . $this->conf['p3p']['policy_location']."\"";
+                $p3pHeader .= " policyref=\"" . $this->conf['p3p']['policy_location']."\"";
             }
             if ($this->conf['p3p']['compact_policy'] != '') {
                 $p3pHeader .= " CP=\"" . $this->conf['p3p']['compact_policy']."\"";
