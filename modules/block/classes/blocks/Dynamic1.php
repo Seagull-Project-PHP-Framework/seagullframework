@@ -1,9 +1,9 @@
 <?php
 /**
- * RndMsgBlock : Returns a random message, or empty string on failure
+ * Creates dynamic html blocks.
  *
  * @package block
- * @author  Michaël Willemot <michael@sotto.be>
+ * @author  Michael Willemot <michael@sotto.be>
  * @version 0.4
  */
 class Dynamic1
@@ -13,15 +13,14 @@ class Dynamic1
         $this->dynamic = true;
     }
 
-    function init(&$input)
+    /**
+     * Essentially an empty placeholder.
+     *
+     */
+    function init()
     {
-        //return $this->getBlockContent(&$input);
-         return $input->content;
-    }
-
-    function getBlockContent(&$input)
-    {
-       
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        return;
     }
 }
 ?>

@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.5.0        |
 +-----------------------+
 BUGFIXES
+19-09-05    Fixed dynamic block implementation to work with FCK
 
 IMPROVEMENTS
 07-09-05    Refactored Category functionality into SGL_Category (Aymerick Jehanne)
