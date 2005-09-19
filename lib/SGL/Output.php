@@ -249,15 +249,14 @@ class SGL_Output
             $_id = $id;
         }
 
-        //  choose the next color
-        if ($curRowClass == 'sgl-row-dark' && $isBold ) {
-            $curRowClass = 'sgl-row-light-bold';
-        } elseif ($curRowClass == 'sgl-row-dark') {
-            $curRowClass = 'sgl-row-light';
+        if ($curRowClass == 'backDark' && $isBold ) {
+            $curRowClass = 'backLightBold';
+        } elseif ($curRowClass == 'backDark') {
+            $curRowClass = 'backLight';
         } elseif ($isBold) {
-            $curRowClass = 'sgl-row-dark-bold';
+            $curRowClass = 'backDarkBold';
         } else {
-            $curRowClass = 'sgl-row-dark';
+            $curRowClass = 'backDark';
         }
 
         return $curRowClass;
