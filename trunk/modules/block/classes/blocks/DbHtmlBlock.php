@@ -6,9 +6,9 @@
  * @author  Michael Willemot <michael@sotto.be>
  * @version 0.4
  */
-class Dynamic1
+class DbHtmlBlock
 {
-    function Dynamic1()
+    function DbHtmlBlock()
     {
         $this->dynamic = true;
     }
