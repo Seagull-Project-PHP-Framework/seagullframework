@@ -1,7 +1,7 @@
 <h1 class="pageTitle">{leadArticle[title]}</h1>
 <p>{leadArticle[bodyHtml]:h}</p>
 <p>
-{if:isAdmin}
+{if:showInlineEdit}
     <a href="{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}" />
         [{translate(#edit#)}]
     </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />

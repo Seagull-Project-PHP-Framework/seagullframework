@@ -533,6 +533,13 @@ legend {
 
 /* /////////////// Various /////////////// */
 
+#sgl #bugReporter {
+    position: absolute;
+    right: 4px;
+    top: 12px;
+}
+
+
 div.pinstripe table {
     background-color: <?php echo $tertiaryLight ?>;
     width: 90%;
