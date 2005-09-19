@@ -73,9 +73,9 @@ class BlockFormDynamic
             //  Set default form values
             $defaultValues['block[name]']         = 'Dynamic1';
             $defaultValues['block[title]']        =  null;
-            $defaultValues['block[content]']        = null;
+            $defaultValues['block[content]']      = null;
             $defaultValues['block[title_class]']  = '';
-            $defaultValues['block[body_class]']  = '';
+            $defaultValues['block[body_class]']   = '';
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 1;
             $defaultValues['block[sections]']     = 0;
@@ -125,8 +125,6 @@ class BlockFormDynamic
         // Field Content
         $this->form->addElement('textarea','block[content]', NULL,
                         array('id' => 'frmBodyName', 'rows' => '20','cols' => '90' )) ;
-        
-        
         // Rules
         if( $this->action == 'edit' ) {
             $this->form->registerRule( 'can_be_activated', 'function', 'classAvailable', $this );

@@ -110,7 +110,10 @@ class BlockMgr extends SGL_Manager
         $output->template = 'blockFormdynamic.html';
         $output->mode = 'New block';
         $output->wysiwyg = true;
-
+        
+        //  override autonaming for textarea element so 'block' hash can be preserved
+        $output->wysiwygElementName = 'block[content]';
+        
         // Build form
         $myForm = & new BlockFormDynamic('addDynamic');
         $output->form = $myForm->init();
@@ -211,6 +214,9 @@ class BlockMgr extends SGL_Manager
         if ($this->isHtmlBlock($input->block_id)) {
             $output->template = 'blockFormdynamic.html';
             $output->wysiwyg = true;
+            
+            //  override autonaming for textarea element so 'block' hash can be preserved
+            $output->wysiwygElementName = 'block[content]';
             $blockForm = & new BlockFormDynamic('edit');            
         } else {
             $output->template = 'blockForm.html';

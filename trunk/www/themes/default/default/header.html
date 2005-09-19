@@ -76,14 +76,19 @@
     {end:}
     {if:wysiwyg_fck}
     <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
-	<script type="text/javascript">
-    function fck_init() 
-    {
-    	var oFCKeditor = new FCKeditor('frmBodyName') ;
-		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
-		oFCKeditor.ReplaceTextarea() ;
-    }
-    </script>
+
+    {scriptOpen:h}
+        function fck_init() 
+        {
+            {if:wysiwygElementName}
+        	var oFCKeditor = new FCKeditor('{wysiwygElementName}');
+        	{else:}
+        	var oFCKeditor = new FCKeditor('frmBodyName');
+        	{end:}
+    		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
+    		oFCKeditor.ReplaceTextarea() ;
+        }
+    {scriptClose:h}
     {end:}
     {end:}
 </head>

@@ -633,7 +633,7 @@ class SGL_Controller
                     : 'xinha';
 			}
 			
-			switch($output->wysiwyg_editor) {
+			switch ($output->wysiwyg_editor) {
             case 'fck':
             	$output->wysiwyg_fck = true;
             	$output->addOnLoadEvent('fck_init()');
