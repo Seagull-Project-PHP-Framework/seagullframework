@@ -233,13 +233,13 @@ th {
 .narrow {
     width: 60%;
 }
-.sgl-row-light, .sgl-row-light-bold {
+.backLight, .backLightBold {
     background-color: <?php echo $tableRowLight ?>;
 }
-.sgl-row-dark, .sgl-row-dark-bold {
+.backDark, .backDarkBold {
     background-color: <?php echo $tableRowDark ?>;
 }
-.sgl-row-light-bold, .sgl-row-dark-bold {
+.backLightBold, .backDarkBold {
     font-weight: bold;
 }
 
