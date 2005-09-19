@@ -63,8 +63,8 @@ class ArticleViewMgr extends SGL_Manager
         $this->template     = 'articleBrowser.html';
 
         $this->_aActionsMapping =  array(
-            'view'   => array('view'), 
-            'summary'   => array('summary'), 
+            'view'   => array('view'),
+            'summary'   => array('summary'),
         );
     }
 
@@ -80,15 +80,15 @@ class ArticleViewMgr extends SGL_Manager
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';
-        $input->articleID       = ($req->get('frmArticleID')) 
-                                    ? (int)$req->get('frmArticleID') 
+        $input->articleID       = ($req->get('frmArticleID'))
+                                    ? (int)$req->get('frmArticleID')
                                     : (int)SGL_HTTP_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
         $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
-		$input->dataTypeID		= ($req->get('frmDataTypeID')) 
-		                              ? $req->get('frmDataTypeID') 
-		                              : $GLOBALS['_SGL']['CONF']['site']['defaultArticleViewType'];
+        $input->dataTypeID      = ($req->get('frmDataTypeID'))
+                                      ? $req->get('frmDataTypeID')
+                                      : $GLOBALS['_SGL']['CONF']['site']['defaultArticleViewType'];
         //  catch static article flag, route to view
         if ($input->staticArticle) {
             $input->action = 'view';
@@ -117,18 +117,21 @@ class ArticleViewMgr extends SGL_Manager
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'articleView.html';
         $ret = SGL_Item::getItemDetail($input->articleID);
-        
+
         if (PEAR::isError($ret)) {
             return false;
         }
         $output->leadArticle = $ret;
-        
+
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);
             $output->documentList = PublisherBase::getDocumentListByCatID($input->catID);
         } else {
             $output->staticArticle = true;
+
+            //show inline edit link
+            $output->showInlineEdit = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ? true : false;
         }
     }
 
@@ -150,24 +153,24 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), 
+            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']),
                                             $aResult['data'][$key]);
 
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
-                    
+
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
-                    $output->articleList[$key]['bodyHtml'] = 
+                    $output->articleList[$key]['bodyHtml'] =
                         SGL_String::summariseHtml($content);
                     break;
 
                 case 'newsHtml':
                     $content = $output->articleList[$key]['newsHtml'];
-                    $output->articleList[$key]['newsHtml'] = 
+                    $output->articleList[$key]['newsHtml'] =
                         SGL_String::summariseHtml($content);
-                    break; 
+                    break;
                 }
             }
         }
