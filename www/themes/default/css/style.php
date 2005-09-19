@@ -196,6 +196,11 @@ body {
 #sgl #login #userInfo .guest {
     font-weight: bold;
 }
+#sgl #bugReporter {
+    position: absolute;
+    right: 4px;
+    top: 12px;
+}
 
 /***************************** LAYOUT : TABLES ********************************/
 
