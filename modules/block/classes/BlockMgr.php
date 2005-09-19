@@ -187,8 +187,8 @@ class BlockMgr extends SGL_Manager
      * Returns true if 'content' field has a string length greater than
      * zero or it is not NULL.
      *
-     * @param unknown_type $blockId
-     * @return unknown
+     * @param integer $blockId
+     * @return boolean
      */
     function isHtmlBlock($blockId)
     {

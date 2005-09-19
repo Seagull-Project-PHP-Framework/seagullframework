@@ -192,7 +192,7 @@ class SGL_BlockLoader
                         SGL_ERROR_NOCLASS);
                 } else {
                     @$obj = & new $blockClass();
-                    $this->_aData[$index]->content = $obj->init($this->output);
+                    $this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id);
                 }
             }
             $this->_sort();

@@ -22,11 +22,6 @@ define('THUMBS_DIR','images/shop/thumb/');
 
 class RndProducts
 {
-    function RndProducts()
-    {
-        return true;
-    }
-
     function init()
     {
         $rateMgr = & new RateMgr();
