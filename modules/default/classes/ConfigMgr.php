@@ -152,13 +152,6 @@ class ConfigMgr extends SGL_Manager
                 }
                 break;
             }
-            
-            //  extended session stuff for mysql only
-            if ((  !empty($input->conf['site']['single_user']) 
-                || !empty($input->conf['site']['extended_session'])) 
-                && !preg_match("/mysql/", $input->conf['db']['type'])) {
-                    $aErrors['single_user'] = 'This feature is currently only available for MySQL users';
-            }
 
             //  session validations
             if (  !empty($input->conf['site']['single_user']) 
