@@ -159,12 +159,6 @@ class OrgMgr extends SGL_Manager
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $input->template = ($input->action == 'update') ? 'orgEdit.html' : 'orgAdd.html';
-
-            //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
-                $output->aOrgTypes = $this->da->getOrgTypes();
-            }
             $this->validated = false;
         }
     }
