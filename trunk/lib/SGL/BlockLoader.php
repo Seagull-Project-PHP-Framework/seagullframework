@@ -211,7 +211,7 @@ class SGL_BlockLoader
     {
         //  sort into left/right
         if (count($this->_aData) > 0) {
-            foreach ($this->_aData as $index => $oBlock) {
+            foreach ($this->_aData as $oBlock) {
                 if ($oBlock->is_onleft) {
                     $this->aBlocks['left'][] = $oBlock;
                 } else {
