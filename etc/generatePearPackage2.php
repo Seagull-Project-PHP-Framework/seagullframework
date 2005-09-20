@@ -25,12 +25,85 @@ XML_RPC        1.1.0   stable
 */
 
 set_time_limit(0);
-require_once 'PEAR/PackageFileManager.php';
+require_once 'PEAR/PackageFileManager2.php';
+PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$packagexml = new PEAR_PackageFileManager;
+$packagexml = new PEAR_PackageFileManager2();
+
 $e = $packagexml->setOptions(array(
     'baseinstalldir' => 'seagull',
-    'version' => '0.4.6',
+    'packagedirectory' => '/var/www/html/tmp/seagull',
+    'filelistgenerator' => 'file',
+    'ignore' => array(
+        'generatePackage.php', 
+        'lib/pear/',
+        'tests/',
+        '*.svn*',
+    ), 
+    'installexceptions' => array(
+        'mysql_SGL.php' => 'DB',
+        'Tree.php' => 'HTML',
+        ),
+    'dir_roles' => array(
+        'etc' => 'data',
+        'lib' => 'data',
+        'modules' => 'data',
+        'var' => 'data',
+        'www' => 'data',
+        ),
+        'exceptions' => array(
+        'CHANGELOG.txt' => 'doc',
+        'COPYING.txt' => 'doc',
+        'init.php' => 'data',
+        'constants.php' => 'data',
+        'INSTALL.txt' => 'data',
+        'README.txt' => 'data',
+        'VERSION.txt' => 'data',         
+        'etc/mysql_SGL.php' => 'php',
+        'etc/Tree.php' => 'php',       
+        ),
+    ));
+$packagexml->setPackage('seagull');
+$packagexml->setSummary('PHP Application Framework');
+$packagexml->setDescription('Seagull is a PHP application framework with a number of modules available that deliver CMS functionality');
+$packagexml->setChannel('pear.phpkitchen.com');
+$packagexml->setAPIVersion('0.4.6');
+$packagexml->setReleaseVersion('1.2.1');
+$packagexml->setReleaseStability('stable');
+$packagexml->setAPIStability('stable');
+$packagexml->setNotes('');
+$packagexml->setPackageType('php'); // this is a PEAR-style php script package
+#$packagexml->addRelease(); // set up a release section
+//$packagexml->setOSInstallCondition('windows');
+//$packagexml->addInstallAs('pear-phpdoc.bat', 'phpdoc.bat');
+//$packagexml->addIgnore('pear-phpdoc');
+//$packagexml->addRelease(); // add another release section for all other OSes
+//$packagexml->addInstallAs('pear-phpdoc', 'phpdoc');
+//$packagexml->addIgnore('pear-phpdoc.bat');
+//$packagexml->addRole('pkg', 'doc'); // add a new role mapping
+$packagexml->setPhpDep('4.3.0');
+$packagexml->setPearinstallerDep('1.4.0a12');
+$packagexml->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
+$packagexml->setLicense('BSD License', 'http://www.php.net/license');
+$packagexml->generateContents(); // create the <contents> tag
+// replace @PHP-BIN@ in this file with the path to php executable!  pretty neat
+#$packagexml->addReplacement('pear-phpdoc', 'pear-config', '@PHP-BIN@', 'php_bin');
+#$packagexml->addReplacement('pear-phpdoc.bat', 'pear-config', '@PHP-BIN@', 'php_bin');
+$pkg = &$packagexml->exportCompatiblePackageFile1(); // get a PEAR_PackageFile object
+// note use of {@link debugPackageFile()} - this is VERY important
+if (isset($_GET['make']) || (isset($_SERVER['argv']) && @$_SERVER['argv'][1] == 'make')) {
+    $pkg->writePackageFile();
+    $packagexml->writePackageFile();
+} else {
+    $pkg->debugPackageFile();
+    $packagexml->debugPackageFile();
+}
+
+exit;
+ 
+$e = $packagexml->setOptions(array(
+    'baseinstalldir' => 'seagull',
+    'version' => '0.4.3',
     'license' => 'BSD License',
     'packagedirectory' => '/var/www/html/tmp/seagull',
     'state' => 'beta',
@@ -38,7 +111,7 @@ $e = $packagexml->setOptions(array(
     'simpleoutput' => true,
     'summary' => 'PHP Application Framework',
     'description' => 'Seagull is a PHP application framework with a number of modules available that deliver CMS functionality',
-    'filelistgenerator' => 'file',
+    'filelistgenerator' => 'file', // generate from cvs, use file for directory
     'notes' => 'See the CHANGELOG for full list of changes',
     'dir_roles' => array(
         'etc' => 'data',
@@ -50,7 +123,7 @@ $e = $packagexml->setOptions(array(
     'ignore' => array(
         'generatePackage.php', 
         'lib/pear/',
-        '*.svn*',
+        '*CVS*',
         ), 
     'roles' => array(
         'php' => 'php',
@@ -60,7 +133,6 @@ $e = $packagexml->setOptions(array(
     'exceptions' => array(
         'CHANGELOG.txt' => 'doc',
         'COPYING.txt' => 'doc',
-        'CODING_STANDARDS.txt' => 'doc',
         'init.php' => 'data',
         'constants.php' => 'data',
         'INSTALL.txt' => 'data',
@@ -87,12 +159,6 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
-$e = $packagexml->addDependency('Archive_Tar', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
 $e = $packagexml->addDependency('Cache_Lite', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
@@ -105,12 +171,6 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
-$e = $packagexml->addDependency('Date', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
 $e = $packagexml->addDependency('DB_DataObject', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
@@ -118,6 +178,12 @@ if (is_a($e, 'PEAR_Error')) {
 }
 
 $e = $packagexml->addDependency('DB_NestedSet', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
+$e = $packagexml->addDependency('Date', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
     exit;
@@ -208,24 +274,6 @@ if (is_a($e, 'PEAR_Error')) {
 }
 
 $e = $packagexml->addDependency('Validate', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
-$e = $packagexml->addDependency('XML_Parser', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
-$e = $packagexml->addDependency('XML_RSS', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
-$e = $packagexml->addDependency('XML_Tree', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
     exit;
