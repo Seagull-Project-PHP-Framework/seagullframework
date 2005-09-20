@@ -206,37 +206,6 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();
         
-        $user_session = $input->conf['table']['user_session'];
-
-        $dbh = & SGL_DB::singleton();
-        if ($input->conf['site']['sessionHandler'] == 'database') {
-            
-            // First check if the mods are not there
-            $query = "DESCRIBE {$user_session} usr_id";
-            $extended = $dbh->getOne($query);
-
-            // Apply the extended session stuff
-            if (!empty($input->conf['site']['extended_session'])) {
-                if (empty($extended)) {
-                    $query = "
-                        ALTER TABLE {$user_session} 
-                            ADD usr_id INT NOT NULL, 
-                            ADD INDEX ( usr_id ), 
-                            ADD username VARCHAR(64), 
-                            ADD INDEX ( username ), 
-                            ADD expiry INT NOT NULL
-                    ";
-                    $res = $dbh->query($query);
-                }
-            } else {
-                if (!empty($extended)) {
-                    // drops indexes automatically
-                    $query = "ALTER TABLE {$user_session} DROP usr_id, DROP username, DROP expiry";
-                    $res = $dbh->query($query);
-                }
-            }
-        }
-        
         //  add version info which is not available in form
         $input->conf['tuples']['version'] = $GLOBALS['_SGL']['VERSION'];
                 

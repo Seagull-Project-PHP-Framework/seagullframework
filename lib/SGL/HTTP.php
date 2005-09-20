@@ -639,23 +639,20 @@ class SGL_HTTP_Session
     function getUserSessionCount($uid, $sessId = -1)
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
-        
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!empty($conf['site']['extended_session'])) {
-            if ($sessId == -1) {
-                $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
-            } else {
-                $query = "
-                    SELECT count(*) 
-                    FROM {$conf['table']['user_session']} 
-                    WHERE usr_id = $uid 
-                    AND session_id != '$sessId'";
-            }
-            $res = $dbh->getOne($query);
-            return $res;
+
+        if ($sessId == -1) {
+            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+        } else {
+            $query = "
+                SELECT count(*) 
+                FROM {$conf['table']['user_session']} 
+                WHERE usr_id = $uid 
+                AND session_id != '$sessId'";
         }
-        return 0;
+        $res = $dbh->getOne($query);
+        return $res;
+
     }
     
     /**
@@ -669,20 +666,16 @@ class SGL_HTTP_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
-
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!empty($conf['site']['extended_session'])) {
-            if ($sessId == -1) {
-                $query = "DELETE FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
-            } else {
-                $query = "
-                    DELETE FROM {$conf['table']['user_session']} 
-                    WHERE usr_id = $uid AND session_id != '$sessId'";
-            }
-            $dbh->query($query);
+
+        if ($sessId == -1) {
+            $query = "DELETE FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+        } else {
+            $query = "
+                DELETE FROM {$conf['table']['user_session']} 
+                WHERE usr_id = $uid AND session_id != '$sessId'";
         }
-        return true;
+        $dbh->query($query);
     }
     
     /**
@@ -693,15 +686,11 @@ class SGL_HTTP_Session
     function getGuestSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
-
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!empty($conf['site']['extended_session'])) {
-            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
-            $res = $dbh->getOne($query);
-            return $res;
-        }
-        return 0;
+        
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
+        $res = $dbh->getOne($query);
+        return $res;
     }
     
     /**
@@ -712,15 +701,11 @@ class SGL_HTTP_Session
     function getMemberSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
-
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!empty($conf['site']['extended_session'])) {
-            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username != 'guest'";
-            $res = $dbh->getOne($query);
-            return $res;
-        }
-        return 0;
+
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username != 'guest'";
+        $res = $dbh->getOne($query);
+        return $res;
     }
 
     /**
@@ -731,15 +716,11 @@ class SGL_HTTP_Session
     function getSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
-
         $conf = & $GLOBALS['_SGL']['CONF'];
-        if (!empty($conf['site']['extended_session'])) {
-            $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
-            $res = $dbh->getOne($query);
-            return $res;
-        }
-        return 0;
+    
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
+        $res = $dbh->getOne($query);
+        return $res;
     }
 
     /**

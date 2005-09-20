@@ -125,7 +125,16 @@ create table user_session
    session_id                    VARCHAR(255)    not null,
    last_updated                  TIMESTAMP       null,
    data_value                    TEXT            null,
+   usr_id                        INT4            not null,
+   username                      VARCHAR(64)     null,
+   expiry                        INT4            not null,   
    constraint PK_SESSION primary key (session_id)
+);
+
+create  index AK_user_session_keys on user_session (
+    last_updated,
+    usr_id,
+    username
 );
 
 -- ==============================================================
