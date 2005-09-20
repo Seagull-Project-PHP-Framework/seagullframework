@@ -25,8 +25,9 @@ FTP_REMOTE_DIR=incoming
 REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
-SVN_REPO_LEAF_FOLDER_NAME=0.4-bugfix
-SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
+SVN_REPO_LEAF_FOLDER_NAME=trunk
+#SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
+SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://seagull.phpkitchen.com:8172/svn/seagull/tags
 
@@ -117,8 +118,8 @@ function exportSvnAndPackage()
     rm -f $PROJECT_NAME/etc/generatePackage.php
     rm -f $PROJECT_NAME/etc/phpDocWeb.ini
     rm -f $PROJECT_NAME/etc/release.sh
-    rm -rf $PROJECT_NAME/lib/SGL/tests
-    rm -rf $PROJECT_NAME/modules/user/tests
+#    rm -rf $PROJECT_NAME/lib/SGL/tests
+#    rm -rf $PROJECT_NAME/modules/user/tests
     rm -f $PROJECT_NAME/www/errorTests.php
     
     # rename folder to current release
@@ -222,7 +223,7 @@ exportSvnAndPackage
 
 uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
 packageApiDocs
 
