@@ -30,7 +30,7 @@ require_once 'PEAR/PackageFileManager.php';
 $packagexml = new PEAR_PackageFileManager;
 $e = $packagexml->setOptions(array(
     'baseinstalldir' => 'seagull',
-    'version' => '0.4.3',
+    'version' => '0.4.6',
     'license' => 'BSD License',
     'packagedirectory' => '/var/www/html/tmp/seagull',
     'state' => 'beta',
@@ -38,7 +38,7 @@ $e = $packagexml->setOptions(array(
     'simpleoutput' => true,
     'summary' => 'PHP Application Framework',
     'description' => 'Seagull is a PHP application framework with a number of modules available that deliver CMS functionality',
-    'filelistgenerator' => 'file', // generate from cvs, use file for directory
+    'filelistgenerator' => 'file',
     'notes' => 'See the CHANGELOG for full list of changes',
     'dir_roles' => array(
         'etc' => 'data',
@@ -50,7 +50,7 @@ $e = $packagexml->setOptions(array(
     'ignore' => array(
         'generatePackage.php', 
         'lib/pear/',
-        '*CVS*',
+        '*.svn*',
         ), 
     'roles' => array(
         'php' => 'php',
@@ -60,6 +60,7 @@ $e = $packagexml->setOptions(array(
     'exceptions' => array(
         'CHANGELOG.txt' => 'doc',
         'COPYING.txt' => 'doc',
+        'CODING_STANDARDS.txt' => 'doc',
         'init.php' => 'data',
         'constants.php' => 'data',
         'INSTALL.txt' => 'data',
@@ -86,6 +87,12 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
+$e = $packagexml->addDependency('Archive_Tar', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
 $e = $packagexml->addDependency('Cache_Lite', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
@@ -98,6 +105,12 @@ if (is_a($e, 'PEAR_Error')) {
     exit;
 }
 
+$e = $packagexml->addDependency('Date', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
 $e = $packagexml->addDependency('DB_DataObject', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
@@ -105,12 +118,6 @@ if (is_a($e, 'PEAR_Error')) {
 }
 
 $e = $packagexml->addDependency('DB_NestedSet', false, 'has', 'pkg', false);
-if (is_a($e, 'PEAR_Error')) {
-    echo $e->getMessage();
-    exit;
-}
-
-$e = $packagexml->addDependency('Date', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
     exit;
@@ -201,6 +208,24 @@ if (is_a($e, 'PEAR_Error')) {
 }
 
 $e = $packagexml->addDependency('Validate', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
+$e = $packagexml->addDependency('XML_Parser', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
+$e = $packagexml->addDependency('XML_RSS', false, 'has', 'pkg', false);
+if (is_a($e, 'PEAR_Error')) {
+    echo $e->getMessage();
+    exit;
+}
+
+$e = $packagexml->addDependency('XML_Tree', false, 'has', 'pkg', false);
 if (is_a($e, 'PEAR_Error')) {
     echo $e->getMessage();
     exit;
