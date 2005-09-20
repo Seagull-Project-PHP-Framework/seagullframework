@@ -225,7 +225,7 @@ class SGL
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &cacheSingleton($cacheEnabled = false)
+    function &cacheSingleton()
     {
         static $instance;
         
