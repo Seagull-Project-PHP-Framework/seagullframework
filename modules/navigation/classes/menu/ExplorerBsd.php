@@ -55,7 +55,6 @@ class Menu_ExplorerBsd
     function getGuruTree($id = 0)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  style definition .treeMenuDefault in <head>
         $tree = &$this->createFromSQL($id);

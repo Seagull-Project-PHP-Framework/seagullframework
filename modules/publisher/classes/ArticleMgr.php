@@ -382,7 +382,6 @@ class ArticleMgr extends SGL_Manager
 
         //  prep publisher sub nav
         if ($this->isAdmin) {
-            $theme = $_SESSION['aPrefs']['theme'];
             $output->addOnLoadEvent('checkNewButton()');
             $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
             $menu = & new MenuBuilder('SelectBox');

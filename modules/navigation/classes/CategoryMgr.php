@@ -144,8 +144,7 @@ class CategoryMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
+        
         $values = (array) $input->category;
         $values['label'] = 'New Category';
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -302,7 +301,7 @@ class CategoryMgr extends SGL_Manager
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around
-            foreach ($input->aDelete as $index => $categoryId) {
+            foreach ($input->aDelete as $categoryId) {
                 if ($nestedSet->getNode($categoryId)){
                     $nestedSet->deleteNode($categoryId);
                 }

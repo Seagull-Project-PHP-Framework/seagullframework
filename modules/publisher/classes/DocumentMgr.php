@@ -309,7 +309,7 @@ class DocumentMgr extends FileMgr
         $output->template = 'documentMgrEdit.html';
 
         //  delete physical file
-        foreach ($input->deleteArray as $index => $assetID) {
+        foreach ($input->deleteArray as $assetID) {
             $document = & new DataObjects_Document();
             $document->get($assetID);
             if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {

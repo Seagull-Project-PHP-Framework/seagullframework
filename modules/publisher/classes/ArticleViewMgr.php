@@ -114,7 +114,6 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'articleView.html';
         $ret = SGL_Item::getItemDetail($input->articleID);
 

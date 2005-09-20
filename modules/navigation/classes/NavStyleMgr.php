@@ -126,8 +126,7 @@ class NavStyleMgr extends SGL_Manager
         $output->currentStyle = $this->getCurrentStyle();
         $output->staticId = (is_numeric($input->staticId)) ? $input->staticId : $this->generateStaticId();
 
-        //  build string of radio buttons html for selecting group
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        //  build string of radio buttons html for selecting group       
         
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
@@ -194,8 +193,7 @@ class NavStyleMgr extends SGL_Manager
 
     function _redirectToDefault(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);       
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {

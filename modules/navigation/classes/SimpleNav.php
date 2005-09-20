@@ -294,7 +294,7 @@ class SimpleNav
                 $aPieces = explode('/', $baseUri);
                 $tmpUri = '';
                 $bFlag = false;
-                foreach ($aPieces as $k => $v) {
+                foreach ($aPieces as $v) {
                     if (!$bFlag) {
                         $tmpUri .= $v;
                         $bFlag = true;
@@ -339,7 +339,6 @@ class SimpleNav
     function _toHtml($sectionNodes)
     {
         $listItems = '';
-        $conf = & $GLOBALS['_SGL']['CONF'];
         foreach ($sectionNodes as $section) {
             $liAtts = '';
             if ($section->isCurrent) {
@@ -380,7 +379,6 @@ class SimpleNav
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
                 $anchorOffset = (strpos($anchorFragment, '&amp;')) + 1;
-                $anchorEnd = $anchorStart + $anchorOffset; 
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 
                 //  remove anchor
