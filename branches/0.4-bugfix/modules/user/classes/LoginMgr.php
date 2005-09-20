@@ -176,7 +176,6 @@ class LoginMgr extends SGL_Manager
         $aResult = $dbh->getRow($query, DB_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];
-            $rid = $aResult['role_id'];
 
             //  record login in db for security
             if (@$conf['LoginMgr']['recordLogin']) {

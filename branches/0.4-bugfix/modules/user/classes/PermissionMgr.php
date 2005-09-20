@@ -215,7 +215,7 @@ class PermissionMgr extends SGL_Manager
         $dbh->autocommit();
 
         $errors = 0;
-        foreach ($input->scannedPerms as $k=>$v) {
+        foreach ($input->scannedPerms as $v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
             
@@ -303,7 +303,7 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_ENT_DIR . '/Permission.php';
-        foreach ($input->aDelete as $index => $permId) {
+        foreach ($input->aDelete as $permId) {
             $oPerm = & new DataObjects_Permission();
             $oPerm->get($permId);
             $oPerm->delete();
@@ -394,9 +394,9 @@ class PermissionMgr extends SGL_Manager
         
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
-        foreach ($filePerms as $k => $filePerm) {
+        foreach ($filePerms as $filePerm) {
             $found = false;
-            foreach ($dbPerms as $k2 => $dbPerm) {
+            foreach ($dbPerms as $dbPerm) {
                 if ($dbPerm['name'] == $filePerm['perm']) {
                     $found = true;
                     break;
@@ -439,9 +439,9 @@ class PermissionMgr extends SGL_Manager
         
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
-        foreach ($dbPerms as $k => $dbPerm) {
+        foreach ($dbPerms as $dbPerm) {
             $found = false;
-            foreach ($filePerms as $k2 => $filePerm) {
+            foreach ($filePerms as $filePerm) {
                 if ($dbPerm['name'] == $filePerm['perm']) {
                     $found = true;
                     break;
@@ -489,7 +489,7 @@ class PermissionMgr extends SGL_Manager
         require_once  'System.php';
         $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
 
-        foreach ($files as $k => $v) {
+        foreach ($files as $v) {
             //  only process files in 'classes' directories
             if (stristr ($v, 'classes') === false) {
                 continue;
@@ -542,7 +542,7 @@ class PermissionMgr extends SGL_Manager
 
             //  add each method perm, if not found. store display name and a 
             //  delimited value used for form submission
-            foreach ($aActions as $k2 => $v2) {
+            foreach ($aActions as $v2) {
                 $permsFound[] = array(
                     'perm' => "{$className}_{$v2}", 
                     'module_id' => $moduleId, 

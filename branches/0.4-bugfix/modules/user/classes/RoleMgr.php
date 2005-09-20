@@ -178,7 +178,7 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        foreach ($input->aDelete as $index => $roleId) {
+        foreach ($input->aDelete as $roleId) {
 
             //  disallow deletion of admin and unassigned role
             $msg = 'role successfully deleted';

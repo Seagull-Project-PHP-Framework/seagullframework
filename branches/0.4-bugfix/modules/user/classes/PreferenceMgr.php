@@ -221,7 +221,7 @@ class PreferenceMgr extends SGL_Manager
         require_once SGL_ENT_DIR . '/Preference.php';
         require_once SGL_ENT_DIR . '/User_preference.php';
         $aToDelete = array();
-        foreach ($input->aDelete as $index => $prefId) {
+        foreach ($input->aDelete as $prefId) {
             $oPref = & new DataObjects_Preference();
             $oPref->get($prefId);
             $oPref->delete();
