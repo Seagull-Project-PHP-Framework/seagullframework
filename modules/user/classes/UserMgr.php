@@ -255,7 +255,6 @@ class UserMgr extends RegisterMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $oUser = & $this->_createUser();
         $dbh = & $oUser->getDatabaseConnection();
@@ -314,7 +313,7 @@ class UserMgr extends RegisterMgr
         $conf = & $GLOBALS['_SGL']['CONF'];
         $results = array();
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $userId) {
+            foreach ($input->aDelete as $userId) {
                 //  don't allow admin to be deleted
                 if ($userId == SGL_ADMIN) {
                     continue;
@@ -561,7 +560,6 @@ class UserMgr extends RegisterMgr
     function _updatePerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'userPermsEdit.html';
 
         //  delete existing perms
@@ -696,7 +694,7 @@ class UserMgr extends RegisterMgr
             //  remove extra perms (remove extra or complete sync)
             if ($mode == SGL_ROLESYNC_ADDREMOVE || $mode == SGL_ROLESYNC_REMOVE) {
                 $toRemove = array_diff($userPerms, $rolePerms);
-                foreach ($toRemove as $k => $permId) {
+                foreach ($toRemove as $permId) {
                     $res = $this->da->deletePermByUserIdAndPermId($userId, $permId);
 
                     if (is_a($res, 'PEAR_Error')) {

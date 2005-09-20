@@ -231,7 +231,7 @@ class UserSearchMgr extends SGL_Manager
                     //search for multiple roles
                     $criteria .= " AND (";
                     $first = true;
-                    foreach ($s['roles'] as $k=>$v) {
+                    foreach ($s['roles'] as $v) {
                         if ($first) {
                             $first = false;
                         } else {
@@ -250,7 +250,7 @@ class UserSearchMgr extends SGL_Manager
                     //search for multiple orgs
                     $criteria .= " AND (";
                     $first = true;
-                    foreach ($s['orgs'] as $k=>$v) {
+                    foreach ($s['orgs'] as $v) {
                         if ($first) {
                             $first = false;
                         } else {

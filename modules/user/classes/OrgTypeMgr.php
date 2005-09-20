@@ -149,7 +149,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $orgTypeId) {
+            foreach ($input->aDelete as $orgTypeId) {
                 $orgTypes = & new DataObjects_Organisation_type();
                 $orgTypes->get($orgTypeId);
                 $orgTypes->delete();

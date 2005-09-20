@@ -311,7 +311,7 @@ class OrgMgr extends SGL_Manager
             
             $success = true;
             
-            while ((list($index, $orgId) = each($input->aDelete)) && $success) {            	            	
+            while ((list(, $orgId) = each($input->aDelete)) && $success) {            	            	
             	$org = $nestedSet->getNode($orgId);
                 if ($org) {
                 	

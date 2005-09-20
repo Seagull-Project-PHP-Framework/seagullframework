@@ -102,7 +102,7 @@ class DA_User
         $this->dbh->autocommit();
 
         $errors = 0;
-        foreach ($aPerms as $k => $v) {
+        foreach ($aPerms as $v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
             
