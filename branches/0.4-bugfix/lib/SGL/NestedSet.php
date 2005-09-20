@@ -167,7 +167,7 @@ class SGL_NestedSet
         //  Get all descendants of each node (rootid = $rootid).
         $r = '';
         if (is_array($roots) && count($roots)) {
-            foreach($roots as $id => $root) {
+            foreach($roots as $root) {
                 $sql = "SELECT $this->_fieldListExternal $cols
                         FROM $this->_tableName $join
                         WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$root[$this->_fieldsInternal['rootid']]}
