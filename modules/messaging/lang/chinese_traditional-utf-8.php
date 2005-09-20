@@ -1,11 +1,35 @@
 <?php
-$words['Messages'] = '信息';
-$words['contacts successfully deleted'] = '聯絡人已刪除完成';
-$words['contacts successfully added'] = '聯絡人已添加完成';
-$words['admin cannot save contacts'] = '系統管理者不能儲存聯絡人';
-$words['Message sent successfully'] = '信息發送完成';
-$words['message deleted successfully'] = '信息刪除完成';
-$words['Group'] = '群組';
-$words['Subject'] = '主題';
-$words['Message'] = '信息';
+$words = array(
+    'Compose Message' => 'Compose Message',
+    'Contact Manager' => 'Contact Manager',
+    'Contacts' => 'Contacts',
+    'Date' => 'Date',
+    'From' => 'From',
+    'Full Name' => 'Full Name',
+    'Group' => '群組',
+    'In order to send an instant message, you must select recipients from the contacts tab' => 'In order to send an instant message, you must select recipients from the contacts tab',
+    'Inbox' => 'Inbox',
+    'Message' => '訊息',
+    'Message sent successfully' => '訊息發送完成',
+    'Messages' => '訊息',
+    'Messages did not reach all recipients' => 'Messages did not reach all recipients',
+    'No messages in inbox' => 'No messages in inbox',
+    'No messages in outbox' => 'No messages in outbox',
+    'Read' => 'Read',
+    'Reply' => 'Reply',
+    'Sender' => 'Sender',
+    'Sent Messages' => 'Sent Messages',
+    'Subject' => '主題',
+    'To' => 'To',
+    'admin cannot save contacts' => '系統管理者不能儲存聯絡人',
+    'cancel' => 'cancel',
+    'check for new messages' => 'check for new messages',
+    'contacts' => 'contacts',
+    'contacts successfully added' => '聯絡人已新增完成',
+    'contacts successfully deleted' => '聯絡人已刪除完成',
+    'go to inbox' => 'go to inbox',
+    'go to outbox' => 'go to outbox',
+    'message deleted successfully' => '訊息刪除完成',
+    'send message to selected user(s)' => 'send message to selected user(s)',
+);
 ?>

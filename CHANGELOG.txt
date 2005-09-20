@@ -19,6 +19,7 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
+20-09-05    Chinese language update (Finjon Kiang)
 14-09-05    Unit test runner added, currently works with pear-installable version of
             SimpleTest, many thanks to m3 Media Services Limited for granting us the
             right to distribute this under BSD (http://www.m3.net/)
