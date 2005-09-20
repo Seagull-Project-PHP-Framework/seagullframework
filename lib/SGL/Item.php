@@ -692,7 +692,7 @@ class SGL_Item
                 ";
         $result = $dbh->query($query);
 
-        while (list($fieldID, $fieldName, $fieldValue) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+        while (list(, $fieldName, $fieldValue) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
             $html[$fieldName] = $fieldValue;
         }
         return $html;

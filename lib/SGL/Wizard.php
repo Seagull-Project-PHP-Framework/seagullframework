@@ -226,7 +226,7 @@ class SGL_Wizard extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aObjAttrs = get_object_vars($obj);
         if (is_array($aObjAttrs)) {
-            foreach ($aObjAttrs as $k => $v) {
+            foreach ($aObjAttrs as $v) {
                 if (!empty($v)) {
                     return false;
                 }

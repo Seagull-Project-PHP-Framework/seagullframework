@@ -129,8 +129,6 @@ class SGL_HTTP_Request
      */
     function SGL_HTTP_Request()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
         //  merge REQUEST AND FILES superglobal arrays
         $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
         
@@ -639,7 +637,6 @@ class SGL_HTTP_Session
     function getUserSessionCount($uid, $sessId = -1)
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
         
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (!empty($conf['site']['extended_session'])) {
@@ -669,7 +666,6 @@ class SGL_HTTP_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (!empty($conf['site']['extended_session'])) {
@@ -693,7 +689,6 @@ class SGL_HTTP_Session
     function getGuestSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (!empty($conf['site']['extended_session'])) {
@@ -712,7 +707,6 @@ class SGL_HTTP_Session
     function getMemberSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (!empty($conf['site']['extended_session'])) {
@@ -731,7 +725,6 @@ class SGL_HTTP_Session
     function getSessionCount()
     {
         $dbh = & SGL_DB::singleton();
-        $timeStamp = SGL::getTime(true);
 
         $conf = & $GLOBALS['_SGL']['CONF'];
         if (!empty($conf['site']['extended_session'])) {

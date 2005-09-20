@@ -225,8 +225,7 @@ class SGL_Manager
 
     function _redirectToDefault(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);      
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {    

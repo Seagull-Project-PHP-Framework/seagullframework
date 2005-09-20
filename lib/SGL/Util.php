@@ -289,7 +289,7 @@ class SGL_Util
 
         //  propagate changes to keys as well
         $aDrivers = array();
-        foreach ($ret as $k => $v) {
+        foreach ($ret as $v) {
             $aDrivers[$v] = $v;
         }       
         return $aDrivers;
