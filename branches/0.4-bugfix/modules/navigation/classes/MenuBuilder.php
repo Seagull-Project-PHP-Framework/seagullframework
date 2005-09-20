@@ -83,7 +83,7 @@ class MenuBuilder
     function toHtml()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $menuType = strtolower(get_class($this->GUI));
         switch ($menuType) {
 

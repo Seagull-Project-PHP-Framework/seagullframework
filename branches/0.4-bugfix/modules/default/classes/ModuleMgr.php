@@ -139,7 +139,7 @@ class ModuleMgr extends SGL_Manager
         $aModules = $dbh->getAll($query);
         if (!DB::isError($aModules)) {
             $ret = array();
-            foreach ($aModules as $k => $oModule) {
+            foreach ($aModules as $oModule) {
                 
                 //  split module/manager values out as object properties
                 if (strpos($oModule->admin_uri, '/') !== false) {
@@ -282,7 +282,7 @@ class ModuleMgr extends SGL_Manager
                         FROM {$conf['table']['module']} 
                         ORDER BY name";
             $aModules = $dbh->getAll($query);
-            foreach ($aModules as $k => $oVal) {
+            foreach ($aModules as $oVal) {
                 if ($oVal->name == 'documentor') {
                     continue;
                 }

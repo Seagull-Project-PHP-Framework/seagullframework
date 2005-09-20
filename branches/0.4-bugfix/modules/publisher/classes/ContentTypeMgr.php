@@ -200,7 +200,7 @@ var $fieldTypes;
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
 
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
+        foreach ($aPagedData['data'] as $aValues) {
             foreach ($aValues as $key => $value) {                              
                 switch ($key) {
                     
@@ -316,7 +316,7 @@ var $fieldTypes;
         );
         $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;       
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
+        foreach ($aPagedData['data'] as $aValues) {
             foreach ($aValues as $key => $value) {                              
                 switch ($key) {
                 
@@ -375,7 +375,7 @@ var $fieldTypes;
         if (is_array($input->aDelete)) {
             $dbh = & SGL_DB::singleton();
             
-            foreach ($input->aDelete as $index => $itemTypeId) {
+            foreach ($input->aDelete as $itemTypeId) {
                 //  delete item type from item_type table
                 $query = "DELETE FROM {$conf['table']['item_type']} WHERE item_type_id=$itemTypeId"; 
                 if (DB::isError($dbh->query($query))) {

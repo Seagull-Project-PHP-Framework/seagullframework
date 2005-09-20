@@ -149,7 +149,6 @@ class BugMgr extends SGL_Manager
         $aServerInfo = array();
         //  get db info
         $dbh = & SGL_DB::singleton();
-        $lastQuery = $dbh->last_query;
         $aServerInfo['lastSql'] = isset($dbh->last_query) ? 
             $dbh->last_query : null;
         $aServerInfo['phpSapi'] = php_sapi_name();
@@ -193,9 +192,7 @@ class BugMgr extends SGL_Manager
     }
     
     function sendEmail($oData)
-    {
-        $body = "The following bug report was submitted: \n\n";
-        
+    {        
         $report = new BugReport($oData);
         
         $options = array(

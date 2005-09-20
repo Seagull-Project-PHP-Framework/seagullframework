@@ -201,7 +201,6 @@ class PageMgr extends SGL_Manager
 
     function display(&$output)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         //  pre-check enabled box
@@ -266,7 +265,6 @@ class PageMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $separator = '/'; // can be configurable later
 
@@ -343,9 +341,7 @@ class PageMgr extends SGL_Manager
         $section = $nestedSet->getNode($input->sectionId);
         
         //  passing a non-existent section id results in null or false $section
-        if ($section) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-                    
+        if ($section) {                    
             //  setup article type, dropdowns built in display()
             $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
@@ -393,7 +389,6 @@ class PageMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $separator = '/';
 
@@ -498,7 +493,7 @@ class PageMgr extends SGL_Manager
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around
-            foreach ($input->aDelete as $index => $sectionId) {
+            foreach ($input->aDelete as $sectionId) {
                 if ($nestedSet->getNode($sectionId)){
                     $nestedSet->deleteNode($sectionId);
                 }
