@@ -7,6 +7,7 @@ BUGFIXES
 19-09-05    Fixed dynamic block implementation to work with FCK
 
 IMPROVEMENTS
+20-09-05    Removed extended session tests, functionality implemented by default
 07-09-05    Refactored Category functionality into SGL_Category (Aymerick Jehanne)
 30-08-05    Modified category.perms field to take 32 chars (Tobias Kuckuck)
 28-08-05    Blocks can now be stored in the DB and updated with GUI (uprooter)

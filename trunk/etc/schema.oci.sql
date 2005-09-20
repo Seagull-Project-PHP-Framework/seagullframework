@@ -111,12 +111,21 @@ constraint PK_TABLE_LOCK primary key (lockID, lockTable)
 -- ==============================================================
 --  Table: user_sessions
 -- ==============================================================
-create table user_session 
+CREATE TABLE user_session 
 (
-session_id                    VARCHAR(255)    not null,
-last_updated                  DATE       null,
-data_value                    CLOB            null,
-constraint PK_SESSION primary key (session_id)
+  session_id    varchar(255) NOT NULL,
+  last_updated  DATE       null,
+  data_value    CLOB            null,
+  usr_id        NUMBER(10) 	NOT NULL,
+  username      VARCHAR(64) DEFAULT NULL,
+  expiry        NUMBER(10) 	NOT NULL,
+  constraint PK_SESSION primary key (session_id)
+);
+
+create  index AK_user_session_keys on user_session (
+    last_updated,
+    usr_id,
+    username
 );
 
 -- ==============================================================
