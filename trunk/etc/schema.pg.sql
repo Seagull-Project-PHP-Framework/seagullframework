@@ -131,9 +131,27 @@ create table user_session
    constraint PK_SESSION primary key (session_id)
 );
 
-create  index AK_user_session_keys on user_session (
-    last_updated,
-    usr_id,
+-- ==============================================================
+--  Index: user_session_last_updated                        
+-- ==============================================================
+
+create  index user_session_last_updated on user_session (
+    last_updated
+);
+
+-- ==============================================================
+--  Index: user_session_usr_id                        
+-- ==============================================================
+
+create  index user_session_usr_id on user_session (
+    usr_id
+);
+    
+-- ==============================================================
+--  Index: user_session_username                        
+-- ==============================================================
+
+create  index user_session_username on user_session (
     username
 );
 
