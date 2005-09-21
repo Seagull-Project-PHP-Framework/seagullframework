@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO_ROOT=/var/www/html/seagull/branches/0.4-bugfix
+REPO_ROOT=/var/www/html/seagull/trunk
 
 # get list of installed modules
 moduleList=`ls $REPO_ROOT/modules`;
