@@ -17,9 +17,7 @@ class SampleRss
     }
 
     function getBlockContent()
-    {
-        $conf = & $GLOBALS['_SGL']['CONF']; 
-        
+    {        
         $cache = & SGL::cacheSingleton();
         if ($data = $cache->get('mailingListRss', 'blocks')) {
             $html = unserialize($data);

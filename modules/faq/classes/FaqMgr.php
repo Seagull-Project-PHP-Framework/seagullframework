@@ -170,7 +170,7 @@ class FaqMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $faqId) {
+            foreach ($input->aDelete as $faqId) {
                 $faq = & new DataObjects_Faq();
                 $faq->get($faqId);
                 $faq->delete();

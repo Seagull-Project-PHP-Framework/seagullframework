@@ -33,9 +33,6 @@ class OnlineUsers
 
     function getBlockContent($output)
     {
-        // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
-
         $theme = $_SESSION['aPrefs']['theme'];
         $output->webRoot = SGL_BASE_URL;
         $output->theme = $theme;

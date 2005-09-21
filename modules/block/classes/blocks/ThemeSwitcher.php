@@ -26,8 +26,7 @@ class ThemeSwitcher
     function getBlockContent()
     {
         $options = SGL_Output::generateSelect($this->aThemes, $_SESSION['aPrefs']['theme']);
-
-        $req = & SGL_HTTP_Request::singleton();        
+      
         $url = SGL_Url::makeLink() . 'frmThemeSwitcher/';
         $html = <<< HTML
         <p>Change the current theme:</p>

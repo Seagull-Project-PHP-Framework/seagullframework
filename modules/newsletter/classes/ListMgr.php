@@ -198,7 +198,7 @@ class ListMgr extends NewsletterMgr
     
                 // Groups validation
                 if (count($aGroups)) {
-                    foreach ($aGroups as $hash => $roleId) {
+                    foreach ($aGroups as $roleId) {
                         if (isset($input->roleList[$roleId])) {
     
                             // Remember all the valid roleIds from the form
@@ -357,7 +357,7 @@ class ListMgr extends NewsletterMgr
     {
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $newsletter_id) {
+            foreach ($input->aDelete as $newsletter_id) {
                 $oUser = & new DataObjects_Newsletter();
                 $oUser->get($newsletter_id);
                 $oUser->delete();
@@ -508,7 +508,7 @@ class ListMgr extends NewsletterMgr
         SGL :: logMessage(null, PEAR_LOG_DEBUG);
               
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $newsletter_id) {
+            foreach ($input->aDelete as $newsletter_id) {
                 $oUser = & new DataObjects_Newsletter();
                 $oUser->whereAdd("list = '".$input->validNewsList[$newsletter_id]['name']."'");
                 $oUser->delete(DB_DATAOBJECT_WHEREADD_ONLY);

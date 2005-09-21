@@ -150,7 +150,7 @@ class BlockForm
         return $this->form;
     }
 
-    function classAvailable($element, $compareTo) 
+    function classAvailable($element) 
     {
         if ($element) {
             $blockClass = $this->form->getElementValue('block[name]');

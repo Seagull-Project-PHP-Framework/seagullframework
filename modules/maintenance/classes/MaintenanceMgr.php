@@ -467,7 +467,7 @@ class MaintenanceMgr extends SGL_Manager
     function _clearCache(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $msg = '';
+
         if (array_key_exists('templates', $input->cache)) {
             include_once 'System.php';
             $theme = $_SESSION['aPrefs']['theme'];
