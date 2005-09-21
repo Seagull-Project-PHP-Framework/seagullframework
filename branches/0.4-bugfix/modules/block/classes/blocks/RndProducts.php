@@ -91,7 +91,7 @@ class RndProducts
         }
         $HTMLoutput = "";
         if (is_array($aProducts) && count($aProducts)) {
-            foreach ($aProducts as $key => $obj) {
+            foreach ($aProducts as $obj) {
               $obj->price = $this->currencyConverter($obj->price,$obj->currency,'EUR');
               $HTMLoutput .= $this->render_product($obj); 
             }

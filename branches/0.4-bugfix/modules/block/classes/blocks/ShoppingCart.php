@@ -61,7 +61,7 @@ class ShoppingCart {
 		$items = SGL_HTTP_Session :: get('cartBlockItems');
 		if (isset($items) and is_array($items) and count($items) > 0) {
             $total = 0;
-			foreach ($items as $key => $item) {
+			foreach ($items as $item) {
 				$html.= '<strong>'.$item['name'].'</strong><br>';
                 $html.= $item['quantity'].' x '.number_format($item['price'], 0, ',', '.');
                 $html.= '<br>';

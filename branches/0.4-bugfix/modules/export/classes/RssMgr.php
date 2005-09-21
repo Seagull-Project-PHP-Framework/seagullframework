@@ -198,7 +198,7 @@ class RssMgr extends SGL_Manager
      function getNews($limit = 10)
      {
          SGL::logMessage(null, PEAR_LOG_DEBUG);
-         $dbh = & SGL_DB::singleton();
+
          $query = "
                  SELECT  i.item_id AS id,
                          i.date_created AS created,

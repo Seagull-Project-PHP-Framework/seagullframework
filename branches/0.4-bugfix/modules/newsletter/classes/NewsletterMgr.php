@@ -568,14 +568,13 @@ class NewsletterMgr extends SGL_Manager
      */     
      function getUnsubscribedLists($userID) 
      {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);        
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $newsLists = $this->_getList();
         $subscribedLists = $this->getSubscribedLists($userID);
 
         foreach ($newsLists as $nKey => $nValues) {
-            foreach ($subscribedLists as $sKey => $sValues) {
+            foreach ($subscribedLists as $sValues) {
                 if ($nValues['name'] == $sValues->list) {
                     unset($newsLists[$nKey]);
                 }   

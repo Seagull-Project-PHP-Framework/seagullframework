@@ -184,7 +184,7 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $blockId) {
+            foreach ($input->aDelete as $blockId) {
                 $block = & new Block();                
                 $block->get($blockId);
                 // This takes into account block assignments as well
@@ -336,7 +336,7 @@ class BlockMgr extends SGL_Manager
 
         //  reindex
         $aReindexedData = array();
-        foreach ($data as $kk => $vv) {
+        foreach ($data as $vv) {
             $aReindexedData[$vv['block_id']] = $vv;
         }
         $aPagedData['data'] = $aReindexedData;

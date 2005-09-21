@@ -20,7 +20,6 @@ class ShopSearch
     function getBlockContent()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $catInput = '';
         $catID = 0;
         if (isset($GLOBALS['_SGL']['REQUEST']['frmCatID'])) {
             $catID = (int) $GLOBALS['_SGL']['REQUEST']['frmCatID'];

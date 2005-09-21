@@ -515,7 +515,7 @@ class IMessageMgr extends SGL_Manager
         $uid = SGL_HTTP_Session::getUid();
 
         $counter = 0;
-        foreach ($input->deleteArray as $index => $message_id) {
+        foreach ($input->deleteArray as $message_id) {
             $message = & new DataObjects_Instant_message();
             $message->whereAdd('instant_message_id = ' . $message_id);
             if ($message->find() != 1 || $message->fetch() == false) {

@@ -103,7 +103,7 @@ class RecentHtmlArticles
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $newItems = '<ul class="noindent">';
         if (is_array($aNewsItems) && count($aNewsItems)) {
-            foreach ($aNewsItems as $key => $obj) {
+            foreach ($aNewsItems as $obj) {
                 $newItems   .= '<li> <a href="'
                             . SGL_Url::makeLink('view', 'articleview', 'publisher', array(), "frmArticleID|$obj->item_id") . '">'
                             . $obj->addition . "</a></li>\n";
