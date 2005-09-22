@@ -4,8 +4,8 @@
     
     //  initialise
     require_once '../init.php';
-    require_once SGL_CORE_DIR . '/Controller.php';
-    $process = & new SGL_Controller();
+    require_once SGL_CORE_DIR . '/AppController.php';
+    $process = & new SGL_AppController();
     $process->go();
 
     /**
