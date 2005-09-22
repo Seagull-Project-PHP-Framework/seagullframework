@@ -229,7 +229,7 @@ class SGL
     {
         static $instance;
         
-        // If the instance is not there, create one
+        // If the instance doesn't exist, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';
             $conf = & $GLOBALS['_SGL']['CONF'];
