@@ -46,6 +46,7 @@ require_once SGL_LIB_DIR . '/SGL.php';
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
+require_once SGL_CORE_DIR . '/Registry.php';
 require_once 'HTML/Template/Flexy.php';
 
 /**
@@ -134,13 +135,11 @@ class SGL_AppController
         $this->init();
 
         //  setup input/output objects
-        $input = & new SGL_Output();
+        $input = &SGL_RequestRegistry::singleton();
+        $output = new SGL_Output();
 
         //  validate the information posted from the browser
         $this->page->validate($req, $input);
-
-        //  make a copy of $input for process
-        $output = $input;
 
         //  if input is valid, copy data members from input to output
         //  and send to be processed

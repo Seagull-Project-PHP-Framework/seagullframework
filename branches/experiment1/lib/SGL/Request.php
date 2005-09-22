@@ -14,23 +14,23 @@ class SGL_Request
     
     function init()
     {
-        #$conf = & $GLOBALS['_SGL']['CONF'];
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_REQUEST, $_FILES);
         
         //  remove slashes if necessary
-#        SGL_String::dispelMagicQuotes($this->aProps);
+        SGL_String::dispelMagicQuotes($this->aProps);
 
         //  get all URL parts after domain and TLD as an array
-        #$aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
         
         //  parse URL segments into SGL request structure
-        #$aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
+        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
         
         //  merge results with cleaned $_REQUEST values and $_POST
-#        SGL_String::dispelMagicQuotes($_POST);
-#        $this->aProps = array_merge($aSglRequest, $this->aProps, $_POST);
+        SGL_String::dispelMagicQuotes($_POST);
+        $this->aProps = array_merge($aSglRequest, $this->aProps, $_POST);
         
         return;
     }
@@ -46,9 +46,9 @@ class SGL_Request
     }
 }
 
-new SGL_Request();
-
-$input = &SGL_RequestRegistry::singleton();
-print '<pre>'; print_r($input);
+//new SGL_Request();
+//
+//$input = &SGL_RequestRegistry::singleton();
+//print '<pre>'; print_r($input);
 
 ?>
