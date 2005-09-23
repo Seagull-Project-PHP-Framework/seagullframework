@@ -19,6 +19,8 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
+23-09-05    After failed perms logout, you now get redirected to correct page
+            (Rares Benea)
 23-09-05    Rewrote RssMgr with XML_Serializer support, data-driven rather than
             template driven
 20-09-05    Chinese language update (Finjon Kiang)

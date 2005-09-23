@@ -195,9 +195,15 @@ class SGL_Manager
                             PEAR::raiseError('infinite loop detected, clear cookies and check perms', 
                                 SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
                         }
-                        //  get default params for logout page
-                        $aParams = $this->getDefaultPageParams();
-                        SGL_HTTP::redirect($aParams);
+                        //  prepare referer info for redirect after login
+                        $aParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+                        $redir = $conf['site']['baseUrl'] .'/'.  implode('/', $aParts);
+                        
+                        //  check that session is not invalid or timed out
+                        $loginPage = array( 'moduleName'    => 'user',
+                                            'managerName'   => 'login',
+                                            'redir'         => urlencode($redir));
+                        SGL_HTTP::redirect($loginPage); 
                     }
                 }
             }
