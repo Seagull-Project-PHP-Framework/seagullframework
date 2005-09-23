@@ -25,7 +25,7 @@ class SampleBlock2
         $text = <<< HTML
 <p style="text-align: center;">
 <a href="http://seagull.phpkitchen.com/index.php/export/rss/">
-    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" align="absmiddle"/>
+    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 2.0" align="absmiddle"/>
 </a>
 </p>
 HTML;
