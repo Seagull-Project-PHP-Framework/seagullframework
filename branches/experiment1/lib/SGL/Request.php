@@ -9,7 +9,7 @@ class SGL_Request
     function SGL_Request()
     {
         $this->init();
-        SGL_RequestRegistry::setRequest($this);
+        #SGL_RequestRegistry::setRequest($this);
     }
     
     function init()

@@ -48,19 +48,19 @@
  */
 class SGL_Util
 {
-    function getUserOs()
+    function setClientOs($client)
     {
         //  detect OS
-        if (!empty($_SERVER['HTTP_USER_AGENT']) and !defined('SGL_USR_OS')) {
-            if (strstr($_SERVER['HTTP_USER_AGENT'], 'Win')) {
+        if (!empty($client) and !defined('SGL_USR_OS')) {
+            if (strstr($client, 'Win')) {
                 define('SGL_USR_OS', 'Win');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
+            } elseif (strstr($client, 'Mac')) {
                 define('SGL_USR_OS', 'Mac');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Linux')) {
+            } elseif (strstr($client, 'Linux')) {
                 define('SGL_USR_OS', 'Linux');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Unix')) {
+            } elseif (strstr($client, 'Unix')) {
                 define('SGL_USR_OS', 'Unix');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'OS/2')) {
+            } elseif (strstr($client, 'OS/2')) {
                 define('SGL_USR_OS', 'OS/2');
             } else {
                 define('SGL_USR_OS', 'Other');

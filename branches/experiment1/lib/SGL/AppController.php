@@ -47,6 +47,7 @@ require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
 require_once SGL_CORE_DIR . '/Registry.php';
+require_once SGL_CORE_DIR . '/Request.php';
 require_once 'HTML/Template/Flexy.php';
 
 /**
@@ -103,6 +104,11 @@ class SGL_AppController
             }
         }
     }
+    
+    function setMode($oModel)
+    {
+        $this->model($oModel);   
+    }
 
     /**
      * Runs the application - main starting point for workflow.
@@ -118,27 +124,45 @@ class SGL_AppController
      * @access  public
      * @return  void
      */
-    function go()
+    function run($req)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        //  setup input/output objects
+        $input = &SGL_RequestRegistry::singleton();
+        $input->setRequest($req);
+        
+        $output = new SGL_Output();
 
+#task1
         //  determine enduser OS
-        SGL_Util::getUserOs();
+        SGL_Util::setClientOs($_SERVER['HTTP_USER_AGENT']);
+        //ApplicationHelper::setUserOs();
         
         //  load relevant manager class and instantiate
         $this->page = $this->_getModel();
+
+        #module = $req->getModuleName()
+        #$mgr = $req->getManagerName()
+        
+        #$mgrResolver = new ManagerResolver();
+        #$oMgr = $mgrResolver->getMgr($module, $mgr);
+        
+        #$oMgr->validate($req, $input);
+        
+        #if ($oMgr->isValid()) {
+            #$oMgr->process($input, $output);
+        #}            
+        #$template = $oMgr->getTemplate();
+        #$renderer = new Renderer(new TemplateStategy($template));
+        #$data = $renderer->render($oMgr->isValid() ? $output: $input);
+        #echo $data;
+        
         
         //  do general session & language initialisation and access-control check
         $this->init();
 
-        //  setup input/output objects
-        $input = &SGL_RequestRegistry::singleton();
-        $output = new SGL_Output();
-
-        //  validate the information posted from the browser
+        //  validate the information requested from the browser
         $this->page->validate($req, $input);
 
         //  if input is valid, copy data members from input to output
