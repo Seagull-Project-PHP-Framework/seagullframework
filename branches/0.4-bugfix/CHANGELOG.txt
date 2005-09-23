@@ -19,6 +19,8 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
+23-09-05    Rewrote RssMgr with XML_Serializer support, data-driven rather than
+            template driven
 20-09-05    Chinese language update (Finjon Kiang)
 14-09-05    Unit test runner added, currently works with pear-installable version of
             SimpleTest, many thanks to m3 Media Services Limited for granting us the

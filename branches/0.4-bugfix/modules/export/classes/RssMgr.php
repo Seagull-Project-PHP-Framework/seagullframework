@@ -40,7 +40,7 @@
 
 require_once SGL_CORE_DIR . '/Item.php';
 
-define('SGL_FEED_RSS_VERSION', '2.0');
+//define('SGL_FEED_RSS_VERSION', '1.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
 define('SGL_ITEM_TYPE_ARTICLE_HTML', 2);
@@ -66,24 +66,24 @@ class RssMgr extends SGL_Manager
         $this->_aActionsMapping = array(
             'news' => array('news'),
             );  
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        #$conf = & $GLOBALS['_SGL']['CONF'];
         
-        $this->feed = new SGL_Feed();
-        $this->feed->xml_version    = "1.0";
-        $this->feed->xml_encoding   = "utf-8";
-        $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
-        $this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
-        $this->feed->title          = $conf['RssMgr']['feedTitle'];
-        $this->feed->description    = $conf['RssMgr']['feedDescription'];
-        $this->feed->copyright      = $conf['RssMgr']['feedCopyright'];
-        $this->feed->managingeditor = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedEditor'] . ")";
-        $this->feed->webmaster      = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedWebmaster'] . ")";
-        $this->feed->ttl            = $conf['RssMgr']['feedRssTtl'];
-        $this->feed->link           = $conf['RssMgr']['feedUrl'];
-        $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
+//        $this->feed = new SGL_Feed();
+//        $this->feed->xml_version    = "1.0";
+//        $this->feed->xml_encoding   = "utf-8";
+//        $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
+        #$this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
+        #$this->feed->title          = $conf['RssMgr']['feedTitle'];
+        #$this->feed->description    = $conf['RssMgr']['feedDescription'];
+//        $this->feed->copyright      = $conf['RssMgr']['feedCopyright'];
+//        $this->feed->managingeditor = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedEditor'] . ")";
+//        $this->feed->webmaster      = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedWebmaster'] . ")";
+//        $this->feed->ttl            = $conf['RssMgr']['feedRssTtl'];
+//        $this->feed->link           = $conf['RssMgr']['feedUrl'];
+//        $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
 //        $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
-        $this->feed->pubdate        = $this->datetime2Rfc2822();
-        $this->feed->generator      = 'Seagull RSS Manager';
+        #$this->feed->pubdate        = $this->datetime2Rfc2822();
+        #$this->feed->generator      = 'Seagull RSS Manager';
         
 /*        $image               = new stdClass();
         $image->url          = ;
@@ -116,7 +116,7 @@ class RssMgr extends SGL_Manager
        
     /**
      *
-     * Generate a RSS feed with the latest news from the startpage.
+     * Generate a RSS feed from news articles.
      *
      * @param   object      $input
      * @param   object      $output
@@ -129,37 +129,69 @@ class RssMgr extends SGL_Manager
         
         $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'masterRss.xml';
-        $this->feed->category[]["content"] = $conf['RssMgr']['feedCategory'];
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
+
+        require_once 'XML/Serializer.php';
         
+        //  RSS 2.0 format
+        $options = array(
+            "indent"    => "    ",
+            "linebreak" => "\n",
+            "typeHints" => false,
+            "addDecl"   => true,
+            "encoding"  => "UTF-8",
+            "rootName"   => "rss",
+            'rootAttributes' => array(
+                'version' => '2.0',
+                'xmlns:content' => 'http://purl.org/rss/1.0/modules/content/',
+                'xmlns:wfw' => 'http://wellformedweb.org/CommentAPI/',
+                'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+                ),
+            "defaultTagName" => "item",
+        );
+        
+        //  build data structure
+        $data['channel'] = array(
+            'title' => $conf['RssMgr']['feedTitle'],
+            'link'  => $conf['RssMgr']['feedUrl'],
+            'description' =>  $conf['RssMgr']['feedDescription'],
+            'copyright' => $conf['RssMgr']['feedCopyright'],
+            'pubDate' => $this->datetime2Rfc2822(),
+            'category' => $conf['RssMgr']['feedCategory'],
+            'generator' => 'Seagull RSS Manager',
+            'language' => 'en',
+            'ttl' => $conf['RssMgr']['feedRssTtl'],
+            'docs' => 'http://blogs.law.harvard.edu/tech/rss',
+            );
+                
         if (($res !== false) && (!empty($res))) {
             foreach ($res as $article) {
-                $item = array();
-                $item["title"]           = $article["title"];
-                $item["link"]            = SGL_Output::makeUrl('view','articleview','publisher', array(),
-                                            "frmArticleID|{$article["id"]}");
-                $item["description"]     = SGL_String::summariseHtml($article["description"]);# . 
-                                            #" " . SGL_String::translate("Read more");
-                $author_name             = (!empty($article["fullname"])) 
-                                            ? " (" . $article["fullname"] . ")" 
-                                            : " (" . $article["username"] . ")";
-                $item["author"]          = $conf['RssMgr']['feedEmail'] . $author_name;
-                $item["source"]["url"]   = '';
-                $item["source"]["content"]   = '';
-                $item["guid"]["bool"]    = "true";
-                $item["guid"]["permalink"] = $item["link"];
-                $item["comments"]        = $item["link"];
-                $item["pubdate"]         = $this->datetime2Rfc2822($article["issued"]);
                 
-                $this->feed->items[] = $item;
+                $author_name  = (!empty($article["fullname"])) 
+                                ? " (" . $article["fullname"] . ")" 
+                                : " (" . $article["username"] . ")";
+                $link = SGL_Output::makeUrl('view','articleview','publisher', array(),
+                    "frmArticleID|{$article["id"]}");
+
+                //  build items
+                $data['channel'][] = array(
+                    'title'       => $article['title'], 
+                    'link'        => $link,
+                    'description' => SGL_String::summariseHtml($article["description"]),
+                    'author'      => $conf['RssMgr']['feedEmail'] . $author_name,
+                    'comments'    => $link,
+                    'pubDate'     => $this->datetime2Rfc2822($article["issued"]),
+                );
             }
-            // Set the pubDate to the release date of the newest item
-            $this->feed->pubdate = $this->feed->items[0]["pubdate"];
+
+            $serializer = new XML_Serializer($options);
+            if ($serializer->serialize($data)) {
+                header('Content-type: text/xml');
+                $output->feed = $serializer->getSerializedData();
+            }
         }
-        header("Content-Type: text/xml");
-        $output->feed = $this->feed;
     }
     
     function datetime2Rfc2822($date = "now")
