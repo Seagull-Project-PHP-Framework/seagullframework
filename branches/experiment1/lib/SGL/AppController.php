@@ -1,4 +1,9 @@
 <?php
+
+#different request implementations
+#
+
+
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | Copyright (c) 2005, Demian Turner                                         |
@@ -133,6 +138,7 @@ class SGL_AppController
         $input->setRequest($req);
         
         $output = new SGL_Output();
+        #$output = clone($input);
 
 #task1
         //  determine enduser OS
@@ -142,21 +148,35 @@ class SGL_AppController
         //  load relevant manager class and instantiate
         $this->page = $this->_getModel();
 
-        #module = $req->getModuleName()
-        #$mgr = $req->getManagerName()
+        /*
+        $moduleName = $req->getModuleName()
+        $mgrName = $req->getManagerName()
         
-        #$mgrResolver = new ManagerResolver();
-        #$oMgr = $mgrResolver->getMgr($module, $mgr);
+        $resolver = new SGL_ManagerResolver();
+        $mgr = $resolver->getMgr($moduleName, $mgrName);
         
-        #$oMgr->validate($req, $input);
+        $mgr->validate($req, $input);
         
-        #if ($oMgr->isValid()) {
-            #$oMgr->process($input, $output);
-        #}            
-        #$template = $oMgr->getTemplate();
-        #$renderer = new Renderer(new TemplateStategy($template));
-        #$data = $renderer->render($oMgr->isValid() ? $output: $input);
-        #echo $data;
+        if ($mgr->isValid()) {
+            $mgr->process($input, $output);
+        }            
+
+        $template = $input->getTemplate();
+        
+        $view = new SGL_View(new SGL_HtmlRenderer_Flexy($template, $options));
+        $data = $view->render($mgr->isValid() ? $output: $input);  // $view->rendererStrategy->render($this);
+        echo $data;
+        
+        
+//        $view = new View($mgr->isValid() ? $output: $input)
+//        --$template = $view->getTemplate();
+//        
+//        $view = new View(new HtmlRenderer_Flexy($template));
+//        $data = $view->render();
+//$view->rendererStrategy->render($this);        
+//        --$data = $renderer->render($oView);
+//        echo $data;
+        */
         
         
         //  do general session & language initialisation and access-control check
@@ -764,5 +784,20 @@ class SGL_AppController
             }
         }
     }   
+}
+
+class SGL_ManagerResolver
+{
+    
+}
+
+class SGL_HtmlRenderer_Flexy extends TemplateStratgy
+{
+    
+}
+
+class SGL_View
+{
+       
 }
 ?>
