@@ -152,14 +152,16 @@ class RssMgr extends SGL_Manager
             "defaultTagName" => "item",
         );
         
+        $lastUpdate = $this->getMostRecentUpdateDate();
+        
         //  build data structure
         $data['channel'] = array(
             'title' => $conf['RssMgr']['feedTitle'],
             'link'  => $conf['RssMgr']['feedUrl'],
             'description' =>  $conf['RssMgr']['feedDescription'],
             'copyright' => $conf['RssMgr']['feedCopyright'],
-            'lastBuildDate' => '',
-            'pubDate' => $this->datetime2Rfc2822(),
+            'pubDate' => $this->datetime2Rfc2822($lastUpdate),
+            'lastBuildDate' => $this->datetime2Rfc2822($lastUpdate),
             'category' => $conf['RssMgr']['feedCategory'],
             'generator' => 'Seagull RSS Manager',
             'language' => 'en',
@@ -186,13 +188,22 @@ class RssMgr extends SGL_Manager
                     'pubDate'     => $this->datetime2Rfc2822($article["issued"]),
                 );
             }
-
+            
             $serializer = new XML_Serializer($options);
             if ($serializer->serialize($data)) {
                 header('Content-type: text/xml');
                 $output->feed = $serializer->getSerializedData();
             }
         }
+    }
+    
+    function getMostRecentUpdateDate()
+    {
+         $dbh = & SGL_DB::singleton();
+         $conf = & $GLOBALS['_SGL']['CONF'];
+         
+         $date = $dbh->getOne("SELECT MAX(last_updated) FROM {$conf['table']['item']}");
+         return $date;
     }
     
     function datetime2Rfc2822($date = "now")
