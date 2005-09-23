@@ -193,6 +193,7 @@ class RssMgr extends SGL_Manager
                 header('Content-type: text/xml');
                 header('Last-Modified: ' . $lastUpdate);
                 header("Etag: \" $lastUpdate\"");
+                header('Cache-Control: max-age=21600');
                 $output->feed = $serializer->getSerializedData();
             }
         }
