@@ -191,6 +191,8 @@ class RssMgr extends SGL_Manager
             $serializer = new XML_Serializer($options);
             if ($serializer->serialize($data)) {
                 header('Content-type: text/xml');
+                header('Last-Modified: ' . $lastUpdate);
+                header("Etag: \" $lastUpdate\"");
                 $output->feed = $serializer->getSerializedData();
             }
         }
