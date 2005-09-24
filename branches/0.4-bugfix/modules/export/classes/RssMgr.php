@@ -132,10 +132,10 @@ class RssMgr extends SGL_Manager
         
         $output->template = 'masterRss.xml';
         
-        $cache = &new HTTP_Cache();
+        $cache = &new HTTP_Cache(array('auto' => true));
         
         // create an etag
-        $etag = $this->mostRecentUpdate;
+        $etag = '"' .$this->mostRecentUpdate.'"';
         $cache->setEtag($etag);
         
         // The browser cache is not valid
