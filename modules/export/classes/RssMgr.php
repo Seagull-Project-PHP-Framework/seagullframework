@@ -224,7 +224,7 @@ class RssMgr extends SGL_Manager
             'link'  => $conf['RssMgr']['feedUrl'],
             'description' =>  $conf['RssMgr']['feedDescription'],
             'copyright' => $conf['RssMgr']['feedCopyright'],
-            'lastBuildDate' => $this->datetime2Rfc2822($lastUpdate),
+            'pubDate' => $this->datetime2Rfc2822($lastUpdate),
             'category' => $conf['RssMgr']['feedCategory'],
             'generator' => 'Seagull RSS Manager',
             'language' => 'en',
