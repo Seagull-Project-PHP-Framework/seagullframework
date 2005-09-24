@@ -132,23 +132,73 @@ class RssMgr extends SGL_Manager
         
         $output->template = 'masterRss.xml';
         
-        $cache = &new HTTP_Cache(array('auto' => true));
+        #$cache = &new HTTP_Cache(array('auto' => true));
         
         // create an etag
-        $etag = '"' .$this->mostRecentUpdate.'"';
-        $cache->setEtag($etag);
+        #$etag = '"' .$this->mostRecentUpdate.'"';
+        #$cache->setEtag($etag);
         
         // The browser cache is not valid
-        if (!$cache->isValid()) {
-            $data = $this->_buildXml($input);
+        #if (!$cache->isValid()) {
+            #$data = $this->_buildXml($input);
             
             // pass it to the cache
-            $cache->setBody($data);
+         #   $cache->setBody($data);
+        #}
+        header('Content-Type: text/xml; charset=utf-8');
+        session_cache_limiter('public');
+        
+        /*
+         * Caching logic - Do not send feed if nothing has changed
+         * Implementation inspired by Simon Willison 
+         * [http://simon.incutio.com/archive/2003/04/23/conditionalGet], Thiemo Maettig
+         */
+    
+        // See if the client has provided the required headers.
+        // Always convert the provided header into GMT timezone to 
+        // allow comparing to the server-side last-modified header
+        $modified_since = !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+                        ? gmdate('D, d M Y H:i:s \G\M\T', 
+                            $this->serverOffsetHour(strtotime(stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE'])), true))
+                        : false;
+        $none_match     = !empty($_SERVER['HTTP_IF_NONE_MATCH'])
+                        ? str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH']))
+                        : false;
+    
+        if ($this->mostRecentUpdate) {
+            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', $this->serverOffsetHour($this->mostRecentUpdate, true));
+            $etag          = '"' . $last_modified . '"';
+    
+            header('Last-Modified: ' . $last_modified);
+            header('ETag: '          . $etag);
+    
+            if (($none_match == $last_modified && $modified_since == $last_modified) ||
+                (!$none_match && $modified_since == $last_modified) ||
+                (!$modified_since && $none_match == $last_modified)) {
+                header('HTTP/1.0 304 Not Modified');
+                return;
+            }
         }
-        header('Content-type: text/xml');
         
         // send header or data
-        $output->feed = $cache->send();
+        $output->feed = $this->_buildXml($input);
+    }
+    
+    function serverOffsetHour($timestamp = null, $negative = false, $serverOffsetHours = 0) 
+    {
+        if ($timestamp == null) {
+            $timestamp = time();
+        }
+    
+        if (empty($serverOffsetHours) 
+                || !is_numeric($serverOffsetHours) 
+                || $serverOffsetHours == 0) {
+            return $timestamp;
+        } else {
+            return $timestamp + (($negative 
+                ? -$serverOffsetHours 
+                : $serverOffsetHours) * 60 * 60);
+        }
     }
 
     function _buildXml(&$input)
