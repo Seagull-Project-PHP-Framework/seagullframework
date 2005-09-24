@@ -158,6 +158,7 @@ class RssMgr extends SGL_Manager
     
             header('Last-Modified: ' . $last_modified);
             header('ETag: '          . $etag);
+            header('Vary: Accept-Encoding');
     
             if (($none_match == $last_modified && $modified_since == $last_modified) ||
                 (!$none_match && $modified_since == $last_modified) ||
