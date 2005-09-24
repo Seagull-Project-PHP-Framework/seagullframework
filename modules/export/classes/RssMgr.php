@@ -39,7 +39,6 @@
 // $Id: RssMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
-require_once 'HTTP/Cache.php';
 
 //define('SGL_FEED_RSS_VERSION', '1.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
@@ -131,20 +130,7 @@ class RssMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $output->template = 'masterRss.xml';
-        
-        #$cache = &new HTTP_Cache(array('auto' => true));
-        
-        // create an etag
-        #$etag = '"' .$this->mostRecentUpdate.'"';
-        #$cache->setEtag($etag);
-        
-        // The browser cache is not valid
-        #if (!$cache->isValid()) {
-            #$data = $this->_buildXml($input);
-            
-            // pass it to the cache
-         #   $cache->setBody($data);
-        #}
+
         header('Content-Type: text/xml; charset=utf-8');
         session_cache_limiter('public');
         
@@ -166,7 +152,8 @@ class RssMgr extends SGL_Manager
                         : false;
     
         if ($this->mostRecentUpdate) {
-            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', $this->serverOffsetHour(strtotime($this->mostRecentUpdate), true));
+            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', 
+                $this->serverOffsetHour(strtotime($this->mostRecentUpdate), true));
             $etag          = '"' . $last_modified . '"';
     
             header('Last-Modified: ' . $last_modified);
