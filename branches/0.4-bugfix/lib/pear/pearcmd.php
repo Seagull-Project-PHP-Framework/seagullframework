@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0RC2";
+$pear_package_version = "1.4.0";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
