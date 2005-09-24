@@ -1,1 +1,10 @@
 - SGL_Util::setClientOs
+
+TODO
+====
+ - observer for LoginMgr
+ - create an SGL_User object that extends DB_DataObject_Usr
+ - use decorator/intercepting filter for Controller::init
+ - send mail regarding timing of php namespace integration
+ - create an ExperiencedDevelopers section in the wiki explaining pattern usage in sgl
+ - make all conf.ini files conf.ini.dist, create a Config::buildFromDist, and store data in var, ie conf_user.ini/php

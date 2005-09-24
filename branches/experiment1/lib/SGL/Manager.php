@@ -39,12 +39,12 @@
 // $Id: Manager.php,v 1.19 2005/06/13 12:00:25 demian Exp $
 
 /**
- * Parent class for all Page/module objects.
+ * Abstract model controller for all the 'manager' classes.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.19 $
- * @since   PHP 4.1
+ * @abstract 
  */
 class SGL_Manager
 {
