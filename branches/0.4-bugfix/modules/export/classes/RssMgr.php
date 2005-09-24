@@ -131,7 +131,6 @@ class RssMgr extends SGL_Manager
         
         $output->template = 'masterRss.xml';
 
-        header('Pragma: cache');
         header('Content-Type: text/xml; charset=utf-8');
         session_cache_limiter('public');
         
