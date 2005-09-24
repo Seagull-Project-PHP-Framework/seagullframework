@@ -39,6 +39,7 @@
 // $Id: RssMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
+require_once 'HTTP/Cache.php';
 
 //define('SGL_FEED_RSS_VERSION', '1.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
@@ -54,6 +55,7 @@ define('SGL_CATEGORY_NEWS_ID', 1);
 class RssMgr extends SGL_Manager 
 {
     var $feed;
+    var $mostRecentUpdate;
 
     function RssMgr()
     {
@@ -65,7 +67,9 @@ class RssMgr extends SGL_Manager
         
         $this->_aActionsMapping = array(
             'news' => array('news'),
-            );  
+            );
+        $this->mostRecentUpdate = $this->getMostRecentUpdateDate();
+        
         #$conf = & $GLOBALS['_SGL']['CONF'];
         
 //        $this->feed = new SGL_Feed();
@@ -113,7 +117,6 @@ class RssMgr extends SGL_Manager
         return $input;
     }
 
-       
     /**
      *
      * Generate a RSS feed from news articles.
@@ -127,8 +130,32 @@ class RssMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'masterRss.xml';
+        
+        $cache = &new HTTP_Cache();
+        
+        // create an etag
+        $etag = $this->mostRecentUpdate;
+        $cache->setEtag($etag);
+        
+        // The browser cache is not valid
+        if (!$cache->isValid()) {
+            $data = $this->_buildXml($input);
+            
+            // pass it to the cache
+            $cache->setBody($data);
+        }
+        header('Content-type: text/xml');
+        
+        // send header or data
+        $output->feed = $cache->send();
+    }
+
+    function _buildXml(&$input)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
@@ -190,12 +217,11 @@ class RssMgr extends SGL_Manager
             
             $serializer = new XML_Serializer($options);
             if ($serializer->serialize($data)) {
-                header('Content-type: text/xml');
-                header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', strtotime($lastUpdate)));
-                header("Etag: \"" . strtotime($lastUpdate)."\"");
-                header('Cache-Control: max-age=21600');
-                header("Pragma: ");
-                $output->feed = $serializer->getSerializedData();
+#                header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', strtotime($lastUpdate)));
+#                header("Etag: \"" . strtotime($lastUpdate)."\"");
+#                header('Cache-Control: max-age=21600');
+#                #header("Pragma: ");
+                return $serializer->getSerializedData();
             }
         }
     }
