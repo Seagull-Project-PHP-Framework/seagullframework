@@ -166,7 +166,7 @@ class RssMgr extends SGL_Manager
                         : false;
     
         if ($this->mostRecentUpdate) {
-            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', $this->serverOffsetHour($this->mostRecentUpdate, true));
+            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', $this->serverOffsetHour(strtotime($this->mostRecentUpdate), true));
             $etag          = '"' . $last_modified . '"';
     
             header('Last-Modified: ' . $last_modified);
