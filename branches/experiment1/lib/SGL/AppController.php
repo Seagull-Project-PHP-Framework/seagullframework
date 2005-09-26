@@ -52,7 +52,8 @@ require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
 require_once SGL_CORE_DIR . '/Registry.php';
-require_once SGL_CORE_DIR . '/Request.php';
+#require_once SGL_CORE_DIR . '/Request.php';
+require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'HTML/Template/Flexy.php';
 
 /**
@@ -134,11 +135,12 @@ class SGL_AppController
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  setup input/output objects
-        $input = &SGL_RequestRegistry::singleton();
-        $input->setRequest($req);
+        #$input = &SGL_RequestRegistry::singleton();
+        #$input->setRequest($req);
         
-        $output = new SGL_Output();
-        #$output = clone($input);
+        $input = new SGL_Output();
+        #$output = new SGL_Output();
+        $output = clone($input);
 
 #task1
         //  determine enduser OS
@@ -580,6 +582,26 @@ class SGL_AppController
         SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
         return true;
     }
+    
+    /**
+     * Copies properties from source object to destination object.
+     *
+     * @access  public
+     * @static
+     * @param   object  $src    typically the validated input from Request
+     * @param   object  $dest   typically the ouput object
+     * @return  void
+     */
+    function _copyObjectProperties(& $src, & $dest)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aObjAttrs = get_object_vars($src);
+        if (is_array($aObjAttrs)) {
+            foreach ($aObjAttrs as $objAttrName => $objAttrValue) {
+                $dest->$objAttrName = $objAttrValue;
+            }
+        }
+    }
 
     /**
      * Sends processed input to template engine.
@@ -704,37 +726,62 @@ class SGL_AppController
             $output->executionTime = getSystemTime() - $GLOBALS['_SGL']['START_TIME'];
         }
         
-        //  initialise template engine
-        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        
         $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $this->page->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $this->page->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/' . $theme . '/default'. PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/default',
-            'templateDirOrder'  => 'reverse',
-            'multiSource'       => true,
-            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $theme,
-            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
-            'debug'             => SGL_FLEXY_DEBUG,
-            'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
-            'filters'           => SGL_FLEXY_FILTERS,
-            'locale'            => SGL_FLEXY_LOCALE,
-            'compiler'          => SGL_FLEXY_COMPILER,
-            'valid_functions'   => SGL_FLEXY_VALID_FNS,
-            'flexyIgnore'       => SGL_FLEXY_IGNORE,
-            'globals'           => true,
-            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
-        );
+            'theme' => $theme,
+            'module' => $this->page->module,
+            );
+        
+        $view = new SGL_HtmlView($output, new SGL_HtmlFlexyStrategy($options));
+        echo $view->render();
+        
 
+
+//        if ($this->conf['site']['outputBuffering']) {
+//            ob_end_flush();
+//        }
+//        echo $data;
+    }   
+}
+
+class SGL_ManagerResolver
+{
+    
+}
+
+
+/**
+ * Abstract renderer strategy
+ *
+ * @abstract
+ */
+class SGL_TemplateRendererStrategy
+{
+    
+}
+
+class SGL_HtmlFlexyStrategy extends SGL_TemplateRendererStratgy
+{
+    var $options = array();
+    
+    function SGL_HtmlFlexyStrategy($conf)
+    {
+
+    }
+    
+    function render(/*SGL_View*/ $view) 
+    {
+        return $view->render($this->data, $this);
+        
         // Configure Flexy to use SGL ModuleOutput Plugin 
         // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $this->page->module . '/classes/Output.php';
+        $customOutput = SGL_MOD_DIR . '/' . $this->conf['module'] . '/classes/Output.php';
         if (is_readable($customOutput)) {
             $className = ucfirst($this->page->module) . 'Output';
-            if (isset($options['plugins'])) {
-                $options['plugins'] = $options['plugins'] + array($className => $customOutput);
+            if (isset($this->options['plugins'])) {
+                $this->options['plugins'] = $this->options['plugins'] + array($className => $customOutput);
             } else {
-                $options['plugins'] = array($className => $customOutput);
+                $this->options['plugins'] = array($className => $customOutput);
             }
         }
 
@@ -756,48 +803,74 @@ class SGL_AppController
         }
 
         $data = $templ->bufferedOutputObject($output, $elements);
-
+        
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
-        if ($this->conf['site']['outputBuffering']) {
-            ob_end_flush();
-        }
-        echo $data;
-#print '<pre>'; print_r($GLOBALS['_SGL']['REQUEST']);
-    }
-
-    /**
-     * Copies properties from source object to destination object.
-     *
-     * @access  public
-     * @static
-     * @param   object  $src    typically the validated input from Request
-     * @param   object  $dest   typically the ouput object
-     * @return  void
-     */
-    function _copyObjectProperties(& $src, & $dest)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aObjAttrs = get_object_vars($src);
-        if (is_array($aObjAttrs)) {
-            foreach ($aObjAttrs as $objAttrName => $objAttrValue) {
-                $dest->$objAttrName = $objAttrValue;
-            }
-        }
-    }   
+        return $data;
+    } 
 }
 
-class SGL_ManagerResolver
-{
-    
-}
-
-class SGL_HtmlRenderer_Flexy extends TemplateStratgy
-{
-    
-}
-
+/**
+ * Abstract view class.
+ *
+ * @abstract 
+ *
+ */
 class SGL_View
 {
-       
+    /**
+     * Enter description here...
+     *
+     * @var SGL_TemplateRendererStrategy
+     */
+    var $rendererStrategy;
+    
+    function render() {}  
+}
+
+class SGL_HtmlView extends SGL_View
+{
+    var $data = null;
+    
+    /**
+     * Enter description here...
+     *
+     * @param SGL_Output $data
+     * @param SGL_TemplateRendererStrategy $templateRendererStrategy
+     * @return SGL_HtmlView
+     */
+    function SGL_HtmlView($data, $templateRendererStrategy)
+    {
+        //  initialise template engine
+        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        $options = array(
+            'templateDir'       =>  SGL_THEME_DIR . '/' . $conf['theme'] . '/' . $this->page->module . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/default/' . $conf['module'] . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/' . $conf['theme'] . '/default'. PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/default/default',
+            'templateDirOrder'  => 'reverse',
+            'multiSource'       => true,
+            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $conf['theme'],
+            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
+            'debug'             => SGL_FLEXY_DEBUG,
+            'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
+            'filters'           => SGL_FLEXY_FILTERS,
+            'locale'            => SGL_FLEXY_LOCALE,
+            'compiler'          => SGL_FLEXY_COMPILER,
+            'valid_functions'   => SGL_FLEXY_VALID_FNS,
+            'flexyIgnore'       => SGL_FLEXY_IGNORE,
+            'globals'           => true,
+            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
+        );
+        $this->options = $options;
+        $this->conf = $conf;
+        
+//        $this->data = $data;
+//        $this->rendererStrategy = $templateRendererStrategy; 
+    }
+    
+    function render(/*SGL_View*/ $view) 
+    {
+        return $view->render($this->data, $this);
+    }
 }
 ?>
