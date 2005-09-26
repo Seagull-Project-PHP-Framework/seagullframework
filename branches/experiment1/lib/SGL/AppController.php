@@ -687,6 +687,7 @@ class SGL_AppController
         $output->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $output->scriptClose      = "\n//--> </script>\n";
         $output->frontScriptName  = $this->conf['site']['frontScriptName'];
+        $output->module			  = $this->page->module;
 
 		// set the default WYSIWYG editor
 		if (isset($output->wysiwyg) && $output->wysiwyg == true) {
@@ -726,13 +727,13 @@ class SGL_AppController
             $output->executionTime = getSystemTime() - $GLOBALS['_SGL']['START_TIME'];
         }
         
+        //  send memory consumption to output
+        if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
+            $output->memoryUsage = number_format(memory_get_usage());
+        }
+
         
-        $options = array(
-            'theme' => $theme,
-            'module' => $this->page->module,
-            );
-        
-        $view = new SGL_HtmlView($output, new SGL_HtmlFlexyStrategy($options));
+        $view = new SGL_HtmlView($output, new SGL_HtmlFlexyStrategy());
         echo $view->render();
         
 
@@ -760,52 +761,12 @@ class SGL_TemplateRendererStrategy
     
 }
 
-class SGL_HtmlFlexyStrategy extends SGL_TemplateRendererStratgy
+class SGL_HtmlFlexyStrategy extends SGL_TemplateRendererStrategy
 {
-    var $options = array();
-    
-    function SGL_HtmlFlexyStrategy($conf)
-    {
-
-    }
     
     function render(/*SGL_View*/ $view) 
     {
-        return $view->render($this->data, $this);
-        
-        // Configure Flexy to use SGL ModuleOutput Plugin 
-        // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $this->conf['module'] . '/classes/Output.php';
-        if (is_readable($customOutput)) {
-            $className = ucfirst($this->page->module) . 'Output';
-            if (isset($this->options['plugins'])) {
-                $this->options['plugins'] = $this->options['plugins'] + array($className => $customOutput);
-            } else {
-                $this->options['plugins'] = array($className => $customOutput);
-            }
-        }
-
-        //  suppress notices in templates
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
-        $templ = & new HTML_Template_Flexy();
-        $templ->compile($output->masterTemplate);
-
-        //  if some Flexy 'elements' exist in the output object, send them as
-        //  2nd arg to Flexy::bufferedOutputObject()
-        $elements = (   isset($output->flexyElements) && 
-                        is_array($output->flexyElements))
-                ? $output->flexyElements 
-                : array();
-
-        //  send memory consumption to output
-        if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
-            $output->memoryUsage = number_format(memory_get_usage());
-        }
-
-        $data = $templ->bufferedOutputObject($output, $elements);
-        
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
-        return $data;
+        return $view->render();
     } 
 }
 
@@ -817,6 +778,8 @@ class SGL_HtmlFlexyStrategy extends SGL_TemplateRendererStratgy
  */
 class SGL_View
 {
+	var $data;
+	
     /**
      * Enter description here...
      *
@@ -824,13 +787,20 @@ class SGL_View
      */
     var $rendererStrategy;
     
-    function render() {}  
+    function SGL_View($data, $rendererStrategy)
+    {
+    	$this->data = $data;
+    	$this->rendererStrategy = $rendererStrategy;	
+    }
+    
+    function render() 
+    {
+    	$this->rendererStrategy->render($this);
+    }  
 }
 
 class SGL_HtmlView extends SGL_View
 {
-    var $data = null;
-    
     /**
      * Enter description here...
      *
@@ -838,18 +808,20 @@ class SGL_HtmlView extends SGL_View
      * @param SGL_TemplateRendererStrategy $templateRendererStrategy
      * @return SGL_HtmlView
      */
-    function SGL_HtmlView($data, $templateRendererStrategy)
+    function SGL_HtmlView(&$data, $templateRendererStrategy)
     {
+    	parent::SGL_View($data, $templateRendererStrategy);
+    	
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $conf['theme'] . '/' . $this->page->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $conf['module'] . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/' . $conf['theme'] . '/default'. PATH_SEPARATOR .
+            'templateDir'       =>  SGL_THEME_DIR . '/' . $data->theme . '/' . $data->module . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/default/' . $data->module . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
                                     SGL_THEME_DIR . '/default/default',
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
-            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $conf['theme'],
+            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $data->theme,
             'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
             'debug'             => SGL_FLEXY_DEBUG,
             'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
@@ -861,16 +833,43 @@ class SGL_HtmlView extends SGL_View
             'globals'           => true,
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
         );
+
         $this->options = $options;
-        $this->conf = $conf;
         
 //        $this->data = $data;
 //        $this->rendererStrategy = $templateRendererStrategy; 
     }
     
-    function render(/*SGL_View*/ $view) 
+    function render() 
     {
-        return $view->render($this->data, $this);
+        // Configure Flexy to use SGL ModuleOutput Plugin 
+        // If an Output.php file exists in module's dir
+        $customOutput = SGL_MOD_DIR . '/' . $this->data->module . '/classes/Output.php';
+        if (is_readable($customOutput)) {
+            $className = ucfirst($this->data->module) . 'Output';
+            if (isset($this->options['plugins'])) {
+                $this->options['plugins'] = $this->options['plugins'] + array($className => $customOutput);
+            } else {
+                $this->options['plugins'] = array($className => $customOutput);
+            }
+        }
+
+        //  suppress notices in templates
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
+        $templ = & new HTML_Template_Flexy();
+        $templ->compile($this->data->masterTemplate);
+
+        //  if some Flexy 'elements' exist in the output object, send them as
+        //  2nd arg to Flexy::bufferedOutputObject()
+        $elements = (   isset($this->data->flexyElements) && 
+                        is_array($this->data->flexyElements))
+                ? $this->data->flexyElements 
+                : array();
+
+        $data = $templ->bufferedOutputObject($this->data, $elements);
+        
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
+        return $data;
     }
 }
 ?>
