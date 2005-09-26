@@ -19,6 +19,7 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
+26-09-05    Added optimize/analyse tables to maintenance module  (Lorenzo Alberton)
 23-09-05    After failed perms logout, you now get redirected to correct page
             (Rares Benea)
 23-09-05    Rewrote RssMgr with XML_Serializer support, data-driven rather than

@@ -328,5 +328,55 @@ class SGL_Sql
         }
         return true;
     }
+    
+    /**
+     * Optimizes db tables.
+     *
+     * Default is to act on all tables in db, unless specified in $tables.
+     *
+     * @access  public
+     * @static
+     * @param   mixed  $tables  string table name or array of string table names
+     * @return  true | PEAR Error
+     */
+    function optimizeTables($tables = null)
+    {
+        $db =& SGL_DB::singleton();
+        switch ($db->phptype) {
+    
+        case 'mysql':
+            $data = array();
+            $aTables = count((array)$tables) ? (array)$tables : $db->getListOf('tables');
+    
+            $sql = 'OPTIMIZE TABLE ' . implode(', ', $aTables);
+            $err = $db->query($sql);
+            if (PEAR::isError($err)) {
+                return $err;
+            }
+            $sql = 'ANALYZE TABLE ' . implode(', ', $aTables);
+            $err = $db->query($sql);
+            if (PEAR::isError($err)) {
+                return $err;
+            }
+    
+        case 'pgsql':
+            if (empty($tables)) {
+                $sql = 'VACUUM FULL ANALYZE';
+                $err = $db->query($sql);
+                if (PEAR::isError($err)) {
+                    return $err;
+                }
+            } else {
+                foreach ((array)$tables as $table) {
+                    $sql = 'VACUUM FULL ANALYZE ' . $table;
+                    $err = $db->query($sql);
+                    if (PEAR::isError($err)) {
+                        return $err;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }
 ?>

@@ -66,6 +66,7 @@ class MaintenanceMgr extends SGL_Manager
             'checkAllModules' => array('checkAllModules'),
             'dbgen'     => array('dbgen'),
             'rebuildSequences' => array('rebuildSequences'),
+            'optimizeTables' => array('optimizeTables'),
             'clearCache' => array('clearCache'),
             'createModule' => array('createModule', 'redirectToDefault'),
             'list'      => array('list'),
@@ -616,6 +617,19 @@ EOF;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
+    
+    function _optimizeTables(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR . '/Sql.php';
+        $res = SGL_Sql::optimizeTables();
+        if (PEAR::isError($res)) {
+            return $res;
+        } else {
+            SGL::raiseMsg('Tables optimized successfully');
+        }
+    }
+    
 
     function _redirectToDefault(&$input, &$output)
     {

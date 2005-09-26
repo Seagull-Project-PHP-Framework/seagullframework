@@ -52,4 +52,7 @@ $words['please specify an option'] = 'please specify an option';
 $words['please check at least one box'] = 'please check at least one box';
 $words['please enter module name'] = 'please enter module name';
 $words['please enter manager name'] = 'please enter manager name';
+$words['Optimize DB Tables'] = 'Optimize DB Tables';
+$words['Optimize DB Tables Now'] = 'Optimize DB Tables Now';
+$words['Tables optimized successfully'] = 'Tables optimized successfully';
 ?>
