@@ -1,5 +1,8 @@
 <?php
-
+/*
+    This block is alpha, use at your own risk, there have been db corruptions in the 
+    user_session table associated with it's usage --demian
+*/
 require_once SGL_MOD_DIR . '/user/classes/UserPreferenceMgr.php';
 $theme = $_SESSION['aPrefs']['theme'];
 $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
