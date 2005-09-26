@@ -55,6 +55,21 @@
     </fieldset>
 </form>
 
+<form name="optimize" method="post" id="optimize" flexy:ignore>
+    <fieldset>
+        <legend>{translate(#Optimize DB Tables#)}</legend>
+
+        <table>
+            <tr>
+                <td>
+                    <input type="hidden" name="action" value="optimizeTables" />
+                    <input type="submit" name="submit" value="{translate(#Optimize DB Tables Now#)}" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>
+
 <form name="caches" method="post" id="caches" flexy:ignore>
     <input type="hidden" name="action" value="clearCache" />
 
