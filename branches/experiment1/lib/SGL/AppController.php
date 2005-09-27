@@ -779,8 +779,8 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
         //  invoke html view specific post-process tasks
         $ok = $view->postProcess();
         
-        //  suppress notices in templates <- method
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
+        //  suppress error notices in templates
+        SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
         
         //  prepare flexy object
         $flexy = $this->initEngine($view->data);
@@ -796,7 +796,7 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
 
         $data = $flexy->bufferedOutputObject($view->data, $elements);
         
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
+        SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
         
 //        if ($this->conf['site']['outputBuffering']) {
 //            ob_end_flush();
