@@ -733,15 +733,8 @@ class SGL_AppController
         }
 
         
-        $view = new SGL_HtmlView($output, new SGL_HtmlFlexyStrategy());
+        $view = new SGL_HtmlView($output, new SGL_HtmlFlexyRendererStrategy());
         echo $view->render();
-        
-
-
-//        if ($this->conf['site']['outputBuffering']) {
-//            ob_end_flush();
-//        }
-//        echo $data;
     }   
 }
 
@@ -756,62 +749,62 @@ class SGL_ManagerResolver
  *
  * @abstract
  */
-class SGL_TemplateRendererStrategy
+class SGL_OutputRendererStrategy
 {
+    function initEngine() {}
     
+    function render($view) {}
 }
 
-class SGL_HtmlFlexyStrategy extends SGL_TemplateRendererStrategy
+class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
 {
     
-    function render(/*SGL_View*/ $view) 
-    {
-        return $view->render();
-    } 
-}
-
-/**
- * Abstract view class.
- *
- * @abstract 
- *
- */
-class SGL_View
-{
-	var $data;
-	
     /**
-     * Enter description here...
+     * Director for html Flexy renderer.
      *
-     * @var SGL_TemplateRendererStrategy
+     * @param SGL_View $view
+     * @return string   rendered html output
      */
-    var $rendererStrategy;
-    
-    function SGL_View($data, $rendererStrategy)
+    function render(/*SGL_View*/ &$view) 
     {
-    	$this->data = $data;
-    	$this->rendererStrategy = $rendererStrategy;	
+        //  invoke html view specific post-process tasks
+        $ok = $view->postProcess();
+        
+        //  suppress notices in templates <- method
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
+        
+        //  prepare flexy object
+        $flexy = $this->initEngine($view->data);
+        
+        $ok = $flexy->compile($view->data->masterTemplate);
+
+        //  if some Flexy 'elements' exist in the output object, send them as
+        //  2nd arg to Flexy::bufferedOutputObject()
+        $elements = (   isset($view->data->flexyElements) 
+                  && is_array($view->data->flexyElements))
+                ? $view->data->flexyElements 
+                : array();
+
+        $data = $flexy->bufferedOutputObject($view->data, $elements);
+        
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
+        
+//        if ($this->conf['site']['outputBuffering']) {
+//            ob_end_flush();
+//        }
+        return $data;
     }
     
-    function render() 
-    {
-    	$this->rendererStrategy->render($this);
-    }  
-}
-
-class SGL_HtmlView extends SGL_View
-{
     /**
-     * Enter description here...
+     * Initialise Flexy options.
      *
      * @param SGL_Output $data
-     * @param SGL_TemplateRendererStrategy $templateRendererStrategy
-     * @return SGL_HtmlView
+     * @return boolean
+     *
+     * @todo move flexy constants to this class def
      */
-    function SGL_HtmlView(&$data, $templateRendererStrategy)
+    function initEngine(&$data)
     {
-    	parent::SGL_View($data, $templateRendererStrategy);
-    	
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
@@ -833,43 +826,115 @@ class SGL_HtmlView extends SGL_View
             'globals'           => true,
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
         );
-
-        $this->options = $options;
         
-//        $this->data = $data;
-//        $this->rendererStrategy = $templateRendererStrategy; 
+        $ok = $this->setupPlugins($data, $options);
+        
+        $flexy = & new HTML_Template_Flexy();
+        return $flexy;
     }
     
-    function render() 
+    /**
+     * Setup Flexy plugins if specified.
+     *
+     * @param SGL_Output $data
+     * @param array $options
+     * @return boolean
+     */
+    function setupPlugins(&$data, &$options)
     {
-        // Configure Flexy to use SGL ModuleOutput Plugin 
-        // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $this->data->module . '/classes/Output.php';
+        //  Configure Flexy to use SGL ModuleOutput Plugin 
+        //   If an Output.php file exists in module's dir
+        $customOutput = SGL_MOD_DIR . '/' . $data->module . '/classes/Output.php';
         if (is_readable($customOutput)) {
-            $className = ucfirst($this->data->module) . 'Output';
-            if (isset($this->options['plugins'])) {
-                $this->options['plugins'] = $this->options['plugins'] + array($className => $customOutput);
+            $className = ucfirst($data->module) . 'Output';
+            if (isset($options['plugins'])) {
+                $options['plugins'] = $options['plugins'] + array($className => $customOutput);
             } else {
-                $this->options['plugins'] = array($className => $customOutput);
+                $options['plugins'] = array($className => $customOutput);
             }
         }
+        return true;
+    }
+}
 
-        //  suppress notices in templates
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
-        $templ = & new HTML_Template_Flexy();
-        $templ->compile($this->data->masterTemplate);
+/**
+ * Container for output data and renderer strategy.
+ *
+ * @abstract 
+ *
+ */
+class SGL_View
+{
+	/**
+	 * Output object.
+	 *
+	 * @var SGL_Output
+	 */
+	var $data;
+	
+    /**
+     * Reference to renderer strategy.
+     *
+     * @var SGL_OutputRendererStrategy
+     */
+    var $rendererStrategy;
+    
+    /**
+     * Constructor.
+     *
+     * @param SGL_Output $data
+     * @param SGL_OutputRendererStrategy $rendererStrategy
+     * @return SGL_View
+     */
+    function SGL_View($data, $rendererStrategy)
+    {
+    	$this->data = $data;
+    	$this->rendererStrategy = $rendererStrategy;	
+    }
+    
+    /**
+     * Post processing tasks specific to view type.
+     *
+     * @abstract 
+     */
+    function postProcess() {}
+    
+    
+    /**
+     * Delegates rendering strategy based on view.
+     *
+     * @return string   Rendered output data
+     */
+    function render() 
+    {
+    	return $this->rendererStrategy->render($this);
+    }  
+}
 
-        //  if some Flexy 'elements' exist in the output object, send them as
-        //  2nd arg to Flexy::bufferedOutputObject()
-        $elements = (   isset($this->data->flexyElements) && 
-                        is_array($this->data->flexyElements))
-                ? $this->data->flexyElements 
-                : array();
-
-        $data = $templ->bufferedOutputObject($this->data, $elements);
+class SGL_HtmlView extends SGL_View
+{
+    /**
+     * Html specific implementation of view object.
+     *
+     * @param SGL_Output $data
+     * @param SGL_OutputRendererStrategy $outputRendererStrategy
+     * @return SGL_HtmlView
+     */
+    function SGL_HtmlView(&$data, $outputRendererStrategy)
+    {
+    	parent::SGL_View($data, $outputRendererStrategy);
+    }
+    
+    function postProcess()
+    {
+        //  prepare navigation
+        //  prepare blocks
+        //  set wysiwyg
+        //  get onload events
+        //  get performance info
         
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = false;
-        return $data;
+        return true;
+        
     }
 }
 ?>
