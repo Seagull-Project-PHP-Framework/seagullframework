@@ -751,8 +751,17 @@ class SGL_ManagerResolver
  */
 class SGL_OutputRendererStrategy
 {
+    /**
+     * Prepare renderer options.
+     *
+     */
     function initEngine() {}
     
+    /**
+     * Abstract render method.
+     *
+     * @param SGL_View $view
+     */
     function render($view) {}
 }
 
@@ -896,6 +905,7 @@ class SGL_View
      * Post processing tasks specific to view type.
      *
      * @abstract 
+     * @return boolean
      */
     function postProcess() {}
     
