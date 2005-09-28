@@ -5,10 +5,8 @@
     //  initialise
     require_once '../init.php';
     require_once SGL_CORE_DIR . '/AppController.php';
-    
-    $process = & new SGL_AppController();
-    #$process->run(new SGL_Request());
-    $process->run(new SGL_HTTP_Request());
+
+    SGL_AppController::run();
 
     /**
      * Returns systime in ms.

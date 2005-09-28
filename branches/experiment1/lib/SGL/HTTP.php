@@ -198,6 +198,16 @@ class SGL_HTTP_Request
             return null;
         }
     }
+    
+    function getModuleName()
+    {
+        return $GLOBALS['_SGL']['REQUEST']['moduleName'];
+    }
+    
+    function getManagerName()
+    {
+        return $GLOBALS['_SGL']['REQUEST']['managerName'];
+    }
 
     /**
      * Set a value for Request object.

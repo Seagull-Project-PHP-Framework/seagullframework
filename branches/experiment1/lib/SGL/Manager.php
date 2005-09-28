@@ -222,6 +222,11 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
+    
+    function isValid()
+    {
+        return $this->validated;   
+    }
 
     function _redirectToDefault(&$input, &$output)
     {

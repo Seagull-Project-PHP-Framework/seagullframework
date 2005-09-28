@@ -44,17 +44,41 @@ class SGL_RequestRegistry extends SGL_Registry
     
     function getRequest()
     {
-        $reg = &SGL_RequestRegistry::singleton();
-        $reg->get('request');
+        #$reg = &SGL_RequestRegistry::singleton();
+        return $this->get('request');
     }
     
     function setRequest($req)
     {
-        $reg = &SGL_RequestRegistry::singleton();
-        $reg->set('request', $req);
+        #$reg = &SGL_RequestRegistry::singleton();
+        $this->set('request', $req);
         
         //  php 4 version of
         //  self::singleton()->set('request', $req);
+    }
+    
+    function getConfig()
+    {
+        return $GLOBALS['_SGL']['CONF'];
+    }
+    
+    /**
+     * Copies properties from source object to destination object.
+     *
+     * @access  public
+     * @static
+     * @param   object  $dest   typically the ouput object
+     * @return  void
+     */
+    function aggregate(& $dest)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aObjAttrs = get_object_vars($this);
+        if (is_array($aObjAttrs)) {
+            foreach ($aObjAttrs as $objAttrName => $objAttrValue) {
+                $dest->$objAttrName = $objAttrValue;
+            }
+        }
     }
 }
 
