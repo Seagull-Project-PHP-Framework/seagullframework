@@ -118,7 +118,7 @@ class SimpleNav
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
         
         //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;

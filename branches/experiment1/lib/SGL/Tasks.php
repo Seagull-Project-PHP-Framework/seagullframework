@@ -343,8 +343,6 @@ class SGL_ManagerResolver extends SGL_DecorateProcess
             SGL::raiseError('malformed request', SGL_ERROR_INVALIDREQUEST);
         }
         
-        //  if $process->init(new SGL_HTTP_Request()) is called directly, as in testing,
-        //  there will be no page object, so create a dummy object
         if (is_null($input->get('manager'))) {
             $mgr = new stdClass();
             $mgr->module = 'default';

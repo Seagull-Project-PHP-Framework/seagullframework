@@ -49,7 +49,7 @@ require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
 require_once SGL_CORE_DIR . '/Registry.php';
 require_once SGL_CORE_DIR . '/Tasks.php';
-#require_once SGL_CORE_DIR . '/Request.php';
+require_once SGL_CORE_DIR . '/Request.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'HTML/Template/Flexy.php';
 
@@ -66,7 +66,7 @@ class SGL_AppController
     function run()
     {
         $input = &SGL_RequestRegistry::singleton();
-        $input->setRequest($req = SGL_HTTP_Request::singleton());
+        $input->setRequest($req = SGL_Request::singleton());
         
         $process =  new SGL_Init(
                     new SGL_DiscoverClientOs(

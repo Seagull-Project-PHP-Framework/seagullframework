@@ -129,7 +129,7 @@ class SGL_Manager
      * Get tabID required by ALL pages, same goes for msg, action, from
      * 
      * @access  public
-     * @param   object  $req    SGL_HTTP_Request object received from user agent
+     * @param   object  $req    SGL_Request object received from user agent
      * @param   object  $input  SGL_Output object from Controller
      * @return  void
      */

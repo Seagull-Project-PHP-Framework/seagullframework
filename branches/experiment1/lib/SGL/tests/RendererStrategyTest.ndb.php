@@ -48,7 +48,7 @@ class RendererStrategyTest extends UnitTestCase {
     {
         $process = new SGL_Init(
                    new SGL_MainProcess());
-        $process->process(new SGL_HTTP_Request());
+        $process->process($req = & SGL_Request::singleton());
     }
 }
 

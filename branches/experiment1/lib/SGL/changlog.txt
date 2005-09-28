@@ -1,5 +1,10 @@
 - SGL_Util::setClientOs
 
+ changes
+=========
+Request object now stored in request registry ($input)
+SGL_HTTP_REQUEST renamed to SGL_Request
+
 TODO
 ====
  - observer for LoginMgr

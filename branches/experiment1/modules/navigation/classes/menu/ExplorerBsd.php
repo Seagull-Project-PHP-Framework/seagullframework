@@ -64,7 +64,7 @@ class Menu_ExplorerBsd
         require_once 'HTML/TreeMenu.php';
         
         //  build url for current page
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         $url = SGL_Url::makeLink(   '', 
                                     $req->get('managerName'),
                                     $req->get('moduleName')                             

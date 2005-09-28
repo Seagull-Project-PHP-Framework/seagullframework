@@ -75,7 +75,7 @@ var $fieldTypes;
      * Validate
      * 
      * @access  public
-     * @param   object  $req    SGL_HTTP_Request
+     * @param   object  $req    SGL_Request
      * @param   object  $input  SGL_Output
      * @return  void
      * @see     lib/SGL/SGL_Controller.php
