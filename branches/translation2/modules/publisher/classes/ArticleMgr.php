@@ -281,6 +281,7 @@ class ArticleMgr extends SGL_Manager
             $key = str_replace('_', '-', $lang);
             $output->availableLangs[$lang] = $aLangOptions[$key];   
         }
+        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) ? $input->articleLang : $langs[0];
 
         //  add language if adding new translation
         if (!array_key_exists($input->articleLang, $output->availableLangs)) {

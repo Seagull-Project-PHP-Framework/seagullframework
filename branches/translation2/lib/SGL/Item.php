@@ -382,17 +382,12 @@ class SGL_Item
             unset($editedTxt);
 
             foreach ($GLOBALS['_SGL']['INSTALLED_LANGUAGES'] as $key) {
-                if ($key != $language) {
-                    if ($content = $trans->get($itemID[$x], 'content', $key)) {
-                        $strings[$key] =  $content;
-                    }
+                if ($key != $language && $content = $trans->get($itemID[$x], 'content', $key)) {
+                    $strings[$key] =  $content;
                 }
             }
 
-            //  remove all translations for current string
-            $transAdmin->remove($itemID[$x], 'content');
-            
-            //  add translations
+            //  update translations
             $transAdmin->add($itemID[$x], 'content', $strings);            
         }
     }

@@ -352,17 +352,7 @@ class MaintenanceMgr extends SGL_Manager
 
         foreach ($input->aTranslation as $aKey => $aValue) {
             if (!empty($aValue)) {
-                //  retreive all translations for current string
-                foreach ($GLOBALS['_SGL']['INSTALLED_LANGUAGES'] as $key) {
-                    if ($key != $input->currentLang) {
-                        $currentStrings[$key] = $trans->get($aKey, $input->currentModule, $key);
-                    }
-                }
-    
-                //  remove all translations for current string
-                $transAdmin->remove($aKey, $input->currentModule);
-                
-                //  add translations
+                //  update translations
                 $currentStrings[$input->currentLang] = $aValue;
                 $transAdmin->add($aKey, $input->currentModule, $currentStrings);
             }
