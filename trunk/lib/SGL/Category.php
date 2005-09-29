@@ -436,7 +436,7 @@ class SGL_Category
         $htmlString = '';
 
         //  build url for current page
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         $url = SGL_Url::makeLink(   $req->get('action'), 
                                     $req->get('managerName'),
                                     $req->get('moduleName')                             

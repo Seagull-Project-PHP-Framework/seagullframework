@@ -439,6 +439,11 @@ EOF;
             $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
         }  
     }
+    
+    function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
+    {
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
+    }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {

@@ -6,6 +6,8 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+28-09-05    Implemented default manager invocation when url params get garbled
+27-09-05    Added SGL::setNoticeBehaviour() method
 
 +-----------------------+
 | VERSION: 0.5.0        |

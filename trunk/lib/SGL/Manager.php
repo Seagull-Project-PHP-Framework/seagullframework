@@ -39,12 +39,12 @@
 // $Id: Manager.php,v 1.19 2005/06/13 12:00:25 demian Exp $
 
 /**
- * Parent class for all Page/module objects.
+ * Abstract model controller for all the 'manager' classes.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.19 $
- * @since   PHP 4.1
+ * @abstract 
  */
 class SGL_Manager
 {
@@ -129,7 +129,7 @@ class SGL_Manager
      * Get tabID required by ALL pages, same goes for msg, action, from
      * 
      * @access  public
-     * @param   object  $req    SGL_HTTP_Request object received from user agent
+     * @param   object  $req    SGL_Request object received from user agent
      * @param   object  $input  SGL_Output object from Controller
      * @return  void
      */
@@ -221,6 +221,11 @@ class SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+    }
+    
+    function isValid()
+    {
+        return $this->validated;   
     }
 
     function _redirectToDefault(&$input, &$output)

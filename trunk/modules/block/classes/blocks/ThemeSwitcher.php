@@ -12,7 +12,7 @@ class ThemeSwitcher
     function init()
     {
         $this->aThemes = SGL_Util::getAllThemes();
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         
         $theme = $req->get('frmThemeSwitcher');
         if (!is_null($theme)) {
@@ -27,7 +27,7 @@ class ThemeSwitcher
     {
         $options = SGL_Output::generateSelect($this->aThemes, $_SESSION['aPrefs']['theme']);
 
-        $req = & SGL_HTTP_Request::singleton();        
+        $req = & SGL_Request::singleton();        
         $url = SGL_Url::makeLink() . 'frmThemeSwitcher/';
         $html = <<< HTML
         <p>Change the current theme:</p>

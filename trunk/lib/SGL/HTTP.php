@@ -69,7 +69,7 @@ class SGL_HTTP
         $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  if arg is not an array of params, pass straight to header function
         if (is_array($url)) {
@@ -100,125 +100,15 @@ class SGL_HTTP
             if (substr($url, -1) != '/') {
                 $url .= '/';
             }
-
             //  determine is session propagated in cookies or URL
             SGL_Url::addSessionInfo($url);
         }
-
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
         exit;
     }
 }
 
-/**
- * Request wraps all $_GET $_POST $_FILES arrays into a Request object.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.36 $
- * @since   PHP 4.1
- */
-class SGL_HTTP_Request
-{
-    /**
-     * Parses raw request into SGL format.
-     *
-     * @access  public
-     * @return  void
-     */
-    function SGL_HTTP_Request()
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        //  merge REQUEST AND FILES superglobal arrays
-        $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
-        
-        //  remove slashes if necessary
-        SGL_String::dispelMagicQuotes($GLOBALS['_SGL']['REQUEST']);
-
-        //  get all URL parts after domain and TLD as an array
-        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
-        
-        //  parse URL segments into SGL request structure
-        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
-        
-        //  merge results with cleaned $_REQUEST values and $_POST
-        SGL_String::dispelMagicQuotes($_POST);
-        $GLOBALS['_SGL']['REQUEST'] = array_merge($aSglRequest, $GLOBALS['_SGL']['REQUEST'], $_POST);
-    }
-
-    /**
-     * Returns a singleton Request instance.
-     *
-     * example usage: 
-     * $req = & SGL_HTTP_Request::singleton();
-     * warning: in order to work correctly, the request
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @return  mixed           reference to Request object
-     */
-    function &singleton()
-    {
-        static $instance;
-
-        // If the instance is not there, create one
-        if (!isset($instance)) {
-            $instance = new SGL_HTTP_Request();
-        }
-        return $instance;
-    }
-
-    /**
-     * Retrieves values from Request object.
-     *
-     * @access  public
-     * @param   mixed   $paramName  Request param name
-     * @param   boolean $allowTags  If html/php tags are allowed or not
-     * @return  mixed               Request param value or null if not exists
-     */
-    function get($paramName, $allowTags = false)
-    {
-        $req = & $GLOBALS['_SGL']['REQUEST'];
-        if (isset($req[$paramName])) {
-
-            //  if html not allowed, run an enhanced strip_tags()
-            if (!$allowTags) {
-                SGL_String::clean($req[$paramName]);
-
-            //  if html is allowed, at least remove javascript
-            } else {
-                SGL_String::removeJs($req[$paramName]);
-            }
-            return $req[$paramName];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Set a value for Request object.
-     *
-     * @access  public
-     * @param   mixed   $name   Request param name
-     * @param   mixed   $value  Request param value
-     * @return  void
-     */
-    function set($name, $value)
-    {
-       $GLOBALS['_SGL']['REQUEST'][$name] = $value;
-    }
-
-    function debug()
-    {
-        $GLOBALS['_SGL']['site']['blocksEnabled'] = 0;
-        print '<pre>';
-        print_r($GLOBALS['_SGL']['REQUEST']);
-    }
-}
 
 /**
  * Handles session management.
@@ -283,7 +173,7 @@ class SGL_HTTP_Session
      
         //  start PHP session handler
 //        if (!(defined('SID'))) {
-//            $req = & SGL_HTTP_Request::singleton();
+//            $req = & SGL_Request::singleton();
 //            define('SID', $conf['cookie']['name'] . '=' . $req->get('SGLSESSID'));
 //        }
         @session_start();       
