@@ -38,11 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
 
-    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
-
-    setupConstants();
-
-    function setupConstants()
+    function SGL_setupConstants()
     {
         define('SGL_SERVER_NAME', hostnameToFilename());
         define('SGL_PATH', dirname(__FILE__));
@@ -283,17 +279,4 @@
         }
         return $baseUrl;
     }
-
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (file_exists($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
-    }
-}
 ?>

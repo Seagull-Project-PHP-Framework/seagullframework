@@ -51,7 +51,10 @@
         require_once 'etc/bc.php';
     }
 
+    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
     require_once 'constants.php';
+    
+    SGL_setupConstants();
     SGL_init();
 
     function SGL_init()
@@ -87,6 +90,7 @@
         //  include Log.php if logging enabled
         if ($conf['log']['enabled']) {
             require_once 'Log.php';
+            
         } else {
             //  define log levels to avoid notices, since Log.php not included
             define('PEAR_LOG_EMERG',    0);     /** System is unusable */
@@ -138,4 +142,17 @@
             }
         }
     }
+    
+if (!(function_exists('file_put_contents'))) {
+    function file_put_contents($location, $data)
+    {
+        if (file_exists($location)) {
+            unlink($location);
+        }
+        $fileHandler = fopen ($location, "w");
+        fwrite ($fileHandler, $data);
+        fclose ($fileHandler);
+        return true;
+    }
+}
 ?>
