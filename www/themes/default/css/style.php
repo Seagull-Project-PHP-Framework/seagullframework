@@ -82,7 +82,8 @@
 
     // CSS Substitution Variables
 
-    $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';  
+    $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';
+    $fontSize               = 'small';
 
     $primary                = '#99cc00'; // lime green
     $primaryLight           = '#bbe713'; // light green
@@ -148,7 +149,7 @@
 body {
     margin: 0;
     padding: 0;
-    font: small <?php echo $fontFamily ?>;
+    font: <?php echo $fontSize ?> <?php echo $fontFamily ?>;
     color: <?php echo $tertiaryDarker ?>;
     background: <?php echo $primaryTextLight ?>;
 }
