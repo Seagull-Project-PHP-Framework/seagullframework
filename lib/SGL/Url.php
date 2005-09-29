@@ -406,7 +406,7 @@ class SGL_Url
         $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;

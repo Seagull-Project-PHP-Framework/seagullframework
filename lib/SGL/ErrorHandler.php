@@ -69,19 +69,19 @@ class SGL_ErrorHandler
         //  nb: comment out Notice for equivalent of 
         //  error_reporting(E_ALL ^ E_NOTICE);
         $this->errorType = array (
-               1   =>  array('Error', 3),
-               2   =>  array('Warning', 4),
-               4   =>  array('Parsing Error', 3),
-               8   =>  array('Notice', 5),
-               16  =>  array('Core Error', 3),
-               32  =>  array('Core Warning', 4),
-               64  =>  array('Compile Error', 3),
-               128 =>  array('Compile Warning', 4),
-               256 =>  array('User Error', 3),
-               512 =>  array('User Warning', 4),
-               1024=>  array('User Notice', 5),
-               2047=>  array('All', 7)
-                );
+           1   =>  array('Error', 3),
+           2   =>  array('Warning', 4),
+           4   =>  array('Parsing Error', 3),
+           8   =>  array('Notice', 5),
+           16  =>  array('Core Error', 3),
+           32  =>  array('Core Warning', 4),
+           64  =>  array('Compile Error', 3),
+           128 =>  array('Compile Warning', 4),
+           256 =>  array('User Error', 3),
+           512 =>  array('User Warning', 4),
+           1024=>  array('User Notice', 5),
+           2047=>  array('All', 7)
+            );
         $this->sourceContextOptions = array('lines' => 5);
     }
 

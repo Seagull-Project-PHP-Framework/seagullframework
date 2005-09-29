@@ -227,10 +227,13 @@
         define('SGL_RET_STRING',                4); 
 
         //  role sync constants
-        define('SGL_ROLESYNC_ADD',     1);
-        define('SGL_ROLESYNC_REMOVE',  2);
-        define('SGL_ROLESYNC_ADDREMOVE',  3);
-        define('SGL_ROLESYNC_VIEWONLY',  4);
+        define('SGL_ROLESYNC_ADD',              1);
+        define('SGL_ROLESYNC_REMOVE',           2);
+        define('SGL_ROLESYNC_ADDREMOVE',        3);
+        define('SGL_ROLESYNC_VIEWONLY',         4);
+        
+        define('SGL_NOTICES_DISABLED',          0);
+        define('SGL_NOTICES_ENABLED',           1);
         
         //  with logging, you can optionally show the file + line no. where 
         //  SGL::logMessage was called from
