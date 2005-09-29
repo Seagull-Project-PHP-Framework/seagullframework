@@ -38,12 +38,14 @@
 // +---------------------------------------------------------------------------+
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
 
+    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
+
     setupConstants();
 
     function setupConstants()
     {
-        define('SGL_SERVER_NAME',               hostnameToFilename());
-        define('SGL_PATH',                      dirname(__FILE__));
+        define('SGL_SERVER_NAME', hostnameToFilename());
+        define('SGL_PATH', dirname(__FILE__));
 
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
@@ -85,6 +87,7 @@
 
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
+        
         $conf = @parse_ini_file($configFile, true);
 
         //  set protocol correctly, build base url
@@ -93,30 +96,12 @@
         //  - http://localhost:8080
         //  - http://www.example.com
         $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
-     
-        //  it's apache
-        if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
-        
-            //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
-            if (strpos(php_sapi_name(), 'cgi') !== false) {
-                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
-                
-            //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
-            } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF']) 
-                    && strstr($_SERVER['REQUEST_URI'], '?'))) {
-                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
-            } else {
-                //  do nothing, PHP_SELF is valid
-            }
-        //  it's IIS
-        } else {
-            if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($conf['site']['frontScriptName'], -1, 1)) {
-                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . '?' . @$_SERVER['QUERY_STRING'];
-            } else {
-                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
-            }
 
-        }
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+        
+        $tmp  = new SGL_URL($_SERVER['PHP_SELF']);
+        
         //  set baseUrl
         if (!(isset($conf['site']['baseUrl']))) {
             $conf['site']['baseUrl'] = getBaseUrl($conf, $serverName);
@@ -188,17 +173,6 @@
         //  set constant to represent profiling mode so it can be used in Controller
         define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
 
-        //  Flexy template settings
-        define('SGL_FLEXY_FORCE_COMPILE',       0);
-        define('SGL_FLEXY_DEBUG',               0);
-        define('SGL_FLEXY_FILTERS',             'SimpleTags');
-        define('SGL_FLEXY_ALLOW_PHP',           true);
-        define('SGL_FLEXY_LOCALE',              'en');
-        define('SGL_FLEXY_COMPILER',            'Standard');
-        define('SGL_FLEXY_VALID_FNS',           'include');
-        define('SGL_FLEXY_GLOBAL_FNS',          true);
-        define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true
-
         //  automate sorting
         define('SGL_SORTBY_GRP',                1);
         define('SGL_SORTBY_USER',               2);
@@ -217,23 +191,11 @@
         define('SGL_STATUS_PUBLISHED',          4);
         define('SGL_STATUS_ARCHIVED',           5);
         
-        define('SGL_DSN_ARRAY',                 0);
-        define('SGL_DSN_STRING',                1);
-        
         //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
-
-        //  role sync constants
-        define('SGL_ROLESYNC_ADD',              1);
-        define('SGL_ROLESYNC_REMOVE',           2);
-        define('SGL_ROLESYNC_ADDREMOVE',        3);
-        define('SGL_ROLESYNC_VIEWONLY',         4);
-        
-        define('SGL_NOTICES_DISABLED',          0);
-        define('SGL_NOTICES_ENABLED',           1);
         
         //  with logging, you can optionally show the file + line no. where 
         //  SGL::logMessage was called from

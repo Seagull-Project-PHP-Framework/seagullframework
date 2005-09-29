@@ -134,7 +134,6 @@ class SGL_URL
     */
     function __construct($url = null, $useBrackets = true)
     {
-        $HTTP_SERVER_VARS  = !empty($_SERVER) ? $_SERVER : $GLOBALS['HTTP_SERVER_VARS'];
 
         $this->useBrackets = $useBrackets;
         $this->url         = $url;
@@ -149,12 +148,13 @@ class SGL_URL
         // Only use defaults if not an absolute URL given
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
-            $this->protocol    = (@$HTTP_SERVER_VARS['HTTPS'] == 'on' ? 'https' : 'http');
+            $this->protocol    = (@$_SERVER['HTTPS'] == 'on' ? 'https' : 'http');
 
             /**
             * Figure out host/port
             */
-            if (!empty($HTTP_SERVER_VARS['HTTP_HOST']) AND preg_match('/^(.*)(:([0-9]+))?$/U', $HTTP_SERVER_VARS['HTTP_HOST'], $matches)) {
+            if (!empty($_SERVER['HTTP_HOST']) && preg_match('/^(.*)(:([0-9]+))?$/U', 
+                    $_SERVER['HTTP_HOST'], $matches)) {
                 $host = $matches[1];
                 if (!empty($matches[3])) {
                     $port = $matches[3];
@@ -165,10 +165,20 @@ class SGL_URL
 
             $this->user        = '';
             $this->pass        = '';
-            $this->host        = !empty($host) ? $host : (isset($HTTP_SERVER_VARS['SERVER_NAME']) ? $HTTP_SERVER_VARS['SERVER_NAME'] : 'localhost');
-            $this->port        = !empty($port) ? $port : (isset($HTTP_SERVER_VARS['SERVER_PORT']) ? $HTTP_SERVER_VARS['SERVER_PORT'] : $this->getStandardPort($this->protocol));
-            $this->path        = !empty($HTTP_SERVER_VARS['PHP_SELF']) ? $HTTP_SERVER_VARS['PHP_SELF'] : '/';
-            $this->querystring = isset($HTTP_SERVER_VARS['QUERY_STRING']) ? $this->_parseRawQuerystring($HTTP_SERVER_VARS['QUERY_STRING']) : null;
+            $this->host        = !empty($host) 
+                                    ? $host 
+                                    : (isset($_SERVER['SERVER_NAME']) 
+                                        ? $_SERVER['SERVER_NAME'] 
+                                        : 'localhost');
+            $this->port        = !empty($port) 
+                                    ? $port 
+                                    : (isset($_SERVER['SERVER_PORT']) 
+                                        ? $_SERVER['SERVER_PORT'] 
+                                        : $this->getStandardPort($this->protocol));
+            $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
+            $this->querystring = isset($_SERVER['QUERY_STRING']) 
+                                    ? $this->_parseRawQuerystring($_SERVER['QUERY_STRING']) 
+                                    : null;
             $this->anchor      = '';
         }
 
@@ -421,7 +431,12 @@ class SGL_URL
         $this->port = is_null($port) ? $this->getStandardPort() : $port;
     }
     
-    function resolveServerVars()
+    /**
+     * Resolves PHP_SELF var depending on implementation, ie apache, iis, cgi, etc.
+     *
+     * @abstract 
+     */
+    function resolveServerVars($conf)
     {
         //  it's apache
         if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
@@ -445,7 +460,7 @@ class SGL_URL
                 $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
             }
 
-        }   
+        } 
     }
     
     function getHostName()

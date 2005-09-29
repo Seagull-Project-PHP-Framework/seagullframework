@@ -38,6 +38,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
+//  role sync constants
+define('SGL_ROLESYNC_ADD',              1);
+define('SGL_ROLESYNC_REMOVE',           2);
+define('SGL_ROLESYNC_ADDREMOVE',        3);
+define('SGL_ROLESYNC_VIEWONLY',         4);
+        
 /**
  * Data access methods for the user module.
  *

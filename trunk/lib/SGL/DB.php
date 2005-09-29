@@ -38,6 +38,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: DB.php,v 1.14 2005/06/20 10:56:31 demian Exp $
 
+define('SGL_DSN_ARRAY',                 0);
+define('SGL_DSN_STRING',                1);
+        
 /**
  * Class for handling DB resources.
  *
@@ -49,16 +52,6 @@
  */
 class SGL_DB
 {
-    /**
-     * Constructor.
-     *
-     * @return void
-     */
-    function SGL_DB()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
-
     /**
      * Returns the default dsn specified in the global config.
      *
