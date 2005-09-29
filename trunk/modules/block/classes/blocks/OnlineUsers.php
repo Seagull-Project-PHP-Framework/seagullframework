@@ -22,10 +22,6 @@ class OnlineUsers
 {
     var $template = "OnlineUsers.html";
 
-    function OnlineUsers()
-    {
-    }
-
     function init($output)
     {
         return $this->getBlockContent($output);
