@@ -218,7 +218,8 @@ class SimpleNav
             
             //  if we're scraping a wikipage, put the title in globals
             if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
-                $GLOBALS['_SGL']['REQUEST']['articleTitle'] = $section->title;
+                $req = & SGL_Request::singleton();
+                $req->set('articleTitle', $section->title);
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might

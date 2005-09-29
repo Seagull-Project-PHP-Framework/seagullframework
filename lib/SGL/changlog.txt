@@ -4,6 +4,7 @@
 =========
 Request object now stored in request registry ($input)
 SGL_HTTP_REQUEST renamed to SGL_Request
+$GLOBALS['_SGL']['REQUEST'] discontinued in favour of true singleton
 
 TODO
 ====

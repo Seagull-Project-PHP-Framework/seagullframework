@@ -103,6 +103,11 @@ class SGL_Request
         $this->aProps[$key] = $value;
     }
     
+    function getAll()
+    {
+        return $this->aProps;   
+    }
+    
     function getModuleName()
     {
         return $this->aProps['moduleName'];
