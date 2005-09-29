@@ -238,9 +238,9 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
     {
         //  Configure Flexy to use SGL ModuleOutput Plugin 
         //   If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $data->module . '/classes/Output.php';
+        $customOutput = SGL_MOD_DIR . '/' . $data->moduleName . '/classes/Output.php';
         if (is_readable($customOutput)) {
-            $className = ucfirst($data->module) . 'Output';
+            $className = ucfirst($data->moduleName) . 'Output';
             if (isset($options['plugins'])) {
                 $options['plugins'] = $options['plugins'] + array($className => $customOutput);
             } else {
