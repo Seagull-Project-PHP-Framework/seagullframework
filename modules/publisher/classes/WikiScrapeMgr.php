@@ -122,7 +122,7 @@ class WikiScrapeMgr extends SGL_Manager
         }
         
         /* Recurse along the children to generate the remaining nodes */
-        if($node->hasChildren()) {
+        if ($node->hasChildren()) {
             foreach($node->child as $child) {
                 $this->html .= $this->traverseTree($child);
             }

@@ -6,6 +6,10 @@ Request object now stored in request registry ($input)
 SGL_HTTP_REQUEST renamed to SGL_Request
 $GLOBALS['_SGL']['REQUEST'] discontinued in favour of true singleton
 
+url
+===
+moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf);
+
 TODO
 ====
  - observer for LoginMgr
