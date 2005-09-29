@@ -241,7 +241,6 @@
 
         //  set globals
         $GLOBALS['_SGL']['BANNED_IPS'] =        array();
-        $GLOBALS['_SGL']['REQUEST'] =           array();
         $GLOBALS['_SGL']['ERRORS'] =            array();
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;

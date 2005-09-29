@@ -22,9 +22,8 @@ class ShopSearch
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $catInput = '';
         $catID = 0;
-        if (isset($GLOBALS['_SGL']['REQUEST']['frmCatID'])) {
-            $catID = (int) $GLOBALS['_SGL']['REQUEST']['frmCatID'];
-        }
+        $req = & SGL_Request::singleton();
+        $catId = $req->get('frmCatID');
         
         // Make select
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
