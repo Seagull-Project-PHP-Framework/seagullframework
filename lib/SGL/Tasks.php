@@ -446,7 +446,7 @@ class SGL_PrepareBlocks extends SGL_DecorateProcess
         if ($this->conf['site']['blocksEnabled'] && $this->conf['navigation']['enabled']) {
             require_once SGL_CORE_DIR . '/BlockLoader.php';
             $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
-            $aBlocks = $blockLoader->render($input);
+            $aBlocks = $blockLoader->render($input->data);
             $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
             $input->data->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
