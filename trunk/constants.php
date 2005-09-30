@@ -37,7 +37,11 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
-
+    
+    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
+    
+    SGL_setupConstants();
+    
     function SGL_setupConstants()
     {
         define('SGL_SERVER_NAME', hostnameToFilename());
@@ -96,7 +100,7 @@
         //  resolve value for $_SERVER['PHP_SELF'] based in host
         SGL_URL::resolveServerVars($conf);
         
-        $tmp  = new SGL_URL($_SERVER['PHP_SELF']);
+        //$tmp  = new SGL_URL($_SERVER['PHP_SELF']);
         
         //  set baseUrl
         if (!(isset($conf['site']['baseUrl']))) {
