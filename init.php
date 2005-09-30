@@ -51,10 +51,8 @@
         require_once 'etc/bc.php';
     }
 
-    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
     require_once 'constants.php';
-    
-    SGL_setupConstants();
+
     SGL_init();
 
     function SGL_init()
