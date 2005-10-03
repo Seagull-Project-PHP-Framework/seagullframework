@@ -625,4 +625,14 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $input->data->frontScriptName  = $conf['site']['frontScriptName'];
     }
 }
+
+
+class SGL_Void extends SGL_ProcessRequest 
+{
+    function process(&$input)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  do nothing
+    }
+}
 ?>

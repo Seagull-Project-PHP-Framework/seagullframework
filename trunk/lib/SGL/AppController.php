@@ -62,7 +62,36 @@ require_once 'HTML/Template/Flexy.php';
  * @since   PHP 4.1
  */
 class SGL_AppController
-{   
+{  
+    
+    /**
+     * Invoke this method if you want setup only, eg, for testing.
+     *
+     */
+    function init()
+    {
+        $input = &SGL_RequestRegistry::singleton();
+        $input->setRequest($req = SGL_Request::singleton());
+        
+        $process =  new SGL_Init(
+                    new SGL_DiscoverClientOs(
+                    new SGL_ManagerResolver(
+                    new SGL_InitSession(
+                    new SGL_InitLangSupport(
+                    new SGL_InitPerms(
+                    new SGL_AuthenticateRequest(
+                    new SGL_BuildHeaders(
+                    new SGL_SetLocale(
+                    new SGL_Void()
+                   )))))))));
+                   
+        $process->process($input);
+    }
+     
+    /**
+     * Main invocation, init tasks plus main process.
+     *
+     */
     function run()
     {
         $input = &SGL_RequestRegistry::singleton();

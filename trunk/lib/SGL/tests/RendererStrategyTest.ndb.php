@@ -44,21 +44,11 @@ class RendererStrategyTest extends UnitTestCase {
         $process->process($output);
     }
     
-    function testProcessRun()
+    function xtestProcessRun()
     {
         $process = new SGL_Init(
                    new SGL_MainProcess());
         $process->process($req = & SGL_Request::singleton());
-    }
-}
-
-if (!function_exists('getSystemTime')) {
-    function getSystemTime()
-    {
-        $time = gettimeofday();    
-        $resultTime = $time['sec'] * 1000;
-        $resultTime += floor($time['usec'] / 1000);
-        return $resultTime;
     }
 }
 ?>

@@ -197,6 +197,9 @@
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
         
+        define('SGL_NOTICES_DISABLED',          0);
+        define('SGL_NOTICES_ENABLED',           1);
+        
         //  with logging, you can optionally show the file + line no. where 
         //  SGL::logMessage was called from
         define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
