@@ -1,5 +1,6 @@
 <?php
-require_once '../classes/UserMgr.php';
+require_once dirname(__FILE__). '/../classes/UserMgr.php';
+#require_once dirname(__FILE__). '/../classes/LoginMgr.php';
 
 Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'));
 
