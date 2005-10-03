@@ -86,8 +86,8 @@ class STR_TestEnv
         $aSchemaFiles = $GLOBALS['_STR']['CONF']['schemaFiles'];
         
         if (is_array($aSchemaFiles) && count($aSchemaFiles)) {
-            foreach ($aSchemaFiles as $schemaFiles) {
-                STR_TestEnv::parseAndExecute(STR_PATH . '/tests/' . $schemaFiles);
+            foreach ($aSchemaFiles as $schemaFile) {
+                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $schemaFile);
             }
         }
     }
@@ -97,7 +97,16 @@ class STR_TestEnv
      */
     function loadData()
     {
-        return true;
+        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
+        
+        // get schema files
+        $aDataFiles = $GLOBALS['_STR']['CONF']['dataFiles'];
+        
+        if (is_array($aDataFiles) && count($aDataFiles)) {
+            foreach ($aDataFiles as $dataFile) {
+                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $dataFile);
+            }
+        }
     }
     
     /**
