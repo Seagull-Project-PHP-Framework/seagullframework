@@ -153,4 +153,14 @@ if (!(function_exists('file_put_contents'))) {
         return true;
     }
 }
+
+if (!function_exists('getSystemTime')) {
+    function getSystemTime()
+    {
+        $time = gettimeofday();    
+        $resultTime = $time['sec'] * 1000;
+        $resultTime += floor($time['usec'] / 1000);
+        return $resultTime;
+    }   
+}
 ?>

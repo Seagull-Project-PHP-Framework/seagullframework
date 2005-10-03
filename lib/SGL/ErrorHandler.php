@@ -41,9 +41,6 @@
 
 //  This class is based on Peter James' class of the same name, for more info 
 //  see http://php.shaman.ca/
-
-define('SGL_NOTICES_DISABLED',          0);
-define('SGL_NOTICES_ENABLED',           1);
         
 /**
  * Global error handler class, modifies behaviour for PHP errors, not PEAR.
