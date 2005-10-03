@@ -164,13 +164,6 @@ class SGL_SetupWizard
                     $filename2 = '/data.default.oci.sql';
                     $filename3 = '/constraints.oci.sql';
                     break;
-
-                case 'odbc':
-                    $dbType = 'odbc';
-                    $filename1 = '/schema.mx.sql';
-                    $filename2 = '/data.default.mx.sql';
-                    $filename3 = '/constraints.mx.sql';
-                    break;
                 }
 
                 $statusText .= ', fetching modules';
@@ -225,6 +218,11 @@ class SGL_SetupWizard
                 //  Load SGL schema (/etc)
                 $sglPath = SGL_PATH . '/etc';
                 $result = SGL_Sql::parseAndExecute($sglPath . $filename1, 0);
+                
+                //  load 'sequence' table
+                if ($conf['db']['type'] == 'mysql_SGL') {
+                    $result = SGL_Sql::parseAndExecute($sglPath . '/sequence.my.sql', 0);
+                }
 
                 //  catch 'table already exists' error
                 if (DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {

@@ -78,7 +78,7 @@ class SGL_DB
                 'port'     => $conf['db']['port']                
             );
         } else {
-        	$protocol = ($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
+        	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
             $port = (!empty($conf['db']['port']) 
                         && ($conf['db']['protocol'] == 'tcp')) 
                 ? ':' . $conf['db']['port'] 
@@ -111,12 +111,19 @@ class SGL_DB
      * @param   object  $dbh    PEAR::DB instance
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      */
-    function setConnection ($dbh, $dsn = null)
+    function setConnection (&$dbh, $dsn = null)
     {
         $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+        
+        //  if we're using SimpleTestRunner, reassign STR db resource
+        if (isset($GLOBALS['_STR'])) {
+            $dbh = $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
+            $dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+        } else {
+            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
+            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+        }
     }
 
     /**

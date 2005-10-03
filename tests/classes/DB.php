@@ -101,11 +101,14 @@ class STR_DB
 
     	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
-            $conf['database']['username'] . ':' .
-            $conf['database']['password'] . '@' .
+            $conf['database']['user'] . ':' .
+            $conf['database']['pass'] . '@' .
             $protocol .
             $conf['database']['host'] . '/' .
             $conf['database']['name'];
+            
+        //   override SGL dsn with temporary testing one
+        $GLOBALS['_SGL']['CONF']['db'] = $conf['database'];
          
         return $dsn;
     }
