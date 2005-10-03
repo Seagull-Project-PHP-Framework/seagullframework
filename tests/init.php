@@ -74,7 +74,7 @@ function STR_init()
 
     $GLOBALS['_STR']['unit_layers'] = array(
             'wdb'   => array('DB with tables', DB_WITH_TABLES),
-            'wdt'   => array('DB with tables and data', DB_WITH_DATA),
+            'wdd'   => array('DB with tables and data', DB_WITH_DATA),
             'ndb'   => array('PHP only', NO_DB),
         );
         
