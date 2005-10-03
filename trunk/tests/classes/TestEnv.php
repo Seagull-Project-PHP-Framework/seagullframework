@@ -63,8 +63,8 @@ class STR_TestEnv
         }
     	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
-            $conf['database']['username'] . ':' .
-            $conf['database']['password'] . '@' .
+            $conf['database']['user'] . ':' .
+            $conf['database']['pass'] . '@' .
             $protocol .
             $conf['database']['host'];
         $dbh = &STR_DB::singleton($dsn);

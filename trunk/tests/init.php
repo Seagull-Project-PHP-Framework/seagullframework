@@ -73,9 +73,9 @@ function STR_init()
     // requirements for the test(s) in that layer
 
     $GLOBALS['_STR']['unit_layers'] = array(
-            'wdb'   => array('DB related',   DB_WITH_TABLES),
-            'wdt'   => array('DB related',   DB_WITH_DATA),
-            'ndb'   => array('PHP only',     NO_DB),
+            'wdb'   => array('DB with tables', DB_WITH_TABLES),
+            'wdt'   => array('DB with tables and data', DB_WITH_DATA),
+            'ndb'   => array('PHP only', NO_DB),
         );
         
     // set error reporting as verbose as possible
@@ -83,7 +83,7 @@ function STR_init()
     
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
-        // Define the Max installation base path
+        // Define the project installation base path
         define('STR_PATH', dirname(dirname(__FILE__)));
 
         // Define the PEAR installation path

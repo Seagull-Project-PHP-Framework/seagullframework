@@ -50,6 +50,19 @@
     if (!function_exists('version_compare') || version_compare(phpversion(), "4.3.0", 'lt')) {
         require_once 'etc/bc.php';
     }
+    
+    if (!(function_exists('file_put_contents'))) {
+        function file_put_contents($location, $data)
+        {
+            if (file_exists($location)) {
+                unlink($location);
+            }
+            $fileHandler = fopen ($location, "w");
+            fwrite ($fileHandler, $data);
+            fclose ($fileHandler);
+            return true;
+        }
+    }
 
     require_once 'constants.php';
 
@@ -140,19 +153,6 @@
             }
         }
     }
-    
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (file_exists($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
-    }
-}
 
 if (!function_exists('getSystemTime')) {
     function getSystemTime()
