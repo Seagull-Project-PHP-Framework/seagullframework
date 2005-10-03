@@ -80,6 +80,7 @@ class SGL_DB
         } else {
         	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
             $port = (!empty($conf['db']['port']) 
+                        && isset($conf['db']['protocol'])
                         && ($conf['db']['protocol'] == 'tcp')) 
                 ? ':' . $conf['db']['port'] 
                 : '';     	

@@ -31,6 +31,27 @@ class SGL_Init extends SGL_DecorateProcess
     }
 }
 
+
+//class SGL_LoadLocalConfig extends SGL_DecorateProcess 
+//{
+//    function process(&$input)
+//    {
+//        $req = $input->getRequest();
+//        $moduleName = $req->get('moduleName');
+//        $aModuleConfig = SGL::getModuleConfig($moduleName);
+//        if ($aModuleConfig) {
+//            SGL::configMerge($aModuleConfig);
+//        } else {
+//            SGL::raiseError('Could not read current module\'s conf.ini file', 
+//                SGL_ERROR_NOFILE);
+//        }
+//        
+//        $this->processRequest->process($input);
+//    }
+//}
+
+
+
 class SGL_DetectBlackListing extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -172,6 +193,7 @@ class SGL_AuthenticateRequest extends SGL_DecorateProcess
             if (!$session->isValid()) {
                 SGL::raiseMsg('authorization required');
                 SGL_HTTP::redirect($loginPage);
+                
             } elseif ($session->isTimedOut()) {
                 $session->destroy();
                 SGL::raiseMsg('session timeout');
