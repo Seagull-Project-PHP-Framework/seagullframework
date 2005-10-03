@@ -185,6 +185,12 @@ class STR_TestEnv
             STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
             STR_TestEnv::loadData();
+            
+            //  if we're testing a sgl install, update sequences after loading data
+            if (isset($GLOBALS['_SGL'])) {
+                require_once SGL_CORE_DIR . '/Sql.php';
+                SGL_Sql::rebuildSequences();   
+            }
         }
         // Store the layer in a global variable, so the environment
         // can be completely re-built during tests using the
