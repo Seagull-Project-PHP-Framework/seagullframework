@@ -154,7 +154,7 @@ class SGL_Util
         $aFiles = array();
         $theme = $_SESSION['aPrefs']['theme'];
         //  get array of files in /www/css/
-        if ($fh = opendir(SGL_WEB_ROOT . "/themes/$theme/css/")) {
+        if ($fh = opendir(SGL_THEME_DIR . "/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {
 
                 //  remove unwanted dir elements

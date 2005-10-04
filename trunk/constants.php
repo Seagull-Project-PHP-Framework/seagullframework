@@ -39,6 +39,8 @@
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
     
     require_once dirname(__FILE__) . '/lib/SGL/Url.php';
+    require_once dirname(__FILE__) . '/lib/SGL/Registry.php';
+    require_once dirname(__FILE__) . '/lib/SGL/Request.php';
     
     SGL_setupConstants();
     
@@ -88,7 +90,8 @@
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
         
-        $conf = @parse_ini_file($configFile, true);
+        //  store in Seagull simulated namespace
+        $GLOBALS['_SGL']['CONF'] = @parse_ini_file($configFile, true);
 
         //  set protocol correctly, build base url
         //  allows for various possibilities:
@@ -97,21 +100,13 @@
         //  - http://www.example.com
         $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
 
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-        
-        //$tmp  = new SGL_URL($_SERVER['PHP_SELF']);
-        
         //  set baseUrl
-        if (!(isset($conf['site']['baseUrl']))) {
-            $conf['site']['baseUrl'] = getBaseUrl($conf, $serverName);
+        if (!(isset($GLOBALS['_SGL']['CONF']['site']['baseUrl']))) {
+            $GLOBALS['_SGL']['CONF']['site']['baseUrl'] = getBaseUrl($GLOBALS['_SGL']['CONF'], $serverName);
         }
-
-        //  store in Seagull namespace
-        $GLOBALS['_SGL']['CONF'] = $conf;
-
+        
         // framework file structure
-        define('SGL_BASE_URL',                  $conf['site']['baseUrl']);
+        define('SGL_BASE_URL',                  $GLOBALS['_SGL']['CONF']['site']['baseUrl']);
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
         define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
         define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
@@ -126,6 +121,15 @@
         define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
         define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
+        
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($GLOBALS['_SGL']['CONF']);
+        
+        //  assign current url object to registry
+        $urlType = 'SGL_UrlParserSefStrategy';
+        $url  = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlType());
+        $input = &SGL_RequestRegistry::singleton();
+        $input->setCurrentUrl($url);
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
@@ -158,7 +162,7 @@
         $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
-        @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
+        @ini_set('error_log',                   SGL_PATH . '/' . $GLOBALS['_SGL']['CONF']['log']['name']);
 
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
@@ -171,7 +175,7 @@
         }
 
         //  set constant to represent profiling mode so it can be used in Controller
-        define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
+        define('SGL_PROFILING_ENABLED',         ($GLOBALS['_SGL']['CONF']['debug']['profiling']) ? true : false);
 
         //  automate sorting
         define('SGL_SORTBY_GRP',                1);
@@ -210,7 +214,7 @@
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
-        $GLOBALS['_SGL']['VERSION'] =           $conf['tuples']['version'];
+        $GLOBALS['_SGL']['VERSION'] =           $GLOBALS['_SGL']['CONF']['tuples']['version'];
     }
 
     /**
