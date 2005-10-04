@@ -714,7 +714,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         }
         
         //  remove frontScriptName
-        #unset($aParsedUri['frontScriptName']);
+        unset($aParsedUri['frontScriptName']);
         
         //  and merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);        

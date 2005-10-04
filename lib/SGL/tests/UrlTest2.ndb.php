@@ -28,7 +28,6 @@ class UrlTest2 extends UnitTestCase {
             'foo' => 'bar',
             'moduleName' => 'user',
             'managerName' => 'login',
-            'frontScriptName' => 'index.php',
             );
         $aData = $this->url->getQueryData();
         $this->assertEqual($aData, $aCompare);

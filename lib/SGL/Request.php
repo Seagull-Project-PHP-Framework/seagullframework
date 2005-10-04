@@ -29,11 +29,12 @@ class SGL_Request
         //  merge results with cleaned $_REQUEST values and $_POST
         SGL_String::dispelMagicQuotes($_POST);
         
+        //  also merge with SEF url params
         $reg = &SGL_RequestRegistry::singleton();
         $url = $reg->getCurrentUrl();
-        $aUrlData = $url->getQueryData();
+        $aUrlParams = $url->getQueryData();
         
-        $this->aProps = array_merge($this->aProps, $aUrlData, $_POST);
+        $this->aProps = array_merge($this->aProps, $aUrlParams, $_POST);
         
         return;
     }
