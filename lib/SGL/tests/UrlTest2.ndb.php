@@ -18,7 +18,7 @@ class UrlTest2 extends UnitTestCase {
     function setup()
     {
         $qs = 'http://localhost/seagull/branches/0.4-bugfix/www/index.php/user/login/foo/bar/';
-        $this->url = new SGL_UrlSef($qs);
+        $this->url = new SGL_Url($qs, true, new SGL_UrlParserSefStrategy());
     }
     function testGetRequestData()
     {
