@@ -52,16 +52,6 @@
 class SimpleNav
 {
     /**
-     * Array of arrays, each representing a section node from the seagull.section
-     * table. Have to fetch each as array rather than object for output to menu to
-     * work properly.
-     *
-     * @access  private
-     * @var     array
-     */
-    var $_aSectionNodes = array();
-
-    /**
      * www root
      *
      * @access  private
@@ -113,7 +103,7 @@ class SimpleNav
      */
     var $_aParentsOfCurrentPage = array();
     
-    function SimpleNav()
+    function SimpleNav($input)
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
         
@@ -122,6 +112,7 @@ class SimpleNav
         
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;
+        $this->input = $input;
     }
 
     /**
@@ -145,9 +136,9 @@ class SimpleNav
             $html = $aUnserialized['html'];
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
         } else {
-            $this->_aSectionNodes = $this->getTabsByRid();
+            $aSectionNodes = $this->getTabsByRid();
             $sectionId = $this->_currentSectionId;
-            $html = $this->_toHtml($this->_aSectionNodes);
+            $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
             $cache->save(serialize($aNav), $cacheId, 'nav');
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
@@ -186,7 +177,13 @@ class SimpleNav
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
 
-        $aBaseUri = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        //  $oCurrentUrl = $input->getCurrentUrl();
+        //  $oUrlData = $oCurrentUrl->getQueryStringData();
+        #$aBaseUri = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        
+        $reg = &SGL_RequestRegistry::singleton();
+        $url = $reg->getCurrentUrl();
+        $aBaseUri = $url->getQueryData();
 
         //  shift off frontScriptName element
         array_shift($aBaseUri);
@@ -232,7 +229,7 @@ class SimpleNav
             }
             //  first check if querystring is a simplified version of section name,
             //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
-            if (SGL_Url::isSimplified($baseUri, $section->resource_uri)) {
+            if (SGL_Inflector::isUrlSimplified($baseUri, $section->resource_uri)) {
 
                 //  module name and manager name are identical, temporarily unshorten
                 //  querystring name so match can be possible

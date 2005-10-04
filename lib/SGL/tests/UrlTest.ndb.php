@@ -86,47 +86,47 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(count($ret), 1);
     }
     
-    function testContainsDuplicates()
+    function testUrlContainsDuplicates()
     {
         $url = '/index.php/faq/faq/';
-        $this->assertTrue($this->url->containsDuplicates($url));
+        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
         
         $url = 'http://example.com/index.php/foo/foo';
-        $this->assertTrue($this->url->containsDuplicates($url));
+        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
         
         //  ignores whitespace
         $url = 'http://example.com/index.php/foo/foo /';
-        $this->assertTrue($this->url->containsDuplicates($url));
+        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
         
         $url = 'http://example.com/index.php/foo/fooo';
-        $this->assertFalse($this->url->containsDuplicates($url));
+        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
         
         //  case sensitive
         $url = 'FOO/foo';
-        $this->assertFalse($this->url->containsDuplicates($url));
+        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
         
         //  minimal
         $url = 'baz/baz';
-        $this->assertTrue($this->url->containsDuplicates($url));
+        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
     }
     
-    function testIsSimplified()
+    function testIsUrlSimplified()
     {
         //  basic example
         $url = 'example.com/index.php/faq';
         $sectionName = 'example.com/index.php/faq/faq';
-        $this->assertTrue($this->url->isSimplified($url, $sectionName));
+        $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
         
         //  minimal
         $url = 'index.php/faq';
         $sectionName = 'index.php/faq/faq';
-        $this->assertTrue($this->url->isSimplified($url, $sectionName));
+        $this->assertTrue(SGL_Inflector::isSimplified($url, $sectionName));
     }
     
     function testGetManagerNameFromSimplifiedName()
     {
         $url = 'foobar';
-        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FoobarMgr');
         
         //  test case sensitivity
@@ -134,35 +134,35 @@ class UrlTest extends UnitTestCase {
         
         //  cannot deal with arbitrary bumpy caps
         $url = 'foobarbaz';
-        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertNotEqual($ret, 'FooBarBazMgr'); //  returns FoobarbazMgr
         
         //  does not fix incorrect case
         $url = 'FoObArMGr';
-        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertNotEqual($ret, 'FoobarMgr'); // returns FoObArMGr
         
         $url = 'FooBarMgr';
-        $ret = $this->url->getManagerNameFromSimplifiedName($url);
+        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FooBarMgr');
     }
     
     function testGetSimplifiedNameFromManagerName()
     {
         $url = 'FooBarMgr';
-        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBar';
-        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBarMgr.php';
-        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBar.php';
-        $ret = $this->url->getSimplifiedNameFromManagerName($url);
+        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
     }
     
@@ -740,7 +740,7 @@ class UrlTest extends UnitTestCase {
         $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', array(), 
             "frmUserID|loggedOnUserID", 0, $output);
         $this->assertEqual($target, $ret);
-    }    
+    }
 }
 
 class Usr

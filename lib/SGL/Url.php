@@ -98,6 +98,10 @@ class SGL_URL
     * @var array
     */
     var $querystring;
+    
+    var $aQueryData;
+    var $frontScriptName;
+    var $parserStrategy;
 
     /**
     * Anchor
@@ -116,9 +120,9 @@ class SGL_URL
     *
     * @see __construct()
     */
-    function SGL_URL($url = null, $useBrackets = true)
+    function SGL_URL($url = null, $useBrackets = true, /*SGL_UrlParserStrategy*/ $parserStrategy)
     {
-        $this->__construct($url, $useBrackets);
+        $this->__construct($url, $useBrackets, $parserStrategy);
     }
 
     /**
@@ -132,9 +136,8 @@ class SGL_URL
     *                            multiple querystrings with the same name
     *                            exist
     */
-    function __construct($url = null, $useBrackets = true)
+    function __construct($url = null, $useBrackets = true, $parserStrategy)
     {
-
         $this->useBrackets = $useBrackets;
         $this->url         = $url;
         $this->user        = '';
@@ -142,10 +145,14 @@ class SGL_URL
         $this->host        = '';
         $this->port        = 80;
         $this->path        = '';
-        $this->querystring = array();
+        $this->aQueryData = array();
         $this->anchor      = '';
 
-        // Only use defaults if not an absolute URL given
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $this->frontScriptName = $conf['site']['frontScriptName'];
+        $this->parserStrategy = $parserStrategy;
+        
+        // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
             $this->protocol    = (@$_SERVER['HTTPS'] == 'on' ? 'https' : 'http');
@@ -176,9 +183,9 @@ class SGL_URL
                                         ? $_SERVER['SERVER_PORT'] 
                                         : $this->getStandardPort($this->protocol));
             $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
-            $this->querystring = isset($_SERVER['QUERY_STRING']) 
-                                    ? $this->_parseRawQuerystring($_SERVER['QUERY_STRING']) 
-                                    : null;
+//            $this->querystring = isset($_SERVER['QUERY_STRING']) 
+//                                    ? $this->_parseRawQuerystring($_SERVER['QUERY_STRING']) 
+//                                    : null;
             $this->anchor      = '';
         }
 
@@ -186,8 +193,8 @@ class SGL_URL
         if (!empty($url)) {
             $urlinfo = parse_url($url);
 
-            // Default querystring
-            $this->querystring = array();
+            // Default query data
+            $this->aQueryData = array();
 
             foreach ($urlinfo as $key => $value) {
                 switch ($key) {
@@ -206,7 +213,13 @@ class SGL_URL
 
                 case 'path':
                     if ($value{0} == '/') {
-                        $this->path = $value;
+                        $frontScriptStartIndex = strpos($value, $this->frontScriptName);
+                        $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+                        $this->path = substr($value, 0, $frontScriptStartIndex);
+                        $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);
+                        if (!array_key_exists('query', $urlinfo)) {
+                            $this->aQueryData = $this->parseQueryString();
+                        }
                     } else {
                         $path = dirname($this->path) == DIRECTORY_SEPARATOR ? '' : dirname($this->path);
                         $this->path = sprintf('%s/%s', $path, $value);
@@ -214,7 +227,7 @@ class SGL_URL
                     break;
 
                 case 'query':
-                    $this->querystring = $this->_parseRawQueryString($value);
+                    $this->aQueryData = $this->parseQueryString();
                     break;
 
                 case 'fragment':
@@ -223,6 +236,70 @@ class SGL_URL
                 }
             }
         }
+    }
+    
+    function &singleton()
+    {
+        static $instance;
+        if (!isset($instance)) {
+            $urlType = 'SGL_UrlParserSefStrategy';
+            $class = __CLASS__;
+            $instance = new $class(null, true, new $urlType());
+        }
+        return $instance;
+    }
+    
+    function getManagerName()
+    {
+        return $this->aQueryData['managerName'];
+    }
+    
+    function getModuleName()
+    {
+        return $this->aQueryData['moduleName'];
+    }
+    
+    /**
+     * Enter description here...
+     *
+     * @param boolean $strict If strict is true, managerName and moduleName are removed
+     * @return array
+     */
+    function getQueryData($strict = false)
+    {
+        $aRet = $this->aQueryData;
+        if ($strict) {
+            if (isset($aRet['moduleName'])) {
+                unset($aRet['moduleName']);    
+            }
+            if (isset($aRet['managerName'])) {
+                unset($aRet['managerName']);    
+            }
+        }
+        return $aRet;
+    }
+    
+    function getQueryString() 
+    {
+        $this->parserStrategy->getQueryString($this);
+    }
+    
+    function parseQueryString() 
+    {
+        return $this->parserStrategy->parseQueryString($this);
+    }
+    
+    function extract() 
+    {
+        $this->parserStrategy->extract($this);
+    }
+    
+    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(), 
+        $params = '', $idx = 0, $output = '')
+    {
+        //  a hack for 0.4.x style of building SEF URLs
+        $url = & SGL_Url::singleton();
+        return $url->parserStrategy->makeLink($action, $mgr, $mod, $aList, $params, $idx, $output);
     }
 
     /**
@@ -244,156 +321,6 @@ class SGL_URL
                    . (!empty($this->anchor) ? '#' . $this->anchor : '');
 
         return $this->url;
-    }
-
-    /**
-    * Adds a querystring item
-    *
-    * @param  string $name       Name of item
-    * @param  string $value      Value of item
-    * @param  bool   $preencoded Whether value is urlencoded or not, default = not
-    * @access public
-    */
-    function addQueryString($name, $value, $preencoded = false)
-    {
-        if ($preencoded) {
-            $this->querystring[$name] = $value;
-        } else {
-            $this->querystring[$name] = is_array($value) ? array_map('rawurlencode', $value): rawurlencode($value);
-        }
-    }
-
-    /**
-    * Removes a querystring item
-    *
-    * @param  string $name Name of item
-    * @access public
-    */
-    function removeQueryString($name)
-    {
-        if (isset($this->querystring[$name])) {
-            unset($this->querystring[$name]);
-        }
-    }
-
-    /**
-    * Sets the querystring to literally what you supply
-    *
-    * @param  string $querystring The querystring data. Should be of the format foo=bar&x=y etc
-    * @access public
-    */
-    function addRawQueryString($querystring)
-    {
-        $this->querystring = $this->_parseRawQueryString($querystring);
-    }
-
-    /**
-    * Returns flat querystring
-    *
-    * @return string Querystring
-    * @access public
-    */
-    function getQueryString()
-    {
-        if (!empty($this->querystring)) {
-            foreach ($this->querystring as $name => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $k => $v) {
-                        $querystring[] = $this->useBrackets ? sprintf('%s[%s]=%s', $name, $k, $v) : ($name . '=' . $v);
-                    }
-                } elseif (!is_null($value)) {
-                    $querystring[] = $name . '=' . $value;
-                } else {
-                    $querystring[] = $name;
-                }
-            }
-            $querystring = implode(ini_get('arg_separator.output'), $querystring);
-        } else {
-            $querystring = '';
-        }
-
-        return $querystring;
-    }
-
-    /**
-    * Parses raw querystring and returns an array of it
-    *
-    * @param  string  $querystring The querystring to parse
-    * @return array                An array of the querystring data
-    * @access private
-    */
-    function _parseRawQuerystring($querystring)
-    {
-        $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'), '/') . ']/', $querystring, -1, PREG_SPLIT_NO_EMPTY);
-        $return = array();
-
-        foreach ($parts as $part) {
-            if (strpos($part, '=') !== false) {
-                $value = substr($part, strpos($part, '=') + 1);
-                $key   = substr($part, 0, strpos($part, '='));
-            } else {
-                $value = null;
-                $key   = $part;
-            }
-            if (substr($key, -2) == '[]') {
-                $key = substr($key, 0, -2);
-                if (@!is_array($return[$key])) {
-                    $return[$key]   = array();
-                    $return[$key][] = $value;
-                } else {
-                    $return[$key][] = $value;
-                }
-            } elseif (!$this->useBrackets AND !empty($return[$key])) {
-                $return[$key]   = (array)$return[$key];
-                $return[$key][] = $value;
-            } else {
-                $return[$key] = $value;
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-    * Resolves //, ../ and ./ from a path and returns
-    * the result. Eg:
-    *
-    * /foo/bar/../boo.php    => /foo/boo.php
-    * /foo/bar/../../boo.php => /boo.php
-    * /foo/bar/.././/boo.php => /foo/boo.php
-    *
-    * This method can also be called statically.
-    *
-    * @param  string $url URL path to resolve
-    * @return string      The result
-    */
-    function resolvePath($path)
-    {
-        $path = explode('/', str_replace('//', '/', $path));
-
-        for ($i=0; $i<count($path); $i++) {
-            if ($path[$i] == '.') {
-                unset($path[$i]);
-                $path = array_values($path);
-                $i--;
-
-            } elseif ($path[$i] == '..' AND ($i > 1 OR ($i == 1 AND $path[0] != '') ) ) {
-                unset($path[$i]);
-                unset($path[$i-1]);
-                $path = array_values($path);
-                $i -= 2;
-
-            } elseif ($path[$i] == '..' AND $i == 1 AND $path[0] == '') {
-                unset($path[$i]);
-                $path = array_values($path);
-                $i--;
-
-            } else {
-                continue;
-            }
-        }
-
-        return implode('/', $path);
     }
 
     /**
@@ -477,112 +404,6 @@ class SGL_URL
     {
         return $this->frontScriptName;   
     }
-    
-    /**
-     * Converts querystring into/se/friendly/format.
-     *
-     * Returns an array of all elements after the front script name
-     * 
-     * @access  public
-     * @param   $url    Url to be parsed
-     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
-     *                              from the front controller script name onwards
-     */
-    function getSignificantSegments($url)
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        //  split elements (remove eventual leading/trailing slashes)
-        $aUriParts = explode('/', trim($url, '/'));
-
-        //  step through array and strip until fc element is reached
-        foreach ($aUriParts as $elem) {
-            if ($elem != $conf['site']['frontScriptName']) {
-                array_shift($aUriParts);
-            } else {
-                break;
-            }
-        }
-        return $aUriParts;
-    }
-    
-    /**
-     * Returns true if manager name is the same of module name, ie, index.php/faq/faq/.
-     *
-     * @param string $url
-     * @return boolean
-     */
-    function containsDuplicates($url)
-    {
-        if (!empty($url)) {
-            $aPieces = explode('/', $url);
-            $initial = count($aPieces);
-            $unique = count(array_unique($aPieces));
-            $ret = $initial != $unique;
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-
-    /**
-    * Returns true if URL has been abbreviated
-    *
-    * This happens when a manager name is the same as its module name, ie
-    * UserManger in the 'user' module would become user/user which gets
-    * reduced to user
-    *
-    * @param string $url            From the querystring
-    * @param string $sectionName    From the database
-    * @return boolean
-    */
-    function isSimplified($url, $sectionName)
-    {
-        if (!(empty($url))) {
-            $aUrlPieces = explode('/', $url);
-            $moduleNameUrl = $aUrlPieces[0];
-            $aSections =  explode('/', $sectionName);
-            $ret = in_array($moduleNameUrl, $aSections) && (SGL_Url::containsDuplicates($sectionName));
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-    
-    /**
-     * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
-     *
-     * @param string $name
-     * @return string
-     */
-    function getManagerNameFromSimplifiedName($name)
-    {
-        //  if Mgr suffix has been left out, append it
-        if (strtolower(substr($name, -3)) != 'mgr') {
-            $name .= 'Mgr';
-        }
-        return ucfirst($name);
-    }
-    
-    /**
-     * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
-     *
-     * @param unknown_type $name
-     * @return unknown
-     */
-    function getSimplifiedNameFromManagerName($name)
-    {
-        //  strip file extension if exists
-        if (substr($name, -4) == '.php') {
-            $name = substr($name, 0, -4);
-        }
-        
-        //  strip 'Mgr' if exists
-        if (strtolower(substr($name, -3)) == 'mgr') {
-            $name = substr($name, 0, -3);
-        }
-        return strtolower($name);      
-    }    
 
     /**
      * Ensures URL is fully qualified.
@@ -639,7 +460,6 @@ class SGL_URL
         if ($numElems <= $idx) {
             return $ret;
         }        
-        
         $aTmp = array();
         for ($x = $idx; $x < $numElems; $x++) {
             if ($x % 2) { // if index is odd
@@ -657,22 +477,130 @@ class SGL_URL
         return $ret;               
     }
     
-
     /**
-     * Converts querystring into/se/friendly/format.
+     * Checks to see if cookies are enabled, if not, session id is added to URL.
      *
-     * @access  public
-     * @return  void
-     * @todo    this data structure should be more similar to the one parsed in 
-     *              SGL_Url::parseResourceUri()
-     * @todo    use same method for SGL_Url::parseResourceUri()
-     * @todo    implement file-based caching or url combinations, simple hashmap
-     @ @todo    factor out config loading
+     * PHP's magic querystring functionality is negated in SimpleNav::getTabsByRid(),
+     * in other words, the ?PHPSESSID=aeff023230323 is stripped out
+     *
+     * @param string $url
+     * @return void
      */
-    function makeSearchEngineFriendly($aUriParts)
+    function addSessionInfo(&$url)
+    {
+        //  determine is session propagated in cookies or URL
+        $sessionInfo = defined('SID') ? SID : '';
+        if (!empty($sessionInfo)) {
+
+            //  determine glue
+            $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
+            $url .= $glue . $sessionInfo . '&amp;/1/';
+        }
+    }
+    
+    /**
+     * Removes the session name and session value elements from an array.
+     *
+     * @param array $aUrl
+     */
+    function removeSessionInfo(&$aUrl)
+    {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $key = array_search($conf['cookie']['name'], $aUrl);
+        if ($key !== false) {
+            unset($aUrl[$key], $aUrl[$key + 1]);
+        }
+    }
+    
+    /**
+     * Returns an array of config value for the specified module.
+     *
+     * @param string $moduleName
+     * @return mixed    Config array on success, false on error
+     *
+     * @todo move this to the yet-to-be-created SGL_Config
+     */
+    function getModuleConfig($moduleName)
+    {
+        $path = SGL_MOD_DIR . '/' . $moduleName . '/';
+        if (is_readable($path . 'conf.ini')) {
+            $ret = parse_ini_file($path . 'conf.ini', true);
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+    
+    /**
+     * Merges the current module's config with the global config.
+     *
+     * @param array $conf
+     * @return void
+     *
+     * @todo move this to the yet-to-be-created SGL_Config
+     */
+    function configMerge($conf) 
+    {
+        //  merge module config with global config, if module conf keys do not already exist
+        //  test first key
+        $firstKey = key($conf);
+        if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
+            $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
+        }  
+    }
+}
+
+/**
+ * Abstract url parser strategy
+ *
+ * @abstract
+ */
+class SGL_UrlParserStrategy
+{
+    function getQueryString() {}
+    
+    function parseQueryString() {}
+    
+    function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output) {}
+    
+    function extract() {} //make SEF
+}
+
+/**
+ * Concrete SEF url parser strategy
+ *
+ */
+class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
+{
+    //FIXME: change to SEF format
+    function getQueryString()
+    {
+        if (!empty($this->querystring)) {
+            foreach ($this->querystring as $name => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $k => $v) {
+                        $querystring[] = $this->useBrackets ? sprintf('%s[%s]=%s', $name, $k, $v) : ($name . '=' . $v);
+                    }
+                } elseif (!is_null($value)) {
+                    $querystring[] = $name . '=' . $value;
+                } else {
+                    $querystring[] = $name;
+                }
+            }
+            $querystring = implode(ini_get('arg_separator.output'), $querystring);
+        } else {
+            $querystring = '';
+        }
+
+        return $querystring;        
+    }
+    
+    function parseQueryString(/*SGL_Url*/$url)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
+        $aUriParts = $this->getSignificantSegments($url->url);
+        
         //  remap
         $aParsedUri['frontScriptName'] = array_shift($aUriParts);
         $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
@@ -715,18 +643,19 @@ class SGL_URL
         /////////////////////////////////////////////////////////////////
         
         //  we've got module name so load and merge local and global configs
-        $aModuleConfig = SGL::getModuleConfig($aParsedUri['moduleName']);
+        $aModuleConfig = SGL_Url::getModuleConfig($aParsedUri['moduleName']);
         if ($aModuleConfig) {
-            SGL::configMerge($aModuleConfig);
+            SGL_Url::configMerge($aModuleConfig);
         } else {
-            SGL::raiseError('Could not read current module\'s conf.ini file', 
-                SGL_ERROR_NOFILE);
+# pear not initialised            
+#            return PEAR::raiseError('Could not read current module\'s conf.ini file', 
+#                SGL_ERROR_NOFILE);
         }
         
         //  determine is moduleName is simplified, in other words, the mgr
         //  and mod names should be the same
         if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
-            if (SGL_Url::mgrNameOmitted($aParsedUri)) {
+            if (SGL_Inflector::isMgrNameOmitted($aParsedUri)) {
                 array_unshift($aUriParts, $mgrCopy);
                 $aParsedUri['managerName'] = $aParsedUri['moduleName'];                
             }
@@ -775,8 +704,8 @@ class SGL_URL
             {
                 //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
                 preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
-                $req = & SGL_Request::singleton();
-                $aRequestVars = $req->getAll();
+                #$req = & SGL_Request::singleton();
+                $aRequestVars = array_merge($_REQUEST, $aParsedUri);
                 if (    !array_key_exists($matches[1], $aRequestVars)
                     &&  !array_key_exists($matches[1], $aQsParams)) {
                         $aQsParams[$matches[1]] = array();
@@ -791,34 +720,39 @@ class SGL_URL
                 $aQsParams[$varName] = $varValue;
             }
         }
+        
         //  merge the default request fields with extracted param k/v pairs
-        return array_merge($aParsedUri, $aQsParams);
+        return array_merge($aParsedUri, $aQsParams);        
     }
     
     /**
-     * Determine if a simplified notation is being used.
+     * Converts querystring into/se/friendly/format.
      *
-     * If the url was of the form example.com/index.php/contactus/contactus/
-     * and it got simplifeid too example.com/index.php/contactus/ it is important
-     * to determine if that simplification happened, so subsequent parameters
-     * don't get interpreted as 'managerName'
-     *
-     * @param array $aParsedUri
-     * @return boolean
+     * Returns an array of all elements after the front script name
+     * 
+     * @access  public
+     * @param   $url    Url to be parsed
+     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
+     *                              from the front controller script name onwards
      */
-    function mgrNameOmitted($aParsedUri)
+    function getSignificantSegments($url)
     {
-        $fullMgrName = SGL_Url::getManagerNameFromSimplifiedName(
-            $aParsedUri['managerName']);
-        
-        //  compensate for case-sensitivity
-        $corrected = SGL::caseFix($fullMgrName, true);
-        $path = SGL_MOD_DIR .'/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
-        
-        //  if the file exists, mgr name is valid and has not been omitted 
-        return !file_exists($path);
-    }
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
+        //  split elements (remove eventual leading/trailing slashes)
+        $aUriParts = explode('/', trim($url, '/'));
+
+        //  step through array and strip until fc element is reached
+        foreach ($aUriParts as $elem) {
+            if ($elem != $conf['site']['frontScriptName']) {
+                array_shift($aUriParts);
+            } else {
+                break;
+            }
+        }
+        return $aUriParts;
+    }
+    
     /**
      * Best way I've come up with so far for passing all params required by Flexy to build a URL.
      *
@@ -831,8 +765,7 @@ class SGL_URL
      * @param object $output
      * @return string
      */
-    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(), 
-        $params = '', $idx = 0, $output = '')
+    function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
@@ -924,103 +857,5 @@ class SGL_URL
         
         return $url;
     }
-    
-    /**
-     * Checks to see if cookies are enabled, if not, session id is added to URL.
-     *
-     * PHP's magic querystring functionality is negated in SimpleNav::getTabsByRid(),
-     * in other words, the ?PHPSESSID=aeff023230323 is stripped out
-     *
-     * @param string $url
-     * @return void
-     */
-    function addSessionInfo(&$url)
-    {
-        //  determine is session propagated in cookies or URL
-        $sessionInfo = defined('SID') ? SID : '';
-        if (!empty($sessionInfo)) {
-
-            //  determine glue
-            $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
-            $url .= $glue . $sessionInfo . '&amp;/1/';
-        }
-    }
-    
-    /**
-     * Removes the session name and session value elements from an array.
-     *
-     * @param array $aUrl
-     */
-    function removeSessionInfo(&$aUrl)
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $key = array_search($conf['cookie']['name'], $aUrl);
-        if ($key !== false) {
-            unset($aUrl[$key], $aUrl[$key + 1]);
-        }
-    }
 }
-/*
-improved URL class for 
-- cleaner implementation in constants.php
-- works with both tradition and FC querystrings
-
-usage :
-
-//  sort out compat issues
-SGL_Url::resolveServerVars();
-
-//  determine current request
-$url = new SGL_Url($_SERVER['PHP_SELF']);  // set frontScriptName in const.
-
-$host = $url->getHostName();
-
-//  eg, handles situation where your URL is http://localhost/seagull/trunk/www/index.php
-//  ie, hostName = localhost; path = /seagull/trunk/www/
-$conf['site']['baseUrl'] = $url->getHostName() . $url->getPath();
-
-- save $url to request registry for later use
-
-- getSignificantSegments() becomes getQueryString()
-$string = $url->getQueryString();
-$dataStructure = $url->getQueryData();
-
-SGL_Url
-(
-    [scheme] => https
-    [host] => example.com
-    [path] => /pls/portal30/PORTAL30.wwpob_page.changetabs/index.php
-    [frontScriptName] => index.php
-    [raw_query] => p_back_url=http%3A%2F%2Fexample.com%2Fservlet%2Fpage%3F_pageid%3D360%2C366%2C368%2C382%26_dad%3Dportal30%26_schema%3DPORTAL30&foo=bar
-    [query] => Array
-                (
-                    [foo] => bar
-                    [baz] => quux
-                )
-)
-
-
-//  building SGL URLs
-    $url = new SGL_Url();
-    
-    $url->setModule('publisher');
-    $url->setManager('articleview');
-    $url->setAction('list');
-    $url->addQueryString('frmArticleId', 23);
-    $output = $url->toString(SGL_URL_ABS);
-    
-//  for Flexy output:
-makeLink(#self/publisher/articleview/action/view/frmArticleID/item_id#, aPagedData[data])
-
-//  https
-makeLink(#self/publisher/articleview/action/view/frmArticleID/item_id#,aPagedData[data],#https#)
--------------------------------------------------^^^^^^^^^^^^^ var name
---------------------------------------------------------------^^^^^^^^ obj prop/array key
------------------------------------------------------------------------^^^^^^^^^^^^^^^^ collection
-----------------------------------------------------------------------------------------^^^^^^^ is https or not
-
-//  working with SGL_Url type, switching FC/traditional implementation at runtime
-$url = new SGL_Url($url, $useBrackets = true, new SefUrlStrategy()); // as in Search Engine Friendly
-
-*/
 ?>

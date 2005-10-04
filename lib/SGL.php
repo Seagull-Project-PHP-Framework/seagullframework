@@ -403,43 +403,6 @@ EOF;
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
     }
     
-    /**
-     * Returns an array of config value for the specified module.
-     *
-     * @param string $moduleName
-     * @return mixed    Config array on success, false on error
-     *
-     * @todo move this to the yet-to-be-created SGL_Config
-     */
-    function getModuleConfig($moduleName)
-    {
-        $path = SGL_MOD_DIR . '/' . $moduleName . '/';
-        if (is_readable($path . 'conf.ini')) {
-            $ret = parse_ini_file($path . 'conf.ini', true);
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-    
-    /**
-     * Merges the current module's config with the global config.
-     *
-     * @param array $conf
-     * @return void
-     *
-     * @todo move this to the yet-to-be-created SGL_Config
-     */
-    function configMerge($conf) 
-    {
-        //  merge module config with global config, if module conf keys do not already exist
-        //  test first key
-        $firstKey = key($conf);
-        if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
-            $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
-        }  
-    }
-    
     function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;

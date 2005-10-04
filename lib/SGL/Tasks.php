@@ -180,7 +180,9 @@ class SGL_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf['debug']['authenticationEnabled']) {
 
             //  prepare referer info for redirect after login
-            $aParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+            $url = $input->getCurrentUrl();
+            $aParts = $url->getQueryData(true);
+
             $redir = $this->conf['site']['baseUrl'] .'/'.  implode('/', $aParts);
 
             //  check that session is not invalid or timed out
@@ -402,7 +404,7 @@ class SGL_ManagerResolver extends SGL_DecorateProcess
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
 
         //  if Mgr suffix has been left out, append it
-        $managerName = SGL_Url::getManagerNameFromSimplifiedName($managerName);
+        $managerName = SGL_Inflector::getManagerNameFromSimplifiedName($managerName);
         
         //  test for full case sensitive classname in config array
         $isFound = array_search($managerName, $aConfValues);
@@ -495,7 +497,7 @@ class SGL_PrepareNavigation extends SGL_DecorateProcess
             if (!class_exists($navClass)) {
                 SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
             }
-            $nav = & new $navClass;
+            $nav = & new $navClass($input);
 
             //  the following arguments are passed by reference and assigned values in
             //  the method

@@ -52,9 +52,18 @@ class SGL_RequestRegistry extends SGL_Registry
     {
         #$reg = &SGL_RequestRegistry::singleton();
         $this->set('request', $req);
-        
         //  php 4 version of
         //  self::singleton()->set('request', $req);
+    }
+    
+    function getCurrentUrl()
+    {
+        return $this->get('currentUrl');
+    }
+    
+    function setCurrentUrl($url)
+    {
+        $this->set('currentUrl', $url);
     }
     
     function getConfig()

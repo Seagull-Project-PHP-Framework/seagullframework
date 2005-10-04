@@ -281,7 +281,7 @@ class PageMgr extends SGL_Manager
         } else {
         
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
@@ -360,7 +360,7 @@ class PageMgr extends SGL_Manager
                 $section = array_merge($section, $parsed);
                 
                 //  adjust friendly mgr name to class filename
-                $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
+                $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
                 $section['manager'] = $className . '.php';
                 
                 //  represent additional params as string
@@ -408,7 +408,7 @@ class PageMgr extends SGL_Manager
         } else {
         
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';

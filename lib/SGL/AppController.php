@@ -47,9 +47,7 @@ require_once SGL_LIB_DIR . '/SGL.php';
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
-require_once SGL_CORE_DIR . '/Registry.php';
 require_once SGL_CORE_DIR . '/Tasks.php';
-require_once SGL_CORE_DIR . '/Request.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'HTML/Template/Flexy.php';
 
@@ -63,31 +61,6 @@ require_once 'HTML/Template/Flexy.php';
  */
 class SGL_AppController
 {  
-    
-    /**
-     * Invoke this method if you want setup only, eg, for testing.
-     *
-     */
-    function init()
-    {
-        $input = &SGL_RequestRegistry::singleton();
-        $input->setRequest($req = SGL_Request::singleton());
-        
-        $process =  new SGL_Init(
-                    new SGL_DiscoverClientOs(
-                    new SGL_ManagerResolver(
-                    new SGL_InitSession(
-                    new SGL_InitLangSupport(
-                    new SGL_InitPerms(
-                    new SGL_AuthenticateRequest(
-                    new SGL_BuildHeaders(
-                    new SGL_SetLocale(
-                    new SGL_Void()
-                   )))))))));
-                   
-        $process->process($input);
-    }
-     
     /**
      * Main invocation, init tasks plus main process.
      *
@@ -155,7 +128,30 @@ class SGL_AppController
         SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
         return true;
     }
-   
+    
+    /**
+     * Invoke this method if you want setup only, eg, for testing.
+     *
+     */
+    function init()
+    {
+        $input = &SGL_RequestRegistry::singleton();
+        $input->setRequest($req = SGL_Request::singleton());
+        
+        $process =  new SGL_Init(
+                    new SGL_DiscoverClientOs(
+                    new SGL_ManagerResolver(
+                    new SGL_InitSession(
+                    new SGL_InitLangSupport(
+                    new SGL_InitPerms(
+                    new SGL_AuthenticateRequest(
+                    new SGL_BuildHeaders(
+                    new SGL_SetLocale(
+                    new SGL_Void()
+                   )))))))));
+                   
+        $process->process($input);
+    }
 }
 
 /**

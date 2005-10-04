@@ -27,14 +27,19 @@ class SGL_Request
         SGL_String::dispelMagicQuotes($this->aProps);
 
         //  get all URL parts after domain and TLD as an array
-        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+        #$aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
         
         //  parse URL segments into SGL request structure
-        $aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
+        #$aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
         
         //  merge results with cleaned $_REQUEST values and $_POST
         SGL_String::dispelMagicQuotes($_POST);
-        $this->aProps = array_merge($aSglRequest, $this->aProps, $_POST);
+        
+        $reg = &SGL_RequestRegistry::singleton();
+        $url = $reg->getCurrentUrl();
+        $aUrlData = $url->getQueryData();
+        
+        $this->aProps = array_merge($this->aProps, $aUrlData, $_POST);
         
         return;
     }
@@ -123,6 +128,141 @@ class SGL_Request
         $GLOBALS['_SGL']['site']['blocksEnabled'] = 0;
         print '<pre>';
         print_r($this->aProps[$key]);
+    }
+}
+
+class SGL_Inflector
+{
+    /**
+    * Returns true if URL has been abbreviated
+    *
+    * This happens when a manager name is the same as its module name, ie
+    * UserManger in the 'user' module would become user/user which gets
+    * reduced to user
+    *
+    * @param string $url            From the querystring
+    * @param string $sectionName    From the database
+    * @return boolean
+    */
+    function isUrlSimplified($url, $sectionName)
+    {
+        if (!(empty($url))) {
+            $aUrlPieces = explode('/', $url);
+            $moduleNameUrl = $aUrlPieces[0];
+            $aSections =  explode('/', $sectionName);
+            $ret = in_array($moduleNameUrl, $aSections) && (SGL_Inflector::urlContainsDuplicates($sectionName));
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+    
+    /**
+     * Returns true if manager name is the same of module name, ie, index.php/faq/faq/.
+     *
+     * @param string $url
+     * @return boolean
+     */
+    function urlContainsDuplicates($url)
+    {
+        if (!empty($url)) {
+            $aPieces = explode('/', $url);
+            $initial = count($aPieces);
+            $unique = count(array_unique($aPieces));
+            $ret = $initial != $unique;
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+    
+    /**
+     * Determine if a simplified notation is being used.
+     *
+     * If the url was of the form example.com/index.php/contactus/contactus/
+     * and it got simplifeid too example.com/index.php/contactus/ it is important
+     * to determine if that simplification happened, so subsequent parameters
+     * don't get interpreted as 'managerName'
+     *
+     * @param array $aParsedUri
+     * @return boolean
+     */
+    function isMgrNameOmitted($aParsedUri)
+    {
+        $fullMgrName = SGL_Inflector::getManagerNameFromSimplifiedName(
+            $aParsedUri['managerName']);
+        
+        //  compensate for case-sensitivity
+        $corrected = SGL_Inflector::caseFix($fullMgrName, true);
+        $path = SGL_MOD_DIR .'/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+        
+        //  if the file exists, mgr name is valid and has not been omitted 
+        return !file_exists($path);
+    }
+    
+    /**
+     * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
+     *
+     * @param string $name
+     * @return string
+     */
+    function getManagerNameFromSimplifiedName($name)
+    {
+        //  if Mgr suffix has been left out, append it
+        if (strtolower(substr($name, -3)) != 'mgr') {
+            $name .= 'Mgr';
+        }
+        return ucfirst($name);
+    }
+    
+    /**
+     * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
+     *
+     * @param unknown_type $name
+     * @return unknown
+     */
+    function getSimplifiedNameFromManagerName($name)
+    {
+        //  strip file extension if exists
+        if (substr($name, -4) == '.php') {
+            $name = substr($name, 0, -4);
+        }
+        
+        //  strip 'Mgr' if exists
+        if (strtolower(substr($name, -3)) == 'mgr') {
+            $name = substr($name, 0, -3);
+        }
+        return strtolower($name);      
+    }
+    
+    /**
+     * Makes up for case insensitive classnames in php4 with get_class().
+     *
+     * @access   public
+     * @static    
+     * @param    string     $str    Classname  
+     * @param    boolean    $force  Force the operation regardless of php version
+     * @return   mixed              Either correct case classname or false
+     */
+    function caseFix($str, $force = false)
+    {
+        if (!$force && SGL_Inflector::isPhp5()) {
+            return $str;
+        }
+        static $aConfValues;
+        if (!isset($aConfValues)) {
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            $aConfValues = array_keys($conf);
+        }
+        $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
+        $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
+        return ($isFound !== false) ? $aConfValues[$isFound] : false;
+    }
+    
+    function isPhp5()
+    {
+        $phpVersion = PHP_VERSION;
+        return ($phpVersion{0} == 5);
     }
 }
 ?>
