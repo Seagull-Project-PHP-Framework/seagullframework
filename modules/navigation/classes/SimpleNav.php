@@ -176,10 +176,6 @@ class SimpleNav
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-
-        //  $oCurrentUrl = $input->getCurrentUrl();
-        //  $oUrlData = $oCurrentUrl->getQueryStringData();
-        #$aBaseUri = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
         
         $reg = &SGL_RequestRegistry::singleton();
         $url = $reg->getCurrentUrl();
@@ -341,7 +337,7 @@ class SimpleNav
         foreach ($sectionNodes as $section) {
             $liAtts = '';
             if ($section->isCurrent) {
-                $liAtts      = ' class="current"';
+                $liAtts = ' class="current"';
             }
             //  add static flag if necessary
             $isStatic = ($section->is_static) ? 'staticId/' . $section->section_id . '/': '';

@@ -2,6 +2,27 @@
 class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
 {
     /**
+    * Returns full url
+    *
+    * @return string Full url
+    * @access public
+    */
+    function toString()
+    {
+        $querystring = $this->getQueryString();
+
+        $this->url = $this->protocol . '://'
+                   . $this->user . (!empty($this->pass) ? ':' : '')
+                   . $this->pass . (!empty($this->user) ? '@' : '')
+                   . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
+                   . $this->path
+                   . (!empty($querystring) ? '?' . $querystring : '')
+                   . (!empty($this->anchor) ? '#' . $this->anchor : '');
+
+        return $this->url;
+    }
+    
+    /**
     * Resolves //, ../ and ./ from a path and returns
     * the result. Eg:
     *

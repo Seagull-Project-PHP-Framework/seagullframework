@@ -25,12 +25,6 @@ class SGL_Request
         
         //  remove slashes if necessary
         SGL_String::dispelMagicQuotes($this->aProps);
-
-        //  get all URL parts after domain and TLD as an array
-        #$aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
-        
-        //  parse URL segments into SGL request structure
-        #$aSglRequest = SGL_Url::makeSearchEngineFriendly($aUriParts);
         
         //  merge results with cleaned $_REQUEST values and $_POST
         SGL_String::dispelMagicQuotes($_POST);
