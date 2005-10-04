@@ -378,30 +378,6 @@ EOF;
             return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
         }
     }
-
-    /**
-     * Makes up for case insensitive classnames in php4 with get_class().
-     *
-     * @access   public
-     * @static    
-     * @param    string     $str    Classname  
-     * @param    boolean    $force  Force the operation regardless of php version
-     * @return   mixed              Either correct case classname or false
-     */
-    function caseFix($str, $force = false)
-    {
-        if (!$force && SGL::isPhp5()) {
-            return $str;
-        }
-        static $aConfValues;
-        if (!isset($aConfValues)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $aConfValues = array_keys($conf);
-        }
-        $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
-        $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
-        return ($isFound !== false) ? $aConfValues[$isFound] : false;
-    }
     
     function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {

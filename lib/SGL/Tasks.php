@@ -126,7 +126,7 @@ class SGL_BuildHeaders extends SGL_DecorateProcess
         
         //  don't send headers according to config
         $mgr = $input->get('manager');        
-        $currentMgr = SGL::caseFix(get_class($mgr));
+        $currentMgr = SGL_Inflector::caseFix(get_class($mgr));
         if (!isset($this->conf[$currentMgr]['setHeaders'])
                 || $this->conf[$currentMgr]['setHeaders'] == true) {
                     
@@ -174,7 +174,7 @@ class SGL_AuthenticateRequest extends SGL_DecorateProcess
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
         
-        $pageName = SGL::caseFix(get_class($mgr));
+        $pageName = SGL_Inflector::caseFix(get_class($mgr));
         if (isset( $this->conf[$pageName]['requiresAuth'])
                 && $this->conf[$pageName]['requiresAuth'] == true
                 && $this->conf['debug']['authenticationEnabled']) {

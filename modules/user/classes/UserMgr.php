@@ -357,7 +357,7 @@ class UserMgr extends RegisterMgr
             $orderBy_query = ' ORDER BY u.usr_id ASC ';
         }
 
-        if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
+        if ($conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
                 FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r

@@ -241,7 +241,7 @@ class SGL_Inflector
      */
     function caseFix($str, $force = false)
     {
-        if (!$force && SGL_Inflector::isPhp5()) {
+        if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;
         }
         static $aConfValues;
@@ -252,12 +252,6 @@ class SGL_Inflector
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
-    }
-    
-    function isPhp5()
-    {
-        $phpVersion = PHP_VERSION;
-        return ($phpVersion{0} == 5);
     }
 }
 ?>
