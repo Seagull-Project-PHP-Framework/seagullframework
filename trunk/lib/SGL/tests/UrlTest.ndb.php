@@ -53,36 +53,36 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('manager', $ret));
     }
     
-    function xtestGetSignificantSegments()
+    function xtestToPartialArray()
     {
         //  test random string
         $url = 'foo/bar/baz/quux';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertEqual($ret, array());
         
         //  test with valid frontScriptName, should return 4 elements
         $url = 'index.php/bar/baz/quux';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName + leading slash, should return 4 elements
         $url = '/index.php/bar/baz/quux';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName + trailing slash, should return 4 elements
         $url = '/index.php/bar/baz/quux/';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName, should return 3 elements
         $url = '/bar/index.php/baz/quux/';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertTrue(count($ret), 3);
         
         //  test with valid frontScriptName, should return 1 element
         $url = '/foo/bar/baz/index.php/';
-        $ret = $this->url->getSignificantSegments($url);
+        $ret = $this->url->toPartialArray($url);
         $this->assertTrue(count($ret), 1);
     }
     

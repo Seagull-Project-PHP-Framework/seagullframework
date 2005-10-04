@@ -93,20 +93,8 @@
         //  store in Seagull simulated namespace
         $GLOBALS['_SGL']['CONF'] = @parse_ini_file($configFile, true);
 
-        //  set protocol correctly, build base url
-        //  allows for various possibilities:
-        //  - http://localhost/seagull/www
-        //  - http://localhost:8080
-        //  - http://www.example.com
-        $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
-
-        //  set baseUrl
-        if (!(isset($GLOBALS['_SGL']['CONF']['site']['baseUrl']))) {
-            $GLOBALS['_SGL']['CONF']['site']['baseUrl'] = getBaseUrl($GLOBALS['_SGL']['CONF'], $serverName);
-        }
         
         // framework file structure
-        define('SGL_BASE_URL',                  $GLOBALS['_SGL']['CONF']['site']['baseUrl']);
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
         define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
         define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
@@ -130,6 +118,13 @@
         $url  = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlType());
         $input = &SGL_RequestRegistry::singleton();
         $input->setCurrentUrl($url);
+        
+        //  get base url
+        if (!(isset($GLOBALS['_SGL']['CONF']['site']['baseUrl']))) {
+            $GLOBALS['_SGL']['CONF']['site']['baseUrl'] = $url->getBase();
+        }
+        
+        define('SGL_BASE_URL',                  $GLOBALS['_SGL']['CONF']['site']['baseUrl']);
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
@@ -252,42 +247,5 @@
             }
         }
         return $hostName;
-    }
-
-    function getProtocol()
-    {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on') ? 'https' : 'http';
-    }
-
-    function getBaseUrl($conf, $serverName)
-    {
-        $baseFolder = dirname($_SERVER['PHP_SELF']);
-
-        //  remove all elements after frontscript name
-        $aUriParts = array_reverse(explode('/', $baseFolder));
-
-        //  step through array and strip until fc element is reached
-        if (in_array($conf['site']['frontScriptName'], $aUriParts)) {
-            foreach ($aUriParts as $elem) {
-                array_shift($aUriParts);
-                if ($elem == $conf['site']['frontScriptName']) {
-                    break;
-                }
-            }
-        }
-        $baseFolder = implode('/', array_reverse($aUriParts));
-
-        //  handle case for user's homedir, ie, presence of tilda: example.com/~seagull
-        if (preg_match('/~/', $baseFolder)) {
-            $baseFolder = str_replace('~', '%7E', $baseFolder);
-        }
-        $baseUrl = getProtocol() . '://' . $serverName . $baseFolder;
-
-        //  chop relevant final slash
-        $search = (substr(PHP_OS, 0, 3) == 'WIN') ? "/\$/" : "/\/$/";
-        if (preg_match($search, $baseUrl)) {
-            $baseUrl = rtrim($baseUrl, DIRECTORY_SEPARATOR);
-        }
-        return $baseUrl;
     }
 ?>

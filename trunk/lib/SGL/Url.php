@@ -155,7 +155,7 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
-            $this->protocol    = (@$_SERVER['HTTPS'] == 'on' ? 'https' : 'http');
+            $this->protocol = (@$_SERVER['HTTPS'] == 'on' ? 'https' : 'http');
 
             /**
             * Figure out host/port
@@ -275,13 +275,16 @@ class SGL_URL
             if (isset($aRet['managerName'])) {
                 unset($aRet['managerName']);    
             }
+            if (isset($aRet['frontScriptName'])) {
+                unset($aRet['frontScriptName']);    
+            }
         }
         return $aRet;
     }
     
     function getQueryString() 
     {
-        $this->parserStrategy->getQueryString($this);
+        return $this->querystring;
     }
     
     function parseQueryString() 
@@ -289,9 +292,9 @@ class SGL_URL
         return $this->parserStrategy->parseQueryString($this);
     }
     
-    function extract() 
+    function toString() 
     {
-        $this->parserStrategy->extract($this);
+        return $this->parserStrategy->toString($this);
     }
     
     function makeLink($action = '', $mgr = '', $mod = '', $aList = array(), 
@@ -300,27 +303,6 @@ class SGL_URL
         //  a hack for 0.4.x style of building SEF URLs
         $url = & SGL_Url::singleton();
         return $url->parserStrategy->makeLink($action, $mgr, $mod, $aList, $params, $idx, $output);
-    }
-
-    /**
-    * Returns full url
-    *
-    * @return string Full url
-    * @access public
-    */
-    function getURL()
-    {
-        $querystring = $this->getQueryString();
-
-        $this->url = $this->protocol . '://'
-                   . $this->user . (!empty($this->pass) ? ':' : '')
-                   . $this->pass . (!empty($this->user) ? '@' : '')
-                   . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
-                   . $this->path
-                   . (!empty($querystring) ? '?' . $querystring : '')
-                   . (!empty($this->anchor) ? '#' . $this->anchor : '');
-
-        return $this->url;
     }
 
     /**
@@ -418,6 +400,22 @@ class SGL_URL
         if (!(isset($aUrl['scheme']))) {
             $url = SGL_BASE_URL . '/' . $url;
         }
+    }
+    
+    function getBase()
+    {
+        $retUrl = $this->protocol . '://'
+                   . $this->user . (!empty($this->pass) ? ':' : '')
+                   . $this->pass . (!empty($this->user) ? '@' : '')
+                   . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
+                   . $this->path;
+        
+        //  handle case for user's homedir, ie, presence of tilda: example.com/~seagull
+        if (preg_match('/~/', $retUrl)) {
+            $retUrl = str_replace('~', '%7E', $retUrl);
+        }
+        //  remove trailing slash
+        return substr($retUrl, 0, -1);
     }
     
     /**
@@ -556,14 +554,12 @@ class SGL_URL
  * @abstract
  */
 class SGL_UrlParserStrategy
-{
-    function getQueryString() {}
-    
+{   
     function parseQueryString() {}
     
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output) {}
     
-    function extract() {} //make SEF
+    function toString() {}
 }
 
 /**
@@ -572,34 +568,31 @@ class SGL_UrlParserStrategy
  */
 class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
 {
-    //FIXME: change to SEF format
-    function getQueryString()
+    /**
+    * Returns full url
+    *
+    * @return string Full url
+    * @access public
+    */
+    function toString(/*SGL_Url*/$url)
     {
-        if (!empty($this->querystring)) {
-            foreach ($this->querystring as $name => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $k => $v) {
-                        $querystring[] = $this->useBrackets ? sprintf('%s[%s]=%s', $name, $k, $v) : ($name . '=' . $v);
-                    }
-                } elseif (!is_null($value)) {
-                    $querystring[] = $name . '=' . $value;
-                } else {
-                    $querystring[] = $name;
-                }
-            }
-            $querystring = implode(ini_get('arg_separator.output'), $querystring);
-        } else {
-            $querystring = '';
-        }
+        $retUrl = $url->protocol . '://'
+                   . $url->user . (!empty($url->pass) ? ':' : '')
+                   . $url->pass . (!empty($url->user) ? '@' : '')
+                   . $url->host . ($url->port == $url->getStandardPort($url->protocol) ? '' : ':' . $url->port)
+                   . $url->path
+                   . $url->frontScriptName
+                   . (!empty($url->querystring) ? $url->querystring : '')
+                   . (!empty($url->anchor) ? '#' . $url->anchor : '');
 
-        return $querystring;        
+        return $retUrl;
     }
     
     function parseQueryString(/*SGL_Url*/$url)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 
-        $aUriParts = $this->getSignificantSegments($url->url);
+        $aUriParts = $this->toPartialArray($url->url, $conf['site']['frontScriptName']);
         
         //  remap
         $aParsedUri['frontScriptName'] = array_shift($aUriParts);
@@ -704,7 +697,6 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             {
                 //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
                 preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
-                #$req = & SGL_Request::singleton();
                 $aRequestVars = array_merge($_REQUEST, $aParsedUri);
                 if (    !array_key_exists($matches[1], $aRequestVars)
                     &&  !array_key_exists($matches[1], $aQsParams)) {
@@ -721,30 +713,29 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             }
         }
         
-        //  merge the default request fields with extracted param k/v pairs
+        //  remove frontScriptName
+        #unset($aParsedUri['frontScriptName']);
+        
+        //  and merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);        
     }
     
     /**
-     * Converts querystring into/se/friendly/format.
-     *
-     * Returns an array of all elements after the front script name
+     * Returns an array of all elements from the front controller script name onwards.
      * 
      * @access  public
      * @param   $url    Url to be parsed
      * @return  array   $aUriParts  An array of all significant parts of the URL, ie
      *                              from the front controller script name onwards
      */
-    function getSignificantSegments($url)
+    function toPartialArray($url, $frontScriptName)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
         //  split elements (remove eventual leading/trailing slashes)
         $aUriParts = explode('/', trim($url, '/'));
 
         //  step through array and strip until fc element is reached
         foreach ($aUriParts as $elem) {
-            if ($elem != $conf['site']['frontScriptName']) {
+            if ($elem != $frontScriptName) {
                 array_shift($aUriParts);
             } else {
                 break;

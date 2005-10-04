@@ -11,6 +11,8 @@ url
 - moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in constants.php
 - SGL_Url now uses a parser strategy and can handle seagull urls as well as traditional
 - SGL_Url stored in registry
+- explain SGL_Url object
+- getSignificantSegments changed to toPartialArray
 
 TODO
 ====
