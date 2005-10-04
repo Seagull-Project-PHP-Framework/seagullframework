@@ -179,20 +179,17 @@ class SimpleNav
         
         $reg = &SGL_RequestRegistry::singleton();
         $url = $reg->getCurrentUrl();
-        $aBaseUri = $url->getQueryData();
-
-        //  shift off frontScriptName element
-        array_shift($aBaseUri);
+        $aQueryData = $url->getQueryData();
 
         // replace +'s in array elements with spaces
-        $aBaseUri = array_map(create_function('$a', 'return str_replace("+", " ", $a);'), 
-            $aBaseUri);
+        $aQueryData = array_map(create_function('$a', 'return str_replace("+", " ", $a);'), 
+            $aQueryData);
         
         //  temporarily remove session info
-        SGL_Url::removeSessionInfo($aBaseUri);
+        SGL_Url::removeSessionInfo($aQueryData);
 
         //  return to string
-        $baseUri = implode('/', $aBaseUri);
+        $baseUri = implode('/', $aQueryData);
          
         //  find current section  
         $aSectionNodes = array();
