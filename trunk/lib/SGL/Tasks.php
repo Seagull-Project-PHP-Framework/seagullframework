@@ -174,9 +174,9 @@ class SGL_AuthenticateRequest extends SGL_DecorateProcess
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
         
-        $pageName = SGL_Inflector::caseFix(get_class($mgr));
-        if (isset( $this->conf[$pageName]['requiresAuth'])
-                && $this->conf[$pageName]['requiresAuth'] == true
+        $mgrName = SGL_Inflector::caseFix(get_class($mgr));
+        if (isset( $this->conf[$mgrName]['requiresAuth'])
+                && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authenticationEnabled']) {
 
             //  prepare referer info for redirect after login
