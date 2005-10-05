@@ -244,9 +244,10 @@ class SGL_URL
     {
         static $instance;
         if (!isset($instance)) {
-            $urlType = 'SGL_UrlParserSefStrategy';
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            $urlHandler = $conf['site']['urlHandler'];
             $class = __CLASS__;
-            $instance = new $class(null, true, new $urlType());
+            $instance = new $class(null, true, new $urlHandler());
         }
         return $instance;
     }
@@ -277,9 +278,6 @@ class SGL_URL
             if (isset($aRet['managerName'])) {
                 unset($aRet['managerName']);    
             }
-//            if (isset($aRet['frontScriptName'])) {
-//                unset($aRet['frontScriptName']);    
-//            }
         }
         return $aRet;
     }
@@ -429,6 +427,8 @@ class SGL_URL
      *
      * @param string $str
      * @return array  A hash containing URL info
+     *
+     * @todo this method is VERY similar to parseQueryString and should be consolidated
      */
     function parseResourceUri($str)
     {
