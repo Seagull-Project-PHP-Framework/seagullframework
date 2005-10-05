@@ -114,8 +114,8 @@
         SGL_URL::resolveServerVars($GLOBALS['_SGL']['CONF']);
         
         //  assign current url object to registry
-        $urlType = 'SGL_UrlParserSefStrategy';
-        $url  = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlType());
+        $urlHandler = $GLOBALS['_SGL']['CONF']['site']['urlHandler'];
+        $url  = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
         $input = &SGL_RequestRegistry::singleton();
         $input->setCurrentUrl($url);
         
