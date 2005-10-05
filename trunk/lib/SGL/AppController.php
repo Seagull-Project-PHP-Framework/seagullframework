@@ -128,30 +128,6 @@ class SGL_AppController
         SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
         return true;
     }
-    
-    /**
-     * Invoke this method if you want setup only, eg, for testing.
-     *
-     */
-    function init()
-    {
-        $input = &SGL_RequestRegistry::singleton();
-        $input->setRequest($req = SGL_Request::singleton());
-        
-        $process =  new SGL_Init(
-                    new SGL_DiscoverClientOs(
-                    new SGL_ManagerResolver(
-                    new SGL_InitSession(
-                    new SGL_InitLangSupport(
-                    new SGL_InitPerms(
-                    new SGL_AuthenticateRequest(
-                    new SGL_BuildHeaders(
-                    new SGL_SetLocale(
-                    new SGL_Void()
-                   )))))))));
-                   
-        $process->process($input);
-    }
 }
 
 /**
