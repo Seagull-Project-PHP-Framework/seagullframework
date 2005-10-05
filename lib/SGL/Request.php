@@ -244,11 +244,8 @@ class SGL_Inflector
         if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;
         }
-        static $aConfValues;
-        if (!isset($aConfValues)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $aConfValues = array_keys($conf);
-        }
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
