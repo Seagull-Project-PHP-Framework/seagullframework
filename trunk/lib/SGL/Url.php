@@ -275,9 +275,9 @@ class SGL_URL
             if (isset($aRet['managerName'])) {
                 unset($aRet['managerName']);    
             }
-            if (isset($aRet['frontScriptName'])) {
-                unset($aRet['frontScriptName']);    
-            }
+//            if (isset($aRet['frontScriptName'])) {
+//                unset($aRet['frontScriptName']);    
+//            }
         }
         return $aRet;
     }
@@ -588,6 +588,13 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         return $retUrl;
     }
     
+    /**
+     * Analyzes querystring content and parses it into module/manager/action and params.
+     *
+     * @param SGL_Url $url
+     * @return array        An array to be assigned to SGL_Url::aQueryData
+     * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
+     */
     function parseQueryString(/*SGL_Url*/$url)
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
