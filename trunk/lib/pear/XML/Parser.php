@@ -18,7 +18,7 @@
 // |         Stephan Schmidt <schst@php-tools.net>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Parser.php,v 1.25 2005/03/25 17:13:10 schst Exp $
+// $Id: Parser.php,v 1.26 2005/09/23 11:51:10 schst Exp $
 
 /**
  * XML Parser class.
@@ -673,9 +673,10 @@ class XML_Parser_Error extends PEAR_Error
     {
         if (is_resource($msgorparser)) {
             $code = xml_get_error_code($msgorparser);
-            $msgorparser = sprintf('%s at XML input line %d',
+            $msgorparser = sprintf('%s at XML input line %d:%d',
                                    xml_error_string($code),
-                                   xml_get_current_line_number($msgorparser));
+                                   xml_get_current_line_number($msgorparser),
+                                   xml_get_current_column_number($msgorparser));
         }
         $this->PEAR_Error($msgorparser, $code, $mode, $level);
     }

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: REST.php,v 1.14 2005/09/07 17:02:47 cellog Exp $
+ * @version    CVS: $Id: REST.php,v 1.15 2005/09/24 04:15:13 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -34,7 +34,7 @@ require_once 'PEAR/XMLParser.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0RC2
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -306,7 +306,7 @@ class PEAR_REST
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
         $request .= "Host: $host:$port\r\n" . $ifmodifiedsince .
-            "User-Agent: PHP/" . PHP_VERSION . "\r\n";
+            "User-Agent: PEAR/1.4.1/PHP/" . PHP_VERSION . "\r\n";
         $username = $this->config->get('username');
         $password = $this->config->get('password');
         if ($username && $password) {

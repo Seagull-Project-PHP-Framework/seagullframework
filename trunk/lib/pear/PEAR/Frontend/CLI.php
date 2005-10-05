@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CLI.php,v 1.54 2005/09/11 19:13:08 cellog Exp $
+ * @version    CVS: $Id: CLI.php,v 1.55 2005/09/18 23:03:08 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Frontend.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0RC2
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -250,7 +250,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 }
                 if (isset($group['param'])) {
                     if (method_exists($script, 'postProcessPrompts')) {
-                        $prompts = $script->postProcessPrompts($group['param'], $group['name']);
+                        $prompts = $script->postProcessPrompts($group['param'], $group['id']);
                         if (!is_array($prompts) || count($prompts) != count($group['param'])) {
                             $this->outputData('postinstall', 'Error: post-install script did not ' .
                                 'return proper post-processed prompts');

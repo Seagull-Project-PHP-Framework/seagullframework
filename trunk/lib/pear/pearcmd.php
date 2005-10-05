@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.26 2005/09/14 19:27:16 pajoye Exp $
+// $Id: pearcmd.php,v 1.27 2005/09/24 06:30:53 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0RC2";
+$pear_package_version = "1.4.1";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -279,6 +279,10 @@ if ($fetype == 'Gtk') {
     $ok = $cmd->run($command, $opts, $params);
     if ($ok === false) {
         PEAR::raiseError("unknown command `$command'");
+    }
+    if (PEAR::isError($ok)) {
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+        PEAR::raiseError($ok);
     }
 } while (false);
 
