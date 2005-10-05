@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: rw.php,v 1.10 2005/08/23 18:15:57 cellog Exp $
+ * @version    CVS: $Id: rw.php,v 1.11 2005/09/25 03:49:01 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a8
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0RC2
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a8
  */
@@ -1508,17 +1508,6 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         } else {
             $this->_packageInfo['changelog']['release'][] = $contents;
         }
-    }
-
-    /**
-     * @return array
-     */
-    function getChangelog()
-    {
-        if (isset($this->_packageInfo['changelog'])) {
-            return $this->_packageInfo['changelog'];
-        }
-        return false;
     }
 
     /**

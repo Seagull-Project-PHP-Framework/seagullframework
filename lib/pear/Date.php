@@ -1,23 +1,31 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Baba Buehler <baba@babaz.com>                               |
-// |          Pierre-Alain Joye <pajoye@php.net>                          |
-// +----------------------------------------------------------------------+
-//
-// $Id: Date.php,v 1.28 2004/05/16 13:11:07 pajoye Exp $
+
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/**
+ * Generic date handling class for PEAR
+ *
+ * Generic date handling class for PEAR.  Attempts to be time zone aware
+ * through the Date::TimeZone class.  Supports several operations from
+ * Date::Calc on Date objects.
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 2.02 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/2_02.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Date and Time
+ * @package    Date
+ * @author     Baba Buehler <baba@babaz.com>
+ * @author     Pierre-Alain Joye <pajoye@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    CVS: $Id: Date.php,v 1.34 2005/10/02 14:47:34 pajoye Exp $
+ * @link       http://pear.php.net/package/Date
+ */
 
 /**@#+
  * Include supporting classes
@@ -57,15 +65,18 @@ define('DATE_FORMAT_UNIXTIME', 5);
 /**@#-*/
 
 /**
- * Generic date handling class for PEAR.
+ * Generic date handling class for PEAR
  *
  * Generic date handling class for PEAR.  Attempts to be time zone aware
  * through the Date::TimeZone class.  Supports several operations from
  * Date::Calc on Date objects.
  *
- * @author Baba Buehler <baba@babaz.com>
- * @package Date
- * @access public
+ * @author     Baba Buehler <baba@babaz.com>
+ * @author     Pierre-Alain Joye <pajoye@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    Release: 1.4.4
+ * @link       http://pear.php.net/package/Date
  */
 class Date
 {
@@ -104,11 +115,19 @@ class Date
      * @var float
      */
     var $partsecond;
+
     /**
      * timezone for this date
      * @var object Date_TimeZone
      */
     var $tz;
+
+    /**
+     * define the default weekday abbreviation length
+     * used by ::format()
+     * @var int
+     */
+    var $getWeekdayAbbrnameLength = 3;
 
 
     /**
@@ -309,7 +328,7 @@ class Date
                 $nextchar = substr($format,$strpos + 1,1);
                 switch ($nextchar) {
                 case "a":
-                    $output .= Date_Calc::getWeekdayAbbrname($this->day,$this->month,$this->year);
+                    $output .= Date_Calc::getWeekdayAbbrname($this->day,$this->month,$this->year, $this->getWeekdayAbbrnameLength);
                     break;
                 case "A":
                     $output .= Date_Calc::getWeekdayFullname($this->day,$this->month,$this->year);
@@ -338,9 +357,16 @@ class Date
                 case "H":
                     $output .= sprintf("%02d", $this->hour);
                     break;
+                case 'h':
+                    $output .= sprintf("%d", $this->hour);
+                    break;
                 case "I":
                     $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
                     $output .= sprintf("%02d", $hour==0 ? 12 : $hour);
+                    break;
+                case "i":
+                    $hour = ($this->hour + 1) > 12 ? $this->hour - 12 : $this->hour;
+                    $output .= sprintf("%d", $hour==0 ? 12 : $hour);
                     break;
                 case "j":
                     $output .= Date_Calc::julianDate($this->day,$this->month,$this->year);
@@ -384,7 +410,7 @@ class Date
                     $output .= sprintf("%02d:%02d", $this->hour, $this->minute);
                     break;
                 case "s":
-                    $output .= sprintf("%02f", (float)((float)$this->second + $this->partsecond));
+                    $output .= str_replace(',', '.', sprintf("%09f", (float)((float)$this->second + $this->partsecond)));
                     break;
                 case "S":
                     $output .= sprintf("%02d", $this->second);
@@ -1046,7 +1072,7 @@ class Date
      */
     function getYear()
     {
-        return $this->year;
+        return (int)$this->year;
     }
 
     /**
@@ -1059,7 +1085,7 @@ class Date
      */
     function getMonth()
     {
-        return $this->month;
+        return (int)$this->month;
     }
 
     /**
@@ -1215,10 +1241,6 @@ class Date
             $this->second = $s;
         }
     }
+}
 
-} // Date
-
-
-//
-// END
 ?>

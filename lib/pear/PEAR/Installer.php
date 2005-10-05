@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.213 2005/08/19 18:59:26 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.218 2005/09/25 20:41:31 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0RC2
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -579,7 +579,7 @@ class PEAR_Installer extends PEAR_Downloader
         }
         // }}}
         $this->addFileOperation("rename", array($dest_file, $final_dest_file, $role->isExtension()));
-        // Store the full path where the file was installed for easy unistall
+        // Store the full path where the file was installed for easy uninstall
         $this->addFileOperation("installed_as", array($file, $installed_as,
                             $save_destdir, dirname(substr($dest_file, strlen($save_destdir)))));
 
@@ -1310,18 +1310,30 @@ class PEAR_Installer extends PEAR_Downloader
             }
             $this->addFileOperation('rename', array($ext['file'], $copyto));
 
-            $pkginfo['filelist'][$bn] = array(
-                'role' => $role,
-                'installed_as' => $dest,
-                'php_api' => $ext['php_api'],
-                'zend_mod_api' => $ext['zend_mod_api'],
-                'zend_ext_api' => $ext['zend_ext_api'],
-                );
+            if ($filelist->getPackageXmlVersion() == '1.0') {
+                $filelist->installedFile($bn, array(
+                    'role' => $role,
+                    'name' => $bn,
+                    'installed_as' => $dest,
+                    'php_api' => $ext['php_api'],
+                    'zend_mod_api' => $ext['zend_mod_api'],
+                    'zend_ext_api' => $ext['zend_ext_api'],
+                    ));
+            } else {
+                $filelist->installedFile($bn, array('attribs' => array(
+                    'role' => $role,
+                    'name' => $bn,
+                    'installed_as' => $dest,
+                    'php_api' => $ext['php_api'],
+                    'zend_mod_api' => $ext['zend_mod_api'],
+                    'zend_ext_api' => $ext['zend_ext_api'],
+                    )));
+            }
         }
     }
 
     // }}}
-    function getUninstallPackages()
+    function &getUninstallPackages()
     {
         return $this->_downloadedPackages;
     }
@@ -1345,6 +1357,7 @@ class PEAR_Installer extends PEAR_Downloader
             $this->config->setInstallRoot($options['installroot']);
             $this->installroot = '';
         } else {
+            $this->config->setInstallRoot('');
             $this->installroot = '';
         }
         $this->_registry = &$this->config->getRegistry();
@@ -1372,29 +1385,31 @@ class PEAR_Installer extends PEAR_Downloader
                     'package' => $package
                 ), true) . ' not installed');
         }
+        if ($pkg->getInstalledBinary()) {
+            // this is just an alias for a binary package
+            return $this->_registry->deletePackage($package, $channel);
+        }
         $filelist = $pkg->getFilelist();
-        if (is_object($pkg)) {
-            PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-            if (!class_exists('PEAR_Dependency2')) {
-                require_once 'PEAR/Dependency2.php';
-            }
-            $depchecker = &new PEAR_Dependency2($this->config, $options, 
-                array('channel' => $channel, 'package' => $package),
-                PEAR_VALIDATE_UNINSTALLING);
-            $e = $depchecker->validatePackageUninstall($this);
-            PEAR::staticPopErrorHandling();
-            if (PEAR::isError($e)) {
-                if (!isset($options['ignore-errors'])) {
-                    return $this->raiseError($e);
-                } else {
-                    if (!isset($options['soft'])) {
-                        $this->log(0, 'WARNING: ' . $e->getMessage());
-                    }
-                }
-            } elseif (is_array($e)) {
+        PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+        if (!class_exists('PEAR_Dependency2')) {
+            require_once 'PEAR/Dependency2.php';
+        }
+        $depchecker = &new PEAR_Dependency2($this->config, $options, 
+            array('channel' => $channel, 'package' => $package),
+            PEAR_VALIDATE_UNINSTALLING);
+        $e = $depchecker->validatePackageUninstall($this);
+        PEAR::staticPopErrorHandling();
+        if (PEAR::isError($e)) {
+            if (!isset($options['ignore-errors'])) {
+                return $this->raiseError($e);
+            } else {
                 if (!isset($options['soft'])) {
-                    $this->log(0, $e[0]);
+                    $this->log(0, 'WARNING: ' . $e->getMessage());
                 }
+            }
+        } elseif (is_array($e)) {
+            if (!isset($options['soft'])) {
+                $this->log(0, $e[0]);
             }
         }
         // {{{ Delete the files

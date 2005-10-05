@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Dependency2.php,v 1.45 2005/09/15 20:53:50 cellog Exp $
+ * @version    CVS: $Id: Dependency2.php,v 1.46 2005/09/22 01:49:26 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/Validate.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0RC2
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -518,7 +518,7 @@ class PEAR_Dependency2
      */
     function getPEARVersion()
     {
-        return '1.4.0RC2';
+        return '1.4.1';
     }
 
     function validatePearinstallerDependency($dep)
@@ -836,6 +836,12 @@ class PEAR_Dependency2
         return $this->_validatePackageDownload($dep, $required, array(), $depv1);
     }
 
+    /**
+     * Verify that uninstalling packages passed in to command line is OK.
+     *
+     * @param PEAR_Installer $dl
+     * @return PEAR_Error|true
+     */
     function validatePackageUninstall(&$dl)
     {
         if (PEAR::isError($this->_dependencydb)) {
