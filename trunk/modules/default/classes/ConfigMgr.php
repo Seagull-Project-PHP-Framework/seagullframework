@@ -91,6 +91,9 @@ class ConfigMgr extends SGL_Manager
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $this->aNavDrivers = SGL_Util::getAllNavDrivers();
         $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
+        $this->aUrlHandlers = array(
+            'SGL_UrlParserSefStrategy' => 'Seagull SEF',
+            'SGL_UrlParserClassicStrategy' => 'Classic');
 
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'), 
@@ -127,6 +130,11 @@ class ConfigMgr extends SGL_Manager
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
+            }
+            
+            //  catch URL invalid handler
+            if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
+                $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
             }
             
             switch ($input->conf['mta']['backend']) {
@@ -187,6 +195,7 @@ class ConfigMgr extends SGL_Manager
         $output->aNavDrivers = $this->aNavDrivers;
         $output->aStyleFiles = $this->aStyleFiles;
         $output->aSessHandlers = $this->aSessHandlers;
+        $output->aUrlHandlers = $this->aUrlHandlers;
     }
 
     function _edit(&$input, &$output)

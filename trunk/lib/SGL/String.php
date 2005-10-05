@@ -126,14 +126,14 @@ class SGL_String
         return $crlf;
     }
 
-    function trimWhitespace(&$var)
+    function trimWhitespace($var)
     {
         if (!is_array($var)) {
-            $var = trim($var);
+            $clean = trim($var);
         } else {
-            array_walk($var, array('SGL_String', 'trimWhitespace'));
+            $clean = array_map(array('SGL_String', 'trimWhitespace'), $var);
         }
-        return $var;
+        return $clean;
     }
 
     /**
@@ -170,25 +170,25 @@ class SGL_String
      * @param   string $var  The string to clean.
      * @return  string       $cleaned result.
      */
-    function clean(&$var)
+    function clean($var)
     {
         if (isset($var)) {
             if (!is_array($var)) {
-                $var = strip_tags($var);
+                $clean = strip_tags($var);
             } else {
-                array_walk($var, array('SGL_String', 'clean'));
+                $clean = array_map(array('SGL_String', 'clean'), $var);
             }
         }
-        SGL_String::trimWhitespace($var);
+        return SGL_String::trimWhitespace($clean);
     }
 
-    function removeJs(&$html)
+    function removeJs($html)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $search = "/<script[^>]*?>.*?<\/script\s*>/i";
         $replace = '';
         $html = preg_replace($search, $replace, $html);
-        SGL_String::trimWhitespace($html);
+        return SGL_String::trimWhitespace($html);
     }
 
     /**
