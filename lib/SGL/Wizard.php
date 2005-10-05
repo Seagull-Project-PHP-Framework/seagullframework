@@ -176,6 +176,17 @@ class SGL_Wizard extends SGL_Manager
 
     function validate($req, &$input)
     {
+        // if direct entering, redirect to default page
+        // for security reasons
+        if (!isset($_SESSION['wiz_sequence'][0]['pageName']['managerName'])) {
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            $aParams = array(
+                'moduleName'    => $conf['site']['defaultModule'],
+                'managerName'   => $conf['site']['defaultManager'],
+            );
+            SGL_HTTP::redirect($aParams);
+        }
+
         //  init sequence values from session
         $this->sequence     = &$_SESSION['wiz_sequence'];
         $input->back        = $req->get('back');
