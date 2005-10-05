@@ -135,6 +135,8 @@ class SGL_URL
     * @param bool   $useBrackets Whether to use square brackets when
     *                            multiple querystrings with the same name
     *                            exist
+    *
+    * @todo the main URL attributes always get set twice, this needs to be optimised
     */
     function __construct($url = null, $useBrackets = true, $parserStrategy)
     {

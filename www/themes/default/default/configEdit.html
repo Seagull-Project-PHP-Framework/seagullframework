@@ -117,6 +117,21 @@
         </td>
     </tr>
     <tr>
+        <td class="fieldName">{translate(#URL handler#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[urlHandler]">{error[urlHandler]}</div>
+            <select name="conf[site][urlHandler]">
+                {generateSelect(aUrlHandlers,conf[site][urlHandler]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#What format would you like your URLs, Seagull Search Engine Friendly is the default#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
         <td class="fieldName">{translate(#Extended Session#)}</td>
         <td class="fieldValue">
             <div class="error" flexy:if="error[extended_session]">{error[extended_session]}</div>

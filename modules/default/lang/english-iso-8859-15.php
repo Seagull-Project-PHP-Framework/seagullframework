@@ -292,6 +292,9 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'database'=>'database',
         'Show debug reporting link' => 'Show debug reporting link',
         'Send feedback to project for bugs' => 'Send feedback to project for bugs',
+        'URL handler' => 'URL handler',
+        'What format would you like your URLs, Seagull Search Engine Friendly is the default' => 'What format would you like your URLs, Seagull Search Engine Friendly is the default',
+        'The classic URL handler has not been implemented yet' => 'The classic URL handler has not been implemented yet',
 
 /*
  ConfigMgr: MTA options

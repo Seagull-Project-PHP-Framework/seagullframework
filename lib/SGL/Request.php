@@ -75,14 +75,18 @@ class SGL_Request
     {
         if (isset($this->aProps[$key])) {
             
+            //  don't operate on reference to avoid segfault :-(
+            $copy = $this->aProps[$key];
+            
             //  if html not allowed, run an enhanced strip_tags()
             if (!$allowTags) {
-                SGL_String::clean($this->aProps[$key]);
+                $clean = SGL_String::clean($copy);
             
             //  if html is allowed, at least remove javascript
             } else {
-                SGL_String::removeJs($this->aProps[$key]);
+                $clean = SGL_String::removeJs($copy);
             }
+            $this->set($key, $clean);
             return $this->aProps[$key];
         
         } else {
