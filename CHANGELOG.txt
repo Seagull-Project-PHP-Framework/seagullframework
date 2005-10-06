@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+06-10-05    Articles can now be set to never expire (Eric Persson)
 28-09-05    Implemented default manager invocation when url params get garbled
 27-09-05    Added SGL::setNoticeBehaviour() method
 

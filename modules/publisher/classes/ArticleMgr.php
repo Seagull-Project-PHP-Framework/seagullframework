@@ -162,7 +162,7 @@ class ArticleMgr extends SGL_Manager
         $aDate['minute'] = 0;
         $aDate['second'] = 0;
         $output->dateSelectorExpiry = 
-            SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
+            SGL_Output::showDateSelector($aDate, 'frmExpiryDate', true, true, 5, true);
         $item = & new SGL_Item();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID);
 
@@ -236,7 +236,7 @@ class ArticleMgr extends SGL_Manager
                 'frmStartDate');
         $output->dateSelectorExpiry = 
             SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate), 
-                'frmExpiryDate');
+                'frmExpiryDate', true, true, 5, true);
 
         //  get dynamic content
         $output->dynaContent = $item->getDynamicContent($input->articleID);

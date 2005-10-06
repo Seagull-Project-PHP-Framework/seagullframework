@@ -57,7 +57,7 @@ class SGL_Category
 {
 	var $_params = array();
 	var $_nestedSetNode = array();
-	var $_da = NULL;
+	var $_da = null;
 	
 	/**
      * Constructor.
@@ -295,7 +295,7 @@ class SGL_Category
     	//  check if Category is not loaded
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
         	SGL::raiseError('Category not loaded', SGL_ERROR_INVALIDCALL);
-            return NULL;
+            return null;
         }
         
         return $this->_nestedSetNode;
@@ -316,7 +316,7 @@ class SGL_Category
     	//  check if Category is not loaded
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
         	SGL::raiseError('Category not loaded', SGL_ERROR_INVALIDCALL);
-            return NULL;
+            return null;
         }
         
         //  get assoc array of all roles

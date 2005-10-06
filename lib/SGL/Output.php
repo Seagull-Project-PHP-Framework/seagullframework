@@ -226,9 +226,9 @@ class SGL_Output
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
     */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
     {
-        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years);
+        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years, $noExpire);
     }
 
     /**

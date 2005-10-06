@@ -9,6 +9,7 @@
        'Documents' => 'Documents',
        'Articles' => 'Articles',
        'Permissions' => 'Permissions',
+       'No expire' => 'No expire',
 
 /*  MODULE MGR  */
         'Module Manager' => 'Module Manager',
@@ -290,6 +291,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Use these params to specify, eg, a static article for your homepage' => 'Use these params to specify, eg, a static article for your homepage',
         'file'=>'file',
         'database'=>'database',
+        'never' => 'never',
         'Show debug reporting link' => 'Show debug reporting link',
         'Send feedback to project for bugs' => 'Send feedback to project for bugs',
         'URL handler' => 'URL handler',

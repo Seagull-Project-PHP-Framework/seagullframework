@@ -53,7 +53,7 @@ require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
 class CategoryMgr extends SGL_Manager
 {
     var $_redirectCatId = 0;
-    var $_category = NULL;
+    var $_category = null;
 
     function CategoryMgr()
     {
