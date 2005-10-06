@@ -48,31 +48,6 @@
  */
 class SGL_Util
 {
-    function setClientOs($client)
-    {
-        //  detect OS
-        if (!empty($client) and !defined('SGL_USR_OS')) {
-            if (strstr($client, 'Win')) {
-                define('SGL_USR_OS', 'Win');
-            } elseif (strstr($client, 'Mac')) {
-                define('SGL_USR_OS', 'Mac');
-            } elseif (strstr($client, 'Linux')) {
-                define('SGL_USR_OS', 'Linux');
-            } elseif (strstr($client, 'Unix')) {
-                define('SGL_USR_OS', 'Unix');
-            } elseif (strstr($client, 'OS/2')) {
-                define('SGL_USR_OS', 'OS/2');
-            } else {
-                define('SGL_USR_OS', 'Other');
-            }
-        } else {
-            // Could be that the file is being run natively (not through a web server)
-			if (!defined('SGL_USR_OS')) {
-            	define('SGL_USR_OS', 'None');
-			}
-        }
-    }
-
     // +---------------------------------------+
     // | Column-sorting methods                |
     // +---------------------------------------+

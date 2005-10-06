@@ -78,4 +78,9 @@ class SGL_ParamHandler_Xml extends SGL_ParamHandler
 {
 
 }
+
+/*
+$params = SGL_ParamHandler::singleton('conf.ini');
+$params->read();
+*/
 ?>
