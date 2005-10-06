@@ -94,8 +94,6 @@ class SGL_RequestRegistry extends SGL_Registry
 //$input = &SGL_RequestRegistry::singleton();
 //print '<pre>'; print_r($input);
 
-
-
 class SGL_SessionRegistry extends SGL_Registry {} //    same as SGL_HTTP_Session
 
 class SGL_ApplicationRegistry extends SGL_Registry 

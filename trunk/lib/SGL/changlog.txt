@@ -18,7 +18,86 @@ TODO
 ====
  - observer for LoginMgr
  - create an SGL_User object that extends DB_DataObject_Usr
- - use decorator/intercepting filter for Controller::init
- - send mail regarding timing of php namespace integration
  - create an ExperiencedDevelopers section in the wiki explaining pattern usage in sgl
  - make all conf.ini files conf.ini.dist, create a Config::buildFromDist, and store data in var, ie conf_user.ini/php
+ - messaging should use strategy, ie, email, instant msg, sms etc
+// $msgSystem = ReceiverFactory::getMessageSystem();
+ - create request strategy to handle CLI, etc
+ - clean up Sgl_Manager with command objects
+ - move makeIniUnreadable to Config when ready
+ - build SGL_Delegator for php4/5 compat delegation
+ 
+/*
+fake user request
+$controller = new SGL_AppController();
+$context = $controller->getContext();
+$context->addParam('action', 'login');
+$context->addParam('username', 'joe');
+$context->addParam('password', 'tiddles');
+$controller->process();
+*/
+
+
+class SGL_AppController
+{
+    var $context;
+    
+    function SGL_AppController()
+    {
+        $this->context = new SGL_RequestRegistry();   
+    }
+    
+    function getContext()
+    {
+        return $this->context;   
+    }
+    
+    function getView($req) 
+    {
+        return $req->getTemplate();
+    }
+    
+    function getForward() {}
+    
+    function process()
+    {
+        //p. 248
+        while ($cmd = $this->getCommand($this->context->get('action'))) { // pass $req
+            $cmd->execute($this->context);
+        }
+        $this->diplay($this->getView($req));
+    }
+    
+    function getCommand($req)
+    {
+        $cmd = $req->get('action');
+        if (! $cmd) {
+            return new DefaultMgr();   
+        }
+        
+        $oCmd = $this->resolveCommand($cmd);
+        return $oCmd;
+    }  
+    
+    function resolveCommand()
+    {
+        
+    }
+}
+
+
+class SGL_Command /* abstract */
+{
+    var $status;
+    
+    function execute($req)
+    {
+        $this->status = $this->_doExecute($req);
+        $req->set('cmd', $this);
+    }
+    
+    function getStatus()
+    {
+        return $this->status;   
+    }
+}
