@@ -217,8 +217,17 @@ class SGL_URL
                     if ($value{0} == '/') {
                         $frontScriptStartIndex = strpos($value, $this->frontScriptName);
                         $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
-                        $this->path = substr($value, 0, $frontScriptStartIndex);
-                        $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);
+                        if (!$frontScriptStartIndex) {
+                            
+                            //  this is an install and index.php was omitted
+                            $this->path = $urlinfo['path'];
+                            $this->querystring = $urlinfo['query'];
+                            $install = true;
+                        } else {
+                            $this->path = substr($value, 0, $frontScriptStartIndex);
+                            $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);                            
+                        }
+
                         if (!array_key_exists('query', $urlinfo)) {
                             $this->aQueryData = $this->parseQueryString();
                         }
