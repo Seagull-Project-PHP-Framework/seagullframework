@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Direct.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
+// $Id: Direct.php,v 1.2 2004/03/02 21:15:45 avb Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -28,7 +28,7 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 class HTML_QuickForm_Action_Direct extends HTML_QuickForm_Action
 {
@@ -36,7 +36,7 @@ class HTML_QuickForm_Action_Direct extends HTML_QuickForm_Action
     {
         // save the form values and validation status to the session
         $page->isFormBuilt() or $page->buildForm();
-        $pageName =  $page->getAttribute('name');
+        $pageName =  $page->getAttribute('id');
         $data     =& $page->controller->container();
         $data['values'][$pageName] = $page->exportValues();
         $data['valid'][$pageName]  = $page->validate();
