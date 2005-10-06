@@ -26,6 +26,7 @@ TODO
  - clean up Sgl_Manager with command objects
  - move makeIniUnreadable to Config when ready
  - build SGL_Delegator for php4/5 compat delegation
+ - make template engine configurable
  
 /*
 fake user request
