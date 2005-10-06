@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Jump.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
+// $Id: Jump.php,v 1.3 2004/03/02 21:15:45 avb Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -25,7 +25,7 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.3 $
  */
 class HTML_QuickForm_Action_Jump extends HTML_QuickForm_Action
 {
@@ -36,7 +36,7 @@ class HTML_QuickForm_Action_Jump extends HTML_QuickForm_Action
             // we check whether *all* pages up to current are valid
             // if there is an invalid page we go to it, instead of the
             // requested one
-            $pageName = $page->getAttribute('name');
+            $pageName = $page->getAttribute('id');
             if (!$page->controller->isValid($pageName)) {
                 $pageName = $page->controller->findInvalid();
             }
