@@ -93,7 +93,8 @@
     // copied from PEAR HTTP Header.php (comments stripped)
     // Author: Wolfram Kriesing <wk@visionp.de>
     // Changes: mktime() to gmmktime() to make work in timezones other than GMT
-    function dateToTimestamp($date) {
+    function dateToTimestamp($date)
+    {
         $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'));
         preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~', $date, $splitDate);
         $timestamp = @gmmktime($splitDate[4], $splitDate[5], $splitDate[6], $months[$splitDate[2]]+1, $splitDate[1], $splitDate[3]);
@@ -102,7 +103,8 @@
 
     // copied from PEAR HTTP.php Date function (comments stripped)
     // Author: Stig Bakken <ssb@fast.no>
-    function timestampToDate($time) {
+    function timestampToDate($time) 
+    {
         if (ini_get("y2k_compliance") == true) {
             return gmdate("D, d M Y H:i:s \G\M\T", $time);
         } else {
