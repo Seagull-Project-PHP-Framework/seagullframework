@@ -136,10 +136,9 @@ class SGL_Util
                 if ($file == '.' || $file == '..' || $file == 'CVS') {
                     continue;
                 }
-                //  and anything without css extension
-                $parts = explode('.', $file);
-                $ext = end($parts);
-                if ($ext != 'css') {
+                //  and anything without .nav.php extension
+                $ext = substr($file, -8);
+                if ($ext != '.nav.php') {
                     continue;
                 }
 
