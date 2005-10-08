@@ -1,0 +1,76 @@
+<form name="contactUs" action="" method="post" enctype="multipart/form-data" flexy:ignore="">
+    <p>
+    <input type="hidden" name="action" value="send" /> 
+    <input type="hidden" name="token" value="{token}" />
+    </p>
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="wide">
+        <tr>
+            <td align="center" colspan="2">{translate(#contact intro#)}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#First Name#)}:</td>
+            <td align="center">
+                <div class="error" flexy:if="error[first_name]">
+                    {translate(error[first_name])}
+                </div>
+                <input type="text" name="contact[first_name]" value="{contact.first_name}" size="30" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Last Name#)}:</td>
+            <td align="center">
+                <div class="error" flexy:if="error[last_name]">
+                    {translate(error[last_name])}
+                </div>
+                <input type="text" name="contact[last_name]" value="{contact.last_name}" size="30" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Email#)}:</td>
+            <td align="center">
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                <input type="text" name="contact[email]" value="{contact.email}" size="30" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Type of enquiry#)}:</td>
+            <td align="center">
+                <div class="error" flexy:if="error[enquiry_type]">
+                    {translate(error[enquiry_type])}
+                </div>
+                <select name="contact[enquiry_type]">
+                    {generateSelect(aContactType,contact.enquiry_type):h}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Comment#)}:</td>
+            <td align="center">
+                <div class="error" flexy:if="error[user_comment]">
+                    {translate(error[user_comment])}
+                </div>
+                <textarea name="contact[user_comment]" cols="40" rows="10">{contact.user_comment}</textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="submitted" class="wideButton" value="{translate(#Send it#)}" />
+            </td>
+        </tr>
+    </table>
+</form>
