@@ -78,16 +78,10 @@
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
-
-    include '../../../../constants.php';
-    $navigation =  './' . $GLOBALS['_SGL']['CONF']['navigation']['stylesheet']
-        . '.nav.php';
-
-    include_once './vars.php';
-
-    include_once './core.php';
-
-    include_once $navigation;
+    $navigation =  './' . @$_REQUEST['navStylesheet'] . '.nav.php';
+    require_once './vars.php';
+    require_once './core.php';
+    require_once $navigation;
 
 
     // copied from PEAR HTTP Header.php (comments stripped)
