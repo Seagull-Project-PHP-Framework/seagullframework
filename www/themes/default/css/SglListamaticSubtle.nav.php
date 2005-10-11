@@ -14,7 +14,7 @@
     background-color: <?php echo $primary ?>;
     text-decoration: none;
     border: 1px solid;
-    border-color: <?php echo $buttonBorderColors ?>;
+    border-color: <?php echo $button ?>;
     font-weight: bold;
     font-size: 0.8em;
 }
@@ -23,7 +23,7 @@
     background-color: <?php echo $primaryText ?>;
     text-decoration: none;
     border: 1px solid;
-    border-color: #333333 #ffffff #ffffff #333333;
+    border-color: <?php echo $buttonAlt ?>;
 }
 #nav ul ul a {
     display: block;

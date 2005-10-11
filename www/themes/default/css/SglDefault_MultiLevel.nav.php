@@ -29,10 +29,10 @@
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
-    border-right: 0.1em solid <?php echo $primary ?>;
+    border-right: 1px solid <?php echo $primary ?>;
 }
 #nav ul li a:hover {
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
     text-decoration: underline;
 }
 /* This one doesn't affect IE */
@@ -43,11 +43,11 @@
     width: 100%;
 }
 #nav ul ul li a {
-    border: 1px solid #006699;
+    border: 1px solid <?php echo $secondaryDark ?>;
     border-top: none;
     padding: 0.2em;
     font-size: 1.1em;
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
     background-color: <?php echo $secondaryLight ?>;
     width: 100%;
 }
@@ -56,7 +56,7 @@
     text-decoration: none;
 }
 #nav ul ul li:first-child > a {
-    border-top: 1px solid #006699;
+    border-top: 1px solid <?php echo $secondaryDark ?>;
 }
 /*hide all sublevels*/
 #nav ul ul {

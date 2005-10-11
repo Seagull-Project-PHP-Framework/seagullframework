@@ -43,7 +43,7 @@ body {
     margin-left: 1em;
     padding: 0.2em;
     border: 1px solid transparent;
-    border-color: <?php echo $buttonBorderColors ?>;
+    border-color: <?php echo $button ?>;
     background-color: <?php echo $primaryLight ?>;
 }
 #sgl #login #userInfo {
@@ -209,7 +209,7 @@ h1 {
 h1.pageTitle {
     font-weight: normal;
     text-align: center;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
 }
 h2 {
     font-size: 1.5em;
@@ -221,7 +221,7 @@ h4 {
     font-size: 1em;
 }
 .pageTitle {
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     font-size: 1.75em;
     font-weight: normal;
 }
@@ -236,7 +236,7 @@ a:visited {
     color: <?php echo $tertiaryDark ?>;
 }
 a:hover {
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     text-decoration: none;
 }
 
@@ -355,7 +355,7 @@ img {
 
 .fieldName, .fieldNameWrap {
     background-color: <?php echo $tertiaryLight ?>;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     font-weight: bold;
     text-align: left;
     width: 35%;
@@ -378,25 +378,25 @@ img {
 fieldset {
     width: 80%;
     margin: 0 auto;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     font-size: 1.1em;
     font-weight: bold;
 }
 legend {
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
 }
 
 /* /////////////// Links  /////////////// */
 
 .linkCrumbsAlt1 {
     text-decoration: none;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     font-weight: normal;
     letter-spacing: 0.5px;
 }
 .linkCrumbsAlt1:hover {
     text-decoration: underline;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
 }
 
 /* /////////////// Various /////////////// */
@@ -478,7 +478,7 @@ ul.bullets li {
 }
 .messageContent {
     background-color: <?php echo $primaryTextLight ?>;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     border: 1px solid <?php echo $primary ?>;
     border-top: none;
     text-align: center;
@@ -510,7 +510,7 @@ ul.bullets li {
     text-decoration: none;
 }
 .bgnd a {
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     font-weight: normal;
 }
 .treeMenuDefault {
@@ -529,9 +529,9 @@ span.tipOwner span.tipText {
     top: 0;
     left: 105%;
     border: 1px solid transparent;
-    border-color: <?php echo $buttonBorderColors ?>;
+    border-color: <?php echo $button ?>;
     background-color: <?php echo $tertiaryLight ?>;
-    color: <?php echo $secondaryDark ?>;
+    color: <?php echo $secondaryDarker ?>;
     text-align: center;
     width: 15em;
     padding: 2px 5px;
