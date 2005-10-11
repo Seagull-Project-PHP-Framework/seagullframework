@@ -9,7 +9,8 @@
     $secondaryLight         = '#e5f1ff'; // baby blue
     $secondary              = '#9dcdfe'; // blue
     $secondaryMedium        = '#3399ff'; // medium blue
-    $secondaryDark          = '#184a84'; // dark blue
+    $secondaryDark          = '#006699'; // dark blue
+    $secondaryDarker        = '#184a84'; // darker blue
     $tertiary               = '#d9d9d9'; // normal gray
     $tertiaryLight          = '#efefef'; // light gray
     $tertiaryMedium         = '#bcbcbc'; // medium gray
@@ -23,7 +24,7 @@
     $blocksBorderTitle      = $tertiaryMedium;
     $blocksBackgroundBody   = $tertiaryLight;
     $blocksBackgroundTitle  = $primary;
-    $blocksColorBody        = $secondaryDark;
+    $blocksColorBody        = $secondaryDarker;
     $blocksColorTitle       = $primaryText;
 
     $tableRowLight          = $tertiaryLight;
@@ -31,9 +32,9 @@
 
     /* Publisher */
     $sectionHeaderBackground = $tertiary;
-    $sectionHeaderColor     = $secondaryDark;
+    $sectionHeaderColor     = $secondaryDarker;
     $colHeaderBackground    = $tertiaryLight;
-    $colHeaderColor         = $secondaryDark;
+    $colHeaderColor         = $secondaryDarker;
     $navigatorBackground    = $tertiaryDarker;
     $navigatorColor         = $tertiaryMedium;
     
@@ -45,10 +46,11 @@
     $error                  = '#ffcc00';
     $errorLight             = '#ffff99';
     $errorDark              = '#ff9600';
-    $errorText              = $secondaryDark;
+    $errorText              = $secondaryDarker;
     $errorTextLight         = '#ffffcc';
     $errorTextMedium        = '#ff0000';
 
     /* Button like border colors */
-    $buttonBorderColors     = '#ffffff #333333 #333333 #ffffff';
+    $button     = '#ffffff #333333 #333333 #ffffff';
+    $buttonAlt     = '#333333 #ffffff #ffffff #333333';
 ?>

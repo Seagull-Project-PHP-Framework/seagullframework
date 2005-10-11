@@ -25,18 +25,18 @@
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
-    border-right: 0.1em solid <?php echo $primary ?>;
+    border-right: 1px solid <?php echo $primary ?>;
 }
 #nav ul li a:hover {
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
     text-decoration: underline;
 }
 #nav ul li.current a {
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
     background-color: <?php echo $secondaryLight ?>;
 }
 #nav ul li.current a:visited {
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
 }
 /* hide the sublevels */
 #nav ul ul {
@@ -63,9 +63,9 @@
     padding: 0 1em;
     font-weight: normal;
     font-size: 1.1em;
-    color: #006699;
+    color: <?php echo $secondaryDark ?>;
     border-right: none;
-    border-left: 0.1em solid #006699;
+    border-left: 1px solid <?php echo $secondaryDark ?>;
 }
 /* hide 3rd or more levels */
 #nav ul ul ul li {
