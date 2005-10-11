@@ -1,4 +1,4 @@
-<?
+<?php
     $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';
     $fontSize               = 'small';
 
