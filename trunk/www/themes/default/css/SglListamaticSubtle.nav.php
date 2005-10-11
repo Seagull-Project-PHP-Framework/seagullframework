@@ -11,16 +11,16 @@
     padding: 5px 10px;
     width: 158px;
     color: #000000;
-    background-color: #99cc00;
+    background-color: <?php echo $primary ?>;
     text-decoration: none;
     border: 1px solid;
-    border-color: #ffffff #333333 #333333 #ffffff;
+    border-color: <?php echo $buttonBorderColors ?>;
     font-weight: bold;
     font-size: 0.8em;
 }
 #nav a:hover {
     color: #000000;
-    background-color: #e6ffa2;
+    background-color: <?php echo $primaryText ?>;
     text-decoration: none;
     border: 1px solid;
     border-color: #333333 #ffffff #ffffff #333333;
@@ -29,6 +29,6 @@
     display: block;
     padding: 5px 5px 5px 30px;
     width: 143px;
-    background-color: #bbe713;
+    background-color: <?php echo $primaryLight ?>;
     font-weight: normal;
 }

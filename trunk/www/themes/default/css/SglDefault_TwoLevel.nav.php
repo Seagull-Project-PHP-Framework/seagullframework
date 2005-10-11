@@ -7,7 +7,7 @@
     width: 100%;
     padding: 0;
     margin: 0;
-    background-color: #99cc00;
+    background-color: <?php echo $primary ?>;
 }
 #nav ul li {
     float: left;
@@ -18,14 +18,14 @@
     display: block;
     position: relative;
     padding: 0.2em 1.5em;
-    background-color: #9dcdfe;
+    background-color: <?php echo $secondary ?>;
     font-size: 1.3em;
     font-weight: bold;
-    color: #ffffff;
+    color: <?php echo $primaryTextLight ?>;
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
-    border-right: 0.1em solid #99cc00;
+    border-right: 0.1em solid <?php echo $primary ?>;
 }
 #nav ul li a:hover {
     color: #006699;
@@ -33,7 +33,7 @@
 }
 #nav ul li.current a {
     color: #006699;
-    background-color: #e5f1ff;
+    background-color: <?php echo $secondaryLight ?>;
 }
 #nav ul li.current a:visited {
     color: #006699;
@@ -52,7 +52,7 @@
      * http://msdn.microsoft.com/workshop/author/dhtml/overview/recalc.asp */
     _width: expression(document.body.clientWidth);
     padding: 0;
-    background-color: #e5f1ff;
+    background-color: <?php echo $secondaryLight ?>;
 }
 #nav ul li.current li {
     padding: 0.4em 0;

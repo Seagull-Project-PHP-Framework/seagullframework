@@ -1,8 +1,3 @@
-/*
-To work correctly in MSIE you need to specify the valid path for the behaviour element in
-#nav ul li, in other words, either the correct absolute or relative path.
-*/
-
 #nav {
     height: 50px;
     font-size: 0.75em;
@@ -13,7 +8,7 @@ To work correctly in MSIE you need to specify the valid path for the behaviour e
     padding: 0;
     margin: 0;
     list-style: none;
-    background-color: #99cc00;
+    background-color: <?php echo $primary ?>;
     z-index: 3;
 }
 #nav ul li {
@@ -21,20 +16,20 @@ To work correctly in MSIE you need to specify the valid path for the behaviour e
     float: left;
     margin: 0;
     /* IE :hover silly javascript workaround */
-    behavior: url(/themes/default/css/listItemHover.htc);
+    behavior: url(<?php echo $baseUrl ?>/css/listItemHover.htc);
 }
 #nav ul li a {
     display: block;
     position: relative;
     padding: 0.2em 1.5em;
-    background-color: #9dcdfe;
+    background-color: <?php echo $secondary ?>;
     font-size: 1.3em;
     font-weight: bold;
-    color: #ffffff;
+    color: <?php echo $primaryTextLight ?>;
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
-    border-right: 0.1em solid #99cc00;
+    border-right: 0.1em solid <?php echo $primary ?>;
 }
 #nav ul li a:hover {
     color: #006699;
@@ -53,11 +48,11 @@ To work correctly in MSIE you need to specify the valid path for the behaviour e
     padding: 0.2em;
     font-size: 1.1em;
     color: #006699;
-    background-color: #e5f1ff;
+    background-color: <?php echo $secondaryLight ?>;
     width: 100%;
 }
 #nav ul ul li a:hover {
-    background-color: #e5f1ff;
+    background-color: <?php echo $secondaryLight ?>;
     text-decoration: none;
 }
 #nav ul ul li:first-child > a {
