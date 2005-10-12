@@ -311,20 +311,7 @@ img {
     letter-spacing: 0.5px;
     margin: 2px 0 0 0;
 }
-.navigator {
-    color: <?php echo $navigatorColor ?>;
-    background-color: <?php echo $navigatorBackground ?>;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: right;
-    line-height: 18px;
-}
-.uploadLayer {
-    position: relative;
-    left: 10px;
-    top: 0;
-}
-    
+
 /* /////////////// Article Manager /////////////// */
 
 .forApproval {
@@ -401,17 +388,25 @@ legend {
 
 /* /////////////// Various /////////////// */
 
-div.pinstripe table {
+.navigator {
+    color: <?php echo $navigatorColor ?>;
+    background-color: <?php echo $navigatorBackground ?>;
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: right;
+    line-height: 18px;
+}
+.pinstripe table {
     background-color: <?php echo $tertiaryLight ?>;
     width: 90%;
 }
-div.pinstripe td {
+.pinstripe td {
     background-color: <?php echo $primaryTextLight ?>;
 }
-div.pinstripe img {
+.pinstripe img {
     padding: 10px;
 }
-div.pinstripe button {
+.pinstripe button {
     padding: 10px 0;
 }
 .noBorder {
@@ -519,11 +514,13 @@ ul.bullets li {
 
 /* /////////////// Tooltips /////////////// */
 
-span.tipOwner {
+.tipOwner {
     position: relative;
     cursor: help;
+    /* IE :hover javascript workaround */
+    behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
 }
-span.tipOwner span.tipText {
+.tipOwner .tipText {
     display: none;
     position: absolute;
     top: 0;
@@ -539,10 +536,6 @@ span.tipOwner span.tipText {
     filter: alpha(opacity=85);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=85);
 }
-span.tipOwner:hover span.tipText {
+.tipOwner:hover .tipText {
     display: block;
-}
-/* IE javascript workaround */
-span.tipOwner {
-    behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
 }
