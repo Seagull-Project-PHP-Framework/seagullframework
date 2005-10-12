@@ -66,6 +66,7 @@
             @unlink(SGL_PATH . '/var/INSTALL_COMPLETE');
         }
 
+        //  handle case for new install
         if (    !file_exists($configFile)
             &&  !file_exists(SGL_PATH . '/var/INSTALL_COMPLETE')) {
             
@@ -90,10 +91,18 @@
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
         
+        // handle case for missing config file
+        if (!file_exists($configFile)) {
+            
+            die("Your config file could not be found, to allow the installer to create one, " .
+                "please remove the file 'INSTALL_COMPLETE' from the seagull/var directory, ");
+
+            $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
+        }
+        
         //  store in Seagull simulated namespace
         $GLOBALS['_SGL']['CONF'] = @parse_ini_file($configFile, true);
 
-        
         // framework file structure
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
         define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
@@ -115,7 +124,8 @@
         
         //  assign current url object to registry
         $urlHandler = $GLOBALS['_SGL']['CONF']['site']['urlHandler'];
-        $url  = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
+
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
         $input = &SGL_RequestRegistry::singleton();
         $input->setCurrentUrl($url);
         

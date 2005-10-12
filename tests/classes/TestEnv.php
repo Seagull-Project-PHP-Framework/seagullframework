@@ -181,7 +181,7 @@ class STR_TestEnv
         } elseif ($envType == DB_WITH_TABLES) {
             STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
-        } elseif ($envType == DB_WITH_DATA) {
+        } elseif ($envType == DB_WITH_DATA || $envType == DB_WITH_DATA_AND_WEB) {
             STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
             STR_TestEnv::loadData();

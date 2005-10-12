@@ -157,7 +157,9 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
-            $this->protocol = (@$_SERVER['HTTPS'] == 'on' ? 'https' : 'http');
+            $this->protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
+                ? 'https' 
+                : 'http';
 
             /**
             * Figure out host/port
@@ -411,6 +413,11 @@ class SGL_URL
         }
     }
     
+    /**
+     * Returns hostname + path with final slashes removed if present.
+     *
+     * @return unknown
+     */
     function getBase()
     {
         $retUrl = $this->protocol . '://'
@@ -424,7 +431,10 @@ class SGL_URL
             $retUrl = str_replace('~', '%7E', $retUrl);
         }
         //  remove trailing slash
-        return substr($retUrl, 0, -1);
+        if (substr($retUrl, -1) == '/') {
+            $retUrl = substr($retUrl, 0, -1);
+        }
+        return $retUrl;
     }
     
     /**

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -53,6 +53,7 @@ class MaintenanceMgr extends SGL_Manager
     function MaintenanceMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $this->module       = 'maintenance';
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'langList.html';
@@ -114,8 +115,8 @@ class MaintenanceMgr extends SGL_Manager
         SGL_HTTP_Session::set('lastLanguageSelected', $input->currentLang);
 
         //  catch any single quotes
-        //note: this is done by PEAR::Config automatically!
-        if (($req->get('action') !='update')&&($req->get('action') !='append')){
+        //  note: this is done by PEAR::Config automatically!
+        if (($req->get('action') !='update') && ($req->get('action') !='append')){
             if (is_array($input->aTranslation)) {
                 foreach ($input->aTranslation as $k => $v) {
                     if (is_array($v)) {
@@ -166,12 +167,12 @@ class MaintenanceMgr extends SGL_Manager
             @include $target;
             $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
         } else {
+            
         //  if the target lang file does not exist
             SGL::raiseMsg('the target lang file '.$target.'does not exist, please create it now',
                 SGL_ERROR_NOFILE);
         }
-        //  remove empty array elements
-        $aTargetLang = @array_filter($aTargetLang, 'strlen');
+        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
 
         if ($input->action != 'checkAllModules') {
 

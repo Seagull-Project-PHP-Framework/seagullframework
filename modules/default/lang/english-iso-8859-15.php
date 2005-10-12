@@ -278,7 +278,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Errors must be >= this level before they are emailed to the site admin'=>'Errors must be >= this level before they are emailed to the site admin',
         'It is recommended to disable this while developing'=>'It is recommended to disable this while developing',
         'Default is 24 hours'=>'Default is 24 hours',
-        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema',
+        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema - "mysql_SGL" maintains all sequences in a single table (less clutter) whereas "mysql" uses one table per sequence giving twice as many tables (better for performance)',
         'It is recommended to disable logging if you are running < PHP 4.3.x'=>'It is recommended to disable logging if you are running < PHP 4.3.x',
         'If sql is used, use log_table as the log table name below'=>'If \'sql\' is used, use \'log_table\' as the log table name below',
         'Use an absolute path or one relative to the Seagull root dir'=>'Use an absolute path or one relative to the Seagull root dir',
@@ -297,6 +297,9 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'URL handler' => 'URL handler',
         'What format would you like your URLs, Seagull Search Engine Friendly is the default' => 'What format would you like your URLs, Seagull Search Engine Friendly is the default',
         'The classic URL handler has not been implemented yet' => 'The classic URL handler has not been implemented yet',
+        'Template Engine' => 'Template Engine',
+        'Seagull allows you to use the template engine of your choice' => 'Seagull allows you to use the template engine of your choice',
+        'The Smarty template hooks have not been implemented yet' => 'The Smarty template hooks have not been implemented yet',
 
 /*
  ConfigMgr: MTA options

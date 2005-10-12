@@ -71,7 +71,7 @@ class STR_Menu
                             )
                         );
         // Create the top-level test groups
-        foreach (array('unit') as $type) {
+        foreach (array('unit', 'web') as $type) {
             $nodeName = $type . 'RootNode';
             ${$nodeName} = new HTML_TreeNode(
                                 array(

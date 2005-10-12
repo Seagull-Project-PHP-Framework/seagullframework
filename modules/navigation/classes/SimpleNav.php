@@ -124,7 +124,7 @@ class SimpleNav
      * @return string
      * @access  public
      */
-    function render(&$sectionId, &$html)
+    function render()
     {
         $cache = & SGL::cacheSingleton();
         //  get a unique token by considering url, group ID and if page
@@ -143,6 +143,9 @@ class SimpleNav
             $cache->save(serialize($aNav), $cacheId, 'nav');
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
+        
+        return array($sectionId, $html);
+        
     }
 
     /**
@@ -399,13 +402,17 @@ class SimpleNav
     function getCurrentSectionName()
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
-        $query = " 
-            SELECT  title
-            FROM    {$conf['table']['section']}
-            WHERE   section_id = " . $this->_currentSectionId;
-
-        $sectionName = $dbh->getOne($query);
+        if (!$this->_currentSectionId) {
+            $sectionName = $this->input->data->pageTitle;
+        } else {
+            $dbh = & SGL_DB::singleton();
+            $query = " 
+                SELECT  title
+                FROM    {$conf['table']['section']}
+                WHERE   section_id = " . $this->_currentSectionId;
+    
+            $sectionName = $dbh->getOne($query);
+        }
         return $sectionName;
     }
 

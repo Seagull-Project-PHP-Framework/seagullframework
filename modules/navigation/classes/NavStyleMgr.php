@@ -145,7 +145,8 @@ class NavStyleMgr extends SGL_Manager
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
         $nav->setDisableLinks(true);
-        $nav->render($sectionId, $html);
+        $aRes = $nav->render();
+        list($sectionId, $html) = $aRes;
         $output->navListPreview = $html;
         if (!$output->navListPreview) {
             $output->navListPreview = 'There are no sections accessible to members of the selected role: ' . 

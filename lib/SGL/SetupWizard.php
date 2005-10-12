@@ -487,7 +487,7 @@ EOF;
             print $instructions;
 
             //  if apache webserver, prompt for .htaccess install
-            if (preg_match('/apache/i', $_SERVER['SERVER_SOFTWARE'])
+            if (preg_match('/apache/i', @$_SERVER['SERVER_SOFTWARE'])
                     && (!file_exists(SGL_PATH . '/.htaccess'))) {
                 print $warning;
             }

@@ -215,10 +215,10 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $data->theme . '/' . $data->moduleName . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $data->moduleName . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/default',
+            'templateDir'       => SGL_THEME_DIR . '/' . $data->theme . '/' . $data->moduleName . PATH_SEPARATOR .
+                                   SGL_THEME_DIR . '/default/' . $data->moduleName . PATH_SEPARATOR .
+                                   SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
+                                   SGL_THEME_DIR . '/default/default',
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
             'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $data->theme,

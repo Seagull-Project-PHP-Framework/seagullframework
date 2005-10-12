@@ -71,9 +71,9 @@
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);
     $aPath = explode('/', $path);
-    $aWithoutBlanks = array_filter($aPath, 'strlen');
-    array_pop($aWithoutBlanks);
-    $baseUrl = join('/', $aWithoutBlanks);
+    $aPath = array_filter($aPath);
+    array_pop($aPath);
+    $baseUrl = join('/', $aPath);
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on') 
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;

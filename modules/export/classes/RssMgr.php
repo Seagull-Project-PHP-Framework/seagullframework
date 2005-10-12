@@ -30,11 +30,12 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | RssMgr.php                                                                |
 // +---------------------------------------------------------------------------+
-// | Author: Fabio Bacigalupo <Fabio Bacigalupo <seagull@open-haus.de>         |
+// | Authors:   Fabio Bacigalupo <seagull@open-haus.de>                        |
+// |            Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
 // $Id: RssMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
 
@@ -58,6 +59,7 @@ class RssMgr extends SGL_Manager
     function RssMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();        
         
         $this->module   = 'export';
         $this->masterTemplate  = 'masterFeed.html';
@@ -65,22 +67,21 @@ class RssMgr extends SGL_Manager
         
         $this->_aActionsMapping = array(
             'news' => array('news'),
-            );  
-        $conf = & $GLOBALS['_SGL']['CONF'];
+            );
         
         $this->feed = new SGL_Feed();
         $this->feed->xml_version    = "1.0";
         $this->feed->xml_encoding   = "utf-8";
         $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
         $this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
-        $this->feed->title          = $conf['RssMgr']['feedTitle'];
-        $this->feed->description    = $conf['RssMgr']['feedDescription'];
-        $this->feed->copyright      = $conf['RssMgr']['feedCopyright'];
-        $this->feed->managingeditor = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedEditor'] . ")";
-        $this->feed->webmaster      = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedWebmaster'] . ")";
-        $this->feed->ttl            = $conf['RssMgr']['feedRssTtl'];
-        $this->feed->link           = $conf['RssMgr']['feedUrl'];
-        $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
+        $this->feed->title          = $this->conf['RssMgr']['feedTitle'];
+        $this->feed->description    = $this->conf['RssMgr']['feedDescription'];
+        $this->feed->copyright      = $this->conf['RssMgr']['feedCopyright'];
+        $this->feed->managingeditor = $this->conf['RssMgr']['feedEmail'] . " (" . $this->conf['RssMgr']['feedEditor'] . ")";
+        $this->feed->webmaster      = $this->conf['RssMgr']['feedEmail'] . " (" . $this->conf['RssMgr']['feedWebmaster'] . ")";
+        $this->feed->ttl            = $this->conf['RssMgr']['feedRssTtl'];
+        $this->feed->link           = $this->conf['RssMgr']['feedUrl'];
+        $this->feed->syndicationurl = $this->conf['RssMgr']['feedSyndicationUrl'];
 //        $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
         $this->feed->pubdate        = $this->datetime2Rfc2822();
         $this->feed->generator      = 'Seagull RSS Manager';
@@ -127,9 +128,8 @@ class RssMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'masterRss.xml';
-        $this->feed->category[]["content"] = $conf['RssMgr']['feedCategory'];
+        $this->feed->category[]["content"] = $this->conf['RssMgr']['feedCategory'];
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
@@ -145,7 +145,7 @@ class RssMgr extends SGL_Manager
                 $author_name             = (!empty($article["fullname"])) 
                                             ? " (" . $article["fullname"] . ")" 
                                             : " (" . $article["username"] . ")";
-                $item["author"]          = $conf['RssMgr']['feedEmail'] . $author_name;
+                $item["author"]          = $this->conf['RssMgr']['feedEmail'] . $author_name;
                 $item["source"]["url"]   = '';
                 $item["source"]["content"]   = '';
                 $item["guid"]["bool"]    = "true";
@@ -198,7 +198,7 @@ class RssMgr extends SGL_Manager
      function getNews($limit = 10)
      {
          SGL::logMessage(null, PEAR_LOG_DEBUG);
-         $dbh = & SGL_DB::singleton();
+
          $query = "
                  SELECT  i.item_id AS id,
                          i.date_created AS created,
@@ -233,8 +233,7 @@ class RssMgr extends SGL_Manager
                  LIMIT 0, ?
              ";
 
-         $dbh = & SGL_DB::singleton();
-         $aRes = $dbh->getAll($query,
+         $aRes = $this->dbh->getAll($query,
             array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL::getTime(), 
                 SGL::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
                 DB_FETCHMODE_ASSOC);

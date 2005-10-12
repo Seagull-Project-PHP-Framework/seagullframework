@@ -103,6 +103,10 @@ class SGL_Manager
      * @var     array
      */
     var $_aActionsMapping = array();
+    
+    var $conf = array();
+    var $dbh = null;
+    
 
     /**
      * Constructor.
@@ -113,6 +117,13 @@ class SGL_Manager
     function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        $this->dbh = & SGL_DB::singleton();
+    }
+    
+    function getConfig()
+    {
+        
     }
 
     // +---------------------------------------+
@@ -128,15 +139,14 @@ class SGL_Manager
      *
      * Get tabID required by ALL pages, same goes for msg, action, from
      * 
+     * @abstract 
+     *
      * @access  public
      * @param   object  $req    SGL_Request object received from user agent
      * @param   object  $input  SGL_Output object from Controller
      * @return  void
      */
-    function validate($req, &$input)
-    {
-        //  abstract
-    }
+    function validate($req, &$input) {}
 
     /**
      * Abstract Page processing method.
@@ -213,15 +223,13 @@ class SGL_Manager
     /**
      * Abstract page display method.
      *
-     * @access  public
      * @abstract
+     *
+     * @access  public
      * @param   object  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
+    function display(&$output) {}
     
     function isValid()
     {
