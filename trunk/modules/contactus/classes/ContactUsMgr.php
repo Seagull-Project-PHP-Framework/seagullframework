@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ContactUsMgr.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -53,6 +53,8 @@ class ContactUsMgr extends SGL_Manager
     function ContactUsMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+                
         $this->module      = 'contactus';
         $this->pageTitle   = 'Contact Us';
         $this->template    = 'contact.html';
@@ -138,7 +140,6 @@ class ContactUsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         //  require Contact entity
         require_once SGL_ENT_DIR . '/Contact_us.php';
 
@@ -152,7 +153,7 @@ class ContactUsMgr extends SGL_Manager
             $contact = & new DataObjects_Contact_us();
             $contact->setFrom($input->contact);
             $dbh = $contact->getDatabaseConnection();
-            $contact->contact_us_id = $dbh->nextId($conf['table']['contact_us']);
+            $contact->contact_us_id = $dbh->nextId($this->conf['table']['contact_us']);
             $contact->insert();
 
             //  4. redirect on success - inherited redirectToDefault method forwards user to default page
@@ -210,15 +211,15 @@ class ContactUsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $contacterName = $oContact->first_name . ' ' . $oContact->last_name;
         $options = array(
-                'toEmail'       => $conf['email']['info'],
+                'toEmail'       => $this->conf['email']['info'],
                 'toRealName'    => 'Admin',
                 'fromEmail'     => "\"{$contacterName}\" <{$oContact->email}>",
                 'fromRealName'  => $contacterName,
                 'replyTo'       => $oContact->email,
-                'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $conf['site']['name'],
+                'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
                 'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 

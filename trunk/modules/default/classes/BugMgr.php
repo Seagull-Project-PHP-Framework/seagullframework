@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | BugMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -50,6 +50,8 @@ class BugMgr extends SGL_Manager
     function BugMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module      = 'default';
         $this->pageTitle   = 'Bug Report';
         $this->template    = 'bugReport.html';
@@ -145,16 +147,14 @@ class BugMgr extends SGL_Manager
 
     function getServerInfo()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         $aServerInfo = array();
         //  get db info
-        $dbh = & SGL_DB::singleton();
-        $lastQuery = $dbh->last_query;
-        $aServerInfo['lastSql'] = isset($dbh->last_query) ? 
-            $dbh->last_query : null;
+        $lastQuery = $this->dbh->last_query;
+        $aServerInfo['lastSql'] = isset($this->dbh->last_query) ? 
+            $this->dbh->last_query : null;
         $aServerInfo['phpSapi'] = php_sapi_name();
         $aServerInfo['phpOs'] = PHP_OS;
-        $aServerInfo['dbType'] = $conf['db']['type'];
+        $aServerInfo['dbType'] = $this->conf['db']['type'];
         $aServerInfo['phpVersion'] = PHP_VERSION;
         $aServerInfo['serverPort'] = $_SERVER['SERVER_PORT'];
         $aServerInfo['serverSoftware'] = $_SERVER['SERVER_SOFTWARE'];   

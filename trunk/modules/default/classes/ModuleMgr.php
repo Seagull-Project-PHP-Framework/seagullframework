@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ModuleMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -57,6 +57,8 @@ class ModuleMgr extends SGL_Manager
     function ModuleMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+                
         $this->module       = 'default';
         $this->pageTitle    = 'Module Manager';
         $this->template     = 'moduleOverview.html';
@@ -131,12 +133,11 @@ class ModuleMgr extends SGL_Manager
     function _overview(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
+
         $query = "  SELECT is_configurable, title, description, admin_uri, icon 
-                    FROM {$conf['table']['module']}
+                    FROM {$this->conf['table']['module']}
                     ORDER BY module_id";
-        $aModules = $dbh->getAll($query);
+        $aModules = $this->dbh->getAll($query);
         if (!DB::isError($aModules)) {
             $ret = array();
             foreach ($aModules as $k => $oModule) {
@@ -144,12 +145,11 @@ class ModuleMgr extends SGL_Manager
                 //  split module/manager values out as object properties
                 if (strpos($oModule->admin_uri, '/') !== false) {
                     list($oModule->module, $oModule->manager) = explode('/', $oModule->admin_uri);
-                }
-                elseif (!empty($oModule->admin_uri)) {
+                    
+                } elseif (!empty($oModule->admin_uri)) {
                     $oModule->module = $oModule->admin_uri;
                     $oModule->manager = '';
-                }
-                else {
+                } else {
                     $oModule->module = '';
                     $oModule->manager = '';
                 }
@@ -176,12 +176,11 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $newEntry = & new DataObjects_Module();
         $newEntry->setFrom($input->module);
         $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->module_id = $dbh->nextId($conf['table']['module']);
+        $newEntry->module_id = $dbh->nextId($this->conf['table']['module']);
         if ($newEntry->insert()) {
             SGL::raiseMsg('Module successfully added to the manager.');
         } else {
@@ -215,7 +214,7 @@ class ModuleMgr extends SGL_Manager
         if ($success) {
             SGL::raiseMsg('module successfully updated');
         } else {
-           SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record', 
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -234,11 +233,9 @@ class ModuleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $output->template = 'moduleList.html';
-        $dbh = & SGL_DB::singleton();
-        $query = "SELECT * FROM {$conf['table']['module']} ORDER BY name";
+        $query = "SELECT * FROM {$this->conf['table']['module']} ORDER BY name";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -247,7 +244,7 @@ class ModuleMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         // if there are modules, clean up output
         if (count($aPagedData['data'])) {
@@ -265,23 +262,21 @@ class ModuleMgr extends SGL_Manager
     function retrieveAllModules($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         switch ($type) {
         case SGL_RET_ID_VALUE:
             $query = "  SELECT module_id, title
-                        FROM {$conf['table']['module']}
+                        FROM {$this->conf['table']['module']}
                         ORDER BY module_id";
-            $aMods = $dbh->getAssoc($query);
+            $aMods = $this->dbh->getAssoc($query);
             break;
 
         case SGL_RET_NAME_VALUE:
         default:
             $query = "  SELECT name, title 
-                        FROM {$conf['table']['module']} 
+                        FROM {$this->conf['table']['module']} 
                         ORDER BY name";
-            $aModules = $dbh->getAll($query);
+            $aModules = $this->dbh->getAll($query);
             foreach ($aModules as $k => $oVal) {
                 if ($oVal->name == 'documentor') {
                     continue;
@@ -296,15 +291,13 @@ class ModuleMgr extends SGL_Manager
     function getModuleIdByPermId($permId = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $permId = ($permId === null) ? 0 : $permId;
         $query = "  SELECT  module_id
-                    FROM    {$conf['table']['permission']}
+                    FROM    {$this->conf['table']['permission']}
                     WHERE   permission_id = $permId
                 ";
-        $moduleId = $dbh->getOne($query);
+        $moduleId = $this->dbh->getOne($query);
         return $moduleId;
     }
 }

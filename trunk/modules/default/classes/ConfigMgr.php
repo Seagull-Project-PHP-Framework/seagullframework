@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ConfigMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -61,6 +61,8 @@ class ConfigMgr extends SGL_Manager
     function ConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module = 'default';
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
@@ -94,7 +96,9 @@ class ConfigMgr extends SGL_Manager
         $this->aUrlHandlers = array(
             'SGL_UrlParserSefStrategy' => 'Seagull SEF',
             'SGL_UrlParserClassicStrategy' => 'Classic');
-
+        $this->aTemplateEngines = array(
+            'flexy' => 'Flexy',
+            'smarty' => 'Smarty');
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'), 
             'update' => array('update', 'redirectToDefault'), 
@@ -105,7 +109,7 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->aStyleFiles = SGL_Util::getStyleFiles();
+        $this->aStyleFiles  = SGL_Util::getStyleFiles();
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = 'masterMinimal.html';
@@ -132,7 +136,12 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
             }
             
-            //  catch URL invalid handler
+            //  catch invalid template engine
+            if ($input->conf['site']['templateEngine'] == 'smarty') {
+                $aErrors['templateEngine'] = 'The Smarty template hooks have not been implemented yet';
+            }
+            
+            //  catch invalid URL handler
             if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
                 $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
             }
@@ -185,7 +194,7 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->conf = $GLOBALS['_SGL']['CONF'];
+        $output->conf = $this->conf;
         $output->aDbTypes = $this->aDbTypes;
         $output->aLogTypes = $this->aLogTypes;
         $output->aLogPriorities = $aLogLevels;
@@ -196,6 +205,7 @@ class ConfigMgr extends SGL_Manager
         $output->aStyleFiles = $this->aStyleFiles;
         $output->aSessHandlers = $this->aSessHandlers;
         $output->aUrlHandlers = $this->aUrlHandlers;
+        $output->aTemplateEngines = $this->aTemplateEngines;
     }
 
     function _edit(&$input, &$output)

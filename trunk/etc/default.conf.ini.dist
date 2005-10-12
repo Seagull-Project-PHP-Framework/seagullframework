@@ -30,6 +30,7 @@ defaultModule           = default
 defaultManager          = default
 defaultArticleViewType  = 1
 defaultParams           =
+templateEngine          = flexy
 wysiwyg_editor          = fck ;Available: htmlarea, xinha, fck
 
 [cache]

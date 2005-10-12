@@ -11,12 +11,28 @@ class SGL_Request
 {
     var $aProps;
     
+    /**
+     * Sets up a request object.
+     *
+     * @return SGL_Request
+     *
+     * @todo implement CLI request initialiser
+     */
     function SGL_Request()
     {
-        $this->init();
+        if (!SGL::runningFromCLI()) {
+            $this->initHttp();
+        } else {
+            $this->initCli();
+        }
     }
     
-    function init()
+    function initCli()
+    {
+        die("CLI interface not implemented yet\n");
+    }
+    
+    function initHttp()
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
 

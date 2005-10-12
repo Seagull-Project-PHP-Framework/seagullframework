@@ -373,7 +373,11 @@ EOF;
         // STDIN isn't a CLI constant before 4.3.0
         $sapi = php_sapi_name();
         if (version_compare(PHP_VERSION, '4.3.0') >= 0 && $sapi != 'cgi') {
-            return @is_resource(STDIN);
+            if (!defined('STDIN')) {
+                return false;
+            } else {
+                return @is_resource(STDIN);
+            }
         } else {
             return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
         }

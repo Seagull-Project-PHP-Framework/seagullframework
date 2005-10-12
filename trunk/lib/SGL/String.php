@@ -517,6 +517,29 @@ class SGL_String
 }
 
 /**
+ * Array manipulation methods.
+ *
+ */
+class SGL_Array
+{
+    /**
+     * Strips 'empty' elements from supplied array.
+     *
+     * 'Empty' can be a null, empty string, false or empty array.
+     *
+     * @param array $elem
+     * @return array
+     */
+    function removeBlanks($elem)
+    {
+        if (is_array($elem)) {
+            $clean = array_filter($elem);
+        }
+        return $clean;
+    }    
+}
+
+/**
  * Various date related methods.
  *
  * @package SGL

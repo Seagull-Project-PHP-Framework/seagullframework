@@ -103,16 +103,17 @@
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate(#Session handler#)}</td>
+        <td class="fieldName">{translate(#Template Engine#)}</td>
         <td class="fieldValue">
-            <select name="conf[site][sessionHandler]">
-                {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
+            <div class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</div>
+            <select name="conf[site][templateEngine]">
+                {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
             </select>
         </td>
         <td>
             <span class="tipOwner">
                 <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
+                <span class="tipText">{translate(#Seagull allows you to use the template engine of your choice#)}</span>
             </span>
         </td>
     </tr>
@@ -128,6 +129,20 @@
             <span class="tipOwner">
                 <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
                 <span class="tipText">{translate(#What format would you like your URLs, Seagull Search Engine Friendly is the default#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Session handler#)}</td>
+        <td class="fieldValue">
+            <select name="conf[site][sessionHandler]">
+                {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
             </span>
         </td>
     </tr>

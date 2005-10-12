@@ -156,14 +156,14 @@ class SGL_ErrorHandler
                 //  PHP error code
                 $output = <<<EOF
 <hr />
-<p class="error">
-  <strong>MESSAGE</strong>: $errStr<br />
-  <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
-  <strong>FILE:</strong> $file<br />
-  <strong>LINE:</strong> $line<br />
-  <strong>DEBUG INFO:</strong>
-  <p>$source</p>
-</p>
+<div class="errorContent">
+        <strong>MESSAGE</strong>: $errStr<br />
+        <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
+        <strong>FILE:</strong> $file<br />
+        <strong>LINE:</strong> $line<br />
+        <strong>DEBUG INFO:</strong>
+        <p>$source</p>
+</div>
 <hr />
 EOF;
                 echo $output;
@@ -259,7 +259,7 @@ EOF;
 	                    "\t" . strip_tags($lines[$line -1]) . '</strong></div>';
 	            } else {
 	                $context_lines[] = '<strong>' . ($i + 1) .
-	                    "</strong>\t" . $lines[$i];
+	                    "</strong>\t" . @$lines[$i];
 	            }
 	        }   
 	        $sourceContext = trim(join("<br />\n", $context_lines)) . "<br />\n";

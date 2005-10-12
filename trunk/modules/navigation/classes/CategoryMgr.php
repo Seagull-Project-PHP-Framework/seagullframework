@@ -30,11 +30,11 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | CategoryMgr.php                                                           |
 // +---------------------------------------------------------------------------+
-// | Author:                              |
+// | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: CategoryMgr.php,v 1.27 2005/05/17 23:54:51 demian Exp $
 
@@ -47,8 +47,6 @@ require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.27 $
- * @since   PHP 4.1
- * @todo    at some point change this for PEAR::Tree
  */
 class CategoryMgr extends SGL_Manager
 {
@@ -58,7 +56,6 @@ class CategoryMgr extends SGL_Manager
     function CategoryMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $this->aggregateOutput = true;
         $this->module           = 'navigation';
@@ -135,7 +132,6 @@ class CategoryMgr extends SGL_Manager
             $output->noEditForm = 1;
             return;
         }
-
         $output->category = $this->_category->getValues();
         $output->breadCrumbs = $this->_category->getBreadCrumbs($output->category['category_id']);
         $output->perms = $this->_category->getPerms();
@@ -155,7 +151,6 @@ class CategoryMgr extends SGL_Manager
         $message = $this->_category->update($input->category_id, $values);
 
         if ($message != '') {
-            //  redirect on success
             SGL::raiseMsg($message);
             $this->_redirectCatId = $input->category_id;
         } else {
@@ -183,7 +178,6 @@ class CategoryMgr extends SGL_Manager
         
         //  delete categories
         $this->_category->delete($input->aDelete);
-
         $output->category_id = 0;
 
         SGL::raiseMsg('The category has successfully been deleted');

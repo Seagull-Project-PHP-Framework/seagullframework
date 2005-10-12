@@ -49,6 +49,25 @@ class StringTest extends UnitTestCase {
         $targetLen = strlen($target);
         $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
     }
+    
+    function testRemoveEmptyElements()
+    {
+        $arr = array(
+                0 => 'foo',
+                1 => false,
+                2 => -1,
+                3 => null,
+                4 => '',
+                5 => array(),
+                  );
+                  
+        $target = array(
+                0 => 'foo',
+                2 => -1,
+                );
+        $arr = SGL_Array::removeBlanks($arr);
+        $this->assertEqual($arr, $target);
+    }
 }
 
 ?>

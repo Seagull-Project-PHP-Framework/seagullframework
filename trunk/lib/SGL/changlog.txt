@@ -14,6 +14,14 @@ url
 - explain SGL_Url object
 - getSignificantSegments changed to toPartialArray
 
+templates
+=========
+- template engine now configurable, flexy implemented as driver
+
+request
+=======
+- request type now content sensitive, HTTP and CLI contexts implemented
+
 TODO
 ====
  - observer for LoginMgr
@@ -26,7 +34,6 @@ TODO
  - clean up Sgl_Manager with command objects
  - move makeIniUnreadable to Config when ready
  - build SGL_Delegator for php4/5 compat delegation
- - make template engine configurable
  
 /*
 fake user request

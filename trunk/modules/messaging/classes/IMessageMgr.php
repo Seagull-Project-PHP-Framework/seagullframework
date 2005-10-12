@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | IMessageMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -57,6 +57,9 @@ class IMessageMgr extends SGL_Manager
 {
     function IMessageMgr()
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+                
         $this->module       = 'messaging';
         $this->pageTitle    = 'Messages';
         $this->template     = 'imInbox.html';
@@ -119,13 +122,10 @@ class IMessageMgr extends SGL_Manager
 
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
-
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         
         $query = 
             " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name 
-              FROM      {$conf['table']['instant_message']} AS im, {$conf['table']['user']} AS u 
+              FROM      {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u 
               WHERE     im.user_id_to = $uid 
               AND       u.usr_id = im.user_id_from 
               AND       im.delete_status in (2, 3) 
@@ -138,7 +138,7 @@ class IMessageMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
@@ -168,13 +168,10 @@ class IMessageMgr extends SGL_Manager
 
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
-
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $query = 
             " SELECT * 
-              FROM {$conf['table']['instant_message']} AS im, {$conf['table']['user']} AS u 
+              FROM {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u 
               WHERE im.user_id_from = $uid 
               AND u.usr_id = im.user_id_to 
               AND im.delete_status <> 2 
@@ -187,7 +184,7 @@ class IMessageMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
@@ -539,8 +536,7 @@ class IMessageMgr extends SGL_Manager
             $message->delete_status = $statusCode;
 
             //  if safeDelete is enabled, just set item status to 0, don't delete
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $safeDelete = $conf['site']['safeDelete'];
+            $safeDelete = $this->conf['site']['safeDelete'];
             if ($message->delete_status == 0 && !$safeDelete) {
                 if (!$message->delete()) {
                     $counter++;
