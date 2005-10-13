@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | PublisherBase.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -129,6 +129,7 @@ class PublisherBase
     function getDocumentListByCatID($catID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         require_once SGL_ENT_DIR . '/Document.php';
         $documentList = & new DataObjects_Document();
         $documentList->category_id = $catID;
