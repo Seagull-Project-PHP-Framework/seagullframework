@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ProfileMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -45,9 +45,7 @@ require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.17 $
- * @since   PHP 4.1
  */
 class ProfileMgr extends SGL_Manager
 {
