@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginMgr.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -45,14 +45,15 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.34 $
- * @since   PHP 4.1
  */
 class LoginMgr extends SGL_Manager
 {
     function LoginMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+        
+        $this->module = 'user';
 
         $this->_aActionsMapping =  array(
             'login' => array('login'), 
@@ -108,7 +109,6 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
         if ($res = $this->_doLogin($input->username, $input->password)) {
 
             // Get the user id from the current session
@@ -117,7 +117,7 @@ class LoginMgr extends SGL_Manager
             // Check for multiple user sessions: allow one only excluding current one.
             $multiple = SGL_HTTP_Session::getUserSessionCount($uid, session_id());
             if ($multiple > 0) {
-                if ($conf['site']['single_user']) {
+                if ($this->conf['site']['single_user']) {
                     SGL_HTTP_Session::destroyUserSessions($uid, session_id());
                     SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
                 } else {
@@ -131,7 +131,7 @@ class LoginMgr extends SGL_Manager
                 SGL_HTTP::redirect(urldecode($input->redir));
             }
             $type = ($res['role_id'] == SGL_ADMIN) ? 'logonAdminGoto' : 'logonUserGoto';
-            list($mod, $mgr) = split('\^', $conf['LoginMgr'][$type]);
+            list($mod, $mgr) = split('\^', $this->conf['LoginMgr'][$type]);
             $aParams = array(
                 'moduleName'    => $mod,
                 'managerName'   => $mgr,
@@ -164,25 +164,24 @@ class LoginMgr extends SGL_Manager
     function _doLogin($username, $password)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
+
         $query = "
             SELECT  usr_id, role_id
-            FROM " . $conf['table']['user'] . "
-            WHERE   username = " . $dbh->quote($username) . "
+            FROM " . $this->conf['table']['user'] . "
+            WHERE   username = " . $this->dbh->quote($username) . "
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
         
-        $aResult = $dbh->getRow($query, DB_FETCHMODE_ASSOC);
+        $aResult = $this->dbh->getRow($query, DB_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];
             $rid = $aResult['role_id'];
 
             //  record login in db for security
-            if (@$conf['LoginMgr']['recordLogin']) {
+            if (@$this->conf['LoginMgr']['recordLogin']) {
                 include_once SGL_ENT_DIR . '/Login.php';
                 $login = & new DataObjects_Login();
-                $login->login_id = $dbh->nextId('login');
+                $login->login_id = $this->dbh->nextId('login');
                 $login->usr_id = $uid;
                 $login->date_time = SGL::getTime(true);
                 $login->remote_ip = $_SERVER['REMOTE_ADDR'];
