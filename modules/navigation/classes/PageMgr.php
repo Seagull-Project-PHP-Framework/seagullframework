@@ -178,6 +178,13 @@ class PageMgr extends SGL_Manager
         }
     }
 
+    /**
+     * Returns a hash of articles.
+     *
+     * @return array
+     *
+     * @todo move to DA_Publisher
+     */
     function _getStaticArticles()
     {
         $query = "
