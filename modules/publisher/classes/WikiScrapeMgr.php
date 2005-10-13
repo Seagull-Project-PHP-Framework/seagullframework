@@ -30,13 +30,13 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | WikiScrapeMgr.php                                                    |
+// | WikiScrapeMgr.php                                                         |
 // +---------------------------------------------------------------------------+
-// | Author: Admin User <admin@example.com>                                  |
+// | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
-// $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
+// $Id: WikiScrapeMgr.php,v 1.2 2005/04/17 02:15:02 demian Exp $
 
 /**
  * Type your class description here ...
@@ -44,7 +44,6 @@
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.2 $
- * @since   PHP 4.1
  */
 class WikiScrapeMgr extends SGL_Manager
 {
