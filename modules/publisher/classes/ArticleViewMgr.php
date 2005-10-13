@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ArticleViewMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -57,7 +57,8 @@ class ArticleViewMgr extends SGL_Manager
     function ArticleViewMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        parent::SGL_Manager();
+        
         $this->module       = 'publisher';
         $this->pageTitle    = 'Article Browser';
         $this->template     = 'articleBrowser.html';
@@ -88,7 +89,7 @@ class ArticleViewMgr extends SGL_Manager
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
 		$input->dataTypeID		= ($req->get('frmDataTypeID')) 
 		                              ? $req->get('frmDataTypeID') 
-		                              : $GLOBALS['_SGL']['CONF']['site']['defaultArticleViewType'];
+		                              : $this->conf['site']['defaultArticleViewType'];
         //  catch static article flag, route to view
         if ($input->staticArticle) {
             $input->action = 'view';
@@ -114,7 +115,6 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'articleView.html';
         $ret = SGL_Item::getItemDetail($input->articleID);
         

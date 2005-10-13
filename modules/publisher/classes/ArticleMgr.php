@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ArticleMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -58,6 +58,7 @@ class ArticleMgr extends SGL_Manager
     function ArticleMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
 
         $this->module    = 'publisher';
         $this->pageTitle = 'Article Manager';
@@ -220,7 +221,6 @@ class ArticleMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $output->template = 'articleMgrEdit.html';
         
@@ -242,11 +242,10 @@ class ArticleMgr extends SGL_Manager
         $output->dynaContent = $item->getDynamicContent($input->articleID);
 
         //  generate flesch html link
-        $output->fleschLink = $conf['site']['baseUrl'] . '/flesch.' . $_SESSION['aPrefs']['language'] . '.html';
+        $output->fleschLink = $this->conf['site']['baseUrl'] . '/flesch.' . $_SESSION['aPrefs']['language'] . '.html';
 
         //  calculate flesch score if enabled
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['ArticleMgr']['fleschScore']) {
+        if ($this->conf['ArticleMgr']['fleschScore']) {
 
             //  strip tags, parse out raw text
             $search = array ("'<script[^>]*?>.*?</script>'si",  // Strip javascript
@@ -408,8 +407,6 @@ class ArticleMgr extends SGL_Manager
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
-        $dbh = & SGL_DB::singleton();        
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  if published flag set, only return published articles
         $isPublishedClause = ($bPublished)? 
@@ -432,8 +429,8 @@ class ArticleMgr extends SGL_Manager
                     i.start_date,
                     i.expiry_date,
                     i.status
-            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, {$conf['table']['user']} u
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -452,7 +449,7 @@ class ArticleMgr extends SGL_Manager
             'delta'    => 3,
             'perPage'  => $limit,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         return $aPagedData;
     }
 
@@ -468,9 +465,6 @@ class ArticleMgr extends SGL_Manager
     function retrieveAll($dataTypeID, $queryRange)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();        
 
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all') ?'' : "AND i.category_id = $catID";
@@ -482,8 +476,8 @@ class ArticleMgr extends SGL_Manager
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, {$conf['table']['user']} u
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
                                 
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
@@ -496,7 +490,7 @@ class ArticleMgr extends SGL_Manager
             $rangeWhereClause . "
             ORDER BY i.date_created DESC
                 ";
-        $aArticles = $dbh->getAll($query);
+        $aArticles = $this->dbh->getAll($query);
         return $aArticles;
     }
 
@@ -509,13 +503,11 @@ class ArticleMgr extends SGL_Manager
     function getTemplateTypes()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $query = "  SELECT  item_type_id, item_type_name 
-                    FROM    {$conf['table']['item_type']}
+                    FROM    {$this->conf['table']['item_type']}
                 ";
-        return $dbh->getAssoc($query);
+        return $this->dbh->getAssoc($query);
     }
 
     function _generateActionLinks($itemID, $itemStatusID)
