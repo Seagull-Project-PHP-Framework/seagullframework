@@ -57,6 +57,8 @@ class PageMgr extends SGL_Manager
     function PageMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module           = 'navigation';
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
@@ -178,14 +180,11 @@ class PageMgr extends SGL_Manager
 
     function _getStaticArticles()
     {
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
+             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id
@@ -195,13 +194,12 @@ class PageMgr extends SGL_Manager
              AND i.status  > " . SGL_STATUS_DELETED . "
              ORDER BY i.last_updated DESC
         ";
-        $res = $dbh->getAssoc($query);
+        $res = $this->dbh->getAssoc($query);
         return ($res)? $res : false;
     }
 
     function display(&$output)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         //  pre-check enabled box
@@ -266,7 +264,6 @@ class PageMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $separator = '/'; // can be configurable later
 
@@ -344,7 +341,6 @@ class PageMgr extends SGL_Manager
         
         //  passing a non-existent section id results in null or false $section
         if ($section) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
                     
             //  setup article type, dropdowns built in display()
             $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
@@ -393,7 +389,6 @@ class PageMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $separator = '/';
 

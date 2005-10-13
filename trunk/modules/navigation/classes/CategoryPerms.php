@@ -48,13 +48,13 @@ require_once SGL_CORE_DIR . '/Category.php';
  * @version $Revision: 1.5 $
  * @since   PHP 4.1
  */
-class Permissions extends SGL_Category
+class SGL_CategoryPerms extends SGL_Category
 {
     var $sPerms = '';
     var $aPerms = array();
     var $catID  = 0;
 
-    function Permissions($catID = -1)
+    function SGL_CategoryPerms($catID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->module = 'navigation';
