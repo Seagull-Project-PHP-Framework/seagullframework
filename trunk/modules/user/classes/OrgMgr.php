@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -50,7 +50,6 @@ require_once 'Validate.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.43 $
- * @since   PHP 4.1
  */
 class OrgMgr extends SGL_Manager
 {
@@ -65,6 +64,8 @@ class OrgMgr extends SGL_Manager
     function OrgMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+
         $this->module       = 'user';
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
@@ -161,8 +162,7 @@ class OrgMgr extends SGL_Manager
             $input->template = ($input->action == 'update') ? 'orgEdit.html' : 'orgAdd.html';
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
             }
             $this->validated = false;
@@ -187,8 +187,7 @@ class OrgMgr extends SGL_Manager
             $output->countries = $countries;
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
                 @$output->currentOrgType = $output->org->organisation_type_id;                
             }
@@ -249,8 +248,7 @@ class OrgMgr extends SGL_Manager
         $aOrgNode = $nestedSet->getNode($input->orgId);
 
         //  build org type combobox
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['OrgMgr']['typeEnabled']) {
+        if ($this->conf['OrgMgr']['typeEnabled']) {
             $output->currentOrgType = @$aOrgNode['organisation_type_id'];
         }
         $output->org = (object)$aOrgNode;
