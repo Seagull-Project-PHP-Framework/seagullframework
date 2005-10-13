@@ -60,6 +60,7 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
+        
         $this->module       = 'user';
         $this->template     = 'prefOrgEdit.html';
         $this->pageTitle    = 'Organisation Preferences';
