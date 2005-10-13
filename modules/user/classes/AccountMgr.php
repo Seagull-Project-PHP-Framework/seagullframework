@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | AccountMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -56,6 +56,8 @@ class AccountMgr extends RegisterMgr
     function AccountMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::RegisterMgr();
+        
         $this->module = 'user';
         $this->pageTitle = 'My Account';
         $this->da = & DA_User::singleton();
@@ -81,14 +83,13 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::display($output);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  set user's country
         if (isset($output->user) && $output->action == 'viewProfile') {
             $output->user->country = $GLOBALS['_SGL']['COUNTRIES'][$output->user->country];
             $output->user->region = $GLOBALS['_SGL']['STATES'][$output->user->region];
         }
-        if ($conf['OrgMgr']['enabled']) {
+        if ($this->conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
         }
         $output->aRoles = $this->da->getRoles();
