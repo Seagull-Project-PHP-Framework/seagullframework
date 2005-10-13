@@ -185,8 +185,8 @@ class SGL_Category
         }
         
         // Update perms
-        require_once SGL_MOD_DIR . '/navigation/classes/Permissions.php';
-		$perms = & new Permissions($category_id);
+        require_once SGL_CORE_DIR . '/CategoryPerms.php';
+		$perms = & new SGL_CategoryPerms($category_id);
         $perms->set('aPerms', $values['perms']);
     	$perms->update();
 
