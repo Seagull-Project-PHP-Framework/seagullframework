@@ -94,7 +94,7 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         
         //  guestbook
         $this->get($this->conf['site']['baseUrl'] . '/index.php/guestbook/');
-        $this->assertTitle('Seagull Framework :: Guestbook Manager');
+        $this->assertTitle('Seagull Framework :: Welcome to our Guestbook');
         $this->assertNoUnwantedPattern("/errorContent/");
         
         //  messaging
