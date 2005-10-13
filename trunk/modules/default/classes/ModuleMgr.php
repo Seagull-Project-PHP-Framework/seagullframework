@@ -259,24 +259,34 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
+    /**
+     * Returns an array of all modules.
+     *
+     * @param integer $type
+     * @return array
+     *
+     * @todo move to DA_Default
+     */
     function retrieveAllModules($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
 
         switch ($type) {
         case SGL_RET_ID_VALUE:
             $query = "  SELECT module_id, title
-                        FROM {$this->conf['table']['module']}
+                        FROM {$conf['table']['module']}
                         ORDER BY module_id";
-            $aMods = $this->dbh->getAssoc($query);
+            $aMods = $dbh->getAssoc($query);
             break;
 
         case SGL_RET_NAME_VALUE:
         default:
             $query = "  SELECT name, title 
-                        FROM {$this->conf['table']['module']} 
+                        FROM {$conf['table']['module']} 
                         ORDER BY name";
-            $aModules = $this->dbh->getAll($query);
+            $aModules = $dbh->getAll($query);
             foreach ($aModules as $k => $oVal) {
                 if ($oVal->name == 'documentor') {
                     continue;
@@ -288,16 +298,26 @@ class ModuleMgr extends SGL_Manager
         return $aMods;
     }
 
+    /**
+     * Returns module id by perm id
+     *
+     * @param integer $permId
+     * @return integer
+     *
+     * @todo move to DA_Default
+     */
     function getModuleIdByPermId($permId = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();        
         
         $permId = ($permId === null) ? 0 : $permId;
         $query = "  SELECT  module_id
-                    FROM    {$this->conf['table']['permission']}
+                    FROM    {$conf['table']['permission']}
                     WHERE   permission_id = $permId
                 ";
-        $moduleId = $this->dbh->getOne($query);
+        $moduleId = $dbh->getOne($query);
         return $moduleId;
     }
 }
