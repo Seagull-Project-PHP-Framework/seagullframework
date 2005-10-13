@@ -180,6 +180,14 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/action/editPerms/frmUserID/2/');
         $this->assertTitle('Seagull Framework :: User Manager :: Edit permissions');
         $this->assertNoUnwantedPattern("/errorContent/");
+
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/org/action/list/');
+        $this->assertTitle('Seagull Framework :: Organisation Manager');
+        $this->assertNoUnwantedPattern("/errorContent/");
+        
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/orgtype/action/list/');
+        $this->assertTitle('Seagull Framework :: OrgType Manager');
+        $this->assertNoUnwantedPattern("/errorContent/");
         
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/role/action/list/');
         $this->assertTitle('Seagull Framework :: Role Manager :: Browse');
