@@ -36,6 +36,11 @@ class SGL_Config
         }
     }
     
+    function replace($aConf)
+    {
+        $this->aProps = $aConf;
+    }
+    
     /**
      * Return an array of all Config properties.
      *
