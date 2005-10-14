@@ -550,10 +550,32 @@ class SGL_Array
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_Date
 {
+    /**
+     * Returns current time in YYYY-MM-DD HH:MM:SS format.
+     * 
+     * GMT format is best for logging system events, otherwise locale offset
+     * will be most helpful to users.
+     * 
+     * @access public
+     * @static
+     * @param boolean $gmt       is time GMT or locale offset
+     * @return string $instance  formatted current time
+     * @todo factor out Cache and Lang methods into their own objects
+     */
+    function getTime($gmt = false)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        static $instance;
+        if (!isset($instance)) {
+            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
+                                : strftime("%Y-%m-%d %H:%M:%S", time());
+        }
+        return $instance;
+    }
+        
     /**
      * Converts date array into MySQL datetime format.
      *

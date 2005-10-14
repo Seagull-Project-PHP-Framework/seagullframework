@@ -218,7 +218,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['date_created'] = $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['date_created'] = $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['created_by'] = $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  create new set with first rootnode
@@ -262,7 +262,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  attempt to update org values

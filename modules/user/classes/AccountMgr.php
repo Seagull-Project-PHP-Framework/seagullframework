@@ -113,7 +113,7 @@ class AccountMgr extends RegisterMgr
         $oUser->get(SGL_HTTP_Session::getUid());
         $original = clone($oUser);
         $oUser->setFrom($input->user);
-        $oUser->last_updated = SGL::getTime();
+        $oUser->last_updated = SGL_Date::getTime();
         $success = $oUser->update($original);
 
         if ($success) {

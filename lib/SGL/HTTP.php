@@ -663,7 +663,7 @@ class SGL_HTTP_Session
         if ($res->numRows() == 1) {
             return $dbh->getOne($query);
         } else {
-            $timeStamp = SGL::getTime(true);
+            $timeStamp = SGL_Date::getTime(true);
             if (!empty($conf['site']['extended_session'])) {
                 $uid = $_SESSION['uid'];
                 $username = $_SESSION['username'];
@@ -694,7 +694,7 @@ class SGL_HTTP_Session
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $timeStamp = SGL::getTime(true);
+        $timeStamp = SGL_Date::getTime(true);
         $qval = $dbh->quote($value);
         $user_session = $conf['table']['user_session'];
         if (!empty($conf['site']['extended_session'])) {
@@ -749,7 +749,7 @@ class SGL_HTTP_Session
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $timeStamp = SGL::getTime(true);
+        $timeStamp = SGL_Date::getTime(true);
         $user_session = $conf['table']['user_session'];
 
         // For extended sessions, enforce session deletion per user expiry setting

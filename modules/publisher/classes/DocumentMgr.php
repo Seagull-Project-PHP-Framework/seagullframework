@@ -239,7 +239,7 @@ class DocumentMgr extends FileMgr
         $dbh = $asset->getDatabaseConnection();
         $asset->document_id = $dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
-        $asset->date_created  = SGL::getTime();
+        $asset->date_created  = SGL_Date::getTime();
         $asset->name = SGL_String::censor($asset->name);
         $asset->description = SGL_String::censor($asset->description);
         $asset->insert();

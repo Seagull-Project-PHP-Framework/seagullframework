@@ -218,7 +218,7 @@ class RegisterMgr extends SGL_Manager
         $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
-        $oUser->date_created = $oUser->last_updated = SGL::getTime();
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $success = $oUser->insert();
 
         //  assign permissions associated with role user belongs to

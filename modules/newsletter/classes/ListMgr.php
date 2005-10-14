@@ -467,9 +467,9 @@ class ListMgr extends NewsletterMgr
         $noRows = $oUser->find();
         $oUser->setFrom($input->oUser);
         $oUser->status = 9;
-        $oUser->last_updated = SGL::getTime();  
+        $oUser->last_updated = SGL_Date::getTime();  
         if ($noRows == 0) {
-            $oUser->date_created = SGL::getTime();
+            $oUser->date_created = SGL_Date::getTime();
             $oUser->newsletter_id = $input->oUser->newsletter_id;
             $success = $oUser->insert();
         } else {

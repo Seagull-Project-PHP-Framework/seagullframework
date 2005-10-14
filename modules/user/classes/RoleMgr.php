@@ -135,7 +135,7 @@ class RoleMgr extends SGL_Manager
         $oRole->setFrom($input->role);
         $dbh = & $oRole->getDatabaseConnection();
         $oRole->role_id = $dbh->nextId($this->conf['table']['role']);
-        $oRole->date_created = $oRole->last_updated = SGL::getTime();
+        $oRole->date_created = $oRole->last_updated = SGL_Date::getTime();
         $oRole->created_by = $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->insert();
         if ($success) {
@@ -162,7 +162,7 @@ class RoleMgr extends SGL_Manager
         $oRole = & new DataObjects_Role();
         $oRole->get($input->role->role_id);
         $oRole->setFrom($input->role);
-        $oRole->last_updated = SGL::getTime();
+        $oRole->last_updated = SGL_Date::getTime();
         $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->update();
         if ($success) {

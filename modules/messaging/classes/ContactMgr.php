@@ -116,7 +116,7 @@ class ContactMgr extends SGL_Manager
             $numRows = $savedUser->find();
             if ($numRows < 1) {
                 $savedUser->contact_id       = $dbh->nextId($this->conf['table']['contact']);
-                $savedUser->date_created     = SGL::getTime();
+                $savedUser->date_created     = SGL_Date::getTime();
                 $savedUser->originator_id    = SGL_HTTP_Session::getUid();
                 $savedUser->usr_id           = $input->userID;
                 $res = $savedUser->insert();
