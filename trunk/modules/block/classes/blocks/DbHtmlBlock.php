@@ -25,7 +25,8 @@ class DbHtmlBlock
     
     function getBlockContent($blockId)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
         
         $query = "

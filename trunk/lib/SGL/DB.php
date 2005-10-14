@@ -62,7 +62,8 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  override default mysql driver to allow for all sequence IDs to 
         //  be kept in a single table
@@ -148,7 +149,8 @@ class SGL_DB
         $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
 
         if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
 
             //  if db connect fails and we're installing, return error info

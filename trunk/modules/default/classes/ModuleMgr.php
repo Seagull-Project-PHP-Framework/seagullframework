@@ -270,7 +270,9 @@ class ModuleMgr extends SGL_Manager
     function retrieveAllModules($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
 
         switch ($type) {
@@ -309,7 +311,9 @@ class ModuleMgr extends SGL_Manager
     function getModuleIdByPermId($permId = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();        
         
         $permId = ($permId === null) ? 0 : $permId;

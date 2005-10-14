@@ -117,7 +117,8 @@ class SGL
      */
     function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Logging is not activated
         if ($conf['log']['enabled'] == false) {
@@ -192,7 +193,8 @@ class SGL
      */
     function debugAllowed()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         return $conf['debug']['sessionDebugAllowed'] &&
             in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['TRUSTED_IPS']);
     }
@@ -232,7 +234,8 @@ class SGL
         // If the instance doesn't exist, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $options = array(
                 'cacheDir'  => SGL_TMP_DIR . '/', 
                 'lifeTime'  => $conf['cache']['lifetime'],
@@ -312,7 +315,8 @@ EOF;
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  if fatal
         if ($behaviour > 0) {

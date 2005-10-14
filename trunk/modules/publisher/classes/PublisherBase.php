@@ -112,7 +112,8 @@ class PublisherBase
         
         //    if not in input or session, set default article type
         if (!isset($input->dataTypeID) && !$sessDatatypeID) {		           
-        	$conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
 			$defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site'])) 
 			 ? $conf['site']['defaultArticleViewType'] 
 			 : 1; 

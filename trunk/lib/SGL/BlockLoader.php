@@ -107,6 +107,8 @@ class SGL_BlockLoader
         if (isset($sectionId)) {
             $this->_currentSectionId = $sectionId;
         }
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
     }
 
     /**
@@ -144,12 +146,11 @@ class SGL_BlockLoader
     function _loadBlocks()
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
                 b.body_class, b.is_onleft
-            FROM    {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba
+            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba
             WHERE   b.is_enabled = 1
             AND     b.block_id = ba.block_id
             AND     ( ba.section_id = 0 OR ba.section_id = " . 

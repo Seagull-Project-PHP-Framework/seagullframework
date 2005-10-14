@@ -2,7 +2,6 @@
 class SGL_ParamHandler
 {
     var $source;
-    var $aParams;
     
     function SGL_ParamHandler($source)
     {
@@ -21,66 +20,87 @@ class SGL_ParamHandler
             switch ($ext) {
 
             case 'xml':
-                return new SGL_ParamHandler_Xml($source);
+                $ret = new SGL_ParamHandler_Xml($source);
                 break;
                 
-            case 'ini':
-            
+            case 'php':
+                $ret = new SGL_ParamHandler_Array($source);
+                break;
             //  at the moment .php file are ini files
             //  but they should be arrays
-            case 'php':
-                return new SGL_ParamHandler_Ini($source);
+            case 'ini':
+                $ret =  new SGL_ParamHandler_Ini($source);
                 break;
             }
-            $class = __CLASS__;
-            $instance = new $class($source);
+            $instances[$signature] = $ret;
         }
-        return $instance;
+        return $instances[$signature];
     }
     
     function read() {}
     function write() {}
     
-    function addParam($key, $value)
-    {
-        $this->aParams[$key] = $value;    
-    }
-    
-    function getAll()
-    {
-        if (empty($this->aParams)) {
-            $this->read();   
-        }
-        return $this->aParams;
-    }
+//    function getAll()
+//    {
+//        if (empty($this->aParams)) {
+//            $this->read();   
+//        }
+//        return $this->aParams;
+//    }
 }
 
 class SGL_ParamHandler_Ini extends SGL_ParamHandler
 {
     function read() 
     {
-        $this->aParams = parse_ini_file($this->source, true);
+        return parse_ini_file($this->source, true);
     }
     
-    function write() 
+    function write($data) 
     {
-        //  lazy load PEAR::Config to do the job
-        print 'writing file ...';
+        //  load PEAR::Config
+        require_once 'Config.php';
+        $c = new Config();
+        $c->parseConfig($data, 'phparray');
+        $ok = $c->writeConfig($this->source, 'inifile');        
+        return $ok;
     }
 }
 
 class SGL_ParamHandler_Array extends SGL_ParamHandler
 {
-
+    function read() 
+    {
+        require $this->source;
+        return $conf;
+    }
+    
+    function write($data) 
+    {
+        //  load PEAR::Config
+        require_once 'Config.php';
+        $c = new Config();
+        $c->parseConfig($data, 'phparray');
+        $ok = $c->writeConfig($this->source, 'phparray');        
+        return $ok;      
+    }
 }
 
 class SGL_ParamHandler_Xml extends SGL_ParamHandler
 {
-
+    function read() 
+    {
+        return simplexml_load_file($this->source);
+    }
+    
+    function write($data) 
+    {
+        //  load PEAR::Config
+        require_once 'Config.php';
+        $c = new Config();
+        $c->parseConfig($data, 'phparray');
+        $ok = $c->writeConfig($this->source, 'xml');        
+        return $ok;      
+    }
 }
-
-/*
-$params = SGL_ParamHandler::singleton('conf.ini');
-$params->read();
-*/
 ?>

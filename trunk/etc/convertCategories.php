@@ -71,7 +71,9 @@ function addToNestedSet(&$nestedSet, &$nodes, $parentId)
 function updateCategoryId($oldCategoryId, $newCategoryId)
 {
     $dbh = &SGL_DB::singleton();
-    $conf = & $GLOBALS['_SGL']['CONF'];
+
+    $c = &SGL_Config::singleton();
+    $conf = $c->getAll();
     
     // update documents
     $query = 'UPDATE ' . $conf['table']['document'] . ' SET category_id = '
@@ -93,7 +95,8 @@ function &createFromSQL()
     require_once 'HTML/Tree.php';
     // get db
     $dbh = &SGL_DB::singleton();
-    $conf = & $GLOBALS['_SGL']['CONF'];
+    $c = &SGL_Config::singleton();
+    $conf = $c->getAll();
     $query = 'SELECT  category_id as id, parent AS parent_id, label, perms
                         FROM category
                         ORDER BY parent_id, category_id';

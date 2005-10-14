@@ -70,7 +70,8 @@
 
     function SGL_init()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // load Base and init DB_DataObject
         require_once SGL_LIB_DIR . '/SGL.php';
@@ -138,7 +139,8 @@
      */
     function pearErrorHandler($oError)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  log message
         $message = $oError->getMessage();

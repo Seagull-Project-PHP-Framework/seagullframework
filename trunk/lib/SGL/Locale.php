@@ -78,7 +78,8 @@ class SGL_Locale
 
                 if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
-                    $conf = & $GLOBALS['_SGL']['CONF'];
+                    $c = &SGL_Config::singleton();
+                    $conf = $c->getAll();
                     
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);

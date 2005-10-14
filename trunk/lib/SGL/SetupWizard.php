@@ -76,8 +76,9 @@ class SGL_SetupWizard
      */
     function processSettings($data)
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
-        $c = new Config();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        #$c = new Config();
 
         // Update conf with new values from form
         if ($data['type'] == 0) {
@@ -111,12 +112,15 @@ class SGL_SetupWizard
 
         // Write and re-read conf to make sure we are accessing DB with what seagull would
         // normally read on startup
-        $c->parseConfig($conf, 'phparray');
-        $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
+        #$c->parseConfig($conf, 'phparray');
+        #$c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
+        $file = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php';
+        $ok = $c->save($file);
 
         //  re-read conf for verification, reset global
-        $conf = @parse_ini_file(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', true);
-        $GLOBALS['_SGL']['CONF'] = $conf;
+        #$conf = @parse_ini_file(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', true);
+        $conf = $c->load($file);
+        #$GLOBALS['_SGL']['CONF'] = $conf;
         
         echo '<span class="title">Status: </span><span id="status"></span>
         <div id="progress_bar">
@@ -411,7 +415,7 @@ class SGL_SetupWizard
             $this->conf['db']['bootstrap'] = '1';
             $c->parseConfig($this->conf, 'phparray');
             $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            #SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
         }
 
         //  clear session cookie so theme comes from DB and not session

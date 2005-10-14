@@ -117,13 +117,16 @@ class SGL_Manager
     function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
     }
     
     function getConfig()
     {
-        
+        $c = &SGL_Config::singleton();
+        return $c;
     }
 
     // +---------------------------------------+
@@ -161,7 +164,6 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $className = get_class($this);
 
         //  determine if action param from $_GET is valid
@@ -171,7 +173,7 @@ class SGL_Manager
         }
 
         //  don't perform checks if authentication is disabled in debug
-        if ($conf['debug']['authenticationEnabled']) {
+        if ($this->conf['debug']['authenticationEnabled']) {
 
             //  setup classwide perm
             $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
@@ -239,7 +241,6 @@ class SGL_Manager
     function _redirectToDefault(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {    
@@ -259,10 +260,9 @@ class SGL_Manager
      */
     function getDefaultPageParams()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $moduleName = $conf['site']['defaultModule'];
-        $managerName = $conf['site']['defaultManager'];
-        $defaultParams = $conf['site']['defaultParams'];
+        $moduleName     = $this->conf['site']['defaultModule'];
+        $managerName    = $this->conf['site']['defaultManager'];
+        $defaultParams  = $this->conf['site']['defaultParams'];
         $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
         
         $aParams = array(

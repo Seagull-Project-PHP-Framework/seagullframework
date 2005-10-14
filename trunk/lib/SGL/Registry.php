@@ -68,7 +68,8 @@ class SGL_RequestRegistry extends SGL_Registry
     
     function getConfig()
     {
-        return $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        return $c->getAll();
     }
     
     /**

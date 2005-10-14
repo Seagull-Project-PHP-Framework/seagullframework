@@ -19,7 +19,8 @@ class SampleRss
 
     function getBlockContent()
     {
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $cache = & SGL::cacheSingleton();
         if ($data = $cache->get('mailingListRss', 'blocks')) {
