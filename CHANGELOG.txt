@@ -8,19 +8,28 @@ BUGFIXES
 
 IMPROVEMENTS
 14-10-05    
-14-10-05    
-14-10-05    
-14-10-05    
-14-10-05    SGL_Url now uses a parser strategy and can handle seagull urls as well as 
+14-10-05    Added SGL_Array class to accomodate the removeBlanks method
+14-10-05    All managers now fire their parents' constructors, ie: parent::SGL_Manager();
+14-10-05    Request type now context sensitive, HTTP and CLI types supported
+14-10-05    Implemented Intercepting Filter pattern so program workflow can now be
+            controlled and customised with pre and post-process tasks.  See
+            http://www.phpkitchen.com/index.php?/archives/725-Modularising-Workflow-with-an-Intercepting-Filter.html
+14-10-05    Added SGL_View class so template engine is now configurable, Flexy 
+            implemented as the default driver.  See
+            http://www.phpkitchen.com/index.php?/archives/724-Implementing-an-Output-Renderer-Strategy.html
+14-10-05    SGL_Url::getSignificantSegments renamed to toPartialArray
+14-10-05    SGL_Url now uses a parser strategy and can handle Seagull urls as well as 
             traditional querystring format, url object stored in SGL_Registry
 14-10-05    Moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in 
             constants.php
+14-10-05    New SGL_Config class which autodetects and handles filetype: xml, ini and php 
+            arrays implemented
 14-10-05    Almost all global vars removed, including $GLOBALS['_SGL']['REQUEST'] and
             $GLOBALS['_SGL']['CONF']
 14-10-05    Request object now stored in request registry ($input), renamed 
             from SGL_HTTP_REQUEST to SGL_Request
 14-10-05    Moved SGL::getTime to SGL_Date::getTime
-12-10-05    Added 74 web tests to ensure error-free screen rendering
+12-10-05    Added 84 web tests to ensure error-free screen rendering
 06-10-05    Articles can now be set to never expire (Eric Persson)
 28-09-05    Implemented default manager invocation when url params get garbled
 27-09-05    Added SGL::setNoticeBehaviour() method
