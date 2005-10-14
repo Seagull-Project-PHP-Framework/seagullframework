@@ -44,7 +44,7 @@ class SGL_Request
         SGL_String::dispelMagicQuotes($_POST);
         
         //  also merge with SEF url params
-        $reg = &SGL_RequestRegistry::singleton();
+        $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
         $aUrlParams = $url->getQueryData();
         

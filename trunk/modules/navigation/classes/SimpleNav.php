@@ -181,7 +181,7 @@ class SimpleNav
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
         
-        $reg = &SGL_RequestRegistry::singleton();
+        $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
         $aQueryData = $url->getQueryData();
 

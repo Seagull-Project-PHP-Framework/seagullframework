@@ -13,7 +13,7 @@ class TestRunnerInit extends SGL_AppController
 {
     function run()
     {
-        $input = &SGL_RequestRegistry::singleton();
+        $input = &SGL_Registry::singleton();
         $input->setRequest($req = SGL_Request::singleton());
         
         $process =  new SGL_Init(
