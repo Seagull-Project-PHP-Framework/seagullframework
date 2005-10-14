@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Locale.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,6 @@ require_once 'I18Nv2/Negotiator.php';
  * @package SGL
  * @author  Jacob Singh <jacob@calabashmusic.com>
  * @version $Revision: 1.6 $
- * @since   PHP 4.1
  */
 class SGL_Locale
 {

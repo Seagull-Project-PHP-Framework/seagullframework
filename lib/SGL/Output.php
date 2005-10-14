@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  * @todo    look at PEAR::Date to improve various date methods used here
  */
 class SGL_Output

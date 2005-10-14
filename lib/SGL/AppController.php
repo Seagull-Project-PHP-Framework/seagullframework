@@ -31,9 +31,9 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | Controller.php                                                            |
+// | AppController.php                                                         |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -57,7 +57,6 @@ require_once 'HTML/Template/Flexy.php';
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.49 $
- * @since   PHP 4.1
  */
 class SGL_AppController
 {  

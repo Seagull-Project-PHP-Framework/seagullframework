@@ -38,6 +38,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
+/**
+ * Simple init task.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_Init extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -69,6 +75,12 @@ class SGL_Init extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Block certain users.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_DetectBlackListing extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -86,6 +98,12 @@ class SGL_DetectBlackListing extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Handle a debug session.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_DetectDebug extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -105,8 +123,10 @@ class SGL_DetectDebug extends SGL_DecorateProcess
 }
 
 /**
- * Sets current locale.
+ * Sets the current locale.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_SetLocale extends SGL_DecorateProcess 
 {
@@ -134,6 +154,8 @@ class SGL_SetLocale extends SGL_DecorateProcess
  *
  * Alternatively, headers can be suppressed if specified in module's config.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_BuildHeaders extends SGL_DecorateProcess 
 {
@@ -181,6 +203,8 @@ class SGL_BuildHeaders extends SGL_DecorateProcess
  *      o if yes, session is checked for validity and expiration
  *      o if it's valid and not expired, the session is deemed valid.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_AuthenticateRequest extends SGL_DecorateProcess 
 {
@@ -229,6 +253,8 @@ class SGL_AuthenticateRequest extends SGL_DecorateProcess
 /**
  * Loads global set of application perms from filesystem cache.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_InitPerms extends SGL_DecorateProcess 
 {
@@ -267,6 +293,7 @@ class SGL_InitPerms extends SGL_DecorateProcess
  * @access  private
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Erlend Stromsvik <ehs@hvorfor.no>
+ * @package SGL
  */
 class SGL_InitLangSupport extends SGL_DecorateProcess 
 {
@@ -331,6 +358,12 @@ class SGL_InitLangSupport extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Starts the session.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_InitSession extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -343,6 +376,12 @@ class SGL_InitSession extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Resolves request params into Manager model object.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_ManagerResolver extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -447,6 +486,12 @@ class SGL_ManagerResolver extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Set client OS constant based on user agent.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_DiscoverClientOs extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -477,6 +522,12 @@ class SGL_DiscoverClientOs extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Initialises block loading.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_PrepareBlocks extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -496,6 +547,12 @@ class SGL_PrepareBlocks extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Builds navigation menus.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_PrepareNavigation extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -526,6 +583,12 @@ class SGL_PrepareNavigation extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Sets up wysiwyg params.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_SetupWysiwyg extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -561,6 +624,12 @@ class SGL_SetupWysiwyg extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Collects performance data.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_GetPerformanceInfo extends SGL_DecorateProcess 
 {
     function process(&$input)
@@ -587,6 +656,12 @@ class SGL_GetPerformanceInfo extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Core data processing routine.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_MainProcess extends SGL_ProcessRequest 
 {
     function process(&$input)
@@ -621,6 +696,8 @@ class SGL_MainProcess extends SGL_ProcessRequest
 /**
  * Assign output vars for template.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com> 
  */
 class SGL_PostProcess extends SGL_ProcessRequest 
 {
@@ -670,7 +747,12 @@ class SGL_PostProcess extends SGL_ProcessRequest
     }
 }
 
-
+/**
+ * A void object.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com> 
+ */
 class SGL_Void extends SGL_ProcessRequest 
 {
     function process(&$input)

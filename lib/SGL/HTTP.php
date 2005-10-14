@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | HTTP.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -49,7 +49,6 @@ require_once SGL_LIB_DIR  . '/SGL.php';
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.36 $
- * @since   PHP 4.1
  */
 class SGL_HTTP
 {

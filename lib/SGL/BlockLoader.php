@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockLoader.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,6 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.7 $
  * @access  public
- * @since   PHP 4.1
  */
 class SGL_BlockLoader
 {
