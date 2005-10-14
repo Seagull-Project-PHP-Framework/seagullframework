@@ -116,6 +116,7 @@ class SGL_SetupWizard
 
         //  re-read conf for verification, reset $conf
         $conf = $c->load($file);
+        $c->replace($conf);
         
         echo '<span class="title">Status: </span><span id="status"></span>
         <div id="progress_bar">

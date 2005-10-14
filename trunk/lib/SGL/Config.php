@@ -58,12 +58,11 @@ class SGL_Config
         $ph = &SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
-            $this->aProps = $data;
+            return $data;
         } else {
             return SGL::raiseError('Problem reading config file', 
                 SGL_ERROR_INVALIDFILEPERMS);    
         }
-        return $this->getAll();
     }
     
     function save($file)
@@ -74,7 +73,10 @@ class SGL_Config
     
     function merge($aConf)
     {
-        $this->aProps = array_merge_recursive($this->aProps, $aConf); 
+        $firstKey = key($aConf);
+        if (!array_key_exists($firstKey, $this->aProps)) {
+            $this->aProps = array_merge_recursive($this->aProps, $aConf);
+        } 
     }
     
     /**

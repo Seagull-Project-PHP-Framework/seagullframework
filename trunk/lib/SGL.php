@@ -39,7 +39,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
-require_once 'PEAR.php';
 require_once 'DB.php';
 require_once SGL_CORE_DIR . '/DB.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
@@ -52,7 +51,6 @@ require_once SGL_CORE_DIR . '/String.php';
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.20 $
  */
 class SGL
