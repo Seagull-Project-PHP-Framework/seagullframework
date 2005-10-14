@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Category.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -51,7 +51,6 @@ define('SGL_MAX_RECURSION', 100);
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Aymerick Jehanne <aymerick@jehanne.org>
  * @version $Revision: 1.10 $
- * @since   PHP 4.1
  */
 class SGL_Category
 {

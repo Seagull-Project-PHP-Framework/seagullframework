@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SetupWizard.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -46,14 +46,13 @@ require_once SGL_CORE_DIR . '/Sql.php';
 require_once 'Config.php';
 
 /**
- * A wizard to install and configure the application.
+ * A wizard to install and configure the program.
  *
  * @package SGL
  * @author  Gerry Lachac <glachac@tethermedia.com>
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Andy Crain <apcrain@fuse.net>
  * @version $Revision: 1.29 $
- * @since   PHP 4.1
  */
 class SGL_SetupWizard
 {

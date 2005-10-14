@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL_DB.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -46,9 +46,7 @@ define('SGL_DSN_STRING',                1);
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_DB
 {

@@ -1,6 +1,6 @@
 <?php
 
-require_once MAX_PATH . '/lib/core/ServiceLocator.php';
+require_once SGL_CORE_DIR . '/ServiceLocator.php';
 
 class SGL_Task
 {   

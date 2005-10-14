@@ -30,9 +30,9 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | Permissions.php                                                           |
+// | CategoryPerms.php                                                         |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -43,10 +43,9 @@ require_once SGL_CORE_DIR . '/Category.php';
 /**
  * Basic Permission object.
  *
- * @package permissions
+ * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
- * @since   PHP 4.1
  */
 class SGL_CategoryPerms extends SGL_Category
 {

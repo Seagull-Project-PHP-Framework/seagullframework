@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | NestedSet.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,6 @@
  * @package SGL
  * @author  Andy Crain <andy@newslogic.com>
  * @version $Revision: 1.10 $
- * @since   PHP 4.1
  */
 class SGL_NestedSet
 {
