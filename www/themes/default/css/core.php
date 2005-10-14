@@ -81,8 +81,8 @@ th {
     background-color: <?php echo $tertiaryMedium ?>;
 }
 #moduleOverview {
-    width: 240px;
-    height: 125px;
+    width: 20.5em;
+    height: 8em;
 }
 .full {
     width: 100%;
@@ -426,19 +426,20 @@ ul.bullets li {
     text-align: center;
     width: 90%;
     margin: 0 auto;
+    padding: 2px 0;
     border: 1px dashed <?php echo $errorDark ?>;
 }
 .narrowButton {
     text-align: center;
-    width: 100px;
+    width: 9em;
 }
 .wideButton {
     text-align: center;
-    width: 150px;
+    width: 13em;
 }
 .errorContainer, .messageContainer {
     margin: 0 auto;
-    width: 300px;
+    width: 50%;
 }
 .errorHeader {
     background-color: <?php echo $error ?>;
@@ -461,7 +462,7 @@ ul.bullets li {
     border: 1px dotted <?php echo $errorDark ?>;
     background-color: <?php echo $errorLight ?>;
     text-align: center;
-    width: 50%;
+    width: 60%;
 }
 .messageHeader {
     color: <?php echo $primaryText ?>;
@@ -482,7 +483,7 @@ ul.bullets li {
     padding: 5px;
 }
 .messageContent input {
-    width: 150px;
+    width: 13em;
 }
 #navPreview {
     position: relative;
