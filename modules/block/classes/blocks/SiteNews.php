@@ -76,7 +76,8 @@ INTRO;
     function retrieveAll()
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
                 SELECT      i.item_id,

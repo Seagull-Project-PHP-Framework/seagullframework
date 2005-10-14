@@ -34,8 +34,6 @@ class SGL_Request
     
     function initHttp()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
         //  merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_REQUEST, $_FILES);
         
@@ -123,6 +121,11 @@ class SGL_Request
         $this->aProps[$key] = $value;
     }
     
+    /**
+     * Return an array of all Request properties.
+     *
+     * @return array
+     */
     function getAll()
     {
         return $this->aProps;   
@@ -264,7 +267,8 @@ class SGL_Inflector
         if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;
         }
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);

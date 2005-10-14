@@ -65,7 +65,9 @@ class SGL_String
     function censor($text)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         $editedText = $text;
         if ($conf['censor']['mode'] != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
@@ -209,7 +211,10 @@ class SGL_String
     function tidy($html, $logErrors = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         if (       !$conf['site']['tidyhtml']
                 || !function_exists('tidy_parse_string')
                 || SGL::isPhp5()) { // tidy 2 in PHP5 has different API

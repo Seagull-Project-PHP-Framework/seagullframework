@@ -38,6 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
     
+    require_once dirname(__FILE__) . '/lib/SGL/Config.php';
     require_once dirname(__FILE__) . '/lib/SGL/Url.php';
     require_once dirname(__FILE__) . '/lib/SGL/Registry.php';
     require_once dirname(__FILE__) . '/lib/SGL/Request.php';
@@ -48,13 +49,28 @@
     {
         define('SGL_SERVER_NAME', hostnameToFilename());
         define('SGL_PATH', dirname(__FILE__));
+        define('SGL_LIB_PEAR_DIR',              SGL_PATH . '/lib/pear');
+#        define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
+
+        $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
+        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+        if (!$allowed) {
+            //  depends on PHP version being >= 4.3.0
+            if (function_exists('set_include_path')) {
+                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+            } else {
+                die('You need at least PHP 4.3.0 if you want to run Seagull
+                with safe mode enabled.');
+            }
+        }
 
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
             '127.0.0.1',
         );
 
-		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php';
+		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php';
+        $c = &SGL_Config::singleton();
 
         //  test if a config delete is requested (see feature request 985089)
         if (isset( $_GET['deleteConfig']) 
@@ -70,8 +86,11 @@
         if (    !file_exists($configFile)
             &&  !file_exists(SGL_PATH . '/var/INSTALL_COMPLETE')) {
             
-            $success = @copy(SGL_PATH . '/etc/default.conf.ini.dist', $configFile);
-            if (!$success) {
+            #$success = @copy(SGL_PATH . '/etc/default.conf.dist.ini', $configFile);
+            $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
+            $ok = $c->save($configFile);
+            
+            if (!$ok) {
                 die("<br />Your config file cannot be copied to the seagull/var directory, " .
                     "please give the webserver write permissions to this directory, eg:<br />" .
                     "<code>'chmod 777 seagull/var'</code>");
@@ -100,8 +119,7 @@
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
         
-        //  store in Seagull simulated namespace
-        $GLOBALS['_SGL']['CONF'] = @parse_ini_file($configFile, true);
+        $conf = $c->load($configFile);
 
         // framework file structure
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
@@ -109,8 +127,6 @@
         define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
         define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
         define('SGL_UPLOAD_DIR',                SGL_PATH . '/var/uploads');
-        define('SGL_LIB_PEAR_DIR',              SGL_PATH . '/lib/pear');
-#        define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
         define('SGL_LIB_DIR',                   SGL_PATH . '/lib');
         define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
         define('SGL_MOD_DIR',                   SGL_PATH . '/modules');
@@ -120,21 +136,21 @@
         define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
         
         //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($GLOBALS['_SGL']['CONF']);
+        SGL_URL::resolveServerVars($conf);
         
         //  assign current url object to registry
-        $urlHandler = $GLOBALS['_SGL']['CONF']['site']['urlHandler'];
+        $urlHandler = $conf['site']['urlHandler'];
 
         $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
         $input = &SGL_RequestRegistry::singleton();
         $input->setCurrentUrl($url);
         
         //  get base url
-        if (!(isset($GLOBALS['_SGL']['CONF']['site']['baseUrl']))) {
-            $GLOBALS['_SGL']['CONF']['site']['baseUrl'] = $url->getBase();
+        if (!(isset($conf['site']['baseUrl']))) {
+            $c->set('site', array('baseUrl' => $url->getBase()));
         }
         
-        define('SGL_BASE_URL',                  $GLOBALS['_SGL']['CONF']['site']['baseUrl']);
+        define('SGL_BASE_URL',                  $c->get(array('site' => 'baseUrl')));
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
@@ -163,24 +179,12 @@
         define('SGL_ERROR_RECURSION',           -123);
 
         // set php.ini directives
-        $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
-        @ini_set('error_log',                   SGL_PATH . '/' . $GLOBALS['_SGL']['CONF']['log']['name']);
-
-        if (!$allowed) {
-            //  depends on PHP version being >= 4.3.0
-            if (function_exists('set_include_path')) {
-                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
-            } else {
-                die('You need at least PHP 4.3.0 if you want to run Seagull
-                with safe mode enabled.');
-            }
-        }
+        @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
 
         //  set constant to represent profiling mode so it can be used in Controller
-        define('SGL_PROFILING_ENABLED',         ($GLOBALS['_SGL']['CONF']['debug']['profiling']) ? true : false);
+        define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
 
         //  automate sorting
         define('SGL_SORTBY_GRP',                1);
@@ -219,7 +223,7 @@
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
-        $GLOBALS['_SGL']['VERSION'] =           $GLOBALS['_SGL']['CONF']['tuples']['version'];
+        $GLOBALS['_SGL']['VERSION'] =           $conf['tuples']['version'];
     }
 
     /**

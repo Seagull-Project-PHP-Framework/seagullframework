@@ -615,7 +615,8 @@ class SGL_MainProcess extends SGL_ProcessRequest
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $req = $input->getRequest();
         
         $mgr = $input->get('manager');
@@ -649,7 +650,8 @@ class SGL_PostProcess extends SGL_ProcessRequest
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         //  set isAdmin flag
         $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) 

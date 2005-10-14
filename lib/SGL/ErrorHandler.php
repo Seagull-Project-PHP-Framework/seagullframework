@@ -139,7 +139,8 @@ class SGL_ErrorHandler
             }
         }
         if (in_array($errNo, array_keys($this->errorType))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             //  final param is 2nd dimension element from errorType array,
             //  representing PEAR error codes mapped to PHP's
 

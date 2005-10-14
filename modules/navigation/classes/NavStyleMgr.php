@@ -53,6 +53,8 @@ class NavStyleMgr extends SGL_Manager
     function NavStyleMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'navigation';
         $this->pageTitle    = 'Navigation Style Manager';
         $this->template     = 'navStyleList.html';
@@ -89,12 +91,11 @@ class NavStyleMgr extends SGL_Manager
 
             //  change [navigation][stylesheet] to $newStyle in default.conf.ini
             require_once 'Config.php';
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $conf['navigation']['stylesheet'] = $input->newStyle;
+            $this->conf['navigation']['stylesheet'] = $input->newStyle;
             $c = new Config();
 
             //  read configuration data and get reference to root
-            $root = & $c->parseConfig($conf, 'phparray');
+            $root = & $c->parseConfig($this->conf, 'phparray');
 
             //  write configuration to file
             $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
@@ -127,7 +128,6 @@ class NavStyleMgr extends SGL_Manager
         $output->staticId = (is_numeric($input->staticId)) ? $input->staticId : $this->generateStaticId();
 
         //  build string of radio buttons html for selecting group
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
@@ -187,8 +187,7 @@ class NavStyleMgr extends SGL_Manager
     function getCurrentStyle()
     {
         if (!isset($this->_currentStyle)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $this->_currentStyle = $conf['navigation']['stylesheet'];
+            $this->_currentStyle = $this->conf['navigation']['stylesheet'];
         }
         return $this->_currentStyle;
     }
@@ -196,7 +195,6 @@ class NavStyleMgr extends SGL_Manager
     function _redirectToDefault(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {

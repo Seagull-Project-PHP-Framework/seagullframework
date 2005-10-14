@@ -71,14 +71,14 @@ class NewsletterOutput
     function statusOpts($selected) 
     {
         $aSatusOpts = & $GLOBALS['_SGL']['CONF']['statusOpts'];
-        return SGL_Output :: generateSelect($aSatusOpts, $selected);
+        return SGL_Output::generateSelect($aSatusOpts, $selected);
     }
     
     function actionOpts($action)
     {
         $aActionOpts = & $GLOBALS['_SGL']['CONF']['ActionOpts'];
         $selectedAction = $action == ''  ? 'empty' : $action;
-        return SGL_Output :: generateSelect($aActionOpts, $selectedAction);
+        return SGL_Output::generateSelect($aActionOpts, $selectedAction);
     }
 }
 ?>

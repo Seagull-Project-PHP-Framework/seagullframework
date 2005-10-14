@@ -15,7 +15,8 @@ class ErrorHandlerTest extends UnitTestCase
     
     function setUp() 
     {
-        #$this->conf = & $GLOBALS['_SGL']['CONF'];    
+        #$c = &SGL_Config::singleton();
+        #$this->conf = $c->getAll();    
         #$this->addHeader('User-agent: foo-bar');
     }
     function tearDown() { }

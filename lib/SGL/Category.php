@@ -67,9 +67,12 @@ class SGL_Category
     function SGL_Category()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
         $this->_da = & DA_User::singleton();
+        $this->dbh = & SGL_DB::singleton();
         
         //  Nested Set Params
         $this->_params = array(
@@ -84,10 +87,10 @@ class SGL_Category
                 'label'       => 'label',
                 'perms'       => 'perms',
             ),
-            'tableName'     => $conf['table']['category'],
-            /** @todo Use $conf['table']['table_lock'] */
+            'tableName'     => $this->conf['table']['category'],
+            /** @todo Use $this->conf['table']['table_lock'] */
             'lockTableName' => 'table_lock',
-            'sequenceName'  => $conf['table']['category']);
+            'sequenceName'  => $this->conf['table']['category']);
     }
     
     /**
@@ -100,8 +103,6 @@ class SGL_Category
     function create(&$values)
     {
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
         
         //  set default category label if none provided
         if (!isset($values['label']))
@@ -369,14 +370,12 @@ class SGL_Category
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
-        $conf = & $GLOBALS['_SGL']['CONF'];
         $query = "  SELECT category_id, label 
-                    FROM " . $conf['table']['category'] . "
+                    FROM " . $this->conf['table']['category'] . "
                     WHERE parent_id = $id
                     ORDER BY parent_id, order_id";
                     
-        $dbh = & SGL_DB::singleton();
-        $result = $dbh->query($query);
+        $result = $this->dbh->query($query);
         $count = 0;
         $aChildren = array();
         while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {

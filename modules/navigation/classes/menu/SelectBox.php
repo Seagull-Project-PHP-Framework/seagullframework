@@ -45,10 +45,12 @@ class Menu_SelectBox extends SGL_Category
     var $_depth         = 0;
     var $module         = 'navigation';
 
-    function Menu_SelectBox($options)
+    function Menu_SelectBox($options, $conf)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Category();
+        
+        $this->conf = $conf;
         $this->_separator   = ($options['separator']) 
                                 ? $options['separator']
                                 :'&nbsp;&nbsp;&nbsp;&nbsp;';

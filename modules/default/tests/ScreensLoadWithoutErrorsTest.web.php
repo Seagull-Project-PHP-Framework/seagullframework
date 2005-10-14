@@ -5,8 +5,8 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
     function ScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
-        #$this->addHeader('User-agent: foo-bar');
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
     }
 
     

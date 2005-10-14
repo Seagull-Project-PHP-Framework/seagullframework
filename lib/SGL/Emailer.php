@@ -68,8 +68,11 @@ class SGL_Emailer
     function SGL_Emailer($options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $siteName = $conf['site']['name'];
+
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+                
+        $siteName = $this->conf['site']['name'];
         $this->headerTemplate
             = "<html><head><title>$siteName</title></head></html><body>";
         $this->footerTemplate
@@ -124,12 +127,12 @@ class SGL_Emailer
     function factory()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $backend = '';
         $aParams = array();
 
         // setup Mail::factory backend & params using site config
-        switch ($conf['mta']['backend']) {
+        switch ($this->conf['mta']['backend']) {
             
         case '':
         case 'mail':
@@ -138,26 +141,26 @@ class SGL_Emailer
             
         case 'sendmail':
             $backend = 'sendmail';
-            $aParams['sendmail_path'] = $conf['mta']['sendmailPath'];
-            $aParams['sendmail_args'] = $conf['mta']['sendmailArgs'];
+            $aParams['sendmail_path'] = $this->conf['mta']['sendmailPath'];
+            $aParams['sendmail_args'] = $this->conf['mta']['sendmailArgs'];
             break;
             
         case 'smtp':
             $backend = 'smtp';
-            if (isset($conf['mta']['smtpLocalHost'])) {
-                $aParams['localhost'] = $conf['mta']['smtpLocalHost'];
+            if (isset($this->conf['mta']['smtpLocalHost'])) {
+                $aParams['localhost'] = $this->conf['mta']['smtpLocalHost'];
             }
 
-            $aParams['host'] = (isset($conf['mta']['smtpHost']))
-                ? $conf['mta']['smtpHost']
+            $aParams['host'] = (isset($this->conf['mta']['smtpHost']))
+                ? $this->conf['mta']['smtpHost']
                 : '127.0.0.1';
-            $aParams['port'] = (isset($conf['mta']['smtpPort']))
-                ? $conf['mta']['smtpPort']
+            $aParams['port'] = (isset($this->conf['mta']['smtpPort']))
+                ? $this->conf['mta']['smtpPort']
                 : 25;
-            if ($conf['mta']['smtpAuth']) {
-                $aParams['auth']     = $conf['mta']['smtpAuth'];
-                $aParams['username'] = $conf['mta']['smtpUsername'];
-                $aParams['password'] = $conf['mta']['smtpPassword'];
+            if ($this->conf['mta']['smtpAuth']) {
+                $aParams['auth']     = $this->conf['mta']['smtpAuth'];
+                $aParams['username'] = $this->conf['mta']['smtpUsername'];
+                $aParams['password'] = $this->conf['mta']['smtpPassword'];
             } else {
                 $aParams['auth'] = false;
             }

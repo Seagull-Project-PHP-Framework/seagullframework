@@ -112,7 +112,8 @@ class SimpleNav
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;
         $this->input = $input;
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
     }
 

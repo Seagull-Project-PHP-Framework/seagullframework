@@ -1,7 +1,8 @@
 <?php
 //  setup seagull environment
 require_once '../constants.php';
-$conf = &$GLOBALS['_SGL']['CONF'];
+$c = &SGL_Config::singleton();
+$conf = $c->getAll();
 
 //  disable logging and error handling
 $conf['debug']['customErrorHandler'] = false;

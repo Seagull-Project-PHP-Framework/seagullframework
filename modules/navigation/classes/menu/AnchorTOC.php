@@ -42,10 +42,12 @@ class Menu_AnchorTOC extends SGL_Category
 {
     var $module = 'navigation';
 
-    function Menu_AnchorTOC()
+    function Menu_AnchorTOC($options, $conf)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Category();
+        
+        $this->conf = $conf;
     }
 
     function render($id = 0)

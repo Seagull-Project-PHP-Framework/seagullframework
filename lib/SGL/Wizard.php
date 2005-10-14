@@ -179,7 +179,8 @@ class SGL_Wizard extends SGL_Manager
         // if direct entering, redirect to default page
         // for security reasons
         if (!isset($_SESSION['wiz_sequence'][0]['pageName']['managerName'])) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $aParams = array(
                 'moduleName'    => $conf['site']['defaultModule'],
                 'managerName'   => $conf['site']['defaultManager'],

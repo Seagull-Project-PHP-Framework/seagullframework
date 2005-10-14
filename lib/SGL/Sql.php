@@ -69,7 +69,8 @@ class SGL_Sql
         // Get database handle based on working config.ini
         $dbh = & SGL_DB::singleton();
         $sql = '';
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Iterate through each line in the file.
         while (!feof($fp)) {
@@ -125,7 +126,8 @@ class SGL_Sql
      */
     function verifyDbSetup()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
         $query = "SELECT COUNT(*) FROM {$conf['table']['permission']}";
         $res = $dbh->getAll($query);
@@ -167,7 +169,8 @@ class SGL_Sql
     function rebuildSequences($tables = null)
     {
         $db =& SGL_DB::singleton();
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         switch ($db->phptype) {
 

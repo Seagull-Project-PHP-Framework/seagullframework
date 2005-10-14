@@ -150,7 +150,9 @@ class SGL_URL
         $this->aQueryData = array();
         $this->anchor      = '';
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         $this->frontScriptName = $conf['site']['frontScriptName'];
         $this->parserStrategy = $parserStrategy;
         
@@ -255,7 +257,8 @@ class SGL_URL
     {
         static $instance;
         if (!isset($instance)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $urlHandler = $conf['site']['urlHandler'];
             $class = __CLASS__;
             $instance = new $class(null, true, new $urlHandler());
@@ -524,7 +527,8 @@ class SGL_URL
      */
     function removeSessionInfo(&$aUrl)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $key = array_search($conf['cookie']['name'], $aUrl);
         if ($key !== false) {
             unset($aUrl[$key], $aUrl[$key + 1]);
@@ -562,9 +566,12 @@ class SGL_URL
     {
         //  merge module config with global config, if module conf keys do not already exist
         //  test first key
+        $c = &SGL_Config::singleton();
+        $globalConf = $c->getAll();
+        
         $firstKey = key($conf);
-        if (!array_key_exists($firstKey, $GLOBALS['_SGL']['CONF'])) {
-            $GLOBALS['_SGL']['CONF'] = array_merge_recursive($conf, $GLOBALS['_SGL']['CONF']);
+        if (!array_key_exists($firstKey, $globalConf)) {
+            $c->merge($conf);
         }  
     }
 }
@@ -618,7 +625,8 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
      */
     function parseQueryString(/*SGL_Url*/$url)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         $aUriParts = $this->toPartialArray($url->url, $conf['site']['frontScriptName']);
         
@@ -786,7 +794,8 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
      */
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  get a reference to the request object
         $req = & SGL_Request::singleton();

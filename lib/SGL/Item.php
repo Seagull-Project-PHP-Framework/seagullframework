@@ -145,7 +145,8 @@ class SGL_Item
     function _init($itemID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
 
         //  get default fields
@@ -204,7 +205,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll(); 
 
         $catID = $this->catID ? $this->catID : 1;        
         $id = $dbh->nextId($conf['table']['item']);
@@ -249,7 +251,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll(); 
                 
         for ($x=0; $x < count($itemID); $x++) {
             $id = $dbh->nextId($conf['table']['item_addition']);
@@ -283,7 +286,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $id = $dbh->nextId($conf['table']['item_addition']);
         if ($itemValue == '') {
@@ -312,7 +316,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "  
             UPDATE {$conf['table']['item']} SET
@@ -339,7 +344,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
                 
         for ($x=0; $x < count($itemID); $x++) {
             if ($itemValue[$x] == '') {
@@ -370,7 +376,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
@@ -397,7 +404,8 @@ class SGL_Item
     function delete($aItems)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
 
         //  if safeDelete is enabled, just set item status to 0, don't delete
@@ -436,7 +444,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
@@ -500,7 +509,8 @@ class SGL_Item
         }
         //  get template specific form fields
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  itm.item_type_mapping_id, itm.field_name, itm.field_type
@@ -586,7 +596,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();        
         
         switch($status) {
         case 'delete':
@@ -640,7 +651,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
         $query = "
@@ -680,7 +692,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
@@ -858,7 +871,8 @@ class SGL_Item
         $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);

@@ -62,7 +62,8 @@ class DA_User
      */
     function DA_User()
     {
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
     }
     
