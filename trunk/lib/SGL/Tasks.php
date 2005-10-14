@@ -50,7 +50,7 @@ class SGL_Init extends SGL_DecorateProcess
         error_log(' ');
         error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
 
-        //  start session and output buffering
+        //  start output buffering
         if ($this->conf['site']['outputBuffering']) {
             ob_start();
         }
@@ -65,7 +65,6 @@ class SGL_Init extends SGL_DecorateProcess
                                 webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
             }
         }
-        
         $this->processRequest->process($input);
     }
 }

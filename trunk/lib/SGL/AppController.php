@@ -196,9 +196,11 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
         
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
         
-//        if ($this->conf['site']['outputBuffering']) {
-//            ob_end_flush();
-//        }
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        if ($conf['site']['outputBuffering']) {
+            ob_end_flush();
+        }
         return $data;
     }
     
