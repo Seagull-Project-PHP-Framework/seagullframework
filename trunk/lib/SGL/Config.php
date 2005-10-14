@@ -28,7 +28,9 @@ class SGL_Config
     
     function set($key, $value)
     {
-        if (is_array($this->aProps[$key]) && is_array($value)) {
+        if (isset($this->aProps[$key])
+                && is_array($this->aProps[$key]) 
+                && is_array($value)) {
             $key2 = key($value);
             $this->aProps[$key][$key2] = $value[$key2];
         } else {
