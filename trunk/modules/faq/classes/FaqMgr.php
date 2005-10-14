@@ -53,6 +53,8 @@ class FaqMgr extends SGL_Manager
     function FaqMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'faq';
         $this->pageTitle    = 'FAQ Manager';
         $this->template     = 'faqList.html';

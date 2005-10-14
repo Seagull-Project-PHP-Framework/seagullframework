@@ -51,6 +51,8 @@ class DefaultMgr extends SGL_Manager
     function DefaultMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'default';
         $this->pageTitle    = 'Home';
         $this->template     = 'home.html';

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -307,23 +307,6 @@ class SGL_Util
             $aRet[$oFile->name] = $oFile->name;
         }
         return $aRet;
-    }
-    
-    /**
-     * Ini file protection.
-     *
-     * By giving ini files a php extension, and inserting some PHP die() code,
-     * we can improve security in situations where browsers might be able to
-     * read them.  Thanks to Georg Gell for the idea.
-     *
-     * @param unknown_type $file
-     */
-    function makeIniUnreadable($file)
-    {
-        $iniFle = file($file);
-        $string = ';<?php die("Eat dust"); ?>' . "\n";
-        array_unshift($iniFle, $string);
-        file_put_contents($file, implode("", $iniFle));
     }
 }
 ?>

@@ -90,17 +90,13 @@ class NavStyleMgr extends SGL_Manager
         if (array_key_exists($input->newStyle, SGL_Util::getStyleFiles($this->getCurrentStyle()))) {
 
             //  change [navigation][stylesheet] to $newStyle in default.conf.ini
-            require_once 'Config.php';
-            $this->conf['navigation']['stylesheet'] = $input->newStyle;
-            $c = new Config();
-
-            //  read configuration data and get reference to root
-            $root = & $c->parseConfig($this->conf, 'phparray');
+            $c = &SGL_Config::singleton();
+            $c->set('navigation', array('stylesheet' => $input->newStyle));
 
             //  write configuration to file
-            $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
-            if (!is_a($result, 'PEAR_Error')) {
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
+            
+            if (!is_a($ok, 'PEAR_Error')) {
                 $this->_currentStyle = $input->newStyle;
                 SGL::raiseMsg('Current style successfully changed');
             } else {
