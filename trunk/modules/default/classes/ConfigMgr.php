@@ -220,7 +220,7 @@ class ConfigMgr extends SGL_Manager
         //  add version info which is not available in form        
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);
-        $c->set('tuples', array('version' => $GLOBALS['_SGL']['VERSION']));
+        $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
         
         //  write configuration to file
         $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');

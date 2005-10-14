@@ -213,6 +213,8 @@
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);
         
+        define('SGL_SEAGULL_VERSION',           $conf['tuples']['version']);
+        
         //  with logging, you can optionally show the file + line no. where 
         //  SGL::logMessage was called from
         define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
@@ -223,7 +225,6 @@
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
-        $GLOBALS['_SGL']['VERSION'] =           $conf['tuples']['version'];
     }
 
     /**

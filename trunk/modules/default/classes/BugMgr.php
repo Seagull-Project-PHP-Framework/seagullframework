@@ -158,7 +158,7 @@ class BugMgr extends SGL_Manager
         $aServerInfo['phpVersion'] = PHP_VERSION;
         $aServerInfo['serverPort'] = $_SERVER['SERVER_PORT'];
         $aServerInfo['serverSoftware'] = $_SERVER['SERVER_SOFTWARE'];   
-        $aServerInfo['sglVersion'] = $GLOBALS['_SGL']['VERSION'];
+        $aServerInfo['sglVersion'] = SGL_SEAGULL_VERSION;
         return $aServerInfo;
     }
     
