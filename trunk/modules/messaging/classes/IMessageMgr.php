@@ -419,7 +419,7 @@ class IMessageMgr extends SGL_Manager
             $message->instant_message_id = $dbh->nextId('instant_message');
             $message->user_id_from = $uid;  // or $sender_id
             $message->user_id_to = $receiver_id;
-            $message->msg_time = SGL::getTime();
+            $message->msg_time = SGL_Date::getTime();
             $message->subject = $subject;
             if ($message->subject == '') {
                 $message->subject = SGL_Output::translate('no subject');
@@ -589,7 +589,7 @@ class IMessageMgr extends SGL_Manager
             $message->delete_status = 3;
             $message->user_id_to = SGL_ADMIN;
             $message->user_id_from = $fromID;
-            $message->msg_time = SGL::getTime();
+            $message->msg_time = SGL_Date::getTime();
 
             //  insert message
             $message->insert();

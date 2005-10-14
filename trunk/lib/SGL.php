@@ -54,33 +54,9 @@ require_once SGL_CORE_DIR . '/String.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.20 $
- * @since   PHP 4.1
  */
 class SGL
 {
-    /**
-     * Returns current time in YYYY-MM-DD HH:MM:SS format.
-     * 
-     * GMT format is best for logging system events, otherwise locale offset
-     * will be most helpful to users.
-     * 
-     * @access public
-     * @static
-     * @param boolean $gmt       is time GMT or locale offset
-     * @return string $instance  formatted current time
-     * @todo factor out Cache and Lang methods into their own objects
-     */
-    function getTime($gmt = false)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                                : strftime("%Y-%m-%d %H:%M:%S", time());
-        }
-        return $instance;
-    }
-
     /**
      * Returns the 2 letter language code, ie, de for German.
      *

@@ -183,7 +183,7 @@ class LoginMgr extends SGL_Manager
                 $login = & new DataObjects_Login();
                 $login->login_id = $this->dbh->nextId('login');
                 $login->usr_id = $uid;
-                $login->date_time = SGL::getTime(true);
+                $login->date_time = SGL_Date::getTime(true);
                 $login->remote_ip = $_SERVER['REMOTE_ADDR'];
                 $login->insert();
             }

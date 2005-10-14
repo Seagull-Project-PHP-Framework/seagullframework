@@ -7,6 +7,7 @@ BUGFIXES
 12-10-05    Fixed error where pages without a section id assumed html title "none"
 
 IMPROVEMENTS
+14-10-05    Moved SGL::getTime to SGL_Date::getTime
 12-10-05    Added 74 web tests to ensure error-free screen rendering
 06-10-05    Articles can now be set to never expire (Eric Persson)
 28-09-05    Implemented default manager invocation when url params get garbled

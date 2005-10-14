@@ -141,7 +141,7 @@ class ArticleMgr extends SGL_Manager
         if ($input->dataTypeID != 4) {
             $output->wysiwyg = true;
         }
-        $output->todaysDate = SGL::getTime();
+        $output->todaysDate = SGL_Date::getTime();
         list($day, $month, $year, $hour, $minute, $second) = 
             explode('/', date('d/m/Y/H/i/s'));
 
@@ -196,8 +196,8 @@ class ArticleMgr extends SGL_Manager
         $item = & new SGL_Item();
         $item->set('createdByID', $input->createdByID);
         $item->set('lastUpdatedById', $input->createdByID);
-        $item->set('dateCreated', SGL::getTime());
-        $item->set('lastUpdated', SGL::getTime());
+        $item->set('dateCreated', SGL_Date::getTime());
+        $item->set('lastUpdated', SGL_Date::getTime());
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
         $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('typeID', $input->dataTypeID);
@@ -307,7 +307,7 @@ class ArticleMgr extends SGL_Manager
         if ($input->dataTypeID == 2) {
             $item->set('catID', $input->articleCatID);
         }
-        $item->set('lastUpdated', SGL::getTime());
+        $item->set('lastUpdated', SGL_Date::getTime());
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
         $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('statusID', SGL_STATUS_FOR_APPROVAL);

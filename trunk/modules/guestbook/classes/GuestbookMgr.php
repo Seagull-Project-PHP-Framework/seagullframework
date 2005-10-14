@@ -121,7 +121,7 @@ class GuestbookMgr extends SGL_Manager
         $newEntry->setFrom($input->guestbook);
         $dbh = $newEntry->getDatabaseConnection();
         $newEntry->guestbook_id = $dbh->nextId($this->conf['table']['guestbook']);
-        $newEntry->date_created = SGL::getTime(true);
+        $newEntry->date_created = SGL_Date::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
             SGL::raiseMsg('new guestbook entry saved successfully');

@@ -206,7 +206,7 @@ class NewsletterMgr extends SGL_Manager
                $oList->status = 0;
             }
             
-            $oList->date_created = $oList->last_updated = SGL::getTime();
+            $oList->date_created = $oList->last_updated = SGL_Date::getTime();
             $success = $oList->insert();
             if ($success) {
                 if ($this->conf['NewsletterMgr']['emailConfirmation']) {
@@ -271,7 +271,7 @@ class NewsletterMgr extends SGL_Manager
             if ($this->conf['NewsletterMgr']['emailConfirmation']) {
                 $oList->action_request = 'unsubscribe';
                 $oList->action_key = $this->_generateKey($input->email);
-                $oList->last_updated = SGL::getTime();
+                $oList->last_updated = SGL_Date::getTime();
                 $success = $oList->update();
                 if ($success) {
                     $output->emailSiteName = $this->conf['site']['name'];
@@ -341,7 +341,7 @@ class NewsletterMgr extends SGL_Manager
             $oList->action_request = '';
             $oList->action_key = '';
             $oList->status = 0;
-            $oList->last_updated = SGL::getTime();
+            $oList->last_updated = SGL_Date::getTime();
             $success = $oList->update();
             if ($success) {
                 SGL::raiseMsg('Authorization accepted! Thank you for subscribing to our newsletter.');
@@ -362,7 +362,7 @@ class NewsletterMgr extends SGL_Manager
         if ($oList->action_request == 'update') {
             $oList->action_request = '';
             $oList->action_key = '';
-            $oList->last_updated = SGL::getTime();
+            $oList->last_updated = SGL_Date::getTime();
             $success = $oList->update();
             if ($success) {
                 SGL::raiseMsg('Authorization accepted! Thank you for updating your subscription.');

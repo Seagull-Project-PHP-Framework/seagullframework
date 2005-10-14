@@ -234,8 +234,8 @@ class RssMgr extends SGL_Manager
              ";
 
          $aRes = $this->dbh->getAll($query,
-            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL::getTime(), 
-                SGL::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
+            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL_Date::getTime(), 
+                SGL_Date::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
                 DB_FETCHMODE_ASSOC);
 
          if (DB::isError($aRes)) {

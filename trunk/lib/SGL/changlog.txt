@@ -26,6 +26,11 @@ managers
 ========
 - any mgr that needs config or dbh resource must fire it's parents constructor, ie, parent::SGL_Manager();
 
+various
+=======
+SGL::getTime moved to SGL_Date::getTime
+added SGL_Array
+
 TODO
 ====
  - observer for LoginMgr
@@ -36,7 +41,6 @@ TODO
 // $msgSystem = ReceiverFactory::getMessageSystem();
  - create request strategy to handle CLI, etc
  - clean up Sgl_Manager with command objects
- - move makeIniUnreadable to Config when ready
  - build SGL_Delegator for php4/5 compat delegation
  
 /*

@@ -207,7 +207,7 @@ class UserMgr extends RegisterMgr
             $oUser->is_acct_active = 1;
         }
         $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);
-        $oUser->date_created = $oUser->last_updated = SGL::getTime();
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
         $success = $oUser->insert();
 
@@ -261,7 +261,7 @@ class UserMgr extends RegisterMgr
         $dbh->autocommit();
         $oUser->get($input->user->usr_id);
         $oUser->setFrom($input->user);
-        $oUser->last_updated = SGL::getTime();
+        $oUser->last_updated = SGL_Date::getTime();
         $oUser->updated_by = SGL_HTTP_Session::getUid();
         $success = $oUser->update();
 
