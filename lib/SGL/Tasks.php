@@ -188,7 +188,7 @@ class SGL_BuildHeaders extends SGL_DecorateProcess
             //  prepare headers during setup, can be overridden later
             header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
             header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
-            header('X-Powered-By: Seagull ' . $GLOBALS['_SGL']['VERSION']);
+            header('X-Powered-By: Seagull ' . SGL_SEAGULL_VERSION);
         }
         
         $this->processRequest->process($input);
@@ -684,7 +684,7 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $input->data->charset          = $GLOBALS['_SGL']['CHARSET'];
         $input->data->webRoot          = SGL_BASE_URL;
         $input->data->imagesDir        = SGL_BASE_URL . '/themes/' . $input->data->theme . '/images';
-        $input->data->versionAPI       = $GLOBALS['_SGL']['VERSION'];
+        $input->data->versionAPI       = SGL_SEAGULL_VERSION;
         $input->data->sessID           = SID;
         $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $input->data->scriptClose      = "\n//--> </script>\n";
