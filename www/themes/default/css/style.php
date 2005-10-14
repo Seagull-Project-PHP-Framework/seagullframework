@@ -409,6 +409,9 @@ img {
 .error {
     color: <?php echo $errorTextMedium ?>;
 }
+.hide {
+    display: none;
+}
 .small {
     font-size: 0.8em;
 }
