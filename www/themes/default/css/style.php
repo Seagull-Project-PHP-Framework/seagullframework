@@ -81,7 +81,9 @@
     $navigation =  './' . @$_REQUEST['navStylesheet'] . '.nav.php';
     require_once './vars.php';
     require_once './core.php';
-    require_once $navigation;
+    if (!empty($_REQUEST['navStylesheet'])) {
+        require_once $navigation;        
+    }
 
 
     // copied from PEAR HTTP Header.php (comments stripped)

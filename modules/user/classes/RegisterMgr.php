@@ -267,7 +267,9 @@ class RegisterMgr extends SGL_Manager
     function _sendEmail($oUser)
     {
         require_once SGL_CORE_DIR . '/Emailer.php';
-
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
         $options = array(

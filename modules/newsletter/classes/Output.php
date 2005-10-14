@@ -70,13 +70,17 @@ class NewsletterOutput
     
     function statusOpts($selected) 
     {
-        $aSatusOpts = & $GLOBALS['_SGL']['CONF']['statusOpts'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aSatusOpts = $conf['statusOpts'];
         return SGL_Output::generateSelect($aSatusOpts, $selected);
     }
     
     function actionOpts($action)
     {
-        $aActionOpts = & $GLOBALS['_SGL']['CONF']['ActionOpts'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aActionOpts = $conf['ActionOpts'];
         $selectedAction = $action == ''  ? 'empty' : $action;
         return SGL_Output::generateSelect($aActionOpts, $selectedAction);
     }

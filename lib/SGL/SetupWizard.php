@@ -78,7 +78,6 @@ class SGL_SetupWizard
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        #$c = new Config();
 
         // Update conf with new values from form
         if ($data['type'] == 0) {
@@ -112,15 +111,11 @@ class SGL_SetupWizard
 
         // Write and re-read conf to make sure we are accessing DB with what seagull would
         // normally read on startup
-        #$c->parseConfig($conf, 'phparray');
-        #$c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
         $file = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php';
         $ok = $c->save($file);
 
-        //  re-read conf for verification, reset global
-        #$conf = @parse_ini_file(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', true);
+        //  re-read conf for verification, reset $conf
         $conf = $c->load($file);
-        #$GLOBALS['_SGL']['CONF'] = $conf;
         
         echo '<span class="title">Status: </span><span id="status"></span>
         <div id="progress_bar">
@@ -334,20 +329,16 @@ class SGL_SetupWizard
             //  adjust sequences
             $res = SGL_Sql::rebuildSequences();
             
-            //  determine version
-            $conf['tuples']['version'] = $this->getFrameworkVersion();
+            //  set framework version
+            $c->set('tuples', array('version' => $this->getFrameworkVersion()));
 
-            //  done, so let then click to "launch seagull"                   
+            //  done, create "launch seagull" link
             $this->updateHtml('additionalInfo', $body);
             $this->updateHtml('progress_bar', '');
             
             //  Disable db bootstrap mode
-            $c2 = new Config();
-            $conf['db']['bootstrap'] = '0';
-            $c2->parseConfig($conf, 'phparray');
-            $c2->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            
-            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            $c->set('db', array('bootstrap' => 0));
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
         }
     }
     
@@ -409,13 +400,11 @@ class SGL_SetupWizard
      */
     function run()
     {
-        // If conf.ini has no bootstrap var, add one so we can set our bootstrap state to 1 (exec bootstrap code)
+        // If conf has no bootstrap var, add one to set our bootstrap state to 1 (exec bootstrap code)
         if (!isset($this->conf['db']['bootstrap'])) {
-            $c = new Config();
-            $this->conf['db']['bootstrap'] = '1';
-            $c->parseConfig($this->conf, 'phparray');
-            $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            #SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            $c = &SGL_Config::singleton();
+            $c->set('db', array('bootstrap' => 1));
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
         }
 
         //  clear session cookie so theme comes from DB and not session
@@ -443,9 +432,9 @@ class SGL_SetupWizard
 EOF;
         require_once 'HTML/QuickForm.php';
         
-        $deleteConfigFlag = (@$_GET['deleteConfig'] == 1) ? true : false;
+        $deleteConfigFlag = empty($_GET['deleteConfig']) ? false : true;
         
-        //  unholy hack ...
+        //  unholy hack required for quickform ...
         if (!isset($_GET['btnSubmit'])) {
             $_GET = array();
         }
@@ -508,7 +497,8 @@ EOF;
 
     function generateDataObjectEntities()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  init DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
@@ -552,7 +542,7 @@ EOF;
             $currentDir = array_pop($stack);
             if ($dh = opendir($currentDir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file !== '.' AND $file !== '..' AND $file !== '.svn') {
+                    if ($file !== '.' && $file !== '..' && $file !== '.svn') {
                         $currentFile = "{$currentDir}/{$file}";
                         if (is_dir($currentFile)) {
                             $fileList[] = "{$file}";

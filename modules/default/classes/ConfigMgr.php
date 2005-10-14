@@ -216,18 +216,15 @@ class ConfigMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = new Config();
-        
-        //  add version info which is not available in form
-        $input->conf['tuples']['version'] = $GLOBALS['_SGL']['VERSION'];
-                
-        //  read configuration data and get reference to root
-        $root = & $c->parseConfig($input->conf, 'phparray');
+
+        //  add version info which is not available in form        
+        $c = &SGL_Config::singleton();
+        $c->set('tuples', array('version' => $GLOBALS['_SGL']['VERSION']));
         
         //  write configuration to file
-        $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-        SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
-        if (!is_a($result, 'PEAR_Error')) {
+        $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
+
+        if (!is_a($ok, 'PEAR_Error')) {
             SGL::raiseMsg('config info successfully updated');
         } else {
             SGL::raiseError('There was a problem saving your configuration, make sure /var is writable', 

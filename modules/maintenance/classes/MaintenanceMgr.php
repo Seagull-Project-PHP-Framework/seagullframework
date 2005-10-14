@@ -53,6 +53,7 @@ class MaintenanceMgr extends SGL_Manager
     function MaintenanceMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
         
         $this->module       = 'maintenance';
         $this->pageTitle    = 'Maintenance';
@@ -375,8 +376,10 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();
+        
         //  read translation data and get reference to root
         $root = & $c->parseConfig($input->aTranslation, 'phparray');
+        
         //  write translation to file
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
             $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
@@ -425,12 +428,12 @@ class MaintenanceMgr extends SGL_Manager
         echo "</pre>";
         */
 
-        //FIXME: make seperate method for saving with config, theese lines are very similar with those in update();
         $c = new Config();
         //  read translation data and get reference to root
 
         //FIXME: config seems to have problems with sub-arrays!
         $root = & $c->parseConfig($aUpdatedTrans, 'phparray');
+
         //  write translation to file
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
             $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';

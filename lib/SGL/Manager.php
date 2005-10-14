@@ -173,6 +173,11 @@ class SGL_Manager
         }
 
         //  don't perform checks if authentication is disabled in debug
+        if (!count($this->conf)) {
+            SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
+            'constructor - please add "parent::SGL_Manager();" in your '.
+            'manager\'s constructor.', SGL_ERROR_NOCLASS);
+        }
         if ($this->conf['debug']['authenticationEnabled']) {
 
             //  setup classwide perm

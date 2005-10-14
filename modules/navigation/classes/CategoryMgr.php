@@ -56,6 +56,7 @@ class CategoryMgr extends SGL_Manager
     function CategoryMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
                 
         $this->aggregateOutput = true;
         $this->module           = 'navigation';
