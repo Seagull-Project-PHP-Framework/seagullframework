@@ -24,7 +24,7 @@ class ErrorHandlerTest extends UnitTestCase
     function testWarningError()
     {
 //        $process = new TestMainProcess();
-//        $input = &SGL_RequestRegistry::singleton();
+//        $input = &SGL_Registry::singleton();
 //        $input->set('manager', new SGL_VoidMgr());
 //
 //        $process->process($input);

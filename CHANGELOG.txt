@@ -7,6 +7,18 @@ BUGFIXES
 12-10-05    Fixed error where pages without a section id assumed html title "none"
 
 IMPROVEMENTS
+14-10-05    
+14-10-05    
+14-10-05    
+14-10-05    
+14-10-05    SGL_Url now uses a parser strategy and can handle seagull urls as well as 
+            traditional querystring format, url object stored in SGL_Registry
+14-10-05    Moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in 
+            constants.php
+14-10-05    Almost all global vars removed, including $GLOBALS['_SGL']['REQUEST'] and
+            $GLOBALS['_SGL']['CONF']
+14-10-05    Request object now stored in request registry ($input), renamed 
+            from SGL_HTTP_REQUEST to SGL_Request
 14-10-05    Moved SGL::getTime to SGL_Date::getTime
 12-10-05    Added 74 web tests to ensure error-free screen rendering
 06-10-05    Articles can now be set to never expire (Eric Persson)
