@@ -63,6 +63,8 @@
                 with safe mode enabled.');
             }
         }
+        
+        require_once 'PEAR.php';
 
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
@@ -86,7 +88,6 @@
         if (    !file_exists($configFile)
             &&  !file_exists(SGL_PATH . '/var/INSTALL_COMPLETE')) {
             
-            #$success = @copy(SGL_PATH . '/etc/default.conf.dist.ini', $configFile);
             $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
             $ok = $c->save($configFile);
             
@@ -120,6 +121,7 @@
         }
         
         $conf = $c->load($configFile);
+        $c->replace($conf);
 
         // framework file structure
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');

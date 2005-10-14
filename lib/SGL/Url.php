@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Url.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.32 $
- * @since   PHP 4.1
  * @see seagull/lib/SGL/tests/UrlTest.ndb.php
  */
 class SGL_URL
@@ -277,7 +276,7 @@ class SGL_URL
     }
     
     /**
-     * Enter description here...
+     * Returns querystring data as an array.
      *
      * @param boolean $strict If strict is true, managerName and moduleName are removed
      * @return array
@@ -320,7 +319,7 @@ class SGL_URL
     }
 
     /**
-    * Returns the standard port number for a protocol
+    * Returns the standard port number for a protocol.
     *
     * @param  string  $scheme The protocol to lookup
     * @return integer         Port number or NULL if no scheme matches
@@ -343,7 +342,7 @@ class SGL_URL
     }
 
     /**
-    * Forces the URL to a particular protocol
+    * Forces the URL to a particular protocol.
     *
     * @param string  $protocol Protocol to force the URL to
     * @param integer $port     Optional port (standard port is used by default)
@@ -534,46 +533,6 @@ class SGL_URL
             unset($aUrl[$key], $aUrl[$key + 1]);
         }
     }
-    
-    /**
-     * Returns an array of config value for the specified module.
-     *
-     * @param string $moduleName
-     * @return mixed    Config array on success, false on error
-     *
-     * @todo move this to the yet-to-be-created SGL_Config
-     */
-    function getModuleConfig($moduleName)
-    {
-        $path = SGL_MOD_DIR . '/' . $moduleName . '/';
-        if (is_readable($path . 'conf.ini')) {
-            $ret = parse_ini_file($path . 'conf.ini', true);
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-    
-    /**
-     * Merges the current module's config with the global config.
-     *
-     * @param array $conf
-     * @return void
-     *
-     * @todo move this to the yet-to-be-created SGL_Config
-     */
-    function configMerge($conf) 
-    {
-        //  merge module config with global config, if module conf keys do not already exist
-        //  test first key
-        $c = &SGL_Config::singleton();
-        $globalConf = $c->getAll();
-        
-        $firstKey = key($conf);
-        if (!array_key_exists($firstKey, $globalConf)) {
-            $c->merge($conf);
-        }  
-    }
 }
 
 /**
@@ -665,20 +624,14 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             }
         }
         
-        /////////////////////////////////////////////////////////////////
-        //  
-        //  config loading below needs to be factored out
-        //
-        /////////////////////////////////////////////////////////////////
-        
         //  we've got module name so load and merge local and global configs
-        $aModuleConfig = SGL_Url::getModuleConfig($aParsedUri['moduleName']);
+        $aModuleConfig = $c->load(SGL_MOD_DIR . '/' . $aParsedUri['moduleName'] . '/conf.ini');
+
         if ($aModuleConfig) {
-            SGL_Url::configMerge($aModuleConfig);
-        } else {
-# pear not initialised            
-#            return PEAR::raiseError('Could not read current module\'s conf.ini file', 
-#                SGL_ERROR_NOFILE);
+            $c->merge($aModuleConfig);
+        } else {         
+            return PEAR::raiseError('Could not read current module\'s conf.ini file', 
+                SGL_ERROR_NOFILE);
         }
         
         //  determine is moduleName is simplified, in other words, the mgr
