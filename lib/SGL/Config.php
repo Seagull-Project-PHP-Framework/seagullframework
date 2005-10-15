@@ -126,6 +126,11 @@ class SGL_Config
         } 
     }
     
+    function isEmpty()
+    {
+        return count($this->aProps) ? false : true;   
+    }
+    
     /**
      * Ini file protection.
      *
