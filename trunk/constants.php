@@ -89,9 +89,10 @@
             &&  !file_exists(SGL_PATH . '/var/INSTALL_COMPLETE')) {
             
             $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
+            $c->replace($conf);
             $ok = $c->save($configFile);
             
-            if (!$ok) {
+            if (PEAR::isError($ok)) {
                 die("<br />Your config file cannot be copied to the seagull/var directory, " .
                     "please give the webserver write permissions to this directory, eg:<br />" .
                     "<code>'chmod 777 seagull/var'</code>");
@@ -120,8 +121,10 @@
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
         
-        $conf = $c->load($configFile);
-        $c->replace($conf);
+        if ($c->isEmpty()) {
+            $conf = $c->load($configFile);
+            $c->replace($conf);
+        }
 
         // framework file structure
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');

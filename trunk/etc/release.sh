@@ -168,7 +168,7 @@ function generateApiDocs()
 function packageApiDocs()
 {
     tar cvf seagullApiDocs-$RELEASE_NAME.tar seagullApiDocs-$RELEASE_NAME \
-        | gzip -f > seagullApiDocs-$RELEASE_NAME.tar
+        | gzip -f > seagullApiDocs-$RELEASE_NAME.tar.gz
 }
 
 ##############################
@@ -231,6 +231,6 @@ uploadToSfApiDocs
 
 scpApiDocsToSglSite
 
-scpChangelogToSglSite
+#scpChangelogToSglSite
 
 exit 0
