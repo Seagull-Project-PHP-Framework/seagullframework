@@ -47,6 +47,8 @@
  */
 class SGL_Registry
 {
+    var $aProps = array();
+    
     function &singleton()
     {
         static $instance;
@@ -57,14 +59,23 @@ class SGL_Registry
         return $instance;
     }
     
-    function get($key) 
+    function &get($key) 
     {
-        return $this->aProps[$key];
+        if (array_key_exists($key, $this->aProps)) {
+            $ret =  $this->aProps[$key];
+        } else {
+            $ret = null;
+        }
+        return $ret;
     }
     
-    function set($key, $value) 
+    function set($key, &$value) 
     {
-        $this->aProps[$key] = $value;
+        $this->aProps[$key] = &$value;
+    }
+    
+    function exists($key) {
+        return array_key_exists($key, $this->aProps);
     }
     
     function getRequest()
