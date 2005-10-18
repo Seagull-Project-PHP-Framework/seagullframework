@@ -1,0 +1,61 @@
+<div align="center">
+    <form name="frmBlockMgr" method="post" flexy:ignore id="frmBlockMgr">
+        <input type="hidden" name="action" value="{action}" /> 
+        <input type="hidden" name="_leftItems" /> 
+        <input type="hidden" name="_rightItems" />
+        <h1 class="pageTitle">{translate(pageTitle)} {if:mode}:: {translate(mode)}{end:}</h1>
+        <span flexy:if="msgGet()">{msgGet()}</span>
+
+        <table class="narrow">
+            <tr>
+                <td colspan="2">{translate(#Reorder instructions#):h}</td>
+            </tr>
+
+            <tr>
+                <td align="center">
+                    <strong>{translate(#Left column#)}</strong>
+
+                    <table class="wide">
+                        <tr>
+                            <td align="right">
+                                <select name="leftItem" size="15">
+                                    {generateSelect(aLeftBlocks):h}
+                                </select>
+                            </td>
+                            <td>
+                                <p><a href="#here" onclick="return orderLeftModule(0)">{translate(#move up#)}</a></p>
+                                <p><a href="#here" onclick="return orderLeftModule(1)">{translate(#move down#)}</a></p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td align="center">
+                    <strong>{translate(#Right column#)}</strong>
+
+                    <table class="wide">
+                        <tr>
+                            <td align="right">
+                                <select name="rightItem" size="15">
+                                    {generateSelect(aRightBlocks):h}
+                                </select>
+                            </td>
+
+                            <td>
+                                <p><a href="#here" onclick="return orderRightModule(0)">{translate(#move up#)}</a></p>
+                                <p><a href="#here" onclick="return orderRightModule(1)">{translate(#move down#)}</a></p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="center">
+                    <input class="wideButton" type="submit" name="submitted" value="{translate(#Submit#)}" onclick="return doSubBlock()" />&nbsp; 
+                    <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(#list#,#block#,#block#)}'" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
