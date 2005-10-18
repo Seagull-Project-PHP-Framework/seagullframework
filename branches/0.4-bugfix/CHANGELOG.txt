@@ -13,6 +13,8 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+18-10-05    Fixed file upload javascript error and improved feedback messages
+            (Werner Krauss)
 16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
             an infinite Flexy loop
 15-09-05    Html title element value is now correctly drawn from the current article 

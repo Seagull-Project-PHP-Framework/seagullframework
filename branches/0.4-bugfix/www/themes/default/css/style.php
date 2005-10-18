@@ -74,7 +74,7 @@
     $aWithoutBlanks = array_filter($aPath, 'strlen');
     array_pop($aWithoutBlanks);
     $baseUrl = join('/', $aWithoutBlanks);
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on') 
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on')
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
@@ -82,7 +82,7 @@
 
     // CSS Substitution Variables
 
-    $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';  
+    $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';
 
     $primary                = '#99cc00'; // lime green
     $primaryLight           = '#bbe713'; // light green
@@ -118,12 +118,12 @@
     $colHeaderColor         = $secondaryDark;
     $navigatorBackground    = $tertiaryDarker;
     $navigatorColor         = $tertiaryMedium;
-    
+
     $forApproval            = '#ff0000';
     $approved               = '#ff9933';
     $published              = '#00cc00';
     $archived               = '#909090';
-    
+
     $error                  = '#ffcc00';
     $errorLight             = '#ffff99';
     $errorDark              = '#ff9600';
@@ -133,12 +133,12 @@
 
     /* Button like border colors */
     $buttonBorderColors     = '#ffffff #333333 #333333 #ffffff';
-    
+
     // include local style file
     $localStyle = './style.local.php';
     if (file_exists($localStyle)) {
         include_once $localStyle;
-    }    
+    }
 ?>
 
 
@@ -459,7 +459,7 @@ img {
     text-align: right;
     line-height: 18px;
 }
-    
+
 /* /////////////// Article Manager /////////////// */
 
 .forApproval {
@@ -477,7 +477,7 @@ img {
 .archived {
     font-weight: bold;
     color:  <?php echo $archived ?>;
-}  
+}
 
 /******************************************************************************/
 /*                                  LEGACY CSS                                */
