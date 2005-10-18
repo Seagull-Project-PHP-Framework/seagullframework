@@ -65,6 +65,11 @@ class SGL_Output
     {
         return SGL_String::translate($key, $filter);
     }
+    
+    function get($key)
+    {
+        return $this->aProps[$key];
+    }
 
     /**
      * Generates options for an HTML select object.
@@ -352,6 +357,11 @@ class SGL_Output
         $body->outputObject($this);
     }
 
+    /**
+     * Returns true if client OS is windows.
+     *
+     * @return boolean
+     */
     function isWin()
     {
         return SGL_USR_OS == 'Win';
