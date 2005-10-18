@@ -744,6 +744,7 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $input->data->scriptClose      = "\n//--> </script>\n";
         $input->data->frontScriptName  = $conf['site']['frontScriptName'];
+        $input->data->showBugReporter  = $conf['debug']['showBugReporterLink'];
     }
 }
 

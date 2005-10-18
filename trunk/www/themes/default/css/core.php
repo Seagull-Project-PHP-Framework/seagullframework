@@ -39,22 +39,10 @@ body {
     text-decoration: underline;
 }
 #sgl #login #logAction {
-    float: left;
-    margin-left: 1em;
+    margin-left: 0.5em;
     padding: 0.2em;
     border: 1px solid transparent;
     border-color: <?php echo $button ?>;
-    background-color: <?php echo $primaryLight ?>;
-}
-#sgl #login #userInfo {
-    float: left;
-    padding-top: 0.35em;
-}
-#sgl #login #userInfo .guest {
-    font-weight: bold;
-}
-#sgl #bugReporter {
-    float: left;
 }
 
 /***************************** LAYOUT : TABLES ********************************/
