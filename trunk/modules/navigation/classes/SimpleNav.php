@@ -132,7 +132,8 @@ class SimpleNav
         
         //  get a unique token by considering url, group ID and if page
         //  is static or not
-        $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
+        $url = $this->input->data->get('currentUrl');
+        $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
             $aUnserialized = unserialize($data);
             $sectionId = $aUnserialized['sectionId'];
@@ -146,7 +147,6 @@ class SimpleNav
             $cache->save(serialize($aNav), $cacheId, 'nav');
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
-        
         return array($sectionId, $html);
         
     }

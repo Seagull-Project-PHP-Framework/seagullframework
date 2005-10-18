@@ -295,6 +295,11 @@ class SGL_URL
         return $aRet;
     }
     
+    /**
+     * Returns querystring portion of url.
+     *
+     * @return string
+     */
     function getQueryString() 
     {
         return $this->querystring;
@@ -395,6 +400,11 @@ class SGL_URL
         return $this->path;   
     }
     
+    /**
+     * Returns the front controller script name.
+     *
+     * @return string
+     */
     function getFrontScriptName()
     {
         return $this->frontScriptName;   
@@ -533,6 +543,35 @@ class SGL_URL
             unset($aUrl[$key], $aUrl[$key + 1]);
         }
     }
+    
+    /**
+     * Returns an array of all elements from the front controller script name onwards.
+     * 
+     * @access  public
+     * @static 
+     *
+     * @param   string  $url        Url to be parsed
+     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
+     *                              from the front controller script name onwards
+     */
+    function toPartialArray($url)
+    {
+        $c = &SGL_Config::singleton();
+        $frontScriptName = $c->get(array('site' => 'frontScriptName'));
+        
+        //  split elements (remove eventual leading/trailing slashes)
+        $aUriParts = explode('/', trim($url, '/'));
+
+        //  step through array and strip until fc element is reached
+        foreach ($aUriParts as $elem) {
+            if ($elem != $frontScriptName) {
+                array_shift($aUriParts);
+            } else {
+                break;
+            }
+        }
+        return $aUriParts;
+    }
 }
 
 /**
@@ -587,7 +626,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $aUriParts = $this->toPartialArray($url->url, $conf['site']['frontScriptName']);
+        $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
         
         //  remap
         $aParsedUri['frontScriptName'] = array_shift($aUriParts);
@@ -707,30 +746,6 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         
         //  and merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);        
-    }
-    
-    /**
-     * Returns an array of all elements from the front controller script name onwards.
-     * 
-     * @access  public
-     * @param   $url    Url to be parsed
-     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
-     *                              from the front controller script name onwards
-     */
-    function toPartialArray($url, $frontScriptName)
-    {
-        //  split elements (remove eventual leading/trailing slashes)
-        $aUriParts = explode('/', trim($url, '/'));
-
-        //  step through array and strip until fc element is reached
-        foreach ($aUriParts as $elem) {
-            if ($elem != $frontScriptName) {
-                array_shift($aUriParts);
-            } else {
-                break;
-            }
-        }
-        return $aUriParts;
     }
     
     /**
