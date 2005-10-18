@@ -59,7 +59,7 @@ if (!defined('DATE_CALC_FORMAT')) {
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999, 2002, 2003 ispi
  * @license    http://www.php.net/license/2_02.txt  PHP License
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/Date
  * @since      Class available since Release 1.2
  */
