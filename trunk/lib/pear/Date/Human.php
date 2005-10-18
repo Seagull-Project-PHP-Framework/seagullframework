@@ -45,7 +45,7 @@
  * @author     Allan Kent <allan@lodestone.co.za>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/2_02.txt  PHP License
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/Date
  * @since      Class available since Release 1.3
  */
