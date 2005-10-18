@@ -10,7 +10,7 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
     }
 
     
-    function xtestPublicScreens()
+    function testPublicScreens()
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
@@ -42,7 +42,7 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertNoUnwantedPattern("/errorContent/");
         
         $this->get($this->conf['site']['baseUrl'] . '/index.php/default/bug/');
-        $this->assertTitle('Seagull Framework :: none');
+        $this->assertTitle('Seagull Framework :: Bug Report');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
     
@@ -123,6 +123,11 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/navstyle/action/list/');
         $this->assertTitle('Seagull Framework :: Navigation Style Manager');
+        $this->assertNoUnwantedPattern("/errorContent/");
+       
+        //  profile
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/profile/action/view/frmUserID/1/');
+        $this->assertTitle('Seagull Framework :: User Profile');
         $this->assertNoUnwantedPattern("/errorContent/");
         
         //  newsletter
