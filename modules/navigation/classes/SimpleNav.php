@@ -132,7 +132,13 @@ class SimpleNav
         
         //  get a unique token by considering url, group ID and if page
         //  is static or not
-        $url = $this->input->data->get('currentUrl');
+        //FIXME: bad hack
+        if (isset($this->input->data)) {
+            $url = $this->input->data->get('currentUrl');    
+        } else {
+            $url = $this->input->get('currentUrl');
+        }
+        
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
             $aUnserialized = unserialize($data);
