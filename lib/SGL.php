@@ -98,6 +98,7 @@ class SGL
         if ($conf['log']['enabled'] == false) {
             return;
         }
+        
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
@@ -317,7 +318,7 @@ EOF;
 
     function raiseMsg($msg, $getTranslation = true)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  must not logmessage here        
         if (is_string($msg) && !empty($msg)) {
 
             $message = SGL_String::translate($msg);

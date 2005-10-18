@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.5.2        |
 +-----------------------+
 BUGFIXES
+18-10-05    Fixed error where enabling logging failed to include Log class.
 
 IMPROVEMENTS
 
