@@ -52,6 +52,8 @@ class ProfileMgr extends SGL_Manager
     function ProfileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+                
         $this->module       = 'user';
         $this->pageTitle    = 'User Profile';
         $this->template     = 'profile.html';
