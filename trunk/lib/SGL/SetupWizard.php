@@ -88,7 +88,7 @@ class SGL_SetupWizard
         } elseif ($data['type'] == 3) {
             $conf['db']['type'] = 'oci8_SGL';
         } else {
-            $conf['db']['type'] = 'odbc';
+            $conf['db']['type'] = 'maxdb_SGL';
         }
         if (!isset($data['port']) || $data['port']==0) {
             $conf['db']['port'] = '3306';
@@ -96,6 +96,8 @@ class SGL_SetupWizard
             $conf['db']['port'] = '5432';
         } elseif ($data['port']==2)  {
             $conf['db']['port'] = '1521';
+        } else {
+            $conf['db']['port'] = '7210';
         }
         if ($data['protocol']==0) {
             $conf['db']['protocol'] = 'unix';
@@ -160,6 +162,13 @@ class SGL_SetupWizard
                     $filename1 = '/schema.oci.sql';
                     $filename2 = '/data.default.oci.sql';
                     $filename3 = '/constraints.oci.sql';
+                    break;
+
+                case 'maxdb_SGL':
+                    $dbType = 'maxdb_SGL';
+                    $filename1 = '/schema.mx.sql';
+                    $filename2 = '/data.default.mx.sql';
+                    $filename3 = '/constraints.mx.sql';
                     break;
                 }
 
@@ -451,12 +460,14 @@ EOF;
         $form->addElement('radio', 'type',     '', "mysql", 1);
         $form->addElement('radio', 'type',     '', "postgres",2);
         $form->addElement('radio', 'type',     '', "oci8",3);
+        $form->addElement('radio', 'type',     '', "maxdb",4);
         $form->addElement('text',  'host',     'Host: ');
         $form->addElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 0);
         $form->addElement('radio', 'protocol', '',"tcp", 1);
         $form->addElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)",0);
         $form->addElement('radio', 'port',     '',"5432 (Postgres default)",1);
         $form->addElement('radio', 'port',     '',"1521 (Oracle default)",2);
+        $form->addElement('radio', 'port',     '',"7210 (MaxDB default)",3);
         $form->addElement('text',  'user',     'Database username: ');
         $form->addElement('password', 'pass', 'Database password: ');
 

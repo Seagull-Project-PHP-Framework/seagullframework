@@ -7,6 +7,7 @@ BUGFIXES
 18-10-05    Fixed error where enabling logging failed to include Log class.
 
 IMPROVEMENTS
+18-10-05    Added support for MaxDB (Andreas Singer)
 
 +-----------------------+
 | VERSION: 0.5.1        |
