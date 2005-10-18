@@ -210,7 +210,7 @@ class SGL_HTTP_Session
         //  set secure session key
         $startTime = mktime();
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $userAgent = @$_SERVER['HTTP_USER_AGENT'];
 
         //  user object is passed only during login
         if (is_object($oUser)) {
@@ -301,7 +301,7 @@ class SGL_HTTP_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $userAgent = @$_SERVER['HTTP_USER_AGENT'];
         $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] . 
             $acceptLang . $userAgent);
 
