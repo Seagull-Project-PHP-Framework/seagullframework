@@ -80,35 +80,35 @@ class SGL_SetupWizard
 
         // Update conf with new values from form
         if ($data['type'] == 0) {
-            $conf['db']['type'] = 'mysql_SGL';
+            $c->set('db', array('type' => 'mysql_SGL'));
         } elseif ($data['type'] == 1) {
-            $conf['db']['type'] = 'mysql';
+            $c->set('db', array('type' => 'mysql'));
         } elseif ($data['type'] == 2) {
-            $conf['db']['type'] = 'pgsql';
+            $c->set('db', array('type' => 'pgsql'));
         } elseif ($data['type'] == 3) {
-            $conf['db']['type'] = 'oci8_SGL';
+            $c->set('db', array('type' => 'oci8_SGL'));
         } else {
-            $conf['db']['type'] = 'maxdb_SGL';
+            $c->set('db', array('type' => 'maxdb_SGL'));
         }
         if (!isset($data['port']) || $data['port']==0) {
-            $conf['db']['port'] = '3306';
+            $c->set('db', array('port' => '3306'));
         } elseif ($data['port']==1)  {
-            $conf['db']['port'] = '5432';
+            $c->set('db', array('port' => '5432'));
         } elseif ($data['port']==2)  {
-            $conf['db']['port'] = '1521';
+            $c->set('db', array('port' => '1521'));
         } else {
-            $conf['db']['port'] = '7210';
+            $c->set('db', array('port' => '7210'));
         }
         if ($data['protocol']==0) {
-            $conf['db']['protocol'] = 'unix';
+            $c->set('db', array('protocol' => 'unix'));
         } else {
-            $conf['db']['protocol'] = 'tcp';
+            $c->set('db', array('protocol' => 'tcp'));
         }
 
-        $conf['db']['host'] = $data['host'];
-        $conf['db']['user'] = $data['user'];
-        $conf['db']['pass'] = $data['pass'];
-        $conf['db']['name'] = $data['name'];
+        $c->set('db', array('host' => $data['host']));
+        $c->set('db', array('user' => $data['user']));
+        $c->set('db', array('pass' => $data['pass']));
+        $c->set('db', array('name' => $data['name']));
 
         // Write and re-read conf to make sure we are accessing DB with what seagull would
         // normally read on startup

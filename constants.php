@@ -63,7 +63,6 @@
                 with safe mode enabled.');
             }
         }
-        
         require_once 'PEAR.php';
 
         //  only IPs defined here can access debug sessions and delete config files
