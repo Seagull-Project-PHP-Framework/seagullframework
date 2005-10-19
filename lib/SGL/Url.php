@@ -554,11 +554,8 @@ class SGL_URL
      * @return  array   $aUriParts  An array of all significant parts of the URL, ie
      *                              from the front controller script name onwards
      */
-    function toPartialArray($url)
-    {
-        $c = &SGL_Config::singleton();
-        $frontScriptName = $c->get(array('site' => 'frontScriptName'));
-        
+    function toPartialArray($url, $frontScriptName)
+    {       
         //  split elements (remove eventual leading/trailing slashes)
         $aUriParts = explode('/', trim($url, '/'));
 
@@ -644,7 +641,8 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  if no module name present, get from config
         //  catch case where debugging with Zend supplies querystring params
         if (empty(  $aParsedUri['moduleName'])
-                || (preg_match('/start_debug/', $aParsedUri['moduleName']))) {
+                || (preg_match('/start_debug/', $aParsedUri['moduleName']))
+                || (preg_match('/\?/i', $aParsedUri['moduleName']))) {
             $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
             $default = true;
         }
