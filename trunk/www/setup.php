@@ -1,9 +1,20 @@
 <?php
 /*
-sgl setup process
-=================
+sgl setup
+=========
+- ability to upload and unzip/tar a packaged module
+- file permission handling ideas from FUDforum installer
+- more user-friendly error messages from Gallery2
+- if no DB detected, prompt to create, otherwise offer to create tables
+
+process
+========
 
 
+
+- choose modules and permissions must be created and set at install time
+- create admin, set username, password and email
+- option to add user
 
 
 

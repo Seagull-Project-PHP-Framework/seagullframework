@@ -9,6 +9,7 @@ BUGFIXES
 18-10-05    Fixed error where enabling logging failed to include Log class.
 
 IMPROVEMENTS
+20-10-05    Added php4/5 compatible delegator class
 18-10-05    Added support for MaxDB (Andreas Singer)
 
 +-----------------------+
