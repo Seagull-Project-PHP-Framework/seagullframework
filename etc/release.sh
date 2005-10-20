@@ -201,7 +201,7 @@ function scpApiDocsToSglSite()
 ##############################
 function scpChangelogToSglSite()
 {
-    scp $PROJECT_NAME-$RELEASE_NAME/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull/web/
+    scp $PROJECT_NAME-$RELEASE_NAME/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull_files/web/
 }
 
 ##############################
