@@ -26,10 +26,10 @@ REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
 SVN_REPO_LEAF_FOLDER_NAME=trunk
-#SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
-SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
+#SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
+SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
-SVN_REPO_TAGS_URL=http://seagull.phpkitchen.com:8172/svn/seagull/tags
+SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
 
 
 ##############################
