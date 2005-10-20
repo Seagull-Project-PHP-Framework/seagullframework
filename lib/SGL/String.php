@@ -595,10 +595,11 @@ class SGL_Date
             $minute = (array_key_exists('minute',$aDate))? $aDate['minute'] : '00';
             $second = (array_key_exists('second',$aDate))? $aDate['second'] : '00';
             
-            if( empty($month) && empty($year) && empty($day) )
+            if (empty($month) && empty($year) && empty($day)) {
                 return null;
-            else
+            } else {
                 return $year . '-' . $month . '-' . $day .' ' . $hour . ':' . $minute . ':' . $second;
+            }
         }
     }
 
