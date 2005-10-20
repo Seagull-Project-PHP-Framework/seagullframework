@@ -51,9 +51,14 @@ function STR_init()
     // Database connection constants
     define('STR_DSN_ARRAY',                 0);
     define('STR_DSN_STRING',                1);
+    
+    $sessSavePath = ini_get('session.save_path');
+    if (empty($sessSavePath)) {
+        $sessSavePath = '/tmp';
+    }
     define('STR_TMP_DIR', (isset($_ENV["TEMP"])) 
         ? $_ENV["TEMP"] 
-        : ini_get('session.save_path'));
+        : $sessSavePath);
     
     // Define the different environment configurations
     define('NO_DB',          0);

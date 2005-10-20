@@ -37,9 +37,9 @@ $start = microtime();
 
 // Store the type of test being run globally, to save passing 
 // about as a parameter all the time
-$GLOBALS['_STR']['test_type'] = $_GET['type'];
+$GLOBALS['_STR']['test_type'] = @$_GET['type'];
 
-$level = $_GET['level'];
+$level = @$_GET['level'];
 if ($level == 'all') {
     STR_TestRunner::runAll();
 } elseif ($level == 'layer') {
