@@ -11,10 +11,6 @@ class SampleRightBlock1
 {
     var $webRoot = SGL_BASE_URL;
 
-    function SampleRightBlock1()
-    {
-    }
-
     function init()
     {
         return $this->getBlockContent();

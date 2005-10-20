@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ListMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -59,6 +59,8 @@ class ListMgr extends NewsletterMgr
     function ListMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::NewsletterMgr();
+        
         $this->module           = 'newsletter';
         $this->pageTitle        = 'Newsletter List Mgr';
         $this->template         = 'newsletter.html';
@@ -85,8 +87,6 @@ class ListMgr extends NewsletterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -94,17 +94,17 @@ class ListMgr extends NewsletterMgr
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->submit      = $req->get('submitted');
-        $input->from        = $req->get('frmFrom') ? $req->get('frmFrom') : $conf['email']['admin'];
+        $input->from        = $req->get('frmFrom') ? $req->get('frmFrom') : $this->conf['email']['admin'];
         $input->email       = $req->get('frmEmail');
         $input->subject     = $req->get('frmSubject');
         $input->body        = $req->get('frmBodyName', $allowTags = true);
         $input->oUser       = $req->get('oUser');
        
         $aGroups            = $req->get('frmGroups');
-        $input->groups = array();
+        $input->groups      = array();
         $input->roleList    = $this->da->getRoles($excludeAdmin = true);
         
-        $input->newsList      = $req->get('frmNewsList') ? $req->get('frmNewsList') : array();
+        $input->newsList    = $req->get('frmNewsList') ? $req->get('frmNewsList') : array();
         $input->validNewsList = $this->_getList();
         
         $input->newsletter_id = $req->get('frmID');
@@ -183,10 +183,12 @@ class ListMgr extends NewsletterMgr
                 }
                   
                 $groupSelected = false;
+                
                 // Lists validation
                 if (is_array($input->newsList) and count($input->newsList)) {
                     foreach($input->newsList as $listID) {
                         if (!array_key_exists($listID,$input->validNewsList)) {
+                            
                            // Would only happen if someone was hacking the form:
                            $aErrors['newslist'] = 'You managed to choose an invalid newsletter list';
                            break; 
@@ -214,22 +216,22 @@ class ListMgr extends NewsletterMgr
                 }
                 
                 if (empty($input->email)) {
+                    
                         //  if no groups/roles have been selected, make sure there's at least one email address
                         if (!$groupSelected) {
                             $aErrors['email'] = 'Please include at least one email address';
                         }
-                    } else {
-                        $aRecipients = explode(';', $input->email);
-                        $aRecipientsWithNulls = array_filter($aRecipients, 'strlen');
-                        foreach ($aRecipientsWithNulls as $email) {
-                            if (!$v->email($email)) {
-                                $aErrors['email'] = 'incorrectly formatted email';
-                                break;
-                            }
+                } else {
+                    $aRecipients = explode(';', $input->email);
+                    $aRecipientsWithNulls = array_filter($aRecipients, 'strlen');
+                    foreach ($aRecipientsWithNulls as $email) {
+                        if (!$v->email($email)) {
+                            $aErrors['email'] = 'incorrectly formatted email';
+                            break;
                         }
+                    }
                 }
             }
-            
         }
         
         //  if errors have occured
@@ -250,7 +252,7 @@ class ListMgr extends NewsletterMgr
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->wysiwyg     = true;        
+        $output->wysiwyg = true;        
         $output->template = 'newsletter.html';
     }
 
@@ -263,7 +265,7 @@ class ListMgr extends NewsletterMgr
     function _listSubscribers(&$input, &$output) 
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $output->template = 'listSubscribers.html';
         $input->pageTitle = 'Newsletter List Mgr :: Subscribers';
         
@@ -275,12 +277,11 @@ class ListMgr extends NewsletterMgr
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ; 
         }
         
-        $dbh = & SGL_DB :: singleton();
-        $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE status <> 9 ".$orderBy_query;;
+        $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE status <> 9 ".$orderBy_query;;
           
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
-        $aPagedData = SGL_DB :: getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB :: getPagedData($this->dbh, $query, $pagerOptions);
         
         if (!DB::isError($aPagedData)) {   
 
@@ -301,7 +302,7 @@ class ListMgr extends NewsletterMgr
     */
     function _editSubscriber(& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editSubscriber.html';
         $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
         
@@ -319,7 +320,7 @@ class ListMgr extends NewsletterMgr
     */
     function _updateSubscriber (& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editSubscriber.html';
         $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
         
@@ -355,7 +356,7 @@ class ListMgr extends NewsletterMgr
     */
     function _deleteSubscriber (& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $newsletter_id) {
                 $oUser = & new DataObjects_Newsletter();
@@ -366,7 +367,6 @@ class ListMgr extends NewsletterMgr
         } else {
             SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        
         SGL :: raiseMsg('Subscriber deleted successfully');
     }
 
@@ -380,7 +380,7 @@ class ListMgr extends NewsletterMgr
     function _listLists(&$input, &$output) 
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $output->template = 'listLists.html';
         $input->pageTitle = 'Newsletter List Mgr :: Lists';
         
@@ -392,14 +392,13 @@ class ListMgr extends NewsletterMgr
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ; 
         }
         
-        $dbh = & SGL_DB :: singleton();
-        $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE status = 9 ".$orderBy_query;;
+        $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE status = 9 ".$orderBy_query;;
           
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
-        $aPagedData = SGL_DB :: getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         
-        if (!DB :: isError($aPagedData)) {   
+        if (!DB::isError($aPagedData)) {   
 
             if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
                 $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
@@ -418,7 +417,7 @@ class ListMgr extends NewsletterMgr
     */
     function _addList(& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Add';
         
@@ -438,7 +437,7 @@ class ListMgr extends NewsletterMgr
     */
     function _editList(& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
         
@@ -457,10 +456,9 @@ class ListMgr extends NewsletterMgr
     */
     function _updateList(& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);        
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $input->oUser = (object) $input->oUser;
         $oUser = & new DataObjects_Newsletter();
@@ -469,17 +467,22 @@ class ListMgr extends NewsletterMgr
         $noRows = $oUser->find();
         $oUser->setFrom($input->oUser);
         $oUser->status = 9;
-        $oUser->last_updated = SGL::getTime();  
+        $oUser->last_updated = SGL_Date::getTime();  
         if ($noRows == 0) {
-            $oUser->date_created = SGL::getTime();
+            $oUser->date_created = SGL_Date::getTime();
             $oUser->newsletter_id = $input->oUser->newsletter_id;
             $success = $oUser->insert();
         } else {
             $success = true;
             if ($oldName != $oUser->list) {
+                
                 // List name has changed. Change the subscribed users too;
                 $dbh = $oUser->getDatabaseConnection();
-                $query = "UPDATE {$conf['table']['newsletter']} SET list='".$oUser->list."'WHERE list='".$oldName."' AND status<>9";
+                $query = "
+                    UPDATE {$this->conf['table']['newsletter']} 
+                    SET list='".$oUser->list."'
+                    WHERE list='".$oldName."' AND status<>9";
+                
                 $result = $dbh->query($query);
                 if (is_a($result, 'PEAR_Error')) {
                     $success = false;
@@ -505,7 +508,7 @@ class ListMgr extends NewsletterMgr
     */
     function _deleteLists(& $input, & $output) 
     {
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
               
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $newsletter_id) {
@@ -530,7 +533,7 @@ class ListMgr extends NewsletterMgr
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $output->template = 'newsletter.html';
 
         // Add group emails to the address list
@@ -570,7 +573,7 @@ class ListMgr extends NewsletterMgr
  
         //  TODO: Use BCC to send multiple emails at once?
         foreach ($aRecipients as $email) {
-            $headers['From'] = $conf['email']['admin'];
+            $headers['From'] = $this->conf['email']['admin'];
             $headers['Subject'] = $input->subject;
             $crlf = SGL_String::getCrlf();
             $mime = & new Mail_mime($crlf);
@@ -635,12 +638,9 @@ class ListMgr extends NewsletterMgr
             return false;
         }
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB :: singleton();
+        $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE list='$listName' AND status=0";
         
-        $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE list='$listName' AND status=0";
-        
-        $result = $dbh->query($query);
+        $result = $this->dbh->query($query);
         if (is_a($result, 'PEAR_Error')) {
             return false;
         }
@@ -664,7 +664,8 @@ class ListMgr extends NewsletterMgr
     * @return   boolean                 true if NOT exists, false if exists or on error
     * 
     */
-    function _checkForDuplicateList($listName, $listId) {
+    function _checkForDuplicateList($listName, $listId) 
+    {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         if (strlen($listName) < 0 or $listId < 1) {
@@ -672,12 +673,12 @@ class ListMgr extends NewsletterMgr
             return false;
         }
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB :: singleton();
+        $query = "
+            SELECT * FROM {$this->conf['table']['newsletter']} 
+            WHERE list='$listName' 
+            AND newsletter_id <> '$listId' AND status=9";
         
-        $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE list='$listName' AND newsletter_id<>'$listId' AND status=9";
-        
-        $result = $dbh->query($query);
+        $result = $this->dbh->query($query);
         if (is_a($result, 'PEAR_Error')) {
             return false;
         }
@@ -685,9 +686,7 @@ class ListMgr extends NewsletterMgr
         if ($result->numRows() > 0) {
             return false;
         }
-        
         return true;
     }
-
 }
 ?>

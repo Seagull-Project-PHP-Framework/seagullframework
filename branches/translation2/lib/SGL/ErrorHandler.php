@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ErrorHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -41,14 +41,13 @@
 
 //  This class is based on Peter James' class of the same name, for more info 
 //  see http://php.shaman.ca/
-
+        
 /**
  * Global error handler class, modifies behaviour for PHP errors, not PEAR.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.8 $
- * @since   PHP 4.1
  */
 class SGL_ErrorHandler
 {
@@ -69,19 +68,19 @@ class SGL_ErrorHandler
         //  nb: comment out Notice for equivalent of 
         //  error_reporting(E_ALL ^ E_NOTICE);
         $this->errorType = array (
-               1   =>  array('Error', 3),
-               2   =>  array('Warning', 4),
-               4   =>  array('Parsing Error', 3),
-               8   =>  array('Notice', 5),
-               16  =>  array('Core Error', 3),
-               32  =>  array('Core Warning', 4),
-               64  =>  array('Compile Error', 3),
-               128 =>  array('Compile Warning', 4),
-               256 =>  array('User Error', 3),
-               512 =>  array('User Warning', 4),
-               1024=>  array('User Notice', 5),
-               2047=>  array('All', 7)
-                );
+           1   =>  array('Error', 3),
+           2   =>  array('Warning', 4),
+           4   =>  array('Parsing Error', 3),
+           8   =>  array('Notice', 5),
+           16  =>  array('Core Error', 3),
+           32  =>  array('Core Warning', 4),
+           64  =>  array('Compile Error', 3),
+           128 =>  array('Compile Warning', 4),
+           256 =>  array('User Error', 3),
+           512 =>  array('User Warning', 4),
+           1024=>  array('User Notice', 5),
+           2047=>  array('All', 7)
+            );
         $this->sourceContextOptions = array('lines' => 5);
     }
 
@@ -139,7 +138,8 @@ class SGL_ErrorHandler
             }
         }
         if (in_array($errNo, array_keys($this->errorType))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             //  final param is 2nd dimension element from errorType array,
             //  representing PEAR error codes mapped to PHP's
 
@@ -156,14 +156,14 @@ class SGL_ErrorHandler
                 //  PHP error code
                 $output = <<<EOF
 <hr />
-<p class="error">
-  <strong>MESSAGE</strong>: $errStr<br />
-  <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
-  <strong>FILE:</strong> $file<br />
-  <strong>LINE:</strong> $line<br />
-  <strong>DEBUG INFO:</strong>
-  <p>$source</p>
-</p>
+<div class="errorContent">
+        <strong>MESSAGE</strong>: $errStr<br />
+        <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
+        <strong>FILE:</strong> $file<br />
+        <strong>LINE:</strong> $line<br />
+        <strong>DEBUG INFO:</strong>
+        <p>$source</p>
+</div>
 <hr />
 EOF;
                 echo $output;
@@ -259,7 +259,7 @@ EOF;
 	                    "\t" . strip_tags($lines[$line -1]) . '</strong></div>';
 	            } else {
 	                $context_lines[] = '<strong>' . ($i + 1) .
-	                    "</strong>\t" . $lines[$i];
+	                    "</strong>\t" . @$lines[$i];
 	            }
 	        }   
 	        $sourceContext = trim(join("<br />\n", $context_lines)) . "<br />\n";

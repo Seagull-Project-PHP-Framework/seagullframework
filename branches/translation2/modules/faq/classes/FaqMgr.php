@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | FaqMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -53,6 +53,8 @@ class FaqMgr extends SGL_Manager
     function FaqMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'faq';
         $this->pageTitle    = 'FAQ Manager';
         $this->template     = 'faqList.html';
@@ -128,7 +130,7 @@ class FaqMgr extends SGL_Manager
         $faq->setFrom($input->faq);
         $dbh = $faq->getDatabaseConnection();
         $faq->faq_id = $dbh->nextId('faq');
-        $faq->last_updated = $faq->date_created = SGL::getTime(true);
+        $faq->last_updated = $faq->date_created = SGL_Date::getTime(true);
         $faq->item_order = $maxItemOrder + 1;
         $success = $faq->insert();
         if ($success) {
@@ -157,7 +159,7 @@ class FaqMgr extends SGL_Manager
         $faq = & new DataObjects_Faq();
         $faq->get($input->faq->faq_id);
         $faq->setFrom($input->faq);
-        $faq->last_updated = SGL::getTime(true);
+        $faq->last_updated = SGL_Date::getTime(true);
         $success = $faq->update();
         if ($success) {
             SGL::raiseMsg('faq updated successfully');

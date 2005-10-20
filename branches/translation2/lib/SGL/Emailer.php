@@ -1,31 +1,42 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Copyright (c) 2005, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Emailer.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005 Demian Turner                                          |
-// |                                                                           |
-// | Author: Demian Turner <demian@phpkitchen.com>                             |
+// | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// |                                                                           |
-// | This library is free software; you can redistribute it and/or             |
-// | modify it under the terms of the GNU Library General Public               |
-// | License as published by the Free Software Foundation; either              |
-// | version 2 of the License, or (at your option) any later version.          |
-// |                                                                           |
-// | This library is distributed in the hope that it will be useful,           |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         |
-// | Library General Public License for more details.                          |
-// |                                                                           |
-// | You should have received a copy of the GNU Library General Public         |
-// | License along with this library; if not, write to the Free                |
-// | Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
-// |                                                                           |
-// +---------------------------------------------------------------------------+
-// $Id: Emailer.php,v 1.11 2005/06/13 21:44:20 demian Exp $
+// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
@@ -36,7 +47,6 @@ require_once 'Mail/mime.php';
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.11 $
- * @since   PHP 4.1
  */
 
 class SGL_Emailer
@@ -59,14 +69,20 @@ class SGL_Emailer
         'password'      => '',
         'siteUrl'       => SGL_BASE_URL,
         'siteName'      => '',
-        'crlf'          => ''
-    );
+        'crlf'          => '',
+        'filepath'      => '',
+        'mimetype'      => '',
+        'Cc'            => ''
+   );
 
     function SGL_Emailer($options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $siteName = $conf['site']['name'];
+
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+                
+        $siteName = $this->conf['site']['name'];
         $this->headerTemplate
             = "<html><head><title>$siteName</title></head></html><body>";
         $this->footerTemplate
@@ -99,6 +115,13 @@ class SGL_Emailer
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
+        if (!empty($this->options['filepath'])) {
+            $mime->addAttachment($this->options['filepath'],$this->options['mimetype']);
+        }
+        // Add Cc-address
+        if(!empty($this->options['Cc'])) {
+            $mime->addCc($this->options['Cc']);
+        }
         $body = $mime->get(array(
             'html_encoding' => '7bit',
             'html_charset' => $GLOBALS['_SGL']['CHARSET'],
@@ -114,12 +137,12 @@ class SGL_Emailer
     function factory()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $backend = '';
         $aParams = array();
 
         // setup Mail::factory backend & params using site config
-        switch ($conf['mta']['backend']) {
+        switch ($this->conf['mta']['backend']) {
             
         case '':
         case 'mail':
@@ -128,22 +151,26 @@ class SGL_Emailer
             
         case 'sendmail':
             $backend = 'sendmail';
-            $aParams['sendmail_path'] = $conf['mta']['sendmailPath'];
-            $aParams['sendmail_args'] = $conf['mta']['sendmailArgs'];
+            $aParams['sendmail_path'] = $this->conf['mta']['sendmailPath'];
+            $aParams['sendmail_args'] = $this->conf['mta']['sendmailArgs'];
             break;
             
         case 'smtp':
             $backend = 'smtp';
-            $aParams['host'] = (isset($conf['mta']['smtpHost']))
-                ? $conf['mta']['smtpHost']
+            if (isset($this->conf['mta']['smtpLocalHost'])) {
+                $aParams['localhost'] = $this->conf['mta']['smtpLocalHost'];
+            }
+
+            $aParams['host'] = (isset($this->conf['mta']['smtpHost']))
+                ? $this->conf['mta']['smtpHost']
                 : '127.0.0.1';
-            $aParams['port'] = (isset($conf['mta']['smtpPort']))
-                ? $conf['mta']['smtpPort']
+            $aParams['port'] = (isset($this->conf['mta']['smtpPort']))
+                ? $this->conf['mta']['smtpPort']
                 : 25;
-            if ($conf['mta']['smtpAuth']) {
-                $aParams['auth']     = $conf['mta']['smtpAuth'];
-                $aParams['username'] = $conf['mta']['smtpUsername'];
-                $aParams['password'] = $conf['mta']['smtpPassword'];
+            if ($this->conf['mta']['smtpAuth']) {
+                $aParams['auth']     = $this->conf['mta']['smtpAuth'];
+                $aParams['username'] = $this->conf['mta']['smtpUsername'];
+                $aParams['password'] = $this->conf['mta']['smtpPassword'];
             } else {
                 $aParams['auth'] = false;
             }

@@ -1,32 +1,35 @@
+<!-- Logo and header -->
 <div id="header">
     <a id="logo" href="{webRoot}" title="{translate(#Home#)}">
     {if:showLogo}
     <img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} Logo" />
     </a>
     {else:}
-    <h1>{siteName}</h1>
+    {siteName}
     </a>
     {end:}
 
     <div id="login">
     {if:loggedOnUser}
-        <div id="userInfo">{translate(#currently_logged_on_as#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="User profile">{loggedOnUser}</a>
-        &nbsp;{translate(#session started at#)} {loggedOnSince}</div>
+        {translate(#currently_logged_on_as#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="User profile">{loggedOnUser}</a>
+        &nbsp;{translate(#session started at#)} {loggedOnSince}
         <a id="logAction" href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a>
     {else:}
-        <div id="userInfo">{translate(#currently_logged_on_as#)}: <span class="guest">{translate(#guest#)}</span></div>
+        {translate(#currently_logged_on_as#)}: <strong>{translate(#guest#)}</strong>
         <a id="logAction" href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a>
     {end:}
-    </div>
-    {if:GLOBALS[_SGL][CONF][debug][showBugReporterLink]}
-    <a id="bugReporter" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
-        <img src="{webRoot}/themes/{theme}/images/bug.png" alt="{translate(#send bug report#)}" />
-    </a>
+    {if:showBugReporter}
+        <a id="bugReporter" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
+            <img src="{webRoot}/themes/{theme}/images/bug.gif" alt="{translate(#send bug report#)}" />
+        </a>
     {end:}
+    </div>
 </div>
 
-<div id="nav" flexy:if="!isVerticalNav(GLOBALS[_SGL][CONF][navigation][stylesheet])">
+<!-- tab navigation -->
+<div id="nav" flexy:if="!isVerticalNav(conf[navigation][stylesheet])">
     {navigation:h}
 </div>
 
+<!-- Main layout -->
 <div id="container">

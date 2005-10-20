@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.23 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: Remote.php,v 1.74 2005/09/11 18:00:20 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -40,7 +40,7 @@ require_once 'PEAR/Config.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -91,8 +91,13 @@ class PEAR_Remote extends PEAR
         if (!$fp) {
             return null;
         }
-        $content  = fread($fp, filesize($filename));
-        fclose($fp);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $content = file_get_contents($filename);
+        } else {
+            $content  = fread($fp, filesize($filename));
+            fclose($fp);
+        }
         $result   = array(
             'age'        => time() - filemtime($filename),
             'lastChange' => filemtime($filename),
@@ -183,10 +188,10 @@ class PEAR_Remote extends PEAR
                 $this->saveCache($_args, $result);
             }
             return $result;
+        } elseif (!@include_once 'XML/RPC.php') {
+            return $this->raiseError("For this remote PEAR operation you need to load the xmlrpc extension or install XML_RPC");
         }
-        if (!@include_once 'XML/RPC.php') {
-            return $this->raiseError("For this remote PEAR operation you need to install the XML_RPC package");
-        }
+
         array_shift($args);
         $username = $this->config->get('username');
         $password = $this->config->get('password');

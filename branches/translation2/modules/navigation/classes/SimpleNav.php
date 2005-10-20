@@ -46,21 +46,10 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  AJ Tarachanowicz <ajt@localhype.net> 
  * @version $Revision: 1.43 $
- * @since   PHP 4.1
  */
 
 class SimpleNav
 {
-    /**
-     * Array of arrays, each representing a section node from the seagull.section
-     * table. Have to fetch each as array rather than object for output to menu to
-     * work properly.
-     *
-     * @access  private
-     * @var     array
-     */
-    var $_aSectionNodes = array();
-
     /**
      * www root
      *
@@ -120,16 +109,20 @@ class SimpleNav
      * @var     array
      */
     var $_aTranslations = array();
-    
-    function SimpleNav()
+
+    function SimpleNav($input)
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
         
         //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;
+        $this->input = $input;
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+        $this->dbh = & SGL_DB::singleton();
     }
 
     /**
@@ -141,12 +134,20 @@ class SimpleNav
      * @return string
      * @access  public
      */
-    function render(&$sectionId, &$html)
+    function render()
     {
         $cache = & SGL::cacheSingleton();
-        //  get a unique token by considering startfile, group ID, and if page
+        
+        //  get a unique token by considering url, group ID and if page
         //  is static or not
-        $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
+        //FIXME: bad hack
+        if (isset($this->input->data)) {
+            $url = $this->input->data->get('currentUrl');    
+        } else {
+            $url = $this->input->get('currentUrl');
+        }
+        
+        $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
             $aUnserialized = unserialize($data);
             $sectionId = $aUnserialized['sectionId'];
@@ -156,23 +157,27 @@ class SimpleNav
             //  fetch current lang
             $lang = SGL_Translation::getLangID();
             
-            //  retreive nav translation
-            $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);
-                                    
-            $this->_aSectionNodes = $this->getTabsByRid();
+            //  retrieve nav translation
+            $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);                                   
+
+            //  retieve nav tabs
+            $aSectionNodes = $this->getSectionsByRoleId();
+            
             $sectionId = $this->_currentSectionId;
-            $html = $this->_toHtml($this->_aSectionNodes);
+            $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
             $cache->save(serialize($aNav), $cacheId, 'nav');
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
+        return array($sectionId, $html);
+        
     }
 
     /**
-     * Gets section nodes (that are enabled and permitted to user's _rid), determines
-     * _currentSectionId. Returns array of section nodes nested with kids inside parents.
+     * Returns an array of section objects that are enabled with perms based 
+     * on the user's role id.  Section objects are nested with children inside parents.
      *
-     * NB Recursive
+     * Also determines _currentSectionId. NB Recursive.
      *
      * @access  public
      * @param   int $sectionId
@@ -180,16 +185,14 @@ class SimpleNav
      * @author  Andy Crain <apcrain@fuse.net>
      * @author  Demian Turner <demian@phpkitchen.com>
      */
-    function getTabsByRid($sectionId = 0)
+    function getSectionsByRoleId($sectionId = 0)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
         $query = "
-            SELECT * FROM {$conf['table']['section']}
+            SELECT * FROM {$this->conf['table']['section']}
             WHERE parent_id = " . $sectionId . '
             ORDER BY order_id';
 
-        $result = $dbh->query($query);
+        $result = $this->dbh->query($query);
         if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
                 please delete the config file from the var directory and try the install again', 
@@ -199,21 +202,20 @@ class SimpleNav
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-
-        $aBaseUri = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
-
-        //  shift off frontScriptName element
-        array_shift($aBaseUri);
+        
+        $reg = &SGL_Registry::singleton();
+        $url = $reg->getCurrentUrl();
+        $aQueryData = $url->getQueryData();
 
         // replace +'s in array elements with spaces
-        $aBaseUri = array_map(create_function('$a', 'return str_replace("+", " ", $a);'), 
-            $aBaseUri);
+        $aQueryData = array_map(create_function('$a', 'return str_replace("+", " ", $a);'), 
+            $aQueryData);
         
         //  temporarily remove session info
-        SGL_Url::removeSessionInfo($aBaseUri);
+        SGL_Url::removeSessionInfo($aQueryData);
 
         //  return to string
-        $baseUri = implode('/', $aBaseUri);
+        $baseUri = implode('/', $aQueryData);
          
         //  find current section  
         $aSectionNodes = array();
@@ -229,6 +231,12 @@ class SimpleNav
             $section->children = false;
             $section->isCurrent = false;
             $section->childIsCurrent = false;
+            
+            //  if we're scraping a wikipage, set the title in the request
+            if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
+                $req = & SGL_Request::singleton();
+                $req->set('articleTitle', $section->title);
+            }
 
             //  retreive translation
             if (is_numeric($section->title)) {
@@ -238,14 +246,14 @@ class SimpleNav
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
             if ($section->right_id - $section->left_id > 1) {
-                $section->children = $this->getTabsByRid($section->section_id);
+                $section->children = $this->getSectionsByRoleId($section->section_id);
                 if (in_array($section->section_id, $this->_aParentsOfCurrentPage)) {
                     $section->childIsCurrent = true;
                 }
             }
             //  first check if querystring is a simplified version of section name,
             //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
-            if (SGL_Url::isSimplified($baseUri, $section->resource_uri)) {
+            if (SGL_Inflector::isUrlSimplified($baseUri, $section->resource_uri)) {
 
                 //  module name and manager name are identical, temporarily unshorten
                 //  querystring name so match can be possible
@@ -290,9 +298,9 @@ class SimpleNav
                 $this->_aParentsOfCurrentPage[] = $section->parent_id;
             } elseif (empty($section->resource_uri)) {
 
-                if (    $baseUri == $conf['site']['defaultModule']
-                    || ($baseUri == $conf['site']['defaultModule'] . '/' .
-                                    $conf['site']['defaultManager'])) {
+                if (    $baseUri == $this->conf['site']['defaultModule']
+                    || ($baseUri == $this->conf['site']['defaultModule'] . '/' .
+                                    $this->conf['site']['defaultManager'])) {
                     $section->isCurrent = true;
                     $this->_currentSectionId = $section->section_id;
                     $exactMatch = true;
@@ -353,11 +361,10 @@ class SimpleNav
     function _toHtml($sectionNodes)
     {
         $listItems = '';
-        $conf = & $GLOBALS['_SGL']['CONF'];
         foreach ($sectionNodes as $section) {
             $liAtts = '';
             if ($section->isCurrent) {
-                $liAtts      = ' class="current"';
+                $liAtts = ' class="current"';
             }
             //  add static flag if necessary
             $isStatic = ($section->is_static) ? 'staticId/' . $section->section_id . '/': '';
@@ -393,7 +400,7 @@ class SimpleNav
             if (stristr($url, '#')) {
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
-                $anchorOffset = (strpos($anchorFragment, '&')) + 1;
+                $anchorOffset = (strpos($anchorFragment, '&amp;')) + 1;
                 $anchorEnd = $anchorStart + $anchorOffset; 
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 
@@ -412,6 +419,26 @@ class SimpleNav
         }
         $output = (isset($listItems)) ? "\n<ul>" . $listItems . "</ul>\n":false;
         return $output;
+    }
+    
+    /**
+     * Returns section name give the section id.
+     *
+     * @return string
+     */
+    function getCurrentSectionName()
+    {
+        if (!$this->_currentSectionId) {
+            $sectionName = $this->input->data->pageTitle;
+        } else {
+            $query = " 
+                SELECT  title
+                FROM    {$this->conf['table']['section']}
+                WHERE   section_id = " . $this->_currentSectionId;
+    
+            $sectionName = $this->dbh->getOne($query);
+        }
+        return $sectionName;
     }
 
     /**

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Command.php,v 1.23 2005/06/23 15:56:32 demian Exp $
+ * @version    CVS: $Id: Command.php,v 1.34 2005/08/22 04:15:25 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -93,7 +93,7 @@ $GLOBALS['_PEAR_Command_objects'] = array();
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -112,7 +112,7 @@ class PEAR_Command
      * @access public
      * @static
      */
-    function factory($command, &$config)
+    function &factory($command, &$config)
     {
         if (empty($GLOBALS['_PEAR_Command_commandlist'])) {
             PEAR_Command::registerCommands();
@@ -121,14 +121,16 @@ class PEAR_Command
             $command = $GLOBALS['_PEAR_Command_shortcuts'][$command];
         }
         if (!isset($GLOBALS['_PEAR_Command_commandlist'][$command])) {
-            return PEAR::raiseError("unknown command `$command'");
+            $a = PEAR::raiseError("unknown command `$command'");
+            return $a;
         }
         $class = $GLOBALS['_PEAR_Command_commandlist'][$command];
         if (!class_exists($class)) {
             require_once $GLOBALS['_PEAR_Command_objects'][$class];
         }
         if (!class_exists($class)) {
-            return PEAR::raiseError("unknown command `$command'");
+            $a = PEAR::raiseError("unknown command `$command'");
+            return $a;
         }
         $ui =& PEAR_Command::getFrontendObject();
         $obj = &new $class($ui, $config);
@@ -137,7 +139,7 @@ class PEAR_Command
 
     // }}}
     // {{{ & getObject()
-    function getObject($command)
+    function &getObject($command)
     {
         $class = $GLOBALS['_PEAR_Command_commandlist'][$command];
         if (!class_exists($class)) {

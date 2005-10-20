@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -44,35 +44,9 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  */
 class SGL_Util
 {
-    function getUserOs()
-    {
-        //  detect OS
-        if (!empty($_SERVER['HTTP_USER_AGENT']) and !defined('SGL_USR_OS')) {
-            if (strstr($_SERVER['HTTP_USER_AGENT'], 'Win')) {
-                define('SGL_USR_OS', 'Win');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
-                define('SGL_USR_OS', 'Mac');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Linux')) {
-                define('SGL_USR_OS', 'Linux');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Unix')) {
-                define('SGL_USR_OS', 'Unix');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'OS/2')) {
-                define('SGL_USR_OS', 'OS/2');
-            } else {
-                define('SGL_USR_OS', 'Other');
-            }
-        } else {
-            // Could be that the file is being run natively (not through a web server)
-			if (!defined('SGL_USR_OS')) {
-            	define('SGL_USR_OS', 'None');
-			}
-        }
-    }
-
     // +---------------------------------------+
     // | Column-sorting methods                |
     // +---------------------------------------+
@@ -154,17 +128,19 @@ class SGL_Util
         $aFiles = array();
         $theme = $_SESSION['aPrefs']['theme'];
         //  get array of files in /www/css/
-        if ($fh = opendir(SGL_WEB_ROOT . "/themes/$theme/css/")) {
+        if ($fh = opendir(SGL_THEME_DIR . "/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {
 
                 //  remove unwanted dir elements
                 if ($file == '.' || $file == '..' || $file == 'CVS') {
                     continue;
                 }
-                //  and anything without css extension
-                if (($ext = end(explode('.', $file))) != 'css') {
+                //  and anything without .nav.php extension
+                $ext = substr($file, -8);
+                if ($ext != '.nav.php') {
                     continue;
                 }
+
                 $filename = substr($file, 0, strpos($file, '.'));
 
                 //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
@@ -222,7 +198,7 @@ class SGL_Util
         //  match files with php extension
         $classDir = $moduleDir . '/classes';
         $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME, 
-                create_function('$a', 'return preg_match("/.*Mgr\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Mgr\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Mgr/", $a, $matches); $a =  $matches[0]; return true;'));
@@ -252,8 +228,11 @@ class SGL_Util
         $filePath = $moduleDir . '/classes/' . $managerFileName;
         
         if (file_exists($filePath)) {
-            include_once($filePath);
-            $className = substr(array_pop(explode('/', $filePath)), 0, -4);
+            require_once $filePath;
+            $aElems = explode('/', $filePath);
+            $last = array_pop($aElems);
+            $className = substr($last, 0, -4);
+            
             $obj = new $className(); // extract classname
             $vars = get_object_vars($obj);
             $actions = array_keys($vars['_aActionsMapping']);
@@ -276,7 +255,7 @@ class SGL_Util
 
         //  match files with *Nav.php format
         $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE, 
-                create_function('$a', 'return preg_match("/.*Nav\.php/", $a);'));
+                create_function('$a', 'return preg_match("/.*Nav\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));
@@ -327,23 +306,6 @@ class SGL_Util
             $aRet[$oFile->name] = $oFile->name;
         }
         return $aRet;
-    }
-    
-    /**
-     * Ini file protection.
-     *
-     * By giving ini files a php extension, and inserting some PHP die() code,
-     * we can improve security in situations where browsers might be able to
-     * read them.  Thanks to Georg Gell for the idea.
-     *
-     * @param unknown_type $file
-     */
-    function makeIniUnreadable($file)
-    {
-        $iniFle = file($file);
-        $string = ';<?php die("Eat dust"); ?>' . "\n";
-        array_unshift($iniFle, $string);
-        file_put_contents($file, implode("", $iniFle));
     }
 }
 ?>

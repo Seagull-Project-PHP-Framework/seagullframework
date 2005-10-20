@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | String.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -65,7 +65,9 @@ class SGL_String
     function censor($text)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         $editedText = $text;
         if ($conf['censor']['mode'] != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
@@ -126,14 +128,14 @@ class SGL_String
         return $crlf;
     }
 
-    function trimWhitespace(&$var)
+    function trimWhitespace($var)
     {
         if (!is_array($var)) {
-            $var = trim($var);
+            $clean = trim($var);
         } else {
-            array_walk($var, array('SGL_String', 'trimWhitespace'));
+            $clean = array_map(array('SGL_String', 'trimWhitespace'), $var);
         }
-        return $var;
+        return $clean;
     }
 
     /**
@@ -170,25 +172,25 @@ class SGL_String
      * @param   string $var  The string to clean.
      * @return  string       $cleaned result.
      */
-    function clean(&$var)
+    function clean($var)
     {
         if (isset($var)) {
             if (!is_array($var)) {
-                $var = strip_tags($var);
+                $clean = strip_tags($var);
             } else {
-                array_walk($var, array('SGL_String', 'clean'));
+                $clean = array_map(array('SGL_String', 'clean'), $var);
             }
         }
-        SGL_String::trimWhitespace($var);
+        return SGL_String::trimWhitespace($clean);
     }
 
-    function removeJs(&$html)
+    function removeJs($html)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $search = "/<script[^>]*?>.*?<\/script>/i";
+        $search = "/<script[^>]*?>.*?<\/script\s*>/i";
         $replace = '';
         $html = preg_replace($search, $replace, $html);
-        SGL_String::trimWhitespace($html);
+        return SGL_String::trimWhitespace($html);
     }
 
     /**
@@ -209,7 +211,10 @@ class SGL_String
     function tidy($html, $logErrors = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         if (       !$conf['site']['tidyhtml']
                 || !function_exists('tidy_parse_string')
                 || SGL::isPhp5()) { // tidy 2 in PHP5 has different API
@@ -277,10 +282,11 @@ class SGL_String
 
     /**
      * Primarily used for obfuscating email addresses to prevent spam
-     * harvesting.
+     * harvesting. Since it is URL-encoded, this can be used only in the href
+     * part of a <a> tag (mailto: scheme).
      *
-     * @param string $str
-     * @return string
+     * @param string $str String to encode
+     * @return string $encoded Encoded string
      */
     function obfuscate($str)
     {
@@ -289,6 +295,82 @@ class SGL_String
         $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
         return $encoded;
     }
+
+    /**
+     * Encode a given character to a decimal or hexadecimal HTML entity or
+     * to an hexadecimal URL-encoded symbol.
+     *
+     * @param string $char Char to encode
+     * @param mixed $encoding 1 or D for decimal entity, 2 or H for hexa entity,
+     *        3 or U for URL-encoding,
+     *        R for a random choice of any of the above,
+     *        E for a random choice of any of the HTML entities.
+     * @return string $encoded Encoded character (or raw char if unknown encoding)
+     *
+     * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+     */
+    function char2entity($char, $encoding = 'H') 
+    {
+        $pad = 1;
+        if ($encoding == 'R' || $encoding == 'E') {
+            // Use random padding with zeroes
+            // Unicode stops at 0x10FFFF, ie. at 1114111 (7 digits)
+            $pad = rand(2, 7);
+            if ($encoding == 'R') {
+                // Full random
+                $encoding = rand(1, 3);
+            } else {
+                // Random only to entity
+                $encoding = rand(1, 2);
+            }
+        }
+        $asc = ord($char);
+
+        switch ($encoding) {
+        case 1: // Decimal entity
+        case 'D':
+            return sprintf("&#%0{$pad}d;", $asc);
+            break;
+        case 2: // Hexadecimal entity
+        case 'H':
+            return sprintf("&#x%0{$pad}X;", $asc);
+            break;
+        case 3: // URL-encoding
+        case 'U':
+            return sprintf("%%%02X", $asc);
+            break;
+        default:
+            return $char;
+        }
+    }
+
+    /**
+     * Primarily used for obfuscating email addresses to prevent spam
+     * harvesting.
+     *
+     * @param string $str String to encode
+     * @param bool $bForLink true if used in the href part of a <a> tag, false to be used in HTML
+     * @return string $encoded Encoded string
+     *
+     * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+     */
+    function obfuscate2($str, $bForLink = true)
+    {
+        if ($bForLink) {
+            $e = "'R'";
+        } else {
+            $e = "'E'";
+        }
+        $encoded = preg_replace_callback(
+                '|([-?=@._emailto:])|',	// Mostly arbitrary, to mix encoded and unencoded chars...
+                create_function(
+                        '$matches',
+                        "return char2entity(\$matches[0], $e);"
+                ),
+                $str
+        );
+        return $encoded;
+     }
 
     /**
      * Returns a shortened version of text string.
@@ -307,20 +389,21 @@ class SGL_String
          }
          return $str;
     }
-    
+
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
      *
-     * @param string $str
-     * @param integer $lines
-     * @param string $appendString
-     * @return string
+     * @param   string $str
+     * @param   integer $lines
+     * @param   string $appendString
+     * @return  string
+     * @todo    needs to handle orphan <b> and <strong> tags
      */
     function summariseHtml($str, $lines=10)
     {
         $aLines = explode("\n", $str);
         $aSegment = array_slice($aLines, 0, $lines);
-        
+
         //  close tags like <ul> so page layout doesn't break
         $unclosedListTags = 0;
         $aMatches = array();
@@ -341,32 +424,36 @@ class SGL_String
     }
 
     /**
-     * Converts bytes to Kb or MB as appropriate.
+     * Converts bytes to KB/MB/GB as appropriate.
      *
      * @access  public
      * @param   int $bytes
-     * @return  int kb/MB
+     * @return  int B/KB/MB/GB
      */
-    function formatBytes($size)
+     function formatBytes($size, $decimals = 1, $lang = '--')
     {
-        $sizeList = array( 
-           '1073741824' => 'GB',
-           '1048576'    => 'MB',
-           '1024'       => 'kb',
-           '0'          => 'b'
-           );
-
-        foreach ($sizeList as $bytes => $unit) {
-            if ($size > $bytes) {
+        $aSizeList = array(1073741824, 1048576, 1024, 0);
+		// Should check if string is in an array, other languages may use octets
+        if ($lang == 'FR') {
+            $aSizeNameList = array('&nbsp;Go', '&nbsp;Mo', '&nbsp;Ko', '&nbsp;octets');
+            // Note: should also use French decimal separator (coma)
+        } else {
+            $aSizeNameList = array('GB', 'MB', 'KB', 'B');
+        }
+        $i = 0;
+        foreach ($aSizeList as $bytes) {
+            if ($size >= $bytes) {
                 if ($bytes == 0) {
                     // size 0 override
                     $bytes = 1;
+                    $decimals = 0;
                 }
-
-                $format = "(%.1f $unit)";
-                return sprintf($format, $size / $bytes);                
+                $formated = sprintf("%.{$decimals}f{$aSizeNameList[$i]}", $size / $bytes);
+                break;
             }
+            $i++;
         }
+        return $formated;
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
@@ -375,23 +462,27 @@ class SGL_String
          $s = SGL_String::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
          $s = strip_tags($s);                       ## remove HTML tags.
-         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
-         $s = preg_replace('![^\w\s]!','',$s);      ## remove non-word/space chars.
-         $s = preg_replace('!\s+!','_',$s);         ## change space chars to underscores.
+         // Note that &nbsp (for example) is legal in HTML 4, ie. semi-colon is optional if it is followed
+         // by a non-alphanumeric character (eg. space, tag...).
+//         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
+         $s = preg_replace('!&#?[A-Za-z0-9]{1,7};?!', '', $s);    ## remove HTML entities.
+         $s = preg_replace('![^\w\s]!', '', $s);      ## remove non-word/space chars.
+         $s = preg_replace('!\s+!', '_', $s);         ## change space chars to underscores.
          return $s;
     }
 
     function convertHighAscii($s)
     {
-         $HighASCII = array(
+        // Seems to be for Latin-1 (ISO-8859-1) and quite limited (no ae/oe, no y:/Y:, etc.)
+         $aHighAscii = array(
            "!\xc0!" => 'A',    # A`
            "!\xe0!" => 'a',    # a`
            "!\xc1!" => 'A',    # A'
            "!\xe1!" => 'a',    # a'
            "!\xc2!" => 'A',    # A^
            "!\xe2!" => 'a',    # a^
-           "!\xc4!" => 'Ae',   # A:
-           "!\xe4!" => 'ae',   # a:
+           "!\xc4!" => 'A',   # A:
+           "!\xe4!" => 'a',   # a:
            "!\xc3!" => 'A',    # A~
            "!\xe3!" => 'a',    # a~
            "!\xc8!" => 'E',    # E`
@@ -400,47 +491,81 @@ class SGL_String
            "!\xe9!" => 'e',    # e'
            "!\xca!" => 'E',    # E^
            "!\xea!" => 'e',    # e^
-           "!\xcb!" => 'Ee',   # E:
-           "!\xeb!" => 'ee',   # e:
+           "!\xcb!" => 'E',   # E:
+           "!\xeb!" => 'e',   # e:
            "!\xcc!" => 'I',    # I`
            "!\xec!" => 'i',    # i`
            "!\xcd!" => 'I',    # I'
            "!\xed!" => 'i',    # i'
            "!\xce!" => 'I',    # I^
            "!\xee!" => 'i',    # i^
-           "!\xcf!" => 'Ie',   # I:
-           "!\xef!" => 'ie',   # i:
+           "!\xcf!" => 'I',   # I:
+           "!\xef!" => 'i',   # i:
            "!\xd2!" => 'O',    # O`
            "!\xf2!" => 'o',    # o`
            "!\xd3!" => 'O',    # O'
            "!\xf3!" => 'o',    # o'
            "!\xd4!" => 'O',    # O^
            "!\xf4!" => 'o',    # o^
-           "!\xd6!" => 'Oe',   # O:
-           "!\xf6!" => 'oe',   # o:
+           "!\xd6!" => 'O',   # O:
+           "!\xf6!" => 'o',   # o:
            "!\xd5!" => 'O',    # O~
            "!\xf5!" => 'o',    # o~
-           "!\xd8!" => 'Oe',   # O/
-           "!\xf8!" => 'oe',   # o/
+           "!\xd8!" => 'O',   # O/
+           "!\xf8!" => 'o',   # o/
            "!\xd9!" => 'U',    # U`
            "!\xf9!" => 'u',    # u`
            "!\xda!" => 'U',    # U'
            "!\xfa!" => 'u',    # u'
            "!\xdb!" => 'U',    # U^
            "!\xfb!" => 'u',    # u^
-           "!\xdc!" => 'Ue',   # U:
-           "!\xfc!" => 'ue',   # u:
+           "!\xdc!" => 'U',   # U:
+           "!\xfc!" => 'u',   # u:
            "!\xc7!" => 'C',    # ,C
            "!\xe7!" => 'c',    # ,c
            "!\xd1!" => 'N',    # N~
            "!\xf1!" => 'n',    # n~
            "!\xdf!" => 'ss'
          );
-         $find = array_keys($HighASCII);
-         $replace = array_values($HighASCII);
-         $s = preg_replace($find,$replace,$s);
+         $find = array_keys($aHighAscii);
+         $replace = array_values($aHighAscii);
+         $s = preg_replace($find, $replace, $s);
          return $s;
     }
+    
+    /**
+     * Removes chars that are illegal in ini files.
+     *
+     * @param string $string
+     * @return string
+     */
+    function stripIniFileIllegalChars($string)
+    {
+        return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
+    }
+}
+
+/**
+ * Array manipulation methods.
+ *
+ */
+class SGL_Array
+{
+    /**
+     * Strips 'empty' elements from supplied array.
+     *
+     * 'Empty' can be a null, empty string, false or empty array.
+     *
+     * @param array $elem
+     * @return array
+     */
+    function removeBlanks($elem)
+    {
+        if (is_array($elem)) {
+            $clean = array_filter($elem);
+        }
+        return $clean;
+    }    
 }
 
 /**
@@ -449,10 +574,32 @@ class SGL_String
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_Date
 {
+    /**
+     * Returns current time in YYYY-MM-DD HH:MM:SS format.
+     * 
+     * GMT format is best for logging system events, otherwise locale offset
+     * will be most helpful to users.
+     * 
+     * @access public
+     * @static
+     * @param boolean $gmt       is time GMT or locale offset
+     * @return string $instance  formatted current time
+     * @todo factor out Cache and Lang methods into their own objects
+     */
+    function getTime($gmt = false)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        static $instance;
+        if (!isset($instance)) {
+            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
+                                : strftime("%Y-%m-%d %H:%M:%S", time());
+        }
+        return $instance;
+    }
+        
     /**
      * Converts date array into MySQL datetime format.
      *
@@ -471,7 +618,11 @@ class SGL_Date
             $hour   = (array_key_exists('hour',$aDate))? $aDate['hour'] : '00';
             $minute = (array_key_exists('minute',$aDate))? $aDate['minute'] : '00';
             $second = (array_key_exists('second',$aDate))? $aDate['second'] : '00';
-            return $year . '-' . $month . '-' . $day .' ' . $hour . ':' . $minute . ':' . $second;
+            
+            if( empty($month) && empty($year) && empty($day) )
+                return null;
+            else
+                return $year . '-' . $month . '-' . $day .' ' . $hour . ':' . $minute . ':' . $second;
         }
     }
 
@@ -512,10 +663,9 @@ class SGL_Date
             require_once 'Date.php';
             $date = & new Date($date);
             if ($_SESSION['aPrefs']['dateFormat'] == 'FR') {
-                $output = $date->format('%d %B, %Y %H:%M');
-            }
-            // Brazilian date format
-            elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+                $output = $date->format('%d %B %Y, %H:%M');
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+				// Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
             } else {
                 //  else UK and US
@@ -529,25 +679,31 @@ class SGL_Date
     }
 
     /**
-     * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into dd.mm.yyyy.
+     * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into locale dependent form.
      *
      * @access  public
      * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
-     * @return  string  $output user-friendly format (european)
+     * @return  string  $output user-friendly format (locale dependent)
      */
     function format($date)
     {
         if (is_string($date)) {
             include_once 'Date.php';
             $date = & new Date($date);
+			// Neither elegant nor efficient way of doing that
+			// (what if we have 30 formats/locales?).
+			// We should move that to a language/locale dependent file.
             if ($_SESSION['aPrefs']['dateFormat'] == 'UK') {
                 $output = $date->format('%d.%m.%Y');
-            // Brazilian date format
-            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR'
+                     || $_SESSION['aPrefs']['dateFormat'] == 'FR') {
+				// Brazilian/French date format
                 $output = $date->format('%d/%m/%Y');
-            } else {
-                //  else display US format, MM.DD.YYYY
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
                 $output = $date->format('%m.%d.%Y');
+            } else {
+                //  else display ISO (international, unambiguous) format, YYYY-MM-DD
+                $output = $date->format('%Y-%m-%d');
             }
             return $output;
         } else {
@@ -564,12 +720,15 @@ class SGL_Date
      * @return  string  $month_options  select month options
      * @see     showDateSelector()
      */
-    function getMonthFormOptions($selected = '')
+    function getMonthFormOptions($selected = '', $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aMonths = SGL_String::translate('aMonths', false, true);
+                $aMonths = SGL_String::translate('aMonths', false, true);
         $monthOptions = '';
-        if (empty($selected)) {
+        if( $noExpire )
+            $monthOptions.="<option value=\"\"> - - </option>\n";
+            
+        if (empty($selected) && $selected != null) {
             $selected = date('m',time());
         }
         for ($i = 1; $i <= 12; $i++) {
@@ -595,10 +754,13 @@ class SGL_Date
      * @return  string  $day_options    select day options
      * @see     showDateSelector()
      */
-    function getDayFormOptions($selected = '')
+    function getDayFormOptions($selected = '', $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $day_options = '';
+        if( $noExpire )
+            $day_options.="<option value=\"\"> - - </option>\n";
+       
         for ($i = 1; $i <= 31; $i++) {
             if ($i < 10) {
                 $dval = '0' . $i;
@@ -624,10 +786,14 @@ class SGL_Date
      * @return  string  $year_options   select year options
      * @see     showDateSelector()
      */
-    function getYearFormOptions($selected = '', $asc = true, $number = 5)
+    function getYearFormOptions($selected = '', $asc = true, $number = 5, $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $year_options = '';
+        if( $noExpire )
+            $year_options.="<option value=\"\"> - - </option>\n";
+        
+        
         $cur_year = date('Y',time());
         $start_year = $cur_year;
         if (!empty($selected)) {
@@ -663,14 +829,17 @@ class SGL_Date
      * @return  string  $hour_options   select hour options
      * @see     showDateSelector()
      */
-    function getHourFormOptions($selected = '')
+    function getHourFormOptions($selected = '', $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $hour_options = '';
+        if( $noExpire )
+            $hour_options.="<option value=\"\"> - - </option>\n";
+
         for ($i = 0; $i <= 23; $i++) {
             $hval = sprintf("%02d",  $i);
             $hour_options .= "\n<option value=\"" . $hval . '" ';
-            if ($selected == $i) {
+            if ($selected == $i && $selected!="" ) {
                 $hour_options .= 'selected="selected"';
             }
             $hour_options .= '>' . $hval . '</option>';
@@ -686,10 +855,13 @@ class SGL_Date
      * @return  string  $minute_options select minute/second options
      * @see     showDateSelector()
      */
-    function getMinSecOptions($selected = '')
+    function getMinSecOptions($selected = '', $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $minute_options = '';
+        if( $noExpire )
+            $minute_options.="<option value=\"\"> - - </option>\n";
+
         for ($i = 0; $i <= 59; $i++) {
             if ($i < 10) {
                 $mval = '0' . $i;
@@ -697,7 +869,7 @@ class SGL_Date
                 $mval = $i;
             }
             $minute_options .= "\n<option value=\"" . $mval . '" ';
-            if ($selected == $i) {
+            if ($selected == $i && $selected!="" ) {
                 $minute_options .= 'selected="SELECTED"';
             }
             $minute_options .= '>' . $mval . '</option>';
@@ -732,22 +904,27 @@ class SGL_Date
      * @param   bool    $asc
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
-     */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
+*/
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $html = '';
-        $html .= "\n<select name='" . $sFormName . "[month]'>" . SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
-        $html .= "\n<select name='" . $sFormName . "[day]'>" . SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
-        $html .= "\n<select name='" . $sFormName . "[year]'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years) . '</select>';
+        $html .= "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month'], $noExpire) . '</select> / ';
+        $html .= "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day'], $noExpire) . '</select> / ';
+        $html .= "\n<select name='" . $sFormName . "[year]' id='".$sFormName."_year'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years, $noExpire) . '</select>';
         if ($bShowTime) {
             $html .= '&nbsp;&nbsp; ';
             $html .= SGL_String::translate('at time');
             $html .= ' &nbsp;&nbsp;';
-            $html .= "\n<select name='" . $sFormName . "[hour]'>" . SGL_Date::getHourFormOptions($aDate['hour']) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[minute]'>" . SGL_Date::getMinSecOptions($aDate['minute']) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[second]'>" . SGL_Date::getMinSecOptions($aDate['second']) . '</select>';
+            $html .= "\n<select name='" . $sFormName . "[hour]'  id='".$sFormName."_hour'>" . SGL_Date::getHourFormOptions($aDate['hour'], $noExpire) . '</select> : ';
+            $html .= "\n<select name='" . $sFormName . "[minute]' id='".$sFormName."_minute'>" . SGL_Date::getMinSecOptions($aDate['minute'], $noExpire) . '</select> : ';
+            $html .= "\n<select name='" . $sFormName . "[second]' id='".$sFormName."_second'>" . SGL_Date::getMinSecOptions($aDate['second'], $noExpire) . '</select>';
         }
+        if ($noExpire) {
+            $checked = ($aDate == null) ? 'checked' : '';
+            $html.='<input type="checkbox" id="'.$sFormName.'_no_expire" onClick="time_select_reset(\''.$sFormName.'\');" '.$checked.'> '.SGL_Output::translate('No expire');
+        }
+        
         return $html;
     }
 }

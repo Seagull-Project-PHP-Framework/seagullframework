@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Boris Kerbikov, Tech Data Solutions                   |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | GuestbookMgr.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -54,6 +54,8 @@ class GuestbookMgr extends SGL_Manager
     function GuestbookMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'guestbook';
         $this->pageTitle    = 'Guestbook Manager';
         $this->template     = 'guestbookList.html';
@@ -113,14 +115,13 @@ class GuestbookMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         //  insert record
         $newEntry = & new DataObjects_Guestbook();
         $newEntry->setFrom($input->guestbook);
         $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->guestbook_id = $dbh->nextId($conf['table']['guestbook']);
-        $newEntry->date_created = SGL::getTime(true);
+        $newEntry->guestbook_id = $dbh->nextId($this->conf['table']['guestbook']);
+        $newEntry->date_created = SGL_Date::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
             SGL::raiseMsg('new guestbook entry saved successfully');
@@ -133,14 +134,11 @@ class GuestbookMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
                 
         $output->pageTitle = 'Welcome to our Guestbook';
         $query = "  SELECT
                         guestbook_id, date_created, name, email, message
-                    FROM {$conf['table']['guestbook']}
+                    FROM {$this->conf['table']['guestbook']}
                     ORDER BY guestbook_id DESC";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -150,7 +148,7 @@ class GuestbookMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;

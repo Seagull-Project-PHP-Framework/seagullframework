@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockMgr.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -56,6 +56,8 @@ class BlockMgr extends SGL_Manager
     function BlockMgr() 
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'block';
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
@@ -106,11 +108,13 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         $output->template = 'blockFormdynamic.html';
         $output->mode = 'New block';
         $output->wysiwyg = true;
-
+        
+        //  override autonaming for textarea element so 'block' hash can be preserved
+        $output->wysiwygElementName = 'block[content]';
+        
         // Build form
         $myForm = & new BlockFormDynamic('addDynamic');
         $output->form = $myForm->init();
@@ -126,7 +130,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = "SELECT MAX(blk_order) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
+                $query = "SELECT MAX(blk_order) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 $block->insert(); // This takes into account block assignments as well
@@ -144,7 +148,6 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];        
         $output->template = 'blockForm.html';
         $output->mode = 'New block';
 
@@ -163,7 +166,7 @@ class BlockMgr extends SGL_Manager
                 $dbh = $block->getDatabaseConnection();
 
                 $dbh->autocommit();
-                $query = "SELECT MAX( blk_order ) FROM {$conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
+                $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
                 $next_order = (int)$dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
@@ -184,18 +187,17 @@ class BlockMgr extends SGL_Manager
      * Returns true if 'content' field has a string length greater than
      * zero or it is not NULL.
      *
-     * @param unknown_type $blockId
-     * @return unknown
+     * @param integer $blockId
+     * @return boolean
      */
     function isHtmlBlock($blockId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $query = "
-            SELECT content FROM {$conf['table']['block']}
+            SELECT content FROM {$this->conf['table']['block']}
             WHERE block_id = " . $blockId;
-        $res = $dbh->getOne($query);
+        $res = $this->dbh->getOne($query);
         if (!strlen($res) || $res == 'NULL') {
             return false;   
         } else {
@@ -211,6 +213,9 @@ class BlockMgr extends SGL_Manager
         if ($this->isHtmlBlock($input->block_id)) {
             $output->template = 'blockFormdynamic.html';
             $output->wysiwyg = true;
+            
+            //  override autonaming for textarea element so 'block' hash can be preserved
+            $output->wysiwygElementName = 'block[content]';
             $blockForm = & new BlockFormDynamic('edit');            
         } else {
             $output->template = 'blockForm.html';
@@ -327,21 +332,20 @@ class BlockMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $output->mode = 'Browse';
         $output->template = 'blockList.html';
-        $secondarySortClause = $conf['BlockMgr']['secondarySortClause'];
+        $secondarySortClause = $this->conf['BlockMgr']['secondarySortClause'];
         $query = "  SELECT
                         b.block_id, b.name, b.title, b.title_class, 
                         b.body_class, b.blk_order, b.is_onleft, b.is_enabled, 
                         ba.section_id as sections, s.title as section_title
-                    FROM {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba, {$conf['table']['section']} s 
+                    FROM {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba, {$this->conf['table']['section']} s 
                     WHERE ba.block_id=b.block_id
                     AND s.section_id=ba.section_id 
                     ORDER BY " .
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
-        $dbh = & SGL_DB::singleton();
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -350,7 +354,7 @@ class BlockMgr extends SGL_Manager
             'totalItems'=> $input->totalItems,
         );
 
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $this->_rebuildPagedData($aPagedData);
                
         $output->aPagedData = $aPagedData;
@@ -452,8 +456,7 @@ class BlockMgr extends SGL_Manager
         if (empty($frmSortBy)) {
             $sessSortBy = SGL_HTTP_Session::get('sortByBlk');
             if (empty($sessSortBy)) {
-                $conf = & $GLOBALS['_SGL']['CONF'];
-                $sortBy = $conf['BlockMgr']['defaultSortBy'];
+                $sortBy = $this->conf['BlockMgr']['defaultSortBy'];
             } else {
                 $sortBy = $sessSortBy;
             }
@@ -485,8 +488,7 @@ class BlockMgr extends SGL_Manager
         if (empty($frmSortOrder)) {
             $sessSortOrder = SGL_HTTP_Session::get('sortOrderBlk');
             if (empty($sessSortOrder)) {
-                $conf = & $GLOBALS['_SGL']['CONF'];
-                $sortOrder = $conf['BlockMgr']['defaultSortOrder'];
+                $sortOrder = $this->conf['BlockMgr']['defaultSortOrder'];
             } else {
                 $sortOrder = $sessSortOrder;
             }

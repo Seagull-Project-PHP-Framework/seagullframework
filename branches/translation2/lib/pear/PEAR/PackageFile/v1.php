@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.7 2005/06/23 15:56:38 demian Exp $
+ * @version    CVS: $Id: v1.php,v 1.61 2005/09/25 03:49:00 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -259,6 +259,16 @@ define('PEAR_PACKAGEFILE_PHP_NO_NOT', 48);
  * Error code when a package.xml contains non-ISO-8859-1 characters
  */
 define('PEAR_PACKAGEFILE_ERROR_NON_ISO_CHARS', 49);
+
+/**
+ * Error code when a dependency is not a 'has' relation, but has no version
+ */
+define('PEAR_PACKAGEFILE_ERROR_NO_DEPPHPVERSION', 50);
+
+/**
+ * Error code when a package has no lead developer
+ */
+define('PEAR_PACKAGEFILE_ERROR_NO_LEAD', 51);
 /**
  * package.xml encapsulator
  * @category   pear
@@ -266,7 +276,7 @@ define('PEAR_PACKAGEFILE_ERROR_NON_ISO_CHARS', 49);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -387,6 +397,11 @@ class PEAR_PackageFile_v1
         return false;
     }
 
+    function getInstalledBinary()
+    {
+        return false;
+    }
+
     function listPostinstallScripts()
     {
         return false;
@@ -428,8 +443,8 @@ class PEAR_PackageFile_v1
 
     function packageInfo($field)
     {
-        if (!isset($this->_packageInfo[$field]) ||
-              !is_string($this->_packageInfo[$field])) {
+        if (!is_string($field) || empty($field) ||
+            !isset($this->_packageInfo[$field])) {
             return false;
         }
         return $this->_packageInfo[$field];
@@ -964,6 +979,8 @@ class PEAR_PackageFile_v1
                     'No release date found',
                 PEAR_PACKAGEFILE_ERROR_NO_NOTES =>
                     'No release notes found',
+                PEAR_PACKAGEFILE_ERROR_NO_LEAD =>
+                    'Package must have at least one lead maintainer',
                 PEAR_PACKAGEFILE_ERROR_NO_MAINTAINERS =>
                     'No maintainers found, at least one must be defined',
                 PEAR_PACKAGEFILE_ERROR_NO_MAINTHANDLE =>
@@ -980,8 +997,14 @@ class PEAR_PackageFile_v1
                     'Dependency %index% has no relation (rel)',
                 PEAR_PACKAGEFILE_ERROR_NO_DEPTYPE =>
                     'Dependency %index% has no type',
+                PEAR_PACKAGEFILE_ERROR_DEPNAME_IGNORED =>
+                    'PHP Dependency %index% has a name attribute of "%name%" which will be' .
+                        ' ignored!',
                 PEAR_PACKAGEFILE_ERROR_NO_DEPVERSION =>
                     'Dependency %index% is not a rel="has" or rel="not" dependency, ' .
+                        'and has no version',
+                PEAR_PACKAGEFILE_ERROR_NO_DEPPHPVERSION =>
+                    'Dependency %index% is a type="php" dependency, ' .
                         'and has no version',
                 PEAR_PACKAGEFILE_ERROR_DEPVERSION_IGNORED =>
                     'Dependency %index% is a rel="%rel%" dependency, versioning is ignored',
@@ -1064,6 +1087,7 @@ class PEAR_PackageFile_v1
         if (empty($info['maintainers'])) {
             $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_MAINTAINERS);
         } else {
+            $haslead = false;
             $i = 1;
             foreach ($info['maintainers'] as $m) {
                 if (empty($m['handle'])) {
@@ -1073,6 +1097,8 @@ class PEAR_PackageFile_v1
                 if (empty($m['role'])) {
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_MAINTROLE,
                         array('index' => $i, 'roles' => PEAR_Common::getUserRoles()));
+                } elseif ($m['role'] == 'lead') {
+                    $haslead = true;
                 }
                 if (empty($m['name'])) {
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_MAINTNAME,
@@ -1083,6 +1109,9 @@ class PEAR_PackageFile_v1
                         array('index' => $i));
                 }
                 $i++;
+            }
+            if (!$haslead) {
+                $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_LEAD);
             }
         }
         if (!empty($info['release_deps'])) {
@@ -1116,6 +1145,10 @@ class PEAR_PackageFile_v1
                         array('index' => $i, 'name' => $d['name']));
                 } elseif ($d['type'] != 'php' && empty($d['name'])) {
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_DEPNAME,
+                        array('index' => $i));
+                }
+                if ($d['type'] == 'php' && empty($d['version'])) {
+                    $this->_validateError(PEAR_PACKAGEFILE_ERROR_NO_DEPPHPVERSION,
                         array('index' => $i));
                 }
                 if (($d['rel'] == 'not') && ($d['type'] == 'php')) {
@@ -1233,6 +1266,11 @@ class PEAR_PackageFile_v1
         return $this->_isValid;
     }
 
+    /**
+     * Get the default xml generator object
+     *
+     * @return PEAR_PackageFile_Generator_v1
+     */
     function &getDefaultGenerator()
     {
         if (!class_exists('PEAR_PackageFile_Generator_v1')) {
@@ -1300,7 +1338,13 @@ class PEAR_PackageFile_v1
         if (!$fp = @fopen($file, "r")) {
             return false;
         }
-        $contents = @fread($fp, filesize($file));
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $contents = file_get_contents($file);
+        } else {
+            $contents = @fread($fp, filesize($file));
+            fclose($fp);
+        }
         $tokens = token_get_all($contents);
 /*
         for ($i = 0; $i < sizeof($tokens); $i++) {

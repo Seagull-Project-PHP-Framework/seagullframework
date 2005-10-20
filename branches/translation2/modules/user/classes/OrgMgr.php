@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -50,7 +50,6 @@ require_once 'Validate.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.43 $
- * @since   PHP 4.1
  */
 class OrgMgr extends SGL_Manager
 {
@@ -65,6 +64,8 @@ class OrgMgr extends SGL_Manager
     function OrgMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+
         $this->module       = 'user';
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
@@ -161,8 +162,7 @@ class OrgMgr extends SGL_Manager
             $input->template = ($input->action == 'update') ? 'orgEdit.html' : 'orgAdd.html';
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
             }
             $this->validated = false;
@@ -187,8 +187,7 @@ class OrgMgr extends SGL_Manager
             $output->countries = $countries;
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
                 @$output->currentOrgType = $output->org->organisation_type_id;                
             }
@@ -219,7 +218,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['date_created'] = $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['date_created'] = $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['created_by'] = $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  create new set with first rootnode
@@ -249,8 +248,7 @@ class OrgMgr extends SGL_Manager
         $aOrgNode = $nestedSet->getNode($input->orgId);
 
         //  build org type combobox
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['OrgMgr']['typeEnabled']) {
+        if ($this->conf['OrgMgr']['typeEnabled']) {
             $output->currentOrgType = @$aOrgNode['organisation_type_id'];
         }
         $output->org = (object)$aOrgNode;
@@ -264,7 +262,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  attempt to update org values
@@ -274,20 +272,24 @@ class OrgMgr extends SGL_Manager
         }
         //  move node if needed
         switch ($aOrg['parent_id']) {
+            
         case $aOrg['original_parent_id']:
             //  usual case, no change => do nothing
             $message = 'The organisation has successfully been updated';
             break;
+            
         case $aOrg['organisation_id']:
             //  cannot be parent to self => display user error
             $message = 'The organisation has successfully been updated, no data changed';
             break;
+            
         case 0:
             //  move the org, make it into a root node, just above its own root
             $thisNode = $nestedSet->getNode($aOrg['organisation_id']);
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $thisNode['root_id'], 'BE');
             $message = 'The organisation has successfully been updated';
             break;
+            
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $aOrg['parent_id'], 'SUB');

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  * @todo    look at PEAR::Date to improve various date methods used here
  */
 class SGL_Output
@@ -65,6 +64,11 @@ class SGL_Output
     function translate($key, $filter = false)
     {
         return SGL_String::translate($key, $filter);
+    }
+    
+    function get($key)
+    {
+        return $this->aProps[$key];
     }
 
     /**
@@ -226,22 +230,19 @@ class SGL_Output
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
     */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
     {
-        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years);
+        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years, $noExpire);
     }
 
     /**
      * Generates alternate classes for rows in tables, used to switch
      * row colors.
      *
-     * usage:
-     * <tr class="{switchRowClass()}" flexy:foreach="...">
-     *
      * @access  public
      * @return  string  $curRowClass string representing class found in stylesheet
     */
-    function switchRowClass($id = 'default')
+    function switchRowClass($isBold, $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -252,12 +253,16 @@ class SGL_Output
             $_id = $id;
         }
 
-        //  choose the next color
-        if ($curRowClass == 'sgl-row-dark') {
-            $curRowClass = 'sgl-row-light';
+        if ($curRowClass == 'backDark' && $isBold ) {
+            $curRowClass = 'backLightBold';
+        } elseif ($curRowClass == 'backDark') {
+            $curRowClass = 'backLight';
+        } elseif ($isBold) {
+            $curRowClass = 'backDarkBold';
         } else {
-            $curRowClass = 'sgl-row-dark';
+            $curRowClass = 'backDark';
         }
+
         return $curRowClass;
     }
 
@@ -352,6 +357,11 @@ class SGL_Output
         $body->outputObject($this);
     }
 
+    /**
+     * Returns true if client OS is windows.
+     *
+     * @return boolean
+     */
     function isWin()
     {
         return SGL_USR_OS == 'Win';

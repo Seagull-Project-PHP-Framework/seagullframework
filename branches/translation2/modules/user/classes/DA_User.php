@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_User.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -38,6 +38,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
+//  role sync constants
+define('SGL_ROLESYNC_ADD',              1);
+define('SGL_ROLESYNC_REMOVE',           2);
+define('SGL_ROLESYNC_ADDREMOVE',        3);
+define('SGL_ROLESYNC_VIEWONLY',         4);
+        
 /**
  * Data access methods for the user module.
  *
@@ -56,7 +62,8 @@ class DA_User
      */
     function DA_User()
     {
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
     }
     
@@ -215,7 +222,7 @@ class DA_User
                 FROM {$this->conf['table']['permission']} p, {$this->conf['table']['module']} m
                 WHERE p.module_id = m.module_id
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
             break;
 
@@ -228,7 +235,7 @@ class DA_User
                 SELECT permission_id, name
                 FROM {$this->conf['table']['permission']}
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAssoc($query);
         }
 
@@ -523,7 +530,7 @@ class DA_User
             INSERT INTO {$this->conf['table']['user_preference']} 
                 (   user_preference_id, 
                     usr_id, 
-                    preference_id, 
+                    preference_id,
                     value)
             VALUES(" . 
                     $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' .

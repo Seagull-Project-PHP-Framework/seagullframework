@@ -23,19 +23,20 @@ class Exchange
 
     function getBlockContent()
     {
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $date = date('d-m-Y');
-        $text = "<strong>Today $date</strong><BR>";
+        $text = "<strong>Today $date</strong><br />";
              
         if (isset($conf['exchangeRate']['EUR'])) {
             $euro = number_format($conf['exchangeRate']['EUR'], 0, ',', '.') . ' Lei';
-            $text .= "1 EURO = $euro<BR>\n";
+            $text .= "1 EURO = $euro<br />\n";
         }
             
         if (isset($conf['exchangeRate']['USD'])) {    
             $usd  = number_format($conf['exchangeRate']['USD'], 0, ',', '.') . ' Lei';
-            $text .= "1 USD = $usd<BR>\n";
+            $text .= "1 USD = $usd<br />\n";
         }
             
 

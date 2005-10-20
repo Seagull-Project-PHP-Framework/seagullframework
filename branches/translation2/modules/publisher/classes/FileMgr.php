@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | FileMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -54,6 +54,7 @@ class FileMgr extends SGL_Manager
     function FileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $this->module           = 'publisher';
         $this->pageTitle        = 'File Manager';
 

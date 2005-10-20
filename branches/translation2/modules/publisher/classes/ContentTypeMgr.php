@@ -1,29 +1,40 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Copyright (c) 2005, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ContentTypeMgr.php                                                        |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005 Demian Turner                                          |
-// |                                                                           |
 // | Author: Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
-// +---------------------------------------------------------------------------+
-// |                                                                           |
-// | This library is free software; you can redistribute it and/or             |
-// | modify it under the terms of the GNU Library General Public               |
-// | License as published by the Free Software Foundation; either              |
-// | version 2 of the License, or (at your option) any later version.          |
-// |                                                                           |
-// | This library is distributed in the hope that it will be useful,           |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         |
-// | Library General Public License for more details.                          |
-// |                                                                           |
-// | You should have received a copy of the GNU Library General Public         |
-// | License along with this library; if not, write to the Free                |
-// | Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
-// |                                                                           |
 // +---------------------------------------------------------------------------+
 // $Id: ContentTypeMgr.php,v 1.2 2005/02/26 21:02:21 demian Exp $
 
@@ -34,7 +45,6 @@
  * @package publisher
  * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
  * @version $Revision: 1.2 $
- * @since   PHP 4.1
  */
 class ContentTypeMgr extends SGL_Manager
 {
@@ -55,6 +65,8 @@ var $fieldTypes;
     function ContentTypeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'publisher';
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
@@ -75,7 +87,7 @@ var $fieldTypes;
      * Validate
      * 
      * @access  public
-     * @param   object  $req    SGL_HTTP_Request
+     * @param   object  $req    SGL_Request
      * @param   object  $input  SGL_Output
      * @return  void
      * @see     lib/SGL/SGL_Controller.php
@@ -141,16 +153,16 @@ var $fieldTypes;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         //  insert item type into item_type table.
-        $dbh = &SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
-        
-        $item_type_id   = $dbh->nextId($conf['table']['item_type']);
+        $item_type_id   = $this->dbh->nextId($this->conf['table']['item_type']);
         $item_type_name = $input->type['item_type_name']; 
-        $query = "INSERT INTO {$conf['table']['item_type']} (item_type_id, item_type_name) VALUES ($item_type_id, '". $item_type_name . "')";
-        $result = $dbh->query($query);         
+        $query = "
+            INSERT INTO {$this->conf['table']['item_type']} (item_type_id, item_type_name) 
+            VALUES ($item_type_id, '". $item_type_name . "')";
+        
+        $result = $this->dbh->query($query);         
         if (DB::isError($result)) {
-        SGL::raiseError('Error inserting item type name exiting ...', 
-            SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+            SGL::raiseError('Error inserting item type name exiting ...', 
+                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         } else {
             $nameInserted = true;
         }
@@ -158,14 +170,15 @@ var $fieldTypes;
         //  insert item type fields into item_type_mapping table.       
         foreach ($input->type['field_name'] as $nKey => $nValue) {
             $field_type = $input->type['field_type'][$nKey];
-            $item_type_mapping_id = $dbh->nextId($conf['table']['item_type_mapping']);
-            $subquery = "INSERT INTO {$conf['table']['item_type_mapping']} (item_type_mapping_id, item_type_id, field_name, field_type) 
+            $item_type_mapping_id = $this->dbh->nextId($this->conf['table']['item_type_mapping']);
+            $subquery = "INSERT INTO {$this->conf['table']['item_type_mapping']} 
+                            (item_type_mapping_id, item_type_id, field_name, field_type) 
                          VALUES ($item_type_mapping_id, $item_type_id, '" . $nValue . "', $field_type)";
-            $subresult = $dbh->query($subquery);
+            $subresult = $this->dbh->query($subquery);
             print_r($subresult);
             if (DB::isError($subresult)) {
-            SGL::raiseError('Error inserting item type fields exiting ...', 
-                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+                SGL::raiseError('Error inserting item type fields exiting ...', 
+                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             } else { 
                 $fieldsInserted = true;
             }
@@ -185,11 +198,9 @@ var $fieldTypes;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'contentTypeEdit.html';
-        $dbh = &SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];       
                 
         $query = "SELECT    itm.item_type_id,  it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM      {$conf['table']['item_type_mapping']} itm, {$conf['table']['item_type']} it                   
+                  FROM      {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['item_type']} it                   
                   WHERE     itm.item_type_id = $input->contentTypeID
                   AND       it.item_type_id = $input->contentTypeID";
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -198,29 +209,30 @@ var $fieldTypes;
             'delta'    => 3,
             'perPage'  => $limit,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             foreach ($aValues as $key => $value) {                              
                 switch ($key) {
-                    case 'item_type_id':
-                        $item_type_id = $value;
-                        break;
-                    case 'item_type_name':
-                        $data[$key] = $value; 
-                        break;
-                    case 'item_type_mapping_id':
-                        $item_type_mapping_id = $value;
-                        break;
-                    case 'field_name':
-                        $field_name = $value;                       
-                        break;
-                    break;                    
-                    case 'field_type':
-                        $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
-                        $data['fields'][$item_type_mapping_id]['field_type'] = $value;
-                        $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;                        
-                        break;
+                    
+                case 'item_type_id':
+                    $item_type_id = $value;
+                    break;
+                case 'item_type_name':
+                    $data[$key] = $value; 
+                    break;
+                case 'item_type_mapping_id':
+                    $item_type_mapping_id = $value;
+                    break;
+                case 'field_name':
+                    $field_name = $value;                       
+                    break;
+                break;                    
+                case 'field_type':
+                    $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
+                    $data['fields'][$item_type_mapping_id]['field_type'] = $value;
+                    $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;                        
+                    break;
                 }
                 
             }
@@ -240,14 +252,12 @@ var $fieldTypes;
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = &SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];               
         
         //  update item type name
         if ($input->type['item_type_name'] !== $input->type['item_type_name_original']) {
-            $query = "UPDATE {$conf['table']['item_type']} SET item_type_name='" . $input->type['item_type_name'] . "'
+            $query = "UPDATE {$this->conf['table']['item_type']} SET item_type_name='" . $input->type['item_type_name'] . "'
                       WHERE item_type_id=" . $input->contentTypeID;
-            $result = $dbh->query($query);
+            $result = $this->dbh->query($query);
             if (DB::isError($result)) {
                 SGL::raiseError('Error updating item type name exiting ...', 
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
@@ -270,14 +280,16 @@ var $fieldTypes;
 
             //  build query
             if (!empty($fieldNameClause) && isset($fieldTypeClause)) {   //  update field_name & field_type
-                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $dbh->query($query);                
+                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
+                $result = $this->dbh->query($query);    
+                            
             } else if (isset($fieldNameClause)) {                       //  update only field_name
-                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $dbh->query($query);                                
+                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
+                $result = $this->dbh->query($query);  
+                                              
             } else if (isset($fieldTypeClause)) {                       //  update only field_type
-                $query = "UPDATE {$conf['table']['item_type_mapping']} SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $dbh->query($query);                                
+                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
+                $result = $this->dbh->query($query);                                
             }
 
             if (DB::isError($result)) { 
@@ -300,11 +312,9 @@ var $fieldTypes;
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $query = "SELECT it.item_type_id, it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
+                  FROM {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
                   WHERE itm.item_type_id = it.item_type_id";  
               
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -313,7 +323,7 @@ var $fieldTypes;
             'delta'    => 3,
             'perPage'  => $limit,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;       
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             foreach ($aValues as $key => $value) {                              
@@ -351,8 +361,7 @@ var $fieldTypes;
         $output->aPagedData['data'] = $data;
                                      
         //  total number of fields allowed
-        $conf = &$GLOBALS['_SGL']['CONF'];      
-        $totalFields = $conf['ContentTypeMgr']['totalFields'];
+        $totalFields = $this->conf['ContentTypeMgr']['totalFields'];
         for($x = 1; $x <= $totalFields; $x++) {
             $output->totalFields[$x] = $x;
         }
@@ -369,22 +378,20 @@ var $fieldTypes;
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
 
         if (is_array($input->aDelete)) {
-            $dbh = & SGL_DB::singleton();
             
             foreach ($input->aDelete as $index => $itemTypeId) {
                 //  delete item type from item_type table
-                $query = "DELETE FROM {$conf['table']['item_type']} WHERE item_type_id=$itemTypeId"; 
-                if (DB::isError($dbh->query($query))) {
+                $query = "DELETE FROM {$this->conf['table']['item_type']} WHERE item_type_id=$itemTypeId"; 
+                if (DB::isError($this->dbh->query($query))) {
                     SGL::raiseError('Error updating item type name exiting ...', 
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 }
                 unset($query);
                 //  delete item type fields from item_type_mapping
-                $query = "DELETE FROM {$conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId"; 
-                if (DB::isError($dbh->query($query))) {
+                $query = "DELETE FROM {$this->conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId"; 
+                if (DB::isError($this->dbh->query($query))) {
                     SGL::raiseError('Error updating item type name exiting ...', 
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 }

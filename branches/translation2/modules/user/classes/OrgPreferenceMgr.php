@@ -60,6 +60,7 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
+        
         $this->module       = 'user';
         $this->template     = 'prefOrgEdit.html';
         $this->pageTitle    = 'Organisation Preferences';
@@ -98,29 +99,27 @@ class OrgPreferenceMgr extends PreferenceMgr
     function _updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $query1 = " DELETE FROM {$conf['table']['org_preference']}
                     WHERE organisation_id = " . $input->orgId;
-        $dbh->query($query1);
+        $this->dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$conf['table']['org_preference']} 
+            INSERT INTO {$this->conf['table']['org_preference']} 
                 (   org_preference_id, 
                     organisation_id, 
                     preference_id, 
                     value)
             VALUES(" . 
-                    $dbh->nextId($conf['table']['org_preference']) . ", 
+                    $this->dbh->nextId($this->conf['table']['org_preference']) . ", 
                     $input->orgId,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
-            $res = $dbh->query($query2);
+            $res = $this->dbh->query($query2);
             if (DB::isError($res)) {
                 SGL::raiseError('Error inserting prefs, exiting ...', 
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);

@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.23 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: Remote.php,v 1.82 2005/09/25 17:28:30 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -129,12 +129,12 @@ server, for example if you download the DB package and the latest stable
 version of DB is 1.6.5, the downloaded file will be DB-1.6.5.tgz.',
             ),
         'clear-cache' => array(
-            'summary' => 'Clear XML-RPC Cache',
+            'summary' => 'Clear Web Services Cache',
             'function' => 'doClearCache',
             'shortcut' => 'cc',
             'options' => array(),
             'doc' => '
-Clear the XML-RPC cache.  See also the cache_ttl configuration
+Clear the XML-RPC/REST cache.  See also the cache_ttl configuration
 parameter.
 ',
             ),
@@ -248,7 +248,8 @@ parameter.
             $data = '(no packages available yet)';
         } else {
             foreach ($available as $name => $info) {
-                $data['data'][] = array($name, isset($info['stable']) ? $info['stable'] : '-n/a-');
+                $data['data'][] = array($name, (isset($info['stable']) && $info['stable'])
+                    ? $info['stable'] : '-n/a-');
             }
         }
         $this->ui->outputData($data, $command);
@@ -311,14 +312,15 @@ parameter.
             }
             if (isset($options['mode']))
             {
-                if ($options['mode'] == 'installed' && !isset($installed['version']))
+                if ($options['mode'] == 'installed' && !isset($installed['version'])) {
                     continue;
-                if ($options['mode'] == 'notinstalled' && isset($installed['version']))
+                }
+                if ($options['mode'] == 'notinstalled' && isset($installed['version'])) {
                     continue;
+                }
                 if ($options['mode'] == 'upgrades'
                       && (!isset($installed['version']) || version_compare($installed['version'],
-                      $info['stable'], '>=')))
-                {
+                      $info['stable'], '>='))) {
                     continue;
                 }
             }
@@ -327,6 +329,9 @@ parameter.
                 unset($local_pkgs[$pos]);
             }
 
+            if (isset($info['stable']) && !$info['stable']) {
+                $info['stable'] = null;
+            }
             $data['data'][$info['category']][] = array(
                 $reg->channelAlias($channel) . '/' . $name,
                 @$info['stable'],
@@ -412,7 +417,7 @@ parameter.
 
             $unstable = '';
             if ($info['unstable']) {
-                $unstable = '/(' . $info['unstable'] . $info['state'] . ')';
+                $unstable = '/(' . $info['unstable'] . ' ' . $info['state'] . ')';
             }
             if (!isset($info['stable']) || !$info['stable']) {
                 $info['stable'] = 'none';

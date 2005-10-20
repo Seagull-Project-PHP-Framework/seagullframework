@@ -33,7 +33,7 @@ $body = <<< EOF
         </tr>
 EOF;
 
-if (!$GLOBALS['_SGL']['CONF']['RegisterMgr']['autoEnable']) {
+if (!$conf['RegisterMgr']['autoEnable']) {
     $pending = SGL_Output::translate('Your registration is being reviewed');
     $body .= <<< EOF
         <tr>

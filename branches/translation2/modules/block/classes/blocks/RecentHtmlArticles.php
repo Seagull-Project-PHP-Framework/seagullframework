@@ -71,7 +71,8 @@ class RecentHtmlArticles
     function retrieveAll()
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
                 SELECT      i.item_id,
@@ -82,12 +83,13 @@ class RecentHtmlArticles
                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id
                 AND     i.item_id = ia.item_id
-                AND     i.start_date < '" . SGL::getTime() . "'
-                AND     i.expiry_date  > '" . SGL::getTime() . "'
+                AND     i.start_date < '" . SGL_Date::getTime() . "'
+                AND     i.expiry_date  > '" . SGL_Date::getTime() . "'
                 AND     itm.field_name = 'title'
                 AND     it.item_type_id  = 2
                 AND     i.status  = " . SGL_STATUS_PUBLISHED . "
-                ORDER BY i.date_created DESC
+                ORDER BY i.start_date DESC
+                LIMIT 5
                 ";
         $aArticles = $dbh->getAll($query);
         if (!DB::isError($aArticles)) {
@@ -107,6 +109,7 @@ class RecentHtmlArticles
                             . SGL_Url::makeLink('view', 'articleview', 'publisher', array(), "frmArticleID|$obj->item_id") . '">'
                             . $obj->addition . "</a></li>\n";
             }
+            $newItems   .= '<li><a href="'.SGL_Url::makeLink('summary', 'articleview', 'publisher').'">more ...</a></li>';
             $newItems   .= "</ul>";
             return $newItems;
         } else {

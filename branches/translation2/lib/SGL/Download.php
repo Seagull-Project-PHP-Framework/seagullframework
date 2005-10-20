@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Download.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -47,7 +47,6 @@ require_once 'HTTP/Download.php';
 * @author Pierpaolo Toniolo
 * @copyright Pierpaolo Toniolo
 * @version $Revision: 1.4 $
-* @since PHP 4.1
 *
 */
 class SGL_Download extends HTTP_Download

@@ -167,7 +167,7 @@ class Block extends DataObjects_Block
         // DataObject assumes that, if you use mysql, you are going
         // to use auto_increment which is not our case, so we have
         // to manually find the next available block id
-        $dbh = & SGL_DB::singleton();
+        $dbh = $this->getDatabaseConnection();
         $block_id = $dbh->nextId('block');
         $this->block_id = $block_id;
         parent::insert();

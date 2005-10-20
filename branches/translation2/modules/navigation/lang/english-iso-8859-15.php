@@ -95,6 +95,7 @@
         'Current Category' => 'Current Category',
         'Current' => 'Current',
         'Group Name' => 'Group Name',
+        'Role Name' => 'Role Name',
         'Has Permissions' => 'Has Permissions',
         'Yes' => 'Yes',
         'No' => 'No',

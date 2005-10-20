@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Dependency2.php,v 1.7 2005/06/23 15:56:33 demian Exp $
+ * @version    CVS: $Id: Dependency2.php,v 1.46 2005/09/22 01:49:26 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/Validate.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -518,7 +518,7 @@ class PEAR_Dependency2
      */
     function getPEARVersion()
     {
-        return '1.4.0a12';
+        return '1.4.1';
     }
 
     function validatePearinstallerDependency($dep)
@@ -747,7 +747,8 @@ class PEAR_Dependency2
                 return $this->warning('warning: %s requires package "' . $depname . '"' .
                     $extra . ", $installed version is " . $version);
             }
-        } elseif ((isset($dep['min']) || isset($dep['max'])) && !$fail && isset($dep['conflicts'])) {
+        } elseif ((isset($dep['min']) || isset($dep['max'])) && !$fail &&
+              isset($dep['conflicts']) && !isset($dep['exclude'])) {
             $installed = $installed ? 'installed' : 'downloaded';
             if (!isset($this->_options['nodeps']) && !isset($this->_options['force'])) {
                 return $this->raiseError('%s conflicts with package "' . $depname . '"' . $extra .
@@ -835,6 +836,12 @@ class PEAR_Dependency2
         return $this->_validatePackageDownload($dep, $required, array(), $depv1);
     }
 
+    /**
+     * Verify that uninstalling packages passed in to command line is OK.
+     *
+     * @param PEAR_Installer $dl
+     * @return PEAR_Error|true
+     */
     function validatePackageUninstall(&$dl)
     {
         if (PEAR::isError($this->_dependencydb)) {
@@ -856,18 +863,20 @@ class PEAR_Dependency2
         $fail = false;
         if ($deps) {
             foreach ($deps as $channel => $info) {
-                foreach ($info as $package => $d) {
-                    $d['dep']['package'] = $d['dep']['name'];
-                    $checker = &new PEAR_Dependency2($this->_config, $this->_options,
-                        array('channel' => $channel, 'package' => $package), $this->_state);
-                    $dep = $d['dep'];
-                    $required = $d['type'] == 'required';
-                    $ret = $checker->_validatePackageUninstall($dep, $required, $params, $dl);
-                    if (is_array($ret)) {
-                        $dl->log(0, $ret[0]);
-                    } elseif (PEAR::isError($ret)) {
-                        $dl->log(0, $ret->getMessage());
-                        $fail = true;
+                foreach ($info as $package => $ds) {
+                    foreach ($ds as $d) {
+                        $d['dep']['package'] = $d['dep']['name'];
+                        $checker = &new PEAR_Dependency2($this->_config, $this->_options,
+                            array('channel' => $channel, 'package' => $package), $this->_state);
+                        $dep = $d['dep'];
+                        $required = $d['type'] == 'required';
+                        $ret = $checker->_validatePackageUninstall($dep, $required, $params, $dl);
+                        if (is_array($ret)) {
+                            $dl->log(0, $ret[0]);
+                        } elseif (PEAR::isError($ret)) {
+                            $dl->log(0, $ret->getMessage());
+                            $fail = true;
+                        }
                     }
                 }
             }
@@ -945,18 +954,20 @@ class PEAR_Dependency2
                         $this->_currentPackage);
                     if ($deps) {
                         foreach ($deps as $channel => $info) {
-                            foreach ($info as $package => $d) {
-                                $d['dep']['package'] = $d['dep']['name'];
-                                $checker = &new PEAR_Dependency2($this->_config, $this->_options,
-                                    array('channel' => $channel, 'package' => $package),
-                                    $this->_state);
-                                $dep = $d['dep'];
-                                $required = $d['type'] == 'required';
-                                $ret = $checker->_validatePackageUninstall($dep, $required, $params,
-                                    $dl);
-                                if (PEAR::isError($ret)) {
-                                    $fail = true;
-                                    break 2;
+                            foreach ($info as $package => $ds) {
+                                foreach ($ds as $d) {
+                                    $d['dep']['package'] = $d['dep']['name'];
+                                    $checker = &new PEAR_Dependency2($this->_config, $this->_options,
+                                        array('channel' => $channel, 'package' => $package),
+                                        $this->_state);
+                                    $dep = $d['dep'];
+                                    $required = $d['type'] == 'required';
+                                    $ret = $checker->_validatePackageUninstall($dep, $required, $params,
+                                        $dl);
+                                    if (PEAR::isError($ret)) {
+                                        $fail = true;
+                                        break 3;
+                                    }
                                 }
                             }
                             $fail = false;
@@ -1005,17 +1016,19 @@ class PEAR_Dependency2
             }
             PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
             foreach ($deps as $channel => $info) {
-                foreach ($info as $package => $d) {
-                    $checker = &new PEAR_Dependency2($this->_config, $this->_options,
-                        array('channel' => $channel, 'package' => $package), $this->_state);
-                    $dep = $d['dep'];
-                    $required = $d['type'] == 'required';
-                    $ret = $checker->_validatePackageDownload($dep, $required, array(&$dp));
-                    if (is_array($ret)) {
-                        $dl->log(0, $ret[0]);
-                    } elseif (PEAR::isError($ret)) {
-                        $dl->log(0, $ret->getMessage());
-                        $fail = true;
+                foreach ($info as $package => $ds) {
+                    foreach ($ds as $d) {
+                        $checker = &new PEAR_Dependency2($this->_config, $this->_options,
+                            array('channel' => $channel, 'package' => $package), $this->_state);
+                        $dep = $d['dep'];
+                        $required = $d['type'] == 'required';
+                        $ret = $checker->_validatePackageDownload($dep, $required, array(&$dp));
+                        if (is_array($ret)) {
+                            $dl->log(0, $ret[0]);
+                        } elseif (PEAR::isError($ret)) {
+                            $dl->log(0, $ret->getMessage());
+                            $fail = true;
+                        }
                     }
                 }
             }

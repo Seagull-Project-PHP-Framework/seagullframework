@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: RunTest.php,v 1.11 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: RunTest.php,v 1.15 2005/09/13 15:20:42 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -44,7 +44,7 @@ putenv("PHP_PEAR_RUNTESTS=1");
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  */
@@ -114,7 +114,7 @@ class PEAR_RunTest
         }
         fclose($fp);
 
-        $shortname = str_replace($cwd.'/', '', $file);
+        $shortname = str_replace($cwd . DIRECTORY_SEPARATOR, '', $file);
         if (!isset($this->_options['simple'])) {
             $tested = trim($section_text['TEST']) . "[$shortname]";
         } else {

@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Action.php,v 1.1 2003/11/19 10:00:29 cvsroot Exp $
+// $Id: Action.php,v 1.1 2003/08/29 12:19:41 avb Exp $
 
 /**
  * Class representing an action to perform on HTTP request. The Controller

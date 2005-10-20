@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -53,6 +53,8 @@ class MaintenanceMgr extends SGL_Manager
     function MaintenanceMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'maintenance';
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'langList.html';
@@ -114,8 +116,8 @@ class MaintenanceMgr extends SGL_Manager
         SGL_HTTP_Session::set('lastLanguageSelected', $input->currentLang);
 
         //  catch any single quotes
-        //note: this is done by PEAR::Config automatically!
-        if (($req->get('action') !='update')&&($req->get('action') !='append')){
+        //  note: this is done by PEAR::Config automatically!
+        if (($req->get('action') !='update') && ($req->get('action') !='append')){
             if (is_array($input->aTranslation)) {
                 foreach ($input->aTranslation as $k => $v) {
                     if (is_array($v)) {
@@ -511,7 +513,8 @@ EOF;
         //  you can edit this file
         @chmod($targetMgrName, 0666);
         if (isset($input->createModule->createIniFile)){
-        //create conf.ini
+        
+            //  create conf.ini
             $confIniName = $aDirectories['module'] . '/conf.ini';
             $confTemplate = '['.$mgrLongName.']'."\n";
             $confTemplate .= 'requiresAuth    = false';

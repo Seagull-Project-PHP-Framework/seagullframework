@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Packager.php,v 1.23 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: Packager.php,v 1.67 2005/08/14 06:49:19 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'System.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -187,8 +187,13 @@ if (!function_exists('md5_file')) {
         if (!$fd = @fopen($file, 'r')) {
             return false;
         }
-        $md5 = md5(fread($fd, filesize($file)));
-        fclose($fd);
+        if (function_exists('file_get_contents')) {
+            fclose($fd);
+            $md5 = md5(file_get_contents($file));
+        } else {
+            $md5 = md5(fread($fd, filesize($file)));
+            fclose($fd);
+        }
         return $md5;
     }
 }

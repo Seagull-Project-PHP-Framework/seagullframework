@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | UserSearchMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -41,20 +41,20 @@
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 
 /**
- * Manages User objects.
+ * Manages searching for User objects.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Jacob Hanson <jacdx@jacobhanson.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.10 $
- * @since   PHP 4.1
  */
 class UserSearchMgr extends SGL_Manager
 {
     function UserSearchMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module = 'user';
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';
@@ -146,10 +146,9 @@ class UserSearchMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $output->aRoles = $this->da->getRoles();
-        if ($conf['OrgMgr']['enabled']) {
+        if ($this->conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
         }
 
@@ -179,10 +178,6 @@ class UserSearchMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 		$output->pageTitle = $this->pageTitle . ' :: Browse';
         $output->template = 'userManager.html';
-
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
-                    
         $criteria = '';
         
         //  if search form data present, built search criteria SQL
@@ -263,21 +258,28 @@ class UserSearchMgr extends SGL_Manager
             }
         }
         
-        if ($conf[SGL::caseFix('OrgMgr')]['enabled']) {
+        $allowedSortFields = array('usr_id','username','is_acct_active');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = ' ORDER BY u.usr_id ASC ';
+        }
+
+        if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    {$conf['table']['user']} u, {$conf['table']['organisation']} o, {$conf['table']['role']} r
+                FROM    {$this->conf['table']['user']} u, {$this->conf['table']['organisation']} o, {$this->conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id
-                $criteria
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                $criteria " . $orderBy_query;
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
-                FROM    {$conf['table']['user']} u, {$conf['table']['role']} r
+                FROM    {$this->conf['table']['user']} u, {$this->conf['table']['role']} r
                 WHERE   r.role_id = u.role_id
-                $criteria
-                ORDER BY u." . $input->sortBy . ' ' . $input->sortOrder;
+                $criteria " . $orderBy_query;
         }
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
@@ -285,8 +287,10 @@ class UserSearchMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
+            'path'      => SGL_Output::makeUrl('search'),
+            'append'    => true,            
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         if (PEAR::isError($aPagedData)) {
             SGL::raiseMsg('There was a database problem');
             $aPagedData = array();
