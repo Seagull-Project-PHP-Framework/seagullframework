@@ -1,0 +1,31 @@
+<form name="fm" method="post" flexy:ignore id="fm">
+    <input type="hidden" name="action" value="reorderUpdate" /> 
+    <input type="hidden" name=".items" />
+
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="narrow">
+        <tr>
+            <td colspan="2">{translate(#reorder instruction#)}</td>
+        </tr>
+
+        <tr>
+            <td align="right">
+                <select name="item" size="15">
+                    {generateSelect(aFaqs):h}
+                </select>
+            </td>
+            <td><a href="#here" onclick="return orderModule(0)">{translate(#move up#)}</a><br />
+            <a href="#here" onclick="return orderModule(1)">{translate(#move down#)}</a></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input class="wideButton" type="submit" name="submit" value="{translate(#finished#)}" onclick="return doSub()" />
+                <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href='{makeUrl(##,#faq#)}'" />
+            </td>
+        </tr>
+    </table>
+</form>
