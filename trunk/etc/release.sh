@@ -126,8 +126,8 @@ function exportSvnAndPackage()
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
     
     # tar and zip   
-    tar cvf $PROJECT_NAME-$RELEASE_NAME.tar $PROJECT_NAME-$RELEASE_NAME \
-        | gzip -f > $PROJECT_NAME-$RELEASE_NAME.tar.gz    
+    tar cvf $PROJECT_NAME-$RELEASE_NAME.tar $PROJECT_NAME-$RELEASE_NAME
+    gzip -f $PROJECT_NAME-$RELEASE_NAME.tar
 }
 
 ##############################
@@ -167,8 +167,8 @@ function generateApiDocs()
 ##############################
 function packageApiDocs()
 {
-    tar cvf seagullApiDocs-$RELEASE_NAME.tar seagullApiDocs-$RELEASE_NAME \
-        | gzip -f > seagullApiDocs-$RELEASE_NAME.tar.gz
+    tar cvf seagullApiDocs-$RELEASE_NAME.tar seagullApiDocs-$RELEASE_NAME
+    gzip -f seagullApiDocs-$RELEASE_NAME.tar
 }
 
 ##############################
@@ -223,14 +223,14 @@ exportSvnAndPackage
 
 uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
-#scpApiDocsToSglSite
+scpApiDocsToSglSite
 
-#scpChangelogToSglSite
+scpChangelogToSglSite
 
 exit 0
