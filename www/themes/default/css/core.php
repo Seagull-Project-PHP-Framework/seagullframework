@@ -29,6 +29,9 @@ body {
     margin: 10px 10px 0 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
+    /* Workaround for IE hiding bottom border of logAction.
+     * No side effect for FF and Opera.  */
+    height: 50%;
 }
 #sgl #login a {
     padding: 0 5px;
