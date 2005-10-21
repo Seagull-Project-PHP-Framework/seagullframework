@@ -69,17 +69,17 @@ class SGL_AppController
         $input = &SGL_Registry::singleton();
         $input->setRequest($req = SGL_Request::singleton());
         
-        $process =  new SGL_Init(
-                    new SGL_DiscoverClientOs(
-                    new SGL_ManagerResolver(
-                    new SGL_InitSession(
-                    new SGL_InitLangSupport(
-                    new SGL_InitPerms(
-                    new SGL_AuthenticateRequest(
-                    new SGL_BuildHeaders(
-                    new SGL_SetLocale(
-                    new SGL_DetectDebug(
-                    new SGL_DetectBlackListing(
+        $process =  new SGL_Process_Init(
+                    new SGL_Process_DiscoverClientOs(
+                    new SGL_Process_ResolveManager(
+                    new SGL_Process_CreateSession(
+                    new SGL_Process_SetupLangSupport(
+                    new SGL_Process_SetupPerms(
+                    new SGL_Process_AuthenticateRequest(
+                    new SGL_Process_BuildHeaders(
+                    new SGL_Process_SetupLocale(
+                    new SGL_Process_DetectDebug(
+                    new SGL_Process_DetectBlackListing(
                     new SGL_MainProcess()
                    )))))))))));
                    
@@ -336,10 +336,10 @@ class SGL_HtmlView extends SGL_View
     
     function postProcess(/*SGL_View*/ &$view)
     {       
-        $process =  new SGL_PrepareNavigation(
-                    new SGL_PrepareBlocks(
-                    new SGL_SetupWysiwyg(
-                    new SGL_GetPerformanceInfo(
+        $process =  new SGL_Process_SetupNavigation(
+                    new SGL_Process_SetupBlocks(
+                    new SGL_Process_SetupWysiwyg(
+                    new SGL_Process_GetPerformanceInfo(
                     new SGL_PostProcess()
                    ))));
                    
