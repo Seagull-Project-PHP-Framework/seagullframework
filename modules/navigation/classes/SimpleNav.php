@@ -138,6 +138,7 @@ class SimpleNav
         } else {
             $url = $this->input->get('currentUrl');
         }
+#$url = $this->input->data->get('currentUrl');            
         
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
