@@ -1,0 +1,168 @@
+<?xml version="{feed.xml_version}" encoding="{feed.xml_encoding}"?>
+<rss version="{feed.rss_version}">
+  <channel>
+    <title>{feed.title}</title>
+    {if:feed.link}
+    <link>{feed.link}</link>
+    {else:}
+    <link />
+    {end:}
+    {if:feed.description}
+    <description>{feed.description}</description>
+    {else:}
+    <description />
+    {end:}
+    {if:feed.language}
+    <language>{feed.language}</language>
+    {end:}
+    {if:feed.copyright}
+    <copyright>{feed.copyright}</copyright>
+    {end:}
+    {if:feed.managingeditor}
+    <managingEditor>{feed.managingeditor}</managingEditor>
+    {end:}
+    {if:feed.webmaster}
+    <webMaster>{feed.webmaster}</webMaster>
+    {end:}
+    {if:feed.pubdate}
+    <pubDate>{feed.pubdate}</pubDate>
+    {end:}
+    {if:feed.lastbuilddate}
+    <lastBuildDate>{feed.lastbuilddate}</lastBuildDate>
+    {end:}
+    {if:feed.category}
+    {foreach:feed.category,key,value}
+    <category>{value[content]}</category>
+    {end:}
+    {end:}
+    {if:feed.generator}
+    <generator>{feed.generator}</generator>
+    {end:}
+    {if:feed.docs}
+    <docs>{feed.docs}</docs>
+    {end:}
+    {if:feed.ttl}
+    <ttl>{feed.ttl}</ttl>
+    {end:}    
+    {if:feed.image}
+    <image>
+        <url>{feed.image.url}</url>
+        <title>{feed.image.title}</title>
+        <link>{feed.image.link}</link>
+        {if:feed.image.width}
+        <width>{feed.image.width}</width>
+        {end:}
+        {if:feed.image.height}
+        <height>{feed.image.height}</height>
+        {end:}
+        {if:feed.image.description}
+        <description>{feed.image.description}</description>
+        {end:}
+    </image>
+    {end:}
+    {if:feed.rating}
+    <rating>{feed.rating}</rating>
+    {end:}
+    {if:feed.cloud}
+    <cloud domain="feed.cloud.domain" port="feed.cloud.port" path="feed.cloud.path" registerProcedure="feed.cloud.registerprocedure" protocol="feed.cloud.protocol" />
+    {end:}
+    {if:feed.textinput}
+    <title>{feed.textinput.title}</title>
+    <description>{feed.textinput.description}</title>
+    <name>{feed.textinput.name}</title>
+    <link>{feed.textinput.link}</title>
+    {end:}
+    {if:feed.skiphours}
+    {foreach:feed.skiphours,key,hour}
+    <hour></hour>
+    {end:}
+    {end:}
+    {if:feed.skipdays}
+    {foreach:feed.skipdays,key,day}
+    <day></day>
+    {end:}    
+    {end:}
+    {if:!feed.generator}
+    <admin:generatorAgent xmlns:admin="http://webns.net/mvcb/" 
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+        rdf:resource="{feed.generatorresource}" />
+    {end:}
+    {if:feed.itunes}
+    {foreach:feed.itunes[category],key,value}
+    <itunes:category text="value" />
+    {end:}
+    <itunes:explicit>{feed.itunes[explicit]}</itunes:explicit>
+    <itunes:summary>{feed.itunes[summary]}</itunes:summary>
+    <itunes:subtitle>{feed.itunes[subtitle]}</itunes:subtitle>
+    <itunes:author>{feed.itunes[autor]}</itunes:author>
+    <itunes:owner>
+      <itunes:email>{feed.itunes[owner][email]}</itunes:email>
+      <itunes:name>{feed.itunes[owner][name]}</itunes:name>
+    </itunes:owner>
+    <itunes:image href="{feed.itunes[image][link]}">{feed.itunes[image][name]}</itunes:image>
+    {end:}
+    {foreach:feed.items,key,value}
+    <item>
+        {if:value[title]}
+        <title>{value[title]}</title>
+        {else:}
+        <title />
+        {end:}
+        {if:value[link]}
+        <link>{value[link]}</link>
+        {else:}
+        <link />
+        {end:}
+        {if:value[description]}
+        <description>{value[description]}</description>
+        {else:}
+        <description />
+        {end:}
+        {if:value[author]}
+        <author>{value[author]}</author>
+        {end:}
+        {if:value[category]}
+        {foreach:value[category],key,category}
+        <category>{category[content]}</category>
+        {end:}
+        {end:}        
+        {if:value[comments]}
+        <comments>{value[comments]}</comments>
+        {end:}        
+        {if:value[pubdate]}
+        <pubDate>{value[pubdate]}</pubDate>
+        {end:}
+        {if:value[guid]}
+        <guid isPermaLink="{value[guid][bool]}">{value[guid][permalink]}</guid>
+        {end:}
+        {if:value[enclosure]}
+        {foreach:value[enclosure],enc_key,enc_value}
+        <enclosure url="{enc_value[url]}" length="{enc_value[length]}" type="{enc_value[type]}" />
+        {end:}
+        {if:value[source]}
+        <source url="{value[source][url]}">{value[source][content]}</source>
+        {end:}
+        {if:mrss}
+        <media:content url="{enc_value[url]}" fileSize="{enc_value[length]}" type="{enc_value[type]}">
+        {if:enc_value[adult]}
+        <media:adult>{enc_value[adult]}</media:adult>
+        {end:}
+        </media:content>
+        {end:}
+        {end:}
+        {if:value[itunes]}
+        {foreach:value[itunes][category],itunes_key,itunes_category}
+        <itunes:category text="{itunes_category}" />
+        {end:}      
+        <itunes:explicit>{value[itunes][explicit]}</itunes:explicit>
+        <itunes:subtitle>{value[itunes][subtitle]}</itunes:subtitle>
+        <itunes:author>{value[itunes][author]}</itunes:author>
+        <itunes:summary>{value[itunes][summary]}</itunes:summary>
+        {end:}
+        {if:feed.oneclick}
+        <atom:link xmlns:atom="http://purl.org/atom/ns#" rel="self" href="{value[link]}" type="application/rss+xml" />
+        {end:}
+    </item>
+    {end:}
+  </channel>
+</rss>
