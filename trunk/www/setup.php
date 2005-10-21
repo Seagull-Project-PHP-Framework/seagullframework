@@ -10,7 +10,7 @@ sgl setup
 process
 ========
 
-
+- 
 
 - choose modules and permissions must be created and set at install time
 - create admin, set username, password and email
