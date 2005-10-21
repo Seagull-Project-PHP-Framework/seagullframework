@@ -132,13 +132,8 @@ class SimpleNav
         
         //  get a unique token by considering url, group ID and if page
         //  is static or not
-        //FIXME: bad hack
-        if (isset($this->input->data)) {
-            $url = $this->input->data->get('currentUrl');    
-        } else {
-            $url = $this->input->get('currentUrl');
-        }
-#$url = $this->input->data->get('currentUrl');            
+        $reg = &SGL_Registry::singleton();
+        $url = $reg->getCurrentUrl();
         
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'nav')) {
@@ -155,7 +150,6 @@ class SimpleNav
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
         return array($sectionId, $html);
-        
     }
 
     /**

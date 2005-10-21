@@ -16,15 +16,15 @@ class TestRunnerInit extends SGL_AppController
         $input = &SGL_Registry::singleton();
         $input->setRequest($req = SGL_Request::singleton());
         
-        $process =  new SGL_Init(
-                    new SGL_DiscoverClientOs(
-                    new SGL_ManagerResolver(
-                    new SGL_InitSession(
-                    new SGL_InitLangSupport(
-                    new SGL_InitPerms(
-                    new SGL_AuthenticateRequest(
-                    new SGL_BuildHeaders(
-                    new SGL_SetLocale(
+        $process =  new SGL_Process_Init(
+                    new SGL_Process_DiscoverClientOs(
+                    new SGL_Process_ResolveManager(
+                    new SGL_Process_CreateSession(
+                    new SGL_Process_SetupLangSupport(
+                    new SGL_Process_SetupPerms(
+                    new SGL_Process_AuthenticateRequest(
+                    new SGL_Process_BuildHeaders(
+                    new SGL_Process_SetupLocale(
                     new SGL_Void()
                    )))))))));
                    
