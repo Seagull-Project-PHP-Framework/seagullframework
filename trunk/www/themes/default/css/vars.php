@@ -17,7 +17,7 @@
     $tertiaryDark           = '#999999'; // dark gray
     $tertiaryDarker         = '#666666'; // darker gray
 
-    $blocksMarginTop        = '97px';
+    $blocksMarginTop        = '107px';
     $blocksWidthLeft        = '180px';
     $blocksWidthRight       = '180px';
     $blocksBorderBody       = $tertiaryMedium;
