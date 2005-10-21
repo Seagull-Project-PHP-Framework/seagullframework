@@ -7,14 +7,68 @@ sgl setup
 - more user-friendly error messages from Gallery2
 - if no DB detected, prompt to create, otherwise offer to create tables
 
-process
+PROCESS
 ========
 
-- 
+- create lockfile, system in 'setup' mode
+- block public access
 
+php interpreter
+===============
+- min php version, not over max
+- get php sapi type
+- check loaded extensions
+
+php ini
+=======
+- deal with register_globals and set session.use_trans_sid = 0
+- detect safe_mode
+- magic_quotes must be off
+- file_uploads ideally enabled
+
+filesystem
+==========
+- check pear libs exists and are loadable
+- determine location in filesystem
+- test if seagull/var exists & is writable
+- copy config file there
+- rewrite with correct values
+- create seagull/var tmp dir for session
+
+db setup
+========
+- test tb connection
+- get prefix, db params
+- create tables
+- insert default SQL data
+- insert sample SQL data
+- load constraints
+
+config setup
+============
+- form
+
+module setup
+============
 - choose modules and permissions must be created and set at install time
+- attempt to 
+    - uncompress
+    - move to correct locatin
+    - apply user perms
+    - apply prefs
+    - add module's db tables to Config
+    - load module's schema + data
+    - add 'section' or 'screen' navigation links
+    - register module in registry
+
+user setup
+==========
 - create admin, set username, password and email
 - option to add user
+
+- remove lockfile, system set to 'production' mode
+
+
 
 
 
