@@ -139,11 +139,10 @@ class SGL_Item
     function SGL_Item($itemID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'item'; //FIXME, do we need this?
+
         if ($itemID >= 0) {
             $this->_init($itemID);
         }
-        
     }
 
     /**
