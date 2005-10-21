@@ -14,7 +14,7 @@ body {
 
 #sgl #header {
     background-color: <?php echo $primary ?>;
-    height: 50px;
+    height: 60px;
 }
 #sgl #logo {
     float: left;
