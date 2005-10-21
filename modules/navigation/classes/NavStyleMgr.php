@@ -138,7 +138,6 @@ class NavStyleMgr extends SGL_Manager
         //  build html unordered list of sections
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
         
-        //  normally data is coming from post-process tasks
         $nav = & new SimpleNav($input);
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
