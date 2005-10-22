@@ -681,7 +681,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         //  process data if valid
         if ($mgr->isValid()) {
             $mgr->process($input, $output);
-        } 
+        }
         
         $mgr->display($output);
         

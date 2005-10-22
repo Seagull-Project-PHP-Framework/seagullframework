@@ -12,6 +12,11 @@ PROCESS
 
 - create lockfile, system in 'setup' mode
 - block public access
+    one idea, using key in hidden file
+        - put main site in standby mode
+        - create randomly named dir
+        - perform install in above dir
+        - delete dir when finished
 
 php interpreter
 ===============
@@ -34,10 +39,11 @@ filesystem
 - copy config file there
 - rewrite with correct values
 - create seagull/var tmp dir for session
-
+    
 db setup
 ========
-- test tb connection
+- test db connection
+- test db perms
 - get prefix, db params
 - create tables
 - insert default SQL data
@@ -47,7 +53,15 @@ db setup
 config setup
 ============
 - form
-
+    - system paths
+    - general
+        - name + desc of site [metas]
+        - admin email address
+        - lang
+        - server time offset
+        
+- the domain of the cookie that will be used
+        
 module setup
 ============
 - choose modules and permissions must be created and set at install time
@@ -66,6 +80,7 @@ user setup
 - create admin, set username, password and email
 - option to add user
 
+- For security reasons, you must remove the installation script ...
 - remove lockfile, system set to 'production' mode
 
 
