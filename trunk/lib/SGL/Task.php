@@ -1,6 +1,6 @@
 <?php
 
-require_once SGL_CORE_DIR . '/ServiceLocator.php';
+#require_once SGL_CORE_DIR . '/ServiceLocator.php';
 
 class SGL_Task
 {   
@@ -12,7 +12,7 @@ class SGL_Task
     
     function SGL_Task()
     {
-        $this->oDal = & $this->_getDal();
+        #$this->oDal = & $this->_getDal();
     }
     
     /**
