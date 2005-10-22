@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.34 2005/09/25 05:25:23 cellog Exp $
+ * @version    CVS: $Id: 10.php,v 1.35 2005/09/28 22:35:53 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -179,7 +179,7 @@ class PEAR_REST_10
             }
             // allow newer releases to say "I'm OK with the dependent package"
             if ($xsdversion == '2.0' && isset($release['co'])) {
-                if (!isset($release['co'][0])) {
+                if (!is_array($release['co']) || !isset($release['co'][0])) {
                     $release['co'] = array($release['co']);
                 }
                 foreach ($release['co'] as $entry) {

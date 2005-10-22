@@ -16,7 +16,7 @@
  * @author     Stephan Schmidt (original XML_Serializer code)
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.30 2005/09/25 03:48:59 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.32 2005/10/02 06:29:24 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -35,7 +35,7 @@ require_once 'System.php';
  * @author     Stephan Schmidt (original XML_Serializer code)
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -114,7 +114,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
      */
     function getPackagerVersion()
     {
-        return '1.4.1';
+        return '1.4.2';
     }
 
     /**
@@ -358,7 +358,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             }
             $this->options['beautifyFilelist'] = true;
         }
-        $arr['attribs']['packagerversion'] = '1.4.1';
+        $arr['attribs']['packagerversion'] = '1.4.2';
         if ($this->serialize($arr, $options)) {
             return $this->_serializedData . "\n";
         }
@@ -377,14 +377,9 @@ http://pear.php.net/dtd/package-2.0.xsd',
         } else {
             foreach ($list as $a) {
                 $file = $a['attribs']['name'];
-                unset($a['attribs']['name']);
                 $attributes = $a['attribs'];
-                if (isset($a[$this->_packagefile->getTasksNs() . ':replace'])) {
-                    $repl = $a[$this->_packagefile->getTasksNs() . ':replace'];
-                } else {
-                    $repl = null;
-                }
-                $this->_addDir($dirs, explode('/', dirname($file)), $file, $attributes, $repl);
+                unset($a['attribs']);
+                $this->_addDir($dirs, explode('/', dirname($file)), $file, $attributes, $a);
             }
         }
         $this->_formatDir($dirs);
@@ -392,22 +387,22 @@ http://pear.php.net/dtd/package-2.0.xsd',
         return $dirs;
     }
 
-    function _addDir(&$dirs, $dir, $file = null, $attributes = null, $replacements = null)
+    function _addDir(&$dirs, $dir, $file = null, $attributes = null, $tasks = null)
     {
+        if (!$tasks) {
+            $tasks = array();
+        }
         if ($dir == array() || $dir == array('.')) {
+            $dirs['file'][basename($file)] = $tasks;
             $attributes['name'] = basename($file);
             $dirs['file'][basename($file)]['attribs'] = $attributes;
-            if (isset($replacements)) {
-                $dirs['file'][basename($file)][$this->_packagefile->getTasksNs() . ':replace']
-                    = $replacements;
-            }
             return;
         }
         $curdir = array_shift($dir);
         if (!isset($dirs['dir'][$curdir])) {
             $dirs['dir'][$curdir] = array();
         }
-        $this->_addDir($dirs['dir'][$curdir], $dir, $file, $attributes, $replacements);
+        $this->_addDir($dirs['dir'][$curdir], $dir, $file, $attributes, $tasks);
     }
 
     function _formatDir(&$dirs)
@@ -890,7 +885,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
 // | Authors: Stephan Schmidt <schst@php-tools.net>                       |
 // +----------------------------------------------------------------------+
 //
-//    $Id: v2.php,v 1.30 2005/09/25 03:48:59 cellog Exp $
+//    $Id: v2.php,v 1.32 2005/10/02 06:29:24 cellog Exp $
 
 /**
  * error code for invalid chars in XML name

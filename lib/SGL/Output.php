@@ -39,7 +39,8 @@
 // $Id: Output.php,v 1.22 2005/06/04 23:56:33 demian Exp $
 
 /**
- * High level HTML transform methods.
+ * High level HTML transform methods, 'Template Helpers' in Yahoo speak, 50% html,
+ * 50% php.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>

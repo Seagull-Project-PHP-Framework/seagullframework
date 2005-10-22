@@ -9,7 +9,7 @@ class SGL_Task_CheckLoadedModules extends SGL_Task
     {
     	foreach (array(
     	           'zlib', 'iconv', 'session', 'gd', 'mysql', 'mysqli', 'pgsql', 'oci8',
-    	           'pcre', 'tokenizer', 'posix', 'domxml', 'tidy', 'apc') as $m) {
+    	           'curl', 'open_ssl', 'pcre', 'tokenizer', 'posix', 'domxml', 'tidy', 'apc') as $m) {
     		$aModules[$m] = extension_loaded($m);
     	}
     	return $aModules;            

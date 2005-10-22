@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.86 2005/09/25 19:24:43 cellog Exp $
+ * @version    CVS: $Id: Package.php,v 1.87 2005/10/08 02:49:25 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -44,7 +44,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -654,7 +654,16 @@ class PEAR_Downloader_Package
                             }
                             continue;
                         } else {
-                            return $url;
+                            if (isset($dep['optional']) && $dep['optional'] == 'yes') {
+                                $this->_downloader->log(2, $this->getShortName() .
+                                    ': Skipping ' . $group
+                                    . ' dependency "' .
+                                    $this->_registry->parsedPackageNameToString($dep, true) .
+                                    '", no releases exist');
+                                continue;
+                            } else {
+                                return $url;
+                            }
                         }
                     }
                 }

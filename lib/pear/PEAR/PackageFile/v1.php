@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.61 2005/09/25 03:49:00 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.63 2005/10/03 03:20:12 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -269,6 +269,11 @@ define('PEAR_PACKAGEFILE_ERROR_NO_DEPPHPVERSION', 50);
  * Error code when a package has no lead developer
  */
 define('PEAR_PACKAGEFILE_ERROR_NO_LEAD', 51);
+
+/**
+ * Error code when a filename begins with "."
+ */
+define('PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME', 52);
 /**
  * package.xml encapsulator
  * @category   pear
@@ -276,7 +281,7 @@ define('PEAR_PACKAGEFILE_ERROR_NO_LEAD', 51);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -1023,6 +1028,8 @@ class PEAR_PackageFile_v1
                     'File "%file%" has no role, expecting one of "%roles%"',
                 PEAR_PACKAGEFILE_ERROR_INVALID_FILEROLE =>
                     'File "%file%" has invalid role "%role%", expecting one of "%roles%"',
+                PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME =>
+                    'File "%file%" cannot start with ".", cannot package or install',
                 PEAR_PACKAGEFILE_ERROR_INVALID_PHPFILE =>
                     'Parser error: invalid PHP found in file "%file%"',
                 PEAR_PACKAGEFILE_ERROR_NO_PNAME_PREFIX =>
@@ -1184,6 +1191,10 @@ class PEAR_PackageFile_v1
                 } elseif (!in_array($fa['role'], PEAR_Common::getFileRoles())) {
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILEROLE,
                         array('file' => $file, 'role' => $fa['role'], 'roles' => PEAR_Common::getFileRoles()));
+                }
+                if ($file{0} == '.') {
+                    $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME,
+                        array('file' => $file));
                 }
             }
         }

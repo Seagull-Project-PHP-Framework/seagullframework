@@ -16,7 +16,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Guess.php,v 1.18 2005/05/15 04:38:16 cellog Exp $
+ * @version    CVS: $Id: Guess.php,v 1.19 2005/09/27 02:55:26 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since PEAR 0.1
  */
@@ -93,7 +93,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -204,6 +204,9 @@ class OS_Guess
         // Use glibc's <features.h> header file to
         // get major and minor version number:
         include_once "System.php";
+        if (!file_exists('/usr/bin/cpp') || !is_executable('/usr/bin/cpp')) {
+            return $glibc = '';
+        }
         $tmpfile = System::mktemp("glibctest");
         $fp = fopen($tmpfile, "w");
         fwrite($fp, "#include <features.h>\n__GLIBC__ __GLIBC_MINOR__\n");
