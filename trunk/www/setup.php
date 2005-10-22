@@ -27,7 +27,8 @@ php interpreter
 php ini
 =======
 - deal with register_globals and set session.use_trans_sid = 0
-- detect safe_mode
+- allow_url_fopen = Off
+- detect and deal with safe_mode
 - magic_quotes must be off
 - file_uploads ideally enabled
 

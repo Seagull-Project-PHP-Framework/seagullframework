@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: RPC.php,v 1.87 2005/09/18 20:55:19 danielc Exp $
+ * @version    CVS: $Id: RPC.php,v 1.88 2005/10/15 20:29:43 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -446,13 +446,13 @@ function XML_RPC_ee($parser_resource, $name)
         break;
 
     case 'VALUE':
-        // deal with a string value
-        if (strlen($XML_RPC_xh[$parser]['ac']) > 0 &&
-            $XML_RPC_xh[$parser]['vt'] == $XML_RPC_String) {
-            $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
-        } elseif ($XML_RPC_xh[$parser]['lv'] == 1) {
-            // The <value> element was empty.
-            $XML_RPC_xh[$parser]['value'] = '';
+        if ($XML_RPC_xh[$parser]['vt'] == $XML_RPC_String) {
+            if (strlen($XML_RPC_xh[$parser]['ac']) > 0) {
+                $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
+            } elseif ($XML_RPC_xh[$parser]['lv'] == 1) {
+                // The <value> element was empty.
+                $XML_RPC_xh[$parser]['value'] = '';
+            }
         }
 
         $temp = new XML_RPC_Value($XML_RPC_xh[$parser]['value'], $XML_RPC_xh[$parser]['vt']);
@@ -546,7 +546,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.3
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -591,7 +591,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.3
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -1013,7 +1013,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.3
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1104,7 +1104,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.3
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1450,7 +1450,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.3
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base

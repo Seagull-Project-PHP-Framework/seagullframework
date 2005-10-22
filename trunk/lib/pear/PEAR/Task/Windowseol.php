@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Windowseol.php,v 1.5 2005/03/21 02:23:45 cellog Exp $
+ * @version    CVS: $Id: Windowseol.php,v 1.6 2005/10/02 06:29:39 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -30,7 +30,7 @@ require_once 'PEAR/Task/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -52,6 +52,7 @@ class PEAR_Task_Windowseol extends PEAR_Task_Common
         if ($xml != '') {
             return array(PEAR_TASK_ERROR_INVALID, 'no attributes allowed');
         }
+        return true;
     }
 
     /**

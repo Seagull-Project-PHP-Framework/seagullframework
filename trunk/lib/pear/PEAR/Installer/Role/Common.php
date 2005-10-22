@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.7 2005/04/06 22:34:39 cellog Exp $
+ * @version    CVS: $Id: Common.php,v 1.8 2005/10/02 06:28:52 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -30,7 +30,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -166,7 +166,7 @@ class PEAR_Installer_Role_Common
     /**
      * Do any unusual setup here
      * @param PEAR_Installer
-     * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @param PEAR_PackageFile_v2
      * @param array file attributes
      * @param string file name
      */

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Builder.php,v 1.25 2005/09/11 12:17:46 pajoye Exp $
+ * @version    CVS: $Id: Builder.php,v 1.26 2005/09/27 03:34:01 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/PackageFile.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since PHP 4.0.2
  * @see        http://pear.php.net/manual/en/core.ppm.pear-builder.php
@@ -280,7 +280,7 @@ class PEAR_Builder extends PEAR_Common
 
         // {{{ start of interactive part
         $configure_command = "$dir/configure";
-        $configure_options = $pkg->packageInfo('configure_options');
+        $configure_options = $pkg->getConfigureOptions();
         if ($configure_options) {
             foreach ($configure_options as $o) {
                 list($r) = $this->ui->userDialog('build',
@@ -331,7 +331,7 @@ class PEAR_Builder extends PEAR_Common
         if (!@chdir($build_dir)) {
             return $this->raiseError("could not chdir to $build_dir");
         }
-        putenv('PHP_PEAR_VERSION=1.4.1');
+        putenv('PHP_PEAR_VERSION=1.4.2');
         foreach ($to_run as $cmd) {
             $err = $this->_runCommand($cmd, $callback);
             if (PEAR::isError($err)) {

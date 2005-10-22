@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.218 2005/09/25 20:41:31 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.219 2005/09/28 22:13:51 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -460,7 +460,10 @@ class PEAR_Installer extends PEAR_Downloader
                     "' for file $file");
         }
         $role = &PEAR_Installer_Role::factory($pkg, $atts['attribs']['role'], $this->config);
-        $role->setup($this, $pkg, $atts['attribs'], $file);
+        $err = $role->setup($this, $pkg, $atts['attribs'], $file);
+        if (PEAR::isError($err)) {
+            return $err;
+        }
         if (!$role->isInstallable()) {
             return;
         }

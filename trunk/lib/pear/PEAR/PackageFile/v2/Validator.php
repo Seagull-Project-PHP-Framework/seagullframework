@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.73 2005/09/25 17:26:05 cellog Exp $
+// $Id: Validator.php,v 1.77 2005/10/03 03:20:14 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -891,23 +891,23 @@ class PEAR_PackageFile_v2_Validator
         $required = array('name', 'channel', 'min', 'max', '*exclude');
         foreach ($compat as $package) {
             $type = '<compatible>';
-            if (isset($package['name'])) {
+            if (is_array($package) && array_key_exists('name', $package)) {
                 $type .= '<name>' . $package['name'] . '</name>';
             }
             $this->_stupidSchemaValidate($required, $package, $type);
-            if (isset($package['min'])) {
+            if (is_array($package) && array_key_exists('min', $package)) {
                 if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
                       $package['min'])) {
                     $this->_invalidVersion(substr($type, 1) . '<min', $package['min']);
                 }
             }
-            if (isset($package['max'])) {
+            if (is_array($package) && array_key_exists('max', $package)) {
                 if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
                       $package['max'])) {
                     $this->_invalidVersion(substr($type, 1) . '<max', $package['max']);
                 }
             }
-            if (isset($package['exclude'])) {
+            if (is_array($package) && array_key_exists('exclude', $package)) {
                 if (!is_array($package['exclude'])) {
                     $package['exclude'] = array($package['exclude']);
                 }
@@ -923,7 +923,7 @@ class PEAR_PackageFile_v2_Validator
 
     function _validateBundle($list)
     {
-        if (!isset($list['bundledpackage'])) {
+        if (!is_array($list) || !isset($list['bundledpackage'])) {
             return $this->_NoBundledPackages();
         }
         if (!is_array($list['bundledpackage']) || !isset($list['bundledpackage'][0])) {
@@ -1011,6 +1011,11 @@ class PEAR_PackageFile_v2_Validator
             }
             foreach ($list['file'] as $i => $file)
             {
+                if (isset($file['attribs']) && isset($file['attribs']['name']) &&
+                      $file['attribs']['name']{0} == '.') {
+                    // name is something like "./doc/whatever.txt"
+                    $this->_invalidFileName($file['attribs']['name']);
+                }
                 if (isset($file['attribs']) && isset($file['attribs']['role'])) {
                     if (!$this->_validateRole($file['attribs']['role'])) {
                         if (isset($this->_packageInfo['usesrole'])) {
@@ -1238,11 +1243,11 @@ class PEAR_PackageFile_v2_Validator
             }
         }
         foreach ($releases as $rel) {
-            if (isset($rel['installconditions'])) {
+            if (is_array($rel) && array_key_exists('installconditions', $rel)) {
                 $this->_validateInstallConditions($rel['installconditions'],
                     "<$release><installconditions>");
             }
-            if (isset($rel['filelist'])) {
+            if (is_array($rel) && array_key_exists('filelist', $rel)) {
                 if ($rel['filelist']) {
                     
                     $this->_validateFilelist($rel['filelist'], true);
@@ -1307,6 +1312,13 @@ class PEAR_PackageFile_v2_Validator
             'file' => $file, 'dir' => $dir, 'role' => $role,
             'roles' => PEAR_Installer_Role::getValidRoles($this->_pf->getPackageType())),
             'File "%file%" in directory "%dir%" has invalid role "%role%", should be one of %roles%');
+    }
+
+    function _invalidFileName($file, $dir)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(
+            'file' => $file, 'dir' => $dir),
+            'File "%file%" in directory "%dir%" cannot begin with "."');
     }
 
     function _filelistCannotContainFile($filelist)
