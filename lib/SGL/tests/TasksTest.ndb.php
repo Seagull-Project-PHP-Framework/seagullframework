@@ -15,12 +15,35 @@ class TasksTest extends UnitTestCase {
         $this->UnitTestCase('Tasks Test');
     }
     
-    function testCheckingLoadedModules()
+    function testGetLoadedModules()
     {
-        $task = new SGL_Task_CheckLoadedModules();
+        $task = new SGL_Task_GetLoadedModules();
         print '<pre>'; print_r($task->run());
     }
     
+    function testGettEnv()
+    {
+        $task = new SGL_Task_GetPhpEnv();
+        print '<pre>'; print_r($task->run());
+    }
+    
+    function testGetIniValues()
+    {
+        $task = new SGL_Task_GetPhpIniValues();
+        print '<pre>'; print_r($task->run());
+    }
+    
+    function testGetFilesystemInfo()
+    {
+        $task = new SGL_Task_GetFilesystemInfo();
+        print '<pre>'; print_r($task->run());
+    }
+    
+    function testGetPearInfo()
+    {
+        $task = new SGL_Task_GetPearInfo();
+        print '<pre>'; print_r($task->run());
+    }
 }
 
 ?>
