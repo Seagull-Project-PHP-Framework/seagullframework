@@ -1,7 +1,5 @@
 <?php
 
-#require_once SGL_CORE_DIR . '/ServiceLocator.php';
-
 class SGL_Task
 {   
    /**
@@ -33,7 +31,7 @@ class SGL_Task
         $oServiceLocator = &ServiceLocator::instance();
         $oDal = $oServiceLocator->get('dal');
         if (!$oDal) {
-            $oDal = &MAX_Dal_Maintenance::singleton();
+            $oDal = &DA_FooBar::singleton();
             $oServiceLocator->register('dal', $oDal);
         }
         return $oDal;
