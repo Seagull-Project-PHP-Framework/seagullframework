@@ -1,4 +1,5 @@
 <?php
+#require_once 'HTML/Table.php';
 require_once dirname(__FILE__) . '/../Task.php';
 
 function bool2int($key)
@@ -55,7 +56,16 @@ class SGL_Task_GetPhpIniValues extends SGL_Task
         $this->aValues['post_max_size'] = ini_get('post_max_size');
         $this->aValues['upload_max_filesize'] = ini_get('upload_max_filesize');
     	return $this->aValues;
-    }   
+    }
+    
+    function foo()
+    {
+        $table = new HTML_Table('width=80%');
+        $table->setCaption('256 colors table');
+        foreach ($this->aValues as $k => $v) {
+               //   3 cols: element name, recommended, actual
+        }
+    }
 }
 
 class SGL_Task_GetFilesystemInfo extends SGL_Task
