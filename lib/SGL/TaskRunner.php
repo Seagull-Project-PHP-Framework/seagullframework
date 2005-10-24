@@ -10,9 +10,12 @@ class SGL_TaskRunner
     
     function main()
     {
+        $ret = array();
         foreach ($this->aTasks as $oTask) {
-            $ret = $oTask->run();
+            $ret[get_class($oTask)] = $oTask->run();
         }
+        
+        return $ret;
     }
     
    /**

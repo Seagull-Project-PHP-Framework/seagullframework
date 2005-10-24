@@ -83,23 +83,29 @@ user setup
 
 - For security reasons, you must remove the installation script ...
 - remove lockfile, system set to 'production' mode
-
-
-
-
-
-
-
-
-
-
-
 */
-/**
- * Example 3 for HTML_QuickForm_Controller: Tabbed form
- * 
- * $Id: tabbed.php,v 1.2 2003/10/02 12:49:38 avb Exp $
- */
+
+
+
+sgl_header();
+
+require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Tasks/All.php';
+
+$runner = new SGL_TaskRunner();
+$runner->addTask(new SGL_Task_GetLoadedModules());
+$runner->addTask(new SGL_Task_GetPhpEnv());
+$runner->addTask(new SGL_Task_GetPhpIniValues());
+$runner->addTask(new SGL_Task_GetFilesystemInfo());
+$runner->addTask(new SGL_Task_GetPearInfo());
+$data = $runner->main();
+
+print '<pre>'; print_r($data);
+
+sgl_footer();
+
+
+exit;
 
 require_once 'HTML/QuickForm/Controller.php';
 
@@ -263,4 +269,51 @@ $tabbed->setDefaults(array(
 ));
 
 $tabbed->run();
+
+
+function sgl_header()
+{
+    $html = <<<HTML
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <title>Seagull Framework :: FAQ</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Rating" content="General" />
+    <meta name="Generator" content="Seagull Framework v0.5.3" />
+
+    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    
+    <style type="text/css" media="screen">
+        @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=faq");
+    </style>
+    </head>
+<body>
+
+<div id="sgl">
+<!-- Logo and header -->
+<div id="header">
+    <a id="logo" href="http://localhost/seagull/trunk/www" title="Home">
+        <img src="http://localhost/seagull/trunk/www/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework
+    </a>
+</div>
+
+HTML;
+    print $html;
+}
+
+function sgl_footer()
+{
+    $html = <<<HTML
+<div id="footer">
+    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a> v0.5.3<br />
+            Execution Time = 122 ms, 9 queries     
+    </div>
+</body>
+</html>
+HTML;
+    print $html;
+}
 ?>
