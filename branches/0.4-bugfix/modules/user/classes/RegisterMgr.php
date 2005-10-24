@@ -240,6 +240,14 @@ class RegisterMgr extends SGL_Manager
 
         //  then assign them to the user_preference table
         $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
+        
+        //  handle custom hook if exists
+        if (!empty($conf['custom']['hook'])) {
+            $params = array('username' => $oUser->username, 'password' => $oUser->passwdClear);
+            require_once SGL_MOD_DIR . '/user/classes/' . $conf['custom']['hook'] . '.php';    
+            $obj = new $conf['custom']['hook']();
+            $ok = $obj->execute($params);
+        }
 
         //  check global error stack for any error that might have occurred
         if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
