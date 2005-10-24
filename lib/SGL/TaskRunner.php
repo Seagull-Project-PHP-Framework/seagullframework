@@ -12,10 +12,10 @@ class SGL_TaskRunner
     {
         $ret = array();
         foreach ($this->aTasks as $oTask) {
-            $ret[get_class($oTask)] = $oTask->run();
+            $ret[] = $oTask->run();
         }
         
-        return $ret;
+        return implode('', $ret);
     }
     
    /**
