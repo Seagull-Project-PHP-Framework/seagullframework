@@ -53,4 +53,21 @@
     /* Button like border colors */
     $button     = '#ffffff #333333 #333333 #ffffff';
     $buttonAlt     = '#333333 #ffffff #ffffff #333333';
+    
+ /* highlighting the selected row and color of unselected row */
+    $dataGridSelectedRow = "#d0d0ff"; /* selected row */
+    $dataGridRow = "#eeeeee"; /* unselected row */
+    
+    /* dataGrid colors */
+    $dataGridMenuBackground ="#f9f9f9"; /* menu above dataGrid */
+    $dataGridBackground = $dataGridRow; /* like unselected row */
+    $dataGridLinkColor = "#555599"; /* link color in dataGrid */
+    $dataGridTitle = $blocksColorTitle; /* title of dataGrid */
+    
+    /* dialog section */
+    $dialogDefault = "#eeeeee"; /* dialog background */
+    $dialogDark = "#dddddd"; /* dialog disabled fields*/
+    $dialogLight = "#f5f5f5"; /* dialog fieldsets background */
+    $dialogTextColor = "#777777";
+    $inputBackground = "#fafafa"; /* dialog inputs background */
 ?>

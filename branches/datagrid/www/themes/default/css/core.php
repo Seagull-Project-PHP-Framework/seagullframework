@@ -531,3 +531,147 @@ ul.bullets li {
 .tipOwner:hover .tipText {
     display: block;
 }
+/* PK menu above the dataGrids */
+
+#dataGrid{
+text-align:left;
+    border: <?php echo $borderLight ?>;
+    background: <?php echo $dataGridMenuBackground ?>; 
+}
+/* dataGrid title */
+#dataGrid H3{
+   font-size: <?php echo $fontDefault ?>;
+ color: <?php echo $dataGridTitle ?>;
+ font-family: <?php $fontFamily ?>;
+letter-spacing: .2em;
+font-weight:normal;
+margin:3px;
+}
+
+#dataGrid  INPUT{
+    margin:0px;
+    border: <?php echo $borderLight ?>;
+    background-color: <?php echo $inputBackground ?>;
+    font-size: <?php echo $fontSmall ?>;
+    vertical-align:middle;
+    height:18px; margin:1px;
+    cursor: pointer;
+}
+#dataGrid INPUT:hover{
+    background: <?php echo $blocksBackgroundBody?>;
+}
+#dataGrid HR{
+margin:2px;
+}
+
+
+/* PK navmenu above each dataGrid */
+
+#dataGrid TABLE{
+/*     border: <?php echo $borderLight ?>;*/
+border: 0px; margin:0px;
+border-top:<?php echo $borderLight ?>;
+   border-collapse: collapse;
+    text-align:left;
+     background: <?php echo $dataGridBackground ?>;
+     width:100% !important;
+
+}
+
+/* PK each dataGrid */
+
+#dataGrid TABLE TR{
+     border: <?php echo $borderLight ?>;
+     color:black;
+     font-size: <?php echo $fontSmall ?>;
+}
+#dataGrid TD{
+     vertical-align: bottom;
+}
+
+/* PK first row is table header nav */
+#dataGrid TR.br_n{
+
+/*background: <?php echo $dataGridBackground  ?>;*/
+
+}
+#dataGrid TABLE TR:first-child *{
+vertical-align:bottom;
+}
+
+/* dataGrid headers*/
+TR.br_h{
+text-align:center;
+background: <?php echo $tertiary ?>;
+}
+/* filter row*/
+TR.br_f TD{
+    white-space:nowrap;
+    text-align: center;
+    /*display:none;*/
+}
+#dataGrid TR.br_f INPUT{
+background:white;
+    font-size:9px;
+    height:14px;
+    margin:0px;
+}
+#dataGrid TR.br_f INPUT:hover{
+background:white;
+cursor:text;
+}
+
+
+#dataGrid TABLE A:link, #dataGrid TABLE A:visited{
+    color: <?php echo $dataGridLinkColor ?>;
+    text-decoration: none;
+}
+#dataGrid TABLE A:hover, #dataGrid TABLE A:active{
+    text-decoration: underline;
+}
+
+
+
+/*
+#dataGrid TABLE TD:first-child{
+display:none;
+}
+*/
+/* PK hide cbx for selected row ([type=checkbox] doesn't work in IE) */
+
+#dataGrid TABLE INPUT[type="checkbox"]{
+   display:none;
+}
+
+
+/* cell with bubble-description */
+TD.tips{
+    text-align:right;
+    vertical-align:middle;
+    /*white-space:nowrap;*/
+}
+
+
+/* PK: class for dataGrid row & dataGrid-selected row (classes are applied in dataGrid.js) */
+.dataGrid_row{
+    background: <?php echo $dataGridRow ?>;
+}
+.dataGrid_selected_row{
+    background: <?php echo $dataGridSelectedRow ?>;
+}
+
+INPUT[readonly], INPUT[disabled]{
+background-color: <?php echo $dialogDark ?>;
+color:555555;
+}
+
+/* new submit buttons */
+INPUT[type="button"],
+INPUT[type="submit"]{
+ background:url('../images/bg_1x18_grad.gif');
+ border:<?php echo $borderStrong ?>;;
+}
+input[type="submit"]{
+ border:2px solid #00bb00;
+  background:url('../images/bg_1x18_grad.gif');
+}
