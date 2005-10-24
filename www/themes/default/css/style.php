@@ -49,23 +49,42 @@
     header('Cache-Control: public');
     header('Content-Type: text/css');
 
+    $modtimes = array();
+
+    if (file_exists($vars = './vars.php')) {
+        $modTimes['vars'] = filemtime($vars);
+    }
+    if (file_exists($core = './core.php')) {
+        $modTimes['core'] = filemtime($core);
+    }
+    if (file_exists($navigation = 
+                            './' . @$_REQUEST['navStylesheet'] . '.nav.php')) {
+        $modTimes['navigation'] = filemtime($navigation);
+    }
+    if (file_exists($module = './' . @$_REQUEST['moduleName'] . '.php')) {
+        $modTimes['module'] = filemtime($module);
+    }
+
     // Get last modified time of file
-    $srvModTime = getlastmod();
+    $modTimes['shared'] = getlastmod();
 
     // exit out of script if cached on client
     if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
         $cliModTime = dateToTimestamp($_SERVER['HTTP_IF_MODIFIED_SINCE']);
-        if ($srvModTime <= $cliModTime) {
+        if (max($modTimes) <= $cliModTime) {
             header('HTTP/1.x 304 Not Modified');
             exit;
         }
     }
 
-    // send last modified date of file to client so it will have date for server on next request.
-    // technically we could just send the current time (as PEAR does) rather than the actual modify
-    // time of the file since either way would get the correct behavior, but since we already have
-    // the actual modified time of the file, we'll just use that.
-    $srvModDate = timestampToDate($srvModTime);
+    /* send last modified date of file to client so it will have date for server
+     * on next request.
+     * Technically we could just send the current time (as PEAR does) rather
+     * than the actual modify time of the file since either way would get the
+     * correct behavior, but since we already have the actual modified time of
+     * the file, we'll just use that.
+     */
+    $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
 
     //  get base url for css classes that include images
@@ -78,13 +97,14 @@
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
-    $navigation =  './' . @$_REQUEST['navStylesheet'] . '.nav.php';
-    require_once './vars.php';
-    require_once './core.php';
-    if (!empty($_REQUEST['navStylesheet'])) {
-        require_once $navigation;        
+    require_once $vars;
+    require_once $core;
+    if (isset($modTimes['navigation'])) {
+        require_once $navigation;
     }
-
+    if (isset($modTimes['module'])) {
+        require_once $module;
+    }
 
     // copied from PEAR HTTP Header.php (comments stripped)
     // Author: Wolfram Kriesing <wk@visionp.de>
