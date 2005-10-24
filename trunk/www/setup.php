@@ -98,9 +98,9 @@ $runner->addTask(new SGL_Task_GetPhpEnv());
 $runner->addTask(new SGL_Task_GetPhpIniValues());
 $runner->addTask(new SGL_Task_GetFilesystemInfo());
 $runner->addTask(new SGL_Task_GetPearInfo());
-$data = $runner->main();
+$output = $runner->main();
 
-print '<pre>'; print_r($data);
+print $output;
 
 sgl_footer();
 
