@@ -1,5 +1,5 @@
 <?php
-require_once SGL_LIB_DIR . '/SGL/Task.php';
+require_once dirname(__FILE__) . '/../Task.php';
 
 function bool2int($key)
 {
