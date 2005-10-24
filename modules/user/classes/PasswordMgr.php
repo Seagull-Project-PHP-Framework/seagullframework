@@ -164,6 +164,16 @@ class PasswordMgr extends SGL_Manager
         $oUser->get(SGL_HTTP_Session::getUid());
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
+        
+        //  handle custom hook if exists
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        if (!empty($conf['custom']['hook'])) {
+            $params = array('username' => $oUser->username, 'password' => $input->password);
+            require_once SGL_MOD_DIR . '/user/classes/' . $conf['custom']['hook'] . '.php';    
+            $obj = new $conf['custom']['hook']();
+            $ok = $obj->execute($params);
+        }
+        
         if ($input->passwdResetNotify) {
             $this->sendPassword($oUser, $input->password);
         }
