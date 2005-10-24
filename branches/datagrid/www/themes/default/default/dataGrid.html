@@ -1,0 +1,311 @@
+{outputText:h}
+{foreach:dataGridData,key,dataGrid}
+
+{if:dataGrid.showDataGrid}
+
+<h3 flexy:if="dataGrid.dataGridHeader">{dataGrid.dataGridHeader}</h3>
+    <input type="hidden" name="{this.plugin(#getVarName#,dataGrid.name,#export#)}" id="{this.plugin(#getVarName#,dataGrid.name,#export#)}" value="">
+    <input type="hidden" name="{this.plugin(#getVarName#,#pageID_#,dataGrid.id)}" value="{dataGrid.pageID}">
+    {if:searchKeywords}
+    <input type="hidden" name="keywords" value="{searchKeywords}">
+    {end:}
+
+{if:noHeader}
+{else:}
+<table>
+<tr class="br_n">
+         <td style="white-space:nowrap">
+        <center>
+        {translate(#Total rows#)}:&nbsp;{dataGrid.allRows}
+        {translate(#Total Pages#)}:&nbsp;{dataGrid.total}
+        <select class="noBorder" name="{this.plugin(#getVarName#,dataGrid.name,#perPage#)}" value="{dataGrid.perPage}" onchange="form.submit()">
+            {generateSelect(dataGrid.perPageOptions,dataGrid.perPage):h}
+        </select>
+        &nbsp; {translate(#Per Page#)}
+        {dataGrid.links:h}</center>
+         </td>
+        {if:print}
+        <script type="text/javascript">
+            window.print();
+        </script>
+        {end:}
+
+        <td>
+        <center>
+        <a href="javascript:SelectAllRows('{dataGrid.name}id')"><img src="{webRoot}/themes/{theme}/images/turn_on.gif" alt="{translate(#select all rows#)}" onmouseover="return overlib('{translate(#select all rows#)}');" onmouseout="return nd();"></a>
+        &nbsp;
+        <a href="javascript:DeselectAllRows('{dataGrid.name}id')"><img src="{webRoot}/themes/{theme}/images/turn_off.gif" alt="{translate(#deselect all rows#)}" onmouseover="return overlib('{translate(#deselect all rows#)}');" onmouseout="return nd();"></a>
+        </center>
+        </td>
+
+        <td>
+        <center>
+
+        <a href="javascript:setExport('{this.plugin(#getVarName#,dataGrid.name,#export#)}','page_XLS')">
+        <img src="{webRoot}/themes/{theme}/images/excel.gif" alt="{translate(#current page#)}" onmouseover="return overlib('{translate(#Export current page to Excel#)}');" onmouseout="return nd();"></a>&nbsp;
+        <a href="javascript:setExport('{this.plugin(#getVarName#,dataGrid.name,#export#)}','total_XLS')">
+        <img src="{webRoot}/themes/{theme}/images/pages_e.gif" alt="{translate(#total pages#)}" onmouseover="return overlib('{translate(#Export total pages to Excel#)}');" onmouseout="return nd();"></a>
+
+        </center>
+         </td>
+         <td>
+        <center>
+        <a href="javascript:setExport('{this.plugin(#getVarName#,dataGrid.name,#export#)}','page_DOC')">
+        <img src="{webRoot}/themes/{theme}/images/word.gif" alt="{translate(#current page#)}" onmouseover="return overlib('{translate(#Export current page to Word#)}');" onmouseout="return nd();"></a>&nbsp;
+        <a href="javascript:setExport('{this.plugin(#getVarName#,dataGrid.name,#export#)}','total_DOC')">
+        <img src="{webRoot}/themes/{theme}/images/pages_w.gif" alt="{translate(#total pages#)}" onmouseover="return overlib('{translate(#Export total pages to Word#)}');" onmouseout="return nd();"></a>
+        </center>
+         </td>
+         <td>
+
+        <center>
+       <a href="javascript:resetFilters('{dataGrid.id}')"><img src="{webRoot}/themes/{theme}/images/reset.gif" onmouseover="return overlib('{translate(#reset filters#)}');" onmouseout="return nd();"></a>&nbsp;</a>
+        </center>
+
+         </td>
+         {if:print}
+         {else:}
+         <td>
+        <a href="{selfUrl}?print=1&{selfUrlParam}" target="_blank"> <img src="{webRoot}/themes/{theme}/images/printer.gif" alt="{translate(#print#)}" onmouseover="return overlib('{translate(#Print dataGrid#)}');" onmouseout="return nd();"></a>&nbsp;
+         </td>
+         {end:}
+<td width="20%">&nbsp;</td>
+</tr>
+</table>
+
+{end:}
+    <table dataGridName="{dataGrid.name}" border=1 rules="rows">
+        <tr class="br_h">
+          {foreach:dataGrid.columns,key_column,column}
+            {if:this.plugin(#isEqual#,column.type,#hidden#)}
+            {else:}
+            <td>
+              {if:print}
+              <span>{translate(column.name)}</span>
+              {else:}
+                {if:column.sort}
+                    <input type="hidden" id="{dataGrid.name}" name="{this.plugin(#getVarName#,dataGrid.name,#sort_#,column.dbName)}" value="{this.plugin(#getArrayValue#,dataGrid.sorts,column.dbName)}">
+                    {if:this.plugin(#isEqualWithArrayValue#,#ASC#,dataGrid.sorts,column.dbName)}
+                        <a href="javascript:setOrderBy('{dataGrid.name}','{this.plugin(#getVarName#,dataGrid.name,#sort_#,column.dbName)}')">{column.name}</a>&nbsp;&uarr;
+                    {else:}
+                        {if:this.plugin(#isEqualWithArrayValue#,#DESC#,dataGrid.sorts,column.dbName)}
+                            <a href="javascript:setOrderBy('{dataGrid.name}','{this.plugin(#getVarName#,dataGrid.name,#sort_#,column.dbName)}')">{column.name}</a>&nbsp;&darr;
+                        {else:}
+                            <a href="javascript:setOrderBy('{dataGrid.name}','{this.plugin(#getVarName#,dataGrid.name,#sort_#,column.dbName)}')">{column.name}</a>
+                        {end:}
+                    {end:}
+                {else:}
+                    <span>{column.name}</span>
+                {end:}
+              {end:}
+            </td>
+            {end:}
+          {end:}
+        </tr>
+        <tr class="br_f">
+          {foreach:dataGrid.columns,key_column,column}
+            {if:this.plugin(#isEqual#,column.type,#hidden#)}
+            {else:}
+            <td>
+            {if:print}
+            {else:}
+                {if:dataGrid.showFilters}
+                    {if:column.filter}
+                      {if:this.plugin(#arrayNotEmpty#,column.transform)}
+                            <select class="noBorder" id="{dataGrid.id}" name="{this.plugin(#getVarName#,dataGrid.name,column.dbName)}" value="{this.plugin(#getArrayValue#,dataGrid.filters,column.dbName)}" onchange="form.submit()">
+                                <option></option>
+                                {foreach:column.transform,key_transform,transformValue}
+                                    {if:this.plugin(#isEqualWithArrayValue#,key_transform,dataGrid.filters,column.dbName)}
+                                        <option value="{key_transform}" selected="selected">{transformValue}</option>
+                                    {else:}
+                                        <option value="{key_transform}">{transformValue}</option>
+                                    {end:}
+                                {end:}
+                            </select>
+                      {else:}
+                        {if:this.plugin(#arrayNotEmpty#,column.filterSelect)}
+                            <select id="{dataGrid.id}" name="{this.plugin(#getVarName#,dataGrid.name,column.dbName)}" value="{this.plugin(#getArrayValue#,dataGrid.filters,column.dbName)}" onchange="form.submit()">
+                                <option></option>
+                                {foreach:column.filterSelect,key_filterSelect,filterSelectValue}
+                                    {if:this.plugin(#isEqualWithArrayValue#,filterSelectValue,dataGrid.filters,column.dbName)}
+                                        <option selected="selected">{filterSelectValue}</option>
+                                    {else:}
+                                        <option>{filterSelectValue}</option>
+                                    {end:}
+                                {end:}
+                            </select>
+                        {else:}
+                            {if:this.plugin(#orEqual#,column.type,#date#,#real#,#integer#)}
+                                <input class="treeMenuDefault" id="{dataGrid.id}" type="text" size="2" name="{this.plugin(#getVarName#,dataGrid.name,column.dbName,#__from__#)}" value="{this.plugin(#getVarNameAndArrayValue#,dataGrid.filters,column.dbName,#__from__#)}">
+                                :
+                                <input class="treeMenuDefault" id= "{dataGrid.id}" type="text" size="2" name="{this.plugin(#getVarName#,dataGrid.name,column.dbName,#__to__#)}" value="{this.plugin(#getVarNameAndArrayValue#,dataGrid.filters,column.dbName,#__to__#)}">
+                                {column.cError:h}
+                            {else:}
+                                <input class="treeMenuDefault" id="{dataGrid.id}" type="text" size="10" name="{this.plugin(#getVarName#,dataGrid.name,column.dbName)}" value="{this.plugin(#getArrayValue#,dataGrid.filters,column.dbName)}">
+                            {end:}
+                        {end:}
+                      {end:}
+                    {else:}
+                        &nbsp;
+                    {end:}
+                {end:}
+            {end:}
+            </td>
+            {end:}
+          {end:}
+        </tr>
+        <tr  flexy:foreach="dataGrid.results,key,valueObj" onClick="javascript:ChangeSelection(event,'{dataGrid.name}id',{key})">
+            {foreach:dataGrid.columns,key_column,column}
+                {if:this.plugin(#isEqual#,column.type,#id#)}
+                    {if:this.plugin(#isEqualWithArrayValue#,dataGrid.setID,valueObj,column.dbName)}
+                        <td width="2" align="{column.align}">
+                            <input type="checkbox" name="{dataGrid.name}id[]" value="{this.plugin(#getArrayValue#,valueObj,column.dbName)}" checked></td>
+                    {else:}
+                        <td width="2" align="{column.align}">
+                        <input type="checkbox" name="{dataGrid.name}id[]" value="{this.plugin(#getArrayValue#,valueObj,column.dbName)}"></td>
+                    {end:}
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#text#)}
+                    <td align="{column.align}">
+                    {this.plugin(#getArrayValue#,valueObj,column.dbName,column.text_length)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#hidden#)}
+                    <input type="hidden" name="{column.dbName}[]" value="{this.plugin(#getArrayValue#,valueObj,column.dbName,column.text_length)}">
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#html#)}
+                    <td align="{column.align}">
+                    {this.plugin(#getArrayValue#,valueObj,column.dbName):h}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#user#)}
+                    {this.plugin(#setTemplateFields#,#valueObj#,valueObj)}
+                    {this.plugin(#setTemplateFields#,#column#,column)}
+                    <flexy:include src="dataGridCol.html"/>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#colour#)}
+                    <td align="{column.align}" bgcolor="{this.plugin(#getArrayValue#,valueObj,column.dbName)}">
+                    {this.plugin(#getArrayValue#,valueObj,column.dbName)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#integer#)}
+                    <td align="{column.align}">
+                    {this.plugin(#getArrayValue#,valueObj,column.dbName)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#real#)}
+                    <td align="{column.align}">
+                    {this.plugin(#getArrayValue#,valueObj,column.dbName,null,1)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#date#)}
+                    <td align="{column.align}">{this.plugin(#getDateArrayValue#,valueObj,column.dbName)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#hour#)}
+                    <td align="{column.align}">{this.plugin(#getArrayValue#,valueObj,column.dbName)}</td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#image#)}
+                    <td align="{column.align}"><img src="{webRoot}/themes/{theme}/images/{this.plugin(#getArrayValue#,valueObj,column.dbName)}"></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#thumbnail#)}
+                    <td align="{column.align}"><img src="{webRoot}/themes/{theme}/images/{this.plugin(#getArrayValue#,valueObj,column.dbName)}"></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#enclosure#)}
+                    <td align="{column.align}"><a href="{uploadPath}/{this.plugin(#getArrayValue#,valueObj,column.dbName)}">{this.plugin(#getArrayValue#,valueObj,column.dbName)}</a></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#email#)}
+                    <td align="{column.align}"><a href="mailto:{this.plugin(#getArrayValue#,valueObj,column.dbName)}">{this.plugin(#getArrayValue#,valueObj,column.dbName)}</a></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#link#)}
+                    <td align="{column.align}"><a href="{this.plugin(#getArrayValue#,valueObj,column.dbName)}">{this.plugin(#getArrayValue#,valueObj,column.dbName)}</a></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#radio#)}
+                    <td align="{column.align}"><input name="{column.dbName}" type="radio" value="{this.plugin(#getArrayValue#,valueObj,column.dbName)}"></td>
+                {end:}
+                {if:this.plugin(#isEqual#,column.type,#action#)}
+                    <td class="tips">
+                        {foreach:column.actionData,key_action,action}
+                            {if:action.tips}
+                                    <span onmouseover="return overlib('{this.plugin(#getActionValue#,action.tips,valueObj)}');" onmouseout="return nd();">
+                            {end:}
+                            {if:print}
+                                {if:action.url}
+                                    {this.plugin(#getActionValue#,action.name,valueObj)}
+                                {end:}
+                                {if:action.javaCode}
+                                    {this.plugin(#getActionValue#,action.name,valueObj)}
+                                {end:}
+                            {else:}
+                                {if:this.plugin(#getActionValue#,action.name,valueObj)}
+                                    {if:action.url}
+                                    <a href="{this.plugin(#getActionValue#,action.url,valueObj)}">
+                                    {end:}
+                                    {if:action.javaCode}
+                                    <a href="#" onClick="{this.plugin(#getActionValue#,action.javaCode,valueObj)};">
+                                    {end:}
+                                    {if:action.img}
+                                        <img src="{webRoot}/themes/{theme}/images/{action.img}">
+                                    {else:}
+                                        {this.plugin(#getActionValue#,action.name,valueObj)}
+                                    {end:}
+                                    </a>
+                                 {end:}
+                            {end:}
+                            {if:action.tips}
+                                </span>
+                            {end:}
+                            &nbsp;
+                        {end:}
+                    </td>
+                {end:}
+            {end:}
+        </tr>
+        {if:dataGrid.showSummary}
+        {if:!this.plugin(#isEqual#,dataGrid.total,#0#)}
+        {if:!this.plugin(#isEqual#,dataGrid.total,#1#)}
+        {if:!this.plugin(#isEqual#,dataGrid.perPage,#1#)}
+        {if:!this.plugin(#isEqual#,dataGrid.perPage,#0#)}
+            <tr>
+            <td flexy:foreach="dataGrid.columns,key_column,column" align="right">
+                {if:column.sum}
+                    {this.plugin(#getArrayValue#,dataGrid.sums,column.dbName)}
+                {else:}
+                    {if:this.plugin(#isEqual#,column.type,#id#)}
+                        {translate(#PAGE SUMMARY#)}
+                    {end:}
+                    &nbsp;
+                {end:}
+            </td>
+            </tr>
+        {end:}
+        {end:}
+        {end:}
+        <tr>
+        <td flexy:foreach="dataGrid.columns,key_column,column" align="right">
+            {if:column.sumTot}
+                {this.plugin(#getArrayValue#,dataGrid.sumsTotal,column.dbName,null,1)}
+            {end:}
+            {if:isEqual(column.type,#id#)}
+                {translate(#TOTAL SUMMARY#)}
+            {end:}
+        </td>
+        </tr>
+        {end:}
+        {end:}
+    </table>
+        {if:print}
+    {else:}
+        {foreach:dataGrid.dataGridButtonDelete,buttonName,buttonUrl}
+            <!--<input type="button" value="{buttonName}" class="noBorder" onClick="deleteConfirm('{dataGrid.name}id', '{buttonUrl}', '{translate(#Do you want to delete: #)}')"/>-->
+            <input type="button" value="{buttonName}" class="noBorder" onClick="deleteConfirm('{dataGrid.name}id', '{buttonUrl}', '{dataGridDeleteMessage}')"/>
+        {end:}
+        {foreach:dataGrid.dataGridButton,buttonName,buttonUrl}
+            <input type="button" value="{buttonName}" class="noBorder" onClick="document.getElementById('dataGrid').setAttribute('action', '{buttonUrl}'); document.getElementById('dataGrid').submit();"/>
+        {end:}
+    {end:}
+    
+<hr size=1> 
+
+    <!-- <A href="javascript:history.go(-1)"> .: back :. </a> -->
+
+{else:}
+<h3>{dataGrid.emptyTitle:h}</h3><br><br>
+{end:}
+    <!-- <input type="hidden" name="action" value="{action}"> -->
+    <input type="hidden" name="{this.plugin(#getVarName#,#setID_#,dataGrid.id)}" value="">
+{end:}
