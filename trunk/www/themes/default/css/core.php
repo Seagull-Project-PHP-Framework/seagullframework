@@ -18,19 +18,23 @@ body {
 }
 #sgl #logo {
     float: left;
-    margin: 5px 5px 0 10px;
+    margin: 5px 0 0 10px;
     font-size: 2em;
     font-weight: normal;
     color: <?php echo $primaryTextLight ?>;
     text-decoration: none;
+}
+#sgl #logo img {
+    vertical-align: middle;
+    /* Workaround for Opera */
+    vertical-align: text-middle;
 }
 #sgl #login {
     float: right;
     margin: 10px 10px 0 0;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
-    /* Workaround for IE hiding bottom border of logAction.
-     * No side effect for FF and Opera.  */
+    /* Workaround for IE hiding bottom border of logAction. */
     height: 50%;
 }
 #sgl #login a {
