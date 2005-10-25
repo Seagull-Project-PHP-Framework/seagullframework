@@ -10,7 +10,7 @@ function sgl_header($title)
     <meta name="ROBOTS" content="ALL" />
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
-    <meta name="Generator" content="Seagull Framework v0.5.3" />
+    <meta name="Generator" content="Seagull Framework" />
 
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
     

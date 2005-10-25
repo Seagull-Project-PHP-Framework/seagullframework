@@ -140,6 +140,7 @@ $output = $runner->main();
 
 print $output;
 
+//  process errors
 print '<p>&nbsp;</p>';
 print "<div class=\"messageContainer\">";
 
