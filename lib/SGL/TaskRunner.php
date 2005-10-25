@@ -14,7 +14,6 @@ class SGL_TaskRunner
         foreach ($this->aTasks as $oTask) {
             $ret[] = $oTask->run();
         }
-        
         return implode('', $ret);
     }
     

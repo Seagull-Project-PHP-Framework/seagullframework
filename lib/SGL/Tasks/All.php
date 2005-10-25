@@ -1,4 +1,6 @@
 <?php
+$GLOBALS['_SGL']['ERRORS'] = array();
+
 define('EOL', "\n");
 
 //  dependency types
@@ -24,9 +26,15 @@ function ini_get2($key)
     return (ini_get($key) == '1' || $key === true ? 1 : 0);        
 }
 
+function getInstallRoot()
+{
+    return dirname(dirname(dirname(dirname(__FILE__))));
+}
+
 class SGL_EnvSummaryTask extends SGL_Task 
 {
     var $aData = array();
+    var $aErrors = array();
     var $aRequirements = array();
     var $title = '';
     var $mandatory = false;
@@ -45,10 +53,10 @@ class SGL_EnvSummaryTask extends SGL_Task
             if (is_array($v)) {
                 $html .= '<td colspan="2">'.$this->createComboBox($v).'</td>';
             } elseif ($this->mandatory) {
-                $html .= '<td colspan="2">'.$this->processDependency($this->aRequirements[$k], $v).$discoveredValue.'</span></td>';
+                $html .= '<td colspan="2">'.$this->processDependency($this->aRequirements[$k], @$this->aErrors[$k], $k, $v).$discoveredValue.'</span></td>';
             } else {
                 $html .= '<td>'.$this->processRecommended($this->aRequirements[$k]).'</td>';
-                $html .= '<td>'.$this->processDependency($this->aRequirements[$k], $v).$discoveredValue.'</span></td>';
+                $html .= '<td>'.$this->processDependency($this->aRequirements[$k], @$this->aErrors[$k], $k, $v).$discoveredValue.'</span></td>';
             }
             $html .= '</tr>';
         }
@@ -56,7 +64,7 @@ class SGL_EnvSummaryTask extends SGL_Task
         return $html;
     }
     
-    function processDependency($aRequirement, $actual)
+    function processDependency($aRequirement, $error, $key, $actual)
     {
         $depType = key($aRequirement);
         $depValue = $aRequirement[$depType];// what value the dep requires
@@ -71,6 +79,7 @@ class SGL_EnvSummaryTask extends SGL_Task
                     $status = 'green';                
                 } else {
                     $status = 'red';
+                    $GLOBALS['_SGL']['ERRORS'][] = array($key, $error);
                 }
                 
             //  else evaluate conventional values
@@ -79,6 +88,7 @@ class SGL_EnvSummaryTask extends SGL_Task
                     $status = 'green';
                 } else {
                     $status = 'red';
+                    $GLOBALS['_SGL']['ERRORS'][] = array($key, $error);
                 }
             }
         } elseif ($depType == SGL_RECOMMENDED) {
@@ -138,6 +148,10 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
         'tidy' => array(SGL_RECOMMENDED => 1),
         'apc' => array(SGL_RECOMMENDED => 1),
         );
+    var $aErrors = array(
+        'session' => 'You need the session extension to run Seagull',
+        'pcre' => 'You need the prce extension to run Seagull',
+    );
 
     function run()
     {
@@ -155,7 +169,14 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
     var $aRequirements = array(
         'phpVersion' => array(SGL_REQUIRED => '>4.3.0'),
         'operatingSystem' => array(SGL_NEUTRAL => 0),
-        'webserverSapi' => array(SGL_NEUTRAL => 1),
+        'webserverSapi' => array(SGL_NEUTRAL => 0),
+        'webSeagullVersion' => array(SGL_NEUTRAL => 0),
+    );
+    var $aErrors = array(
+        'phpVersion' => 'As a minimum you need to be running PHP version 4.3.0 to run Seagull',
+        'operatingSystem' => '',
+        'webserverSapi' => '',
+        'webSeagullVersion' => '',
     );
     
     function run()
@@ -163,6 +184,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
         $this->aData['phpVersion'] = phpversion();
         $this->aData['operatingSystem'] = php_uname('s') .' '. php_uname('r') .', '. php_uname('m');
         $this->aData['webserverSapi'] = php_sapi_name();
+        $this->aData['webSeagullVersion'] = file_get_contents(getInstallRoot() . '/VERSION.txt');
     	return $this->render($this->aData);
     }
 }
@@ -207,10 +229,15 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
         'varDirExists' => array(SGL_REQUIRED => 1),
         'varDirIsWritable' => array(SGL_REQUIRED => 1),
     );
+    var $aErrors = array(
+        'installRoot' => '',
+        'varDirExists' => 'It appears you do not have a "var" folder, please create a folder with this name in the root of your Seagull install',
+        'varDirIsWritable' => 'Your "var" dir is not writable by the webserver, please chmod it to 0777',
+    );
     
     function run()
     {
-        $installRoot = dirname(dirname(dirname(dirname(__FILE__))));
+        $installRoot = getInstallRoot();
         $this->aData['installRoot'] = $installRoot;
         $this->aData['varDirExists'] = bool2int(file_exists($installRoot . '/var'));
         $this->aData['varDirIsWritable'] = bool2int(is_writable($installRoot . '/var'));
@@ -235,7 +262,7 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
     
     function run()
     {
-        $installRoot = dirname(dirname(dirname(dirname(__FILE__))));
+        $installRoot = getInstallRoot();
         $this->aData['pearFolderExists'] = bool2int(file_exists($installRoot . '/lib/pear'));
         $this->aData['pearLibIsLoadable'] = bool2int(include_once $installRoot . '/lib/pear/PEAR.php');
         
