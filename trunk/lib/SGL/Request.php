@@ -291,6 +291,35 @@ class SGL_Inflector
         return strtolower($name);      
     }
     
+    function getTitleFromCamelCase($camelCaseWord)
+    {   
+        if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
+            return $camelCaseWord;   
+        }
+        $ret = '';
+        for ($x = 0; $x < strlen($camelCaseWord); $x ++) {
+            if (preg_match("/[A-Z]/", $camelCaseWord{$x})) {
+                $ret .= ' ';
+            }
+            $ret .= $camelCaseWord{$x};
+        }
+        return ucfirst($ret);
+    }
+    
+    function isCamelCase($str)
+    {
+        //  ensure no non-alpha chars
+        if (preg_match("/[^a-z].*/i", $str)) {
+            return false;
+        }
+        //  and at least 1 capital not including first letter
+        for ($x = 1; $x < strlen($str)-1; $x ++) {
+            if (preg_match("/[A-Z]/", $str{$x})) {
+                return true;
+            }
+        }
+    }
+    
     /**
      * Makes up for case insensitive classnames in php4 with get_class().
      *

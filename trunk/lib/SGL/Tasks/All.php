@@ -7,6 +7,7 @@ define('SGL_RECOMMENDED', 1);
 define('SGL_REQUIRED', 2);
 
 require_once dirname(__FILE__) . '/../Task.php';
+require_once dirname(__FILE__) . '/../Request.php';
 
 function bool2words($key)
 {
@@ -40,7 +41,7 @@ class SGL_EnvSummaryTask extends SGL_Task
         foreach ($this->aData as $k => $v) {
             $discoveredValue = (is_int($v)) ? bool2words($v) : $v;
             $html .= '<tr>'.EOL;
-            $html .= '<td><strong>'.$k.'</strong></td>';               
+            $html .= '<td><strong>'.SGL_Inflector::getTitleFromCamelCase($k).'</strong></td>';               
             if (is_array($v)) {
                 $html .= '<td colspan="2">'.$this->createComboBox($v).'</td>';
             } elseif ($this->mandatory) {
@@ -97,8 +98,13 @@ class SGL_EnvSummaryTask extends SGL_Task
     function processRecommended($aRequirement)
     {
         $depType = key($aRequirement);
-        $depValue = $aRequirement[$depType];        
-        return is_int($depValue) ? bool2words($depValue) : $depValue;
+        $depValue = $aRequirement[$depType];
+        if ($depType == SGL_NEUTRAL) {
+            $ret = '--';
+        } else {
+            $ret = is_int($depValue) ? bool2words($depValue) : $depValue;
+        }
+        return $ret;
     }
     
     function createComboBox($aData)
