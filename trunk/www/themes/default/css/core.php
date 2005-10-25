@@ -75,7 +75,7 @@ th {
 #imRead {
     background-color: <?php echo $tertiaryMedium ?>;
 }
-#moduleOverview {
+.moduleOverview {
     width: 20.5em;
     height: 8em;
 }
