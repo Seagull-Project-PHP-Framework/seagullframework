@@ -3,7 +3,7 @@
 $thanks = SGL_Output::translate('Thanks for registering with');
 $dear = SGL_Output::translate('Dear');
 $message = SGL_Output::translate('You are being sent this email because you just registered, your logon details are as follows');
-$logonIs = SGL_Output::translate('Your logon is');
+$logonIs = SGL_Output::translate('Your username is');
 $passwdIs = SGL_Output::translate('Your password is');
 $click = SGL_Output::translate('Click');
 $here = SGL_Output::translate('here');
