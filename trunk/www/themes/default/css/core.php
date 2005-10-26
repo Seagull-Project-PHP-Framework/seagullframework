@@ -65,11 +65,10 @@ td, th {
     padding: 2px;
 }
 th {
-    background-color: <?php echo $tertiaryMedium ?>;
+    background-color: <?php echo $tertiaryLight ?>;
+    color: <?php echo $tertiaryDarker ?>;
     text-align: left;
-    color: <?php echo $primaryTextLight ?>;
     font-size: 1.1em;
-    letter-spacing: 0.1px;
     line-height: 1.75em;
 }
 #imRead {
@@ -88,13 +87,13 @@ th {
 .narrow {
     width: 60%;
 }
-.backLight, .backLightBold {
+.backLight {
     background-color: <?php echo $tableRowLight ?>;
 }
-.backDark, .backDarkBold {
+.backDark {
     background-color: <?php echo $tableRowDark ?>;
 }
-.backLightBold, .backDarkBold {
+.bold {
     font-weight: bold;
 }
 
@@ -460,7 +459,7 @@ ul.bullets li {
     width: 60%;
 }
 .messageHeader {
-    color: <?php echo $primaryText ?>;
+    color: <?php echo $primaryTextLight ?>;
     background-color: <?php echo $primary ?>;
     font-weight: bold;
     font-size: 1.2em;
