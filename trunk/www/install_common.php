@@ -1,4 +1,9 @@
 <?php
+function getInstallRoot()
+{
+    return dirname(dirname(__FILE__));
+}
+
 function sgl_header($title)
 {
     $html = <<<HTML

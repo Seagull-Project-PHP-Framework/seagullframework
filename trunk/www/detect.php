@@ -151,7 +151,7 @@ if (count($GLOBALS['_SGL']['ERRORS'])) {
     }
     print '<p>You must fix the above error(s) before you can continue.</p>';       
 } else {
-    print '<input type="submit" name="envDetect" value="continue >>>" onClick="document.location.href=\'setup.php\'" />';   
+    print '<input type="submit" name="envDetect" value="Next >>" onClick="document.location.href=\'setup.php\'" />';   
 }
 print '</div>';
 

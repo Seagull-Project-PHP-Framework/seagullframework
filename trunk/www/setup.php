@@ -39,96 +39,156 @@
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 require_once 'install_common.php';
+
+//  setup pear include path
+$installRoot = getInstallRoot();
+$includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
+$ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear'. $includeSeparator.'/usr/local/lib/php');
+
 require_once 'HTML/QuickForm/Controller.php';
 
 // Load some default action handlers
-require_once 'HTML/QuickForm/Action/Submit.php';
+require_once 'HTML/QuickForm/Action/Next.php';
+require_once 'HTML/QuickForm/Action/Back.php';
 require_once 'HTML/QuickForm/Action/Jump.php';
 require_once 'HTML/QuickForm/Action/Display.php';
-require_once 'HTML/QuickForm/Action/Direct.php';
 
+function canConnectToDb()
+{
+    require_once 'DB.php';
+    require_once dirname(__FILE__) . '/../lib/SGL/DB.php';
+    require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
+    
+    $aFormValues = $GLOBALS['_SGL']['dbFormValues'];
+
+	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
+    $port = (!empty($aFormValues['dbPort']['port']) 
+                && isset($aFormValues['dbProtocol']['protocol'])
+                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
+        ? ':' . $aFormValues['dbPort']['port'] 
+        : '';     	
+    $dsn = $aFormValues['dbType']['type'] . '://' .
+        $aFormValues['user'] . ':' .
+        $aFormValues['pass'] . '@' .
+        $protocol .
+        $aFormValues['host'] . $port . '/' .
+        $aFormValues['name'];
+
+    //  attempt to get db connection
+    $dbh = & SGL_DB::singleton($dsn);
+    
+    //  deal with 'table does not exist' error
+
+    if (PEAR::isError($dbh)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+// Start the session, form-page values will be kept there
 session_start();
 
-class PageFoo extends HTML_QuickForm_Page
+class PageFirst extends HTML_QuickForm_Page
+{
+    function buildForm()
+    {
+        $this->_formBuilt = true;
+        $this->addElement('header',     null, 'Test DB Connection: page 1 of 3');
+        
+        //  db name
+        $this->addElement('text',  'name',     'Database name: ');
+        $this->addRule('name', 'Please specify the name of the database', 'required');
+        
+        //  type
+        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
+        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
+        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
+        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
+        $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
+        $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
+        $this->addGroupRule('dbType', 'Please specify a db type', 'required');
+        
+        //  host
+        $this->addElement('text',  'host',     'Host: ');
+        $this->addRule('host', 'Please specify the hostname', 'required');
+        
+        //  protocol
+        unset($radio);
+        $radio[] = &$this->createElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 'unix');
+        $radio[] = &$this->createElement('radio', 'protocol', '',"tcp", 'tcp');
+        $this->addGroup($radio, 'dbProtocol', 'Protocol:', '<br />');
+        $this->addGroupRule('dbProtocol', 'Please specify a db protocol', 'required');
+        
+        //  port
+        unset($radio);
+        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)", 3306);
+        $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
+        $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
+        $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
+        $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
+        $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
+        
+        //  credentials
+        $this->addElement('text',  'user',    'Database username: ');
+        $this->addElement('password', 'pass', 'Database password: ');
+        $this->addRule('user', 'Please specify the db username', 'required');
+        #$this->addRule('pass', 'Please specify the db password', 'required');
+
+        //  test db connect
+        $this->registerRule('canConnectToDb','function','canConnectToDb'); 
+        $this->addRule('user','cannot connect to the db, please check all credentials', 'canConnectToDb');
+        
+        //  submit
+        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $this->setDefaultAction('next');
+        
+        $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
+    }
+}
+
+class PageSecond extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
 
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('foo'), 'Foo', array('class' => 'flat', 'disabled' => 'disabled'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('bar'), 'Bar', array('class' => 'flat'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('baz'), 'Baz', array('class' => 'flat'));
-        $this->addGroup($tabs, 'tabs', null, '&nbsp;', false);
+        $this->addElement('header',     null, 'Wizard page 2 of 3');
+
+        $name['last']  = &$this->createElement('text', 'last', null, array('size' => 30));
+        $name['first'] = &$this->createElement('text', 'first', null, array('size' => 20));
+        $this->addGroup($name, 'name', 'Name (last, first):', ',&nbsp;');
+
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
         
-        $this->addElement('header',     null, 'Foo page');
+        $this->addGroupRule('name', array('last' => array(array('Last name is required', 'required'))));
 
-        $radio[] = &$this->createElement('radio', null, null, 'Yes', 'Y');
-        $radio[] = &$this->createElement('radio', null, null, 'No', 'N');
-        $radio[] = &$this->createElement('radio', null, null, 'Maybe', 'M');
-        $this->addGroup($radio, 'iradYesNoMaybe', 'Do you want this feature?', '<br />');
-
-        $this->addElement('text',       'tstText', 'Why do you want it?', array('size'=>20, 'maxlength'=>50));
-
-        $this->addElement('submit',     $this->getButtonName('submit'), 'Big Red Button', array('class' => 'bigred'));
-
-        $this->addRule('iradYesNoMaybe', 'Check a radiobutton', 'required');
-
-        $this->setDefaultAction('submit');
+        $this->setDefaultAction('next');
     }
 }
 
-class PageBar extends HTML_QuickForm_Page
+class PageThird extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
 
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('foo'), 'Foo', array('class' => 'flat'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('bar'), 'Bar', array('class' => 'flat', 'disabled' => 'disabled'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('baz'), 'Baz', array('class' => 'flat'));
-        $this->addGroup($tabs, 'tabs', null, '&nbsp;', false);
-        
-        $this->addElement('header',     null, 'Bar page');
+        $this->addElement('header',     null, 'Wizard page 3 of 3');
 
-        $this->addElement('date',       'favDate', 'Favourite date:', array('format' => 'd-M-Y', 'minYear' => 1950, 'maxYear' => date('Y')));
-        $checkbox[] = &$this->createElement('checkbox', 'A', null, 'A');
-        $checkbox[] = &$this->createElement('checkbox', 'B', null, 'B');
-        $checkbox[] = &$this->createElement('checkbox', 'C', null, 'C');
-        $checkbox[] = &$this->createElement('checkbox', 'D', null, 'D');
-        $checkbox[] = &$this->createElement('checkbox', 'X', null, 'X');
-        $checkbox[] = &$this->createElement('checkbox', 'Y', null, 'Y');
-        $checkbox[] = &$this->createElement('checkbox', 'Z', null, 'Z');
-        $this->addGroup($checkbox, 'favLetter', 'Favourite letters:', array('&nbsp;', '<br />'));
+        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
 
-        $this->addElement('submit',     $this->getButtonName('submit'), 'Big Red Button', array('class' => 'bigred'));
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
 
-        $this->setDefaultAction('submit');
+        $this->addRule('itxaTest', 'Say something!', 'required');
+
+        $this->setDefaultAction('next');
     }
 }
 
-class PageBaz extends HTML_QuickForm_Page
-{
-    function buildForm()
-    {
-        $this->_formBuilt = true;
-
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('foo'), 'Foo', array('class' => 'flat'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('bar'), 'Bar', array('class' => 'flat'));
-        $tabs[] =& $this->createElement('submit',   $this->getButtonName('baz'), 'Baz', array('class' => 'flat', 'disabled' => 'disabled'));
-        $this->addGroup($tabs, 'tabs', null, '&nbsp;', false);
-        
-        $this->addElement('header',     null, 'Baz page');
-
-        $this->addElement('textarea',   'textPoetry', 'Recite a poem:', array('rows' => 5, 'cols' => 40));
-        $this->addElement('textarea',   'textOpinion', 'Did you like this demo?', array('rows' => 5, 'cols' => 40));
-
-        $this->addElement('submit',     $this->getButtonName('submit'), 'Big Red Button', array('class' => 'bigred'));
-
-        $this->addRule('textPoetry', 'Pretty please!', 'required');
-
-        $this->setDefaultAction('submit');
-    }
-}
 
 // We subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
@@ -137,7 +197,6 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     {
         $renderer =& $page->defaultRenderer();
         
-        // Do some cheesy customizations
         $renderer->setElementTemplate("\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\" colspan=\"2\">{element}</td>\n\t</tr>", 'tabs');
         $renderer->setFormTemplate(<<<_HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -165,6 +224,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         <img src="http://localhost/seagull/trunk/www/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
     </a>
 </div>
+<p>&nbsp;</p>
 <form{attributes}>
 <table border="0">
 {content}
@@ -191,32 +251,21 @@ class ActionProcess extends HTML_QuickForm_Action
     }
 }
 
-$tabbed =& new HTML_QuickForm_Controller('Tabbed', false);
-
-$tabbed->addPage(new PageFoo('foo'));
-$tabbed->addPage(new PageBar('bar'));
-$tabbed->addPage(new PageBaz('baz'));
-
-// These actions manage going directly to the pages with the same name
-$tabbed->addAction('foo', new HTML_QuickForm_Action_Direct());
-$tabbed->addAction('bar', new HTML_QuickForm_Action_Direct());
-$tabbed->addAction('baz', new HTML_QuickForm_Action_Direct());
+$wizard =& new HTML_QuickForm_Controller('Installation Wizard');
+$wizard->addPage(new PageFirst('page1'));
+$wizard->addPage(new PageSecond('page2'));
+$wizard->addPage(new PageThird('page3'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller
-$tabbed->addAction('jump', new HTML_QuickForm_Action_Jump());
-$tabbed->addAction('submit', new HTML_QuickForm_Action_Submit());
+$wizard->addAction('display', new HTML_QuickForm_Action_Display());
+$wizard->addAction('next', new HTML_QuickForm_Action_Next());
+$wizard->addAction('back', new HTML_QuickForm_Action_Back());
+$wizard->addAction('jump', new HTML_QuickForm_Action_Jump());
 
-// The customized actions
-$tabbed->addAction('display', new ActionDisplay());
-$tabbed->addAction('process', new ActionProcess());
+// This is the action we should always define ourselves
+$wizard->addAction('display', new ActionDisplay());
+$wizard->addAction('process', new ActionProcess());
 
-$tabbed->setDefaults(array(
-    'iradYesNoMaybe' => 'M',
-    'favLetter'      => array('A' => true, 'Z' => true),
-    'favDate'        => array('d' => 1, 'M' => 1, 'Y' => 2001),
-    'textOpinion'    => 'Yes, it rocks!'
-));
-
-$tabbed->run();
+$wizard->run();
 ?>
