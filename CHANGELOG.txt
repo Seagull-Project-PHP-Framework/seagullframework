@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.5.3        |
 +-----------------------+
 BUGFIXES
+26-10-05    Registration emails are no longer CCed to admin, separate notification
+            is sent.
 
 
 IMPROVEMENTS
