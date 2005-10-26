@@ -310,6 +310,11 @@ class SGL_Controller
             //  prepare referer info for redirect after login
             $aParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
             $redir = $this->conf['site']['baseUrl'] .'/'.  implode('/', $aParts);
+            
+            //  add a trailing slash if one is not present
+            if (substr($redir, -1) != '/') {
+                $redir .= '/';
+            }            
 
             //  check that session is not invalid or timed out
             $loginPage = array( 'moduleName'    => 'user', 

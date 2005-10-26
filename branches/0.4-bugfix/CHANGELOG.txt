@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+26-10-05    Trailing slash on url got chopped in redirects, reinstated
 18-10-05    Fixed file upload javascript error and improved feedback messages
             (Werner Krauss)
 16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
@@ -21,7 +22,7 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
-26-10--5    Separate email confirmation sent to site admin on registration of a new 
+26-10-05    Separate email confirmation sent to site admin on registration of a new 
             user, user's password remains private
 24-09-05    Added hook for custom events on registration and password change
 26-09-05    Added optimize/analyse tables to maintenance module  (Lorenzo Alberton)
