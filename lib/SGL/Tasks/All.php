@@ -26,11 +26,6 @@ function ini_get2($key)
     return (ini_get($key) == '1' || $key === true ? 1 : 0);        
 }
 
-function getInstallRoot()
-{
-    return dirname(dirname(dirname(dirname(__FILE__))));
-}
-
 class SGL_EnvSummaryTask extends SGL_Task 
 {
     var $aData = array();

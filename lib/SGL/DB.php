@@ -144,6 +144,9 @@ class SGL_DB
     {
         $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
+        if (!is_array(@$GLOBALS['_SGL']['CONNECTIONS'])) {
+            $GLOBALS['_SGL']['CONNECTIONS'] = array();  
+        } 
         $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
 
         if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
