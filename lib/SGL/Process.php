@@ -222,9 +222,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 
             //  prepare referer info for redirect after login
             $url = $input->getCurrentUrl();
-            $aParts = $url->getQueryData(true);
-
-            $redir = $this->conf['site']['baseUrl'] .'/'.  implode('/', $aParts);
+            $redir = $url->toString();
 
             //  check that session is not invalid or timed out
             $loginPage = array( 'moduleName'    => 'user', 
