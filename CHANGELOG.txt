@@ -21,6 +21,8 @@ BUGFIXES
             title, or the section name if none exists
 
 IMPROVEMENTS
+26-10--5    Separate email confirmation sent to site admin on registration of a new 
+            user, user's password remains private
 24-09-05    Added hook for custom events on registration and password change
 26-09-05    Added optimize/analyse tables to maintenance module  (Lorenzo Alberton)
 23-09-05    After failed perms logout, you now get redirected to correct page

@@ -290,13 +290,30 @@ class RegisterMgr extends SGL_Manager
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
-        if ($conf['RegisterMgr']['sendEmailConfAdmin']) {
-            $options['Cc'] = $conf['email']['admin'];
-        }
                 
         $message = & new SGL_Emailer($options);
         $message->prepare();
-        return $message->send();
+        $message->send();
+        
+        //  conf to admin
+        if ($conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options = array(
+                    'toEmail'       => $conf['email']['admin'],
+                    'toRealName'    => 'Admin',
+                    'fromEmail'     => $conf['email']['admin'],
+                    'replyTo'       => $conf['email']['admin'],
+                    'subject'       => 'New Registration at ' . $conf['site']['name'],
+                    'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                        $this->module . '/email_registration_admin.php',
+                    'username'      => $oUser->username,
+                    'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
+            );
+            $notification = & new SGL_Emailer($options);
+            $notification->prepare();
+            $notification->send();         
+        }
+        //  check error stack
+        return (count($GLOBALS['SGL']['ERRORS'])) ? false : true;
     }
 }
 ?>
