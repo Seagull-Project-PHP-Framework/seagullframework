@@ -267,9 +267,7 @@ class RegisterMgr extends SGL_Manager
     function _sendEmail($oUser)
     {
         require_once SGL_CORE_DIR . '/Emailer.php';
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        
+
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
         $options = array(
@@ -289,7 +287,27 @@ class RegisterMgr extends SGL_Manager
                 
         $message = & new SGL_Emailer($options);
         $message->prepare();
-        return $message->send();
+        $message->send();
+        
+        //  conf to admin
+        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options = array(
+                    'toEmail'       => $this->conf['email']['admin'],
+                    'toRealName'    => 'Admin',
+                    'fromEmail'     => $this->conf['email']['admin'],
+                    'replyTo'       => $this->conf['email']['admin'],
+                    'subject'       => 'New Registration at ' . $this->conf['site']['name'],
+                    'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                        $this->module . '/email_registration_admin.php',
+                    'username'      => $oUser->username,
+                    'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
+            );
+            $notification = & new SGL_Emailer($options);
+            $notification->prepare();
+            $notification->send();         
+        }
+        //  check error stack
+        return (count($GLOBALS['_SGL']['ERRORS'])) ? false : true;
     }
 }
 ?>
