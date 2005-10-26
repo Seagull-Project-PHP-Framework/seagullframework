@@ -1,7 +1,7 @@
 <?php
 //  translations
 $title = SGL_Output::translate('New Registration at');
-$message = SGL_Output::translate('The following user has just registered:');
+$message = SGL_Output::translate('The following user has just registered');
 $username = SGL_Output::translate('username');
 $click = SGL_Output::translate('Click');
 $here = SGL_Output::translate('here');
