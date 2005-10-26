@@ -380,6 +380,7 @@ class DocumentMgr extends FileMgr
         //  jpgs on linux
         case 'image/jpeg':                      $assetTypeID = 5; break;
         case 'image/x-png':                     $assetTypeID = 5; break;
+        case 'image/png':                       $assetTypeID = 5; break;
         case 'image/gif':                       $assetTypeID = 5; break;
         case 'application/pdf':                 $assetTypeID = 6; break;
         default:
