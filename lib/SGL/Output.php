@@ -254,14 +254,14 @@ class SGL_Output
             $_id = $id;
         }
 
-        if ($curRowClass == 'backDark' && $isBold ) {
-            $curRowClass = 'backLightBold';
-        } elseif ($curRowClass == 'backDark') {
-            $curRowClass = 'backLight';
-        } elseif ($isBold) {
-            $curRowClass = 'backDarkBold';
-        } else {
+        if ($curRowClass == 'backLight' && $isBold ) {
+            $curRowClass = 'backDark bold';
+        } elseif ($curRowClass == 'backLight') {
             $curRowClass = 'backDark';
+        } elseif ($isBold) {
+            $curRowClass = 'backLight bold';
+        } else {
+            $curRowClass = 'backLight';
         }
 
         return $curRowClass;

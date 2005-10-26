@@ -12,7 +12,7 @@
     $secondaryDark          = '#006699'; // dark blue
     $secondaryDarker        = '#184a84'; // darker blue
     $tertiary               = '#d9d9d9'; // normal gray
-    $tertiaryLight          = '#efefef'; // light gray
+    $tertiaryLight          = '#eeeeee'; // light gray
     $tertiaryMedium         = '#bcbcbc'; // medium gray
     $tertiaryDark           = '#999999'; // dark gray
     $tertiaryDarker         = '#666666'; // darker gray
@@ -25,10 +25,10 @@
     $blocksBackgroundBody   = $tertiaryLight;
     $blocksBackgroundTitle  = $primary;
     $blocksColorBody        = $secondaryDarker;
-    $blocksColorTitle       = $primaryText;
+    $blocksColorTitle       = $primaryTextLight;
 
-    $tableRowLight          = $tertiaryLight;
-    $tableRowDark           = $tertiary;
+    $tableRowLight          = 'transparent';
+    $tableRowDark           = $tertiaryLight;
 
     /* Publisher */
     $sectionHeaderBackground = $tertiary;
