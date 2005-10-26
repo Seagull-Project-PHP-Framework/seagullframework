@@ -313,7 +313,7 @@ class RegisterMgr extends SGL_Manager
             $notification->send();         
         }
         //  check error stack
-        return (count($GLOBALS['SGL']['ERRORS'])) ? false : true;
+        return (count($GLOBALS['_SGL']['ERRORS'])) ? false : true;
     }
 }
 ?>
