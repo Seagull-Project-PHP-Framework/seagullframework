@@ -32,45 +32,29 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | WizardDetectEnv.php                                                       |
+// | WizardCreateAdminUser.php                                                 |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require_once dirname(__FILE__) . '/../TaskRunner.php';
-require_once dirname(__FILE__) . '/../Tasks/All.php';
+class WizardCreateAdminUser extends HTML_QuickForm_Page
+{
+    function buildForm()
+    {
+#print '<pre>'; print_r($_SESSION);
+        $this->_formBuilt = true;
 
-SGL_Install::printHeader('Detecting Environment');
+        $this->addElement('header',     null, 'Create Admin User: page 3 of 3');
 
-$runner = new SGL_TaskRunner();
-$runner->addTask(new SGL_Task_GetLoadedModules());
-$runner->addTask(new SGL_Task_GetPhpEnv());
-$runner->addTask(new SGL_Task_GetPhpIniValues());
-$runner->addTask(new SGL_Task_GetFilesystemInfo());
-$runner->addTask(new SGL_Task_GetPearInfo());
-$output = $runner->main();
+        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
 
-//  store output for later processing
-$serialized = serialize($runner);
-@file_put_contents(SGL_Install::getInstallRoot() . '/var/env.php', $serialized);
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
 
-print $output;
+        $this->addRule('itxaTest', 'Say something!', 'required');
 
-//  process errors
-print '<p>&nbsp;</p>';
-print "<div class=\"messageContainer\">";
-
-if (SGL_Install::errorsExist()) {
-    print "<div class=\"errorHeader\">Errors Detected</div>";
-    foreach ($_SESSION['ERRORS'] as $error) {
-        print "<div class=\"errorContent\"><strong>{$error[0]}</strong> : {$error[1]}</div>";
+        $this->setDefaultAction('next');
     }
-    print '<p>You must fix the above error(s) before you can continue.</p>';       
-} else {
-    print '<input type="submit" name="envDetect" value="Next >>" onClick="document.location.href=\''.$_SERVER['PHP_SELF'].'\'" />';   
 }
-print '</div>';
-
-SGL_Install::printFooter();
 ?>
