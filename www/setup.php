@@ -90,8 +90,9 @@ function canCreateDb()
 {
     $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page1'], 
         $GLOBALS['_SGL']['dbFormValues']);
-    
-#print '<pre>'; print_r($aFormValues);
+
+    $skipDbCreation = (bool)$aFormValues['skipDbCreation'];
+    $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
     $port = (!empty($aFormValues['dbPort']['port']) 
@@ -103,10 +104,17 @@ function canCreateDb()
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
         $protocol .
-        $aFormValues['host'] . $port;
+        $aFormValues['host'] . $port . $dbName;
 
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
+    
+    if ($skipDbCreation && PEAR::isError($dbh)) {
+        SGL_Install::errorPush($dbh);
+        return false;
+    } elseif ($skipDbCreation) {
+        return true;   
+    }
 
     //  attept to create database
     $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
@@ -124,11 +132,10 @@ class PageFirst extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header',     null, 'Test DB Connection: page 1 of 3');
+        $this->addElement('header', null, 'Test DB Connection: page 1 of 3');
         
-        //  use detect.php info to supply sensible defaults
+        //  FIXME: use detect.php info to supply sensible defaults
         $this->setDefaults(array(
-            #'name' => 'seagull',
             'host' => 'localhost',
             'dbProtocol'  => array('protocol' => 'unix'),
             'dbType'  => array('type' => 'mysql_SGL'),
@@ -168,7 +175,6 @@ class PageFirst extends HTML_QuickForm_Page
         $this->addElement('text',  'user',    'Database username: ');
         $this->addElement('password', 'pass', 'Database password: ');
         $this->addRule('user', 'Please specify the db username', 'required');
-        #$this->addRule('pass', 'Please specify the db password', 'required');
 
         //  test db connect
         $this->registerRule('canConnectToDbServer','function','canConnectToDbServer'); 
@@ -187,19 +193,24 @@ class PageSecond extends HTML_QuickForm_Page
 {
     function buildForm()
     {
-#print '<pre>'; print_r($_SESSION);
-
         $this->_formBuilt = true;
+        
+        $this->setDefaults(array(
+            'name' => 'seagull',
+            ));
 
-        $this->addElement('header',     null, 'Create Database: page 2 of 3');
+        $this->addElement('header', null, 'Database Setup: page 2 of 3');
 
+        //  skip db creation FIXME: improve
+        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db', 'Yes (If box is not ticked, a new Db will be created)');        
+        
         //  db name
         $this->addElement('text',  'name',     'Database name: ');
         $this->addRule('name', 'Please specify the name of the database', 'required');
         
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb'); 
-        $this->addRule('name', 'the db could not be created', 'canCreateDb');
+        $this->addRule('name', 'the db does not exist or could not be created', 'canCreateDb');
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
