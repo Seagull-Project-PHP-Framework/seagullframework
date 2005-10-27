@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | detect.php                                                                 |
+// | WizardDetectEnv.php                                                       |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -124,11 +124,8 @@ user setup
 - remove lockfile, system set to 'production' mode
 */
 
-session_start();
-
-require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
-require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Tasks/All.php';
+require_once dirname(__FILE__) . '/../TaskRunner.php';
+require_once dirname(__FILE__) . '/../Tasks/All.php';
 
 SGL_Install::printHeader('Detecting Environment');
 
