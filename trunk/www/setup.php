@@ -38,7 +38,97 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-//  setup pear include path
+
+/*
+sgl setup
+=========
+- ability to upload and unzip/tar a packaged module
+- file permission handling ideas from FUDforum installer
+- more user-friendly error messages from Gallery2
+- if no DB detected, prompt to create, otherwise offer to create tables
+
+PROCESS
+========
+
+- create lockfile, system in 'setup' mode
+- block public access
+    one idea, using key in hidden file
+        - put main site in standby mode
+        - create randomly named dir
+        - perform install in above dir
+        - delete dir when finished
+
+php interpreter
+===============
+- min php version, not over max
+- get php sapi type
+- check loaded extensions
+
+php ini
+=======
+- deal with register_globals and set session.use_trans_sid = 0
+- allow_url_fopen = Off
+- detect and deal with safe_mode
+- magic_quotes must be off
+- file_uploads ideally enabled
+
+filesystem
+==========
+- check pear libs exists and are loadable
+- determine location in filesystem
+- test if seagull/var exists & is writable
+- copy config file there
+- rewrite with correct values
+- create seagull/var tmp dir for session
+    
+db setup
+========
+- test db connection
+- test db perms
+- get prefix, db params
+- create tables
+- insert default SQL data
+- insert sample SQL data
+- load constraints
+
+- generateDataObjectEntities
+- rebuildSequences
+
+config setup
+============
+- form
+    - system paths
+    - general
+        - name + desc of site [metas]
+        - admin email address
+        - lang
+        - server time offset
+        
+- the domain of the cookie that will be used
+- getFrameworkVersion
+        
+module setup
+============
+- choose modules and permissions must be created and set at install time
+- attempt to 
+    - uncompress
+    - move to correct locatin
+    - apply user perms
+    - apply prefs
+    - add module's db tables to Config
+    - load module's schema + data
+    - add 'section' or 'screen' navigation links
+    - register module in registry
+
+user setup
+==========
+- create admin, set username, password and email
+- option to add user
+
+- For security reasons, you must remove the installation script ...
+- remove lockfile, system set to 'production' mode
+*/
+
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 
@@ -50,6 +140,7 @@ if (!file_exists($installRoot . '/var/env.php')) {
     die();
 }
 
+//  setup pear include path
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
 $ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
 
@@ -69,7 +160,7 @@ require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
 //  Load wizard screens
 require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardTestDbConnection.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateDb.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateTables.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateAdminUser.php';
 
 
 class ActionProcess extends HTML_QuickForm_Action
@@ -142,7 +233,7 @@ _HTML
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardTestDbConnection('page1'));
 $wizard->addPage(new WizardCreateDb('page2'));
-$wizard->addPage(new WizardCreateTables('page3'));
+$wizard->addPage(new WizardCreateAdminUser('page3'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller

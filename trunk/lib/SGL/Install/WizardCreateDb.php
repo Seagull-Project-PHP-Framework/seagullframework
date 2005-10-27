@@ -97,6 +97,9 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addElement('text',  'name',     'Database name: ');
         $this->addRule('name', 'Please specify the name of the database', 'required');
         
+        //  db prefix
+        $this->addElement('text',  'prefix',     'Table prefix: ');
+        
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb'); 
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
