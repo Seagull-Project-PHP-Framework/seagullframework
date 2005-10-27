@@ -124,11 +124,13 @@ user setup
 - remove lockfile, system set to 'production' mode
 */
 
-require_once 'install_common.php';
+session_start();
+
+require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Tasks/All.php';
 
-sgl_header('Detecting Environment');
+SGL_Install::printHeader('Detecting Environment');
 
 $runner = new SGL_TaskRunner();
 $runner->addTask(new SGL_Task_GetLoadedModules());
@@ -138,15 +140,19 @@ $runner->addTask(new SGL_Task_GetFilesystemInfo());
 $runner->addTask(new SGL_Task_GetPearInfo());
 $output = $runner->main();
 
+//  store output for later processing
+$serialized = serialize($runner);
+file_put_contents(SGL_Install::getInstallRoot() . '/var/env.dat', $serialized);
+
 print $output;
 
 //  process errors
 print '<p>&nbsp;</p>';
 print "<div class=\"messageContainer\">";
 
-if (count($GLOBALS['_SGL']['ERRORS'])) {
+if (SGL_Install::errorsExist()) {
     print "<div class=\"errorHeader\">Errors Detected</div>";
-    foreach ($GLOBALS['_SGL']['ERRORS'] as $error) {
+    foreach ($_SESSION['ERRORS'] as $error) {
         print "<div class=\"errorContent\"><strong>{$error[0]}</strong> : {$error[1]}</div>";
     }
     print '<p>You must fix the above error(s) before you can continue.</p>';       
@@ -155,5 +161,5 @@ if (count($GLOBALS['_SGL']['ERRORS'])) {
 }
 print '</div>';
 
-sgl_footer();
+SGL_Install::printFooter();
 ?>

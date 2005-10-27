@@ -38,12 +38,14 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require_once 'install_common.php';
+// Start the session, form-page values will be kept there
+session_start();
+require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 
 //  setup pear include path
-$installRoot = getInstallRoot();
+$installRoot = SGL_Install::getInstallRoot();
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-$ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear'. $includeSeparator.'/usr/local/lib/php');
+$ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
 
 require_once 'HTML/QuickForm/Controller.php';
 
@@ -53,12 +55,12 @@ require_once 'HTML/QuickForm/Action/Back.php';
 require_once 'HTML/QuickForm/Action/Jump.php';
 require_once 'HTML/QuickForm/Action/Display.php';
 
-function canConnectToDb()
-{
-    require_once 'DB.php';
-    require_once dirname(__FILE__) . '/../lib/SGL/DB.php';
-    require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
+require_once 'DB.php';
+require_once dirname(__FILE__) . '/../lib/SGL/DB.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
     
+function canConnectToDbServer()
+{
     $aFormValues = $GLOBALS['_SGL']['dbFormValues'];
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
@@ -71,23 +73,51 @@ function canConnectToDb()
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
         $protocol .
-        $aFormValues['host'] . $port . '/' .
-        $aFormValues['name'];
+        $aFormValues['host'] . $port;
 
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
-    
-    //  deal with 'table does not exist' error
 
     if (PEAR::isError($dbh)) {
+        SGL_Install::errorPush($dbh);        
         return false;
     } else {
         return true;
     }
 }
 
-// Start the session, form-page values will be kept there
-session_start();
+function canCreateDb()
+{
+    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page1'], 
+        $GLOBALS['_SGL']['dbFormValues']);
+    
+#print '<pre>'; print_r($aFormValues);
+
+	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
+    $port = (!empty($aFormValues['dbPort']['port']) 
+                && isset($aFormValues['dbProtocol']['protocol'])
+                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
+        ? ':' . $aFormValues['dbPort']['port'] 
+        : '';     	
+    $dsn = $aFormValues['dbType']['type'] . '://' .
+        $aFormValues['user'] . ':' .
+        $aFormValues['pass'] . '@' .
+        $protocol .
+        $aFormValues['host'] . $port;
+
+    //  attempt to get db connection
+    $dbh = & SGL_DB::singleton($dsn);
+
+    //  attept to create database
+    $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
+
+    if (PEAR::isError($ok)) {
+        SGL_Install::errorPush($ok);
+        return false;
+    } else {
+        return true;
+    }    
+}
 
 class PageFirst extends HTML_QuickForm_Page
 {
@@ -96,9 +126,14 @@ class PageFirst extends HTML_QuickForm_Page
         $this->_formBuilt = true;
         $this->addElement('header',     null, 'Test DB Connection: page 1 of 3');
         
-        //  db name
-        $this->addElement('text',  'name',     'Database name: ');
-        $this->addRule('name', 'Please specify the name of the database', 'required');
+        //  use detect.php info to supply sensible defaults
+        $this->setDefaults(array(
+            #'name' => 'seagull',
+            'host' => 'localhost',
+            'dbProtocol'  => array('protocol' => 'unix'),
+            'dbType'  => array('type' => 'mysql_SGL'),
+            'dbPort'  => array('port' => 3306),
+            ));
         
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
@@ -136,13 +171,14 @@ class PageFirst extends HTML_QuickForm_Page
         #$this->addRule('pass', 'Please specify the db password', 'required');
 
         //  test db connect
-        $this->registerRule('canConnectToDb','function','canConnectToDb'); 
-        $this->addRule('user','cannot connect to the db, please check all credentials', 'canConnectToDb');
+        $this->registerRule('canConnectToDbServer','function','canConnectToDbServer'); 
+        $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
         
         //  submit
         $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
         $this->setDefaultAction('next');
         
+        //  make vars available for db connection test
         $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
     }
 }
@@ -151,21 +187,28 @@ class PageSecond extends HTML_QuickForm_Page
 {
     function buildForm()
     {
+#print '<pre>'; print_r($_SESSION);
+
         $this->_formBuilt = true;
 
-        $this->addElement('header',     null, 'Wizard page 2 of 3');
+        $this->addElement('header',     null, 'Create Database: page 2 of 3');
 
-        $name['last']  = &$this->createElement('text', 'last', null, array('size' => 30));
-        $name['first'] = &$this->createElement('text', 'first', null, array('size' => 20));
-        $this->addGroup($name, 'name', 'Name (last, first):', ',&nbsp;');
+        //  db name
+        $this->addElement('text',  'name',     'Database name: ');
+        $this->addRule('name', 'Please specify the name of the database', 'required');
+        
+        //  test db creation
+        $this->registerRule('canCreateDb','function','canCreateDb'); 
+        $this->addRule('name', 'the db could not be created', 'canCreateDb');
 
+        //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
-        
-        $this->addGroupRule('name', array('last' => array(array('Last name is required', 'required'))));
-
         $this->setDefaultAction('next');
+        
+        //  make vars available for db creation test
+        $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
     }
 }
 
@@ -193,6 +236,12 @@ class PageThird extends HTML_QuickForm_Page
 // We subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
 {
+    function perform(&$page, $actionName)
+    {
+        SGL_Install::errorCheck($page);
+        return parent::perform($page, $actionName);   
+    }
+    
     function _renderForm(&$page) 
     {
         $renderer =& $page->defaultRenderer();
@@ -251,20 +300,28 @@ class ActionProcess extends HTML_QuickForm_Action
     }
 }
 
-$wizard =& new HTML_QuickForm_Controller('Installation Wizard');
+//class SGL_Installer_Action_Display extends HTML_QuickForm_Action_Display
+//{
+//    function perform(&$page, $actionName)
+//    {
+//        SGL_Install::errorCheck();
+//        return parent::perform($page, $actionName);   
+//    }
+//}
+
+$wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new PageFirst('page1'));
 $wizard->addPage(new PageSecond('page2'));
 $wizard->addPage(new PageThird('page3'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller
-$wizard->addAction('display', new HTML_QuickForm_Action_Display());
+$wizard->addAction('display', new ActionDisplay()/*HTML_QuickForm_Action_Display()*/);
 $wizard->addAction('next', new HTML_QuickForm_Action_Next());
 $wizard->addAction('back', new HTML_QuickForm_Action_Back());
 $wizard->addAction('jump', new HTML_QuickForm_Action_Jump());
 
 // This is the action we should always define ourselves
-$wizard->addAction('display', new ActionDisplay());
 $wizard->addAction('process', new ActionProcess());
 
 $wizard->run();
