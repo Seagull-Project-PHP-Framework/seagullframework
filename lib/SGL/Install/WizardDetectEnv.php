@@ -139,7 +139,7 @@ $output = $runner->main();
 
 //  store output for later processing
 $serialized = serialize($runner);
-file_put_contents(SGL_Install::getInstallRoot() . '/var/env.php', $serialized);
+@file_put_contents(SGL_Install::getInstallRoot() . '/var/env.php', $serialized);
 
 print $output;
 
@@ -154,7 +154,7 @@ if (SGL_Install::errorsExist()) {
     }
     print '<p>You must fix the above error(s) before you can continue.</p>';       
 } else {
-    print '<input type="submit" name="envDetect" value="Next >>" onClick="document.location.href=\'setup.php\'" />';   
+    print '<input type="submit" name="envDetect" value="Next >>" onClick="document.location.href=\''.$_SERVER['PHP_SELF'].'\'" />';   
 }
 print '</div>';
 

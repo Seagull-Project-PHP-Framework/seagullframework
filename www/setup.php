@@ -44,11 +44,11 @@ require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 
 $installRoot = SGL_Install::getInstallRoot();
 
+//  get environment data if this is a new install
 if (!file_exists($installRoot . '/var/env.php')) {
     require_once $installRoot . '/lib/SGL/Install/WizardDetectEnv.php';
     die();
 }
-
 
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
 $ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
