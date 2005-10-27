@@ -17,7 +17,6 @@ class SGL_Install
                 $out .= $oError->getUserInfo();   
                 $page->addElement('static',   'errors', 'Errors:', $out);                
             }
-
             $_SESSION['ERRORS'] = array();
         }
     }

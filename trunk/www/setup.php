@@ -38,211 +38,49 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-// Start the session, form-page values will be kept there
+//  setup pear include path
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 
-//  setup pear include path
 $installRoot = SGL_Install::getInstallRoot();
+
+if (!file_exists($installRoot . '/var/env.php')) {
+    require_once $installRoot . '/lib/SGL/Install/WizardDetectEnv.php';
+    die();
+}
+
+
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
 $ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
 
+// Load QuickFormController libs
 require_once 'HTML/QuickForm/Controller.php';
-
-// Load some default action handlers
 require_once 'HTML/QuickForm/Action/Next.php';
 require_once 'HTML/QuickForm/Action/Back.php';
 require_once 'HTML/QuickForm/Action/Jump.php';
 require_once 'HTML/QuickForm/Action/Display.php';
 
 require_once 'DB.php';
+
+//  Load SGL libs
 require_once dirname(__FILE__) . '/../lib/SGL/DB.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
-    
-function canConnectToDbServer()
+
+//  Load wizard screens
+require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardTestDbConnection.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateDb.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateTables.php';
+
+
+class ActionProcess extends HTML_QuickForm_Action
 {
-    $aFormValues = $GLOBALS['_SGL']['dbFormValues'];
-
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
-    $port = (!empty($aFormValues['dbPort']['port']) 
-                && isset($aFormValues['dbProtocol']['protocol'])
-                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
-        ? ':' . $aFormValues['dbPort']['port'] 
-        : '';     	
-    $dsn = $aFormValues['dbType']['type'] . '://' .
-        $aFormValues['user'] . ':' .
-        $aFormValues['pass'] . '@' .
-        $protocol .
-        $aFormValues['host'] . $port;
-
-    //  attempt to get db connection
-    $dbh = & SGL_DB::singleton($dsn);
-
-    if (PEAR::isError($dbh)) {
-        SGL_Install::errorPush($dbh);        
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function canCreateDb()
-{
-    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page1'], 
-        $GLOBALS['_SGL']['dbFormValues']);
-
-    $skipDbCreation = (bool)$aFormValues['skipDbCreation'];
-    $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
-
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
-    $port = (!empty($aFormValues['dbPort']['port']) 
-                && isset($aFormValues['dbProtocol']['protocol'])
-                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
-        ? ':' . $aFormValues['dbPort']['port'] 
-        : '';     	
-    $dsn = $aFormValues['dbType']['type'] . '://' .
-        $aFormValues['user'] . ':' .
-        $aFormValues['pass'] . '@' .
-        $protocol .
-        $aFormValues['host'] . $port . $dbName;
-
-    //  attempt to get db connection
-    $dbh = & SGL_DB::singleton($dsn);
-    
-    if ($skipDbCreation && PEAR::isError($dbh)) {
-        SGL_Install::errorPush($dbh);
-        return false;
-    } elseif ($skipDbCreation) {
-        return true;   
-    }
-
-    //  attept to create database
-    $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
-
-    if (PEAR::isError($ok)) {
-        SGL_Install::errorPush($ok);
-        return false;
-    } else {
-        return true;
-    }    
-}
-
-class PageFirst extends HTML_QuickForm_Page
-{
-    function buildForm()
+    function perform(&$page, $actionName)
     {
-        $this->_formBuilt = true;
-        $this->addElement('header', null, 'Test DB Connection: page 1 of 3');
-        
-        //  FIXME: use detect.php info to supply sensible defaults
-        $this->setDefaults(array(
-            'host' => 'localhost',
-            'dbProtocol'  => array('protocol' => 'unix'),
-            'dbType'  => array('type' => 'mysql_SGL'),
-            'dbPort'  => array('port' => 3306),
-            ));
-        
-        //  type
-        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
-        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
-        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
-        $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
-        $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
-        $this->addGroupRule('dbType', 'Please specify a db type', 'required');
-        
-        //  host
-        $this->addElement('text',  'host',     'Host: ');
-        $this->addRule('host', 'Please specify the hostname', 'required');
-        
-        //  protocol
-        unset($radio);
-        $radio[] = &$this->createElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 'unix');
-        $radio[] = &$this->createElement('radio', 'protocol', '',"tcp", 'tcp');
-        $this->addGroup($radio, 'dbProtocol', 'Protocol:', '<br />');
-        $this->addGroupRule('dbProtocol', 'Please specify a db protocol', 'required');
-        
-        //  port
-        unset($radio);
-        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)", 3306);
-        $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
-        $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
-        $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
-        $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
-        $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
-        
-        //  credentials
-        $this->addElement('text',  'user',    'Database username: ');
-        $this->addElement('password', 'pass', 'Database password: ');
-        $this->addRule('user', 'Please specify the db username', 'required');
-
-        //  test db connect
-        $this->registerRule('canConnectToDbServer','function','canConnectToDbServer'); 
-        $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
-        
-        //  submit
-        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
-        $this->setDefaultAction('next');
-        
-        //  make vars available for db connection test
-        $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
+        echo "Submit successful!<br>\n<pre>\n";
+        var_dump($page->controller->exportValues());
+        echo "\n</pre>\n";
     }
 }
-
-class PageSecond extends HTML_QuickForm_Page
-{
-    function buildForm()
-    {
-        $this->_formBuilt = true;
-        
-        $this->setDefaults(array(
-            'name' => 'seagull',
-            ));
-
-        $this->addElement('header', null, 'Database Setup: page 2 of 3');
-
-        //  skip db creation FIXME: improve
-        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db', 'Yes (If box is not ticked, a new Db will be created)');        
-        
-        //  db name
-        $this->addElement('text',  'name',     'Database name: ');
-        $this->addRule('name', 'Please specify the name of the database', 'required');
-        
-        //  test db creation
-        $this->registerRule('canCreateDb','function','canCreateDb'); 
-        $this->addRule('name', 'the db does not exist or could not be created', 'canCreateDb');
-
-        //  submit
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
-        $this->addGroup($prevnext, null, '', '&nbsp;', false);
-        $this->setDefaultAction('next');
-        
-        //  make vars available for db creation test
-        $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
-    }
-}
-
-class PageThird extends HTML_QuickForm_Page
-{
-    function buildForm()
-    {
-        $this->_formBuilt = true;
-
-        $this->addElement('header',     null, 'Wizard page 3 of 3');
-
-        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
-
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
-        $this->addGroup($prevnext, null, '', '&nbsp;', false);
-
-        $this->addRule('itxaTest', 'Say something!', 'required');
-
-        $this->setDefaultAction('next');
-    }
-}
-
 
 // We subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
@@ -301,29 +139,10 @@ _HTML
     }
 }
 
-class ActionProcess extends HTML_QuickForm_Action
-{
-    function perform(&$page, $actionName)
-    {
-        echo "Submit successful!<br>\n<pre>\n";
-        var_dump($page->controller->exportValues());
-        echo "\n</pre>\n";
-    }
-}
-
-//class SGL_Installer_Action_Display extends HTML_QuickForm_Action_Display
-//{
-//    function perform(&$page, $actionName)
-//    {
-//        SGL_Install::errorCheck();
-//        return parent::perform($page, $actionName);   
-//    }
-//}
-
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
-$wizard->addPage(new PageFirst('page1'));
-$wizard->addPage(new PageSecond('page2'));
-$wizard->addPage(new PageThird('page3'));
+$wizard->addPage(new WizardTestDbConnection('page1'));
+$wizard->addPage(new WizardCreateDb('page2'));
+$wizard->addPage(new WizardCreateTables('page3'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller
