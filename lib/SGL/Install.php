@@ -1,14 +1,40 @@
 <?php
 $GLOBALS['_SGL'] = array();
+$_SESSION['ERRORS'] = array();
 
-function getInstallRoot()
-{
-    return dirname(dirname(__FILE__));
-}
+class SGL_Install
+{   
+    function errorPush($error)
+    {
+        array_push($_SESSION['ERRORS'], $error);
+    }
+    
+    function errorCheck(&$page)
+    {
+        if (SGL_Install::errorsExist()) {
+            foreach ($_SESSION['ERRORS'] as $oError) {
+                $out =  $oError->getMessage() . '<br /> ';   
+                $out .= $oError->getUserInfo();   
+                $page->addElement('static',   'errors', 'Errors:', $out);                
+            }
 
-function sgl_header($title)
-{
-    $html = <<<HTML
+            $_SESSION['ERRORS'] = array();
+        }
+    }
+    
+    function errorsExist()
+    {
+        return count($_SESSION['ERRORS']);
+    }
+    
+    function getInstallRoot()
+    {
+        return dirname(dirname((dirname(__FILE__))));
+    }
+    
+    function printHeader($title)
+    {
+        $html = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
@@ -37,19 +63,20 @@ function sgl_header($title)
 <h2>$title</h2>
 
 HTML;
-    print $html;
-}
-
-function sgl_footer()
-{
-    $html = <<<HTML
+        print $html;
+    }
+    
+    function printFooter()
+    {
+        $html = <<<HTML
     <div id="footer">
     Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>  
     </div>
 </body>
 </html>
 HTML;
-    print $html;
+        print $html;
+    }
 }
 
 if (!(function_exists('file_put_contents'))) {

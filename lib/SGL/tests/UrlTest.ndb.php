@@ -1,4 +1,11 @@
 <?php
+/*
+FIXME: note from wiki, verify:
+ about 5–10% of all URLs are not in makeUrl() format
+    * one fix for some of these is the need to parse obj.method format vars in templates, currently only array[element] are dealt with
+    * array[element] [subelement] are not dealt with either
+*/
+
 require_once dirname(__FILE__) . '/../Url.php';
 require_once dirname(__FILE__) . '/../Output.php';
 

@@ -318,7 +318,7 @@ EOF;
 
     function raiseMsg($msg, $getTranslation = true)
     {
-        //  must not logmessage here        
+        //  must not log message here        
         if (is_string($msg) && !empty($msg)) {
 
             $message = SGL_String::translate($msg);

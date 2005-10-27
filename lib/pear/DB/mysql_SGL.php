@@ -56,7 +56,7 @@ class DB_mysql_SGL extends DB_mysql
      */
     function simpleQuery($query)
     {
-        $GLOBALS['_SGL']['QUERY_COUNT'] ++;
+        @$GLOBALS['_SGL']['QUERY_COUNT'] ++;
         return parent::simpleQuery($query);
     }    
 }
