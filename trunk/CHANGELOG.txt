@@ -9,6 +9,8 @@ BUGFIXES
 
 
 IMPROVEMENTS
+28-10-05    Blocks can now be displayed according to the role of the current user
+            (Daniel Korsak)
 23-10-05	Added support for observers with SGL_Oberserver and SGL_Observable
 21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php 
             to Process.php to respect namespace

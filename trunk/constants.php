@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | constants.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -213,6 +213,7 @@
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
+        define('SGL_ALL_ROLES', 				-2);
         
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);

@@ -138,14 +138,15 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'accountSummary.html';
+        $currentUid = SGL_HTTP_Session::getUid();
         $user = & new DataObjects_Usr();
-        $user->get(SGL_HTTP_Session::getUid());
-        $user->getLinks('link_%s');
+        $user->get($currentUid);
 
         //  get current remote IP
         $output->remote_ip = $_SERVER['REMOTE_ADDR'];
         $output->login = $this->da->getLastLogin();
         $output->user = $user;
+        $output->user->role_name = $this->da->getRoleNameById($currentUid);
     }
 }
 ?>

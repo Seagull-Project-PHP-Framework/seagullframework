@@ -659,6 +659,9 @@ class SGL_HTTP_Session
         $user_session = $conf['table']['user_session'];
         $query = "SELECT data_value FROM {$user_session} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
         if ($res->numRows() == 1) {
             return $dbh->getOne($query);
         } else {
