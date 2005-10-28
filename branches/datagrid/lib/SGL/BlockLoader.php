@@ -145,14 +145,19 @@ class SGL_BlockLoader
     function _loadBlocks()
     {
         $dbh = & SGL_DB::singleton();
+        //DK added show block for roles
         $query = "
             SELECT
-                b.block_id, b.name, b.title, b.title_class, 
+                b.block_id, b.name, b.title, b.title_class,
                 b.body_class, b.is_onleft
-            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba
+            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
+                    block_roles br
             WHERE   b.is_enabled = 1
+            AND     (br.block_id = b.block_id AND 
+                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ALL_ROLES . "')
+                    )   
             AND     b.block_id = ba.block_id
-            AND     ( ba.section_id = 0 OR ba.section_id = " . 
+            AND     ( ba.section_id = 0 OR ba.section_id = " .
                     $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';

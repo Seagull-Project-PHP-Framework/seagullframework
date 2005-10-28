@@ -40,3 +40,12 @@ create index block_assignment_fk2 on block_assignment
 (
    section_id
 );
+
+-- ==============================================================
+--  table block_roles
+--  DK 
+-- ==============================================================
+create table if not exists block_roles (
+    block_id integer not null,
+    role_id integer not null
+);

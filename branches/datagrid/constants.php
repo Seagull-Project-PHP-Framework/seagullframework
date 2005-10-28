@@ -213,6 +213,8 @@
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
+        // DK for block_roles
+        define('SGL_ALL_ROLES', -2);
         
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);

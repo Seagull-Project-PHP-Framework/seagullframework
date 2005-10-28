@@ -232,15 +232,50 @@ class BlockMgr extends SGL_Manager
         } else {
             $block->get($input->block_id);
         }
-
-        $output->form = $blockForm->init( $block->toArray('block[%s]') );
+        
+        // DK select role assignment
+        //==================CHANGE CODE========================
+        $data = $block->toArray('block[%s]');
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT role_id FROM block_roles WHERE block_id = '" .$data['block[block_id]'] . "'";
+        $res = & $dbh->getAll($query);
+        $data['block[roles]'] = array();
+        foreach ($res as $key => $value) {
+            $data['block[roles]'][] = $value->role_id;    
+        }
+        // set default value (all roles)
+        if (count($data['block[roles]']) == 0) {
+            $data['block[roles]'][] = SGL_ALL_ROLES;
+        }
+        $output->form = $blockForm->init( $data );
+        //===================END CHANGE =======================
         if ($output->form->validate()) {
             $oBlock = (object)$output->form->getSubmitValue('block');
             $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
             $block->setFrom($oBlock);
             // Update record in DB
             $block->update(false, true); // This takes into account block assignments as well
-
+            // DK save role assignment
+            //=============CHANGE CODE======================
+            $dbh = & SGL_DB::singleton();
+            $query = "DELETE FROM block_roles WHERE block_id ='" .$oBlock->block_id . "'";
+            $dbh->query($query);
+            $query = '';
+            // delete 'all roles' option
+            if (count($oBlock->roles) > 2) {
+                foreach ($oBlock->roles as $key => $value) {        
+                    if ($value == SGL_ALL_ROLES) {
+                        unset($oBlock->roles[$key]);
+                    }
+                }
+            } 
+            foreach ($oBlock->roles as $key => $value) {
+                $query .= "INSERT into block_roles VALUES(" . $oBlock->block_id . ", $value);";    
+            }
+            if ($query <> '') {
+                $dbh->query($query);
+            }
+            //============END CHANGE ========================================
             //clear cache so a new cache file is built reflecting changes
             SGL::clearCache('blocks');
             SGL::raiseMsg('Block details successfully updated');

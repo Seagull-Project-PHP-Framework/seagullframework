@@ -72,6 +72,17 @@ class BlockForm
         }
         $sections[0] = 'All sections';
         $this->sections = $sections;
+        // DK select roles from db
+        //=============CHANGE CODE===========================
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT role_id, name FROM role";
+        $res = & $dbh->getAll($query);
+        $roles[SGL_ALL_ROLES] = SGL_String::translate('All roles');
+        foreach ($res as $key => $value) {
+            $roles[$value->role_id] = $value->name;
+        }
+        $this->roles = $roles;
+        //=============END CHANGE=============================
     }
 
     function init( $data = null )
@@ -88,6 +99,10 @@ class BlockForm
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
+            // DK default roles
+            //=================CHANGE CODE=======================
+            $defaultValues['block[roles]']        = SGL_ALL_ROLES;
+            //=================END CHANGE =======================
             $this->form->setDefaults( $defaultValues );
         }
 
@@ -114,6 +129,13 @@ class BlockForm
         $this->form->addElement('text', 'block[body_class]', SGL_String::translate('Body class')) ;
         // Field sections
         $this->form->addElement('select', 'block[sections]', SGL_String::translate('Sections'), $this->sections );
+        // DK added select roles
+        //=============CHANGE CODE===================================
+        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Show for roles'), $this->roles);        
+        $roles = &$this->form->getElement('block[roles]');
+        $roles->setMultiple(true);
+        $roles->setSize(5);
+        //============================================================
         $select = &$this->form->getElement('block[sections]');
         $select->setMultiple(true);
         $select->setSize(15);
