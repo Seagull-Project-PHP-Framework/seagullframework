@@ -659,6 +659,17 @@ class DA_User
         return $aAllRoles;
     }
     
+    function getRoleNameById($id)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "
+            SELECT name
+            FROM    " . $this->conf['table']['role'] . "
+            WHERE  role_id = " . $id;
+        return $this->dbh->getOne($query);
+    }
+    
     /**
      * Returns a string of all emails per given group.
      *

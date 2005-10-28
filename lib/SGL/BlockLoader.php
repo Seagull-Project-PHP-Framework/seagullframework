@@ -149,8 +149,12 @@ class SGL_BlockLoader
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
                 b.body_class, b.is_onleft
-            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba
+            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
+                    {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
+            AND     (br.block_id = b.block_id AND 
+                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ALL_ROLES . "')
+                    )   
             AND     b.block_id = ba.block_id
             AND     ( ba.section_id = 0 OR ba.section_id = " . 
                     $this->_currentSectionId . ' )
