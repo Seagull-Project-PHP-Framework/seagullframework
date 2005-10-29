@@ -80,7 +80,7 @@ class ProfileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_ENT_DIR . '/Usr.php';
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         $user->get($input->userId);
         $output->profile = $user;
 

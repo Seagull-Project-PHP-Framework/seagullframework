@@ -39,7 +39,6 @@
 // $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
 
 require_once 'Validate.php';
-require_once SGL_ENT_DIR . '/Usr.php';
 
 /**
  * Manages passwords.
@@ -160,7 +159,7 @@ class PasswordMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = & new DataObjects_Usr();
+        $oUser = DB_DataObject::factory('Usr');
         $oUser->get(SGL_HTTP_Session::getUid());
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
@@ -220,7 +219,7 @@ class PasswordMgr extends SGL_Manager
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = & new DataObjects_Usr();
+        $oUser = DB_DataObject::factory('Usr');
         $oUser->get($userId);
         $oUser->passwd = md5($passwd);
         $oUser->update();
@@ -230,7 +229,7 @@ class PasswordMgr extends SGL_Manager
     function _isOriginalPassword($passwd)
     {
         if (isset($passwd)) {
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->get(SGL_HTTP_Session::getUid());
             return md5($passwd) == $oUser->passwd;
         }
