@@ -37,24 +37,38 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
-class WizardCreateAdminUser extends HTML_QuickForm_Page
+function hasAgreed()
+{
+    if ($_SESSION['_installationWizard_container']['values']['page1']['agree']['agree'] == 'yes') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+class WizardLicenseAgreement extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
 
-        $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
+        $licenseTxt = file_get_contents(SGL_INSTALL_ROOT . '/COPYING.txt');
+        $this->setDefaults(array(
+            'license' => $licenseTxt,
+            ));
+                    
+        $this->addElement('header',     null, 'Seagull License Agreement: page 1 of 5');
+        $this->addElement('textarea',   'license', null, array('rows' => 15, 'cols' => 80));
+        
+        $radio[] = &$this->createElement('radio', 'agree',     '', "I Agree", 'yes');
+        $radio[] = &$this->createElement('radio', 'agree',     '', "I Disagree", 'no');
+        $this->addGroup($radio, 'agree', null, '<br />');
+        $this->addGroupRule('agree', 'You must agree with the License terms in order to install and use this product', 'required');
+        
+        $this->registerRule('hasAgreed','function','hasAgreed'); 
+        $this->addRule('agree', 'You must agree with the License terms in order to install and use this product', 'hasAgreed');
 
-
-#        $this->addElement('static',   'errors', null, $out);  
-//        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
-//
-//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
-//        $this->addGroup($prevnext, null, '', '&nbsp;', false);
-//
-//        $this->addRule('itxaTest', 'Say something!', 'required');
-
+        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
         $this->setDefaultAction('next');
     }
 }

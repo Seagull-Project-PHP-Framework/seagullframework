@@ -127,6 +127,11 @@ user setup
 
 - For security reasons, you must remove the installation script ...
 - remove lockfile, system set to 'production' mode
+
+paths setup
+===========
+allow enduser to dynamically setup paths, ie, for hosted environments
+
 */
 
 session_start();
@@ -152,6 +157,7 @@ require_once SGL_INSTALL_ROOT . '/lib/SGL/DB.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Config.php';
 
 //  Load wizard screens
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardLicenseAgreement.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardDetectEnv.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardTestDbConnection.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateDb.php';
@@ -226,10 +232,11 @@ _HTML
 }
 
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
-$wizard->addPage(new WizardDetectEnv('page1'));
-$wizard->addPage(new WizardTestDbConnection('page2'));
-$wizard->addPage(new WizardCreateDb('page3'));
-$wizard->addPage(new WizardCreateAdminUser('page4'));
+$wizard->addPage(new WizardLicenseAgreement('page1'));
+$wizard->addPage(new WizardDetectEnv('page2'));
+$wizard->addPage(new WizardTestDbConnection('page3'));
+$wizard->addPage(new WizardCreateDb('page4'));
+$wizard->addPage(new WizardCreateAdminUser('page5'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller

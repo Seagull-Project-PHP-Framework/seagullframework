@@ -39,8 +39,8 @@
 
 function canCreateDb()
 {
-    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page2'], 
-        $_SESSION['_installationWizard_container']['values']['page3']);
+    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page3'], 
+        $_SESSION['_installationWizard_container']['values']['page4']);
 
     $skipDbCreation = (bool)@$aFormValues['skipDbCreation'];
     $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
@@ -88,7 +88,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
             'name' => 'seagull',
             ));
 
-        $this->addElement('header', null, 'Database Setup: page 3 of 3');
+        $this->addElement('header', null, 'Database Setup: page 4 of 5');
 
         //  skip db creation FIXME: improve
         $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?', 'Yes (If box is not ticked, a new Db will be created)');        
