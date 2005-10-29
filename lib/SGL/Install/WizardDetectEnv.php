@@ -38,39 +38,53 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require_once dirname(__FILE__) . '/../TaskRunner.php';
-require_once dirname(__FILE__) . '/../Tasks/All.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/TaskRunner.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/All.php';
 
-SGL_Install::printHeader('Detecting Environment');
-
-$runner = new SGL_TaskRunner();
-$runner->addTask(new SGL_Task_GetLoadedModules());
-$runner->addTask(new SGL_Task_GetPhpEnv());
-$runner->addTask(new SGL_Task_GetPhpIniValues());
-$runner->addTask(new SGL_Task_GetFilesystemInfo());
-$runner->addTask(new SGL_Task_GetPearInfo());
-$output = $runner->main();
-
-//  store output for later processing
-$serialized = serialize($runner);
-@file_put_contents(SGL_Install::getInstallRoot() . '/var/env.php', $serialized);
-
-print $output;
-
-//  process errors
-print '<p>&nbsp;</p>';
-print "<div class=\"messageContainer\">";
-
-if (SGL_Install::errorsExist()) {
-    print "<div class=\"errorHeader\">Errors Detected</div>";
-    foreach ($_SESSION['ERRORS'] as $error) {
-        print "<div class=\"errorContent\"><strong>{$error[0]}</strong> : {$error[1]}</div>";
+function environmentOk()
+{
+    if (SGL_Install::errorsExist()) {
+        return false;
+    } else {
+        //  store output for later processing
+        $serialized = serialize($GLOBALS['_SGL']['runner']);
+        @file_put_contents(SGL_INSTALL_ROOT . '/var/env.php', $serialized);    
+        return true;
     }
-    print '<p>You must fix the above error(s) before you can continue.</p>';       
-} else {
-    print '<input type="submit" name="envDetect" value="Next >>" onClick="document.location.href=\''.$_SERVER['PHP_SELF'].'\'" />';   
 }
-print '</div>';
 
-SGL_Install::printFooter();
+class WizardDetectEnv extends HTML_QuickForm_Page
+{
+    function buildForm()
+    {
+        $this->_formBuilt = true;
+        $this->setDefaults(array(
+            'detectEnv' => 1,
+            ));
+                    
+        $this->addElement('header',     null, 'Detect Environment: page 1 of 3');        
+
+        $runner = new SGL_TaskRunner();
+        $runner->addTask(new SGL_Task_GetLoadedModules());
+        $runner->addTask(new SGL_Task_GetPhpEnv());
+        $runner->addTask(new SGL_Task_GetPhpIniValues());
+        $runner->addTask(new SGL_Task_GetFilesystemInfo());
+        $runner->addTask(new SGL_Task_GetPearInfo());
+        
+        $html = $runner->main();
+        
+        //  store global copy for error callback
+        $GLOBALS['_SGL']['runner'] = $runner;
+
+        $this->addElement('checkbox', 'detectEnv', 'Detect Env?', 'Yes');
+        $this->registerRule('environmentOk','function','environmentOk'); 
+        $this->addRule('detectEnv', 'please fix the listed errors', 'environmentOk');
+        
+        $this->addElement('static',  'env', null, $html);
+
+        //  submit
+        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $this->setDefaultAction('next');
+    }
+}
 ?>
