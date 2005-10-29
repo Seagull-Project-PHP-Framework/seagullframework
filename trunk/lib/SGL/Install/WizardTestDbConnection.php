@@ -39,7 +39,7 @@
 
 function canConnectToDbServer()
 {
-    $aFormValues = $GLOBALS['_SGL']['dbFormValues'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page2'];
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
     $port = (!empty($aFormValues['dbPort']['port']) 
@@ -69,7 +69,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header', null, 'Test DB Connection: page 1 of 3');
+        $this->addElement('header', null, 'Test DB Connection: page 2 of 3');
         
         //  FIXME: use detect.php info to supply sensible defaults
         $this->setDefaults(array(
@@ -118,11 +118,10 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
         
         //  submit
-        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
-        
-        //  make vars available for db connection test
-        $GLOBALS['_SGL']['dbFormValues'] = $this->exportValues();
     }
 }
 ?>

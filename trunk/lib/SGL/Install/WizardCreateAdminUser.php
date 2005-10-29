@@ -41,18 +41,19 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
     {
-#print '<pre>'; print_r($_SESSION);
         $this->_formBuilt = true;
 
-        $this->addElement('header',     null, 'Create Admin User: page 3 of 3');
+        $this->addElement('header',     null, 'Create Admin User: page 4 of 3');
 
-        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
 
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
-        $this->addGroup($prevnext, null, '', '&nbsp;', false);
-
-        $this->addRule('itxaTest', 'Say something!', 'required');
+#        $this->addElement('static',   'errors', null, $out);  
+//        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
+//
+//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
+//        $this->addGroup($prevnext, null, '', '&nbsp;', false);
+//
+//        $this->addRule('itxaTest', 'Say something!', 'required');
 
         $this->setDefaultAction('next');
     }

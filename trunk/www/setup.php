@@ -132,17 +132,11 @@ user setup
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 
-$installRoot = SGL_Install::getInstallRoot();
-
-//  get environment data if this is a new install
-if (!file_exists($installRoot . '/var/env.php')) {
-    require_once $installRoot . '/lib/SGL/Install/WizardDetectEnv.php';
-    die();
-}
+define('SGL_INSTALL_ROOT', SGL_Install::getInstallRoot());
 
 //  setup pear include path
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-$ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
+$ok = @ini_set('include_path',      '.' . $includeSeparator . SGL_INSTALL_ROOT . '/lib/pear');
 
 // Load QuickFormController libs
 require_once 'HTML/QuickForm/Controller.php';
@@ -154,13 +148,14 @@ require_once 'HTML/QuickForm/Action/Display.php';
 require_once 'DB.php';
 
 //  Load SGL libs
-require_once dirname(__FILE__) . '/../lib/SGL/DB.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/DB.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Config.php';
 
 //  Load wizard screens
-require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardTestDbConnection.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateDb.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Install/WizardCreateAdminUser.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardDetectEnv.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardTestDbConnection.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateDb.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateAdminUser.php';
 
 
 class ActionProcess extends HTML_QuickForm_Action
@@ -215,7 +210,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 </div>
 <p>&nbsp;</p>
 <form{attributes}>
-<table border="0">
+<table border="0" width="800px">
 {content}
 </table>
 </form>
@@ -231,9 +226,10 @@ _HTML
 }
 
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
-$wizard->addPage(new WizardTestDbConnection('page1'));
-$wizard->addPage(new WizardCreateDb('page2'));
-$wizard->addPage(new WizardCreateAdminUser('page3'));
+$wizard->addPage(new WizardDetectEnv('page1'));
+$wizard->addPage(new WizardTestDbConnection('page2'));
+$wizard->addPage(new WizardCreateDb('page3'));
+$wizard->addPage(new WizardCreateAdminUser('page4'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller
