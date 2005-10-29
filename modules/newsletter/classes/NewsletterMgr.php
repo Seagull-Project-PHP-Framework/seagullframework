@@ -41,7 +41,6 @@
 // $Id: NewsletterMgr.php,v 1.24 2005/06/12 18:19:18 demian Exp $
 
 require_once SGL_ENT_DIR . '/Newsletter.php';
-require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
@@ -94,7 +93,7 @@ class NewsletterMgr extends SGL_Manager
 
         if ($req->get('frmUserID')) {
             $input->userID = $req->get('frmUserID');
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->get($input->userID);
             $input->email       = $oUser->email;
             $input->name        = $oUser->first_name . $oUser->last_name;                       
@@ -544,8 +543,8 @@ class NewsletterMgr extends SGL_Manager
      {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get user details        
-        $oUser = & new DataObjects_Usr();
+        //  get user details
+        $oUser = DB_DataObject::factory('Usr');
         $oUser->get($userID);
 
         $query = "SELECT * FROM ". $this->conf['table']['newsletter'] ." WHERE email='". $oUser->email ."' AND status=0"; 

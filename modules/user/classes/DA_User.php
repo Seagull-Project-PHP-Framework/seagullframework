@@ -824,7 +824,7 @@ class DA_User
     function isUniqueUsername($username)
     {
         if (isset($username)) {
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->whereAdd("username = '$username'");
             $numRows = $oUser->find();
 
@@ -843,7 +843,7 @@ class DA_User
     function isUniqueEmail($email)
     {
         if (isset($email)) {
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->whereAdd("email = '$email'");
             $numRows = $oUser->find();
 

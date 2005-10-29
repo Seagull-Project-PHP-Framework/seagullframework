@@ -173,7 +173,6 @@ class ContactUsMgr extends SGL_Manager
 
         //  require Contact and Usr entities
         require_once SGL_ENT_DIR . '/Contact_us.php';
-        require_once SGL_ENT_DIR . '/Usr.php';
 
         //  1. Set template
         //  The default template set in the class vars is copied to the 
@@ -190,7 +189,7 @@ class ContactUsMgr extends SGL_Manager
         if (SGL_HTTP_Session::getUserType() != SGL_GUEST) {
 
             //  instantiate new User entity
-            $user = & new DataObjects_Usr();
+            $user = DB_DataObject::factory('Usr');
             $user->get(SGL_HTTP_Session::getUid());
 
             //  instantiate Contact_us entity which will hold User data

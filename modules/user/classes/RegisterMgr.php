@@ -193,7 +193,7 @@ class RegisterMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'userAdd.html';
-        $output->user = & new DataObjects_Usr();
+        $output->user = DB_DataObject::factory('Usr');
         $output->user->password_confirm = (isset($input->user->password_confirm)) ? 
             $input->user->password_confirm : '';
     }
@@ -207,7 +207,7 @@ class RegisterMgr extends SGL_Manager
         $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
         //  build new user object
-        $oUser = & new DataObjects_Usr();
+        $oUser = DB_DataObject::factory('Usr');
         $oUser->setFrom($input->user);
         $oUser->passwdClear = $input->user->passwd;
         $oUser->passwd = md5($input->user->passwd);

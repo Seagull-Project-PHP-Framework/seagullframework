@@ -40,7 +40,6 @@
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'Validate.php';
 
@@ -189,8 +188,8 @@ class UserMgr extends RegisterMgr
      */
     function &_createUser()
     {
-        $usr = new DataObjects_Usr();
-        return $usr;
+        $oUser = DB_DataObject::factory('Usr');
+        return $oUser;
     }
 
     function _insert(&$input, &$output)

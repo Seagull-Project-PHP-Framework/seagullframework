@@ -524,8 +524,7 @@ class MaintenanceMgr extends SGL_Manager
             : $input->createModule->managerName . 'Mgr';
 
         //  set author details
-        require_once SGL_ENT_DIR . '/Usr.php';
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         $user->get(SGL_HTTP_Session::getUid());
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
