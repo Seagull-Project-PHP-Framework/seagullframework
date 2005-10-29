@@ -62,7 +62,7 @@ class WizardDetectEnv extends HTML_QuickForm_Page
             'detectEnv' => 1,
             ));
                     
-        $this->addElement('header',     null, 'Detect Environment: page 1 of 3');        
+        $this->addElement('header',     null, 'Detect Environment: page 2 of 5');        
 
         $runner = new SGL_TaskRunner();
         $runner->addTask(new SGL_Task_GetLoadedModules());
@@ -83,7 +83,9 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $this->addElement('static',  'env', null, $html);
 
         //  submit
-        $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }
 }

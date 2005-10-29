@@ -39,7 +39,7 @@
 
 function canConnectToDbServer()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page2'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page3'];
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
     $port = (!empty($aFormValues['dbPort']['port']) 
@@ -69,7 +69,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header', null, 'Test DB Connection: page 2 of 3');
+        $this->addElement('header', null, 'Test DB Connection: page 3 of 5');
         
         //  FIXME: use detect.php info to supply sensible defaults
         $this->setDefaults(array(
