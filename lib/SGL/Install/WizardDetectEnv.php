@@ -38,9 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require_once SGL_INSTALL_ROOT . '/lib/SGL/TaskRunner.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/All.php';
-
 function environmentOk()
 {
     if (SGL_Install::errorsExist()) {

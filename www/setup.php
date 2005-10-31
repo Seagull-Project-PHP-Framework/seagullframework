@@ -163,16 +163,11 @@ require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardTestDbConnection.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateDb.php';
 require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateAdminUser.php';
 
-
-class ActionProcess extends HTML_QuickForm_Action
-{
-    function perform(&$page, $actionName)
-    {
-        echo "Submit successful!<br>\n<pre>\n";
-        var_dump($page->controller->exportValues());
-        echo "\n</pre>\n";
-    }
-}
+//  Load tasks
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Task.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/TaskRunner.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/DetectEnv.php';
+require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/Install.php';
 
 // We subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
@@ -228,6 +223,19 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 _HTML
 );
         $page->display();
+    }
+}
+
+class ActionProcess extends HTML_QuickForm_Action
+{
+    function perform(&$page, $actionName)
+    {
+        print '<pre>'; print_r($page->controller->exportValues());
+        
+        $runner = new SGL_TaskRunner();
+        $runner->addTask(new SGL_Task_GetLoadedModules());
+        
+        $ok = $runner->main();
     }
 }
 

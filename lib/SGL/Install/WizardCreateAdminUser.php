@@ -42,19 +42,57 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-
         $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
 
+        //  set defaults
+        $this->setDefaults(array(
+            'adminUserName' => 'admin',
+            'adminRealName' => 'Alouicious Bird',
+            'siteName'  => 'Seagull',
+            'siteDesc'  => 'Coming soon to a webserver near you.',
+            'siteLanguage'  => 'en-iso-8859-15',
+            'serverTimeOffset'  => 0,
+            'installRoot'  => SGL_INSTALL_ROOT,
+            'webRoot'  => SGL_INSTALL_ROOT . '/web',
+            ));
+            
+        //  setup admin user
+        $this->addElement('text',  'adminUserName', 'Admin username: ');
+        $this->addElement('password',  'adminPassword', 'Admin password: ');
+        $this->addElement('text',  'adminRealName', 'Real name: ');
+        $this->addElement('text',  'adminEmail', 'Email: ');
+        
+        //  general
+        $this->addElement('header',     null, 'General:');
+        $this->addElement('text',  'siteName',     'Site name: ');
+        $this->addElement('textarea',   'siteDesc', 'Description:', array('rows' => 5, 'cols' => 40));
+        
+        //  set lang
+        require_once SGL_INSTALL_ROOT . '/lib/data/ary.languages.php';
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        uasort($availableLanguages, 'SGL_cmp');
+        foreach ($availableLanguages as $id => $tmplang) {
+            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangData[$id] =  $langName . ' (' . $id . ')';
+        }
+        $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
+        
+        //  set offset
+        $offset = range(-23, 23);
+        $aOffset = array();
+        foreach ($offset as $hour) {
+            $aOffset[$hour] = $hour;
+        }
+        $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $aOffset);
+        
+        $this->addElement('header',     null, 'Paths:');
+        $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
+        $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
 
-#        $this->addElement('static',   'errors', null, $out);  
-//        $this->addElement('textarea',   'itxaTest', 'Parting words:', array('rows' => 5, 'cols' => 40));
-//
-//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-//        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish');
-//        $this->addGroup($prevnext, null, '', '&nbsp;', false);
-//
-//        $this->addRule('itxaTest', 'Say something!', 'required');
-
+        //  submit
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish >>');
+        $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }
 }
