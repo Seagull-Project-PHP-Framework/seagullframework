@@ -60,6 +60,8 @@ function canCreateDb()
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
     
+    // if DB exists, detect if tables exist
+    
     if ($skipDbCreation && PEAR::isError($dbh)) {
         SGL_Install::errorPush($dbh);
         return false;
@@ -67,8 +69,10 @@ function canCreateDb()
         return true;   
     }
 
-    //  attept to create database
+    //  attempt to create database
     $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
+    
+    //  if new db, set flag to create tables
 
     if (PEAR::isError($ok)) {
         SGL_Install::errorPush($ok);

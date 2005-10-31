@@ -46,17 +46,21 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         //  set defaults
         $this->setDefaults(array(
+            'frameworkVersion' => SGL_Install::getFrameworkVersion(),
             'adminUserName' => 'admin',
             'adminRealName' => 'Alouicious Bird',
             'siteName'  => 'Seagull',
+            'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
             'siteLanguage'  => 'en-iso-8859-15',
             'serverTimeOffset'  => 0,
+            'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_INSTALL_ROOT,
             'webRoot'  => SGL_INSTALL_ROOT . '/web',
             ));
             
         //  setup admin user
+        $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
         $this->addElement('text',  'adminRealName', 'Real name: ');
@@ -65,6 +69,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         //  general
         $this->addElement('header',     null, 'General:');
         $this->addElement('text',  'siteName',     'Site name: ');
+        $this->addElement('text',  'siteKeywords',     'Keywords: ', 'size="50"');
         $this->addElement('textarea',   'siteDesc', 'Description:', array('rows' => 5, 'cols' => 40));
         
         //  set lang
@@ -84,10 +89,12 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             $aOffset[$hour] = $hour;
         }
         $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $aOffset);
+        $this->addElement('text',  'siteCookie',     'Cookie name: ');
         
         $this->addElement('header',     null, 'Paths:');
         $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
         $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
+        //  test if dirs exist
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');

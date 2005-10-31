@@ -233,11 +233,23 @@ class ActionProcess extends HTML_QuickForm_Action
         print '<pre>'; print_r($page->controller->exportValues());
         
         $runner = new SGL_TaskRunner();
-        $runner->addTask(new SGL_Task_GetLoadedModules());
+        $runner->addTask(new SGL_Task_CreateConfig());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_CreateFileSystem());        
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_RemoveLockfile());
         
         $ok = $runner->main();
     }
 }
+
+//  clear session cookie so theme comes from DB and not session
+#setcookie(  $this->conf['cookie']['name'], null, 0, $this->conf['cookie']['path'], 
+#            $this->conf['cookie']['domain'], $this->conf['cookie']['secure']);
 
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
