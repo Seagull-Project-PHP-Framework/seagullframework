@@ -21,6 +21,12 @@ class SGL_Install
         }
     }
     
+    function getFrameworkVersion()
+    {
+        $version = file_get_contents(SGL_Install::getInstallRoot() . '/VERSION.txt');
+        return $version;
+    }
+    
     function errorsExist()
     {
         return count($_SESSION['ERRORS']);
