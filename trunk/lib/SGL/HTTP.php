@@ -387,11 +387,8 @@ class SGL_HTTP_Session
     function getUid()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['uid'];
-        }
-        return $instance;
+
+        return $_SESSION['uid'];
     }
 
     /**
@@ -403,11 +400,8 @@ class SGL_HTTP_Session
     function getRoleId()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['rid'];
-        }
-        return $instance;
+
+        return $_SESSION['rid'];
     }
 
     /**
@@ -419,11 +413,8 @@ class SGL_HTTP_Session
     function getOrganisationId()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['oid'];
-        }
-        return $instance;
+
+        return $_SESSION['oid'];
     }
 
     /**
