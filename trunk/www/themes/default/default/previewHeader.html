@@ -1,10 +1,10 @@
 <flexy:include src="header.html" />
 
 <div id="header">
-    {if:showLogo} 
-        <span><img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} logo" /></span> 
+    {if:conf[site][showLogo]} 
+        <span><img src="{webRoot}/themes/{theme}/images/{conf[site][showLogo]}" alt="{conf[site][name]} logo" /></span> 
     {else:}
-        <h1 id="logo">{siteName}</h1>
+        <h1 id="logo">{conf[site][name]}</h1>
     {end:}
 </div>
 
