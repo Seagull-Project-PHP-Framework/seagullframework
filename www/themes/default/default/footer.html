@@ -6,7 +6,7 @@
         {translate(#Execution Time#)} = {executionTime} {translate(#ms#)}{if:queryCount}, {queryCount} {translate(#queries#)} {end:}
     {end:}
 
-    {if:GLOBALS[_SGL][CONF][debug][profiling]}
+    {if:conf[debug][profiling]}
     <p>{memoryUsage} kb {translate(#allocated#)}</p>
     {end:}
 </div>

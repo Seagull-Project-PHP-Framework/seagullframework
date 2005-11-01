@@ -194,7 +194,6 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->conf = $this->conf;
         $output->aDbTypes = $this->aDbTypes;
         $output->aLogTypes = $this->aLogTypes;
         $output->aLogPriorities = $aLogLevels;

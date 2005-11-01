@@ -1,11 +1,11 @@
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="{webRoot}" title="{translate(#Home#)}">
-    {if:showLogo}
-    <img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} Logo" /> {siteName}
+    {if:conf[site][showLogo]}
+    <img src="{webRoot}/themes/{theme}/images/{conf[site][showLogo]}" alt="{conf[site][name]} Logo" /> {conf[site][name]}
     </a>
     {else:}
-    {siteName}
+    {conf[site][name]}
     </a>
     {end:}
 
@@ -18,7 +18,7 @@
         {translate(#currently_logged_on_as#)}: <strong>{translate(#guest#)}</strong>
         <a id="logAction" href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a>
     {end:}
-    {if:showBugReporter}
+    {if:conf[debug][showBugReporterLink]}
         <a id="bugReporter" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
             <img src="{webRoot}/themes/{theme}/images/bug.gif" alt="{translate(#send bug report#)}" />
         </a>

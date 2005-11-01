@@ -710,7 +710,6 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) 
             ? true : false;
 
-
         //  get all html onLoad events
         $input->data->onLoad = $input->data->getAllOnLoadEvents();
         
@@ -723,14 +722,6 @@ class SGL_PostProcess extends SGL_ProcessRequest
             $input->data->remoteIp = $_SERVER['REMOTE_ADDR'];
             $input->data->isMember = true;
         }
-        
-        $input->data->siteName     = $conf['site']['name'];
-        $input->data->newWinHeight = $conf['popup']['winHeight'];
-        $input->data->newWinWidth  = $conf['popup']['winWidth'];
-        $input->data->showLogo     = $conf['site']['showLogo'];
-        if ($conf['navigation']['enabled']) {
-            $input->data->navStylesheet = $conf['navigation']['stylesheet'];
-        }
         $input->data->currUrl          = $_SERVER['PHP_SELF'];
         $input->data->currLang         = SGL::getCurrentLang();
         $input->data->theme            = $_SESSION['aPrefs']['theme'];
@@ -741,8 +732,7 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $input->data->sessID           = SID;
         $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $input->data->scriptClose      = "\n//--> </script>\n";
-        $input->data->frontScriptName  = $conf['site']['frontScriptName'];
-        $input->data->showBugReporter  = $conf['debug']['showBugReporterLink'];
+		$input->data->conf = $conf;
     }
 }
 
