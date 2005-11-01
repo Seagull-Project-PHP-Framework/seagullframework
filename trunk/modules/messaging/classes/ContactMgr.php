@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: ContactMgr.php,v 1.24 2005/05/13 14:55:48 demian Exp $
 
+require_once 'DB/DataObject.php';
+
 /**
  * Manages Contacts.
  *
@@ -87,10 +89,10 @@ class ContactMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'docBlank.htm';
-        require_once SGL_ENT_DIR . '/Contact.php';
+
         if (is_array($input->deleteArray)) {
             foreach ($input->deleteArray as $userID) {
-                $user = & new DataObjects_Contact();
+                $user = DB_DataObject::factory('Contact');
                 $user->whereAdd("usr_id = $userID");
                 $user->whereAdd("originator_id  = " . SGL_HTTP_Session::getUid());
                 $user->delete(true);
@@ -106,8 +108,7 @@ class ContactMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
-            require_once SGL_ENT_DIR . '/Contact.php';
-            $savedUser = & new DataObjects_Contact();
+            $savedUser = DB_DataObject::factory('Contact');
             $dbh = $savedUser->getDatabaseConnection();
 
             //  skip if user already exists

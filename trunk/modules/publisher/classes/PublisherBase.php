@@ -131,8 +131,8 @@ class PublisherBase
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        require_once SGL_ENT_DIR . '/Document.php';
-        $documentList = & new DataObjects_Document();
+        require_once 'DB/DataObject.php';
+        $documentList = DB_DataObject::factory('Document');
         $documentList->category_id = $catID;
         $result = $documentList->find();
         $documents = array();

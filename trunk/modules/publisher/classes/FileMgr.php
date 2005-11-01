@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: FileMgr.php,v 1.15 2005/03/14 02:21:46 demian Exp $
 
-require_once SGL_ENT_DIR . '/Document.php';
+require_once 'DB/DataObject.php';
 require_once SGL_CORE_DIR . '/Download.php';
 
 /**
@@ -81,7 +81,7 @@ class FileMgr extends SGL_Manager
     function _download(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $mimeType = $document->mime_type;
@@ -101,7 +101,7 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_LIB_DIR . '/other/Zip.php';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $buffer = file_get_contents($fileName);
@@ -122,7 +122,7 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'docBlank.html';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         if (!@file_exists($fileName)) {
