@@ -17,7 +17,7 @@ class SGL_Task
      * @abstract
      *
      */
-    function run()
+    function run($data = null)
     {
         return;
     }

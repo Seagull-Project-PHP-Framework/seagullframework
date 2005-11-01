@@ -74,7 +74,6 @@ class SGL_EnvSummaryTask extends SGL_Task
                     $status = 'red';
                     SGL_Install::errorPush(PEAR::raiseError($error));
                 }
-                
             //  else evaluate conventional values
             } else {
                 if ($actual == $depValue) {
@@ -177,7 +176,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
         $this->aData['phpVersion'] = phpversion();
         $this->aData['operatingSystem'] = php_uname('s') .' '. php_uname('r') .', '. php_uname('m');
         $this->aData['webserverSapi'] = php_sapi_name();
-        $this->aData['webSeagullVersion'] = file_get_contents(SGL_Install::getInstallRoot() . '/VERSION.txt');
+        $this->aData['webSeagullVersion'] = file_get_contents(SGL_PATH . '/VERSION.txt');
     	return $this->render($this->aData);
     }
 }
@@ -230,10 +229,9 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
     
     function run()
     {
-        $installRoot = SGL_Install::getInstallRoot();
-        $this->aData['installRoot'] = $installRoot;
-        $this->aData['varDirExists'] = bool2int(file_exists($installRoot . '/var'));
-        $this->aData['varDirIsWritable'] = bool2int(is_writable($installRoot . '/var'));
+        $this->aData['installRoot'] = SGL_PATH;
+        $this->aData['varDirExists'] = bool2int(file_exists(SGL_PATH . '/var'));
+        $this->aData['varDirIsWritable'] = bool2int(is_writable(SGL_PATH . '/var'));
     	return $this->render($this->aData);
     }   
 }
@@ -255,16 +253,15 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
     
     function run()
     {
-        $installRoot = SGL_Install::getInstallRoot();
-        $this->aData['pearFolderExists'] = bool2int(file_exists($installRoot . '/lib/pear'));
-        $this->aData['pearLibIsLoadable'] = bool2int(include_once $installRoot . '/lib/pear/PEAR.php');
+        $this->aData['pearFolderExists'] = bool2int(file_exists(SGL_PATH . '/lib/pear'));
+        $this->aData['pearLibIsLoadable'] = bool2int(include_once SGL_PATH . '/lib/pear/PEAR.php');
         
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-        $ok = @ini_set('include_path',      '.' . $includeSeparator . $installRoot . '/lib/pear');
+        $ok = @ini_set('include_path',      '.' . $includeSeparator . SGL_PATH . '/lib/pear');
         $this->aData['pearPath'] = @ini_get('include_path');
         $this->aData['pearSystemLibIsLoadable'] = bool2int(require_once 'System.php');
         $this->aData['pearRegistryLibIsLoadable'] = bool2int(require_once 'PEAR/Registry.php');
-        $registry = new PEAR_Registry($installRoot . '/lib/pear');
+        $registry = new PEAR_Registry(SGL_PATH . '/lib/pear');
         $this->aData['pearRegistryIsObject'] = bool2int(is_object($registry));
         $this->aData['pearBundledPackages'] = $registry->_listPackages();
     	return $this->render($this->aData);

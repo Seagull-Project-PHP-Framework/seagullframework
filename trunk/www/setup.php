@@ -134,16 +134,14 @@ allow enduser to dynamically setup paths, ie, for hosted environments
 
 */
 
+//  initialise
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Tasks/Install.php';
+$task = new SGL_Task_SetupPaths();
+$task->run();
 
-define('SGL_INSTALL_ROOT', SGL_Install::getInstallRoot());
-
-//  setup pear include path
-$includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-$ok = @ini_set('include_path',      '.' . $includeSeparator . SGL_INSTALL_ROOT . '/lib/pear');
-
-// Load QuickFormController libs
+// load QuickFormController libs
 require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Action/Next.php';
 require_once 'HTML/QuickForm/Action/Back.php';
@@ -152,24 +150,24 @@ require_once 'HTML/QuickForm/Action/Display.php';
 
 require_once 'DB.php';
 
-//  Load SGL libs
-require_once SGL_INSTALL_ROOT . '/lib/SGL/DB.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Config.php';
+//  load SGL libs
+require_once SGL_PATH . '/lib/SGL/DB.php';
+require_once SGL_PATH . '/lib/SGL/Config.php';
 
-//  Load wizard screens
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardLicenseAgreement.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardDetectEnv.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardTestDbConnection.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateDb.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Install/WizardCreateAdminUser.php';
+//  load wizard screens
+require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardDetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 
-//  Load tasks
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Task.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/TaskRunner.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/DetectEnv.php';
-require_once SGL_INSTALL_ROOT . '/lib/SGL/Tasks/Install.php';
+//  load tasks
+require_once SGL_PATH . '/lib/SGL/Task.php';
+require_once SGL_PATH . '/lib/SGL/TaskRunner.php';
+require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Tasks/Install.php';
 
-// We subclass the default 'display' handler to customize the output
+//  subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
 {
     function perform(&$page, $actionName)
@@ -231,17 +229,20 @@ class ActionProcess extends HTML_QuickForm_Action
     function perform(&$page, $actionName)
     {
         print '<pre>'; print_r($page->controller->exportValues());
+        $data = $page->controller->exportValues();
         
         $runner = new SGL_TaskRunner();
+        $runner->addData($data);
         $runner->addTask(new SGL_Task_CreateConfig());
-        $runner->addTask(new SGL_Task_CreateTables());
-        $runner->addTask(new SGL_Task_LoadDefaultData());
-        $runner->addTask(new SGL_Task_VerifyDbSetup());
-        $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_CreateFileSystem());        
-        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_RemoveLockfile());
+//        $runner->addTask(new SGL_Task_CreateTables());
+//        $runner->addTask(new SGL_Task_LoadDefaultData());
+//        $runner->addTask(new SGL_Task_CreateAdminUser());
+//        $runner->addTask(new SGL_Task_VerifyDbSetup());
+//        $runner->addTask(new SGL_Task_CreateConstraints());
+//        $runner->addTask(new SGL_Task_CreateFileSystem());        
+//        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+//        $runner->addTask(new SGL_Task_SyncSequences());
+//        $runner->addTask(new SGL_Task_RemoveLockfile());
         
         $ok = $runner->main();
     }

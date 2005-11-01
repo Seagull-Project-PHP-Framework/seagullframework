@@ -45,7 +45,7 @@ function environmentOk()
     } else {
         //  store output for later processing
         $serialized = serialize($GLOBALS['_SGL']['runner']);
-        @file_put_contents(SGL_INSTALL_ROOT . '/var/env.php', $serialized);    
+        @file_put_contents(SGL_PATH . '/var/env.php', $serialized);    
         return true;
     }
 }
