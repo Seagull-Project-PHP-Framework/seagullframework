@@ -39,6 +39,26 @@ INSERT INTO block_assignment VALUES (17, 0);
 INSERT INTO block_assignment VALUES (18, 0);
 
 --
+-- Dumping data for table block_role
+--
+
+
+INSERT INTO block_role VALUES (1, -2);
+INSERT INTO block_role VALUES (2, -2);
+INSERT INTO block_role VALUES (3, -2);
+INSERT INTO block_role VALUES (4, -2);
+INSERT INTO block_role VALUES (5, -2);
+INSERT INTO block_role VALUES (10, -2);
+INSERT INTO block_role VALUES (11, -2);
+INSERT INTO block_role VALUES (12, -2);
+INSERT INTO block_role VALUES (13, -2);
+INSERT INTO block_role VALUES (14, -2);
+INSERT INTO block_role VALUES (15, -2);
+INSERT INTO block_role VALUES (16, -2);
+INSERT INTO block_role VALUES (17, -2);
+INSERT INTO block_role VALUES (18, -2);
+
+--
 -- Creating sequences
 -- sequence must start on the first free record id
 --
