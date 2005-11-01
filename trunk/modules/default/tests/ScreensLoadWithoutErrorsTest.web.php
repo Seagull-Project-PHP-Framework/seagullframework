@@ -235,6 +235,11 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/randommsg/rndmsg/action/add/');
         $this->assertTitle('Seagull Framework :: RndMsg Manager :: Add');
         $this->assertNoUnwantedPattern("/errorContent/");
+        
+        // bug mgr
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/default/bug/');
+        $this->assertTitle('Seagull Framework :: Bug Report');
+        $this->assertNoUnwantedPattern("/errorContent/");
     }
 }
 ?>

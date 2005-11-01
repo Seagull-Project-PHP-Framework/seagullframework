@@ -4,9 +4,9 @@ CHANGELOG
 | VERSION: 0.5.3        |
 +-----------------------+
 BUGFIXES
+31-10-05	Fixed broken config calls in templates
 26-10-05    Registration emails are no longer CCed to admin, separate notification
             is sent.
-
 
 IMPROVEMENTS
 28-10-05    Blocks can now be displayed according to the role of the current user

@@ -73,7 +73,7 @@
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        // load Base and init DB_DataObject
+        // load utility lib
         require_once SGL_LIB_DIR . '/SGL.php';
 
         //  to overcome overload problem
