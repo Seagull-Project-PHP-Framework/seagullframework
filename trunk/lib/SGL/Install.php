@@ -27,6 +27,11 @@ class SGL_Install
         return $version;
     }
     
+    function getMinimumModuleList()
+    {
+        return array('default', 'user');   
+    }
+    
     function errorsExist()
     {
         return count($_SESSION['ERRORS']);
