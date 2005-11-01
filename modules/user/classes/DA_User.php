@@ -788,7 +788,7 @@ class DA_User
                     FROM    {$this->conf['table']['organisation']}
                     WHERE   organisation_id = " . $orgId;
 
-        $aOrg = $this->dbh->getAssoc($query);
+        $aOrg = $this->dbh->getRow($query);
         return $aOrg;
     }
     
