@@ -6,15 +6,12 @@ class SGL_TaskRunner
     * collection of Task objects
     * @var array
     */ 
-    var $aTasks;
+    var $aTasks = array();
+    var $data = null;
     
-    function main()
+    function addData($data)
     {
-        $ret = array();
-        foreach ($this->aTasks as $oTask) {
-            $ret[] = $oTask->run();
-        }
-        return implode('', $ret);
+        $this->data = $data;
     }
     
    /**
@@ -32,6 +29,15 @@ class SGL_TaskRunner
             return true;
         }
         return PEAR::raiseError('unexpected object type');
+    }
+    
+    function main()
+    {
+        $ret = array();
+        foreach ($this->aTasks as $oTask) {
+            $ret[] = $oTask->run($this->data);                
+        }
+        return implode('', $ret);
     }
 }
 ?>

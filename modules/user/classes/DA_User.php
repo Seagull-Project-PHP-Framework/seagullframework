@@ -775,6 +775,24 @@ class DA_User
     }
     
     /**
+     * Returns an organisation by org id.
+     *
+     * @param integer $orgId
+     * @return array $aOrg
+     */
+    function getOrgById($orgId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "  SELECT  * 
+                    FROM    {$this->conf['table']['organisation']}
+                    WHERE   organisation_id = " . $orgId;
+
+        $aOrg = $this->dbh->getAssoc($query);
+        return $aOrg;
+    }
+    
+    /**
      * Returns all organisations by role id.
      *
      * @param integer $roleId

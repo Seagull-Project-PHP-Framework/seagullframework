@@ -100,7 +100,7 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $query1 = " DELETE FROM {$conf['table']['org_preference']}
+        $query1 = " DELETE FROM {$this->conf['table']['org_preference']}
                     WHERE organisation_id = " . $input->orgId;
         $this->dbh->query($query1);
 

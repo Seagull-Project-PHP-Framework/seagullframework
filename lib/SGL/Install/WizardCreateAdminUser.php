@@ -55,8 +55,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'siteLanguage'  => 'en-iso-8859-15',
             'serverTimeOffset'  => 0,
             'siteCookie'  => 'SGLSESSID',
-            'installRoot'  => SGL_INSTALL_ROOT,
-            'webRoot'  => SGL_INSTALL_ROOT . '/web',
+            'installRoot'  => SGL_PATH,
+            'webRoot'  => SGL_PATH . '/web',
             ));
             
         //  setup admin user
@@ -73,7 +73,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('textarea',   'siteDesc', 'Description:', array('rows' => 5, 'cols' => 40));
         
         //  set lang
-        require_once SGL_INSTALL_ROOT . '/lib/data/ary.languages.php';
+        require_once SGL_PATH . '/lib/data/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         foreach ($availableLanguages as $id => $tmplang) {
