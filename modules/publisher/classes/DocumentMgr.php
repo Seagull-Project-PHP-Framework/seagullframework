@@ -41,8 +41,7 @@
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/publisher/classes/FileMgr.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-require_once SGL_ENT_DIR . '/Category.php';
-require_once SGL_ENT_DIR . '/Document.php';
+require_once 'DB/DataObject.php';
 
 /**
  * For performing operations on Document objects.
@@ -179,7 +178,7 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get current navigation cat name for publisher subnav
-        $category = & new DataObjects_Category();
+        $category = DB_DataObject::factory('Category');
         $category->get($output->catID);
         $output->catName = $category->label;
         $output->queryRange = PublisherBase::getQueryRange($output);
@@ -234,7 +233,7 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $asset = & new DataObjects_Document();
+        $asset = DB_DataObject::factory('Document');
         $asset->setFrom($input->document);
         $dbh = $asset->getDatabaseConnection();
         $asset->document_id = $dbh->nextId($this->conf['table']['document']);
@@ -256,7 +255,7 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $document->getLinks('link_%s');
 
@@ -286,7 +285,7 @@ class DocumentMgr extends FileMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
@@ -310,7 +309,7 @@ class DocumentMgr extends FileMgr
 
         //  delete physical file
         foreach ($input->deleteArray as $index => $assetID) {
-            $document = & new DataObjects_Document();
+            $document = DB_DataObject::factory('Document');
             $document->get($assetID);
             if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {
                 @unlink(SGL_UPLOAD_DIR . '/' . $document->name);

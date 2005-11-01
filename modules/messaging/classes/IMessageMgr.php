@@ -38,8 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: IMessageMgr.php,v 1.28 2005/05/22 10:21:39 demian Exp $
 
-require_once SGL_ENT_DIR . '/Instant_message.php';
-require_once SGL_ENT_DIR . '/Usr.php';
+require_once 'DB/DataObject.php'; 
 
 define('SGL_PRIVATE_MAIL', false);
 define('SGL_ALERT_OBSCENITY',   1);
@@ -229,7 +228,7 @@ class IMessageMgr extends SGL_Manager
         $counter = 0;
         // Setup the addressees
         foreach ($input->aRecipients as $recipientID) {
-            $tmpUser = & new DataObjects_Usr();
+            $tmpUser = DB_DataObject::factory('Usr');
             $tmpUser->get($recipientID);
 
             // All users except admin types have to obey privacy settings
@@ -302,7 +301,7 @@ class IMessageMgr extends SGL_Manager
         $output->wysiwyg = true;
         $hiddenFields = '';
 
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         if (!is_numeric($input->msgFromID)) {
             SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__, 
                             SGL_ERROR_INVALIDARGS);
@@ -315,7 +314,7 @@ class IMessageMgr extends SGL_Manager
         $output->cancelRedirect = SGL_Url::makeLink('inbox', 'imessage', 'messaging');
 
         //  prepare reply message
-        $origMsg = & new DataObjects_Instant_message();
+        $origMsg = DB_DataObject::factory('Instant_message');
         $origMsg->get($input->messageID);
         if (empty($origMsg)) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -372,7 +371,7 @@ class IMessageMgr extends SGL_Manager
             SGL_HTTP::redirect($aParams);
         }
 
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         $user->usr_id = $sender_id;
         if ($user->find() != 1 || $user->fetch() == false) {
             SGL::raiseMsg('Sender not found');
@@ -396,7 +395,7 @@ class IMessageMgr extends SGL_Manager
         foreach ($input->instantMessage->user_id_to as $receiver_id) {
             // verify each receiver
 
-            $receiver = & new DataObjects_Usr();
+            $receiver = DB_DataObject::factory('Usr');
             $receiver->usr_id = $receiver_id;
             if ($receiver->find() != 1 || $receiver->fetch() == false) {
                 // Make sure they don't pass an invalid user id
@@ -413,7 +412,7 @@ class IMessageMgr extends SGL_Manager
                 }
             }
 
-            $message = & new DataObjects_Instant_message();
+            $message = DB_DataObject::factory('Instant_message');
             $dbh = $message->getDatabaseConnection();
 
             $message->instant_message_id = $dbh->nextId('instant_message');
@@ -458,7 +457,7 @@ class IMessageMgr extends SGL_Manager
 
         $message_id = $input->messageID;
 
-        $message = & new DataObjects_Instant_message();
+        $message = DB_DataObject::factory('Instant_message');
         $message->whereAdd('instant_message_id = ' . $message_id);
         if ($message->find() != 1 || $message->fetch() == false) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -513,7 +512,7 @@ class IMessageMgr extends SGL_Manager
 
         $counter = 0;
         foreach ($input->deleteArray as $index => $message_id) {
-            $message = & new DataObjects_Instant_message();
+            $message = DB_DataObject::factory('Instant_message');
             $message->whereAdd('instant_message_id = ' . $message_id);
             if ($message->find() != 1 || $message->fetch() == false) {
                 $counter++;

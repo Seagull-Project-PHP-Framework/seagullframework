@@ -40,7 +40,7 @@
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_ENT_DIR . '/Module.php';
+require_once 'DB/DataObject.php';
 
 define('SGL_ICONS_PER_ROW', 3);
 
@@ -177,7 +177,7 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
         
-        $newEntry = & new DataObjects_Module();
+        $newEntry = DB_DataObject::factory('Module');
         $newEntry->setFrom($input->module);
         $dbh = $newEntry->getDatabaseConnection();
         $newEntry->module_id = $dbh->nextId($this->conf['table']['module']);
@@ -196,7 +196,7 @@ class ModuleMgr extends SGL_Manager
         $output->action = 'update';
         $output->template  = 'moduleEdit.html';
         require_once SGL_ENT_DIR . '/Module.php';
-        $oModule = & new DataObjects_Module();
+        $oModule = DB_DataObject::factory('Module');
         $oModule->get($input->moduleId);
         $output->module = $oModule;
         $output->isConfigurable = ($oModule->is_configurable) ? ' checked' : '';
@@ -206,7 +206,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
-        $newEntry = & new DataObjects_Module();
+        $newEntry = DB_DataObject::factory('Module');
         $newEntry->get($input->module->module_id);
         $newEntry->setFrom($input->module);
         $success = $newEntry->update();
@@ -223,7 +223,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $rm = & new DataObjects_Module();
+        $rm = DB_DataObject::factory('Module');
         $rm->get($input->module->module_id);
         $rm->delete();
 
