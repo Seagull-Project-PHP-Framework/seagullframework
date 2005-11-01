@@ -176,6 +176,7 @@ class BugMgr extends SGL_Manager
     function getCurrentUserInfo()
     {
         //  instantiate new User entity
+		require_once 'DB/DataObject.php';        
         $user = DB_DataObject::factory('Usr');
         $user->get(SGL_HTTP_Session::getUid());
         return $user;
