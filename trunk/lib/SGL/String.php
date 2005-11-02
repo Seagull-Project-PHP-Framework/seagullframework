@@ -567,7 +567,7 @@ class SGL_Date
      */
     function getTime($gmt = false)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  no logMessage allowed here
         static $instance;
         if (!isset($instance)) {
             $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())

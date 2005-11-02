@@ -70,7 +70,7 @@
             '127.0.0.1',
         );
 
-		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php';
+		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
         $c = &SGL_Config::singleton();
 
         //  test if a config delete is requested (see feature request 985089)

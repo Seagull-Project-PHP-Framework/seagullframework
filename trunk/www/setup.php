@@ -137,9 +137,14 @@ allow enduser to dynamically setup paths, ie, for hosted environments
 //  initialise
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Task.php';
+require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Tasks/Install.php';
-$task = new SGL_Task_SetupPaths();
-$task->run();
+
+$init = new SGL_TaskRunner();
+$init->addTask(new SGL_Task_SetupPaths());
+$init->addTask(new SGL_Task_SetupConstants());
+$init->main();
 
 // load QuickFormController libs
 require_once 'HTML/QuickForm/Controller.php';
@@ -162,10 +167,7 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 
 //  load tasks
-require_once SGL_PATH . '/lib/SGL/Task.php';
-require_once SGL_PATH . '/lib/SGL/TaskRunner.php';
 require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';
-require_once SGL_PATH . '/lib/SGL/Tasks/Install.php';
 
 //  subclass the default 'display' handler to customize the output
 class ActionDisplay extends HTML_QuickForm_Action_Display
@@ -238,10 +240,10 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
-//        $runner->addTask(new SGL_Task_CreateAdminUser());
-//        $runner->addTask(new SGL_Task_CreateFileSystem());        
-//        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-//        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_CreateFileSystem());        
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_CreateAdminUser());
 //        $runner->addTask(new SGL_Task_RemoveLockfile());
         
         set_time_limit(60);

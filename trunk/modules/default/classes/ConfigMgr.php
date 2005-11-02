@@ -222,7 +222,7 @@ class ConfigMgr extends SGL_Manager
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
         
         //  write configuration to file
-        $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
+        $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
 
         if (!is_a($ok, 'PEAR_Error')) {
             SGL::raiseMsg('config info successfully updated');

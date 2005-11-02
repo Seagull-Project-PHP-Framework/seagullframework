@@ -540,7 +540,6 @@ class SGL_Process_SetupBlocks extends SGL_DecorateProcess
             $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
             $input->data->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
-        
         $this->processRequest->process($input);
     }
 }

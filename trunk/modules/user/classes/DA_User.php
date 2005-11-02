@@ -90,6 +90,64 @@ class DA_User
         }
         return $instance;
     }
+    
+    //  //////////////////////////////////////////////////
+    //  /////////////////   USERS   //////////////////////
+    //  //////////////////////////////////////////////////
+
+    function addUser($oUser)
+    {
+        $dbh = & $oUser->getDatabaseConnection();
+        SGL_DB::setConnection($dbh);
+        $dbh->autocommit();
+
+        $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);        
+        $ok = $oUser->insert();
+        
+        //  assign permissions associated with role user belongs to
+        //  first get all perms associated with user's role
+        $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
+
+        //  then assign them to the user_permission table
+        $ret = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
+
+        //  assign preferences associated with org user belongs to
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if (@$this->conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
+        }
+        //  then assign them to the user_preference table
+        $ret = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
+        
+        if ($ok && !(count($GLOBALS['_SGL']['ERRORS']))) {
+            $dbh->commit();            
+            return true;
+        } else {
+            $dbh->rollback();            
+            return false;   
+        }
+    }
+    
+    /**
+     * Returns a DataObjects Usr object.
+     * 
+     * @access private
+     * @param integer   $id optional user id
+     * @return object   A DataObjects user object
+     */    
+    function getUserById($id = null)
+    {
+        require_once 'DB/DataObject.php';
+        $oUser = DB_DataObject::factory('Usr');
+        if (!is_null($id)) {
+            $oUser->get($id);
+        }
+        return $oUser;        
+    }
+       
         
     //  //////////////////////////////////////////////////
     //  /////////////////   PERMS   //////////////////////
@@ -140,7 +198,7 @@ class DA_User
      */
     function getPermsByRoleId($roleId = 0)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  no logMessage allowed here        
         $query = "  SELECT  permission_id 
                     FROM    {$this->conf['table']['role_permission']}
                     WHERE   role_id = " . $roleId;
@@ -256,6 +314,7 @@ class DA_User
      */
     function addPermsByUserId($aRolePerms, $userId)
     {
+        //  no logMessage allowed here
         if (count($aRolePerms)) {
             foreach ($aRolePerms as $permId) {
                 $this->dbh->query('   
@@ -390,8 +449,7 @@ class DA_User
      */
     function getUserPrefsByOrgId($orgId = 0, $type = SGL_RET_NAME_VALUE)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        //  no logMessage allowed here
         switch ($type) {
         case SGL_RET_ID_VALUE:
             $term = 'op.preference_id';
@@ -467,7 +525,7 @@ class DA_User
      */
     function getMasterPrefs($type = SGL_RET_NAME_VALUE)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  no logMessage allowed here
 
         switch ($type) {
         case SGL_RET_ID_VALUE:

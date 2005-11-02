@@ -17,7 +17,7 @@ class SGL_Task_SetupPaths extends SGL_Task
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());        
         define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
-        define('SGL_LIB_PEAR_DIR',              SGL_PATH . '/lib/pear');
+        define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         #define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
         
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
@@ -72,11 +72,88 @@ class SGL_Task_SetupPaths extends SGL_Task
     }
 }
 
+class SGL_Task_SetupConstants extends SGL_Task
+{
+    function run($data)
+    {
+        // framework file structure
+        define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
+        define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
+        define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
+        define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
+        define('SGL_UPLOAD_DIR',                SGL_PATH . '/var/uploads');
+        define('SGL_LIB_DIR',                   SGL_PATH . '/lib');
+        define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
+        define('SGL_MOD_DIR',                   SGL_PATH . '/modules');
+        define('SGL_BLK_DIR',                   SGL_MOD_DIR . '/block/classes/blocks');
+        define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
+        define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
+        define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
+        
+        //  error codes to use with SGL::raiseError()
+        //  start at -100 in order not to conflict with PEAR::DB error codes
+        define('SGL_ERROR_INVALIDARGS',         -101);  // wrong args to function
+        define('SGL_ERROR_INVALIDCONFIG',       -102);  // something wrong with the config
+        define('SGL_ERROR_NODATA',              -103);  // no data available
+        define('SGL_ERROR_NOCLASS',             -104);  // no class exists
+        define('SGL_ERROR_NOMETHOD',            -105);  // no method exists
+        define('SGL_ERROR_NOAFFECTEDROWS',      -106);  // no rows where affected by update/insert/delete
+        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);  // limit queries on unsuppored databases
+        define('SGL_ERROR_INVALIDCALL',         -108);  // overload getter/setter failure
+        define('SGL_ERROR_INVALIDAUTH',         -109);
+        define('SGL_ERROR_EMAILFAILURE',        -110);
+        define('SGL_ERROR_DBFAILURE',           -111);
+        define('SGL_ERROR_DBTRANSACTIONFAILURE',-112);
+        define('SGL_ERROR_BANNEDUSER',          -113);
+        define('SGL_ERROR_NOFILE',              -114);
+        define('SGL_ERROR_INVALIDFILEPERMS',    -115);
+        define('SGL_ERROR_INVALIDSESSION',      -116);
+        define('SGL_ERROR_INVALIDPOST',         -117);
+        define('SGL_ERROR_INVALIDTRANSLATION',  -118);
+        define('SGL_ERROR_FILEUNWRITABLE',      -119);
+        define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
+        define('SGL_ERROR_INVALIDREQUEST',      -121);
+        define('SGL_ERROR_INVALIDTYPE',         -122);
+        define('SGL_ERROR_RECURSION',           -123);
+
+        //  automate sorting
+        define('SGL_SORTBY_GRP',                1);
+        define('SGL_SORTBY_USER',               2);
+        define('SGL_SORTBY_ORG',                3);
+        
+        //  Seagull user types
+        define('SGL_UNASSIGNED',                -1);
+        define('SGL_GUEST',                     0);
+        define('SGL_ADMIN',                     1);
+        define('SGL_MEMBER',                    2);
+        
+        define('SGL_STATUS_DELETED',            0);
+        define('SGL_STATUS_FOR_APPROVAL',       1);
+        define('SGL_STATUS_BEING_EDITED',       2);
+        define('SGL_STATUS_APPROVED',           3);
+        define('SGL_STATUS_PUBLISHED',          4);
+        define('SGL_STATUS_ARCHIVED',           5);
+        
+        //  define return types, k/v pairs, arrays, strings, etc
+        define('SGL_RET_NAME_VALUE',            1);
+        define('SGL_RET_ID_VALUE',              2);
+        define('SGL_RET_ARRAY',                 3);
+        define('SGL_RET_STRING',                4); 
+        define('SGL_ALL_ROLES', 				-2);
+        
+        define('SGL_NOTICES_DISABLED',          0);
+        define('SGL_NOTICES_ENABLED',           1);
+        
+        //  with logging, you can optionally show the file + line no. where 
+        //  SGL::logMessage was called from
+        define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
+    }
+}
+
 class SGL_Task_CreateConfig extends SGL_Task
 {
     function run($data)
     {
-        require_once SGL_PATH . '/lib/SGL/Config.php';        
         $c = &SGL_Config::singleton();
         $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
         $c->replace($conf);
@@ -110,6 +187,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
         $c->set('site', array('language' => $data['siteLanguage']));
+        $c->set('site', array('blocksEnabled' => false));
         
         //  save
         $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
@@ -139,7 +217,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
     
     function getMinimumModuleList()
     {
-        return array('default', 'user');
+        return array('default', 'navigation', 'user');
     }
     
     function setup()
@@ -215,8 +293,8 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
     {
         require_once SGL_PATH . '/lib/SGL/Sql.php';
         define('SGL_BASE_URL', 'http://localhost/seagull/trunk/www');
-        define('SGL_MOD_DIR', SGL_PATH . '/modules');
         
+        SGL_Install::printHeader('Building Database');
         if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
             
             $this->setup();
@@ -302,7 +380,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
         if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {        
             $this->setup();
             
-            $statusText .= ', loading data';
+            $statusText = 'loading data';
             $this->updateHtml('status', $statusText);
             
             //  Go back and load each module's default data, if there is a sql file in /data
@@ -331,7 +409,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
         if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {        
             $this->setup();
             
-            $statusText .= ', loading constraints';
+            $statusText = 'loading constraints';
             $this->updateHtml('status', $statusText);
             
             //  Go back and load module foreign keys/constraints, if any
@@ -356,16 +434,20 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        $this->setup();
+        
         //  verify db
         $dbh = & SGL_DB::singleton();
         $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
         $res = $dbh->getAll($query);
         if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
-            return SGL_Install::errorPush(SGL::raiseError('No tables exist in DB - was schema created?'));
+            return SGL_Install::errorPush(
+                PEAR::raiseError('No tables exist in DB - was schema created?'));
         }
         
         if (!(count($res))) {
-            return SGL_Install::errorPush(SGL::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
+            return SGL_Install::errorPush(
+                PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
         }      
         
         if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
@@ -387,15 +469,9 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         //  done, create "launch seagull" link
         $this->updateHtml('additionalInfo', $body);
         $this->updateHtml('progress_bar', '');
-    }   
-}
-
-
-class SGL_Task_CreateAdminUser extends SGL_Task
-{
-    function run($data)
-    {
-
+        
+        SGL_Install::printFooter();
+        $this->tearDown();
     }   
 }
 
@@ -403,7 +479,16 @@ class SGL_Task_CreateFileSystem extends SGL_Task
 {
     function run($data)
     {
-
+        require_once 'System.php';
+        require_once 'DB/DataObject/Generator.php';
+        $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
+        if (PEAR::isError($cacheDir)) {
+            return SGL_Install::errorPush(PEAR::raiseError('Problem creating cache dir'));            
+        }
+        $entDir = System::mkDir(array(SGL_ENT_DIR));
+        if (PEAR::isError($entDir)) {
+            return SGL_Install::errorPush(PEAR::raiseError('Problem creating entity dir'));            
+        }        
     }   
 }
 
@@ -411,7 +496,38 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
 {
     function run($data)
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
+        //  init DB_DataObject
+        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = array(
+            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
+            'schema_location'       => SGL_ENT_DIR,
+            'class_location'        => SGL_ENT_DIR,
+            'require_prefix'        => SGL_ENT_DIR . '/',
+            'class_prefix'          => 'DataObjects_',
+            'debug'                 => 0,
+            'production'            => 0,
+            'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema'=> 1,            
+        );
+        
+        require_once 'DB/DataObject/Generator.php';
+        ob_start();
+        $generator = new DB_DataObject_Generator();
+        $generator->start();
+        $out = ob_get_contents();
+        ob_end_clean();
+        
+        if (PEAR::isError($out)) {
+            return SGL_Install::errorPush(
+                PEAR::raiseError('generating DB_DataObject entities failed'));
+        }
+        
+        //  copy over links file
+        @copy(SGL_PATH . '/etc/links.ini.dist', 
+            SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini');
     }   
 }
 
@@ -419,7 +535,196 @@ class SGL_Task_SyncSequences extends SGL_Task
 {
     function run($data)
     {
+        $db =& SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
+        $tables = null;
+        
+        switch ($db->phptype) {
 
+        case 'mysql':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            
+            //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
+            $suffix = $db->getOption('seqname_format');
+            $suffixRaw = str_replace('%s', '', $suffix);
+            $suffixRawStart = (0 - strlen($suffixRaw));
+            
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                //  we only build sequences for tables that are not sequences themselves
+                if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
+                    continue;
+                }
+                    
+                $info = $db->tableInfo($table);
+                foreach ($info as $field) {
+                    if (eregi('primary_key', $field['flags'])) {
+                        $primary_field = $field['name'];
+                        break;
+                    }
+                }
+                if ($primary_field <> '') {
+                    $maxId = $db->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
+                    if (!is_null($maxId)) {
+                    	$data[] = array($table, $maxId);
+                    }
+                }
+            }
+
+            foreach ($data as $k) {
+                $tableName = $k[0];
+                $seqName = sprintf($suffix, $tableName);
+                $maxVal   = $k[1];
+                $currVal = $db->nextId($tableName, true);
+                $sql = 'UPDATE ' . $seqName . ' SET id=' . $maxVal . ' WHERE id=' . $currVal;
+                $result = $db->query($sql);
+            }
+            break;
+            
+        case 'mysql_SGL':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                if ($table <> $conf['table']['sequence']) {
+                    $info = $db->tableInfo($table);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') FROM ' . $table . ' WHERE 1'));
+                    } else {
+                        $data[] = array($table, 0);
+                    }
+                }
+            }
+            $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
+            $db->executeMultiple($sth, $data);
+            break;            
+           
+        case 'pgsql':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                if ($table <> $conf['table']['sequence']) {
+                    $info = $db->tableInfo($table);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') FROM ' . $table . ' WHERE true'));
+                    }
+                }
+            }
+            //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
+            $suffix = $db->getOption('seqname_format');
+            
+            //  we'll just create the sequences manually...why not?
+            foreach ($data as $k) {
+                $tableName = $k[0];
+                $seqName = sprintf($suffix, $tableName);
+                $maxVal   = $k[1] + 1;
+                $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
+                $result = $db->query($sql);
+                if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
+                    $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
+                    $result = $db->query($sql);
+                }
+            }
+            break;
+
+        case 'oci8':
+            $db->autoCommit(false);
+            
+            $data = '';
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('sequences');
+            foreach ($aTables as $sequence) {
+                $primary_field = '';
+                // get tablename
+                if (preg_match("/^(.*)_seq$/",$sequence,$table)) {
+                    $info = $db->tableInfo($table[1]);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $maxId = $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') + 1 FROM ' . $table[1]);
+                    } else {
+                        $maxId = 1;
+                    }
+                    
+                    // check for NULL
+                    if (!$maxId) {
+                        $maxId = 1;
+                    }
+                    
+                    // drop and recreate sequence 
+                    $success = false;
+                    if (!DB::isError($db->dropSequence($table[1]))) {
+                        $success = $db->query('CREATE SEQUENCE ' . 
+                            $db->getSequenceName($table[1]) . ' START WITH ' . $maxId);
+                    }
+
+                    if (!$success) {
+                        $db->rollback();
+                        $db->autoCommit(true);
+                        return SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+                    }
+                }
+            }
+            $success = $db->commit();
+            $db->autoCommit(true);
+            if (!$success) {
+                return SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+            }
+            break;
+
+        default:
+            return SGL_Install::errorPush(
+                PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
+        }
+    }   
+}
+
+class SGL_Task_CreateAdminUser extends SGL_Task
+{
+    function run($data)
+    {
+        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+        require_once SGL_PATH . '/lib/SGL/String.php';        
+        $da = & DA_User::singleton();
+        $oUser = $da->getUserById();
+
+        $oUser->username = $data['adminUserName'];
+        $oUser->first_name = $data['adminRealName'];
+        $oUser->email = $data['adminEmail'];
+        $oUser->passwd = md5($data['adminPassword']);
+        $oUser->organisation_id = 1;
+        $oUser->is_acct_active = 1;
+        $oUser->role_id = SGL_ADMIN;
+        
+//        $oUser->addr_1 = '1 Seagull Drive';
+//        $oUser->city = 'London';
+//        $oUser->country = 'GB';
+//        $oUser->country = 'GB';
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
+        $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
+        $success = $da->addUser($oUser);
     }   
 }
 
