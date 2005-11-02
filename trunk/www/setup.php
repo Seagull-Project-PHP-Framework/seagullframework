@@ -228,22 +228,23 @@ class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
-        print '<pre>'; print_r($page->controller->exportValues());
+#        print '<pre>'; print_r($page->controller->exportValues());
         $data = $page->controller->exportValues();
         
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_CreateConfig());
-//        $runner->addTask(new SGL_Task_CreateTables());
-//        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
 //        $runner->addTask(new SGL_Task_CreateAdminUser());
-//        $runner->addTask(new SGL_Task_VerifyDbSetup());
-//        $runner->addTask(new SGL_Task_CreateConstraints());
 //        $runner->addTask(new SGL_Task_CreateFileSystem());        
 //        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
 //        $runner->addTask(new SGL_Task_SyncSequences());
 //        $runner->addTask(new SGL_Task_RemoveLockfile());
         
+        set_time_limit(60);
         $ok = $runner->main();
     }
 }
@@ -270,4 +271,12 @@ $wizard->addAction('jump', new HTML_QuickForm_Action_Jump());
 $wizard->addAction('process', new ActionProcess());
 
 $wizard->run();
+
+if (SGL_Install::errorsExist()) {
+    foreach ($_SESSION['ERRORS'] as $oError) {
+        $out =  $oError->getMessage() . '<br /> ';   
+        $out .= $oError->getUserInfo(); 
+        print $out;
+    }
+}
 ?>

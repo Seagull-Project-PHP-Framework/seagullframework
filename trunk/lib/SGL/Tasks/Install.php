@@ -120,41 +120,278 @@ class SGL_Task_CreateConfig extends SGL_Task
     }
 }
 
-class SGL_Task_CreateTables extends SGL_Task
+class SGL_UpdateHtmlTask extends SGL_Task 
+{
+    function updateHtml($id, $displayHtml) 
+    {
+        if ($id == 'status') {
+            $msg = $displayHtml;
+            $displayHtml = '<span class=\\"pageTitle\\">' . $msg . '</span>';
+        }
+        echo "<script>
+              document.getElementById('$id').innerHTML=\"$displayHtml\";
+              </script>";
+
+        //  echo 5K+ worth of spaces, since some browsers will buffer internally until they get 4K
+        echo str_repeat(' ', 5120);
+        flush();
+    }
+    
+    function getMinimumModuleList()
+    {
+        return array('default', 'user');
+    }
+    
+    function setup()
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+                
+        //  disable fk constraints if mysql (>= 4.1.x)
+        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {                    
+            $dbh = & SGL_DB::singleton();
+            $query = 'SET FOREIGN_KEY_CHECKS=0;';
+            $res = $dbh->query($query);
+        }
+        
+        //  setup db type vars
+        switch ($this->conf['db']['type']) {
+        case 'pgsql':
+            $this->dbType = 'pgsql';
+            $this->filename1 = '/schema.pg.sql';
+            $this->filename2 = '/data.default.pg.sql';
+            $this->filename3 = '/constraints.pg.sql';
+            break;
+
+        case 'mysql':
+            $this->dbType = 'mysql';
+            $this->filename1 = '/schema.my.sql';
+            $this->filename2 = '/data.default.my.sql';
+            $this->filename3 = '/constraints.my.sql';
+            break;
+
+        case 'mysql_SGL':
+            $this->dbType = 'mysql_SGL';
+            $this->filename1 = '/schema.my.sql';
+            $this->filename2 = '/data.default.my.sql';
+            $this->filename3 = '/constraints.my.sql';
+            break;
+
+        case 'oci8_SGL':
+            $this->dbType = 'oci8';
+            $this->filename1 = '/schema.oci.sql';
+            $this->filename2 = '/data.default.oci.sql';
+            $this->filename3 = '/constraints.oci.sql';
+            break;
+
+        case 'maxdb_SGL':
+            $this->dbType = 'maxdb_SGL';
+            $this->filename1 = '/schema.mx.sql';
+            $this->filename2 = '/data.default.mx.sql';
+            $this->filename3 = '/constraints.mx.sql';
+            break;
+        }
+        
+        //  these hold what to display in results grid, depending on outcome
+        $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
+        $this->failure = '<span class=\\"error\\">ERROR</span>';
+        $this->noFile  = '<strong>N/A</strong>';        
+    }
+    
+    function tearDown()
+    {
+        //  re-enable fk constraints if mysql (>= 4.1.x)
+        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {                    
+            $dbh = & SGL_DB::singleton();
+            $query = 'SET FOREIGN_KEY_CHECKS=1;';
+            $res = $dbh->query($query);
+        }
+    }
+}
+
+class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        require_once SGL_PATH . '/lib/SGL/Sql.php';
+        define('SGL_BASE_URL', 'http://localhost/seagull/trunk/www');
+        define('SGL_MOD_DIR', SGL_PATH . '/modules');
+        
+        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+            
+            $this->setup();
+            
+            echo '<span class="title">Status: </span><span id="status"></span>
+            <div id="progress_bar">
+                <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
+            </div>
+            <div id="additionalInfo"></div>';
+            flush();
 
-    }   
+            $statusText = 'Fetching modules';
+            $this->updateHtml('status', $statusText);
+
+            //  Print table shell, with module names; we'll update statuses as we execute sql below
+            echo '<table class="wide">
+                <tr>
+                    <th class="alignCenter">Module</th>
+                    <th class="alignCenter">Create Table</th>
+                    <th class="alignCenter">Load Data</th>
+                    <th class="alignCenter">Add Constraints</th>
+                </tr>
+                <!--tr>
+                    <td class="title">Main</td>
+                    <td id="etc_schema" class="alignCenter"></td>
+                    <td id="etc_data" class="alignCenter"></td>
+                    <td id="etc_constraints" class="alignCenter"></td>
+                </tr-->            
+            ';
+            
+            $aModuleList = $this->getMinimumModuleList();
+            
+            foreach ($aModuleList as $module) {
+                echo '<tr>
+                        <td class="title">' . ucfirst($module) . '</td>
+                        <td id="' . $module . '_schema" class="alignCenter"></td>
+                        <td id="' . $module . '_data" class="alignCenter"></td>
+                        <td id="' . $module . '_constraints" class="alignCenter"></td>
+                    </tr>';
+            }
+            echo '</table>';
+            flush();
+
+            $statusText .= ', creating and loading tables';
+            $this->updateHtml('status', $statusText);
+            
+            //  load 'sequence' table
+            if ($this->conf['db']['type'] == 'mysql_SGL') {
+                $result = SGL_Sql::parseAndExecute(SGL_PATH . '/etc/sequence.my.sql', 0);
+            }
+
+            //  Load each module's schema, if there is a sql file in /data
+            foreach ($aModuleList as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+
+                //  Load the module's schema
+                if (file_exists($modulePath . $this->filename1)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename1, 0);
+                    $displayHtml = $result ? $this->success : $this->failure;
+                    $this->updateHtml($module . '_schema', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_schema', $this->noFile);
+                }
+            }
+            
+            //  catch 'table already exists' error
+            if (DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
+                $this->updateHtml('status', 'Tables already exist');
+                $body = 'It appears that the schema already exists.  Click <a href=\\"index.php\\">here</a> to return to the configuration screen and choose \\"Only set DB connection details\\".';
+                $this->updateHtml('additionalInfo', $body);
+                $this->updateHtml('progress_bar', '');
+                exit;
+            }
+            $this->tearDown();
+        }
+    }
 }
 
-class SGL_Task_LoadDefaultData extends SGL_Task
+class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-
+        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {        
+            $this->setup();
+            
+            $statusText .= ', loading data';
+            $this->updateHtml('status', $statusText);
+            
+            //  Go back and load each module's default data, if there is a sql file in /data
+            $aModuleList = $this->getMinimumModuleList();            
+            foreach ($aModuleList as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+    
+                //  Load the module's data
+                if (file_exists($modulePath . $this->filename2)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename2, 0);
+                    $displayHtml = $result ? $this->success : $this->failure;
+                    $this->updateHtml($module . '_data', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_data', $this->noFile);
+                }
+            }
+            $this->tearDown();
+        }
     }   
 }
+
+class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {        
+            $this->setup();
+            
+            $statusText .= ', loading constraints';
+            $this->updateHtml('status', $statusText);
+            
+            //  Go back and load module foreign keys/constraints, if any
+            $aModuleList = $this->getMinimumModuleList();            
+            foreach ($aModuleList as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+                if (file_exists($modulePath . $this->filename3)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename3, 0);
+                    $displayHtml = $result ? $this->success : $this->failure;
+                    $this->updateHtml($module . '_constraints', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_constraints', $this->noFile);
+                }
+            }
+            $this->tearDown();
+        }
+    }   
+}
+
+//  some more tests would be helpful
+class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        //  verify db
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
+        $res = $dbh->getAll($query);
+        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
+            return SGL_Install::errorPush(SGL::raiseError('No tables exist in DB - was schema created?'));
+        }
+        
+        if (!(count($res))) {
+            return SGL_Install::errorPush(SGL::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
+        }      
+        
+        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+            
+            //  note: must all be on one line for DOM text replacement
+            $message = 'Database initialisation complete!';
+            $this->updateHtml('status', $message);
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
+            
+        //  else only a DB connect was requested
+        } else {
+            $statusText = 'DB connect succeeded';
+            $statusText .= ', Schema creation skipped';
+            $this->updateHtml('status', $statusText);
+
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/\\">LAUNCH SEAGULL</a> </p>';
+        }
+        
+        //  done, create "launch seagull" link
+        $this->updateHtml('additionalInfo', $body);
+        $this->updateHtml('progress_bar', '');
+    }   
+}
+
 
 class SGL_Task_CreateAdminUser extends SGL_Task
-{
-    function run($data)
-    {
-
-    }   
-}
-
-
-
-class SGL_Task_VerifyDbSetup extends SGL_Task
-{
-    function run($data)
-    {
-
-    }   
-}
-
-class SGL_Task_CreateConstraints extends SGL_Task
 {
     function run($data)
     {
