@@ -230,7 +230,6 @@ class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
-#        print '<pre>'; print_r($page->controller->exportValues());
         $data = $page->controller->exportValues();
         
         $runner = new SGL_TaskRunner();
