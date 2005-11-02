@@ -66,11 +66,18 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('text',  'adminRealName', 'Real name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
         
+        $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
+        $this->addRule('adminPassword', 'Please specify the admin\'s password', 'required');
+        $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
+        $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
+        
         //  general
         $this->addElement('header',     null, 'General:');
         $this->addElement('text',  'siteName',     'Site name: ');
         $this->addElement('text',  'siteKeywords',     'Keywords: ', 'size="50"');
         $this->addElement('textarea',   'siteDesc', 'Description:', array('rows' => 5, 'cols' => 40));
+        
+        $this->addRule('siteName', 'Please specify the site\'s name', 'required');
         
         //  set lang
         require_once SGL_PATH . '/lib/data/ary.languages.php';
@@ -91,9 +98,14 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $aOffset);
         $this->addElement('text',  'siteCookie',     'Cookie name: ');
         
+        $this->addRule('siteCookie', 'Please specify the cookie\'s name', 'required');
+        
         $this->addElement('header',     null, 'Paths:');
         $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
         $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
+        
+        $this->addRule('installRoot', 'You must specify an install root path', 'required');
+        $this->addRule('webRoot', 'You must specify a web root path', 'required');
         //  test if dirs exist
 
         //  submit

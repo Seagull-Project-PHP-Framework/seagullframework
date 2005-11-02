@@ -179,62 +179,24 @@ class UserMgr extends RegisterMgr
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
 
-
-    /**
-     * Returns a DataObjects user object.
-     * 
-     * @access private
-     * @return object   A DataObjects user object
-     */
-    function &_createUser()
-    {
-        $oUser = DB_DataObject::factory('Usr');
-        return $oUser;
-    }
-
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = & $this->_createUser();
-        $dbh = & $oUser->getDatabaseConnection();
-        SGL_DB::setConnection($dbh);
-        $dbh->autocommit();
+        $oUser = $this->da->getUserById();
         $oUser->setFrom($input->user);
         $oUser->passwd = md5($input->user->passwd);
         if (@$this->conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
-        $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
-        $success = $oUser->insert();
-
-        //  assign permissions associated with role user belongs to
-        //  first get all perms associated with user's role
-        $aRolePerms = $this->da->getPermsByRoleId($oUser->role_id);
-
-        //  then assign them to the user_permission table
-        $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
-
-        //  assign preferences associated with org user belongs to
-        //  first get all prefs associated with user's org or default
-        //  prefs if orgs are disabled
-        if (@$this->conf['OrgMgr']['enabled']) {
-            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
-        } else {
-            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
-        }
-
-        //  then assign them to the user_preference table
-        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
+        $success = $this->da->addUser($oUser);
 
         //  check global error stack for any error that might have occurred
-        if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
-            $dbh->commit();
+        if ($success) {
             SGL::raiseMsg('user successfully added');
         } else {
-            $dbh->rollback();
             SGL::raiseError('There was a problem inserting the record', 
                 SGL_ERROR_NOAFFECTEDROWS);
         }
@@ -245,7 +207,7 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $output->template = 'userAdd.html';
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $oUser->get($input->userID);
         $output->user = $oUser;
     }
@@ -254,7 +216,7 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $dbh = & $oUser->getDatabaseConnection();
         SGL_DB::setConnection($dbh);
         $dbh->autocommit();
@@ -445,7 +407,7 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Change status';
         $output->template = 'userStatusChange.html';
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $oUser->get($input->userID);
         $output->user = $oUser;
     }
@@ -454,7 +416,7 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $oUser->get($input->userID);
         $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
         $success = $oUser->update();
@@ -499,7 +461,7 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Reset password';
         $output->template = 'userPasswordReset.html';
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $oUser->get($input->userID);
         $output->user = $oUser;
     }
@@ -510,7 +472,7 @@ class UserMgr extends RegisterMgr
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = & $this->_createUser();
+        $oUser = $this->da->getUserById();
         $oUser->get($input->userID);
         $oUser->passwd = md5($passwd);
         $success = $oUser->update();

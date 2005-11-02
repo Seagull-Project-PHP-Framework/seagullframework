@@ -94,7 +94,7 @@ class NavStyleMgr extends SGL_Manager
             $c->set('navigation', array('stylesheet' => $input->newStyle));
 
             //  write configuration to file
-            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
             
             if (!is_a($ok, 'PEAR_Error')) {
                 $this->_currentStyle = $input->newStyle;
