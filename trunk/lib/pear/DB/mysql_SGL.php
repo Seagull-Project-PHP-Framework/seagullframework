@@ -26,10 +26,12 @@ class DB_mysql_SGL extends DB_mysql
             // Failed to get the lock, bail with a DB_ERROR_NOT_LOCKED error
             return $this->mysqlRaiseError(DB_ERROR_NOT_LOCKED);
         }
-
-        $id = $this->getOne("SELECT id FROM {$conf['table']['sequence']} WHERE name = '$name'") + 1;
+        
+        $id = $this->getOne("SELECT id FROM {$conf['table']['sequence']} WHERE name = '$name'");
         if (DB::isError($id)) {
             return $this->raiseError($id);
+        } else {
+            $id += 1;
         }
 
         $result = $this->query("REPLACE INTO {$conf['table']['sequence']} VALUES ('$name', '$id')");
