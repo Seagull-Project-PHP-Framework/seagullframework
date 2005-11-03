@@ -366,6 +366,16 @@ EOF;
     {
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
+    
+    /**
+     * Returns true on success, false if resource was not found.
+     *
+     * @param string $resource  File or lib name
+     */
+    function import($resource)
+    {
+        
+    }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {
