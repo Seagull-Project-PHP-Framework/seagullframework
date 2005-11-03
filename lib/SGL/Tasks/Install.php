@@ -295,16 +295,15 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
         define('SGL_BASE_URL', 'http://localhost/seagull/trunk/www');
         
         SGL_Install::printHeader('Building Database');
+        echo '<span class="title">Status: </span><span id="status"></span>
+        <div id="progress_bar">
+            <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
+        </div>
+        <div id="additionalInfo"></div>';
+        flush();
         if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
             
             $this->setup();
-            
-            echo '<span class="title">Status: </span><span id="status"></span>
-            <div id="progress_bar">
-                <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
-            </div>
-            <div id="additionalInfo"></div>';
-            flush();
 
             $statusText = 'Fetching modules';
             $this->updateHtml('status', $statusText);
@@ -459,8 +458,8 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             
         //  else only a DB connect was requested
         } else {
-            $statusText = 'DB connect succeeded';
-            $statusText .= ', Schema creation skipped';
+            $statusText = 'DB setup succeeded';
+            $statusText .= ', schema creation skipped';
             $this->updateHtml('status', $statusText);
 
             $body = '<p><a href=\\"' . SGL_BASE_URL . '/\\">LAUNCH SEAGULL</a> </p>';

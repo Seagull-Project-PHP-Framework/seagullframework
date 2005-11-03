@@ -249,7 +249,7 @@ INSERT INTO permission VALUES (284, 'bugmgr_send', NULL, 3);
 #
 
 INSERT INTO preference VALUES (1, 'sessionTimeout', '1800');
-INSERT INTO preference VALUES (2, 'timezone', 'Europe/London');
+INSERT INTO preference VALUES (2, 'timezone', 'UTC');
 INSERT INTO preference VALUES (3, 'theme', 'default');
 INSERT INTO preference VALUES (4, 'dateFormat', 'UK');
 INSERT INTO preference VALUES (5, 'language', 'en-iso-8859-15');
@@ -402,7 +402,7 @@ INSERT INTO user_permission VALUES (50, 2, 263);
 
 
 INSERT INTO user_preference VALUES (1,0,1,'1800');
-INSERT INTO user_preference VALUES (2,0,2,'Europe/London');
+INSERT INTO user_preference VALUES (2,0,2,'UTC');
 INSERT INTO user_preference VALUES (3,0,3,'default');
 INSERT INTO user_preference VALUES (4,0,4,'UK');
 INSERT INTO user_preference VALUES (5,0,5,'en-iso-8859-15');
