@@ -90,6 +90,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
         
         $this->setDefaults(array(
             'name' => 'seagull',
+            'prefix' => 'not implemented yet',
             ));
 
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
