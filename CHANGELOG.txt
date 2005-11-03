@@ -9,6 +9,10 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+03-11-05    all SQL-related files that used to live in seagull/etc have been moved to 
+            'default' module as that's what they are, default
+03-11-05    item* tables and data moved to publisher
+03-11-05    category table and data moved to publisher
 03-11-05    Improved timezone list
 02-11-05    Global config file renamed to <host_name>.conf.php
 28-10-05    Blocks can now be displayed according to the role of the current user

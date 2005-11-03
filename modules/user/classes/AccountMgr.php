@@ -146,7 +146,7 @@ class AccountMgr extends RegisterMgr
         $output->remote_ip = $_SERVER['REMOTE_ADDR'];
         $output->login = $this->da->getLastLogin();
         $output->user = $oUser;
-        $output->user->role_name = $this->da->getRoleNameById($currentUid);
+        $output->user->role_name = $this->da->getRoleNameById(SGL_HTTP_Session::getRoleId());
     }
 }
 ?>
