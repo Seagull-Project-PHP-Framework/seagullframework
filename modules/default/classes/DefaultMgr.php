@@ -58,7 +58,7 @@ class DefaultMgr extends SGL_Manager
         $this->template     = 'home.html';
 
         $this->_aActionsMapping =  array(
-            'showNews'   => array('showNews'),
+//            'showNews'   => array('showNews'),
             'list'   => array('list'),
         );
     }
@@ -71,15 +71,15 @@ class DefaultMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->pageTitle   = $this->pageTitle;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->newsID      = $req->get('frmNewsID');
+//        $input->newsID      = $req->get('frmNewsID');
     }
 
-    function _showNews(&$input, &$output)
-    {
-        require_once SGL_CORE_DIR . '/Item.php';
-        $item = & new SGL_Item($input->newsID);
-        $output->preview = $item->preview();
-    }
+//    function _showNews(&$input, &$output)
+//    {
+//        require_once SGL_CORE_DIR . '/Item.php';
+//        $item = & new SGL_Item($input->newsID);
+//        $output->preview = $item->preview();
+//    }
 
     function _list(&$input, &$output)
     {
