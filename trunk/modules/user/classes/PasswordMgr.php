@@ -39,6 +39,7 @@
 // $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
 
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages passwords.
