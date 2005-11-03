@@ -53,7 +53,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
             'siteLanguage'  => 'en-iso-8859-15',
-            'serverTimeOffset'  => 0,
+            'serverTimeOffset'  => 'UTC',
             'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_PATH,
             'webRoot'  => SGL_PATH . '/web',
@@ -89,13 +89,9 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         }
         $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
         
-        //  set offset
-        $offset = range(-23, 23);
-        $aOffset = array();
-        foreach ($offset as $hour) {
-            $aOffset[$hour] = $hour;
-        }
-        $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $aOffset);
+        //  set tz offset
+        require_once SGL_PATH . '/lib/data/ary.timezones.en.php';
+        $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $tz);
         $this->addElement('text',  'siteCookie',     'Cookie name: ');
         
         $this->addRule('siteCookie', 'Please specify the cookie\'s name', 'required');
