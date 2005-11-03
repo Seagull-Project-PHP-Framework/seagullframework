@@ -152,6 +152,7 @@
         //  get base url
         if (!(isset($conf['site']['baseUrl']))) {
             $c->set('site', array('baseUrl' => $url->getBase()));
+            $ok = $c->save($configFile);
         }
         
         define('SGL_BASE_URL',                  $c->get(array('site' => 'baseUrl')));

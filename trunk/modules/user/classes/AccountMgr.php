@@ -58,7 +58,6 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::RegisterMgr();
         
-        $this->module = 'user';
         $this->pageTitle = 'My Account';
         $this->da = & DA_User::singleton();
 

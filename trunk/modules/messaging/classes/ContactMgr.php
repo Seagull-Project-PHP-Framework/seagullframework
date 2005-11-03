@@ -58,7 +58,6 @@ class ContactMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'messaging';
         $this->pageTitle    = 'Contact Manager';
         $this->template     = 'contacts.html';
 

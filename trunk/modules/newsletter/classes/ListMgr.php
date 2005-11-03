@@ -61,7 +61,6 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::NewsletterMgr();
         
-        $this->module           = 'newsletter';
         $this->pageTitle        = 'Newsletter List Mgr';
         $this->template         = 'newsletter.html';
         $this->da               = & DA_User::singleton();

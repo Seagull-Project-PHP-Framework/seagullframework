@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
+require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
+
 /**
  * Simple init task.
  *
@@ -394,6 +396,11 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
         if (!empty($moduleName) && !empty($managerName)) {
 
+            if (!ModuleMgr::moduleIsRegistered($moduleName)) {
+                SGL::raiseError('module "'.$moduleName.'"does not appear to be registered', SGL_ERROR_INVALIDREQUEST);
+                return $this->getDefaultManager($input);                
+            }
+            
             //  get manager name if $managerName not correct attempt to load default manager w/$moduleName
             $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
             $retMgrName = $this->getManagerName($managerName, $mgrPath);
@@ -423,7 +430,6 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
             SGL::raiseError('malformed request', SGL_ERROR_INVALIDREQUEST);
             return $this->getDefaultManager($input);
         }
-        
         $this->processRequest->process($input);
     }
     

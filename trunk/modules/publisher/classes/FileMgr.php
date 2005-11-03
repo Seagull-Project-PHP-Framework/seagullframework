@@ -55,9 +55,7 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $this->module           = 'publisher';
         $this->pageTitle        = 'File Manager';
-
         $this->_aActionsMapping =  array(
             'download'   => array('download'), 
             'downloadZipped'   => array('downloadZipped'), 

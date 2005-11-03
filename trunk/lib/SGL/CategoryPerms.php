@@ -57,7 +57,6 @@ class SGL_CategoryPerms extends SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $this->module = 'navigation';
         if (isset($catID) && $catID >= 0) {
             $this->init($catID);
         } else {

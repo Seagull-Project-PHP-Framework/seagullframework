@@ -49,7 +49,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'frameworkVersion' => SGL_Install::getFrameworkVersion(),
             'adminUserName' => 'admin',
             'adminRealName' => 'Alouicious Bird',
-            'siteName'  => 'Seagull',
+            'siteName'  => 'Seagull Framework',
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
             'siteLanguage'  => 'en-iso-8859-15',

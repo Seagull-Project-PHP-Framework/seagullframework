@@ -59,7 +59,6 @@ class CategoryMgr extends SGL_Manager
         parent::SGL_Manager();
                 
         $this->aggregateOutput = true;
-        $this->module           = 'navigation';
         $this->pageTitle        = 'Category Manager';
         $this->template         = 'categoryMgr.html';
         $this->da               = & DA_User::singleton();

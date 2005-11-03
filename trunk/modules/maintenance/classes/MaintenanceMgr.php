@@ -54,8 +54,7 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
-        $this->module       = 'maintenance';
+
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'langList.html';
         $this->redirect     = true;

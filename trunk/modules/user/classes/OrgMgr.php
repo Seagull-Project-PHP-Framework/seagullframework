@@ -66,7 +66,6 @@ class OrgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->module       = 'user';
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
         $this->da           = & DA_User::singleton();

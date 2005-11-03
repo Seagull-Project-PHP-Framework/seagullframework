@@ -63,7 +63,6 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module = 'default';
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
         $this->aDbTypes = array(

@@ -372,6 +372,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
         $this->processRequest = $pr;
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
+        $this->dbh = & SGL_DB::singleton();        
     }
 }
 ?>

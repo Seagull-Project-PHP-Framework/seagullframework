@@ -59,10 +59,8 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'publisher';
         $this->pageTitle    = 'Article Browser';
         $this->template     = 'articleBrowser.html';
-
         $this->_aActionsMapping =  array(
             'view'   => array('view'), 
             'summary'   => array('summary'), 

@@ -52,10 +52,9 @@ class WikiScrapeMgr extends SGL_Manager
     function WikiScrapeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'publisher';
+
         $this->pageTitle    = 'WikiScrape Manager';
         $this->template     = 'wikiScrapeList.html';
-
         $this->_aActionsMapping =  array(
             'list'      => array('list'), 
         );

@@ -58,8 +58,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-                
-        $this->module       = 'default';
+
         $this->pageTitle    = 'Module Manager';
         $this->template     = 'moduleOverview.html';
 
@@ -323,6 +322,24 @@ class ModuleMgr extends SGL_Manager
                 ";
         $moduleId = $dbh->getOne($query);
         return $moduleId;
+    }
+    
+    /**
+     * Returns true if module record exists in db.
+     *
+     * @return boolean
+     */
+    function moduleIsRegistered($moduleName)
+    {
+
+        $query = " 
+            SELECT  module_id
+            FROM    {$this->conf['table']['module']}
+            WHERE   name = '$moduleName'";
+
+        $exists = $this->dbh->getOne($query);
+
+        return ! is_null($exists);
     }
 }
 ?>

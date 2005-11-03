@@ -56,7 +56,6 @@ class RndMsgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module            = 'randommsg';
         $this->pageTitle         = 'RndMsg Manager :: Browse';
         $this->masterTemplate    = 'masterLeftCol.html';
         $this->template          = 'rndMsg.html';

@@ -163,13 +163,13 @@ class SGL_Wizard extends SGL_Manager
         return $html;
     }
 
-    function _createRegister()
+    function _createRegister($moduleName)
     {
         $html = '';
         foreach($this->sequence as $key => $aSeq) {
             $html .= '<a class="subnavi" href="javascript:document.frmWizard.jumpID.value='.$key.';document.frmWizard.submit()">'.SGL_String::translate($aSeq['pageName']['managerName']).'</a><br/>';
         }
-        $html .= '<span class="mainnavi">'.SGL_String::translate($this->module).'</span>';
+        $html .= '<span class="mainnavi">'.SGL_String::translate($moduleName).'</span>';
         return $html;
     }
 
@@ -211,7 +211,7 @@ class SGL_Wizard extends SGL_Manager
     {
         //  put below in parent class
         $output->buttons = $this->_createButtons();
-        $output->register = $this->_createRegister(); 
+        $output->register = $this->_createRegister($output->moduleName); 
 
         //  catch back button
         if ($this->submit == 'back') {

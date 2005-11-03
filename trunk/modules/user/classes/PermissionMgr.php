@@ -57,7 +57,6 @@ class PermissionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'user';
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
         $this->da           = & DA_User::singleton();

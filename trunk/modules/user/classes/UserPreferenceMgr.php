@@ -59,7 +59,6 @@ class UserPreferenceMgr extends PreferenceMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
         
-        $this->module       = 'user';
         $this->template     = 'prefUserEdit.html';
         $this->pageTitle    = 'User Preferences';
 

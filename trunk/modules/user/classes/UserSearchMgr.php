@@ -55,7 +55,6 @@ class UserSearchMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module = 'user';
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';
         $this->da = & DA_User::singleton();

@@ -55,7 +55,6 @@ class UserImportMgr extends UserMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::UserMgr();
         
-        $this->module       = 'user';
         $this->pageTitle    = 'User Import Manager';
         $this->template     = 'userImport.html';
         $this->da           = & DA_User::singleton();

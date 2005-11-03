@@ -9,6 +9,10 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr, 
+            CategoryMgr so core modules could work
+03-11-05    Added SGL_Process_ResolveManager::moduleIsRegistered() to gracefully supply
+            default module if requested module is not registered.
 03-11-05    all SQL-related files that used to live in seagull/etc have been moved to 
             'default' module as that's what they are, default
 03-11-05    item* tables and data moved to publisher

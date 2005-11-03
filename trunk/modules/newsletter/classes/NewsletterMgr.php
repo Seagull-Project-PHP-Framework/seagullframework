@@ -61,7 +61,6 @@ class NewsletterMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module           = 'newsletter';
         $this->pageTitle        = 'Newsletter';
         $this->template         = 'list.html';
 
@@ -390,8 +389,8 @@ class NewsletterMgr extends SGL_Manager
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $this->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $this->module . PATH_SEPARATOR .
+            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $input->moduleName . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/default/' . $input->moduleName . PATH_SEPARATOR .
                                     SGL_THEME_DIR . '/' . $theme . '/default'. PATH_SEPARATOR .
                                     SGL_THEME_DIR . '/default/default',
             'templateDirOrder'  => 'reverse',
@@ -411,9 +410,9 @@ class NewsletterMgr extends SGL_Manager
 
         // Configure Flexy to use SGL ModuleOutput Plugin 
         // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $this->module . '/classes/Output.php';
+        $customOutput = SGL_MOD_DIR . '/' . $input->moduleName . '/classes/Output.php';
         if (is_readable($customOutput)) {
-            $className = ucfirst($this->module) . 'Output';
+            $className = ucfirst($input->moduleName) . 'Output';
             if (isset($options['plugins'])) {
                 $options['plugins'] = $options['plugins'] + array($className => $customOutput);
             } else {

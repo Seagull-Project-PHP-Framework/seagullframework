@@ -34,7 +34,7 @@ class RendererStrategyTest extends UnitTestCase {
     {
         $output = new SGL_Output();
         $output->masterTemplate = 'home.html';
-        $output->module = 'default';
+
         $view = new SGL_HtmlView($output, new SGL_HtmlFlexyRendererStrategy());
         #$view->postProcess();
         $process = new SGL_PrepareBlocks(

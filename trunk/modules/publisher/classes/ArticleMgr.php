@@ -60,9 +60,7 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->module    = 'publisher';
         $this->pageTitle = 'Article Manager';
-
         $this->_aActionsMapping =  array(
             'add'       => array('add'), 
             'insert'    => array('insert', 'redirectToDefault'),
