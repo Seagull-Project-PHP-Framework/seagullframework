@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | HTML_TreeMenu_DHTML_SGL.php                                               |
 // +---------------------------------------------------------------------------+
@@ -149,13 +149,13 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $html  = "\n";
         $html .= '<script type="text/javascript">' . "\n\t";
         $html .= sprintf('%s = new TreeMenu("%s", "%s", "%s", "%s", %s, %s);',
-                         $menuObj,
-                         $this->images,
-                         $menuObj,
-                         $this->linkTarget,
-                         $this->defaultClass,
-                         $this->usePersistence ? 'true' : 'false',
-                         $this->noTopLevelImages ? 'true' : 'false');
+                     $menuObj,
+                     $this->images,
+                     $menuObj,
+                     $this->linkTarget,
+                     $this->defaultClass,
+                     $this->usePersistence ? 'true' : 'false',
+                     $this->noTopLevelImages ? 'true' : 'false');
 
         $html .= "\n";
 
@@ -187,23 +187,23 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $expanded  = $this->isDynamic ? ($nodeObj->expanded  ? 'true' : 'false') : 'true';
         $isDynamic = $this->isDynamic ? ($nodeObj->isDynamic ? 'true' : 'false') : 'false';
         $html = sprintf("\t %s = %s.addItem(new TreeNode('%s', %s, %s, %s, %s, '%s', '%s', %s));\n",
-                        addslashes($return),
-                        $prefix,
-                        $nodeObj->text,
-                        !empty($nodeObj->icon) ? "'" . $nodeObj->icon . "'" : 'null',
-#                        !empty($nodeObj->link) ? "'" . $nodeObj->link . "'" : 'null',
-                        !empty($nodeObj->link) ? "'" . $nodeObj->link . $nodeObj->id ."/'" : 'null',
-                        $expanded,
-                        $isDynamic,
-                        $nodeObj->cssClass,
-                        $nodeObj->linkTarget,
-                        !empty($nodeObj->expandedIcon) ? "'" . $nodeObj->expandedIcon . "'" : 'null');
+                    addslashes($return),
+                    $prefix,
+                    $nodeObj->text,
+                    !empty($nodeObj->icon) ? "'" . $nodeObj->icon . "'" : 'null',
+#                   !empty($nodeObj->link) ? "'" . $nodeObj->link . "'" : 'null',
+                    !empty($nodeObj->link) ? "'" . $nodeObj->link . $nodeObj->id ."/'" : 'null',
+                    $expanded,
+                    $isDynamic,
+                    $nodeObj->cssClass,
+                    $nodeObj->linkTarget,
+                    !empty($nodeObj->expandedIcon) ? "'" . $nodeObj->expandedIcon . "'" : 'null');
 
         foreach ($nodeObj->events as $event => $handler) {
             $html .= sprintf("\t %s.setEvent('%s', '%s');\n",
-                             $return,
-                             $event,
-                             str_replace(array("\r", "\n", "'"), array('\r', '\n', "\'"), $handler));
+                         $return,
+                         $event,
+                         str_replace(array("\r", "\n", "'"), array('\r', '\n', "\'"), $handler));
         }
 
         /**
@@ -217,5 +217,5 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
 
         return $html;
     }
-} // End class HTML_TreeMenu_DHTML
+}
 ?>

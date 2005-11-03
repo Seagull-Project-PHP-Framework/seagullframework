@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.7 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: Validate.php,v 1.43 2005/09/25 16:55:58 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Validator/PECL.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -46,7 +46,7 @@ class PEAR_Validate
 {
     var $packageregex = _PEAR_COMMON_PACKAGE_NAME_PREG;
     /**
-     * @var PEAR_PackageFile
+     * @var PEAR_PackageFile_v1|PEAR_PackageFile_v2
      */
     var $_packagexml;
     /**
@@ -211,7 +211,7 @@ class PEAR_Validate
                   $this->_packagexml->getExtends()) {
                 $version = $this->_packagexml->getVersion() . '';
                 $name = $this->_packagexml->getPackage();
-                $test = array_shift(explode('.', $version));
+                $test = array_shift($a = explode('.', $version));
                 if ($test == '0') {
                     return true;
                 }
@@ -237,8 +237,8 @@ class PEAR_Validate
             }
         }
         if (!$this->validPackageName($this->_packagexml->getPackage())) {
-            $this->_addFailure('name', 'package name ' .
-                $this->_packagexml->getPackage() . ' is invalid');
+            $this->_addFailure('name', 'package name "' .
+                $this->_packagexml->getPackage() . '" is invalid');
             return false;
         }
     }
@@ -436,9 +436,8 @@ class PEAR_Validate
      */
     function validateDate()
     {
-        // packager automatically sets date, so only validate if
-        // pear validate is called
-        if ($this->_state = PEAR_VALIDATE_NORMAL) {
+        if ($this->_state == PEAR_VALIDATE_NORMAL ||
+              $this->_state == PEAR_VALIDATE_PACKAGING) {
             if (!preg_match('/\d\d\d\d\-\d\d\-\d\d/',
                   $this->_packagexml->getDate())) {
                 $this->_addFailure('date', 'invalid release date "' .
@@ -449,6 +448,11 @@ class PEAR_Validate
                 $this->_addFailure('date', 'invalid release date "' .
                     $this->_packagexml->getDate() . '"');
                 return false;
+            }
+            if ($this->_state == PEAR_VALIDATE_PACKAGING &&
+                  $this->_packagexml->getDate() != date('Y-m-d')) {
+                $this->_addWarning('date', 'Release Date "' .
+                    $this->_packagexml->getDate() . '"is not today');
             }
         }
         return true;

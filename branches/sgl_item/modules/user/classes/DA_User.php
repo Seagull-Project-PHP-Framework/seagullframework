@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_User.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -38,6 +38,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
+//  role sync constants
+define('SGL_ROLESYNC_ADD',              1);
+define('SGL_ROLESYNC_REMOVE',           2);
+define('SGL_ROLESYNC_ADDREMOVE',        3);
+define('SGL_ROLESYNC_VIEWONLY',         4);
+        
 /**
  * Data access methods for the user module.
  *
@@ -56,7 +62,8 @@ class DA_User
      */
     function DA_User()
     {
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
     }
     
@@ -83,6 +90,64 @@ class DA_User
         }
         return $instance;
     }
+    
+    //  //////////////////////////////////////////////////
+    //  /////////////////   USERS   //////////////////////
+    //  //////////////////////////////////////////////////
+
+    function addUser($oUser)
+    {
+        $dbh = & $oUser->getDatabaseConnection();
+        SGL_DB::setConnection($dbh);
+        $dbh->autocommit();
+
+        $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);        
+        $ok = $oUser->insert();
+        
+        //  assign permissions associated with role user belongs to
+        //  first get all perms associated with user's role
+        $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
+
+        //  then assign them to the user_permission table
+        $ret = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
+
+        //  assign preferences associated with org user belongs to
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if (@$this->conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
+        }
+        //  then assign them to the user_preference table
+        $ret = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
+        
+        if ($ok && !(count($GLOBALS['_SGL']['ERRORS']))) {
+            $dbh->commit();            
+            return true;
+        } else {
+            $dbh->rollback();            
+            return false;   
+        }
+    }
+    
+    /**
+     * Returns a DataObjects Usr object.
+     * 
+     * @access private
+     * @param integer   $id optional user id
+     * @return object   A DataObjects user object
+     */    
+    function getUserById($id = null)
+    {
+        require_once 'DB/DataObject.php';
+        $oUser = DB_DataObject::factory('Usr');
+        if (!is_null($id)) {
+            $oUser->get($id);
+        }
+        return $oUser;        
+    }
+       
         
     //  //////////////////////////////////////////////////
     //  /////////////////   PERMS   //////////////////////
@@ -133,7 +198,7 @@ class DA_User
      */
     function getPermsByRoleId($roleId = 0)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  no logMessage allowed here        
         $query = "  SELECT  permission_id 
                     FROM    {$this->conf['table']['role_permission']}
                     WHERE   role_id = " . $roleId;
@@ -215,7 +280,7 @@ class DA_User
                 FROM {$this->conf['table']['permission']} p, {$this->conf['table']['module']} m
                 WHERE p.module_id = m.module_id
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
             break;
 
@@ -228,7 +293,7 @@ class DA_User
                 SELECT permission_id, name
                 FROM {$this->conf['table']['permission']}
                 $filter
-                ORDER BY permission_id";
+                ORDER BY name";
             $aAllPerms = $this->dbh->getAssoc($query);
         }
 
@@ -249,6 +314,7 @@ class DA_User
      */
     function addPermsByUserId($aRolePerms, $userId)
     {
+        //  no logMessage allowed here
         if (count($aRolePerms)) {
             foreach ($aRolePerms as $permId) {
                 $this->dbh->query('   
@@ -383,8 +449,7 @@ class DA_User
      */
     function getUserPrefsByOrgId($orgId = 0, $type = SGL_RET_NAME_VALUE)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        //  no logMessage allowed here
         switch ($type) {
         case SGL_RET_ID_VALUE:
             $term = 'op.preference_id';
@@ -460,7 +525,7 @@ class DA_User
      */
     function getMasterPrefs($type = SGL_RET_NAME_VALUE)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  no logMessage allowed here
 
         switch ($type) {
         case SGL_RET_ID_VALUE:
@@ -523,7 +588,7 @@ class DA_User
             INSERT INTO {$this->conf['table']['user_preference']} 
                 (   user_preference_id, 
                     usr_id, 
-                    preference_id, 
+                    preference_id,
                     value)
             VALUES(" . 
                     $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' .
@@ -652,6 +717,17 @@ class DA_User
         return $aAllRoles;
     }
     
+    function getRoleNameById($id)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "
+            SELECT name
+            FROM    " . $this->conf['table']['role'] . "
+            WHERE  role_id = " . $id;
+        return $this->dbh->getOne($query);
+    }
+    
     /**
      * Returns a string of all emails per given group.
      *
@@ -757,6 +833,24 @@ class DA_User
     }
     
     /**
+     * Returns an organisation by org id.
+     *
+     * @param integer $orgId
+     * @return array $aOrg
+     */
+    function getOrgById($orgId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "  SELECT  * 
+                    FROM    {$this->conf['table']['organisation']}
+                    WHERE   organisation_id = " . $orgId;
+
+        $aOrg = $this->dbh->getRow($query);
+        return $aOrg;
+    }
+    
+    /**
      * Returns all organisations by role id.
      *
      * @param integer $roleId
@@ -806,7 +900,7 @@ class DA_User
     function isUniqueUsername($username)
     {
         if (isset($username)) {
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->whereAdd("username = '$username'");
             $numRows = $oUser->find();
 
@@ -825,7 +919,7 @@ class DA_User
     function isUniqueEmail($email)
     {
         if (isset($email)) {
-            $oUser = & new DataObjects_Usr();
+            $oUser = DB_DataObject::factory('Usr');
             $oUser->whereAdd("email = '$email'");
             $numRows = $oUser->find();
 

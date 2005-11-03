@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | UserImportMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -53,7 +53,8 @@ class UserImportMgr extends UserMgr
     function UserImportMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::UserMgr();
+        
         $this->pageTitle    = 'User Import Manager';
         $this->template     = 'userImport.html';
         $this->da           = & DA_User::singleton();
@@ -103,13 +104,14 @@ class UserImportMgr extends UserMgr
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  build roles array
         $aRoles = $this->da->getRoles();
         $output->aRoles = $aRoles;
-        if ($conf['OrgMgr']['enabled']) {
+        if ($this->conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
+        } else {
+            $output->aOrgs = array(1 => 'default');
         }
 
         $output->aFiles = $this->_getCsvFiles();

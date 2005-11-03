@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ConfigMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -61,7 +61,8 @@ class ConfigMgr extends SGL_Manager
     function ConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'default';
+        parent::SGL_Manager();
+        
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
         $this->aDbTypes = array(
@@ -69,7 +70,7 @@ class ConfigMgr extends SGL_Manager
             'mysql' => 'mysql',
             'pgsql' => 'pgsql',
             'oci8_SGL' => 'oci8',
-            'odbc' => 'odbc',
+            'maxdb_SGL' => 'maxdb_SGL',
             );
         $this->aLogTypes = array(
             'file' => 'file',
@@ -91,10 +92,15 @@ class ConfigMgr extends SGL_Manager
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $this->aNavDrivers = SGL_Util::getAllNavDrivers();
         $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
-
+        $this->aUrlHandlers = array(
+            'SGL_UrlParserSefStrategy' => 'Seagull SEF',
+            'SGL_UrlParserClassicStrategy' => 'Classic');
+        $this->aTemplateEngines = array(
+            'flexy' => 'Flexy',
+            'smarty' => 'Smarty');
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'), 
-            'insert' => array('insert', 'redirectToDefault'), 
+            'update' => array('update', 'redirectToDefault'), 
         );
     }
 
@@ -102,7 +108,7 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->aStyleFiles = SGL_Util::getStyleFiles();
+        $this->aStyleFiles  = SGL_Util::getStyleFiles();
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = 'masterMinimal.html';
@@ -119,15 +125,24 @@ class ConfigMgr extends SGL_Manager
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
-            
-            //  filter site name for illegal chars
-            $input->conf['site']['name'] = preg_replace("/[^\sa-z]/i", "", $input->conf['site']['name']);
+            //  filter site name for chars not suited to ini files
+            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']);
             
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
+            }
+            
+            //  catch invalid template engine
+            if ($input->conf['site']['templateEngine'] == 'smarty') {
+                $aErrors['templateEngine'] = 'The Smarty template hooks have not been implemented yet';
+            }
+            
+            //  catch invalid URL handler
+            if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
+                $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
             }
             
             switch ($input->conf['mta']['backend']) {
@@ -153,6 +168,16 @@ class ConfigMgr extends SGL_Manager
                 }
                 break;
             }
+
+            //  session validations
+            if (  !empty($input->conf['site']['single_user']) 
+                && empty($input->conf['site']['extended_session'])) {
+                    $aErrors['single_user'] = 'Single session per user requires extended session';
+            }
+            if (   !empty($input->conf['site']['extended_session']) 
+                && $input->conf['site']['sessionHandler'] != 'database') {
+                    $aErrors['extended_session'] = 'Extended session requires database session handling';
+            }
         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
@@ -168,7 +193,6 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->conf = $GLOBALS['_SGL']['CONF'];
         $output->aDbTypes = $this->aDbTypes;
         $output->aLogTypes = $this->aLogTypes;
         $output->aLogPriorities = $aLogLevels;
@@ -178,6 +202,8 @@ class ConfigMgr extends SGL_Manager
         $output->aNavDrivers = $this->aNavDrivers;
         $output->aStyleFiles = $this->aStyleFiles;
         $output->aSessHandlers = $this->aSessHandlers;
+        $output->aUrlHandlers = $this->aUrlHandlers;
+        $output->aTemplateEngines = $this->aTemplateEngines;
     }
 
     function _edit(&$input, &$output)
@@ -185,21 +211,19 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _insert(&$input, &$output)
+    function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = new Config();
-        
-        //  add version info which is not available in form
-        $input->conf['tuples']['version'] = $GLOBALS['_SGL']['VERSION'];
-                
-        //  read configuration data and get reference to root
-        $root = & $c->parseConfig($input->conf, 'phparray');
+
+        //  add version info which is not available in form        
+        $c = &SGL_Config::singleton();
+        $c->replace($input->conf);
+        $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
         
         //  write configuration to file
-        $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-        SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
-        if (!is_a($result, 'PEAR_Error')) {
+        $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
+
+        if (!is_a($ok, 'PEAR_Error')) {
             SGL::raiseMsg('config info successfully updated');
         } else {
             SGL::raiseError('There was a problem saving your configuration, make sure /var is writable', 

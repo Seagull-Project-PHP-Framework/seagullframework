@@ -26,7 +26,7 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 //
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 /**
  * Creates a select menu from db category structure.
@@ -37,7 +37,7 @@ require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
  * @since   PHP 4.1
  */
 
-class Menu_SelectBox extends CategoryMgr
+class Menu_SelectBox extends SGL_Category
 {
     var $_separator     = '';
     var $_ret           = array();
@@ -45,10 +45,12 @@ class Menu_SelectBox extends CategoryMgr
     var $_depth         = 0;
     var $module         = 'navigation';
 
-    function Menu_SelectBox($options)
+    function Menu_SelectBox($options, $conf)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::CategoryMgr();
+        parent::SGL_Category();
+        
+        $this->conf = $conf;
         $this->_separator   = ($options['separator']) 
                                 ? $options['separator']
                                 :'&nbsp;&nbsp;&nbsp;&nbsp;';

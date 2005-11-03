@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.23 2005/06/23 15:56:35 demian Exp $
+ * @version    CVS: $Id: Registry.php,v 1.140 2005/09/11 18:34:44 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -43,7 +43,7 @@ define('PEAR_REGISTRY_ERROR_CHANNEL_FILE', -6);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -218,6 +218,7 @@ class PEAR_Registry extends PEAR
                         $pecl_channel->setServer('pecl.php.net');
                         $pecl_channel->setSummary('PHP Extension Community Library');
                         $pecl_channel->setDefaultPEARProtocols();
+                        $pecl_channel->setBaseURL('REST1.0', 'http://pecl.php.net/rest/');
                         $pecl_channel->setValidationPackage('PEAR_Validator_PECL', '1.0');
                     } else {
                         $pecl_channel->setName('pecl.php.net');
@@ -690,12 +691,17 @@ class PEAR_Registry extends PEAR
             return $this->raiseError('PEAR_Registry: could not open filemap', PEAR_REGISTRY_ERROR_FILE, null, null, $php_errormsg);
         }
         clearstatcache();
-        $fsize = filesize($this->filemap);
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
-        $data = fread($fp, $fsize);
+        $fsize = filesize($this->filemap);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $data = file_get_contents($this->filemap);
+        } else {
+            $data = fread($fp, $fsize);
+            fclose($fp);
+        }
         set_magic_quotes_runtime($rt);
-        fclose($fp);
         $tmp = unserialize($data);
         if (!$tmp && $fsize > 7) {
             return $this->raiseError('PEAR_Registry: invalid filemap data', PEAR_REGISTRY_ERROR_FORMAT, null, null, $data);
@@ -987,9 +993,14 @@ class PEAR_Registry extends PEAR
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
         clearstatcache();
-        $data = fread($fp, filesize($this->_packageFileName($package, $channel)));
+        if (function_exists('file_get_contents')) {
+            $this->_closePackageFile($fp);
+            $data = file_get_contents($this->_packageFileName($package, $channel));
+        } else {
+            $data = fread($fp, filesize($this->_packageFileName($package, $channel)));
+            $this->_closePackageFile($fp);
+        }
         set_magic_quotes_runtime($rt);
-        $this->_closePackageFile($fp);
         $data = unserialize($data);
         if ($key === null) {
             return $data;
@@ -1024,9 +1035,14 @@ class PEAR_Registry extends PEAR
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
         clearstatcache();
-        $data = fread($fp, filesize($this->_channelFileName($channel)));
+        if (function_exists('file_get_contents')) {
+            $this->_closeChannelFile($fp);
+            $data = file_get_contents($this->_channelFileName($channel));
+        } else {
+            $data = fread($fp, filesize($this->_channelFileName($channel)));
+            $this->_closeChannelFile($fp);
+        }
         set_magic_quotes_runtime($rt);
-        $this->_closeChannelFile($fp);
         $data = unserialize($data);
         return $data;
     }
@@ -1304,6 +1320,7 @@ class PEAR_Registry extends PEAR
             $pear_channel->setAlias('pecl');
             $pear_channel->setSummary('PHP Extension Community Library');
             $pear_channel->setDefaultPEARProtocols();
+            $pear_channel->setBaseURL('REST1.0', 'http://pecl.php.net/rest/');
             $pear_channel->setValidationPackage('PEAR_Validator_PECL', '1.0');
             return $pear_channel;
         }

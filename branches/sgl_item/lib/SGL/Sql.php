@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Sql.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.23 $
- * @since   PHP 4.1
  */
 class SGL_Sql
 {
@@ -69,7 +68,8 @@ class SGL_Sql
         // Get database handle based on working config.ini
         $dbh = & SGL_DB::singleton();
         $sql = '';
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Iterate through each line in the file.
         while (!feof($fp)) {
@@ -116,9 +116,17 @@ class SGL_Sql
         return true;
     }
     
+    /**
+     * Returns true if database was setup correctly.
+     *
+     * Checks for existence of permission table and that records were inserted 
+     *
+     * @return mixed    True on success, PEAR error on failure
+     */
     function verifyDbSetup()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
         $query = "SELECT COUNT(*) FROM {$conf['table']['permission']}";
         $res = $dbh->getAll($query);
@@ -131,8 +139,12 @@ class SGL_Sql
         }
         return true;
     }
-
-    //    regenerate dataobject entity files
+   
+    /**
+     * Regenerates dataobject entity files.
+     *
+     * @return string   Error message if any
+     */
     function generateDataObjectEntities()
     {
         require_once 'DB/DataObject/Generator.php';
@@ -156,6 +168,9 @@ class SGL_Sql
     function rebuildSequences($tables = null)
     {
         $db =& SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         switch ($db->phptype) {
 
         case 'mysql':
@@ -170,7 +185,7 @@ class SGL_Sql
             foreach ($aTables as $table) {
                 $primary_field = '';
                 //  we only build sequences for tables that are not sequences themselves
-                if ($table == 'sequence' || substr($table, $suffixRawStart) == $suffixRaw) {
+                if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
                     continue;
                 }
                     
@@ -204,7 +219,7 @@ class SGL_Sql
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> 'sequence') {
+                if ($table <> $conf['table']['sequence']) {
                     $info = $db->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -220,7 +235,7 @@ class SGL_Sql
                     }
                 }
             }
-            $sth = $db->prepare('REPLACE INTO sequence (name, id) VALUES(?,?)');
+            $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
             $db->executeMultiple($sth, $data);
             break;            
            
@@ -229,7 +244,7 @@ class SGL_Sql
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> 'sequence') {
+                if ($table <> $conf['table']['sequence']) {
                     $info = $db->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -245,6 +260,7 @@ class SGL_Sql
             }
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
             $suffix = $db->getOption('seqname_format');
+            
             //  we'll just create the sequences manually...why not?
             foreach ($data as $k) {
                 $tableName = $k[0];
@@ -252,6 +268,10 @@ class SGL_Sql
                 $maxVal   = $k[1] + 1;
                 $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
                 $result = $db->query($sql);
+                if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
+                    $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
+                    $result = $db->query($sql);
+                }
             }
             break;
 

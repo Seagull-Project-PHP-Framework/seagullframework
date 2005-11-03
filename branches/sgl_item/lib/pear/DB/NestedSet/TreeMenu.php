@@ -14,7 +14,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: Jason Rust <jrust@rustyparts.com>                           |
 // +----------------------------------------------------------------------+
-// $Id: TreeMenu.php,v 1.10 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: TreeMenu.php,v 1.19 2004/04/02 00:15:06 datenpunk Exp $
 require_once 'HTML/TreeMenu.php';
 // {{{ DB_NestedSet_TreeMenu:: class
 /**
@@ -24,7 +24,7 @@ require_once 'HTML/TreeMenu.php';
  * @see docs/TreeMenu_example.php
  * @author Jason Rust <jrust@rustyparts.com>
  * @package DB_NestedSet
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.19 $
  * @access public
  */
 // }}}
@@ -33,8 +33,8 @@ require_once 'HTML/TreeMenu.php';
  *
  * @package
  * @author daniel
- * @copyright Copyright (c) 2005
- * @version $Id: TreeMenu.php,v 1.10 2004/10/25 06:39:22 cvsroot Exp $
+ * @copyright Copyright (c) 2004
+ * @version $Id: TreeMenu.php,v 1.19 2004/04/02 00:15:06 datenpunk Exp $
  * @access public
  **/
 class DB_NestedSet_TreeMenu extends DB_NestedSet_Output {

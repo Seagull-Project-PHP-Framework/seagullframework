@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.23 2005/06/23 15:56:36 demian Exp $
+ * @version    CVS: $Id: Install.php,v 1.108 2005/09/25 20:27:27 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -89,11 +89,6 @@ class PEAR_Command_Install extends PEAR_Command_Common
                 'onlyreqdeps' => array(
                     'shortopt' => 'o',
                     'doc' => 'install all required dependencies',
-                    ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also install to ftp site using remote config file (ftp://host.com/pear.conf)'
                     ),
                 'offline' => array(
                     'shortopt' => 'O',
@@ -172,11 +167,6 @@ four ways of specifying packages.
                     'shortopt' => 'o',
                     'doc' => 'install all required dependencies',
                     ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also upgrade on ftp site using remote config file (ftp://host.com/pear.conf)'
-                    ),
                 'offline' => array(
                     'shortopt' => 'O',
                     'doc' => 'do not attempt to download any urls or contact channels',
@@ -225,11 +215,6 @@ More than one package may be specified at once.
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
                     ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also upgrade on ftp site using remote config file (ftp://host.com/pear.conf)'
-                    ),
                 ),
             'doc' => '
 Upgrades all packages that have a newer release available.  Upgrades are
@@ -257,11 +242,6 @@ more stable.
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
-                    ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also uninstall on ftp site using remote config file (ftp://host.com/pear.conf)'
                     ),
                 'offline' => array(
                     'shortopt' => 'O',
@@ -348,12 +328,6 @@ Run post-installation scripts in package <package>, if any exist.
     {
         if (empty($this->installer)) {
             $this->installer = &$this->getInstaller($this->ui);
-        }
-        if (isset($options['remoteconfig'])) {
-            $e = $this->config->readFTPConfigFile($options['remoteconfig']);
-            if (!PEAR::isError($e)) {
-                $this->installer->setConfig($this->config);
-            }
         }
         if ($command == 'upgrade') {
             $options['upgrade'] = true;
@@ -457,9 +431,39 @@ Run post-installation scripts in package <package>, if any exist.
                         $this->ui->outputData('ERROR: ' .$oldinfo->getMessage());
                         continue;
                     }
+                    // we just installed a different package than requested,
+                    // let's change the param and info so that the rest of this works
+                    $param = $info[0];
+                    $info = $info[1];
                 }
             }
             if (is_array($info)) {
+                if ($param->getPackageType() == 'extsrc' ||
+                      $param->getPackageType() == 'extbin') {
+                    $pkg = &$param->getPackageFile();
+                    if ($instbin = $pkg->getInstalledBinary()) {
+                        $instpkg = &$reg->getPackage($instbin, $pkg->getChannel());
+                    } else {
+                        $instpkg = &$reg->getPackage($pkg->getPackage(), $pkg->getChannel());
+                    }
+                    foreach ($instpkg->getFilelist() as $name => $atts) {
+                        $pinfo = pathinfo($atts['installed_as']);
+                        if (!isset($pinfo['extension']) ||
+                              in_array($pinfo['extension'], array('c', 'h'))) {
+                            continue; // make sure we don't match php_blah.h
+                        }
+                        if ((strpos($pinfo['basename'], 'php_') === 0 &&
+                              $pinfo['extension'] == 'dll') ||
+                              // most unices
+                              $pinfo['extension'] == 'so' ||
+                              // hp-ux
+                              $pinfo['extension'] == 'sl') {
+                            $extrainfo[] = 'You should add "extension=' . $pinfo['basename']
+                                . '" to php.ini';
+                            break;
+                        }
+                    }
+                }
                 if ($this->config->get('verbose') > 0) {
                     $channel = $param->getChannel();
                     $label = $reg->parsedPackageNameToString(
@@ -567,10 +571,27 @@ Run post-installation scripts in package <package>, if any exist.
             $package = $parsed['package'];
             $channel = $parsed['channel'];
             $info = &$reg->getPackage($package, $channel);
+            if ($info === null &&
+                 ($channel == 'pear.php.net' || $channel == 'pecl.php.net')) {
+                // make sure this isn't a package that has flipped from pear to pecl but
+                // used a package.xml 1.0
+                $testc = ($channel == 'pear.php.net') ? 'pecl.php.net' : 'pear.php.net';
+                $info = &$reg->getPackage($package, $testc);
+                if ($info !== null) {
+                    $channel = $testc;
+                }
+            }
             if ($info === null) {
                 $badparams[] = $pkg;
             } else {
                 $newparams[] = &$info;
+                // check for binary packages (this is an alias for those packages if so)
+                if ($installedbinary = $info->getInstalledBinary()) {
+                    $this->ui->log('adding binary package ' .
+                        $reg->parsedPackageNameToString(array('channel' => $channel,
+                            'package' => $installedbinary), true));
+                    $newparams[] = &$reg->getPackage($installedbinary, $channel);
+                }
                 // add the contents of a dependency group to the list of installed packages
                 if (isset($parsed['group'])) {
                     $group = $info->getDependencyGroup($parsed['group']);
@@ -578,7 +599,7 @@ Run post-installation scripts in package <package>, if any exist.
                         $installed = &$reg->getInstalledGroup($group);
                         if ($installed) {
                             foreach ($installed as $i => $p) {
-                                $newparams[] = & $installed[$i];
+                                $newparams[] = &$installed[$i];
                             }
                         }
                     }
@@ -610,7 +631,8 @@ Run post-installation scripts in package <package>, if any exist.
                     }
                     $this->ui->outputData("uninstall ok: $pkg", $command);
                 }
-                if (!isset($options['offline']) && is_object($savepkg)) {
+                if (!isset($options['offline']) && is_object($savepkg) &&
+                      defined('PEAR_REMOTEINSTALL_OK')) {
                     if ($this->config->isDefinedLayer('ftp')) {
                         $this->installer->pushErrorHandling(PEAR_ERROR_RETURN);
                         $info = $this->installer->ftpUninstall($savepkg);

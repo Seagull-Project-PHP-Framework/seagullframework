@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | init.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -50,15 +50,30 @@
     if (!function_exists('version_compare') || version_compare(phpversion(), "4.3.0", 'lt')) {
         require_once 'etc/bc.php';
     }
+    
+    if (!(function_exists('file_put_contents'))) {
+        function file_put_contents($location, $data)
+        {
+            if (file_exists($location)) {
+                unlink($location);
+            }
+            $fileHandler = fopen ($location, "w");
+            fwrite ($fileHandler, $data);
+            fclose ($fileHandler);
+            return true;
+        }
+    }
 
     require_once 'constants.php';
+
     SGL_init();
 
     function SGL_init()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
-        // load Base and init DB_DataObject
+        // load utility lib
         require_once SGL_LIB_DIR . '/SGL.php';
 
         //  to overcome overload problem
@@ -87,6 +102,7 @@
         //  include Log.php if logging enabled
         if ($conf['log']['enabled']) {
             require_once 'Log.php';
+            
         } else {
             //  define log levels to avoid notices, since Log.php not included
             define('PEAR_LOG_EMERG',    0);     /** System is unusable */
@@ -123,7 +139,8 @@
      */
     function pearErrorHandler($oError)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  log message
         $message = $oError->getMessage();
@@ -138,4 +155,14 @@
             }
         }
     }
+
+if (!function_exists('getSystemTime')) {
+    function getSystemTime()
+    {
+        $time = gettimeofday();    
+        $resultTime = $time['sec'] * 1000;
+        $resultTime += floor($time['usec'] / 1000);
+        return $resultTime;
+    }   
+}
 ?>

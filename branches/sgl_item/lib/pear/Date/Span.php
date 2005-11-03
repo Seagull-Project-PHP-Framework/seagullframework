@@ -1,25 +1,36 @@
 <?php
-// vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4:
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Author: Leandro Lucarella <llucax@php.net>                           |
-// +----------------------------------------------------------------------+
-//
-// $Id: Span.php,v 1.6 2004/10/25 06:39:22 cvsroot Exp $
-//
 
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/**
+ * Generic time span handling class for PEAR
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 2.02 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/2_02.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Date and Time
+ * @package    Date
+ * @author     Leandro Lucarella <llucax@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    CVS: $Id: Span.php,v 1.6 2005/10/02 14:50:23 pajoye Exp $
+ * @link       http://pear.php.net/package/Date
+ * @since      File available since Release 1.4
+ */
+
+/**
+ * Get the Date class
+ */
 require_once 'Date.php';
+
+/**
+ * Get the Date_Calc class
+ */
 require_once 'Date/Calc.php';
 
 /**
@@ -49,24 +60,26 @@ define('DATE_SPAN_INPUT_FORMAT_NNSV', 1);
  *
  * @global string
  */
-$_DATE_SPAN_FORMAT  = '%C';
+$GLOBALS['_DATE_SPAN_FORMAT']  = '%C';
 
 /**
  * Default time format when converting from a string.
  *
  * @global mixed
  */
-$_DATE_SPAN_INPUT_FORMAT = DATE_SPAN_INPUT_FORMAT_NNSV;
+$GLOBAL['_DATE_SPAN_INPUT_FORMAT'] = DATE_SPAN_INPUT_FORMAT_NNSV;
 
 /**
- * Generic time span handling class for PEAR.
+ * Generic time span handling class for PEAR
  *
- * @package Date
- * @author  Leandro Lucarella <llucax@php.net>
- * @version $Revision: 1.6 $
- * @since   1.4
- * @todo    Get and set default local input and output formats?
- * @access  public
+ * @author     Leandro Lucarella <llucax@php.net>
+ * @copyright  1997-2005 The PHP Group
+ * @license    http://www.php.net/license/2_02.txt  PHP License
+ * @version    Release: 1.4.5
+ * @link       http://pear.php.net/package/Date
+ * @since      Class available since Release 1.4
+ *
+ * @todo       Get and set default local input and output formats?
  */
 class Date_Span {
 

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | RoleMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -57,16 +57,15 @@ define('SGL_ROLE_REMOVE',  2);
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.34 $
- * @since   PHP 4.1
  */
 class RoleMgr extends SGL_Manager
 {
     function RoleMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+        
         $this->template     = 'roleManager.html';
         $this->pageTitle    = 'Role Manager';
         $this->da           = & DA_User::singleton();
@@ -101,6 +100,8 @@ class RoleMgr extends SGL_Manager
         $input->permsToAdd      = $req->get('AddfrmRolePerms');
         $input->permsToRemove   = $req->get('RemovefrmRolePerms');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $aErrors = array();
         if ($input->submit && $input->action =='insert') {
@@ -128,13 +129,12 @@ class RoleMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $oRole = & new DataObjects_Role();
         $oRole->setFrom($input->role);
         $dbh = & $oRole->getDatabaseConnection();
-        $oRole->role_id = $dbh->nextId($conf['table']['role']);
-        $oRole->date_created = $oRole->last_updated = SGL::getTime();
+        $oRole->role_id = $dbh->nextId($this->conf['table']['role']);
+        $oRole->date_created = $oRole->last_updated = SGL_Date::getTime();
         $oRole->created_by = $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->insert();
         if ($success) {
@@ -161,7 +161,7 @@ class RoleMgr extends SGL_Manager
         $oRole = & new DataObjects_Role();
         $oRole->get($input->role->role_id);
         $oRole->setFrom($input->role);
-        $oRole->last_updated = SGL::getTime();
+        $oRole->last_updated = SGL_Date::getTime();
         $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->update();
         if ($success) {
@@ -207,22 +207,18 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  bring global vars into scope
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
         //  select all users and orgs with a given role id
         $aUsers = $this->da->getUsersByRoleId($roleId);
 
         //  and update users to 'unassigned' role
         if (count($aUsers)) {
             foreach ($aUsers as $userId) {
-                $dbh->query('   UPDATE ' . $conf['table']['user'] . '
+                $this->dbh->query('   UPDATE ' . $this->conf['table']['user'] . '
                                 SET role_id = ' . SGL_UNASSIGNED . '
                                 WHERE usr_id =' . $userId);
 
                 //  remove all user perms associated with deleted role
-                $dbh->query('   DELETE FROM ' . $conf['table']['user_permission'] . '
+                $this->dbh->query('   DELETE FROM ' . $this->conf['table']['user_permission'] . '
                                 WHERE   usr_id = ' . $userId);
             }
         }
@@ -231,7 +227,7 @@ class RoleMgr extends SGL_Manager
         $aOrgs = $this->da->getOrgsByRoleId($roleId);        
         if (count($aOrgs)) {
             foreach ($aOrgs as $orgId) {
-                $dbh->query('   UPDATE ' . $conf['table']['organisation'] . '
+                $this->dbh->query('   UPDATE ' . $this->conf['table']['organisation'] . '
                                 SET role_id = ' . SGL_UNASSIGNED . '
                                 WHERE organisation_id =' . $orgId);
             }
@@ -241,15 +237,24 @@ class RoleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $output->template = 'roleManager.html';
         $output->pageTitle = $this->pageTitle . ' :: Browse';
+
+        $allowedSortFields = array('role_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY role_id ASC ';
+        }
 
         $query = "  SELECT
                         role_id, name, description, date_created, 
                         created_by, last_updated, updated_by 
-                    FROM {$conf['table']['role']}";
-        $dbh = & SGL_DB::singleton();
+                    FROM {$this->conf['table']['role']} " .$orderBy_query;
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -257,7 +262,7 @@ class RoleMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
@@ -268,17 +273,15 @@ class RoleMgr extends SGL_Manager
     function _duplicate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
 
         //  get role name info
-        $name = $dbh->getOne("SELECT name FROM {$conf['table']['role']} WHERE role_id = " . $input->roleId);
+        $name = $this->dbh->getOne("SELECT name FROM {$this->conf['table']['role']} WHERE role_id = " . $input->roleId);
         $duplicateName = $name . ' (duplicate)';
 
         //  insert new role duplicate, wrap in transaction
-        $dbh->autocommit();
-        $newRoleId = $dbh->nextId($conf['table']['role']);
-        $res1 = $dbh->query('INSERT INTO ' . $conf['table']['role'] . "
+        $this->dbh->autocommit();
+        $newRoleId = $this->dbh->nextId($this->conf['table']['role']);
+        $res1 = $this->dbh->query('INSERT INTO ' . $this->conf['table']['role'] . "
                             (role_id, name, description)
                             VALUES ($newRoleId, '$duplicateName', 'please enter description')");
 
@@ -287,18 +290,18 @@ class RoleMgr extends SGL_Manager
         $isError = false;
         if (count($aRolePerms)) {
             foreach ($aRolePerms as $permId => $permName) {
-                $res2 = $dbh->query('INSERT INTO ' . $conf['table']['role_permission'] . "
+                $res2 = $this->dbh->query('INSERT INTO ' . $this->conf['table']['role_permission'] . "
                                      (role_permission_id, role_id, permission_id)
-                                     VALUES (" . $dbh->nextId($conf['table']['role_permission']) . ", $newRoleId, $permId)");
+                                     VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) . ", $newRoleId, $permId)");
             }
             $isError = DB::isError($res2);
         }
         if (DB::isError($res1) || $isError) {
-            $dbh->rollback();
+            $this->dbh->rollback();
             SGL::raiseError('There was a problem inserting the record', 
                 SGL_ERROR_DBTRANSACTIONFAILURE);
         } else {
-            $dbh->commit();
+            $this->dbh->commit();
             SGL::raiseMsg('role successfully duplicated');
         }
     }

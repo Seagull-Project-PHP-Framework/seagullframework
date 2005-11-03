@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL_DB.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -38,27 +38,18 @@
 // +---------------------------------------------------------------------------+
 // $Id: DB.php,v 1.14 2005/06/20 10:56:31 demian Exp $
 
+define('SGL_DSN_ARRAY',                 0);
+define('SGL_DSN_STRING',                1);
+        
 /**
  * Class for handling DB resources.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_DB
 {
-    /**
-     * Constructor.
-     *
-     * @return void
-     */
-    function SGL_DB()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
-
     /**
      * Returns the default dsn specified in the global config.
      *
@@ -69,7 +60,8 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  override default mysql driver to allow for all sequence IDs to 
         //  be kept in a single table
@@ -85,8 +77,9 @@ class SGL_DB
                 'port'     => $conf['db']['port']                
             );
         } else {
-        	$protocol = ($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
+        	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
             $port = (!empty($conf['db']['port']) 
+                        && isset($conf['db']['protocol'])
                         && ($conf['db']['protocol'] == 'tcp')) 
                 ? ':' . $conf['db']['port'] 
                 : '';     	
@@ -106,7 +99,7 @@ class SGL_DB
      * This enables you to use DataObjects and SGL_DB in the same transaction.
      *
      * example usage: 
-     * $oUser = & new DataObjects_Usr();
+     * $oUser = DB_DataObject::factory('Usr');
      * $dbh = & $oUser->getDatabaseConnection();
      * SGL_DB::setConnection($dbh);
      * $dbh->autocommit();
@@ -118,12 +111,19 @@ class SGL_DB
      * @param   object  $dbh    PEAR::DB instance
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      */
-    function setConnection ($dbh, $dsn = null)
+    function setConnection (&$dbh, $dsn = null)
     {
         $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+        
+        //  if we're using SimpleTestRunner, reassign STR db resource
+        if (isset($GLOBALS['_STR'])) {
+            $dbh = $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
+            $dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+        } else {
+            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
+            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+        }
     }
 
     /**
@@ -144,10 +144,14 @@ class SGL_DB
     {
         $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
+        if (!is_array(@$GLOBALS['_SGL']['CONNECTIONS'])) {
+            $GLOBALS['_SGL']['CONNECTIONS'] = array();  
+        } 
         $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
 
         if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
 
             //  if db connect fails and we're installing, return error info
@@ -187,12 +191,12 @@ class SGL_DB
     }
 
     /**
-     * @param object PEAR::DB instance
-     * @param string db query
-     * @param array  PEAR::Pager options
-     * @param boolean Disable pagination (get all results)
-     * @param int    fetchmode to use
-     * @param mixed  array, string or numeric data passed to DB execute
+     * @param object $db            PEAR::DB instance
+     * @param string $query         db query
+     * @param array  $pager_options PEAR::Pager options
+     * @param boolean $disabled     Disable pagination (get all results)
+     * @param int    $fetchMode     fetchmode to use
+     * @param mixed  $dbparams      array, string or numeric data passed to DB execute
      * @return array with links and paged data
      */
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 

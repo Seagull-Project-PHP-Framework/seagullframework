@@ -44,3 +44,11 @@ create  index block_assignment_fk2 on block_assignment
 (
 	section_id
 );
+
+-- ==============================================================
+--  Table: block_role
+-- ==============================================================
+create table block_role (
+	block_id 	NUMBER(10)	not null,
+	role_id		NUMBER(10)	not null
+);

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SetupWizard.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -46,14 +46,13 @@ require_once SGL_CORE_DIR . '/Sql.php';
 require_once 'Config.php';
 
 /**
- * A wizard to install and configure the application.
+ * A wizard to install and configure the program.
  *
  * @package SGL
  * @author  Gerry Lachac <glachac@tethermedia.com>
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Andy Crain <apcrain@fuse.net>
  * @version $Revision: 1.29 $
- * @since   PHP 4.1
  */
 class SGL_SetupWizard
 {
@@ -76,49 +75,49 @@ class SGL_SetupWizard
      */
     function processSettings($data)
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
-        $c = new Config();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Update conf with new values from form
         if ($data['type'] == 0) {
-            $conf['db']['type'] = 'mysql_SGL';
+            $c->set('db', array('type' => 'mysql_SGL'));
         } elseif ($data['type'] == 1) {
-            $conf['db']['type'] = 'mysql';
+            $c->set('db', array('type' => 'mysql'));
         } elseif ($data['type'] == 2) {
-            $conf['db']['type'] = 'pgsql';
+            $c->set('db', array('type' => 'pgsql'));
         } elseif ($data['type'] == 3) {
-            $conf['db']['type'] = 'oci8_SGL';
+            $c->set('db', array('type' => 'oci8_SGL'));
         } else {
-            $conf['db']['type'] = 'odbc';
+            $c->set('db', array('type' => 'maxdb_SGL'));
         }
         if (!isset($data['port']) || $data['port']==0) {
-            $conf['db']['port'] = '3306';
+            $c->set('db', array('port' => '3306'));
         } elseif ($data['port']==1)  {
-            $conf['db']['port'] = '5432';
+            $c->set('db', array('port' => '5432'));
         } elseif ($data['port']==2)  {
-            $conf['db']['port'] = '1521';
+            $c->set('db', array('port' => '1521'));
         } else {
-            $conf['db']['port'] = '7210';
+            $c->set('db', array('port' => '7210'));
         }
         if ($data['protocol']==0) {
-            $conf['db']['protocol'] = 'unix';
+            $c->set('db', array('protocol' => 'unix'));
         } else {
-            $conf['db']['protocol'] = 'tcp';
+            $c->set('db', array('protocol' => 'tcp'));
         }
 
-        $conf['db']['host'] = $data['host'];
-        $conf['db']['user'] = $data['user'];
-        $conf['db']['pass'] = $data['pass'];
-        $conf['db']['name'] = $data['name'];
+        $c->set('db', array('host' => $data['host']));
+        $c->set('db', array('user' => $data['user']));
+        $c->set('db', array('pass' => $data['pass']));
+        $c->set('db', array('name' => $data['name']));
 
         // Write and re-read conf to make sure we are accessing DB with what seagull would
         // normally read on startup
-        $c->parseConfig($conf, 'phparray');
-        $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
+        $file = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php';
+        $ok = $c->save($file);
 
-        //  re-read conf for verification, reset global
-        $conf = @parse_ini_file(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', true);
-        $GLOBALS['_SGL']['CONF'] = $conf;
+        //  re-read conf for verification, reset $conf
+        $conf = $c->load($file);
+        $c->replace($conf);
         
         echo '<span class="title">Status: </span><span id="status"></span>
         <div id="progress_bar">
@@ -165,8 +164,8 @@ class SGL_SetupWizard
                     $filename3 = '/constraints.oci.sql';
                     break;
 
-                case 'odbc':
-                    $dbType = 'odbc';
+                case 'maxdb_SGL':
+                    $dbType = 'maxdb_SGL';
                     $filename1 = '/schema.mx.sql';
                     $filename2 = '/data.default.mx.sql';
                     $filename3 = '/constraints.mx.sql';
@@ -225,6 +224,11 @@ class SGL_SetupWizard
                 //  Load SGL schema (/etc)
                 $sglPath = SGL_PATH . '/etc';
                 $result = SGL_Sql::parseAndExecute($sglPath . $filename1, 0);
+                
+                //  load 'sequence' table
+                if ($conf['db']['type'] == 'mysql_SGL') {
+                    $result = SGL_Sql::parseAndExecute($sglPath . '/sequence.my.sql', 0);
+                }
 
                 //  catch 'table already exists' error
                 if (DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
@@ -334,20 +338,16 @@ class SGL_SetupWizard
             //  adjust sequences
             $res = SGL_Sql::rebuildSequences();
             
-            //  determine version
-            $conf['tuples']['version'] = $this->getFrameworkVersion();
+            //  set framework version
+            $c->set('tuples', array('version' => $this->getFrameworkVersion()));
 
-            //  done, so let then click to "launch seagull"                   
+            //  done, create "launch seagull" link
             $this->updateHtml('additionalInfo', $body);
             $this->updateHtml('progress_bar', '');
             
             //  Disable db bootstrap mode
-            $c2 = new Config();
-            $conf['db']['bootstrap'] = '0';
-            $c2->parseConfig($conf, 'phparray');
-            $c2->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            
-            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            $c->set('db', array('bootstrap' => 0));
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
         }
     }
     
@@ -409,13 +409,11 @@ class SGL_SetupWizard
      */
     function run()
     {
-        // If conf.ini has no bootstrap var, add one so we can set our bootstrap state to 1 (exec bootstrap code)
+        // If conf has no bootstrap var, add one to set our bootstrap state to 1 (exec bootstrap code)
         if (!isset($this->conf['db']['bootstrap'])) {
-            $c = new Config();
-            $this->conf['db']['bootstrap'] = '1';
-            $c->parseConfig($this->conf, 'phparray');
-            $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            $c = &SGL_Config::singleton();
+            $c->set('db', array('bootstrap' => 1));
+            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.php');
         }
 
         //  clear session cookie so theme comes from DB and not session
@@ -443,9 +441,9 @@ class SGL_SetupWizard
 EOF;
         require_once 'HTML/QuickForm.php';
         
-        $deleteConfigFlag = (@$_GET['deleteConfig'] == 1) ? true : false;
+        $deleteConfigFlag = empty($_GET['deleteConfig']) ? false : true;
         
-        //  unholy hack ...
+        //  unholy hack required for quickform ...
         if (!isset($_GET['btnSubmit'])) {
             $_GET = array();
         }
@@ -466,8 +464,8 @@ EOF;
         $form->addElement('text',  'host',     'Host: ');
         $form->addElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 0);
         $form->addElement('radio', 'protocol', '',"tcp", 1);
-        $form->addElement('radio', 'port',     'TCP port: ',"3306 (mysql default)",0);
-        $form->addElement('radio', 'port',     '',"5432 (postgres default)",1);
+        $form->addElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)",0);
+        $form->addElement('radio', 'port',     '',"5432 (Postgres default)",1);
         $form->addElement('radio', 'port',     '',"1521 (Oracle default)",2);
         $form->addElement('radio', 'port',     '',"7210 (MaxDB default)",3);
         $form->addElement('text',  'user',     'Database username: ');
@@ -493,7 +491,7 @@ EOF;
             print $instructions;
 
             //  if apache webserver, prompt for .htaccess install
-            if (preg_match('/apache/i', $_SERVER['SERVER_SOFTWARE'])
+            if (preg_match('/apache/i', @$_SERVER['SERVER_SOFTWARE'])
                     && (!file_exists(SGL_PATH . '/.htaccess'))) {
                 print $warning;
             }
@@ -510,7 +508,8 @@ EOF;
 
     function generateDataObjectEntities()
     {
-        $conf = $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  init DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
@@ -554,7 +553,7 @@ EOF;
             $currentDir = array_pop($stack);
             if ($dh = opendir($currentDir)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file !== '.' AND $file !== '..' AND $file !== '.svn') {
+                    if ($file !== '.' && $file !== '..' && $file !== '.svn') {
                         $currentFile = "{$currentDir}/{$file}";
                         if (is_dir($currentFile)) {
                             $fileList[] = "{$file}";

@@ -15,7 +15,7 @@
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: System.php,v 1.24 2005/06/23 15:56:28 demian Exp $
+ * @version    CVS: $Id: System.php,v 1.50 2005/09/11 17:46:55 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -55,7 +55,7 @@ $GLOBALS['_System_temp_files'] = array();
 * @author     Tomas V.V. Cox <cox@idecnet.com>
 * @copyright  1997-2005 The PHP Group
 * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
-* @version    Release: 1.4.0a12
+* @version    Release: 1.4.2
 * @link       http://pear.php.net/package/PEAR
 * @since      Class available since Release 0.1
 */
@@ -138,7 +138,7 @@ class System
         if ($aktinst < $maxinst || $maxinst == 0) {
             foreach($list as $val) {
                 $path = $sPath . DIRECTORY_SEPARATOR . $val;
-                if (is_dir($path)) {
+                if (is_dir($path) && !is_link($path)) {
                     $tmp = System::_dirToStruct($path, $maxinst, $aktinst+1);
                     $struct = array_merge_recursive($tmp, $struct);
                 } else {
@@ -461,6 +461,9 @@ class System
             // Honor safe mode
             if (!ini_get('safe_mode') || !$path = ini_get('safe_mode_exec_dir')) {
                 $path = getenv('PATH');
+                if (!$path) {
+                    $path = getenv('Path'); // some OSes are just stupid enough to do this
+                }
             }
             $path_elements = explode($path_delim, $path);
         }

@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: static.php,v 1.7 2004/10/25 06:39:23 cvsroot Exp $
+// $Id: static.php,v 1.6 2003/06/16 13:06:26 avb Exp $
 
 require_once("HTML/QuickForm/element.php");
 

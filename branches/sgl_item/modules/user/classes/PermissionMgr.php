@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | PermissionMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -49,14 +49,14 @@ require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
  * @author  Jacob Hanson <jacdx@jacobhanson.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.58 $
- * @since   PHP 4.1
  */
 class PermissionMgr extends SGL_Manager
 {
     function PermissionMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+        
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
         $this->da           = & DA_User::singleton();
@@ -91,6 +91,8 @@ class PermissionMgr extends SGL_Manager
         $input->scannedPerms    = (array) $req->get('scannedPerms');
         $input->aDelete         = $req->get('frmDelete');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $aErrors = array();
         if ($input->submit) {
@@ -169,7 +171,6 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
         require_once SGL_ENT_DIR . '/Permission.php';
         $oPerm = & new DataObjects_Permission();
 
@@ -179,7 +180,7 @@ class PermissionMgr extends SGL_Manager
             $oPerm->free(); 
             $oPerm->setFrom($input->perm);
             $dbh = & $oPerm->getDatabaseConnection();
-            $oPerm->permission_id = $dbh->nextId($conf['table']['permission']);
+            $oPerm->permission_id = $dbh->nextId($this->conf['table']['permission']);
             $success = $oPerm->insert();
 
             //  update perms superset cache
@@ -205,30 +206,27 @@ class PermissionMgr extends SGL_Manager
             SGL::raiseMsg('No perms were selected');
         }
         $input->template = 'permScan.html';
-
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
         //  let's go transactional
-        $dbh->autocommit();
+        $this->dbh->autocommit();
 
         $errors = 0;
         foreach ($input->scannedPerms as $k=>$v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
             
-            $query = "  INSERT INTO {$conf['table']['permission']} (permission_id, name, module_id)
-                        VALUES (" . $dbh->nextId($conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
-            if (is_a($dbh->query($query), 'PEAR_Error')) {
+            $query = "  INSERT INTO {$this->conf['table']['permission']} (permission_id, name, module_id)
+                        VALUES (" . $this->dbh->nextId($this->conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
+            if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                 $errors++;
             }
         }
         if ($errors > 0) {
-            $dbh->rollBack();   
+            $this->dbh->rollBack();   
             SGL::raiseError('There was a problem inserting the record(s)', 
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
-            $dbh->commit();
+            $this->dbh->commit();
             
             //  update perms superset cache
             SGL::clearCache('perms');
@@ -320,8 +318,6 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get limit and totalNumRows
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -335,12 +331,21 @@ class PermissionMgr extends SGL_Manager
             $disabled = false;
         }
 
+        $allowedSortFields = array('permission_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY permission_id ASC ';
+        }
+
         $query = "
-            SELECT  permission_id, name, module_id
-            FROM    {$conf['table']['permission']}
+            SELECT  permission_id, name, module_id, description
+            FROM    {$this->conf['table']['permission']}
             $whereClause
-            ORDER BY permission_id
-        ";
+            $orderBy_query ";
+        
         $pagerOptions = array(
             'mode'      => 'Sliding',
             'delta'     => 3,
@@ -349,7 +354,7 @@ class PermissionMgr extends SGL_Manager
 //            'append'    => false,
 //            'fileName'  => 'pageID/%d/'
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions, $disabled);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions, $disabled);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
@@ -459,13 +464,10 @@ class PermissionMgr extends SGL_Manager
     function retrievePermsFromFiles()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $dbh = & SGL_DB::singleton();    
-        $conf = & $GLOBALS['_SGL']['CONF'];    
         
         //  get a list of modules in db
-        $query = "SELECT module_id, name FROM {$conf['table']['module']}";
-		$modules = $dbh->getAssoc($query);
+        $query = "SELECT module_id, name FROM {$this->conf['table']['module']}";
+		$modules = $this->dbh->getAssoc($query);
 		 
 		if (is_a($modules, 'PEAR_Error')) {
            return SGL::raiseError('There was a problem retrieving modules', 

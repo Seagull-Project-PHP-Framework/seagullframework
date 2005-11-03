@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ArticleViewMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -40,7 +40,7 @@
 
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_CORE_DIR . '/Item.php';
-require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 /**
  * Class for browsing articles.
@@ -57,11 +57,10 @@ class ArticleViewMgr extends SGL_Manager
     function ArticleViewMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $this->module       = 'publisher';
+        parent::SGL_Manager();
+        
         $this->pageTitle    = 'Article Browser';
         $this->template     = 'articleBrowser.html';
-
         $this->_aActionsMapping =  array(
             'view'   => array('view'), 
             'summary'   => array('summary'), 
@@ -80,13 +79,15 @@ class ArticleViewMgr extends SGL_Manager
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';
-        $input->articleID       = ($req->get('frmArticleID')) ? (int)$req->get('frmArticleID') : (int)SGL_HTTP_Session::get('articleID');
+        $input->articleID       = ($req->get('frmArticleID')) 
+                                    ? (int)$req->get('frmArticleID') 
+                                    : (int)SGL_HTTP_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
         $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
 		$input->dataTypeID		= ($req->get('frmDataTypeID')) 
 		                              ? $req->get('frmDataTypeID') 
-		                              : $GLOBALS['_SGL']['CONF']['site']['defaultArticleViewType'];
+		                              : $this->conf['site']['defaultArticleViewType'];
         //  catch static article flag, route to view
         if ($input->staticArticle) {
             $input->action = 'view';
@@ -103,9 +104,9 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  get category info
-        $catMgr = & new CategoryMgr();
-        $output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
-        $output->currentCat = $catMgr->getLabel($output->catID);
+        $cat = & new SGL_Category();
+        $output->path = $cat->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
+        $output->currentCat = $cat->getLabel($output->catID);
     }
 
     function _view(&$input, &$output)
@@ -113,10 +114,13 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'articleView.html';
-        $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
+        $ret = SGL_Item::getItemDetail($input->articleID);
         
-        //  make article title available for <title> tag
-        $GLOBALS['_SGL']['REQUEST']['articleTitle'] = $output->leadArticle['title'];
+        if (PEAR::isError($ret)) {
+            return false;
+        }
+        $output->leadArticle = $ret;
+        
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);
@@ -134,7 +138,8 @@ class ArticleViewMgr extends SGL_Manager
             $bPublish = true,
             $input->dataTypeID,
             '',
-            $input->from);
+            $input->from,
+            'start_date');
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -143,22 +148,24 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), $aResult['data'][$key]);
+            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), 
+                                            $aResult['data'][$key]);
 
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
+                    
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
                     $output->articleList[$key]['bodyHtml'] = 
                         SGL_String::summariseHtml($content);
-                break;
+                    break;
 
                 case 'newsHtml':
                     $content = $output->articleList[$key]['newsHtml'];
                     $output->articleList[$key]['newsHtml'] = 
                         SGL_String::summariseHtml($content);
-                break; 
+                    break; 
                 }
             }
         }

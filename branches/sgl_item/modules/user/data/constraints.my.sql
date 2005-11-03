@@ -1,20 +1,10 @@
-ALTER TABLE `role_permission` ADD FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`) ON DELETE CASCADE;
-ALTER TABLE `role_permission` ADD FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`) ON DELETE CASCADE;
-
-ALTER TABLE `user_permission` ADD FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`) ON DELETE CASCADE;
-ALTER TABLE `user_permission` ADD FOREIGN KEY (`usr_id`) REFERENCES `usr` (`usr_id`) ON DELETE CASCADE;
-
-ALTER TABLE `user_preference` ADD FOREIGN KEY (`usr_id`) REFERENCES `usr` (`usr_id`) ON DELETE CASCADE;
-ALTER TABLE `user_preference` ADD FOREIGN KEY (`preference_id`) REFERENCES `preference` (`preference_id`) ON DELETE CASCADE;
-
-ALTER TABLE `org_preference` ADD FOREIGN KEY (`organisation_id`) REFERENCES `organisation` (`organisation_id`) ON DELETE CASCADE;
-ALTER TABLE `org_preference` ADD FOREIGN KEY (`preference_id`) REFERENCES `preference` (`preference_id`) ON DELETE CASCADE;
-
-alter table login add constraint FK_usr_login foreign key (usr_id)
-      references usr (usr_id) on delete restrict on update restrict;
-
-alter table user_preference add constraint FK_preference_user_preference foreign key (preference_id)
-      references preference (preference_id) on delete restrict on update restrict;
-
-alter table user_preference add constraint FK_usr_user_preferences foreign key (usr_id)
-      references usr (usr_id) on delete restrict on update restrict;
+-- The schema in mysql.fk.fix.sql will load user related tables with correct FK constraints
+-- however mysql 4.0.x and 4.1.x seem to have a bug where deleting a record with a child
+-- constraint gives an FK violation error.  The correct behaviour is when a user record
+-- is deleted where usr_id = 2, all related records from user_permission and user_preference
+-- should also be deleted on the cascade.  MySQL appears to misinterpret this and will only
+-- delete the user record when wrapped in SET_FOREIGN_KEY_CHECK=0 calls.  Not surprisingly,
+-- this disables the cascade behaviour defeating the original purpose of using cascades.
+--
+-- Unless someone discovers a workaround, FK integrity will be abandoned in the MySQL version
+-- until this bug is fixed.

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Wizard.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -65,7 +65,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.8 $
- * @since   PHP 4.1
  */
 class SGL_Wizard extends SGL_Manager
 {
@@ -89,9 +88,9 @@ class SGL_Wizard extends SGL_Manager
         if (isset($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']) 
                 && !(SGL_Wizard::isObjEmpty($_SESSION['wiz_sequence'][$this->_getCurrent()]['data'])) 
                 &&   SGL_Wizard::isObjEmpty($obj)) {
-            $obj = $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'];
+            $obj = clone($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']);
         } else {
-            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = $obj;
+            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = clone($obj);
         }
     }
 
@@ -151,32 +150,43 @@ class SGL_Wizard extends SGL_Manager
         $max = count($this->sequence) -1;
         //  beginning
         if (isset($this->sequence[0]['current']) && $this->sequence[0]['current'] == true) {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;';
         //  end
         } elseif (isset($this->sequence[$max]['current']) && $this->sequence[$max]['current'] == true) {
-            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
-                    
+            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         //  middle
         } else {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         }
         return $html;
     }
 
-    function _createRegister()
+    function _createRegister($moduleName)
     {
         $html = '';
         foreach($this->sequence as $key => $aSeq) {
             $html .= '<a class="subnavi" href="javascript:document.frmWizard.jumpID.value='.$key.';document.frmWizard.submit()">'.SGL_String::translate($aSeq['pageName']['managerName']).'</a><br/>';
         }
-        $html .= '<span class="mainnavi">'.SGL_String::translate($this->module).'</span>';
+        $html .= '<span class="mainnavi">'.SGL_String::translate($moduleName).'</span>';
         return $html;
     }
 
     function validate($req, &$input)
     {
+        // if direct entering, redirect to default page
+        // for security reasons
+        if (!isset($_SESSION['wiz_sequence'][0]['pageName']['managerName'])) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $aParams = array(
+                'moduleName'    => $conf['site']['defaultModule'],
+                'managerName'   => $conf['site']['defaultManager'],
+            );
+            SGL_HTTP::redirect($aParams);
+        }
+
         //  init sequence values from session
         $this->sequence     = &$_SESSION['wiz_sequence'];
         $input->back        = $req->get('back');
@@ -201,7 +211,7 @@ class SGL_Wizard extends SGL_Manager
     {
         //  put below in parent class
         $output->buttons = $this->_createButtons();
-        $output->register = $this->_createRegister(); 
+        $output->register = $this->_createRegister($output->moduleName); 
 
         //  catch back button
         if ($this->submit == 'back') {

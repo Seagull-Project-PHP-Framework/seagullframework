@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | PreferenceMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -45,9 +45,7 @@ require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.39 $
- * @since   PHP 4.1
  */
 class PreferenceMgr extends SGL_Manager
 {
@@ -55,7 +53,7 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        $this->module       = 'user';
+        
         $this->template     = 'prefManager.html';
         $this->pageTitle    = 'Preference Manager';
         $this->da           = & DA_User::singleton();
@@ -171,9 +169,8 @@ class PreferenceMgr extends SGL_Manager
         $oPref = & new DataObjects_Preference();
         $oPref->setFrom($input->pref);
         $dbh = & $oPref->getDatabaseConnection();
-        $conf = & $GLOBALS['_SGL']['CONF'];
         
-        $oPref->preference_id = $dbh->nextId($conf['table']['preference']);
+        $oPref->preference_id = $dbh->nextId($this->conf['table']['preference']);
         $success = $oPref->insert();
         if ($success) {
             //  synchronise with user_preference table
@@ -243,10 +240,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $query = "SELECT preference_id, name, default_value FROM {$conf['table']['preference']}";
+        $query = "SELECT preference_id, name, default_value FROM {$this->conf['table']['preference']}";
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -255,7 +249,7 @@ class PreferenceMgr extends SGL_Manager
             'totalItems'=> $input->totalItems,
         );
 
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;

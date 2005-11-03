@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -53,7 +53,8 @@ class MaintenanceMgr extends SGL_Manager
     function MaintenanceMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'maintenance';
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'langList.html';
         $this->redirect     = true;
@@ -114,8 +115,8 @@ class MaintenanceMgr extends SGL_Manager
         SGL_HTTP_Session::set('lastLanguageSelected', $input->currentLang);
 
         //  catch any single quotes
-        //note: this is done by PEAR::Config automatically!
-        if (($req->get('action') !='update')&&($req->get('action') !='append')){
+        //  note: this is done by PEAR::Config automatically!
+        if (($req->get('action') !='update') && ($req->get('action') !='append')){
             if (is_array($input->aTranslation)) {
                 foreach ($input->aTranslation as $k => $v) {
                     if (is_array($v)) {
@@ -166,12 +167,12 @@ class MaintenanceMgr extends SGL_Manager
             @include $target;
             $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
         } else {
+            
         //  if the target lang file does not exist
             SGL::raiseMsg('the target lang file '.$target.'does not exist, please create it now',
                 SGL_ERROR_NOFILE);
         }
-        //  remove empty array elements
-        $aTargetLang = @array_filter($aTargetLang, 'strlen');
+        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
 
         if ($input->action != 'checkAllModules') {
 
@@ -374,8 +375,10 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();
+        
         //  read translation data and get reference to root
         $root = & $c->parseConfig($input->aTranslation, 'phparray');
+        
         //  write translation to file
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
             $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
@@ -424,12 +427,12 @@ class MaintenanceMgr extends SGL_Manager
         echo "</pre>";
         */
 
-        //FIXME: make seperate method for saving with config, theese lines are very similar with those in update();
         $c = new Config();
         //  read translation data and get reference to root
 
         //FIXME: config seems to have problems with sub-arrays!
         $root = & $c->parseConfig($aUpdatedTrans, 'phparray');
+
         //  write translation to file
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
             $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
@@ -520,8 +523,7 @@ class MaintenanceMgr extends SGL_Manager
             : $input->createModule->managerName . 'Mgr';
 
         //  set author details
-        require_once SGL_ENT_DIR . '/Usr.php';
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         $user->get(SGL_HTTP_Session::getUid());
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
@@ -595,7 +597,8 @@ EOF;
         //  you can edit this file
         @chmod($targetMgrName, 0666);
         if (isset($input->createModule->createIniFile)){
-        //create conf.ini
+        
+            //  create conf.ini
             $confIniName = $aDirectories['module'] . '/conf.ini';
             $confTemplate = '['.$mgrLongName.']'."\n";
             $confTemplate .= 'requiresAuth    = false';

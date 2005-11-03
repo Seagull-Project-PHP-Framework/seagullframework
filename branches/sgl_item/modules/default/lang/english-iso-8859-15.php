@@ -9,6 +9,7 @@
        'Documents' => 'Documents',
        'Articles' => 'Articles',
        'Permissions' => 'Permissions',
+       'No expire' => 'No expire',
 
 /*  MODULE MGR  */
         'Module Manager' => 'Module Manager',
@@ -20,6 +21,7 @@
 /*  FOOTER  */
         'Execution Time' => 'Execution Time',
         'seconds' => 'seconds',
+        'ms' => 'ms',
         'queries'=>'queries',
         'allocated'=>'allocated',
         'Powered by' => 'Powered by',
@@ -189,6 +191,15 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Enable IP banning'=>'Enable IP banning',
         'Enable Tidy html cleaning'=>'Enable Tidy html cleaning',
         'Session handler'=>'Session handler',
+        'Extended Session' => 'Extended Session',
+        'Enforce Single User' => 'Enforce Single User',
+        'You are allowed to connect from one computer at a time, other sessions were terminated!' => 'You are allowed to connect from one computer at a time, other sessions were terminated!',
+        'You have multiple sessions on this site!' => 'You have multiple sessions on this site!',
+        'Enables extended session API when using database sessions. This allows the site to enforce one session per user.' => 'Enables extended session API when using database sessions. This allows the site to enforce one session per user.',
+        'Enforces one session per user on this site (requires database session handling, and extended session to be on).' => 'Enforces one session per user on this site (requires database session handling, and extended session to be on).',
+        'Guests' => 'Guests',
+        'Members' => 'Members',
+        'Total' => 'Total',
         'Enable left/right columns'=>'Enable left/right columns',
         'Default article view type'=>'Default article view type',
         'Front controller script name'=>'Front controller script name',
@@ -267,7 +278,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Errors must be >= this level before they are emailed to the site admin'=>'Errors must be >= this level before they are emailed to the site admin',
         'It is recommended to disable this while developing'=>'It is recommended to disable this while developing',
         'Default is 24 hours'=>'Default is 24 hours',
-        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema',
+        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema - "mysql_SGL" maintains all sequences in a single table (less clutter) whereas "mysql" uses one table per sequence giving twice as many tables (better for performance)',
         'It is recommended to disable logging if you are running < PHP 4.3.x'=>'It is recommended to disable logging if you are running < PHP 4.3.x',
         'If sql is used, use log_table as the log table name below'=>'If \'sql\' is used, use \'log_table\' as the log table name below',
         'Use an absolute path or one relative to the Seagull root dir'=>'Use an absolute path or one relative to the Seagull root dir',
@@ -280,8 +291,15 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Use these params to specify, eg, a static article for your homepage' => 'Use these params to specify, eg, a static article for your homepage',
         'file'=>'file',
         'database'=>'database',
+        'never' => 'never',
         'Show debug reporting link' => 'Show debug reporting link',
         'Send feedback to project for bugs' => 'Send feedback to project for bugs',
+        'URL handler' => 'URL handler',
+        'What format would you like your URLs, Seagull Search Engine Friendly is the default' => 'What format would you like your URLs, Seagull Search Engine Friendly is the default',
+        'The classic URL handler has not been implemented yet' => 'The classic URL handler has not been implemented yet',
+        'Template Engine' => 'Template Engine',
+        'Seagull allows you to use the template engine of your choice' => 'Seagull allows you to use the template engine of your choice',
+        'The Smarty template hooks have not been implemented yet' => 'The Smarty template hooks have not been implemented yet',
 
 /*
  ConfigMgr: MTA options

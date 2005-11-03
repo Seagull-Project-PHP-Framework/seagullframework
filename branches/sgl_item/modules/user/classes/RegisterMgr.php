@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | RegisterMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -48,16 +48,15 @@ require_once 'Validate.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.38 $
- * @since   PHP 4.1
  */
 class RegisterMgr extends SGL_Manager
 {
     function RegisterMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+        
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';
         $this->da           = & DA_User::singleton();
@@ -193,7 +192,7 @@ class RegisterMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'userAdd.html';
-        $output->user = & new DataObjects_Usr();
+        $output->user = DB_DataObject::factory('Usr');
         $output->user->password_confirm = (isset($input->user->password_confirm)) ? 
             $input->user->password_confirm : '';
     }
@@ -201,25 +200,24 @@ class RegisterMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get default values for new users
-        $defaultRoleId = $conf['RegisterMgr']['defaultRoleId'];
-        $defaultOrgId  = $conf['RegisterMgr']['defaultOrgId'];
+        $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
+        $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
         //  build new user object
-        $oUser = & new DataObjects_Usr();
+        $oUser = DB_DataObject::factory('Usr');
         $oUser->setFrom($input->user);
         $oUser->passwdClear = $input->user->passwd;
         $oUser->passwd = md5($input->user->passwd);
-        if ($conf['RegisterMgr']['autoEnable']) {
+        if ($this->conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
         $dbh = $oUser->getDatabaseConnection();
-        $oUser->usr_id = $dbh->nextId($conf['table']['user']);
+        $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
-        $oUser->date_created = $oUser->last_updated = SGL::getTime();
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $success = $oUser->insert();
 
         //  assign permissions associated with role user belongs to
@@ -227,22 +225,31 @@ class RegisterMgr extends SGL_Manager
         $aRolePerms = $this->da->getPermsByRoleId($defaultRoleId);
 
         //  then assign them to the user_permission table
-        foreach ($aRolePerms as $permId) {
-            $dbh->query('   INSERT INTO ' . $conf['table']['user_permission'] . '
-                            (user_permission_id, usr_id, permission_id)
-                            VALUES (' . $dbh->nextId($conf['table']['user_permission']) . ', ' . $oUser->usr_id . ", $permId)");
+        $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
+        
+        //  assign preferences associated with org user belongs to
+        //  first get all prefs associated with user's org or default
+        //  prefs if orgs are disabled
+        if ($this->conf['OrgMgr']['enabled']) {
+            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+        } else {
+            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
         }
 
-        if ($success) {
+        //  then assign them to the user_preference table
+        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
+
+        //  check global error stack for any error that might have occurred
+        if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
             //  send email confirmation according to config
-            if ($conf['RegisterMgr']['sendEmailConf']) {
-                $bEmailSent = $this->_sendEmail($oUser);
+            if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
+                $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
                 if (!$bEmailSent) {
                     SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
                 }
             }
             //  authenticate user according to settings
-            if ($conf['RegisterMgr']['autoLogin']) {
+            if ($this->conf['RegisterMgr']['autoLogin']) {
                 $input->username = $input->user->username;
                 $input->password = $input->user->passwd;
                 $oLogin = new LoginMgr();
@@ -256,26 +263,50 @@ class RegisterMgr extends SGL_Manager
         }
     }
 
-    function _sendEmail($oUser)
+    function _sendEmail($oUser, $moduleName)
     {
         require_once SGL_CORE_DIR . '/Emailer.php';
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
         $options = array(
                 'toEmail'       => $oUser->email,
                 'toRealName'    => $recipientName,
-                'fromEmail'     => $conf['email']['admin'],
-                'replyTo'       => $conf['email']['admin'],
-                'subject'       => 'Thanks for registering at ' . $conf['site']['name'],
+                'fromEmail'     => $this->conf['email']['admin'],
+                'replyTo'       => $this->conf['email']['admin'],
+                'subject'       => 'Thanks for registering at ' . $this->conf['site']['name'],
                 'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_registration_thanks.php',
+                    $moduleName . '/email_registration_thanks.php',
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
+        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options['Cc'] = $this->conf['email']['admin'];
+        }
+                
         $message = & new SGL_Emailer($options);
         $message->prepare();
-        return $message->send();
+        $message->send();
+        
+        //  conf to admin
+        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
+            $options = array(
+                    'toEmail'       => $this->conf['email']['admin'],
+                    'toRealName'    => 'Admin',
+                    'fromEmail'     => $this->conf['email']['admin'],
+                    'replyTo'       => $this->conf['email']['admin'],
+                    'subject'       => 'New Registration at ' . $this->conf['site']['name'],
+                    'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                        $moduleName . '/email_registration_admin.php',
+                    'username'      => $oUser->username,
+                    'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
+            );
+            $notification = & new SGL_Emailer($options);
+            $notification->prepare();
+            $notification->send();         
+        }
+        //  check error stack
+        return (count($GLOBALS['_SGL']['ERRORS'])) ? false : true;
     }
 }
 ?>

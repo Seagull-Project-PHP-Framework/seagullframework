@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.7 2005/06/23 15:56:40 demian Exp $
+// $Id: Validator.php,v 1.77 2005/10/03 03:20:14 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -95,7 +95,7 @@ class PEAR_PackageFile_v2_Validator
                          // needs a certain package installed in order to implement a role or task
             '*providesextension',
             '*srcpackage|*srcuri',
-            '+phprelease|extsrcrelease|+extbinrelease|bundle', //special validation needed
+            '+phprelease|+extsrcrelease|+extbinrelease|bundle', //special validation needed
             '*changelog',
         );
         $test = $this->_packageInfo;
@@ -105,6 +105,9 @@ class PEAR_PackageFile_v2_Validator
         }
         if (array_key_exists('_lastmodified', $test)) {
             unset($test['_lastmodified']);
+        }
+        if (array_key_exists('#binarypackage', $test)) {
+            unset($test['#binarypackage']);
         }
         if (array_key_exists('old', $test)) {
             unset($test['old']);
@@ -844,6 +847,9 @@ class PEAR_PackageFile_v2_Validator
             );
             foreach ($groups as $group) {
                 if ($this->_stupidSchemaValidate($structure, $group, '<group>')) {
+                    if (!PEAR_Validate::validGroupName($group['attribs']['name'])) {
+                        $this->_invalidDepGroupName($group['attribs']['name']);
+                    }
                     foreach (array('package', 'subpackage', 'extension') as $type) {
                         if (isset($group[$type])) {
                             $iter = $group[$type];
@@ -885,23 +891,23 @@ class PEAR_PackageFile_v2_Validator
         $required = array('name', 'channel', 'min', 'max', '*exclude');
         foreach ($compat as $package) {
             $type = '<compatible>';
-            if (isset($package['name'])) {
+            if (is_array($package) && array_key_exists('name', $package)) {
                 $type .= '<name>' . $package['name'] . '</name>';
             }
             $this->_stupidSchemaValidate($required, $package, $type);
-            if (isset($package['min'])) {
+            if (is_array($package) && array_key_exists('min', $package)) {
                 if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
                       $package['min'])) {
                     $this->_invalidVersion(substr($type, 1) . '<min', $package['min']);
                 }
             }
-            if (isset($package['max'])) {
+            if (is_array($package) && array_key_exists('max', $package)) {
                 if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
                       $package['max'])) {
                     $this->_invalidVersion(substr($type, 1) . '<max', $package['max']);
                 }
             }
-            if (isset($package['exclude'])) {
+            if (is_array($package) && array_key_exists('exclude', $package)) {
                 if (!is_array($package['exclude'])) {
                     $package['exclude'] = array($package['exclude']);
                 }
@@ -917,7 +923,7 @@ class PEAR_PackageFile_v2_Validator
 
     function _validateBundle($list)
     {
-        if (!isset($list['bundledpackage'])) {
+        if (!is_array($list) || !isset($list['bundledpackage'])) {
             return $this->_NoBundledPackages();
         }
         if (!is_array($list['bundledpackage']) || !isset($list['bundledpackage'][0])) {
@@ -950,19 +956,14 @@ class PEAR_PackageFile_v2_Validator
                 '*dir->name->?baseinstalldir',
                 '*file->name->role->?baseinstalldir->?md5sum'
             );
-            // do a quick test for better error message
             if (isset($list['dir']) && isset($list['file'])) {
-                $first = false;
-                foreach ($list as $key => $tag) {
-                    if ($key == 'attribs') {
-                        continue;
-                    }
-                    $first = $key;
-                    break;
+                // stave off validation errors without requiring a set order.
+                $_old = $list;
+                if (isset($list['attribs'])) {
+                    $list = array('attribs' => $_old['attribs']);
                 }
-                if ($first == 'file') {
-                    $this->_dirMustBeFirst($dirs);
-                }
+                $list['dir'] = $_old['dir'];
+                $list['file'] = $_old['file'];
             }
         }
         if (!isset($list['attribs']) || !isset($list['attribs']['name'])) {
@@ -1010,6 +1011,11 @@ class PEAR_PackageFile_v2_Validator
             }
             foreach ($list['file'] as $i => $file)
             {
+                if (isset($file['attribs']) && isset($file['attribs']['name']) &&
+                      $file['attribs']['name']{0} == '.') {
+                    // name is something like "./doc/whatever.txt"
+                    $this->_invalidFileName($file['attribs']['name']);
+                }
                 if (isset($file['attribs']) && isset($file['attribs']['role'])) {
                     if (!$this->_validateRole($file['attribs']['role'])) {
                         if (isset($this->_packageInfo['usesrole'])) {
@@ -1165,10 +1171,6 @@ class PEAR_PackageFile_v2_Validator
             if (isset($this->_packageInfo['srcpackage']) || isset($this->_packageInfo['srcuri'])) {
                 $this->_cannotHaveSrcpackage($release);
             }
-            if (is_array($this->_packageInfo['extsrcrelease']) &&
-                  isset($this->_packageInfo['extsrcrelease'][0])) {
-                return $this->_extsrcCanOnlyHaveOneRelease();
-            }
             $releases = $this->_packageInfo['extsrcrelease'];
             if (!is_array($releases)) {
                 return true;
@@ -1178,8 +1180,10 @@ class PEAR_PackageFile_v2_Validator
             }
             foreach ($releases as $rel) {
                 $this->_stupidSchemaValidate(array(
+                    '*installconditions',
                     '*configureoption->name->prompt->?default',
                     '*binarypackage',
+                    '*filelist',
                 ), $rel, '<extsrcrelease>');
                 if (isset($rel['binarypackage'])) {
                     if (!is_array($rel['binarypackage']) || !isset($rel['binarypackage'][0])) {
@@ -1239,11 +1243,11 @@ class PEAR_PackageFile_v2_Validator
             }
         }
         foreach ($releases as $rel) {
-            if (isset($rel['installconditions'])) {
+            if (is_array($rel) && array_key_exists('installconditions', $rel)) {
                 $this->_validateInstallConditions($rel['installconditions'],
                     "<$release><installconditions>");
             }
-            if (isset($rel['filelist'])) {
+            if (is_array($rel) && array_key_exists('filelist', $rel)) {
                 if ($rel['filelist']) {
                     
                     $this->_validateFilelist($rel['filelist'], true);
@@ -1308,6 +1312,13 @@ class PEAR_PackageFile_v2_Validator
             'file' => $file, 'dir' => $dir, 'role' => $role,
             'roles' => PEAR_Installer_Role::getValidRoles($this->_pf->getPackageType())),
             'File "%file%" in directory "%dir%" has invalid role "%role%", should be one of %roles%');
+    }
+
+    function _invalidFileName($file, $dir)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(
+            'file' => $file, 'dir' => $dir),
+            'File "%file%" in directory "%dir%" cannot begin with "."');
     }
 
     function _filelistCannotContainFile($filelist)
@@ -1452,12 +1463,6 @@ class PEAR_PackageFile_v2_Validator
             'Unknown task "%task%" passed in file <file name="%file%">');
     }
 
-    function _extsrcCanOnlyHaveOneRelease()
-    {
-        $this->_stack->push(__FUNCTION__, 'error', array(),
-            'Only one <extsrcrelease> tag may exist in a package.xml');
-    }
-
     function _subpackageCannotProvideExtension($name)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('name' => $name),
@@ -1578,13 +1583,10 @@ class PEAR_PackageFile_v2_Validator
             '%tag% cannot conflict with all OSes');
     }
 
-    function _dirsMustBeFirst($dir)
+    function _invalidDepGroupName($name)
     {
-        if (!$dir) {
-            $dir = '/';
-        }
-        $this->_stack->push(__FUNCTION__, 'error', array('dir' => $dir),
-            'In <dir name="%dir%">, child <dir> tags must precede child <file> tags');
+        $this->_stack->push(__FUNCTION__, 'error', array('group' => $name),
+            'Invalid dependency group name "%name%"');
     }
 
     function _analyzeBundledPackages()
@@ -1723,7 +1725,13 @@ class PEAR_PackageFile_v2_Validator
             if (!$fp = @fopen($file, "r")) {
                 return false;
             }
-            $contents = @fread($fp, filesize($file));
+            if (function_exists('file_get_contents')) {
+                fclose($fp);
+                $contents = file_get_contents($file);
+            } else {
+                $contents = @fread($fp, filesize($file));
+                fclose($fp);
+            }
         }
         $tokens = token_get_all($contents);
 /*

@@ -3,7 +3,7 @@
  * RndMsgBlock : Returns a random message, or empty string on failure
  *
  * @package block
- * @author  Michaël Willemot <michael@sotto.be>
+ * @author  Michaï¿½l Willemot <michael@sotto.be>
  * @version 0.4
  */
 class RndMsgBlock
@@ -20,7 +20,8 @@ class RndMsgBlock
     function getBlockContent()
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
                 
         $sql = "SELECT msg FROM {$conf['table']['rndmsg_message']}";
 

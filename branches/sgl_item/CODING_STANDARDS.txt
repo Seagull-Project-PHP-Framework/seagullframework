@@ -301,6 +301,14 @@ an example:
 Other general guidelines: Table names should be singular (faq); field names
 should be also be singular (username).
 
+Foreign Key Naming Conventions
+==============================
+If table_foo.field_foo references table_bar.field_bar, write the constraint 
+as follows:
+
+ALTER TABLE table_foo ADD CONSTRAINT FK_table_bar_field_bar FOREIGN KEY (field_foo)
+      REFERENCES table_bar (field_bar) on DELETE CASCADE;
+
 
 Regular Expression Use
 ======================

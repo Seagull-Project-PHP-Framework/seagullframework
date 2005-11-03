@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
-require_once 'PEAR.php';
 require_once 'DB.php';
 require_once SGL_CORE_DIR . '/DB.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
@@ -52,35 +51,10 @@ require_once SGL_CORE_DIR . '/String.php';
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.20 $
- * @since   PHP 4.1
  */
 class SGL
 {
-    /**
-     * Returns current time in YYYY-MM-DD HH:MM:SS format.
-     * 
-     * GMT format is best for logging system events, otherwise locale offset
-     * will be most helpful to users.
-     * 
-     * @access public
-     * @static
-     * @param boolean $gmt       is time GMT or locale offset
-     * @return string $instance  formatted current time
-     * @todo factor out Cache and Lang methods into their own objects
-     */
-    function getTime($gmt = false)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                                : strftime("%Y-%m-%d %H:%M:%S", time());
-        }
-        return $instance;
-    }
-
     /**
      * Returns the 2 letter language code, ie, de for German.
      *
@@ -117,12 +91,14 @@ class SGL
      */
     function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Logging is not activated
         if ($conf['log']['enabled'] == false) {
             return;
         }
+        
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
@@ -192,7 +168,8 @@ class SGL
      */
     function debugAllowed()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         return $conf['debug']['sessionDebugAllowed'] &&
             in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['TRUSTED_IPS']);
     }
@@ -225,13 +202,15 @@ class SGL
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &cacheSingleton()
+    function &cacheSingleton($cacheEnabled = false)
     {
         static $instance;
-        // If the instance is not there, create one
+        
+        // If the instance doesn't exist, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $options = array(
                 'cacheDir'  => SGL_TMP_DIR . '/', 
                 'lifeTime'  => $conf['cache']['lifetime'],
@@ -311,7 +290,8 @@ EOF;
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  if fatal
         if ($behaviour > 0) {
@@ -338,7 +318,7 @@ EOF;
 
     function raiseMsg($msg, $getTranslation = true)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  must not log message here        
         if (is_string($msg) && !empty($msg)) {
 
             $message = SGL_String::translate($msg);
@@ -372,33 +352,34 @@ EOF;
         // STDIN isn't a CLI constant before 4.3.0
         $sapi = php_sapi_name();
         if (version_compare(PHP_VERSION, '4.3.0') >= 0 && $sapi != 'cgi') {
-            return @is_resource(STDIN);
+            if (!defined('STDIN')) {
+                return false;
+            } else {
+                return @is_resource(STDIN);
+            }
         } else {
             return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
         }
     }
-
-    /**
-     * Makes up for case insensitive classnames in php4 with get_class().
-     *
-     * @access   public
-     * @static    
-     * @param    string $str classname  
-     * @return   mixed       either correct case classname or false
-     */
-    function caseFix($str)
+    
+    function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {
-        if (SGL::isPhp5()) {
-            return $str;
-        }
-        static $aConfValues;
-        if (!isset($aConfValues)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $aConfValues = array_keys($conf);
-        }
-        $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
-        $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
-        return ($isFound !== false) ? $aConfValues[$isFound] : false;
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
+    
+    /**
+     * Returns true on success, false if resource was not found.
+     *
+     * @param string $resource  File or lib name
+     */
+    function import($resource)
+    {
+        
+    }
+}
+
+if (!SGL::isPhp5() && !function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
 }
 ?>

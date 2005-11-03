@@ -46,5 +46,13 @@ create index block_assignment_fk2 on block_assignment
    section_id
 );
 
+-- ==============================================================
+--  table block_role
+--  DK 
+-- ==============================================================
+create table block_role (
+    block_id integer not null,
+    role_id integer not null
+);
 
 COMMIT;

@@ -1,31 +1,43 @@
 <?php
+/* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Copyright (c) 2005, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Item.php                                                                  |
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005 Demian Turner                                          |
-// |                                                                           |
-// | Author: Demian Turner <demian@phpkitchen.com>                             |
+// | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// |                                                                           |
-// | This library is free software; you can redistribute it and/or             |
-// | modify it under the terms of the GNU Library General Public               |
-// | License as published by the Free Software Foundation; either              |
-// | version 2 of the License, or (at your option) any later version.          |
-// |                                                                           |
-// | This library is distributed in the hope that it will be useful,           |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         |
-// | Library General Public License for more details.                          |
-// |                                                                           |
-// | You should have received a copy of the GNU Library General Public         |
-// | License along with this library; if not, write to the Free                |
-// | Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
-// |                                                                           |
-// +---------------------------------------------------------------------------+
-// $Id
-
+// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
+        
 /**
  * Item class
  *
@@ -35,7 +47,6 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @package SGL
  * @version $Revision: 1.12 $
- * @since   PHP 4.1
  */
 class SGL_Item
 {
@@ -128,7 +139,7 @@ class SGL_Item
     function SGL_Item($itemID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'item';
+
         if ($itemID >= 0) {
             $this->_init($itemID);
         }
@@ -144,30 +155,36 @@ class SGL_Item
     function _init($itemID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
 
         //  get default fields
         $query = "
-                    SELECT  u.username,
-                            i.created_by_id,
-                            i.updated_by_id,
-                            i.date_created,
-                            i.last_updated,
-                            i.start_date,
-                            i.expiry_date,
-                            i.item_type_id,
-                            it.item_type_name,
-                            i.category_id,
-                            i.status
-                    FROM    {$conf['table']['item']} i, {$conf['table']['item_type']} it, {$conf['table']['user']} u
-                    WHERE   it.item_type_id = i.item_type_id
-                    AND     i.created_by_id = u.usr_id
-                    AND     i.item_id = $itemID
+            SELECT  u.username,
+                    i.created_by_id,
+                    i.updated_by_id,
+                    i.date_created,
+                    i.last_updated,
+                    i.start_date,
+                    i.expiry_date,
+                    i.item_type_id,
+                    it.item_type_name,
+                    i.category_id,
+                    i.status
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_type']} it, {$conf['table']['user']} u
+            WHERE   it.item_type_id = i.item_type_id
+            AND     i.created_by_id = u.usr_id
+            AND     i.item_id = $itemID
                 ";
         $result = $dbh->query($query);
         if (!DB::isError($result)) {
             $itemObj = $result->fetchRow();
+            
+            //  catch null results
+            if (is_null($itemObj)) {
+                return false;
+            }
             //  set object properties
             $this->set('id', $itemID);
             $this->set('creatorName', $itemObj->username);
@@ -198,7 +215,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll(); 
 
         $catID = $this->catID ? $this->catID : 1;        
         $id = $dbh->nextId($conf['table']['item']);
@@ -243,7 +261,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF']; 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll(); 
                 
         for ($x=0; $x < count($itemID); $x++) {
             $id = $dbh->nextId($conf['table']['item_addition']);
@@ -277,7 +296,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $id = $dbh->nextId($conf['table']['item_addition']);
         if ($itemValue == '') {
@@ -306,7 +326,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "  
             UPDATE {$conf['table']['item']} SET
@@ -333,7 +354,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
                 
         for ($x=0; $x < count($itemID); $x++) {
             if ($itemValue[$x] == '') {
@@ -364,7 +386,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
@@ -391,7 +414,8 @@ class SGL_Item
     function delete($aItems)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
 
         //  if safeDelete is enabled, just set item status to 0, don't delete
@@ -420,17 +444,18 @@ class SGL_Item
      * input types are built using the data in the item_type and
      * item_type_mapping tables.
      * 
-     * @todo	Make return array to build form in template.
-     * 
      * @access	public
      * @param	int		$itemID			Item ID
+     * @param   int     $type           data type to return, can be SGL_RET_STRING
+     *                                  or SGL_RET_ARRAY     
      * @return	mixed	$fieldsString	HTML Form
      */
-    function getDynamicContent($itemID)
+    function getDynamicContent($itemID, $type = SGL_RET_STRING)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
@@ -443,31 +468,48 @@ class SGL_Item
                 ";
         $result = $dbh->query($query);
 
-        //  display dynamic form fields (changed default object output to standard array
-        $fieldsString = '';
-        while (list($fieldID, $fieldName, $fieldValue, $fieldType)
-            = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $fieldsString .= "<tr>\n";
-            $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
-            $fieldsString .= '<td>' . $this->generateFormFields(
-                                      $fieldID, $fieldName, $fieldValue, $fieldType) 
-                                    . "</td>\n";
-            $fieldsString .= "</tr>\n";
+        switch ($type) {
+            
+        case SGL_RET_ARRAY:
+            $aFields = array();
+            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                    $aFields[ucfirst($fieldName)] = 
+                        $this->generateFormFields(
+                        $fieldID, $fieldName, $fieldValue, $fieldType);
+            }
+            $res = $aFields;
+                       
+        case SGL_RET_STRING: 
+        default:
+        
+            //  display dynamic form fields (changed default object output to standard array
+            $fieldsString = '';
+            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                $fieldsString .= "<tr>\n";
+                $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
+                $fieldsString .= '<td>' . $this->generateFormFields(
+                                          $fieldID, $fieldName, $fieldValue, $fieldType) 
+                                        . "</td>\n";
+                $fieldsString .= "</tr>\n";
+            }
+            $res = $fieldsString;
         }
-        return $fieldsString;
+        return $res;
     }
 
     /**
      * Builds a HTML form with the input types built using the data in the
      * item_type and item_type_mapping tables.
      * 
-     * @todo	Make return array to build form in template.
-     * 
      * @access  public
      * @param   int   	$typeID			Item Type ID
+     * @param   int     $type           data type to return, can be SGL_RET_STRING
+     *                                  or SGL_RET_ARRAY
      * @return  mixed   $fieldsString	HTML Form
      */
-    function getDynamicFields($typeID)
+    function getDynamicFields($typeID, $type = SGL_RET_STRING)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -477,7 +519,8 @@ class SGL_Item
         }
         //  get template specific form fields
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  itm.item_type_mapping_id, itm.field_name, itm.field_type
@@ -487,18 +530,34 @@ class SGL_Item
                     ";
         $result = $dbh->query($query);
 
-        //  display dynamic form fields (changed default object output to standard array)
-        $fieldsString = '';
-        while (list($itemMappingID, $fieldName, $fieldType) 
-            = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $fieldsString .= "<tr>\n";
-            $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
-            $fieldsString .= '<td>' . $this->generateFormFields(
-                                      $itemMappingID, $fieldName, null, $fieldType) 
-                                    . "</td>\n";
-            $fieldsString .= "</tr>\n";
+        switch ($type) {
+            
+        case SGL_RET_ARRAY:
+            $aFields = array();
+            while (list($itemMappingID, $fieldName, $fieldType)
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                    $aFields[ucfirst($fieldName)] =
+                        $this->generateFormFields(
+                        $itemMappingID, $fieldName, null, $fieldType);
+            }
+            $res = $aFields;
+            break;
+
+        case SGL_RET_STRING:
+            //  display dynamic form fields (changed default object output to standard array)
+            $fieldsString = '';
+            while (list($itemMappingID, $fieldName, $fieldType) 
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                $fieldsString .= "<tr>\n";
+                $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
+                $fieldsString .= '<td>' . $this->generateFormFields(
+                                          $itemMappingID, $fieldName, null, $fieldType) 
+                                        . "</td>\n";
+                $fieldsString .= "</tr>\n";
+            }
+            $res = $fieldsString;
         }
-        return $fieldsString;
+        return $res;
     }
 
     /**
@@ -547,7 +606,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();        
         
         switch($status) {
         case 'delete':
@@ -601,7 +661,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
         $query = "
@@ -641,7 +702,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
@@ -783,6 +845,10 @@ class SGL_Item
         }
         if ($itemID) {
             $item = & new SGL_Item($itemID);
+            if (is_null($item->id)) {
+                return SGL::raiseError('No article found for that ID', 
+                    SGL_ERROR_NODATA); 
+            }
             $ret = $item->preview($bPublished);
             if (!is_a($ret, 'PEAR_Error')) {
                 $ret['creatorName'] = $item->creatorName;
@@ -803,18 +869,20 @@ class SGL_Item
      * Gets paginated list of articles.
      *
      * @access  public
-     * @param   int     $dataTypeID template ID of article, ie, new article, weather article, etc.
+     * @param   int     $dataTypeID template ID of article, ie, news article, weather article, etc.
      * @param   string  $queryRange flag to indicate if results limited to specific category
      * @param   int     $catID      optional cat ID to limit results to
      * @param   int     $from       row ID offset for pagination
+     * @param   string  $orderBy    column to sort on
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
      * @see     retrieveAll()
      */
     function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
-        $queryRange = 'thisCategory', $from = '')
+        $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
@@ -851,7 +919,7 @@ class SGL_Item
             $isPublishedClause . "
             AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
-            ORDER BY i.last_updated DESC
+            ORDER BY i.$orderBy DESC
             ";
         $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];

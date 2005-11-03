@@ -1,22 +1,22 @@
 <?php
 /* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 // +----------------------------------------------------------------------+
-// | PHP version 4ÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊ|
+// | PHP version 4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2002 The PHP GroupÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊ|
+// | Copyright (c) 1997-2002 The PHP Groupï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
 // +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,ÊÊÊÊÊÊÊ|
-// | that is bundled with this package in the file LICENSE, and isÊÊÊÊÊÊÊÊ|
-// | available at through the world-wide-web atÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊ|
-// | http://www.php.net/license/2_02.txt.ÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊ|
-// | If you did not receive a copy of the PHP license and are unable toÊÊÊ|
-// | obtain it through the world-wide-web, please send a note toÊÊÊÊÊÊÊÊÊÊ|
-// | license@php.net so we can mail you a copy immediately.ÊÊÊÊÊÊÊÊÊÊÊÊÊÊÊ|
+// | This source file is subject to version 2.0 of the PHP license,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
+// | that is bundled with this package in the file LICENSE, and isï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
+// | available at through the world-wide-web atï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
+// | http://www.php.net/license/2_02.txt.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
+// | If you did not receive a copy of the PHP license and are unable toï¿½ï¿½ï¿½|
+// | obtain it through the world-wide-web, please send a note toï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
+// | license@php.net so we can mail you a copy immediately.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|
 // +----------------------------------------------------------------------+
 // | Author: George Schlossnagle <george@omniti.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Statistics.php,v 1.6 2004/10/27 09:46:09 cvsroot Exp $
+// $Id$
 
 /*
  * Text_Statistics calculates some basic readability metrics on a 

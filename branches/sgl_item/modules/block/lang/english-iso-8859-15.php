@@ -41,5 +41,7 @@
         'Left' => 'Left',
         'Right' => 'Right',
         'New Html block' => 'New Html block',
+        'Can view' => 'Can view',
+        'All roles' => 'All roles',
     );
 ?>

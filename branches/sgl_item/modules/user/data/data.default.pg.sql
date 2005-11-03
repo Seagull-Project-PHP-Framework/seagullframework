@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Data dump for /modules/user
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 -- 
@@ -14,15 +21,15 @@ INSERT INTO organisation VALUES (2,0,2,1,2,2,1,2,0,'sainsburys','test','aasdfasd
 -- Permission table
 --
 
-INSERT INTO permission VALUES (1, 'blockmgr_add', '', 1);
-INSERT INTO permission VALUES (2, 'blockmgr_edit', '', 1);
-INSERT INTO permission VALUES (3, 'blockmgr_delete', '', 1);
-INSERT INTO permission VALUES (4, 'blockmgr_reorder', '', 1);
-INSERT INTO permission VALUES (5, 'blockmgr_list', '', 1);
-INSERT INTO permission VALUES (6, 'contactusmgr_send', '', 2);
-INSERT INTO permission VALUES (7, 'contactusmgr_list', '', 2);
-INSERT INTO permission VALUES (8, 'configmgr_edit', '', 3);
-INSERT INTO permission VALUES (9, 'configmgr_insert', '', 3);
+INSERT INTO permission VALUES (1, 'blockmgr_add', 'Permission to add new block', 1);
+INSERT INTO permission VALUES (2, 'blockmgr_edit', 'Permission to edit existing block', 1);
+INSERT INTO permission VALUES (3, 'blockmgr_delete', 'Permission to remove block', 1);
+INSERT INTO permission VALUES (4, 'blockmgr_reorder', 'Permission to reorder blocks', 1);
+INSERT INTO permission VALUES (5, 'blockmgr_list', 'Permission to view block listing', 1);
+INSERT INTO permission VALUES (6, 'contactusmgr_send', 'Permission to submit contact info', 2);
+INSERT INTO permission VALUES (7, 'contactusmgr_list', 'Permission to view Contact Us screen', 2);
+INSERT INTO permission VALUES (8, 'configmgr_edit', 'Permission to view and edit config settings', 3);
+INSERT INTO permission VALUES (9, 'configmgr_update', 'Permission to update config values', 3);
 INSERT INTO permission VALUES (10, 'defaultmgr_list', '', 3);
 INSERT INTO permission VALUES (11, 'defaultmgr_showNews', '', 3);
 INSERT INTO permission VALUES (12, 'modulemgr_add', '', 3);
@@ -108,6 +115,7 @@ INSERT INTO permission VALUES (101, 'orgmgr_edit', '', 12);
 INSERT INTO permission VALUES (102, 'orgmgr_update', '', 12);
 INSERT INTO permission VALUES (103, 'orgmgr_delete', '', 12);
 INSERT INTO permission VALUES (104, 'orgmgr_list', '', 12);
+INSERT INTO permission VALUES (239, 'passwordmgr_redirectToEdit', '', 12);
 INSERT INTO permission VALUES (105, 'passwordmgr_edit', '', 12);
 INSERT INTO permission VALUES (106, 'passwordmgr_update', '', 12);
 INSERT INTO permission VALUES (107, 'passwordmgr_retrieve', '', 12);
@@ -198,8 +206,9 @@ INSERT INTO permission VALUES (217, 'modulemgr', '', 3);
 INSERT INTO permission VALUES (219, 'modulemgr_edit', '', 3);
 INSERT INTO permission VALUES (220, 'modulemgr_update', '', 3);
 INSERT INTO permission VALUES (221, 'contactusmgr', '', 2);
-INSERT INTO permission VALUES (223, 'blockmgr', '', 1);
+INSERT INTO permission VALUES (223, 'blockmgr', 'Permission to use block manager', 1);
 INSERT INTO permission VALUES (224, 'bugmgr', '', 3);
+
 
 --
 -- Dumping data for table preference
@@ -273,6 +282,7 @@ INSERT INTO role_permission VALUES (44, 2, 118);
 INSERT INTO role_permission VALUES (45, 2, 121);
 INSERT INTO role_permission VALUES (46, 2, 105);
 INSERT INTO role_permission VALUES (47, 2, 106);
+INSERT INTO role_permission VALUES (35, 2, 239);
 INSERT INTO role_permission VALUES (48, 2, 142);
 INSERT INTO role_permission VALUES (49, 2, 143);
 INSERT INTO role_permission VALUES (50, 2, 67);
@@ -327,6 +337,7 @@ INSERT INTO user_permission VALUES (30, 2, 118);
 INSERT INTO user_permission VALUES (31, 2, 121);
 INSERT INTO user_permission VALUES (32, 2, 105);
 INSERT INTO user_permission VALUES (33, 2, 106);
+INSERT INTO user_permission VALUES (43, 2, 239);
 INSERT INTO user_permission VALUES (34, 2, 142);
 INSERT INTO user_permission VALUES (35, 2, 143);
 INSERT INTO user_permission VALUES (36, 2, 67);
@@ -355,9 +366,9 @@ INSERT INTO user_preference VALUES (8, 0, 8, 'en_GB');
 -- Dumping data for table usr
 --
 
-INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','webmaster@phpkitchen.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
-INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','demian@phpkitchen.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
+#INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+#INSERT INTO usr VALUES (1,1,1,'admin','21232f297a57a5a743894a0e4a801fc3','Admin','User','','','admin@example.com','1 Seagull Drive','','','London','','GB','55555',0,1,1,'rover','2003-12-09 18:02:44',1,'2004-06-10 11:07:27',1);
+#INSERT INTO usr VALUES (2,1,2,'seagull','21232f297a57a5a743894a0e4a801fc3','Test','User','','','seagull@example.com','17 Daver Court','Mount Avenue','','Ealing','','GB','55555',0,1,1,'rover','2004-06-10 18:04:06',1,'2004-06-10 18:04:06',1);
 
 
 COMMIT;

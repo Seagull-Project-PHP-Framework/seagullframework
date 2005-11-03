@@ -40,9 +40,10 @@ class Menu_ExplorerBsd
 {
     var $module = 'navigation';
 
-    function Menu_ExplorerBsd()
+    function Menu_ExplorerBsd($options, $conf)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $this->conf = $conf;
     }
 
     function render($id = 0) 
@@ -55,7 +56,6 @@ class Menu_ExplorerBsd
     function getGuruTree($id = 0)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  style definition .treeMenuDefault in <head>
         $tree = &$this->createFromSQL($id);
@@ -64,7 +64,7 @@ class Menu_ExplorerBsd
         require_once 'HTML/TreeMenu.php';
         
         //  build url for current page
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
         $url = SGL_Url::makeLink(   '', 
                                     $req->get('managerName'),
                                     $req->get('moduleName')                             
@@ -103,12 +103,12 @@ class Menu_ExplorerBsd
     function &createFromSQL($id = 0)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         require_once 'HTML/Tree.php';
 
         $dbh = &SGL_DB::singleton();
         $query = '  SELECT  category_id as id, parent_id, label AS text
-                    FROM    ' . $conf['table']['category'] .'
+                    FROM    ' . $this->conf['table']['category'] .'
                     ORDER BY parent_id, order_id';
         $tree     = &new Tree();
         $nodeList = array();

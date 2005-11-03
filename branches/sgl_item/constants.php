@@ -30,27 +30,48 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | constants.php                                                             |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: constants.php,v 1.31 2005/06/23 18:21:24 demian Exp $
-
-    setupConstants();
-
-    function setupConstants()
+    
+    require_once dirname(__FILE__) . '/lib/SGL/Config.php';
+    require_once dirname(__FILE__) . '/lib/SGL/Url.php';
+    require_once dirname(__FILE__) . '/lib/SGL/Registry.php';
+    require_once dirname(__FILE__) . '/lib/SGL/Request.php';
+    
+    SGL_setupConstants();
+    
+    function SGL_setupConstants()
     {
-        define('SGL_SERVER_NAME',               hostnameToFilename());
-        define('SGL_PATH',                      dirname(__FILE__));
+        define('SGL_SERVER_NAME', hostnameToFilename());
+        define('SGL_PATH', dirname(__FILE__));
+        define('SGL_LIB_PEAR_DIR',              SGL_PATH . '/lib/pear');
+#        define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
+
+        $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
+        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+        if (!$allowed) {
+            //  depends on PHP version being >= 4.3.0
+            if (function_exists('set_include_path')) {
+                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+            } else {
+                die('You need at least PHP 4.3.0 if you want to run Seagull
+                with safe mode enabled.');
+            }
+        }
+        require_once 'PEAR.php';
 
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
             '127.0.0.1',
         );
 
-		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php';
+		$configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+        $c = &SGL_Config::singleton();
 
         //  test if a config delete is requested (see feature request 985089)
         if (isset( $_GET['deleteConfig']) 
@@ -62,11 +83,15 @@
             @unlink(SGL_PATH . '/var/INSTALL_COMPLETE');
         }
 
+        //  handle case for new install
         if (    !file_exists($configFile)
             &&  !file_exists(SGL_PATH . '/var/INSTALL_COMPLETE')) {
             
-            $success = @copy(SGL_PATH . '/etc/default.conf.ini.dist', $configFile);
-            if (!$success) {
+            $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
+            $c->replace($conf);
+            $ok = $c->save($configFile);
+            
+            if (PEAR::isError($ok)) {
                 die("<br />Your config file cannot be copied to the seagull/var directory, " .
                     "please give the webserver write permissions to this directory, eg:<br />" .
                     "<code>'chmod 777 seagull/var'</code>");
@@ -85,50 +110,27 @@
 
             $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
         }
-        $conf = @parse_ini_file($configFile, true);
-
-        //  set protocol correctly, build base url
-        //  allows for various possibilities:
-        //  - http://localhost/seagull/www
-        //  - http://localhost:8080
-        //  - http://www.example.com
-        $serverName = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
-     
-        //  it's apache
-        if (isset($_SERVER['PHP_SELF']) && !empty($_SERVER['PHP_SELF'])) {
         
-            //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
-            if (strpos(php_sapi_name(), 'cgi') !== false) {
-                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
-                
-            //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
-            } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF']) 
-                    && strstr($_SERVER['REQUEST_URI'], '?'))) {
-                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
-            } else {
-                //  do nothing, PHP_SELF is valid
-            }
-        //  it's IIS
-        } else {
-            $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'];
-        }
-        //  set baseUrl
-        if (!(isset($conf['site']['baseUrl']))) {
-            $conf['site']['baseUrl'] = getBaseUrl($conf, $serverName);
-        }
+        // handle case for missing config file
+        if (!file_exists($configFile)) {
+            
+            die("Your config file could not be found, to allow the installer to create one, " .
+                "please remove the file 'INSTALL_COMPLETE' from the seagull/var directory, ");
 
-        //  store in Seagull namespace
-        $GLOBALS['_SGL']['CONF'] = $conf;
+            $GLOBALS['_SGL']['executeDbBootstrap'] = 1;
+        }
+        
+        if ($c->isEmpty()) {
+            $conf = $c->load($configFile);
+            $c->replace($conf);
+        }
 
         // framework file structure
-        define('SGL_BASE_URL',                  $conf['site']['baseUrl']);
         define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
         define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
         define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
         define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
         define('SGL_UPLOAD_DIR',                SGL_PATH . '/var/uploads');
-        define('SGL_LIB_PEAR_DIR',              SGL_PATH . '/lib/pear');
-#        define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
         define('SGL_LIB_DIR',                   SGL_PATH . '/lib');
         define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
         define('SGL_MOD_DIR',                   SGL_PATH . '/modules');
@@ -136,6 +138,24 @@
         define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
         define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
+        
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+        
+        //  assign current url object to registry
+        $urlHandler = $conf['site']['urlHandler'];
+
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
+        $input = &SGL_Registry::singleton();
+        $input->setCurrentUrl($url);
+        
+        //  get base url
+        if (!(isset($conf['site']['baseUrl']))) {
+            $c->set('site', array('baseUrl' => $url->getBase()));
+            $ok = $c->save($configFile);
+        }
+        
+        define('SGL_BASE_URL',                  $c->get(array('site' => 'baseUrl')));
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
@@ -164,35 +184,12 @@
         define('SGL_ERROR_RECURSION',           -123);
 
         // set php.ini directives
-        $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
         @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
 
-        if (!$allowed) {
-            //  depends on PHP version being >= 4.3.0
-            if (function_exists('set_include_path')) {
-                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
-            } else {
-                die('You need at least PHP 4.3.0 if you want to run Seagull
-                with safe mode enabled.');
-            }
-        }
-
         //  set constant to represent profiling mode so it can be used in Controller
         define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
-
-        //  Flexy template settings
-        define('SGL_FLEXY_FORCE_COMPILE',       0);
-        define('SGL_FLEXY_DEBUG',               0);
-        define('SGL_FLEXY_FILTERS',             'SimpleTags');
-        define('SGL_FLEXY_ALLOW_PHP',           true);
-        define('SGL_FLEXY_LOCALE',              'en');
-        define('SGL_FLEXY_COMPILER',            'Standard');
-        define('SGL_FLEXY_VALID_FNS',           'include');
-        define('SGL_FLEXY_GLOBAL_FNS',          true);
-        define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true
 
         //  automate sorting
         define('SGL_SORTBY_GRP',                1);
@@ -212,18 +209,17 @@
         define('SGL_STATUS_PUBLISHED',          4);
         define('SGL_STATUS_ARCHIVED',           5);
         
-        define('SGL_DSN_ARRAY',                 0);
-        define('SGL_DSN_STRING',                1);
-        
+        //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
-
-        //  role sync constants
-        define('SGL_ROLESYNC_ADD',     1);
-        define('SGL_ROLESYNC_REMOVE',  2);
-        define('SGL_ROLESYNC_ADDREMOVE',  3);
-        define('SGL_ROLESYNC_VIEWONLY',  4);
+        define('SGL_RET_STRING',                4); 
+        define('SGL_ALL_ROLES', 				-2);
+        
+        define('SGL_NOTICES_DISABLED',          0);
+        define('SGL_NOTICES_ENABLED',           1);
+        
+        define('SGL_SEAGULL_VERSION',           $conf['tuples']['version']);
         
         //  with logging, you can optionally show the file + line no. where 
         //  SGL::logMessage was called from
@@ -231,12 +227,10 @@
 
         //  set globals
         $GLOBALS['_SGL']['BANNED_IPS'] =        array();
-        $GLOBALS['_SGL']['REQUEST'] =           array();
         $GLOBALS['_SGL']['ERRORS'] =            array();
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
-        $GLOBALS['_SGL']['VERSION'] =           $conf['tuples']['version'];
     }
 
     /**
@@ -275,54 +269,4 @@
         }
         return $hostName;
     }
-
-    function getProtocol()
-    {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on') ? 'https' : 'http';
-    }
-
-    function getBaseUrl($conf, $serverName)
-    {
-        $baseFolder = dirname($_SERVER['PHP_SELF']);
-
-        //  remove all elements after frontscript name
-        $aUriParts = array_reverse(explode('/', $baseFolder));
-
-        //  step through array and strip until fc element is reached
-        if (in_array($conf['site']['frontScriptName'], $aUriParts)) {
-            foreach ($aUriParts as $elem) {
-                array_shift($aUriParts);
-                if ($elem == $conf['site']['frontScriptName']) {
-                    break;
-                }
-            }
-        }
-        $baseFolder = implode('/', array_reverse($aUriParts));
-
-        //  handle case for user's homedir, ie, presence of tilda: example.com/~seagull
-        if (preg_match('/~/', $baseFolder)) {
-            $baseFolder = str_replace('~', '%7E', $baseFolder);
-        }
-        $baseUrl = getProtocol() . '://' . $serverName . $baseFolder;
-
-        //  chop relevant final slash
-        $search = (substr(PHP_OS, 0, 3) == 'WIN') ? "/\$/" : "/\/$/";
-        if (preg_match($search, $baseUrl)) {
-            $baseUrl = rtrim($baseUrl, DIRECTORY_SEPARATOR);
-        }
-        return $baseUrl;
-    }
-
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (file_exists($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
-    }
-}
 ?>
