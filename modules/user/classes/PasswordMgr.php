@@ -55,7 +55,6 @@ class PasswordMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->module = 'user';
         $this->template = 'userPasswordEdit.html';
 
         $this->_aActionsMapping =  array(
@@ -165,7 +164,7 @@ class PasswordMgr extends SGL_Manager
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
         if ($input->passwdResetNotify) {
-            $this->sendPassword($oUser, $input->password);
+            $this->sendPassword($oUser, $input->password, $input->moduleName);
         }
         //  redirect on success
         if ($success) {
@@ -236,7 +235,7 @@ class PasswordMgr extends SGL_Manager
         }
     }
 
-    function sendPassword($oUser, $passwd)
+    function sendPassword($oUser, $passwd, $moduleName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
@@ -247,7 +246,7 @@ class PasswordMgr extends SGL_Manager
                 'replyTo'   => $this->conf['email']['admin'],
                 'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
                 'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_forgot.php',
+                    $moduleName . '/email_forgot.php',
                 'username'  => $oUser->username,
                 'password'  => $passwd,
         );

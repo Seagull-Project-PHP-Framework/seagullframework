@@ -52,7 +52,6 @@ class BugMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module      = 'default';
         $this->pageTitle   = 'Bug Report';
         $this->template    = 'bugReport.html';
 
@@ -137,7 +136,7 @@ class BugMgr extends SGL_Manager
     
     function _send(&$input, &$output)
     {
-        $ok = $this->sendEmail($input->bug);
+        $ok = $this->sendEmail($input->bug, $input->moduleName);
         if (!PEAR::isError($ok)) {
             SGL::raiseMsg('email submitted successfully');
         } else {
@@ -192,7 +191,7 @@ class BugMgr extends SGL_Manager
         return $html;
     }
     
-    function sendEmail($oData)
+    function sendEmail($oData, $moduleName)
     {
         $body = "The following bug report was submitted: \n\n";
         
@@ -207,7 +206,7 @@ class BugMgr extends SGL_Manager
             'subject'       => '[Seagull Bug report]',
             'body'          => $report->toString(),
             'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/emailBugReport.php',
+                    $moduleName . '/emailBugReport.php',
             'siteUrl'       => SGL_BASE_URL,
             'siteName'      => 'Seagull',
         );

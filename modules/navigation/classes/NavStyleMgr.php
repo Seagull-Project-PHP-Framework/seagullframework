@@ -54,8 +54,7 @@ class NavStyleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
-        $this->module       = 'navigation';
+
         $this->pageTitle    = 'Navigation Style Manager';
         $this->template     = 'navStyleList.html';
         $this->da           = & DA_User::singleton();

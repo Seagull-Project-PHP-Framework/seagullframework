@@ -41,6 +41,7 @@
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
 /**
  * To administer sections.
@@ -59,7 +60,6 @@ class PageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module           = 'navigation';
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
@@ -221,7 +221,11 @@ class PageMgr extends SGL_Manager
             $output->wikiSelected = '';
             
             //  build static article list
-            $output->aStaticArticles = $this->_getStaticArticles();
+            if (ModuleMgr::moduleIsRegistered('publisher')) {            
+                $output->aStaticArticles = $this->_getStaticArticles();
+            } else {
+                $output->aStaticArticles = array('' => 'invalide w/out Publisher module');
+            }
             
         } elseif ($output->articleType == 'wiki') { 
             
@@ -376,7 +380,7 @@ class PageMgr extends SGL_Manager
                     $section['add_params'] = null;
                 }
                 //  deal with static articles
-                if ($section['is_static']) {
+                if ($section['is_static'] && ModuleMgr::moduleIsRegistered('publisher')) {
                     if (isset($parsed['parsed_params'])) {
                         $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
                     }

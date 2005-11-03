@@ -186,6 +186,11 @@ class SGL_Util
 
         //  until i get rid of this folder
         unset($ret['wizardExample']);
+        foreach ($ret as $module) {
+            if (!ModuleMgr::moduleIsRegistered($module)) {
+                unset($ret[$module]);
+            }
+        }
         return $ret;
     }
 

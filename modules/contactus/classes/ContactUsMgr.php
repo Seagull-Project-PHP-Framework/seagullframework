@@ -54,8 +54,7 @@ class ContactUsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-                
-        $this->module      = 'contactus';
+
         $this->pageTitle   = 'Contact Us';
         $this->template    = 'contact.html';
 
@@ -145,7 +144,7 @@ class ContactUsMgr extends SGL_Manager
 
         //  1. Take data from validated contact object and pass
         //  to sendEmail() method
-        $bEmailSent = $this->sendEmail($input->contact);
+        $bEmailSent = $this->sendEmail($input->contact, $input->moduleName);
         //  2. If email sending is successfull:
         if ($bEmailSent) {
 
@@ -206,7 +205,7 @@ class ContactUsMgr extends SGL_Manager
         $output->contact = $contact;
     }
 
-    function sendEmail($oContact)
+    function sendEmail($oContact, $moduleName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';

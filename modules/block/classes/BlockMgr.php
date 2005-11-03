@@ -58,10 +58,8 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'block';
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
-
         $this->_aActionsMapping =  array(
             'addDynamic' => array('addDynamic'),
             'add'       => array('add'), 

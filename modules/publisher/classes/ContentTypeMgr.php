@@ -67,7 +67,6 @@ var $fieldTypes;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'publisher';
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
 

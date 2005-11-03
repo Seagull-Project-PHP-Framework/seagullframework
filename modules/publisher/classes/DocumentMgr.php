@@ -61,7 +61,6 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->module       = 'publisher';
         $this->pageTitle    = 'Document Manager';
         $this->template     = 'documentManager.html';
         $this->_aAllowedFileTypes = array(

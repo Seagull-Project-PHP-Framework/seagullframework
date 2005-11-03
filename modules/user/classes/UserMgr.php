@@ -58,7 +58,6 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module = 'user';
         $this->pageTitle = 'User Manager';
         $this->template = 'userManager.html';
         $this->da = & DA_User::singleton();
@@ -421,7 +420,7 @@ class UserMgr extends RegisterMgr
         $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
         $success = $oUser->update();
         if ($input->changeStatusNotify && $success) {
-            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
+            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active, $input->moduleName);
         }
         //  redirect on success
         if ($success) {
@@ -433,7 +432,7 @@ class UserMgr extends RegisterMgr
         }
     }
     
-    function _sendStatusNotification($oUser, $isEnabled)
+    function _sendStatusNotification($oUser, $isEnabled, $moduleName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
@@ -448,7 +447,7 @@ class UserMgr extends RegisterMgr
                 'replyTo'   => $this->conf['email']['admin'],
                 'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
                 'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_status_notification.php',
+                    $moduleName . '/email_status_notification.php',
                 'username'  => $oUser->username,
         );
         $message = & new SGL_Emailer($options);

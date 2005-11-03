@@ -57,7 +57,6 @@ class RegisterMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'user';
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';
         $this->da           = & DA_User::singleton();
@@ -244,7 +243,7 @@ class RegisterMgr extends SGL_Manager
         if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
             //  send email confirmation according to config
             if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
-                $bEmailSent = $this->_sendEmail($oUser);
+                $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
                 if (!$bEmailSent) {
                     SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
                 }
@@ -264,7 +263,7 @@ class RegisterMgr extends SGL_Manager
         }
     }
 
-    function _sendEmail($oUser)
+    function _sendEmail($oUser, $moduleName)
     {
         require_once SGL_CORE_DIR . '/Emailer.php';
 
@@ -277,7 +276,7 @@ class RegisterMgr extends SGL_Manager
                 'replyTo'       => $this->conf['email']['admin'],
                 'subject'       => 'Thanks for registering at ' . $this->conf['site']['name'],
                 'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_registration_thanks.php',
+                    $moduleName . '/email_registration_thanks.php',
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
@@ -298,7 +297,7 @@ class RegisterMgr extends SGL_Manager
                     'replyTo'       => $this->conf['email']['admin'],
                     'subject'       => 'New Registration at ' . $this->conf['site']['name'],
                     'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                        $this->module . '/email_registration_admin.php',
+                        $moduleName . '/email_registration_admin.php',
                     'username'      => $oUser->username,
                     'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
             );

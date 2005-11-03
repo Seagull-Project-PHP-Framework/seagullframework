@@ -52,8 +52,6 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
-        $this->module = 'user';
 
         $this->_aActionsMapping =  array(
             'login' => array('login'), 

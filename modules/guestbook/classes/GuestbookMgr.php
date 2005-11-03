@@ -56,7 +56,6 @@ class GuestbookMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         
-        $this->module       = 'guestbook';
         $this->pageTitle    = 'Guestbook Manager';
         $this->template     = 'guestbookList.html';
 

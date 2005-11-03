@@ -61,7 +61,6 @@ class RssMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();        
         
-        $this->module   = 'export';
         $this->masterTemplate  = 'masterFeed.html';
         $this->template = 'masterRss.xml';
         
