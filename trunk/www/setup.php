@@ -156,28 +156,36 @@ $init->main();
 if (isset($_GET['start'])) {
     
     //  remove installer info
-    $_SESSION = array();    
+    @session_destroy();
+    $_SESSION = array();
+    
+    //  clear session cookie
+    $c = &SGL_Config::singleton();
+    $conf = $c->getAll();    
+    setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'], 
+                    $conf['cookie']['domain'], $conf['cookie']['secure']);
+    
     header('Location: index.php');
     exit;
 }
 
 //  check authorization
 if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php') 
-        && !empty($_SESSION['valid'])
-        && $_SESSION['valid'] === true) {
+        && empty($_SESSION['valid'])) {
     SGL_Install::printHeader();
     SGL_Install::printLoginForm();
     SGL_Install::printFooter();
     
     if (!empty($_POST['frmPassword'])) {
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
-        $secret = substr($aLines[1], 1);
+        $secret = trim(substr($aLines[1], 1));
         if ($_POST['frmPassword'] != $secret) {
             $_SESSION['message'] = 'incorrect password';
             header('Location: setup.php');
             exit;
         } else {
             $_SESSION['valid'] = true;
+            header('Location: setup.php');
         }
     } else {
         exit;

@@ -7,7 +7,7 @@
     require_once SGL_CORE_DIR . '/AppController.php';
 
     SGL_AppController::run();
-
+    
     /**
      * Returns systime in ms.
      *
