@@ -119,9 +119,9 @@ class SGL_URL
     *
     * @see __construct()
     */
-    function SGL_URL($url = null, $useBrackets = true, /*SGL_UrlParserStrategy*/ $parserStrategy)
+    function SGL_URL($url = null, $useBrackets = true, /*SGL_UrlParserStrategy*/ $parserStrategy = null, $conf = null)
     {
-        $this->__construct($url, $useBrackets, $parserStrategy);
+        $this->__construct($url, $useBrackets, $parserStrategy, $conf);
     }
 
     /**
@@ -134,10 +134,12 @@ class SGL_URL
     * @param bool   $useBrackets Whether to use square brackets when
     *                            multiple querystrings with the same name
     *                            exist
+    * @param SGL_UrlParserStrategy  The strategy object to be used, optional
+    * @param array               An array of config elements, optional
     *
     * @todo the main URL attributes always get set twice, this needs to be optimised
     */
-    function __construct($url = null, $useBrackets = true, $parserStrategy)
+    function __construct($url = null, $useBrackets = true, $parserStrategy = null, $conf = null)
     {
         $this->useBrackets = $useBrackets;
         $this->url         = $url;
@@ -149,8 +151,10 @@ class SGL_URL
         $this->aQueryData = array();
         $this->anchor      = '';
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        if (is_null($conf)) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+        }
         
         $this->frontScriptName = $conf['site']['frontScriptName'];
         $this->parserStrategy = $parserStrategy;
@@ -232,7 +236,7 @@ class SGL_URL
                         }
 
                         if (!array_key_exists('query', $urlinfo)) {
-                            $this->aQueryData = $this->parseQueryString();
+                            $this->aQueryData = $this->parseQueryString($conf);
                         }
                     } else {
                         $path = dirname($this->path) == DIRECTORY_SEPARATOR ? '' : dirname($this->path);
@@ -241,7 +245,7 @@ class SGL_URL
                     break;
 
                 case 'query':
-                    $this->aQueryData = $this->parseQueryString();
+                    $this->aQueryData = $this->parseQueryString($conf);
                     break;
 
                 case 'fragment':
@@ -305,9 +309,9 @@ class SGL_URL
         return $this->querystring;
     }
     
-    function parseQueryString() 
+    function parseQueryString($conf) 
     {
-        return $this->parserStrategy->parseQueryString($this);
+        return $this->parserStrategy->parseQueryString($this, $conf);
     }
     
     function toString() 
@@ -363,7 +367,7 @@ class SGL_URL
      *
      * @abstract 
      */
-    function resolveServerVars($conf)
+    function resolveServerVars($conf = null)
     {
         //  it's apache
         if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
@@ -374,14 +378,16 @@ class SGL_URL
                 
             //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
             } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF']) 
-                    && strstr($_SERVER['REQUEST_URI'], '?'))) {
+                    && strstr($_SERVER['REQUEST_URI'], '?')
+                    && !isset($conf['setup']))) {
                 $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
             } else {
                 //  do nothing, PHP_SELF is valid
             }
         //  it's IIS
         } else {
-            if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($conf['site']['frontScriptName'], -1, 1)) {
+            $frontScriptName = is_null($conf) ? 'index.php' : $conf['site']['frontScriptName'];
+            if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($frontScriptName, -1, 1)) {
                 $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . '?' . @$_SERVER['QUERY_STRING'];
             } else {
                 $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
@@ -428,10 +434,19 @@ class SGL_URL
     /**
      * Returns hostname + path with final slashes removed if present.
      *
-     * @return unknown
+     * @return string   The base url
+     * @todo make logic more generic
      */
     function getBase()
     {
+        $aParts = explode('/', $this->path);
+
+        //  accomodate setup exception
+        if (in_array('setup.php', $aParts)) {
+            array_pop($aParts);
+            $this->path = implode('/', $aParts);
+        }
+        
         $retUrl = $this->protocol . '://'
                    . $this->user . (!empty($this->pass) ? ':' : '')
                    . $this->pass . (!empty($this->user) ? '@' : '')
@@ -618,10 +633,9 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
      * @return array        An array to be assigned to SGL_Url::aQueryData
      * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
      */
-    function parseQueryString(/*SGL_Url*/$url)
+    function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        #$conf = $c->getAll();
 
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
         
@@ -662,13 +676,17 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         }
         
         //  we've got module name so load and merge local and global configs
-        $aModuleConfig = $c->load(SGL_MOD_DIR . '/' . $aParsedUri['moduleName'] . '/conf.ini');
+        //  unless we're running the setup wizard
+        if (!isset($conf['setup'])) {
+            $c = &SGL_Config::singleton();            
+            $aModuleConfig = $c->load(SGL_MOD_DIR . '/' . $aParsedUri['moduleName'] . '/conf.ini');
 
-        if ($aModuleConfig) {
-            $c->merge($aModuleConfig);
-        } else {         
-            return PEAR::raiseError('Could not read current module\'s conf.ini file', 
-                SGL_ERROR_NOFILE);
+            if ($aModuleConfig) {
+                $c->merge($aModuleConfig);
+            } else {         
+                return PEAR::raiseError('Could not read current module\'s conf.ini file', 
+                    SGL_ERROR_NOFILE);
+            }
         }
         
         //  determine is moduleName is simplified, in other words, the mgr
@@ -683,7 +701,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  catch case where when manger + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
         if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
-            list(,$cookieValue) = split('=', $aParsedUri['managerName']);
+            @list(,$cookieValue) = split('=', $aParsedUri['managerName']);
             $cookieValue = substr($cookieValue, 0, -1);
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
             array_unshift($aUriParts, $cookieValue);

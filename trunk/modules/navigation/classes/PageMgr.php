@@ -224,7 +224,7 @@ class PageMgr extends SGL_Manager
             if (ModuleMgr::moduleIsRegistered('publisher')) {            
                 $output->aStaticArticles = $this->_getStaticArticles();
             } else {
-                $output->aStaticArticles = array('' => 'invalide w/out Publisher module');
+                $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
             }
             
         } elseif ($output->articleType == 'wiki') { 

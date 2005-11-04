@@ -144,7 +144,6 @@
         
         //  assign current url object to registry
         $urlHandler = $conf['site']['urlHandler'];
-
         $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
         $input = &SGL_Registry::singleton();
         $input->setCurrentUrl($url);

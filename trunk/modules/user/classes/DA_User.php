@@ -205,8 +205,7 @@ class DA_User
 
         $aRolePerms = $this->dbh->getCol($query);
         if (is_a($aRolePerms, 'PEAR_Error')) {
-           return SGL::raiseError('There was a problem retrieving perms', 
-                SGL_ERROR_NODATA);
+           return PEAR::raiseError('There was a problem retrieving perms');
 		}
         return $aRolePerms;
     }
@@ -543,7 +542,7 @@ class DA_User
         if (!DB::isError($aRes)) {
             return $aRes;
         } else {
-            SGL::raiseError('Could not find any prefs in db, exiting ...', 
+            PEAR::raiseError('Could not find any prefs in db, exiting ...', 
                 SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
     }
