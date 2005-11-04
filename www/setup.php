@@ -141,12 +141,15 @@ allow enduser to dynamically setup paths, ie, for hosted environments
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Task.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
+require_once dirname(__FILE__) . '/../lib/SGL/Url.php';
 require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
 require_once dirname(__FILE__) . '/../lib/SGL/Tasks/Install.php';
 
 $init = new SGL_TaskRunner();
 $init->addTask(new SGL_Task_SetupPaths());
 $init->addTask(new SGL_Task_SetupConstants());
+$init->addTask(new SGL_Task_SetBaseUrl());
 $init->main();
 
 //  reroute to front controller

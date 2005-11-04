@@ -13,7 +13,7 @@ class SGL_Task_SetupPaths extends SGL_Task
      * 
      * @param array $data
      */
-    function run($data = null)
+    function run($data)
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());        
         define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
@@ -148,6 +148,27 @@ class SGL_Task_SetupConstants extends SGL_Task
         //  SGL::logMessage was called from
         define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
     }
+}
+
+class SGL_Task_SetBaseUrl extends SGL_Task
+{
+    function run($data)
+    {
+        $conf = array(
+            'setup' => true, 
+            'site' =>   array(  'frontScriptName' => 'index.php',
+                                'defaultModule' => 'default',
+                                'defaultManager' => 'default',
+                        ),
+            'cookie' => array(  'name' => ''),
+            );
+            
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+        
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new SGL_UrlParserSefStrategy(), $conf);
+        define('SGL_BASE_URL', $url->getBase());
+    }   
 }
 
 class SGL_Task_CreateConfig extends SGL_Task
@@ -292,7 +313,6 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
     function run($data)
     {
         require_once SGL_PATH . '/lib/SGL/Sql.php';
-        define('SGL_BASE_URL', 'http://localhost/seagull/trunk/www');
         
         SGL_Install::printHeader('Building Database');
         echo '<span class="title">Status: </span><span id="status"></span>
