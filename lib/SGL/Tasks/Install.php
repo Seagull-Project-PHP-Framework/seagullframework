@@ -474,7 +474,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             //  note: must all be on one line for DOM text replacement
             $message = 'Database initialisation complete!';
             $this->updateHtml('status', $message);
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
             
         //  else only a DB connect was requested
         } else {
@@ -482,7 +482,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             $statusText .= ', schema creation skipped';
             $this->updateHtml('status', $statusText);
 
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/?start\\">LAUNCH SEAGULL</a> </p>';
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>';
         }
         
         //  done, create "launch seagull" link
@@ -748,7 +748,7 @@ class SGL_Task_InstallerCleanup extends SGL_Task
     {
         $newFile = <<<PHP
 <?php
-#{$data['installPassword']};
+#{$data['installPassword']}
 ?>
 PHP;
         $ok = file_put_contents(SGL_PATH . '/var/INSTALL_COMPLETE.php', $newFile);
