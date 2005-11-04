@@ -79,11 +79,9 @@
         //  to overcome overload problem
         define('DB_DATAOBJECT_NO_OVERLOAD', true);
 
-        // If we just copied conf.ini, execute bootstrap
-        if (isset($GLOBALS['_SGL']['executeDbBootstrap']) || @$conf['db']['bootstrap'] == '1') {
-            require_once SGL_CORE_DIR . '/SetupWizard.php';
-            $wizard = new SGL_SetupWizard($conf);
-            $wizard->run();
+        // determine if setup needed
+        if (!file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')) {
+            SGL_HTTP::redirect(SGL_BASE_URL . '/setup.php');
         }
 
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');

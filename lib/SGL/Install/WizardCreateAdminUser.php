@@ -71,6 +71,15 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
         
+        //  paths
+        $this->addElement('header',     null, 'Paths:');
+        $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
+        $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
+        
+        $this->addRule('installRoot', 'You must specify an install root path', 'required');
+        $this->addRule('webRoot', 'You must specify a web root path', 'required');
+        //  test if dirs exist
+        
         //  general
         $this->addElement('header',     null, 'General:');
         $this->addElement('text',  'siteName',     'Site name: ');
@@ -94,15 +103,11 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $tz);
         $this->addElement('text',  'siteCookie',     'Cookie name: ');
         
+        //  install passwd
+        $this->addElement('password',  'installPassword', 'Install password: ');
+
         $this->addRule('siteCookie', 'Please specify the cookie\'s name', 'required');
-        
-        $this->addElement('header',     null, 'Paths:');
-        $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
-        $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
-        
-        $this->addRule('installRoot', 'You must specify an install root path', 'required');
-        $this->addRule('webRoot', 'You must specify a web root path', 'required');
-        //  test if dirs exist
+        $this->addRule('installPassword', 'Please specify a password to be used to access the installer', 'required');        
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
