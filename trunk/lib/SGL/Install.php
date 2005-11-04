@@ -32,7 +32,7 @@ class SGL_Install
         return count($_SESSION['ERRORS']);
     }
     
-    function printHeader($title)
+    function printHeader($title = '')
     {
         $html = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -76,6 +76,57 @@ HTML;
 </html>
 HTML;
         print $html;
+    }
+    
+    function printLoginForm()
+    {
+        $message = !empty($_SESSION['message']) ? $_SESSION['message'] : '';
+        $_SESSION = array();
+        
+        $html = <<<HTML
+<form name="frmLogin" method="post" action="" id="frmLogin">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="messageContainer">
+        <div class="messageHeader">
+            Authorisation Required
+        </div>
+        <div class="messageContent">
+            <div>
+                <div class="error">
+                    $message
+                </div>            
+                <span class="error">*&nbsp;</span>Password
+                <input type="password" name="frmPassword" maxlength="24" />
+            </div>
+            <p><input type="submit" class="formsubmit" name="submitted" value="Enter" /></p>
+        </div>
+    </div>
+</form>
+HTML;
+        print $html;
+    }
+    
+    function getModuleList() 
+    {
+        $dir =  SGL_MOD_DIR;
+        $fileList = array();
+        $stack[] = $dir;
+        while ($stack) {
+            $currentDir = array_pop($stack);
+            if ($dh = opendir($currentDir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file !== '.' && $file !== '..' && $file !== '.svn') {
+                        $currentFile = "{$currentDir}/{$file}";
+                        if (is_dir($currentFile)) {
+                            $fileList[] = "{$file}";
+                        }
+                    }
+               }
+           }
+       }
+       return $fileList;
     }
 }
 

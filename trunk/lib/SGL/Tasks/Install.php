@@ -454,7 +454,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             //  note: must all be on one line for DOM text replacement
             $message = 'Database initialisation complete!';
             $this->updateHtml('status', $message);
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
             
         //  else only a DB connect was requested
         } else {
@@ -462,7 +462,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             $statusText .= ', schema creation skipped';
             $this->updateHtml('status', $statusText);
 
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/\\">LAUNCH SEAGULL</a> </p>';
+            $body = '<p><a href=\\"' . SGL_BASE_URL . '/?start\\">LAUNCH SEAGULL</a> </p>';
         }
         
         //  done, create "launch seagull" link
@@ -716,22 +716,22 @@ class SGL_Task_CreateAdminUser extends SGL_Task
         $oUser->organisation_id = 1;
         $oUser->is_acct_active = 1;
         $oUser->role_id = SGL_ADMIN;
-        
-//        $oUser->addr_1 = '1 Seagull Drive';
-//        $oUser->city = 'London';
-//        $oUser->country = 'GB';
-//        $oUser->country = 'GB';
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
         $success = $da->addUser($oUser);
     }   
 }
 
-class SGL_Task_RemoveLockfile extends SGL_Task
+class SGL_Task_InstallerCleanup extends SGL_Task
 {
     function run($data)
     {
-
+        $newFile = <<<PHP
+<?php
+#{$data['installPassword']};
+?>
+PHP;
+        $ok = file_put_contents(SGL_PATH . '/var/INSTALL_COMPLETE.php', $newFile);
     }   
 }
 ?>

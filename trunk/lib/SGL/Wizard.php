@@ -79,6 +79,7 @@ class SGL_Wizard extends SGL_Manager
     function SGL_Wizard()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
     }
 
     function maintainState(&$obj)

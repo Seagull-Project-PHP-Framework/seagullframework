@@ -34,7 +34,10 @@
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Authors:                                                                  |
+// |            Demian Turner <demian@phpkitchen.com>                          |
+// |            Gerry Lachac <glachac@tethermedia.com>                         |
+// |            Andy Crain <apcrain@fuse.net>                                  |
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
@@ -132,7 +135,7 @@ paths setup
 ===========
 allow enduser to dynamically setup paths, ie, for hosted environments
 
-*/
+*/ 
 
 //  initialise
 session_start();
@@ -146,11 +149,42 @@ $init->addTask(new SGL_Task_SetupPaths());
 $init->addTask(new SGL_Task_SetupConstants());
 $init->main();
 
+//  reroute to front controller
+if (isset($_GET['start'])) {
+    
+    //  remove installer info
+    $_SESSION = array();    
+    header('Location: index.php');
+    exit;
+}
+
+//  check authorization
+if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php') 
+        && !empty($_SESSION['valid'])
+        && $_SESSION['valid'] === true) {
+    SGL_Install::printHeader();
+    SGL_Install::printLoginForm();
+    SGL_Install::printFooter();
+    
+    if (!empty($_POST['frmPassword'])) {
+        $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
+        $secret = substr($aLines[1], 1);
+        if ($_POST['frmPassword'] != $secret) {
+            $_SESSION['message'] = 'incorrect password';
+            header('Location: setup.php');
+            exit;
+        } else {
+            $_SESSION['valid'] = true;
+        }
+    } else {
+        exit;
+    }
+}
+
 // load QuickFormController libs
 require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Action/Next.php';
 require_once 'HTML/QuickForm/Action/Back.php';
-require_once 'HTML/QuickForm/Action/Jump.php';
 require_once 'HTML/QuickForm/Action/Display.php';
 
 require_once 'DB.php';
@@ -243,7 +277,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_CreateAdminUser());
-//        $runner->addTask(new SGL_Task_RemoveLockfile());
+        $runner->addTask(new SGL_Task_InstallerCleanup());
         
         set_time_limit(60);
         $ok = $runner->main();
@@ -263,10 +297,9 @@ $wizard->addPage(new WizardCreateAdminUser('page5'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller
-$wizard->addAction('display', new ActionDisplay()/*HTML_QuickForm_Action_Display()*/);
+$wizard->addAction('display', new ActionDisplay());
 $wizard->addAction('next', new HTML_QuickForm_Action_Next());
 $wizard->addAction('back', new HTML_QuickForm_Action_Back());
-$wizard->addAction('jump', new HTML_QuickForm_Action_Jump());
 
 // This is the action we should always define ourselves
 $wizard->addAction('process', new ActionProcess());
