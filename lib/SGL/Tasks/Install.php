@@ -513,7 +513,7 @@ class SGL_Task_CreateFileSystem extends SGL_Task
 
 class SGL_Task_CreateDataObjectEntities extends SGL_Task
 {
-    function run($data)
+    function run($data = null)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -561,13 +561,11 @@ class SGL_Task_SyncSequences extends SGL_Task
      * @param   mixed  $tables  string table name or array of string table names
      * @return  true | PEAR Error
      */     
-    function run($data)
+    function run($tables = null)
     {
         $db =& SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
-        $tables = null;
         
         switch ($db->phptype) {
 
