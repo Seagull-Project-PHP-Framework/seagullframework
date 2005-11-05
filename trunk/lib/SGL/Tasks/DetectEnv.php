@@ -8,6 +8,7 @@ define('SGL_RECOMMENDED', 1);
 define('SGL_REQUIRED', 2);
 
 require_once dirname(__FILE__) . '/../Request.php';
+require_once dirname(__FILE__) . '/../Task.php';
 
 function bool2words($key)
 {
