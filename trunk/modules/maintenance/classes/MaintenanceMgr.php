@@ -449,8 +449,8 @@ class MaintenanceMgr extends SGL_Manager
     //    regenerate dataobject entity files
     function _dbgen(&$input, &$output)
     {
-        require_once SGL_CORE_DIR . '/Sql.php';
-        $res = SGL_Sql::generateDataObjectEntities();
+        require_once SGL_CORE_DIR . '/Tasks/Install.php';
+        $res = SGL_Task_CreateDataObjectEntities::run();
         SGL::raiseMsg('Data Objects rebuilt successfully');
         SGL::logMessage($res, PEAR_LOG_DEBUG);
     }
@@ -458,8 +458,8 @@ class MaintenanceMgr extends SGL_Manager
     function _rebuildSequences(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_CORE_DIR . '/Sql.php';
-        $res = SGL_Sql::rebuildSequences();
+        require_once SGL_CORE_DIR . '/Tasks/Install.php';
+        $res = SGL_Task_SyncSequences::run();
         if (PEAR::isError($res)) {
             return $res;
         } else {
@@ -472,7 +472,7 @@ class MaintenanceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $msg = '';
         if (array_key_exists('templates', $input->cache)) {
-            include_once 'System.php';
+            require_once 'System.php';
             $theme = $_SESSION['aPrefs']['theme'];
             $dir = SGL_CACHE_DIR . "/tmpl/$theme";
             $aFiles = System::find("$dir -name *");
