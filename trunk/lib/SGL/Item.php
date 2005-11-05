@@ -39,9 +39,7 @@
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
         
 /**
- * Item class
- *
- * Basic methods for manipulating Item objects.
+ * Acts as a wrapper for content objects.
  *
  * @access  public
  * @author  Demian Turner <demian@phpkitchen.com>

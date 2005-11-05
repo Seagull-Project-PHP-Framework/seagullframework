@@ -39,7 +39,7 @@
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 /**
- * Request wraps all $_GET $_POST $_FILES arrays into a Request object.
+ * Wraps all $_GET $_POST $_FILES arrays into a Request object, provides a number of filtering methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -187,6 +187,10 @@ class SGL_Request
     }
 }
 
+/**
+ * Performs transformations on resource names, ie, urls, classes, methods, variables.
+ *
+ */
 class SGL_Inflector
 {
     /**

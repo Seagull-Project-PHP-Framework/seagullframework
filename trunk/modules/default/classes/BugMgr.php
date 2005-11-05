@@ -130,6 +130,7 @@ class BugMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $output->environment = $this->buildEnvironmentReport();
         $output->aSeverityTypes = $this->aSeverityTypes;          
     }

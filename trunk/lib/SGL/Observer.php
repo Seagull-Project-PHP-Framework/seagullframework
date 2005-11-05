@@ -6,7 +6,6 @@ class SGL_Observer
 
 class SGL_Observable
 {
-    
     var $aObservers = array();
     
     function attach($observer)

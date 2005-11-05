@@ -40,7 +40,7 @@
 require_once 'HTTP/Download.php';
 
 /** 
-* wrapper around PEAR HTTP/Download class to workaround some limits of
+* Wrapper around PEAR HTTP/Download class to workaround some limits of
 * that class.
 *
 * @package SGL

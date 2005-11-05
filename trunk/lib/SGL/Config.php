@@ -42,7 +42,7 @@
 require_once dirname(__FILE__) . '/ParamHandler.php';
 
 /**
- * Config file parsing and handling.
+ * Config file parsing and handling, acts as a registry for config data.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>

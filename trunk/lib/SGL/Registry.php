@@ -39,7 +39,7 @@
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 /**
- * Temporary data and resource storage.
+ * Generic data storage object, referred to as $input.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>

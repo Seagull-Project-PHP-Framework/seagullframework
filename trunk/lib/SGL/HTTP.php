@@ -44,7 +44,7 @@ require_once SGL_CORE_DIR . '/Url.php';
 require_once SGL_LIB_DIR  . '/SGL.php';
 
 /**
- * Class for HTTP functionality including redirects.
+ * Provides HTTP functionality including redirects.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>

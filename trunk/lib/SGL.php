@@ -45,7 +45,7 @@ require_once SGL_CORE_DIR . '/HTTP.php';
 require_once SGL_CORE_DIR . '/String.php';
 
 /**
- * Base class the Seagull framework.
+ * Provides a set of static utility methods used by most modules.
  *
  * A set of utility methods used by most modules.
  *
