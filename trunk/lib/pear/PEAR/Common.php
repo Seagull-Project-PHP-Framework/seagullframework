@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.147 2005/09/11 17:51:06 cellog Exp $
+ * @version    CVS: $Id: Common.php,v 1.151 2005/11/04 22:36:31 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1.0
  * @deprecated File deprecated since Release 1.4.0a1
@@ -128,7 +128,7 @@ $GLOBALS['_PEAR_Common_script_phases'] = array('pre-install', 'post-install', 'p
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  * @deprecated This class will disappear, and its components will be spread
@@ -712,6 +712,7 @@ class PEAR_Common extends PEAR
                     continue;
                 } else {
                     $inquote = false;
+                    continue;
                 }
             }
             switch ($token) {
@@ -762,9 +763,10 @@ class PEAR_Common extends PEAR
                     if (version_compare(zend_version(), '2.0', '<')) {
                         if (in_array(strtolower($data),
                             array('public', 'private', 'protected', 'abstract',
-                                  'interface', 'implements', 'clone', 'throw') 
+                                  'interface', 'implements', 'throw') 
                                  )) {
-                            PEAR::raiseError('Error: PHP5 packages must be packaged by php 5 PEAR');
+                            PEAR::raiseError('Error: PHP5 token encountered in ' . $file . 
+                            'packaging should be done in PHP 5');
                             return false;
                         }
                     }
@@ -1124,4 +1126,15 @@ class PEAR_Common extends PEAR
 }
 require_once 'PEAR/Config.php';
 require_once 'PEAR/PackageFile.php';
+if (!function_exists('file_get_contents')) {
+    function file_get_contents($filename)
+    {
+        $fp = fopen($filename, 'rb');
+        $ret = '';
+        while (!feof($fp)) {
+            $ret .= fread($fp, 8092);;
+        }
+        return $ret;
+    }
+}
 ?>

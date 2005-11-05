@@ -24,6 +24,11 @@
 * @abstract 
 * does all the clever stuff...
 *
+* Security Notes:
+*   Templates should not originate from untrusted sources, 
+*    - the  method(#.....#) could be regarded as insecure.
+*    - there is no attempt to protect your from <script / <?php in templates.
+*
 * @package    HTML_Template_Flexy
 *  
 */  

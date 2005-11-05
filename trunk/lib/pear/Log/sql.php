@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /repository/pear/Log/Log/sql.php,v 1.36 2005/06/30 06:07:44 jon Exp $
+ * $Header: /repository/pear/Log/Log/sql.php,v 1.39 2005/10/25 16:42:53 jon Exp $
  * $Horde: horde/lib/Log/sql.php,v 1.12 2000/08/16 20:27:34 chuck Exp $
  *
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.39 $
  * @package Log
  */
 
@@ -41,6 +41,14 @@ class Log_sql extends Log
      * @access private
      */
     var $_dsn = '';
+
+    /**
+     * String containing the SQL insertion statement.
+     *
+     * @var string
+     * @access private
+     */
+    var $_sql = '';
 
     /**
      * Array containing our set of DB configuration options.
@@ -109,9 +117,17 @@ class Log_sql extends Log
         $this->_table = $name;
         $this->_mask = Log::UPTO($level);
 
+        /* Now that we have a table name, assign our SQL statement. */
+        if (!empty($this->_sql)) {
+            $this->_sql = $conf['sql'];
+        } else {
+            $this->_sql = 'INSERT INTO ' . $this->_table .
+                          ' (id, logtime, ident, priority, message)' .
+                          ' VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?)';
+        }
+
         /* If an options array was provided, use it. */
-        if (isset($conf['options']) && is_array($conf['options']))
-        {
+        if (isset($conf['options']) && is_array($conf['options'])) {
             $this->_options = $conf['options'];
         }
 
@@ -155,11 +171,7 @@ class Log_sql extends Log
             }
 
             /* Create a prepared statement for repeated use in log(). */
-            $this->_statement =
-                $this->_db->prepare('INSERT INTO ' . $this->_table .
-                                    ' (id, logtime, ident, priority, message)' .
-                                    ' VALUES(?, CURRENT_TIMESTAMP, ?, ?, ?)');
-            if (DB::isError($this->_statement)) {
+            if (!$this->_prepareStatement()) {
                 return false;
             }
 
@@ -234,6 +246,11 @@ class Log_sql extends Log
             return false;
         }
 
+        /* If we don't already have our statement object yet, create it. */
+        if (!is_object($this->_statement) && !$this->_prepareStatement()) {
+            return false;
+        }
+
         /* Extract the string representation of the message. */
         $message = $this->_extractMessage($message);
 
@@ -252,4 +269,19 @@ class Log_sql extends Log
         return true;
     }
 
+    /**
+     * Prepare the SQL insertion statement.
+     *
+     * @return boolean  True if the statement was successfully created.
+     *
+     * @access  private
+     * @since   Log 1.9.1
+     */
+    function _prepareStatement()
+    {
+        $this->_statement = $this->_db->prepare($this->_sql);
+
+        /* Return success if we didn't generate an error. */
+        return (DB::isError($this->_statement) === false);
+    }
 }

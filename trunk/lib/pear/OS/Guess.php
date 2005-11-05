@@ -16,7 +16,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Guess.php,v 1.19 2005/09/27 02:55:26 cellog Exp $
+ * @version    CVS: $Id: Guess.php,v 1.20 2005/10/26 19:33:03 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since PEAR 0.1
  */
@@ -93,7 +93,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -201,10 +201,42 @@ class OS_Guess
         if ($glibc !== false) {
             return $glibc; // no need to run this multiple times
         }
-        // Use glibc's <features.h> header file to
-        // get major and minor version number:
         include_once "System.php";
         if (!file_exists('/usr/bin/cpp') || !is_executable('/usr/bin/cpp')) {
+            // Use glibc's <features.h> header file to
+            // get major and minor version number:
+            if ($features_file = @fopen('/usr/include/features.h', 'rb') ) {
+                while (!feof($features_file)) {
+                    $line = fgets($features_file, 8192);
+                    if (!$line || (strpos($line, '#define') === false)) {
+                        continue;
+                    }
+                    if (strpos($line, '__GLIBC__')) {
+                        // major version number #define __GLIBC__ version
+                        $line = preg_split('/\s+/', $line);
+                        $glibc_major = trim($line[2]);
+                        if (isset($glibc_minor)) {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (strpos($line, '__GLIBC_MINOR__'))  {
+                        // got the minor version number
+                        // #define __GLIBC_MINOR__ version
+                        $line = preg_split('/\s+/', $line);
+                        $glibc_minor = trim($line[2]);
+                        if (isset($glibc_major)) {
+                            break;
+                        }
+                        continue;
+                    }
+                }
+                fclose($features_file);
+                if (!isset($glibc_major) || !isset($glibc_minor)) {
+                    return $glibc = '';
+                }
+                return $glibc = 'glibc' . trim($glibc_major) . "." . trim($glibc_minor) ;
+            }
             return $glibc = '';
         }
         $tmpfile = System::mktemp("glibctest");

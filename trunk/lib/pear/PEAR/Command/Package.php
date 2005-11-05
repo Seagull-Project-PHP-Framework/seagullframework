@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.113 2005/10/08 23:40:37 cellog Exp $
+ * @version    CVS: $Id: Package.php,v 1.114 2005/10/26 19:14:14 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -995,7 +995,7 @@ used for automated conversion or learning the format.
                                     for ($i = 0; $i < count($dep['exclude']) - 1; $i++) {
                                         $newdeprange[] = '(' .
                                             $package . " {$lastmin[1]} {$lastmin[0]} and " .
-                                            $package . ' < ' . $dep[exclude][$i] . ')';
+                                            $package . ' < ' . $dep['exclude'][$i] . ')';
                                         $lastmin = array($dep['exclude'][$i], '>');
                                     }
                                     if (isset($dep['max'])) {

@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.219 2005/09/28 22:13:51 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.220 2005/11/01 22:28:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -467,8 +467,12 @@ class PEAR_Installer extends PEAR_Downloader
         if (!$role->isInstallable()) {
             return;
         }
-        list($save_destdir, $dest_dir, $dest_file, $orig_file) =
-            $role->processInstallation($pkg, $atts['attribs'], $file, $tmp_path);
+        $info = $role->processInstallation($pkg, $atts['attribs'], $file, $tmp_path);
+        if (PEAR::isError($info)) {
+            return $info;
+        } else {
+            list($save_destdir, $dest_dir, $dest_file, $orig_file) = $info;
+        }
         $final_dest_file = $installed_as = $dest_file;
         $dest_dir = dirname($final_dest_file);
         $dest_file = $dest_dir . DIRECTORY_SEPARATOR . '.tmp' . basename($final_dest_file);

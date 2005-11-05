@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome>                               |
 // +----------------------------------------------------------------------+
 //
-// $Id: Tag.php,v 1.20 2005/05/25 04:31:29 alan_k Exp $
+// $Id: Tag.php,v 1.23 2005/10/10 05:01:19 alan_k Exp $
 /* FC/BC compatibility with php5 */
 if ( (substr(phpversion(),0,1) < 5) && !function_exists('clone')) {
     eval('function clone($t) { return $t; }');
@@ -31,10 +31,11 @@ if ( (substr(phpversion(),0,1) < 5) && !function_exists('clone')) {
 * one instance of these exists for each namespace.
 *
 *
-* @version    $Id: Tag.php,v 1.20 2005/05/25 04:31:29 alan_k Exp $
+* @version    $Id: Tag.php,v 1.23 2005/10/10 05:01:19 alan_k Exp $
 */
 
-class HTML_Template_Flexy_Compiler_Flexy_Tag {
+class HTML_Template_Flexy_Compiler_Flexy_Tag 
+{
 
         
     /**
@@ -76,7 +77,8 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
         
         $filename = 'HTML/Template/Flexy/Compiler/Flexy/' . ucfirst(strtolower($type)) . '.php';
         if (!HTML_Template_Flexy_Compiler_Flexy_Tag::fileExistsInPath($filename)) {
-            return HTML_Template_Flexy_Compiler_Flexy_Tag::factory('Tag',$compiler);
+            $ret = HTML_Template_Flexy_Compiler_Flexy_Tag::factory('Tag',$compiler);
+            return $ret; 
         }
         // if we dont have a handler - just use the basic handler.
         if (!file_exists(dirname(__FILE__) . '/'. ucfirst(strtolower($type)) . '.php')) {
@@ -87,9 +89,11 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
         
         $class = 'HTML_Template_Flexy_Compiler_Flexy_' . $type;
         if (!class_exists($class)) {
-            return false;
+            $ret = false;
+            return $ret;
         }
-        return HTML_Template_Flexy_Compiler_Flexy_Tag::factory($type,$compiler);
+        $ret = HTML_Template_Flexy_Compiler_Flexy_Tag::factory($type,$compiler);
+        return $ret;
     }
     /**
     *   
@@ -614,9 +618,9 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
                 null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
         }
         
-        if ((strtolower($this->element->getAttribute('type')) == 'checkbox' ) && 
-                (substr($this->element->getAttribute('name'),-2) == '[]')) {
-            if ($this->element->getAttribute('id') === false) {
+        if ((strtolower($this->element->getAttribute('TYPE')) == 'checkbox' ) && 
+                (substr($this->element->getAttribute('NAME'),-2) == '[]')) {
+            if ($this->element->getAttribute('ID') === false) {
                 $id = 'tmpId'. (++$tmpId);
                 $this->element->attributes['id'] = $id;
                 $this->element->ucAttributes['ID'] = $id;
@@ -737,18 +741,41 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
         }
         
         if ($var = $this->element->getAttribute('FLEXY:NAMEUSES')) {
+            // force var to use name (as radio buttons pick up id.)
             
-            $var = 'sprintf(\''.$id .'\','.$this->element->toVar($var) .')';
-            return  $ret . 
-                'if (!isset($this->elements['.$var.'])) $this->elements['.$var.']= $this->elements[\''.$id.'\'];
-                $this->elements['.$var.'] = $this->mergeElement($this->elements[\''.$id.'\'],$this->elements['.$var.']);
-                $this->elements['.$var.']->attributes[\'name\'] = '.$var. ';
-                echo $this->elements['.$var.']->toHtml();' .$unset; 
+            $ename = $this->element->getAttribute('NAME');
+            $printfnamevar = $printfvar = 'sprintf(\''.$ename .'\','.$this->element->toVar($var) .')';
+            // support id replacement as well ...
+            $idreplace = '';
+           
+            
+            if (strtolower($this->element->getAttribute('TYPE')) == 'radio') {
+                $ename = $this->element->getAttribute('ID');
+                $printfvar = 'sprintf(\''.$ename .'\','.$this->element->toVar($var) .')';
+            }
+            if ($this->element->getAttribute('ID')) {
+                $idvar     = 'sprintf(\''.$this->element->getAttribute('ID') .'\','.$this->element->toVar($var) .')';
+                $idreplace = '$this->elements['.$printfvar.']->attributes[\'id\'] = '.$idvar.';';
+            }
+            return  $ret . '
+                if (!isset($this->elements['.$printfvar.'])) {
+                   $this->elements['.$printfvar.']= $this->elements[\''.$id.'\'];
+                }
+                $this->elements['.$printfvar.'] = $this->mergeElement(
+                    $this->elements[\''.$id.'\'],
+                    $this->elements['.$printfnamevar .']
+                );
+                $this->elements['.$printfvar.']->attributes[\'name\'] = '.$printfnamevar. ';
+                ' . $idreplace . '
+                echo $this->elements['.$printfvar.']->toHtml();' .$unset; 
         }
         
         
         if ($mergeWithName) {
             $name = $this->element->getAttribute('NAME');
+            //if ((strtolower($this->element->getAttribute('TYPE')) == 'checkbox') && (substr($name,-2) == '[]')) {
+            //    $name = substr($name,0,-2);
+            //}
             return  $ret . 
                 '$element = $this->elements[\''.$id.'\'];
                 $element = $this->mergeElement($element,$this->elements[\''.$name.'\']);
@@ -765,7 +792,8 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
     * @return   false|PEAR_Error 
     * @access   public
     */
-    function parseTagScript() {
+    function parseTagScript() 
+    {
         
         
         $lang = $this->element->getAttribute('LANGUAGE');
@@ -991,7 +1019,8 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
     * @return   object HTML_Template_Flexy_Element
     * @access   public
     */
-    function toElement($element) {
+    function toElement($element) 
+    {
         require_once 'HTML/Template/Flexy/Element.php';
         $ret = new HTML_Template_Flexy_Element;
         
@@ -1081,7 +1110,8 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag {
     */
   
     
-    function elementUsesDynamic($e) {
+    function elementUsesDynamic($e) 
+    {
         if (is_a($e,'HTML_Template_Flexy_Token_Var')) {
             return true;
         }

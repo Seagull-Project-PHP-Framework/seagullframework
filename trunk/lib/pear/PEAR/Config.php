@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.118 2005/09/23 16:40:08 cellog Exp $
+ * @version    CVS: $Id: Config.php,v 1.122 2005/11/03 04:52:26 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -216,7 +216,7 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -544,7 +544,9 @@ class PEAR_Config extends PEAR
         $this->files['user'] = $user_file;
         $this->files['system'] = $system_file;
         if ($user_file && @file_exists($user_file)) {
+            $this->pushErrorHandling(PEAR_ERROR_RETURN);
             $this->readConfigFile($user_file, 'user', $strict);
+            $this->popErrorHandling();
             if ($this->_errorsFound > 0) {
                 return;
             }
@@ -1009,13 +1011,12 @@ class PEAR_Config extends PEAR
     // }}}
 
     /**
-     * @param PEAR_Installer_Role_Common
+     * @param array information on a role as parsed from its xml file
      * @return true|PEAR_Error
      * @access private
      */
-    function _addConfigVars($role)
+    function _addConfigVars($vars)
     {
-        $vars = call_user_func(array($role, 'getSupportingConfigVars'));
         if (count($vars) > 3) {
             return $this->raiseError('Roles can only define 3 new config variables or less');
         }
@@ -1036,6 +1037,36 @@ class PEAR_Config extends PEAR
             if (!isset($var['default'])) {
                 return $this->raiseError(
                     'Configuration information must contain a default value ("default" index)');
+            } else {
+                if (is_array($var['default'])) {
+                    $real_default = '';
+                    foreach ($var['default'] as $config_var => $val) {
+                        if (strpos($config_var, 'text') === 0) {
+                            $real_default .= $val;
+                        } elseif (strpos($config_var, 'constant') === 0) {
+                            if (defined($val)) {
+                                $real_default .= constant($val);
+                            } else {
+                                return $this->raiseError(
+                                    'Unknown constant "' . $val . '" requested in ' .
+                                    'default value for configuration variable "' .
+                                    $name . '"');
+                            }
+                        } elseif (isset($this->configuration_info[$config_var])) {
+                            $real_default .=
+                                $this->configuration_info[$config_var]['default'];
+                        } else {
+                            return $this->raiseError(
+                                'Unknown request for "' . $config_var . '" value in ' .
+                                'default value for configuration variable "' .
+                                $name . '"');
+                        }
+                    }
+                    $var['default'] = $real_default;
+                }
+                if ($var['type'] == 'integer') {
+                    $var['default'] = (integer) $var['default'];
+                }
             }
             if (!isset($var['doc'])) {
                 return $this->raiseError(
@@ -1057,6 +1088,7 @@ class PEAR_Config extends PEAR
         }
         return true;
     }
+
     // {{{ _encodeOutput(&data)
 
     /**
