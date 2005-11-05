@@ -47,7 +47,7 @@ require_once SGL_LIB_DIR . '/SGL.php';
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Output.php';
 require_once SGL_CORE_DIR . '/String.php';
-require_once SGL_CORE_DIR . '/Process.php';
+require_once SGL_CORE_DIR . '/Tasks/Process.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'HTML/Template/Flexy.php';
 
