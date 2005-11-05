@@ -44,7 +44,7 @@ define('SGL_CENSOR_WORD_BEGINNING', 2);
 define('SGL_CENSOR_WORD_FRAGMENT',  3);
 
 /**
- * Various string related methods.
+ * Various string helper methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -522,7 +522,7 @@ class SGL_String
 }
 
 /**
- * Array manipulation methods.
+ * Provides array manipulation methods.
  *
  */
 class SGL_Array
@@ -545,7 +545,7 @@ class SGL_Array
 }
 
 /**
- * Various date related methods.
+ * Provides various date formatting methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>

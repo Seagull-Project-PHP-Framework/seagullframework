@@ -549,9 +549,18 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
             SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini');
     }   
 }
-
+ 
 class SGL_Task_SyncSequences extends SGL_Task
 {
+    /**
+     * Creates new or updates existing sequences, based on max(primary key).
+     * Default is to act on all tables in db, unless specified in $tables.
+     *
+     * @access  public
+     * @static
+     * @param   mixed  $tables  string table name or array of string table names
+     * @return  true | PEAR Error
+     */     
     function run($data)
     {
         $db =& SGL_DB::singleton();
