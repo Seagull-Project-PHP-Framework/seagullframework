@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.77 2005/10/03 03:20:14 cellog Exp $
+// $Id: Validator.php,v 1.82 2005/10/27 05:07:24 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -1012,7 +1012,8 @@ class PEAR_PackageFile_v2_Validator
             foreach ($list['file'] as $i => $file)
             {
                 if (isset($file['attribs']) && isset($file['attribs']['name']) &&
-                      $file['attribs']['name']{0} == '.') {
+                      $file['attribs']['name']{0} == '.' &&
+                        $file['attribs']['name']{1} == '/') {
                     // name is something like "./doc/whatever.txt"
                     $this->_invalidFileName($file['attribs']['name']);
                 }
@@ -1317,8 +1318,8 @@ class PEAR_PackageFile_v2_Validator
     function _invalidFileName($file, $dir)
     {
         $this->_stack->push(__FUNCTION__, 'error', array(
-            'file' => $file, 'dir' => $dir),
-            'File "%file%" in directory "%dir%" cannot begin with "."');
+            'file' => $file),
+            'File "%file%" cannot begin with "."');
     }
 
     function _filelistCannotContainFile($filelist)
@@ -1436,22 +1437,22 @@ class PEAR_PackageFile_v2_Validator
     {
         switch ($ret[0]) {
             case PEAR_TASK_ERROR_MISSING_ATTRIB :
-                $info = array('attrib' => $ret[1], 'task' => $task);
+                $info = array('attrib' => $ret[1], 'task' => $task, 'file' => $file);
                 $msg = 'task <%task%> is missing attribute "%attrib%" in file %file%';
             break;
             case PEAR_TASK_ERROR_NOATTRIBS :
-                $info = array('task' => $task);
+                $info = array('task' => $task, 'file' => $file);
                 $msg = 'task <%task%> has no attributes in file %file%';
             break;
             case PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE :
                 $info = array('attrib' => $ret[1], 'values' => $ret[3],
-                    'was' => $ret[2], 'task' => $task);
+                    'was' => $ret[2], 'task' => $task, 'file' => $file);
                 $msg = 'task <%task%> attribute "%attrib%" has the wrong value "%was%" '.
                     'in file %file%, expecting one of "%values%"';
             break;
             case PEAR_TASK_ERROR_INVALID :
-                $info = array('reason' => $ret[1], 'task' => $task);
-                $msg = 'task <%task%> is invalid because of "%reason%"';
+                $info = array('reason' => $ret[1], 'task' => $task, 'file' => $file);
+                $msg = 'task <%task%> in file %file% is invalid because of "%reason%"';
             break;
         }
         $this->_stack->push(__FUNCTION__, 'error', $info, $msg);
@@ -1778,6 +1779,7 @@ class PEAR_PackageFile_v2_Validator
                     continue;
                 } else {
                     $inquote = false;
+                    continue;
                 }
             }
             switch ($token) {
@@ -1829,10 +1831,12 @@ class PEAR_PackageFile_v2_Validator
                     if (version_compare(zend_version(), '2.0', '<')) {
                         if (in_array(strtolower($data),
                             array('public', 'private', 'protected', 'abstract',
-                                  'interface', 'implements', 'clone', 'throw') 
+                                  'interface', 'implements', 'throw') 
                                  )) {
-                            $this->_stack->push(__FUNCTION__, 'warning', array(),
-                                'Error, PHP5 token encountered, analysis should be in PHP5');
+                            $this->_stack->push(__FUNCTION__, 'warning', array(
+                                'file' => $file),
+                                'Error, PHP5 token encountered in %file%,' .
+                                ' analysis should be in PHP5');
                         }
                     }
                     if ($look_for == T_CLASS) {

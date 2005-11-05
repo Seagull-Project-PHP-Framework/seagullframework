@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.114 2005/09/27 04:12:53 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.117 2005/10/30 19:10:51 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/ErrorStack.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -310,7 +310,8 @@ class PEAR_PackageFile_v2
             $this->_differentSummary($pf1->getSummary());
             $pass = false;
         }
-        if (trim($pf1->getDescription()) != $this->getDescription()) {
+        if (preg_replace('/\s+/', '', $pf1->getDescription()) !=
+              preg_replace('/\s+/', '', $this->getDescription())) {
             $this->_differentDescription($pf1->getDescription());
             $pass = false;
         }
@@ -318,7 +319,8 @@ class PEAR_PackageFile_v2
             $this->_differentState($pf1->getState());
             $pass = false;
         }
-        if (!strstr(trim($this->getNotes()), trim($pf1->getNotes()))) {
+        if (!strstr(preg_replace('/\s+/', '', $this->getNotes()),
+              preg_replace('/\s+/', '', $pf1->getNotes()))) {
             $this->_differentNotes($pf1->getNotes());
             $pass = false;
         }
@@ -464,6 +466,14 @@ class PEAR_PackageFile_v2
     function setRawState($state)
     {
         $this->_packageInfo['stability']['release'] = $state;
+    }
+
+    /**
+     * WARNING - do not use this function unless you know what you're doing
+     */
+    function setRawCompatible($compatible)
+    {
+        $this->_packageInfo['compatible'] = $compatible;
     }
 
     /**
@@ -1822,6 +1832,9 @@ class PEAR_PackageFile_v2
     function analyzeSourceCode($file, $string = false)
     {
         if (!isset($this->_v2Validator)) {
+            if (!class_exists('PEAR_PackageFile_v2_Validator')) {
+                require_once 'PEAR/PackageFile/v2/Validator.php';
+            }
             $this->_v2Validator = new PEAR_PackageFile_v2_Validator;
         }
         return $this->_v2Validator->analyzeSourceCode($file, $string);

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.108 2005/09/25 20:27:27 cellog Exp $
+ * @version    CVS: $Id: Install.php,v 1.109 2005/10/26 19:37:14 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.2
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -53,6 +53,10 @@ class PEAR_Command_Install extends PEAR_Command_Common
                 'force' => array(
                     'shortopt' => 'f',
                     'doc' => 'will overwrite newer installed packages',
+                    ),
+                'loose' => array(
+                    'shortopt' => 'l',
+                    'doc' => 'do not check for recommended dependency version',
                     ),
                 'nodeps' => array(
                     'shortopt' => 'n',
@@ -135,6 +139,10 @@ four ways of specifying packages.
                     'shortopt' => 'f',
                     'doc' => 'overwrite newer installed packages',
                     ),
+                'loose' => array(
+                    'shortopt' => 'l',
+                    'doc' => 'do not check for recommended dependency version',
+                    ),
                 'nodeps' => array(
                     'shortopt' => 'n',
                     'doc' => 'ignore dependencies, upgrade anyway',
@@ -214,6 +222,9 @@ More than one package may be specified at once.
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
+                    ),
+                'loose' => array(
+                    'doc' => 'do not check for recommended dependency version',
                     ),
                 ),
             'doc' => '

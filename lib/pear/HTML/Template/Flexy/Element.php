@@ -17,7 +17,7 @@
 // | Based on HTML_Common by: Adam Daniel <adaniel1@eesus.jnj.com>        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Element.php,v 1.36 2005/05/18 06:05:12 alan_k Exp $
+// $Id: Element.php,v 1.37 2005/10/10 05:36:08 alan_k Exp $
 
 /**
  * Lightweight HTML Element builder and render
@@ -265,7 +265,11 @@ class HTML_Template_Flexy_Element {
                         if (isset($this->attributes['checked'])) {
                             unset($this->attributes['checked']);
                         }
-                        
+                        // if we dont have values associated yet, store it..
+                        if (!isset($this->attributes['value'])) {
+                            $this->value = $value;
+                            return;
+                        }
                         if ($this->attributes['value'] == $value) {
                             $this->attributes['checked'] =  true;
                         }
@@ -324,11 +328,11 @@ class HTML_Template_Flexy_Element {
                     // standard option value...
                     //echo "testing {$child->attributes['value']} against ". print_r($value,true)."\n";
                     // does the value exist and match..
-                    
+                     
                     if (isset($child->attributes['value']) 
                         && in_array((string) $child->attributes['value'], $value)) 
                     {
-                       // echo "MATCH!\n";
+                        
                       
                         $this->children[$i]->attributes['selected'] = 
                             isset($this->attributes['flexy:xhtml']) ? 'selected' : true;;
