@@ -189,7 +189,7 @@ class STR_TestEnv
             //  if we're testing a sgl install, update sequences after loading data
             if (isset($GLOBALS['_SGL'])) {
                 require_once SGL_CORE_DIR . '/Sql.php';
-                SGL_Sql::rebuildSequences();   
+                STR_DB::rebuildSequences();   
             }
         }
         // Store the layer in a global variable, so the environment
@@ -211,14 +211,6 @@ class STR_TestEnv
         if ($envType != NO_DB) {
             STR_TestEnv::teardownDB();
         }
-    }
-    
-    /**
-     * A method for rebuilding the database sequences.
-     */
-    function rebuildSequences()
-    {
-        
     }
     
     /**
