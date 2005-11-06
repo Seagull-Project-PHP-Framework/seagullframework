@@ -56,7 +56,8 @@ class SGL_Config
     function SGL_Config($autoLoad = true)
     {
         if ($this->isEmpty() && $autoLoad) {
-            $configFile = dirname(__FILE__)  . '/../../var/' . $this->hostnameToFilename() . '.conf.php';                    
+            $configFile = dirname(__FILE__)  . '/../../var/' 
+                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';                    
             $conf = $this->load($configFile);
             $this->fileName = $configFile;
             $this->replace($conf);
@@ -146,58 +147,4 @@ class SGL_Config
     {
         return count($this->aProps) ? false : true;   
     }
-    
-    /**
-     * Ini file protection.
-     *
-     * By giving ini files a php extension, and inserting some PHP die() code,
-     * we can improve security in situations where browsers might be able to
-     * read them.  Thanks to Georg Gell for the idea.
-     *
-     * @param unknown_type $file
-     */
-    function makeIniUnreadable($file)
-    {
-        $iniFle = file($file);
-        $string = ';<?php die("Eat dust"); ?>' . "\n";
-        array_unshift($iniFle, $string);
-        file_put_contents($file, implode("", $iniFle));
-    }
-    
-/**
- * Determines the name of the INI file, based on the host name.
- *
- * If PHP is being run interactively (CLI) where no $_SERVER vars
- * are available, a default 'localhost' is supplied.
- *
- * @return  string  the name of the host
- */
-function hostnameToFilename()
-{
-    //  start with a default
-    $hostName = 'localhost';
-    if (php_sapi_name() != 'cli') {
-
-        // Determine the host name
-        if (!empty($_SERVER['SERVER_NAME'])) {
-            $hostName = $_SERVER['SERVER_NAME'];
-            
-        } elseif (!empty($_SERVER['HTTP_HOST'])) {
-            //  do some spoof checking here, like
-            //  if (gethostbyname($_SERVER['HTTP_HOST']) != $_SERVER['SERVER_ADDR'])
-            $hostName = $_SERVER['HTTP_HOST'];
-        } else {
-            //  if neither of these variables are set
-            //  we're going to have a hard time setting up
-            die('Could not determine your server name');
-        }
-        // Determine if the port number needs to be added onto the end
-        if (!empty($_SERVER['SERVER_PORT']) 
-                && $_SERVER['SERVER_PORT'] != 80 
-                && $_SERVER['SERVER_PORT'] != 443) {
-            $hostName .= '_' . $_SERVER['SERVER_PORT'];
-        }
-    }
-    return $hostName;
-}
 }

@@ -92,10 +92,12 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         switch ($callingPage) {
+            
         case SGL_SORTBY_GRP:
             $sortByType = 'Grp';
             $sessSortBy = SGL_HTTP_Session::get('sortByGrp');
             break;
+            
         case SGL_SORTBY_USER:
             $sortByType = 'User';
             $sessSortBy = SGL_HTTP_Session::get('sortByUser');
@@ -311,6 +313,23 @@ class SGL_Util
             $aRet[$oFile->name] = $oFile->name;
         }
         return $aRet;
+    }
+    
+    /**
+     * Ini file protection.
+     *
+     * By giving ini files a php extension, and inserting some PHP die() code,
+     * we can improve security in situations where browsers might be able to
+     * read them.  Thanks to Georg Gell for the idea.
+     *
+     * @param string $file
+     */
+    function makeIniUnreadable($file)
+    {
+        $iniFle = file($file);
+        $string = ';<?php die("Eat dust"); ?>' . "\n";
+        array_unshift($iniFle, $string);
+        file_put_contents($file, implode("", $iniFle));
     }
 }
 ?>

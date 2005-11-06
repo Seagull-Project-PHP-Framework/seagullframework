@@ -212,25 +212,25 @@ function scpChangelogToSglSite()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvnAndPackage
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
 generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
-scpApiDocsToSglSite
+#scpApiDocsToSglSite
 
-scpChangelogToSglSite
+#scpChangelogToSglSite
 
 exit 0
