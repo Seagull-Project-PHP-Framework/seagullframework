@@ -150,21 +150,10 @@ class SGL_DB
         $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
 
         if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
-//            $c = &SGL_Config::singleton();
-//            $conf = $c->getAll();
             $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
 
-            //  if db connect fails and we're installing, return error info
-//            if ((DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]) 
-//                    && isset($conf['db']['bootstrap']) 
-//                    && ($conf['db']['bootstrap'] == 1))
-//                    
-//                    //  a connection with no DB name will still return a PEAR::DB object
-//                    || empty($conf['db']['name'])) {
-//                return $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
-
             //  if db connect fails and seagull is already configured, die
-            /*} else*/if (DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5])) {
+            if (DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5])) {
                 SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                     SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
             }
@@ -175,6 +164,7 @@ class SGL_DB
     
     /**
      * Helper method - Rewrite the query into a "SELECT COUNT(*)" query.
+     *
      * @param string $sql query
      * @return string rewritten query OR false if the query can't be rewritten
      * @access private
