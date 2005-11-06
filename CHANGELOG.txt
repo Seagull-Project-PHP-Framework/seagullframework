@@ -9,6 +9,11 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+06-11-05    Moved all core classes that doubled up with other classes to reduce
+            file loading to seagull/lib/SGL/Other.php.  Currently this contains
+            SGL_Array, SGL_Date and SGL_Inflector.  Should make libs easier to find:
+            if you don't see a file named the same as the lib you want, it will most
+            likely be in Other.php
 04-11-05    New wizard can only be accessed if admin knows password stored in
             seagull/var/INSTALL_COMPLETE.php.  Installer is invoked automatically
             on first seagull install, and can be called manually by calling setup.php
