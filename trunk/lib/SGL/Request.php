@@ -254,7 +254,7 @@ class SGL_Inflector
         
         //  compensate for case-sensitivity
         $corrected = SGL_Inflector::caseFix($fullMgrName, true);
-        $path = SGL_MOD_DIR .'/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+        $path = dirname(__FILE__) .'/../../modules/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
         
         //  if the file exists, mgr name is valid and has not been omitted 
         return !file_exists($path);

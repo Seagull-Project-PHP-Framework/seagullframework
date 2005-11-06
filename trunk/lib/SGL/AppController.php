@@ -39,18 +39,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
-if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
-    apd_set_pprof_trace();
-}
-
-require_once SGL_LIB_DIR . '/SGL.php';
-require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_CORE_DIR . '/Output.php';
-require_once SGL_CORE_DIR . '/String.php';
-require_once SGL_CORE_DIR . '/Tasks/Process.php';
-require_once SGL_CORE_DIR . '/HTTP.php';
-require_once 'HTML/Template/Flexy.php';
-
 /**
  * Application controller.
  *
@@ -65,8 +53,21 @@ class SGL_AppController
      *
      */
     function run()
-    {
-        $input = &SGL_Registry::singleton();
+    {       
+        //  get config singleton
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+        
+        //  get current url object
+        $urlHandler = $conf['site']['urlHandler'];
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
+
+        //  assign to registry
+        $input = &SGL_Registry::singleton();        
+        $input->setCurrentUrl($url);        
         $input->setRequest($req = SGL_Request::singleton());
         
         $process =  new SGL_Process_Init(
@@ -180,6 +181,7 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
         
         //  prepare flexy object
+        require_once 'HTML/Template/Flexy.php';        
         $flexy = $this->initEngine($view->data);
         
         $ok = $flexy->compile($view->data->masterTemplate);
@@ -372,7 +374,6 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
         $this->processRequest = $pr;
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();        
     }
 }
 ?>

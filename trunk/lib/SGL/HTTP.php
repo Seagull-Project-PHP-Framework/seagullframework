@@ -38,10 +38,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: HTTP.php,v 1.36 2005/06/06 22:05:35 demian Exp $
 
-require_once SGL_CORE_DIR . '/Util.php';
-require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_CORE_DIR . '/Url.php';
-require_once SGL_LIB_DIR  . '/SGL.php';
+require_once dirname(__FILE__)  . '/Util.php';
+require_once dirname(__FILE__)  . '/Manager.php';
+require_once dirname(__FILE__)  . '/Url.php';
 
 /**
  * Provides HTTP functionality including redirects.
