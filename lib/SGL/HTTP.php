@@ -112,7 +112,7 @@ class SGL_HTTP
 /**
  * Handles session management.
  *
- * Typically looks like this:
+ * Typically looks like this for an admin login:
     Array
     (
         [uid] => 1

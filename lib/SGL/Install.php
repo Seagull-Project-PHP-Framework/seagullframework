@@ -150,6 +150,11 @@ HTML;
         print $html;
     }
     
+    /**
+     * Returns an array of modules scanned from filesystem.
+     *
+     * @return array
+     */
     function getModuleList() 
     {
         $dir =  SGL_MOD_DIR;
