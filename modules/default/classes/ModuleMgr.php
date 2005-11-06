@@ -39,8 +39,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
-require_once 'DB/DataObject.php';
+require_once dirname(__FILE__) . '/../../../lib/SGL/Manager.php';
 
 define('SGL_ICONS_PER_ROW', 3);
 
@@ -176,6 +175,7 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
         
+        require_once 'DB/DataObject.php';
         $newEntry = DB_DataObject::factory('Module');
         $newEntry->setFrom($input->module);
         $dbh = $newEntry->getDatabaseConnection();
@@ -194,7 +194,7 @@ class ModuleMgr extends SGL_Manager
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $output->action = 'update';
         $output->template  = 'moduleEdit.html';
-        require_once SGL_ENT_DIR . '/Module.php';
+        require_once 'DB/DataObject.php';
         $oModule = DB_DataObject::factory('Module');
         $oModule->get($input->moduleId);
         $output->module = $oModule;
@@ -205,6 +205,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
+        require_once 'DB/DataObject.php';
         $newEntry = DB_DataObject::factory('Module');
         $newEntry->get($input->module->module_id);
         $newEntry->setFrom($input->module);
@@ -222,6 +223,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        require_once 'DB/DataObject.php';
         $rm = DB_DataObject::factory('Module');
         $rm->get($input->module->module_id);
         $rm->delete();
@@ -332,12 +334,13 @@ class ModuleMgr extends SGL_Manager
     function moduleIsRegistered($moduleName)
     {
 
+        $dbh = & SGL_DB::singleton();        
         $query = " 
             SELECT  module_id
             FROM    {$this->conf['table']['module']}
             WHERE   name = '$moduleName'";
 
-        $exists = $this->dbh->getOne($query);
+        $exists = $dbh->getOne($query);
 
         return ! is_null($exists);
     }

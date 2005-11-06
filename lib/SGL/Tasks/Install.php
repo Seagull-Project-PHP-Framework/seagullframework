@@ -1,156 +1,7 @@
 <?php
 require_once dirname(__FILE__) . '/../Task.php';
 
-class SGL_Task_SetupPaths extends SGL_Task
-{
-    /**
-     * Sets up the minimum paths required for framework execution.
-     *
-     * - SGL_SERVER_NAME must always be known in order to rewrite config file
-     * - SGL_PATH is the filesystem root path
-     * - pear include path is setup
-     * - PEAR.php included for errors, etc
-     * 
-     * @param array $data
-     */
-    function run($data)
-    {
-        define('SGL_SERVER_NAME', $this->hostnameToFilename());        
-        define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
-        define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
-        #define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
-        
-        $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
-        if (!$allowed) {
-            //  depends on PHP version being >= 4.3.0
-            if (function_exists('set_include_path')) {
-                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
-            } else {
-                die('You need at least PHP 4.3.0 if you want to run Seagull
-                with safe mode enabled.');
-            }
-        }
-        require_once 'PEAR.php';
-    }
-    
-    /**
-     * Determines the name of the INI file, based on the host name.
-     *
-     * If PHP is being run interactively (CLI) where no $_SERVER vars
-     * are available, a default 'localhost' is supplied.
-     *
-     * @return  string  the name of the host
-     */
-    function hostnameToFilename()
-    {
-        //  start with a default
-        $hostName = 'localhost';
-        if (php_sapi_name() != 'cli') {
-
-            // Determine the host name
-            if (!empty($_SERVER['SERVER_NAME'])) {
-                $hostName = $_SERVER['SERVER_NAME'];
-                
-            } elseif (!empty($_SERVER['HTTP_HOST'])) {
-                //  do some spoof checking here, like
-                //  if (gethostbyname($_SERVER['HTTP_HOST']) != $_SERVER['SERVER_ADDR'])
-                $hostName = $_SERVER['HTTP_HOST'];
-            } else {
-                //  if neither of these variables are set
-                //  we're going to have a hard time setting up
-                die('Could not determine your server name');
-            }
-            // Determine if the port number needs to be added onto the end
-            if (!empty($_SERVER['SERVER_PORT']) 
-                    && $_SERVER['SERVER_PORT'] != 80 
-                    && $_SERVER['SERVER_PORT'] != 443) {
-                $hostName .= '_' . $_SERVER['SERVER_PORT'];
-            }
-        }
-        return $hostName;
-    }
-}
-
-class SGL_Task_SetupConstants extends SGL_Task
-{
-    function run($data)
-    {
-        // framework file structure
-        define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
-        define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
-        define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
-        define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
-        define('SGL_UPLOAD_DIR',                SGL_PATH . '/var/uploads');
-        define('SGL_LIB_DIR',                   SGL_PATH . '/lib');
-        define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
-        define('SGL_MOD_DIR',                   SGL_PATH . '/modules');
-        define('SGL_BLK_DIR',                   SGL_MOD_DIR . '/block/classes/blocks');
-        define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
-        define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
-        define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
-        
-        //  error codes to use with SGL::raiseError()
-        //  start at -100 in order not to conflict with PEAR::DB error codes
-        define('SGL_ERROR_INVALIDARGS',         -101);  // wrong args to function
-        define('SGL_ERROR_INVALIDCONFIG',       -102);  // something wrong with the config
-        define('SGL_ERROR_NODATA',              -103);  // no data available
-        define('SGL_ERROR_NOCLASS',             -104);  // no class exists
-        define('SGL_ERROR_NOMETHOD',            -105);  // no method exists
-        define('SGL_ERROR_NOAFFECTEDROWS',      -106);  // no rows where affected by update/insert/delete
-        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);  // limit queries on unsuppored databases
-        define('SGL_ERROR_INVALIDCALL',         -108);  // overload getter/setter failure
-        define('SGL_ERROR_INVALIDAUTH',         -109);
-        define('SGL_ERROR_EMAILFAILURE',        -110);
-        define('SGL_ERROR_DBFAILURE',           -111);
-        define('SGL_ERROR_DBTRANSACTIONFAILURE',-112);
-        define('SGL_ERROR_BANNEDUSER',          -113);
-        define('SGL_ERROR_NOFILE',              -114);
-        define('SGL_ERROR_INVALIDFILEPERMS',    -115);
-        define('SGL_ERROR_INVALIDSESSION',      -116);
-        define('SGL_ERROR_INVALIDPOST',         -117);
-        define('SGL_ERROR_INVALIDTRANSLATION',  -118);
-        define('SGL_ERROR_FILEUNWRITABLE',      -119);
-        define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
-        define('SGL_ERROR_INVALIDREQUEST',      -121);
-        define('SGL_ERROR_INVALIDTYPE',         -122);
-        define('SGL_ERROR_RECURSION',           -123);
-
-        //  automate sorting
-        define('SGL_SORTBY_GRP',                1);
-        define('SGL_SORTBY_USER',               2);
-        define('SGL_SORTBY_ORG',                3);
-        
-        //  Seagull user types
-        define('SGL_UNASSIGNED',                -1);
-        define('SGL_GUEST',                     0);
-        define('SGL_ADMIN',                     1);
-        define('SGL_MEMBER',                    2);
-        
-        define('SGL_STATUS_DELETED',            0);
-        define('SGL_STATUS_FOR_APPROVAL',       1);
-        define('SGL_STATUS_BEING_EDITED',       2);
-        define('SGL_STATUS_APPROVED',           3);
-        define('SGL_STATUS_PUBLISHED',          4);
-        define('SGL_STATUS_ARCHIVED',           5);
-        
-        //  define return types, k/v pairs, arrays, strings, etc
-        define('SGL_RET_NAME_VALUE',            1);
-        define('SGL_RET_ID_VALUE',              2);
-        define('SGL_RET_ARRAY',                 3);
-        define('SGL_RET_STRING',                4); 
-        define('SGL_ALL_ROLES', 				-2);
-        
-        define('SGL_NOTICES_DISABLED',          0);
-        define('SGL_NOTICES_ENABLED',           1);
-        
-        //  with logging, you can optionally show the file + line no. where 
-        //  SGL::logMessage was called from
-        define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
-    }
-}
-
-class SGL_Task_SetBaseUrl extends SGL_Task
+class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
     function run($data)
     {
@@ -175,7 +26,7 @@ class SGL_Task_CreateConfig extends SGL_Task
 {
     function run($data)
     {
-        $c = &SGL_Config::singleton();
+        $c = &SGL_Config::singleton($autoLoad = false);
         $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
         $c->replace($conf);
         
@@ -203,12 +54,13 @@ class SGL_Task_CreateConfig extends SGL_Task
         
         //  various
         $c->set('site', array('serverTimeOffset' => $data['serverTimeOffset']));
-        $c->set('cookie', array('name' => $data['siteCookie']));
+        $c->set('site', array('baseUrl' => SGL_BASE_URL));
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
         $c->set('site', array('language' => $data['siteLanguage']));
         $c->set('site', array('blocksEnabled' => false));
+        $c->set('cookie', array('name' => $data['siteCookie']));        
         
         //  save
         $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
@@ -560,12 +412,15 @@ class SGL_Task_SyncSequences extends SGL_Task
      * @static
      * @param   mixed  $tables  string table name or array of string table names
      * @return  true | PEAR Error
+     * @todo we need to reinstate this method's ability to receive an array of tables as an argument
      */     
-    function run($tables = null)
+    function run($data = null)
     {
         $db =& SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
+        
+        $tables = null;
         
         switch ($db->phptype) {
 

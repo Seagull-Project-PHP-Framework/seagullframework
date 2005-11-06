@@ -38,7 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
-require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
+require_once dirname(__FILE__) . '/../../../modules/default/classes/ModuleMgr.php';
+require_once dirname(__FILE__) . '/../AppController.php';
 
 /**
  * Simple init task.
@@ -50,6 +51,47 @@ class SGL_Process_Init extends SGL_DecorateProcess
 {
     function process(&$input)
     {
+        $init = new SGL_TaskRunner();
+        $init->addData($this->conf);
+        $init->addTask(new SGL_Task_SetupPaths());
+        $init->addTask(new SGL_Task_SetupConstants());
+        $init->addTask(new SGL_Task_ModifyIniSettings());
+        $init->addTask(new SGL_Task_SetBaseUrl());
+        $init->addTask(new SGL_Task_SetGlobals());
+        $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_EnsureBC());
+        $init->main();
+        
+        if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
+            apd_set_pprof_trace();
+        }
+
+        // load utility lib
+        require_once SGL_LIB_DIR . '/SGL.php';
+
+        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = array(
+            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
+            'schema_location'       => SGL_ENT_DIR,
+            'class_location'        => SGL_ENT_DIR,
+            'require_prefix'        => SGL_ENT_DIR . '/',
+            'class_prefix'          => 'DataObjects_',
+            'debug'                 => 0,
+            'production'            => 0,
+            'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema' => 1,
+        );
+
+        //  start PHP error handler
+        if ($this->conf['debug']['customErrorHandler']) {
+	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
+	        $eh = & new SGL_ErrorHandler();
+	        $eh->startHandler();
+        }
+
+        //  set PEAR error handler
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');
+        
         //  pre PHP 4.3.x workaround
         if (!defined('__CLASS__')) {
             define('__CLASS__', null);

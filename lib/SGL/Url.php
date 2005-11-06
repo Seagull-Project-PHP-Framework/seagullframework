@@ -679,7 +679,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  unless we're running the setup wizard
         if (!isset($conf['setup'])) {
             $c = &SGL_Config::singleton();            
-            $aModuleConfig = $c->load(SGL_MOD_DIR . '/' . $aParsedUri['moduleName'] . '/conf.ini');
+            $aModuleConfig = $c->load(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
 
             if ($aModuleConfig) {
                 $c->merge($aModuleConfig);
