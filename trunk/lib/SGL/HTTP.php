@@ -112,6 +112,38 @@ class SGL_HTTP
 /**
  * Handles session management.
  *
+ * Typically looks like this:
+    Array
+    (
+        [uid] => 1
+        [rid] => 1
+        [oid] => 1
+        [username] => admin
+        [startTime] => 1131308728
+        [lastRefreshed] => 1131309174
+        [key] => 0e3b45dea658ac339d26395ff528db1d
+        [currentResRange] => all
+        [sortOrder] => ASC
+        [aPrefs] => Array
+            (
+                [sessionTimeout] => 1800
+                [timezone] => UTC
+                [theme] => default
+                [dateFormat] => UK
+                [language] => en-iso-8859-15
+                [resPerPage] => 10
+                [showExecutionTimes] => 1
+                [locale] => en_GB
+            )
+    
+        [aPerms] => Array
+            (
+            )
+    
+        [currentCatId] => 1
+        [dataTypeId] => 1
+    )
+ *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.36 $

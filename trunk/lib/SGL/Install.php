@@ -90,7 +90,7 @@ class SGL_Install
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
     
     <style type="text/css" media="screen">
-        @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=faq");
+        @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=default");
     </style>
     </head>
 <body>
