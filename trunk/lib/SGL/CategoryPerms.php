@@ -93,6 +93,7 @@ class SGL_CategoryPerms extends SGL_Category
                     WHERE   category_id = $this->catID
                 ";
         $result = $dbh->query($query);
+        
         //  recurse to update children
         if ($this->isBranch($this->catID)) {           
             $childNodeArray = $this->getChildren($this->catID);

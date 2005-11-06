@@ -39,6 +39,15 @@
 // +---------------------------------------------------------------------------+
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
+require_once dirname(__FILE__)  . '/Registry.php';    
+require_once dirname(__FILE__)  . '/Request.php';    
+require_once dirname(__FILE__)  . '/Other.php';    
+require_once dirname(__FILE__)  . '/../SGL.php';
+require_once dirname(__FILE__)  . '/Config.php';    
+require_once dirname(__FILE__)  . '/Tasks/Process.php';    
+require_once dirname(__FILE__)  . '/Tasks/Setup.php';    
+require_once dirname(__FILE__)  . '/TaskRunner.php';  
+    
 /**
  * Application controller.
  *

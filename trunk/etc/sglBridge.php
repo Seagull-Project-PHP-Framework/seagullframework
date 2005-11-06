@@ -1,13 +1,10 @@
 <?php
 //  setup seagull environment
-require_once '../constants.php';
-$c = &SGL_Config::singleton();
-$conf = $c->getAll();
+require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
 
-//  disable logging and error handling
-$conf['debug']['customErrorHandler'] = false;
-require_once '../init.php';
-require_once SGL_CORE_DIR . '/AppController.php';
+$c = &SGL_Config::singleton();
+$c->set('debug', array('customErrorHandler' => false));
+
 
 class TestRunnerInit extends SGL_AppController
 {
