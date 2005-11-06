@@ -41,7 +41,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-
 /*
 sgl setup
 =========
@@ -50,22 +49,6 @@ sgl setup
 - more user-friendly error messages from Gallery2
 - if no DB detected, prompt to create, otherwise offer to create tables
 
-PROCESS
-========
-
-- create lockfile, system in 'setup' mode
-- block public access
-    one idea, using key in hidden file
-        - put main site in standby mode
-        - create randomly named dir
-        - perform install in above dir
-        - delete dir when finished
-
-php interpreter
-===============
-- min php version, not over max
-- get php sapi type
-- check loaded extensions
 
 php ini
 =======
@@ -74,41 +57,6 @@ php ini
 - detect and deal with safe_mode
 - magic_quotes must be off
 - file_uploads ideally enabled
-
-filesystem
-==========
-- check pear libs exists and are loadable
-- determine location in filesystem
-- test if seagull/var exists & is writable
-- copy config file there
-- rewrite with correct values
-- create seagull/var tmp dir for session
-    
-db setup
-========
-- test db connection
-- test db perms
-- get prefix, db params
-- create tables
-- insert default SQL data
-- insert sample SQL data
-- load constraints
-
-- generateDataObjectEntities
-- rebuildSequences
-
-config setup
-============
-- form
-    - system paths
-    - general
-        - name + desc of site [metas]
-        - admin email address
-        - lang
-        - server time offset
-        
-- the domain of the cookie that will be used
-- getFrameworkVersion
         
 module setup
 ============
@@ -122,19 +70,6 @@ module setup
     - load module's schema + data
     - add 'section' or 'screen' navigation links
     - register module in registry
-
-user setup
-==========
-- create admin, set username, password and email
-- option to add user
-
-- For security reasons, you must remove the installation script ...
-- remove lockfile, system set to 'production' mode
-
-paths setup
-===========
-allow enduser to dynamically setup paths, ie, for hosted environments
-
 */ 
 
 //  initialise
@@ -166,7 +101,7 @@ if (isset($_GET['start'])) {
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'], 
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
     
-    header('Location: index.php');
+    header('Location: '.SGL_BASE_URL.'/index.php');
     exit;
 }
 
@@ -215,63 +150,6 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 //  load tasks
 require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';
 
-//  subclass the default 'display' handler to customize the output
-class ActionDisplay extends HTML_QuickForm_Action_Display
-{
-    function perform(&$page, $actionName)
-    {
-        SGL_Install::errorCheck($page);
-        return parent::perform($page, $actionName);   
-    }
-    
-    function _renderForm(&$page) 
-    {
-        $renderer =& $page->defaultRenderer();
-        
-        $renderer->setElementTemplate("\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\" colspan=\"2\">{element}</td>\n\t</tr>", 'tabs');
-        $renderer->setFormTemplate(<<<_HTML
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-    <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-    <meta http-equiv="Content-Language" content="en" />
-    <meta name="ROBOTS" content="ALL" />
-    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
-    <meta name="Rating" content="General" />
-    <meta name="Generator" content="Seagull Framework" />
-
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    
-    <style type="text/css" media="screen">
-        @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=faq");
-    </style>
-    </head>
-<body>
-
-<div id="sgl">
-<!-- Logo and header -->
-<div id="header">
-    <a id="logo" href="http://localhost/seagull/trunk/www" title="Home">
-        <img src="http://localhost/seagull/trunk/www/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
-    </a>
-</div>
-<p>&nbsp;</p>
-<form{attributes}>
-<table border="0" width="800px">
-{content}
-</table>
-</form>
-    <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>  
-    </div>
-</body>
-</html>
-_HTML
-);
-        $page->display();
-    }
-}
-
 class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
@@ -296,10 +174,7 @@ class ActionProcess extends HTML_QuickForm_Action
     }
 }
 
-//  clear session cookie so theme comes from DB and not session
-#setcookie(  $this->conf['cookie']['name'], null, 0, $this->conf['cookie']['path'], 
-#            $this->conf['cookie']['domain'], $this->conf['cookie']['secure']);
-
+//  start wizard
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
 $wizard->addPage(new WizardDetectEnv('page2'));
