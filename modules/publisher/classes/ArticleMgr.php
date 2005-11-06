@@ -239,8 +239,10 @@ class ArticleMgr extends SGL_Manager
         //  get dynamic content
         $output->dynaContent = $item->getDynamicContent($input->articleID);
 
-        //  generate flesch html link
-        $output->fleschLink = $this->conf['site']['baseUrl'] . '/flesch.' . $_SESSION['aPrefs']['language'] . '.html';
+        //  generate flesch html link        
+        $output->fleschLink = $this->conf['site']['baseUrl'] 
+            . '/themes/'.$_SESSION['aPrefs']['theme'].'/publisher/flesch.' 
+            . $_SESSION['aPrefs']['language'] . '.html';
 
         //  calculate flesch score if enabled
         if ($this->conf['ArticleMgr']['fleschScore']) {
