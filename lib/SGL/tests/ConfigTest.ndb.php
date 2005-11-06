@@ -65,7 +65,7 @@ class ConfigTest extends UnitTestCase {
         $this->assertTrue(file_exists($phpTmpFileName));
         $aConf = $this->c->load($phpTmpFileName);
         $this->assertTrue(is_array($aConf));
-        $this->assertEqual(count($aConf), 18);
+        $this->assertEqual(count($aConf), 19);
     }
     
     function testSetScalarProperty()

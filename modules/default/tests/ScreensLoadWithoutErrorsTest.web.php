@@ -16,26 +16,6 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl']);
         $this->assertTitle('Seagull Framework :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
-                
-        $this->clickLink('Contact Us');
-        $this->assertTitle('Seagull Framework :: Contact Us');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->clickLink('Sample');
-        $this->assertTitle('Seagull Framework :: Content Reshuffle');
-        $this->assertNoUnwantedPattern("/errorContent/");        
-        
-        $this->clickLink('Sample');
-        $this->assertTitle('Seagull Framework :: Content Reshuffle');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->clickLink('Articles');
-        $this->assertTitle('Seagull Framework :: Articles');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->clickLink('FAQ');
-        $this->assertTitle('Seagull Framework :: FAQ');
-        $this->assertNoUnwantedPattern("/errorContent/");        
         
         $this->clickLink('Register Now');
         $this->assertTitle('Seagull Framework :: Register Now');
@@ -92,78 +72,15 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertTitle('Seagull Framework :: Change Password');
         $this->assertNoUnwantedPattern("/errorContent/");
         
-        //  guestbook
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/guestbook/');
-        $this->assertTitle('Seagull Framework :: Welcome to our Guestbook');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  messaging
-        $this->clickLink('Messages');
-        $this->assertTitle('Seagull Framework :: Messages');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        #$this->showSource();
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/contact/');
-        $this->assertTitle('Seagull Framework :: Contact Manager');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
         //  mtce
         $this->get($this->conf['site']['baseUrl'] . '/index.php/maintenance/');
         $this->assertTitle('Seagull Framework :: Maintenance');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  navigation
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/page/');
-        $this->assertTitle('Seagull Framework :: Page Manager');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/page/action/add/');
-        $this->assertTitle('Seagull Framework :: Page Manager :: Add');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/navstyle/action/list/');
-        $this->assertTitle('Seagull Framework :: Navigation Style Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
        
         //  profile
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/profile/action/view/frmUserID/1/');
         $this->assertTitle('Seagull Framework :: User Profile');
         $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  newsletter
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/action/listSubscribers/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/action/listLists/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  publisher
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: PubArticles');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: PubArticles');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/document/');
-        $this->assertTitle('Seagull Framework :: PubDocuments');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/frmCatID/1/');
-        $this->assertTitle('Seagull Framework :: PubCategories');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/action/reorder/');
-        $this->assertTitle('Seagull Framework :: PubCategories');
-        $this->assertNoUnwantedPattern("/errorContent/");
-#        $this->showHeaders();        
         
         //  user
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/');
@@ -224,16 +141,6 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/preference/action/add/');
         $this->assertTitle('Seagull Framework :: Preference Manager :: Add');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  random msg
-        # improve url
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/randommsg/rndmsg/');
-        $this->assertTitle('Seagull Framework :: RndMsg Manager :: Browse');
-        $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/randommsg/rndmsg/action/add/');
-        $this->assertTitle('Seagull Framework :: RndMsg Manager :: Add');
         $this->assertNoUnwantedPattern("/errorContent/");
         
         // bug mgr
