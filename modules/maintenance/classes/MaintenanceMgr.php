@@ -158,7 +158,7 @@ class MaintenanceMgr extends SGL_Manager
         $aSourceLang = isset($defaultWords) ? $defaultWords : $words;
 
         //  hack to remove sub arrays from translations which cannot be handled by current system
-        unset($defaultWords, $words, $aTmp);
+        unset($defaultWords, $words);
 
         //  get target array
         $target = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' . $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
@@ -298,7 +298,7 @@ class MaintenanceMgr extends SGL_Manager
 
             $aSourceLang = isset($defaultWords) ? $defaultWords : $words;
             //  hack to remove sub arrays from translations which cannot be handled by current system
-            unset($defaultWords, $words, $aTmp);
+            unset($defaultWords, $words);
 
             //  get target array
             $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
