@@ -42,6 +42,7 @@ require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages User objects.

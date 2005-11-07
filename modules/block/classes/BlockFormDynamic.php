@@ -46,11 +46,10 @@ class BlockFormDynamic
     {
         $this->action = $action;
         require_once 'HTML/QuickForm.php';
-        
         $this->form = & new HTML_QuickForm( 'frmBlock', 'POST' );
-
-        require_once SGL_ENT_DIR . '/Section.php';
-        $sectionList = & new DataObjects_Section();
+        
+        require_once 'DB/DataObject.php';
+        $sectionList = DB_DataObject::factory('Section');
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
         if( $result > 0) {

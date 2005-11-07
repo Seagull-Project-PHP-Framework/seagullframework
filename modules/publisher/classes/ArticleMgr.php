@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: ArticleMgr.php,v 1.52 2005/05/23 23:29:12 demian Exp $
 
-require_once 'DB/DataObject.php'; 
 require_once SGL_CORE_DIR . '/Item.php';
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
@@ -120,6 +119,7 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get cat name for reschooser title
+        require_once 'DB/DataObject.php';
         $category = DB_DataObject::factory('Category');
         $category->get($output->catID);
         $output->catName = $category->label;

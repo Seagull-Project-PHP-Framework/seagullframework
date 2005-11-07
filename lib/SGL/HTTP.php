@@ -212,6 +212,7 @@ class SGL_HTTP_Session
 
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
+            require_once 'DB/DataObject.php';
             $sessUser = DB_DataObject::factory('Usr');
             $sessUser->get($uid);
             $this->_init($sessUser);

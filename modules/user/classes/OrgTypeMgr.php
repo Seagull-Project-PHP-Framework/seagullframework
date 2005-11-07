@@ -39,7 +39,8 @@
 // $Id: PreferenceMgr.php,v 1.39 2005/05/17 23:54:53 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_ENT_DIR . '/Organisation_type.php';
+require_once 'DB/DataObject.php';
+
 /**
  * Manage Org Types.
  *
@@ -112,7 +113,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $orgType = & new DataObjects_Organisation_type();
+        $orgType = DB_DataObject::factory('Organisation_type');
         $orgType->setFrom($input->orgTypes);
         $dbh = $orgType->getDatabaseConnection();
         $orgType->organisation_type_id = $dbh->nextId($this->conf['table']['organisation_type']);        
@@ -129,7 +130,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
         $output->isEdit = true;
-        $orgType = & new DataObjects_Organisation_type();
+        $orgType = DB_DataObject::factory('Organisation_type');
         $orgType->get($input->orgTypeId);
         $output->orgTypes = $orgType;
     }
@@ -138,7 +139,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
-        $orgType = & new DataObjects_Organisation_type();
+        $orgType = DB_DataObject::factory('Organisation_type');
         $orgType->get($input->orgTypeId);
         $orgType->setFrom($input->orgTypes);      
         $success = $orgType->update();
@@ -161,7 +162,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $orgTypeId) {
-                $orgTypes = & new DataObjects_Organisation_type();
+                $orgTypes = DB_DataObject::factory('Organisation_type');
                 $orgTypes->get($orgTypeId);
                 $orgTypes->delete();
                 unset($orgTypes);

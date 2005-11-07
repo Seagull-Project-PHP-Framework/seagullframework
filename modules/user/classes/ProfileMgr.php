@@ -78,8 +78,8 @@ class ProfileMgr extends SGL_Manager
 
     function _view(&$input, &$output)
     {
+        require_once 'DB/DataObject.php';
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Usr.php';
         $user = DB_DataObject::factory('Usr');
         
         if (is_null($input->userId)) {
@@ -103,8 +103,7 @@ class ProfileMgr extends SGL_Manager
         }
         //  total articles
         if (ModuleMgr::moduleIsRegistered('publisher')) {
-            require_once SGL_ENT_DIR . '/Item.php';
-            $items = & new DataObjects_Item();
+            $items = DB_DataObject::factory('Item');
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();
         }

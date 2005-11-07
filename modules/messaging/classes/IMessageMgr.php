@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: IMessageMgr.php,v 1.28 2005/05/22 10:21:39 demian Exp $
 
-require_once 'DB/DataObject.php'; 
+require_once 'DB/DataObject.php';
 
 define('SGL_PRIVATE_MAIL', false);
 define('SGL_ALERT_OBSCENITY',   1);
@@ -577,7 +577,7 @@ class IMessageMgr extends SGL_Manager
             $accusee = DataObjects_Usr::staticGet($input->accuseeID);
             $messageBody .= "<br /><br /><strong>Complaint filed by:</strong> " . $accuser->username . " (id = $accuser->usr_id)";
             $messageBody .= '<br /><br /><strong>Person Accused:</strong> ' . $accusee->username . " (id = $accusee->usr_id)";
-            $message = & new DataObjects_Instant_message();
+            $message = DB_DataObject::factory('Instant_message');
             $message->subject = 'ALERT: profanity notice';
             $message->body = $messageBody;
 
