@@ -71,11 +71,6 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/password/action/edit/');
         $this->assertTitle('Seagull Framework :: Change Password');
         $this->assertNoUnwantedPattern("/errorContent/");
-        
-        //  mtce
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/maintenance/');
-        $this->assertTitle('Seagull Framework :: Maintenance');
-        $this->assertNoUnwantedPattern("/errorContent/");
        
         //  profile
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/profile/action/view/frmUserID/1/');
