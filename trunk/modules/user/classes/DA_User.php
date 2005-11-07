@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
+require_once 'DB/DataObject.php';
+
 //  role sync constants
 define('SGL_ROLESYNC_ADD',              1);
 define('SGL_ROLESYNC_REMOVE',           2);
@@ -140,7 +142,6 @@ class DA_User
      */    
     function getUserById($id = null)
     {
-        require_once 'DB/DataObject.php';
         $oUser = DB_DataObject::factory('Usr');
         if (!is_null($id)) {
             $oUser->get($id);

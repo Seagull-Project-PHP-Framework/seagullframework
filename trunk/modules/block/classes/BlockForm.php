@@ -39,7 +39,6 @@
 // $Id: BlockForm.php,v 1.11 2005/05/28 21:15:50 demian Exp $
 
 require_once 'HTML/QuickForm.php';
-require_once SGL_ENT_DIR . '/Section.php';
 
 /**
  * Quickform Block wrapper class.
@@ -65,7 +64,8 @@ class BlockForm
         
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
-        $sectionList = & new DataObjects_Section();
+        require_once 'DB/DataObject.php';
+        $sectionList = DB_DataObject::factory('Section');
         $sectionList->whereAdd('parent_id = 0');        
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();

@@ -38,13 +38,13 @@
 // +---------------------------------------------------------------------------+
 // $Id: ListMgr.php,v 1.7 2005/06/12 18:19:18 demian Exp $
 
-require_once SGL_ENT_DIR  . '/Newsletter.php';
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once SGL_MOD_DIR  . '/newsletter/classes/NewsletterMgr.php';
 require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * For distributing 'newsletter' type email to users.
@@ -305,7 +305,7 @@ class ListMgr extends NewsletterMgr
         $output->template = 'editSubscriber.html';
         $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
         
-        $oUser = & new DataObjects_Newsletter();
+        $oUser = DB_DataObject::factory('Newsletter');
         $oUser->get($input->newsletter_id);
                 
         $output->oUser = (array) $oUser;     
@@ -326,7 +326,7 @@ class ListMgr extends NewsletterMgr
         $input->oUser = (object) $input->oUser;
         $input->oUser->action_request = $input->oUser->action_request == 'empty' ? '' : $input->oUser->action_request;
         
-        $oUser = & new DataObjects_Newsletter();
+        $oUser = DB_DataObject::factory('Newsletter');
         $oUser->get($input->oUser->newsletter_id);
         unset($input->oUser->newsletter_id);
         unset($input->oUser->list);
@@ -358,7 +358,7 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $newsletter_id) {
-                $oUser = & new DataObjects_Newsletter();
+                $oUser = DB_DataObject::factory('Newsletter');
                 $oUser->get($newsletter_id);
                 $oUser->delete();
                 unset ($oUser);
@@ -420,7 +420,7 @@ class ListMgr extends NewsletterMgr
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Add';
         
-        $oUser = & new DataObjects_Newsletter();
+        $oUser = DB_DataObject::factory('Newsletter');
         $dbh = $oUser->getDatabaseConnection();
         $oUser->newsletter_id = $dbh->nextId('newsletter');
                 
@@ -440,7 +440,7 @@ class ListMgr extends NewsletterMgr
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
         
-        $oUser = & new DataObjects_Newsletter();
+        $oUser = DB_DataObject::factory('Newsletter');
         $oUser->get($input->newsletter_id);
                 
         $output->oUser = (array) $oUser;  
@@ -460,7 +460,7 @@ class ListMgr extends NewsletterMgr
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
         
         $input->oUser = (object) $input->oUser;
-        $oUser = & new DataObjects_Newsletter();
+        $oUser = DB_DataObject::factory('Newsletter');
         $oUser->get($input->oUser->newsletter_id);
         $oldName = $oUser->list;
         $noRows = $oUser->find();
@@ -511,7 +511,7 @@ class ListMgr extends NewsletterMgr
               
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $newsletter_id) {
-                $oUser = & new DataObjects_Newsletter();
+                $oUser = DB_DataObject::factory('Newsletter');
                 $oUser->whereAdd("list = '".$input->validNewsList[$newsletter_id]['name']."'");
                 $oUser->delete(DB_DATAOBJECT_WHEREADD_ONLY);
                 unset ($oUser);

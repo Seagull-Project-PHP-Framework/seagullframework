@@ -40,11 +40,11 @@
 // +---------------------------------------------------------------------------+
 // $Id: NewsletterMgr.php,v 1.24 2005/06/12 18:19:18 demian Exp $
 
-require_once SGL_ENT_DIR . '/Newsletter.php';
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * For distributing 'newsletter' type email to users.
@@ -177,7 +177,7 @@ class NewsletterMgr extends SGL_Manager
 
         // Process registration for every list selected
         foreach ($input->listName as $list) {
-            $oList = & new DataObjects_Newsletter();
+            $oList = DB_DataObject::factory('Newsletter');
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find();
@@ -254,7 +254,7 @@ class NewsletterMgr extends SGL_Manager
         
         // Process request for every list selected
         foreach($input->listName as $list) {
-            $oList = & new DataObjects_Newsletter();
+            $oList = DB_DataObject::factory('Newsletter');
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find(true);
@@ -324,7 +324,7 @@ class NewsletterMgr extends SGL_Manager
             return;
         }
         
-        $oList = & new DataObjects_Newsletter();
+        $oList = DB_DataObject::factory('Newsletter');
         $oList->email = $input->email;
         $oList->action_key = $input->actionKey;
         $noRows = $oList->find(true);

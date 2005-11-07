@@ -40,6 +40,7 @@
 
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages user permissions.
@@ -120,10 +121,9 @@ class PermissionMgr extends SGL_Manager
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Permission.php';
         $output->template = 'permAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->perm = & new DataObjects_Permission();
+        $output->perm = DB_DataObject::factory('Permission');
 
         // setup module combobox
         require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
@@ -171,8 +171,7 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        require_once SGL_ENT_DIR . '/Permission.php';
-        $oPerm = & new DataObjects_Permission();
+        $oPerm = DB_DataObject::factory('Permission');
 
         //  check to see if perm already exists
         $oPerm->name = $input->perm->name;
@@ -261,10 +260,9 @@ class PermissionMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Permission.php';
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPerm = & new DataObjects_Permission();
+        $oPerm = DB_DataObject::factory('Permission');
         $oPerm->get($input->permId);
         $output->perm = $oPerm;
 
@@ -277,8 +275,7 @@ class PermissionMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Permission.php';
-        $oPerm = & new DataObjects_Permission();
+        $oPerm = DB_DataObject::factory('Permission');
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
         $oPerm->setFrom($input->perm);
@@ -298,9 +295,8 @@ class PermissionMgr extends SGL_Manager
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Permission.php';
         foreach ($input->aDelete as $index => $permId) {
-            $oPerm = & new DataObjects_Permission();
+            $oPerm = DB_DataObject::factory('Permission');
             $oPerm->get($permId);
             $oPerm->delete();
             unset($oPerm);

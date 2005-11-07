@@ -39,7 +39,7 @@
 // $Id: GuestbookMgr.php,v 1.22 2005/01/21 00:26:16 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_ENT_DIR . '/Guestbook.php';
+require_once 'DB/DataObject.php';
 
 /**
  * To allow users to contact site admins.
@@ -108,7 +108,7 @@ class GuestbookMgr extends SGL_Manager
         $output->template = 'guestbookAdd.html';
 
         //  build ordering select object
-        $output->guestbook = & new DataObjects_Guestbook();
+        $output->guestbook = DB_DataObject::factory('Guestbook');
     }
     
     function _insert(&$input, &$output)
@@ -116,7 +116,7 @@ class GuestbookMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         //  insert record
-        $newEntry = & new DataObjects_Guestbook();
+        $newEntry = DB_DataObject::factory('Guestbook');
         $newEntry->setFrom($input->guestbook);
         $dbh = $newEntry->getDatabaseConnection();
         $newEntry->guestbook_id = $dbh->nextId($this->conf['table']['guestbook']);

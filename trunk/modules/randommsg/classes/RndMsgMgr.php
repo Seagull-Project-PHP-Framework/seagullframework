@@ -39,7 +39,7 @@
 // $Id: RndMsgMgr.php,v 1.19 2005/01/23 13:47:24 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_ENT_DIR . '/Rndmsg_message.php';
+require_once 'DB/DataObject.php';
 
 /**
 * RndMsgMgr class, for managing random messages
@@ -165,7 +165,7 @@ class RndMsgMgr extends SGL_Manager
         $success = true;
         foreach($aLines as $rndmsg) {
             if (trim($rndmsg) != '') {
-                $msg = & new DataObjects_Rndmsg_message();
+                $msg = DB_DataObject::factory('Rndmsg_message');
                 $msg->msg = $rndmsg;
                 $dbh = $msg->getDatabaseConnection();
                 $msg->rndmsg_message_id = $dbh->nextId($this->conf['table']['rndmsg_message']);
@@ -185,7 +185,7 @@ class RndMsgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->msgDelete)) {
             foreach ($input->msgDelete as $index => $msgId){
-                $rm = & new DataObjects_Rndmsg_message();
+                $rm = DB_DataObject::factory('Rndmsg_message');
                 $rm->get($msgId);
                 $rm->delete();
                 unset($rm);

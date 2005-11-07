@@ -39,6 +39,7 @@
 // $Id: PreferenceMgr.php,v 1.39 2005/05/17 23:54:53 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages user permissions.
@@ -156,17 +157,15 @@ class PreferenceMgr extends SGL_Manager
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
         $output->template = 'prefAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->pref = & new DataObjects_Preference();
+        $output->pref = DB_DataObject::factory('Preference');
     }
 
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        $oPref = & new DataObjects_Preference();
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->setFrom($input->pref);
         $dbh = & $oPref->getDatabaseConnection();
         
@@ -185,10 +184,9 @@ class PreferenceMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
         $output->template = 'prefEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPref = & new DataObjects_Preference();
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->get($input->prefId);
         $output->pref = $oPref;
     }
@@ -196,8 +194,7 @@ class PreferenceMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        $oPref = & new DataObjects_Preference();
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->get($input->pref->preference_id);
         $oPref->setFrom($input->pref);
         unset($oPref->name);
@@ -215,11 +212,9 @@ class PreferenceMgr extends SGL_Manager
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        require_once SGL_ENT_DIR . '/User_preference.php';
         $aToDelete = array();
         foreach ($input->aDelete as $index => $prefId) {
-            $oPref = & new DataObjects_Preference();
+            $oPref = DB_DataObject::factory('Preference');
             $oPref->get($prefId);
             $oPref->delete();
             $aToDelete[] = $prefId;
@@ -227,7 +222,7 @@ class PreferenceMgr extends SGL_Manager
         }
         //  delete related user_prefs
         foreach ($aToDelete as $deleteId) {
-            $oUserPref = & new DataObjects_User_preference();
+            $oUserPref = DB_DataObject::factory('User_preference');
             $oUserPref->get('preference_id', $deleteId);
             $oUserPref->delete();
             unset($oUserPref);

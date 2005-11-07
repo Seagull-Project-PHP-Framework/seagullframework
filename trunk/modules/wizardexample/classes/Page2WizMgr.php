@@ -111,12 +111,9 @@ class Page2WizMgr extends SGL_Wizard
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  require Contact entity
-        require_once SGL_ENT_DIR . '/Contact_us.php';
-        require_once SGL_ENT_DIR . '/Usr.php';
-
         if ($input->finish) {
-            $contact = & new DataObjects_Contact_us();
+            require_once 'DB/DataObject.php';
+            $contact = DB_DataObject::factory('Contact_us');
             $contact->setFrom($input->contact);
             $dbh = & SGL_DB::singleton();
             $contact->contact_us_id = $dbh->nextId('contact_us');
