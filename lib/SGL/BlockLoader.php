@@ -153,11 +153,10 @@ class SGL_BlockLoader
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
             AND     (br.block_id = b.block_id AND 
-                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ALL_ROLES . "')
+                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
                     )   
             AND     b.block_id = ba.block_id
-            AND     ( ba.section_id = 0 OR ba.section_id = " . 
-                    $this->_currentSectionId . ' )
+            AND     ( ba.section_id = ".SGL_ANY_SECTION." OR ba.section_id = " . $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';
 

@@ -122,7 +122,8 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_SORTBY_USER',               2);
         define('SGL_SORTBY_ORG',                3);
         
-        //  Seagull user types
+        //  Seagull user roles
+        define('SGL_ANY_ROLE', 				    -2);        
         define('SGL_UNASSIGNED',                -1);
         define('SGL_GUEST',                     0);
         define('SGL_ADMIN',                     1);
@@ -140,7 +141,9 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
-        define('SGL_ALL_ROLES', 				-2);
+        
+        //  section/sreen IDs
+        define('SGL_ANY_SECTION', 				0);
         
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);

@@ -243,7 +243,7 @@ class BlockMgr extends SGL_Manager
         }
         // set default value (all roles)
         if (count($data['block[roles]']) == 0) {
-            $data['block[roles]'][] = SGL_ALL_ROLES;
+            $data['block[roles]'][] = SGL_ANY_ROLE;
         }
         $output->form = $blockForm->init( $data );
 
@@ -261,7 +261,7 @@ class BlockMgr extends SGL_Manager
             // delete 'all roles' option
             if (count($oBlock->roles) > 2) {
                 foreach ($oBlock->roles as $key => $value) {        
-                    if ($value == SGL_ALL_ROLES) {
+                    if ($value == SGL_ANY_ROLE) {
                         unset($oBlock->roles[$key]);
                     }
                 }
