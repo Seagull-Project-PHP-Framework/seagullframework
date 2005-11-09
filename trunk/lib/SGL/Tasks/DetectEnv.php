@@ -9,6 +9,7 @@ define('SGL_REQUIRED', 2);
 
 require_once dirname(__FILE__) . '/../Request.php';
 require_once dirname(__FILE__) . '/../Task.php';
+require_once 'HTML/QuickForm/Action/Display.php';
 
 function bool2words($key)
 {

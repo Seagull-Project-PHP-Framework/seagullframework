@@ -226,6 +226,17 @@ class SGL_Task_SetGlobals extends SGL_Task
     }    
 }
 
+//			$userInfo = posix_getpwuid(fileowner($configFile));
+//			$fileOwnerName = $userInfo['name'];
+//			$allowedFileOwners = array('nobody', 'apache');
+//
+//			if (!in_array($fileOwnerName, $allowedFileOwners)) {
+//                die("<br />Your config file in the seagull/var directory has the wrong " .
+//					"owner (currently set as: $fileOwnerName). " .
+//                    "Please set the correct file owner to this directory and it's contents, eg:<br/>" .
+//                    "<code>'chmod -R 777 seagull/var'</code>");
+//			}
+
 class SGL_Task_ModifyIniSettings extends SGL_Task 
 {
     function run($conf)

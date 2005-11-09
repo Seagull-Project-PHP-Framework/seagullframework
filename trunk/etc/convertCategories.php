@@ -3,6 +3,7 @@
 /* Reminder: always indent with 4 spaces (no tabs). */
 // $Id: convertCategories.php,v 1.2 2005/05/09 23:33:39 demian Exp $
 
+#WARNING: this way of initialising the app is deprecated, if you need to use this script pls contact the mailing list
 require_once '../init.php';
 
 error_reporting(E_ALL);
