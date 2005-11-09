@@ -16,7 +16,7 @@
 // | Authors: Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: Flexy.php,v 1.19 2005/07/14 00:30:39 alan_k Exp $
+// $Id: Flexy.php,v 1.20 2005/10/25 02:21:16 alan_k Exp $
 //
 //  Base Compiler Class
 //  Standard 'Original Flavour' Flexy compiler
@@ -531,6 +531,11 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
                 
                 // add language ?
                 $suffix = '))';
+                break;
+            case 'e':
+                $prefix = 'echo htmlentities(';
+                // add language ?
+                $suffix = ')';
                 break;
             case ' ':
                 $prefix = 'echo htmlspecialchars(';

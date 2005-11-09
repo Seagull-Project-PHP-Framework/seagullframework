@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Role.php,v 1.10 2005/03/21 02:03:20 cellog Exp $
+ * @version    CVS: $Id: Role.php,v 1.12 2005/11/01 06:18:14 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -24,6 +24,7 @@
  * base class for installer roles
  */
 require_once 'PEAR/Installer/Role/Common.php';
+require_once 'PEAR/XMLParser.php';
 //$GLOBALS['_PEAR_INSTALLER_ROLES'] = array();
 /**
  * @category   pear
@@ -31,7 +32,7 @@ require_once 'PEAR/Installer/Role/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -50,8 +51,11 @@ class PEAR_Installer_Role
         if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'])) {
             PEAR_Installer_Role::registerRoles();
         }
-        foreach ($GLOBALS['_PEAR_INSTALLER_ROLES'] as $class => $unused) {
-            $config->_addConfigVars($class);
+        foreach ($GLOBALS['_PEAR_INSTALLER_ROLES'] as $class => $info) {
+            if (!$info['config_vars']) {
+                continue;
+            }
+            $config->_addConfigVars($info['config_vars']);
         }
     }
 
@@ -71,7 +75,10 @@ class PEAR_Installer_Role
             $a = false;
             return $a;
         }
-        $a = "PEAR_Installer_Role_$role";
+        $a = 'PEAR_Installer_Role_' . ucfirst($role);
+        if (!class_exists($a)) {
+            require_once str_replace('_', '/', $a) . '.php';
+        }
         $b = new $a($config);
         return $b;
     }
@@ -205,6 +212,7 @@ class PEAR_Installer_Role
      */
     function registerRoles($dir = null)
     {
+        $parser = new PEAR_XMLParser;
         if ($dir === null) {
             $dir = dirname(__FILE__) . '/Role';
         }
@@ -213,16 +221,19 @@ class PEAR_Installer_Role
             return PEAR::raiseError("registerRoles: opendir($dir) failed");
         }
         while ($entry = readdir($dp)) {
-            if ($entry{0} == '.' || substr($entry, -4) != '.php' || $entry == 'Common.php') {
+            if ($entry{0} == '.' || substr($entry, -4) != '.xml') {
                 continue;
             }
             $class = "PEAR_Installer_Role_".substr($entry, 0, -4);
-            $file = "$dir/$entry";
-            include_once $file;
             // List of roles
             if (empty($GLOBALS['_PEAR_INSTALLER_ROLES'][$class])) {
-                $GLOBALS['_PEAR_INSTALLER_ROLES'][$class] =
-                    call_user_func(array($class, 'getInfo'));
+                $file = "$dir/$entry";
+                $parser->parse(file_get_contents($file));
+                $data = $parser->getData();
+                if (!is_array($data['releasetypes'])) {
+                    $data['releasetypes'] = array($data['releasetypes']);
+                }
+                $GLOBALS['_PEAR_INSTALLER_ROLES'][$class] = $data;
             }
         }
         @closedir($dp);

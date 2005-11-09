@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.83 2005/08/21 22:33:46 cellog Exp $
+ * @version    CVS: $Id: Package.php,v 1.88 2005/10/29 22:09:45 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -44,7 +44,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -144,7 +144,7 @@ class PEAR_Downloader_Package
             if (isset($options['offline'])) {
                 if (PEAR::isError($origErr)) {
                     if (!isset($options['soft'])) {
-                        $this->log(0, $origErr->getMessage());
+                        $this->_downloader->log(0, $origErr->getMessage());
                     }
                 }
                 return PEAR::raiseError('Cannot download non-local package "' . $param . '"');
@@ -604,14 +604,25 @@ class PEAR_Downloader_Package
                     case 'eq' :
                     case 'gt' :
                     case 'has' :
+                        $group = (!isset($dep['optional']) || $dep['optional'] == 'no') ?
+                            'required' :
+                            'optional';
                         if (PEAR_Downloader_Package::willDownload($dep, $params)) {
-                            $group = (!isset($dep['optional']) || $dep['optional'] == 'no') ?
-                                'required' :
-                                'optional';
                             $this->_downloader->log(2, $this->getShortName() . ': Skipping ' . $group
                                 . ' dependency "' .
                                 $this->_registry->parsedPackageNameToString($dep, true) .
                                 '", will be installed');
+                            continue 2;
+                        }
+                        $fakedp = new PEAR_PackageFile_v1;
+                        $fakedp->setPackage($dep['name']);
+                        // skip internet check if we are not upgrading (bug #5810)
+                        if (!isset($options['upgrade']) && $this->isInstalled(
+                              $fakedp, $dep['rel'])) {
+                            $this->_downloader->log(2, $this->getShortName() . ': Skipping ' . $group
+                                . ' dependency "' .
+                                $this->_registry->parsedPackageNameToString($dep, true) .
+                                '", is already installed');
                             continue 2;
                         }
                 }
@@ -634,9 +645,37 @@ class PEAR_Downloader_Package
                     $chan = 'pecl.php.net';
                     $url =
                         $this->_downloader->_getDepPackageDownloadUrl($newdep, $pname);
+                    $obj = &$this->_registry->getPackage($dep['name']);
                     if (PEAR::isError($url)) {
                         PEAR::popErrorHandling();
-                        return $url;
+                        if ($obj !== null && $this->isInstalled($obj, $dep['rel'])) {
+                            $group = (!isset($dep['optional']) || $dep['optional'] == 'no') ?
+                                'required' :
+                                'optional';
+                            $dep['package'] = $dep['name'];
+                            if (!isset($options['soft'])) {
+                                $this->_downloader->log(3, $this->getShortName() .
+                                    ': Skipping ' . $group . ' dependency "' .
+                                    $this->_registry->parsedPackageNameToString($dep, true) .
+                                    '", already installed as version ' . $obj->getVersion());
+                            }
+                            if (@$skipnames[count($skipnames) - 1] ==
+                                  $this->_registry->parsedPackageNameToString($dep, true)) {
+                                array_pop($skipnames);
+                            }
+                            continue;
+                        } else {
+                            if (isset($dep['optional']) && $dep['optional'] == 'yes') {
+                                $this->_downloader->log(2, $this->getShortName() .
+                                    ': Skipping ' . $group
+                                    . ' dependency "' .
+                                    $this->_registry->parsedPackageNameToString($dep, true) .
+                                    '", no releases exist');
+                                continue;
+                            } else {
+                                return $url;
+                            }
+                        }
                     }
                 }
                 PEAR::popErrorHandling();
@@ -1461,6 +1500,18 @@ class PEAR_Downloader_Package
         }
         $info = $this->_downloader->_getPackageDownloadUrl($pname);
         if (PEAR::isError($info)) {
+            if ($pname['channel'] == 'pear.php.net') {
+                // try pecl
+                $pname['channel'] = 'pecl.php.net';
+                if ($test = $this->_downloader->_getPackageDownloadUrl($pname)) {
+                    if (!PEAR::isError($test)) {
+                        $info = PEAR::raiseError($info->getMessage() . ' - package ' .
+                            $this->_registry->parsedPackageNameToString($pname, true) .
+                            ' can be installed with "pecl install ' . $pname['package'] .
+                            '"');
+                    }
+                }
+            }
             return $info;
         }
         $this->_rawpackagefile = $info['raw'];

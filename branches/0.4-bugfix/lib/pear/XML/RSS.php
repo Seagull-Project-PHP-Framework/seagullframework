@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: RSS.php,v 1.14 2003/03/13 20:32:00 mj Exp $
+// $Id: RSS.php,v 1.26 2005/05/25 20:48:46 mj Exp $
 //
 
 require_once 'XML/Parser.php';
@@ -30,7 +30,7 @@ require_once 'XML/Parser.php';
 * website of the RSS working group (http://www.purl.org/rss/).
 *
 * @author Martin Jansen <mj@php.net>
-* @version $Revision: 1.14 $
+* @version $Revision: 1.26 $
 * @access  public
 */
 class XML_RSS extends XML_Parser
@@ -41,6 +41,11 @@ class XML_RSS extends XML_Parser
      * @var string
      */
     var $insideTag = '';
+
+    /**
+     * @var array
+     */
+    var $insideTagStack = array();
 
     /**
      * @var string
@@ -80,31 +85,42 @@ class XML_RSS extends XML_Parser
     /**
      * @var array
      */
+    var $attribs;
+
+    /**
+     * @var array
+     */
     var $parentTags = array('CHANNEL', 'ITEM', 'IMAGE', 'TEXTINPUT');
 
     /**
      * @var array
      */
     var $channelTags = array('TITLE', 'LINK', 'DESCRIPTION', 'IMAGE',
-                              'ITEMS', 'TEXTINPUT');
+                              'ITEMS', 'TEXTINPUT', 'LANGUAGE', 'COPYRIGHT',
+                              'MANAGINGEditor', 'WEBMASTER', 'PUBDATE', 'LASTBUILDDATE',
+                              'CATEGORY', 'GENERATOR', 'DOCS', 'CLOUD', 'TTL',
+                              'RATING');
 
     /**
      * @var array
      */
-    var $itemTags = array('TITLE', 'LINK', 'DESCRIPTION', 'PUBDATE');
+    var $itemTags = array('TITLE', 'LINK', 'DESCRIPTION', 'PUBDATE', 'AUTHOR', 'CATEGORY',
+                          'COMMENTS', 'ENCLOSURE', 'GUID', 'PUBDATE', 'SOURCE',
+                          'CONTENT:ENCODED');
 
     /**
      * @var array
      */
-    var $imageTags = array('TITLE', 'URL', 'LINK');
+    var $imageTags = array('TITLE', 'URL', 'LINK', 'WIDTH', 'HEIGHT');
+
 
     var $textinputTags = array('TITLE', 'DESCRIPTION', 'NAME', 'LINK');
 
     /**
      * List of allowed module tags
      *
-     * Currently Dublin Core Metadata and the blogChannel RSS module
-     * are supported.
+     * Currently Dublin Core Metadata, blogChannel RSS module, CreativeCommons,
+     * Content and Syndication are supported.
      *
      * @var array
      */
@@ -113,7 +129,10 @@ class XML_RSS extends XML_Parser
                             'DC:FORMAT', 'DC:IDENTIFIER', 'DC:SOURCE', 'DC:LANGUAGE',
                             'DC:RELATION', 'DC:COVERAGE', 'DC:RIGHTS',
                             'BLOGCHANNEL:BLOGROLL', 'BLOGCHANNEL:MYSUBSCRIPTIONS',
-                            'BLOGCHANNEL:MYSUBSCRIPTIONS', 'BLOGCHANNEL:CHANGES');
+                            'BLOGCHANNEL:MYSUBSCRIPTIONS', 'BLOGCHANNEL:CHANGES',
+                            'CC:LICENSE', 'CONTENT:ENCODED', 
+                            'SY:UPDATEPERIOD', 'SY:UPDATEFREQUENCY', 'SY:UPDATEBASE', 
+                            );
 
     // }}}
     // {{{ Constructor
@@ -122,19 +141,25 @@ class XML_RSS extends XML_Parser
      * Constructor
      *
      * @access public
-     * @param mixed File pointer or name of the RDF file.
+     * @param mixed File pointer, name of the RSS file, or an RSS string.
+     * @param string  Source charset encoding, use null (default) to use
+     *                default encoding (ISO-8859-1)
+     * @param string  Target charset encoding, use null (default) to use
+     *                default encoding (ISO-8859-1)
      * @return void
      */
-    function XML_RSS($handle = '')
+    function XML_RSS($handle = '', $srcenc = null, $tgtenc = null)
     {
-        $this->XML_Parser();
-
-        if (@is_resource($handle)) {
-            $this->setInput($handle);
-        } elseif ($handle != '') {
-            $this->setInputFile($handle);
+        if ($srcenc === null && $tgtenc === null) {
+            $this->XML_Parser();
         } else {
-            $this->raiseError('No filename passed.');
+            $this->XML_Parser($srcenc, 'event', $tgtenc);
+        }
+
+        $this->setInput($handle);
+
+        if ($handle == '') {
+            $this->raiseError('No input passed.');
         }
     }
 
@@ -152,12 +177,21 @@ class XML_RSS extends XML_Parser
      */
     function startHandler($parser, $element, $attribs)
     {
+        if (substr($element, 0, 4) == "RSS:") {
+            $element = substr($element, 4);
+        }
+
         switch ($element) {
             case 'CHANNEL':
             case 'ITEM':
             case 'IMAGE':
             case 'TEXTINPUT':
                 $this->insideTag = $element;
+                array_push($this->insideTagStack, $element);
+                break;
+
+            case 'ENCLOSURE' :
+                $this->attribs = $attribs;
                 break;
 
             default:
@@ -172,7 +206,7 @@ class XML_RSS extends XML_Parser
      * End element handler for XML parser
      *
      * If the end of <item>, <channel>, <image> or <textinput>
-     * is reached, this function updates the structure array
+     * is reached, this method updates the structure array
      * $this->struct[] and adds the field "type" to this array,
      * that defines the type of the current field.
      *
@@ -183,8 +217,14 @@ class XML_RSS extends XML_Parser
      */
     function endHandler($parser, $element)
     {
+        if (substr($element, 0, 4) == "RSS:") {
+            $element = substr($element, 4);
+        }
+
         if ($element == $this->insideTag) {
-            $this->insideTag = '';
+            array_pop($this->insideTagStack);
+            $this->insideTag = end($this->insideTagStack);
+
             $this->struct[] = array_merge(array('type' => strtolower($element)),
                                           $this->last);
         }
@@ -202,6 +242,15 @@ class XML_RSS extends XML_Parser
         if ($element == 'TEXTINPUT') {
             $this->textinputs = $this->textinput;
             $this->textinput = '';
+        }
+
+        if ($element == 'ENCLOSURE') {
+            if (!isset($this->item['enclosures'])) {
+                $this->item['enclosures'] = array();
+            }
+
+            $this->item['enclosures'][] = array_change_key_case($this->attribs, CASE_LOWER);
+            $this->attribs = array();
         }
 
         $this->activeTag = '';
@@ -293,7 +342,7 @@ class XML_RSS extends XML_Parser
     /**
      * Get general information about current channel
      *
-     * This function returns an array containing the information
+     * This method returns an array containing the information
      * that has been extracted from the <channel>-tag while parsing
      * the RSS file.
      *
@@ -311,7 +360,7 @@ class XML_RSS extends XML_Parser
     /**
      * Get items from RSS file
      *
-     * This function returns an array containing the set of items
+     * This method returns an array containing the set of items
      * that are provided by the RSS file.
      *
      * @access public
@@ -328,7 +377,7 @@ class XML_RSS extends XML_Parser
     /**
      * Get images from RSS file
      *
-     * This function returns an array containing the set of images
+     * This method returns an array containing the set of images
      * that are provided by the RSS file.
      *
      * @access public

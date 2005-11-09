@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.40 2005/08/21 03:49:38 cellog Exp $
+ * @version    CVS: $Id: Validate.php,v 1.43 2005/09/25 16:55:58 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Validator/PECL.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -237,8 +237,8 @@ class PEAR_Validate
             }
         }
         if (!$this->validPackageName($this->_packagexml->getPackage())) {
-            $this->_addFailure('name', 'package name ' .
-                $this->_packagexml->getPackage() . ' is invalid');
+            $this->_addFailure('name', 'package name "' .
+                $this->_packagexml->getPackage() . '" is invalid');
             return false;
         }
     }
@@ -436,9 +436,8 @@ class PEAR_Validate
      */
     function validateDate()
     {
-        // packager automatically sets date, so only validate if
-        // pear validate is called
-        if ($this->_state = PEAR_VALIDATE_NORMAL) {
+        if ($this->_state == PEAR_VALIDATE_NORMAL ||
+              $this->_state == PEAR_VALIDATE_PACKAGING) {
             if (!preg_match('/\d\d\d\d\-\d\d\-\d\d/',
                   $this->_packagexml->getDate())) {
                 $this->_addFailure('date', 'invalid release date "' .
@@ -449,6 +448,11 @@ class PEAR_Validate
                 $this->_addFailure('date', 'invalid release date "' .
                     $this->_packagexml->getDate() . '"');
                 return false;
+            }
+            if ($this->_state == PEAR_VALIDATE_PACKAGING &&
+                  $this->_packagexml->getDate() != date('Y-m-d')) {
+                $this->_addWarning('date', 'Release Date "' .
+                    $this->_packagexml->getDate() . '"is not today');
             }
         }
         return true;

@@ -13,6 +13,7 @@ IMPROVEMENTS
 | VERSION: 0.4.7        |
 +-----------------------+
 BUGFIXES
+09-11-05    Pear updates including security fixes in PEAR and XML_RPC
 26-10-05    Trailing slash on url got chopped in redirects, reinstated
 18-10-05    Fixed file upload javascript error and improved feedback messages
             (Werner Krauss)
