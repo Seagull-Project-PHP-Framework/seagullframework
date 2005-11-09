@@ -61,14 +61,14 @@ class ArticleMgr extends SGL_Manager
 
         $this->pageTitle = 'Article Manager';
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'changeStatus'    => array('changeStatus', 'redirectToDefault'), 
-            'list'      => array('list'), 
-            'view'      => array('view'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'changeStatus'    => array('changeStatus', 'redirectToDefault'),
+            'list'      => array('list'),
+            'view'      => array('view'),
         );
     }
 
@@ -82,7 +82,7 @@ class ArticleMgr extends SGL_Manager
             $this->template = 'publisher.html';
         }
         $this->validated        = true;
-        $input->masterTemplate  = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ? 
+        $input->masterTemplate  = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
             'masterLeftCol.html' : $this->masterTemplate;
         $input->error           = array();
         $input->pageTitle       = $this->pageTitle;
@@ -140,7 +140,7 @@ class ArticleMgr extends SGL_Manager
             $output->wysiwyg = true;
         }
         $output->todaysDate = SGL_Date::getTime();
-        list($day, $month, $year, $hour, $minute, $second) = 
+        list($day, $month, $year, $hour, $minute, $second) =
             explode('/', date('d/m/Y/H/i/s'));
 
         //  initialise input array with current date/time
@@ -150,8 +150,14 @@ class ArticleMgr extends SGL_Manager
                         'hour' => $hour,
                         'minute' => $minute,
                         'second' => $second);
-        $output->dateSelectorStart = 
-            SGL_Output::showDateSelector($aDate, 'frmStartDate');
+        if ($this->conf['ArticleMgr']['backDateNumYears'] > 0) {
+            $aDate['year'] = $aDate['year'] - $this->conf['ArticleMgr']['backDateNumYears'];
+            $years         = $this->conf['ArticleMgr']['backDateNumYears'] + 5;
+        } else {
+            $years         = 5;
+        }
+        $output->dateSelectorStart =
+            SGL_Output::showDateSelector($aDate, 'frmStartDate', true, true, $years, false);
 
         //  increment year for expiry
         $aDate['year'] = $aDate['year'] + 5;
@@ -160,7 +166,7 @@ class ArticleMgr extends SGL_Manager
         $aDate['hour'] = 0;
         $aDate['minute'] = 0;
         $aDate['second'] = 0;
-        $output->dateSelectorExpiry = 
+        $output->dateSelectorExpiry =
             SGL_Output::showDateSelector($aDate, 'frmExpiryDate', true, true, 5, true);
         $item = & new SGL_Item();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID);
@@ -183,7 +189,7 @@ class ArticleMgr extends SGL_Manager
 
         //  if category has been changed, update input
         $input->catID = ($input->catID == $input->catChangeToID)
-                        ? $input->catID 
+                        ? $input->catID
                         : $input->catChangeToID;
 
         //  check for missing article id
@@ -219,9 +225,9 @@ class ArticleMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
+
         $output->template = 'articleMgrEdit.html';
-        
+
         //  don't show wysiwyg for 'news' articles
         if ($input->dataTypeID != 4) {
             $output->wysiwyg = true;
@@ -229,11 +235,11 @@ class ArticleMgr extends SGL_Manager
         $item = & new SGL_Item($input->articleID);
 
         //  prepare date selectors
-        $output->dateSelectorStart = 
-            SGL_Output::showDateSelector(SGL_Date::stringToArray($item->startDate), 
+        $output->dateSelectorStart =
+            SGL_Output::showDateSelector(SGL_Date::stringToArray($item->startDate),
                 'frmStartDate');
-        $output->dateSelectorExpiry = 
-            SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate), 
+        $output->dateSelectorExpiry =
+            SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate),
                 'frmExpiryDate', true, true, 5, true);
 
         //  get dynamic content
@@ -254,13 +260,13 @@ class ArticleMgr extends SGL_Manager
                              "'\*'si");
             $replace = array (' ', ' ', '\1', '');
             $lines = explode("\n", preg_replace($search, $replace, $output->dynaContent));
-            
+
             //  body text occurs in 4th element
             if (!isset($lines[4])) {
                 $lines[4] = '';
             }
             $rawTxt = strip_tags($lines[4]);
-            
+
             //  detect if sufficient text to run stats
             //  minimum is one word and a full stop
             $bContainsPeriod = (boolean)preg_match("/\./", $rawTxt);
@@ -294,7 +300,7 @@ class ArticleMgr extends SGL_Manager
 
         //  if category has been changed, update input
         $input->articleCatID = ($input->articleCatID == $input->catChangeToID)
-                            ? $input->articleCatID 
+                            ? $input->articleCatID
                             : $input->catChangeToID;
         if (empty($input->articleCatID)) {
             SGL::logMessage('Category ID has been lost, FIXME', PEAR_LOG_NOTICE);
@@ -347,8 +353,8 @@ class ArticleMgr extends SGL_Manager
     function _view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->masterTemplate = 'masterBlank.html';        
-        $output->template = 'preview.html';      
+        $output->masterTemplate = 'masterBlank.html';
+        $output->template = 'preview.html';
         $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
     }
 
@@ -366,7 +372,7 @@ class ArticleMgr extends SGL_Manager
 
         //  generate action links for each article
         for ($n = 0; $n < count($aResult['data']); $n++) {
-            $aResult['data'][$n]['actionLinks'] = 
+            $aResult['data'][$n]['actionLinks'] =
                 $this->_generateActionLinks(
                     $aResult['data'][$n]['item_id'],
                     $aResult['data'][$n]['status']);
@@ -399,17 +405,17 @@ class ArticleMgr extends SGL_Manager
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
      * @see     retrieveAll()
      */
-    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
+    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1,
                                 $queryRange = 'thisCategory', $from = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
 
         //  if published flag set, only return published articles
-        $isPublishedClause = ($bPublished)? 
+        $isPublishedClause = ($bPublished)?
             ' AND i.status  = ' . SGL_STATUS_PUBLISHED :
             ' AND i.status  > ' . SGL_STATUS_DELETED ;
 
@@ -419,7 +425,7 @@ class ArticleMgr extends SGL_Manager
 
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause    = ($dataTypeID == 1)?'' : " AND it.item_type_id  = '$dataTypeID'";
-        $limitByAuthorClause = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ? 
+        $limitByAuthorClause = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
                                 '' : ' AND i.updated_by_id = ' . SGL_HTTP_Session::getUid();
         $query = "
             SELECT  i.item_id,
@@ -429,7 +435,7 @@ class ArticleMgr extends SGL_Manager
                     i.start_date,
                     i.expiry_date,
                     i.status
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
@@ -476,9 +482,9 @@ class ArticleMgr extends SGL_Manager
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
-                                
+
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -503,8 +509,8 @@ class ArticleMgr extends SGL_Manager
     function getTemplateTypes()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
-        $query = "  SELECT  item_type_id, item_type_name 
+
+        $query = "  SELECT  item_type_id, item_type_name
                     FROM    {$this->conf['table']['item_type']}
                 ";
         return $this->dbh->getAssoc($query);
@@ -557,7 +563,7 @@ EOF;
      * Add article objects to elements array for counting.
      *
      * @access  public
-     * @param   mixed   $mElement   
+     * @param   mixed   $mElement
      * @return  void
      */
     function add($mElement)

@@ -258,7 +258,7 @@ class SGL_Date
             }
         }
         if ($asc) {
-             for ($i = $start_year; $i <= $cur_year+$number; $i++) {
+             for ($i = $start_year; $i <= $start_year+$number; $i++) {
                  $year_options .= "\n<option value=\"" . $i . '" ';
                  if ($i == $selected) {
                      $year_options .= 'selected="selected"';
@@ -266,7 +266,7 @@ class SGL_Date
                  $year_options .= '>' . $i . '</option>';
              }
         } else {
-             for ($i = $start_year+1; $i >= $cur_year-($number-1); $i--) {
+             for ($i = $start_year+1; $i >= $start_year-($number-1); $i--) {
                  $year_options .= "\n<option value=\"" . $i . '" ';
                  if ($i == $selected) {
                      $year_options .= 'selected="selected"';

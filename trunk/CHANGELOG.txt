@@ -4,11 +4,14 @@ CHANGELOG
 | VERSION: 0.5.3        |
 +-----------------------+
 BUGFIXES
+09-11-05    Fixed small bug where backdating date comboboxes wasn't working
+            (Werner Krauss)
 31-10-05	Fixed broken config calls in templates
 26-10-05    Registration emails are no longer CCed to admin, separate notification
             is sent.
 
 IMPROVEMENTS
+09-11-05    Added ability to backdate articles (Werner Krauss)
 09-11-05    Removed unnecessary framebuster from login page
 06-11-05    Split web tests into modules
 06-11-05    Moved all core classes that doubled up with other classes to reduce
