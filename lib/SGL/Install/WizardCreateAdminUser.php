@@ -109,6 +109,10 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('siteCookie', 'Please specify the cookie\'s name', 'required');
         $this->addRule('installPassword', 'Please specify a password to be used to access the installer', 'required');        
 
+        $this->addElement('checkbox', 'installAllModules', 'Install all modules?', 
+            'Yes (If box is not ticked, only 3 core modules will be installed)');        
+      
+        
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish >>');

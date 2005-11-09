@@ -60,7 +60,7 @@ class SGL_Sql
     function parseAndExecute($filename, $errorReporting = E_ALL)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
-        error_reporting($errorReporting);
+//        error_reporting($errorReporting);
 
         if (! ($fp = fopen($filename, 'r')) ) {
             return false;
@@ -88,7 +88,14 @@ class SGL_Sql
             if ($cmt == '--' || trim($cmt) == '#') {
                 continue;
             } 
-#END:FIXME            
+#END:FIXME      
+
+            if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
+                $tableName = SGL_Sql::extractTableName($line);
+                $nextId = $dbh->nextId($tableName);
+                $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
+            }
+            
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
@@ -114,6 +121,20 @@ class SGL_Sql
         }
         fclose($fp);
         return true;
+    }
+    
+    function extractTableName($str)
+    {
+        $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
+        preg_match($pattern, $str, $matches);
+        $tableName = $matches[2]; 
+        return $tableName;       
+    }
+    
+    function rewriteWithAutoIncrement($str, $nextId)
+    {
+        $res = str_replace('{SGL_NEXT_ID}', $nextId, $str);
+        return $res;
     }
 }
 ?>

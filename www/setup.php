@@ -86,6 +86,7 @@ $init = new SGL_TaskRunner();
 $init->addTask(new SGL_Task_SetupPaths());
 $init->addTask(new SGL_Task_SetupConstants());
 $init->addTask(new SGL_Task_SetBaseUrlMinimal());
+$init->addTask(new SGL_Task_SetGlobals());
 $init->main();
 
 //  reroute to front controller

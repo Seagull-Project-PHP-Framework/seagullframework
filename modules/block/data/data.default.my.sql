@@ -2,6 +2,7 @@
 # Dumping data for table `block`
 #
 
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'block', 'Blocks', 'Use the ''Blocks'' module to configure the contents of the blocks in the left and right hand columns.', 'block/block', 'blocks.png');
 
 INSERT INTO block VALUES (1, 'SiteNews', 'Site News', '', '', 2, 1, 1, NULL);
 INSERT INTO block VALUES (2, 'DirectoryNav', 'Navigation', '', 'navWidget', 1, 1, 1, NULL);
