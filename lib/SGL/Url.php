@@ -381,9 +381,14 @@ class SGL_URL
                     && strstr($_SERVER['REQUEST_URI'], '?')
                     && !isset($conf['setup']))) {
                 $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+            
+            // we don't want to have index.php in our url, so REQUEST_URI as more info
+            } elseif ($conf['site']['frontScriptName'] == false) {
+                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
             } else {
-                //  do nothing, PHP_SELF is valid
-            }
+                //  do nothing, PHP_SELF is valid    
+            }            
+                
         //  it's IIS
         } else {
             $frontScriptName = is_null($conf) ? 'index.php' : $conf['site']['frontScriptName'];
@@ -574,14 +579,26 @@ class SGL_URL
         //  split elements (remove eventual leading/trailing slashes)
         $aUriParts = explode('/', trim($url, '/'));
 
-        //  step through array and strip until fc element is reached
-        foreach ($aUriParts as $elem) {
-            if ($elem != $frontScriptName) {
-                array_shift($aUriParts);
-            } else {
-                break;
+        if ($frontScriptName != false) {
+            //  step through array and strip until fc element is reached
+            foreach ($aUriParts as $elem) {
+                if ($elem != $frontScriptName) {
+                    array_shift($aUriParts);
+                } else {
+                    break;
+                }
+            }
+        } else {
+            $pathFromServer = dirname($_SERVER['SCRIPT_NAME']); //=> /seagull/branches/0.4-bugfix/www
+            foreach ($aUriParts as $elem) {
+                if (stristr($pathFromServer, $elem)) {
+                    array_shift($aUriParts);
+                } else {
+                    break;
+                }
             }
         }
+         
         return $aUriParts;
     }
 }
@@ -640,20 +657,23 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
         
         //  remap
-        $aParsedUri['frontScriptName'] = array_shift($aUriParts);
+        if ($conf['site']['frontScriptName'] != false) {
+            $aParsedUri['frontScriptName'] = array_shift($aUriParts);
+            
+            //  if frontScriptName empty, get from config 
+            if (empty($aParsedUri['frontScriptName'])
+                    || $aParsedUri['frontScriptName'] != $conf['site']['frontScriptName']) {
+                $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
+            }
+        }
+
         $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
         $mgrCopy = array_shift($aUriParts);
         $aParsedUri['managerName'] = strtolower($mgrCopy);
         
-        //  if frontScriptName empty, get from config
-        $default = false;
-        if (empty($aParsedUri['frontScriptName'])
-                || $aParsedUri['frontScriptName'] != $conf['site']['frontScriptName']) {
-            $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
-        }
-
         //  if no module name present, get from config
         //  catch case where debugging with Zend supplies querystring params
+        $default = false;
         if (empty(  $aParsedUri['moduleName'])
                 || (preg_match('/start_debug/', $aParsedUri['moduleName']))
                 || (preg_match('/\?/i', $aParsedUri['moduleName']))) {
@@ -787,7 +807,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;
         $mod = (empty($mod)) ? $req->get('moduleName'): $mod;
-        $url = $conf['site']['frontScriptName'] . '/';
+        $url = ($conf['site']['frontScriptName'] != false) ? $conf['site']['frontScriptName'] . '/' : '';
 
         //  allow for default managers, ie, in faqMgr, don't
         //  return http://localhost.localdomain/seagull/www/index.php/faq/faq/action/edit/
