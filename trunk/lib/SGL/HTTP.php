@@ -86,7 +86,10 @@ class SGL_HTTP
                 }
             }
             $qs = (count($aParams)) ? implode('/', $aParams): '';
-            $url = $conf['site']['frontScriptName'] . '/' . $moduleName;
+            $url = ($conf['site']['frontScriptName']) 
+                ? $conf['site']['frontScriptName'] . '/' . $moduleName 
+                : $moduleName;            
+                
             if (!empty($managerName)) {
                 $url .=  '/' . $managerName;
             }
