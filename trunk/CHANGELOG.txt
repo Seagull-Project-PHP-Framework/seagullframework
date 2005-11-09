@@ -11,12 +11,15 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+09-11-05    Added ability for sql parser to auto-increment records when PK is marked
+            with {SGL_NEXT_ID} token
+09-11-05    Added ability to add all or minimum modules
 09-11-05    Added ability to remove frontScriptName and have even clearner urls than
             previously, eg, now available: http://example.com/user/login/ 
-            option currently only available to apache users with mod_rewrite enabled,
-            also you must copy seagull/etc/htaccess-cleanUrl.dist to 
-            seagull/www/.htaccess and make sure the file is readable by the webserver
-            (Julien Casanova)
+            Option currently only available to apache users with mod_rewrite enabled,
+            to activate set [site][frontScriptName] = false and copy 
+            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure 
+            the file is readable by the webserver (Julien Casanova)
 09-11-05    Added ability to backdate articles (Werner Krauss)
 09-11-05    Removed unnecessary framebuster from login page
 06-11-05    Split web tests into modules

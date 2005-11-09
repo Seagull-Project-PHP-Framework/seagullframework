@@ -196,7 +196,9 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 </tr-->            
             ';
             
-            $aModuleList = $this->getMinimumModuleList();
+            $aModuleList = (isset($data['installAllModules'])) 
+                ? SGL_Install::getModuleList()
+                : $this->getMinimumModuleList();
             
             foreach ($aModuleList as $module) {
                 echo '<tr>
@@ -255,7 +257,10 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
             
             //  Go back and load each module's default data, if there is a sql file in /data
-            $aModuleList = $this->getMinimumModuleList();            
+            $aModuleList = (isset($data['installAllModules'])) 
+                ? SGL_Install::getModuleList()
+                : $this->getMinimumModuleList();
+                           
             foreach ($aModuleList as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
     
@@ -284,7 +289,10 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
             
             //  Go back and load module foreign keys/constraints, if any
-            $aModuleList = $this->getMinimumModuleList();            
+            $aModuleList = (isset($data['installAllModules'])) 
+                ? SGL_Install::getModuleList()
+                : $this->getMinimumModuleList();
+                          
             foreach ($aModuleList as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
                 if (file_exists($modulePath . $this->filename3)) {

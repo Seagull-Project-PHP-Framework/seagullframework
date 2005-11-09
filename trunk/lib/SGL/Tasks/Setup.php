@@ -142,9 +142,9 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4); 
         
-        //  section/sreen IDs
+        //  various
         define('SGL_ANY_SECTION', 				0);
-        
+        define('SGL_NEXT_ID', 				    0);
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);
         
