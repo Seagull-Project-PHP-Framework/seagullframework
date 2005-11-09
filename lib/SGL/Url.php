@@ -222,19 +222,23 @@ class SGL_URL
 
                 case 'path':
                     if ($value{0} == '/') {
-                        $frontScriptStartIndex = strpos($value, $this->frontScriptName);
-                        $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
-                        if (!$frontScriptStartIndex) {
-                            
-                            //  this is an install and index.php was omitted
-                            $this->path = $urlinfo['path'];
-                            $this->querystring = @$urlinfo['query'];
-                            $install = true;
+                        if ($this->frontScriptName != false) {
+                            $frontScriptStartIndex = strpos($value, $this->frontScriptName);
+                            $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+                            if (!$frontScriptStartIndex) {
+                                
+                                //  this is an install and index.php was omitted
+                                $this->path = $urlinfo['path'];
+                                $this->querystring = @$urlinfo['query'];
+                                $install = true;
+                            } else {
+                                $this->path = substr($value, 0, $frontScriptStartIndex);
+                                $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);   
+                            }
                         } else {
-                            $this->path = substr($value, 0, $frontScriptStartIndex);
-                            $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);                            
+                            $this->path = dirname($_SERVER['SCRIPT_NAME']);
+                            $this->querystring = ltrim(str_replace($this->path, '', $urlinfo['path']), '/');
                         }
-
                         if (!array_key_exists('query', $urlinfo)) {
                             $this->aQueryData = $this->parseQueryString($conf);
                         }
