@@ -79,7 +79,7 @@ class BlockForm
         $query = "SELECT role_id, name FROM {$conf['table']['role']}";
         $res = & $dbh->getAll($query);
         $roles = array();
-        $roles[SGL_ALL_ROLES] = SGL_String::translate('All roles');
+        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
         foreach ($res as $key => $value) {
             $roles[$value->role_id] = $value->name;
         }
@@ -100,7 +100,7 @@ class BlockForm
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
-            $defaultValues['block[roles]']        = SGL_ALL_ROLES;
+            $defaultValues['block[roles]']        = SGL_ANY_ROLE;
             $this->form->setDefaults( $defaultValues );
         }
 
