@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.90 2005/09/15 20:10:11 cellog Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.94 2005/10/29 21:23:19 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -239,7 +239,7 @@ class PEAR_Downloader extends PEAR_Common
         if (!class_exists('PEAR_Downloader_Package')) {
             require_once 'PEAR/Downloader/Package.php';
         }
-        $a = new PEAR_Downloader_Package($t);
+        $a = &new PEAR_Downloader_Package($t);
         return $a;
     }
 
@@ -421,7 +421,7 @@ class PEAR_Downloader extends PEAR_Common
                     } else {
                         $send = $param->getPackageFile();
                     }
-                    $installcheck = $depchecker->validatePackage($send, $this);
+                    $installcheck = $depchecker->validatePackage($send, $this, $params);
                     if (PEAR::isError($installcheck)) {
                         if (!isset($this->_options['soft'])) {
                             $this->log(0, $installcheck->getMessage());
@@ -447,7 +447,7 @@ class PEAR_Downloader extends PEAR_Common
                     } else {
                         $send = $param->getPackageFile();
                     }
-                    $installcheck = $depchecker->validatePackage($send, $this);
+                    $installcheck = $depchecker->validatePackage($send, $this, $params);
                     if (PEAR::isError($installcheck)) {
                         if (!isset($this->_options['soft'])) {
                             $this->log(0, $installcheck->getMessage());
@@ -732,10 +732,13 @@ class PEAR_Downloader extends PEAR_Common
                 return PEAR::raiseError('Invalid remote dependencies retrieved from REST - ' .
                     'this should never happen');
             }
-            if (isset($url['info']['required'])) {
+            if (isset($url['info']['required']) || $url['compatible']) {
                 require_once 'PEAR/PackageFile/v2.php';
                 $pf = new PEAR_PackageFile_v2;
                 $pf->setRawChannel($parr['channel']);
+                if ($url['compatible']) {
+                    $pf->setRawCompatible($url['compatible']);
+                }
             } else {
                 require_once 'PEAR/PackageFile/v1.php';
                 $pf = new PEAR_PackageFile_v1;
@@ -1362,7 +1365,7 @@ class PEAR_Downloader extends PEAR_Common
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
         $request .= "Host: $host:$port\r\n" . $ifmodifiedsince .
-            "User-Agent: PHP/" . PHP_VERSION . "\r\n";
+            "User-Agent: PEAR/1.4.4/PHP/" . PHP_VERSION . "\r\n";
         if (isset($this)) { // only pass in authentication for non-static calls
             $username = $config->get('username');
             $password = $config->get('password');

@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.140 2005/09/11 18:34:44 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.143 2005/10/31 05:06:43 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -43,7 +43,7 @@ define('PEAR_REGISTRY_ERROR_CHANNEL_FILE', -6);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -199,6 +199,7 @@ class PEAR_Registry extends PEAR
                         $pear_channel->setSummary('PHP Extension and Application Repository');
                         $pear_channel->setDefaultPEARProtocols();
                         $pear_channel->setBaseURL('REST1.0', 'http://pear.php.net/rest/');
+                        $pear_channel->setBaseURL('REST1.1', 'http://pear.php.net/rest/');
                     } else {
                         $pear_channel->setName('pear.php.net');
                         $pear_channel->setAlias('pear');
@@ -219,6 +220,7 @@ class PEAR_Registry extends PEAR
                         $pecl_channel->setSummary('PHP Extension Community Library');
                         $pecl_channel->setDefaultPEARProtocols();
                         $pecl_channel->setBaseURL('REST1.0', 'http://pecl.php.net/rest/');
+                        $pecl_channel->setBaseURL('REST1.1', 'http://pecl.php.net/rest/');
                         $pecl_channel->setValidationPackage('PEAR_Validator_PECL', '1.0');
                     } else {
                         $pecl_channel->setName('pecl.php.net');
@@ -1308,6 +1310,7 @@ class PEAR_Registry extends PEAR
             $pear_channel->setSummary('PHP Extension and Application Repository');
             $pear_channel->setDefaultPEARProtocols();
             $pear_channel->setBaseURL('REST1.0', 'http://pear.php.net/rest/');
+            $pear_channel->setBaseURL('REST1.1', 'http://pear.php.net/rest/');
             return $pear_channel;
         }
         if ($this->_getChannelFromAlias($channel) == 'pecl.php.net') {
@@ -1321,6 +1324,7 @@ class PEAR_Registry extends PEAR
             $pear_channel->setSummary('PHP Extension Community Library');
             $pear_channel->setDefaultPEARProtocols();
             $pear_channel->setBaseURL('REST1.0', 'http://pecl.php.net/rest/');
+            $pear_channel->setBaseURL('REST1.1', 'http://pecl.php.net/rest/');
             $pear_channel->setValidationPackage('PEAR_Validator_PECL', '1.0');
             return $pear_channel;
         }
@@ -1837,6 +1841,9 @@ class PEAR_Registry extends PEAR
                     }
                 }
                 $pkgs[$name] = $this->checkFileMap($name, $package, $api, $attrs);
+                if (PEAR::isError($pkgs[$name])) {
+                    return $pkgs[$name];
+                }
             }
             return array_filter($pkgs, $notempty);
         }

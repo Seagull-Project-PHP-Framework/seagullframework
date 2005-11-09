@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.26 2005/09/14 19:27:16 pajoye Exp $
+// $Id: pearcmd.php,v 1.28 2005/09/28 22:45:56 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0";
+$pear_package_version = "1.4.4";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -280,6 +280,10 @@ if ($fetype == 'Gtk') {
     if ($ok === false) {
         PEAR::raiseError("unknown command `$command'");
     }
+    if (PEAR::isError($ok)) {
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+        PEAR::raiseError($ok);
+    }
 } while (false);
 
 // {{{ usage()
@@ -385,16 +389,11 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
         E_USER_NOTICE =>  "User Notice"
     );
     $prefix = $errortype[$errno];
-    $file = basename($file);
-    if (function_exists('debug_backtrace')) {
-        $trace = debug_backtrace();
-        if (isset($trace[1]) && isset($trace[1]['file'])) {
-            $dir = $trace[1]['file'];
-            global $_PEAR_PHPDIR;
-            if (stristr($dir, $_PEAR_PHPDIR)) {
-                $file = substr($dir, strlen($_PEAR_PHPDIR) + 1);
-            }
-        }
+    global $_PEAR_PHPDIR;
+    if (stristr($file, $_PEAR_PHPDIR)) {
+        $file = substr($file, strlen($_PEAR_PHPDIR) + 1);
+    } else {
+        $file = basename($file);
     }
     print "\n$prefix: $errmsg in $file on line $line\n";
 }

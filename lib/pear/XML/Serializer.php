@@ -19,7 +19,7 @@
  * @author     Stephan Schmidt <schst@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Serializer.php,v 1.45 2005/09/22 14:54:48 schst Exp $
+ * @version    CVS: $Id: Serializer.php,v 1.47 2005/09/30 13:40:30 schst Exp $
  * @link       http://pear.php.net/package/XML_Serializer
  * @see        XML_Unserializer
  */
@@ -380,7 +380,7 @@ define('XML_SERIALIZER_ENTITIES_HTML', XML_UTIL_ENTITIES_HTML);
  * @author     Stephan Schmidt <schst@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 0.17.0
+ * @version    Release: 0.18.0
  * @link       http://pear.php.net/package/XML_Serializer
  * @see        XML_Unserializer
  */
@@ -509,7 +509,7 @@ class XML_Serializer extends PEAR
     */
     function apiVersion()
     {
-        return '0.17.0';
+        return '0.18.0';
     }
 
    /**
@@ -890,7 +890,10 @@ class XML_Serializer extends PEAR
         }
         if (isset($this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG][$parent])) {
             return $this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG][$parent];
+        } elseif (isset($this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG]['#default'])) {
+            return $this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG]['#default'];
         } elseif (isset($this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG]['__default'])) {
+            // keep this for BC
             return $this->options[XML_SERIALIZER_OPTION_DEFAULT_TAG]['__default'];
         }
         return 'XML_Serializer_Tag';
@@ -907,7 +910,15 @@ class XML_Serializer extends PEAR
     {
         // check for magic function
         if (method_exists($object, '__sleep')) {
-            $properties = $object->__sleep();
+            $propNames = $object->__sleep();
+            if (is_array($propNames)) {
+            	$properties = array();
+            	foreach ($propNames as $propName) {
+            		$properties[$propName] = $object->$propName;
+            	}
+            } else {
+                $properties = get_object_vars($object);
+            }
         } else {
             $properties = get_object_vars($object);
         }

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: rw.php,v 1.10 2005/08/23 18:15:57 cellog Exp $
+ * @version    CVS: $Id: rw.php,v 1.12 2005/09/27 03:34:02 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a8
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @version    Release: 1.4.4
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a8
  */
@@ -1302,7 +1302,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         $this->_isValid = 0;
         $r = $this->_mergeTag($r, $package,
             array(
-                'binarypackage' => array(),
+                'binarypackage' => array('filelist'),
             ));
     }
 
@@ -1328,7 +1328,7 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         $this->_isValid = 0;
         $r = $this->_mergeTag($r, $opt,
             array(
-                'configureoption' => array('binarypackage'),
+                'configureoption' => array('binarypackage', 'filelist'),
             ));
     }
 
@@ -1355,11 +1355,20 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
             }
             $dep['exclude'] = $exclude;
         }
-        $r = $this->_mergeTag($r, $dep,
-            array(
-                'installconditions' => array('filelist'),
-                'php' => array('extension', 'os', 'arch')
-            ));
+        if ($this->getPackageType() == 'extsrc') {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('configureoption', 'binarypackage',
+                        'filelist'),
+                    'php' => array('extension', 'os', 'arch')
+                ));
+        } else {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('filelist'),
+                    'php' => array('extension', 'os', 'arch')
+                ));
+        }
     }
 
     /**
@@ -1379,11 +1388,20 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         }
         $this->_isValid = 0;
         $dep = $this->_constructDep($name, false, false, $min, $max, $recommended, $exclude);
-        $r = $this->_mergeTag($r, $dep,
-            array(
-                'installconditions' => array('filelist'),
-                'extension' => array('os', 'arch')
-            ));
+        if ($this->getPackageType() == 'extsrc') {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('configureoption', 'binarypackage',
+                        'filelist'),
+                    'extension' => array('os', 'arch')
+                ));
+        } else {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('filelist'),
+                    'extension' => array('os', 'arch')
+                ));
+        }
     }
 
     /**
@@ -1405,11 +1423,20 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         if ($conflicts) {
             $dep['conflicts'] = '';
         }
-        $r = $this->_mergeTag($r, $dep,
-            array(
-                'installconditions' => array('filelist'),
-                'os' => array('arch')
-            ));
+        if ($this->getPackageType() == 'extsrc') {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('configureoption', 'binarypackage',
+                        'filelist'),
+                    'os' => array('arch')
+                ));
+        } else {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('filelist'),
+                    'os' => array('arch')
+                ));
+        }
     }
 
     /**
@@ -1431,11 +1458,20 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         if ($conflicts) {
             $dep['conflicts'] = '';
         }
-        $r = $this->_mergeTag($r, $dep,
-            array(
-                'installconditions' => array('filelist'),
-                'arch' => array()
-            ));
+        if ($this->getPackageType() == 'extsrc') {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('configureoption', 'binarypackage',
+                        'filelist'),
+                    'arch' => array()
+                ));
+        } else {
+            $r = $this->_mergeTag($r, $dep,
+                array(
+                    'installconditions' => array('filelist'),
+                    'arch' => array()
+                ));
+        }
     }
 
     /**
@@ -1508,17 +1544,6 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
         } else {
             $this->_packageInfo['changelog']['release'][] = $contents;
         }
-    }
-
-    /**
-     * @return array
-     */
-    function getChangelog()
-    {
-        if (isset($this->_packageInfo['changelog'])) {
-            return $this->_packageInfo['changelog'];
-        }
-        return false;
     }
 
     /**
