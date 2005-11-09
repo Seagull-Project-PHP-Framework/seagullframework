@@ -9,6 +9,7 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+09-11-05    Removed unnecessary framebuster from login page
 06-11-05    Split web tests into modules
 06-11-05    Moved all core classes that doubled up with other classes to reduce
             file loading to seagull/lib/SGL/Other.php.  Currently this contains
