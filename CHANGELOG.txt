@@ -11,6 +11,7 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+10-11-05    Moved MaintenanceMgr to 'default' module
 10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
             assignments) by creating an auto-increment token in data and using
             dynamic inserts

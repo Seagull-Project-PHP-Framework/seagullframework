@@ -5,33 +5,33 @@
         'Home' => 'Inicio',
 
 /*  MODULE MGR  */
-        'Module Manager' => 'Gestor de Módulos',
+        'Module Manager' => 'Gestor de Mï¿½dulos',
 
 /*  CONFIG MGR  */
-        'Config Manager' => 'Gestor de Configurações',
-        'config info successfully updated' => 'A configuração foi gravada com sucesso',
+        'Config Manager' => 'Gestor de Configuraï¿½ï¿½es',
+        'config info successfully updated' => 'A configuraï¿½ï¿½o foi gravada com sucesso',
 
 /*  FOOTER  */
-        'Execution Time' => 'Tempo de execução',
+        'Execution Time' => 'Tempo de execuï¿½ï¿½o',
         'Powered by' => 'Powered by',
 
 /*  GENERAL MESSAGES    */
-        'insufficient rights' => 'Não tem permissões suficientes para entrar nesta área.',
-        'authorization required' => 'É necessário ser um utilizador registado para usar esta funcionalidade. <br>Por favor, use o formulário respectivo para se registar.',
-        'session timeout' => 'A sessão expirou. Entre novamente.',
-        'You have been successfully logged out' => 'Saiu da sessão',
+        'insufficient rights' => 'Nï¿½o tem permissï¿½es suficientes para entrar nesta ï¿½rea.',
+        'authorization required' => 'ï¿½ necessï¿½rio ser um utilizador registado para usar esta funcionalidade. <br>Por favor, use o formulï¿½rio respectivo para se registar.',
+        'session timeout' => 'A sessï¿½o expirou. Entre novamente.',
+        'You have been successfully logged out' => 'Saiu da sessï¿½o',
         'password emailed out' => 'A sua password foi enviada para o e-mail com que se registou',
-        'email not in system' => 'O seu e-mail não se encontra no sistema. Por favor tente outra vez.',
+        'email not in system' => 'O seu e-mail nï¿½o se encontra no sistema. Por favor tente outra vez.',
         'email submitted successfully' => 'O seu email foi submetido.',
         'There was a problem sending the email' => 'Ocorreu um erro no envio do seu e-mail.',
-        'message ID not recognised' => 'o ID da mensagem não é reconhecido',
+        'message ID not recognised' => 'o ID da mensagem nï¿½o ï¿½ reconhecido',
         'Please fill in the indicated fields' => 'Por favor preencha todos os campos abaixo indicados.',
         'Your alert has been sent successfully' => 'A sua alerta foi enviado com sucesso',
 
 /*  VARIOUS */
         'user' => 'utilizdor',
         'Username' => 'Nome do Utilizador',
-        'Action' => 'Acção',
+        'Action' => 'Acï¿½ï¿½o',
         'Select' => 'Selecionar',
         'delete' => 'remover',
         'Edit' => 'Editar',
@@ -44,10 +44,10 @@
         'guest' => 'visitante',
         'login' => 'login',
         'logout' => 'logout',
-        'session started at' => 'sessão iniciada ás',
-        'logged in at' => 'entrou ás',
+        'session started at' => 'sessï¿½o iniciada ï¿½s',
+        'logged in at' => 'entrou ï¿½s',
         'displaying results' => 'mostrar resultados',
-        'to' => 'até',
+        'to' => 'atï¿½',
         'from a total of' => 'de um total de',
         'back' => 'voltar',
         'next' => 'seguinte',
@@ -62,35 +62,35 @@
         'move' => 'mover',
         'delete' => 'remover',
         'Manage' => 'Gerir',
-        'Title'  => 'Titúlo',
+        'Title'  => 'Titï¿½lo',
         'Status' => 'Status',
         'ID' => 'ID',
         'Name' => 'Nome',
 
         'check to activate' => 'clicar para activar',
-        
+
 // Status
         'Enabled' => 'Activo',
         'Disabled' => 'Inactivo',
 
-        
-        'Are you sure you want to delete this' => 'Confirma a remoção?',
+
+        'Are you sure you want to delete this' => 'Confirma a remoï¿½ï¿½o?',
         'You must select an element to delete' => 'Deve selecionadr um elemento para remover',
         'no results found' => 'nenhum resultado encontrado',
-        'You have been banned' => 'Foi banido deste site. Contacte o responsável pelo mesmo para mais informações',
-        'Invalid POST source' => 'O formulário aparentemente foi enviado de uma fonte não autorizada',
-        'You are here' => 'Está aqui',
-        'whats this?' => 'O que é isto?',
-        'denotes required field' => 'campo obrigatório',
-        
+        'You have been banned' => 'Foi banido deste site. Contacte o responsï¿½vel pelo mesmo para mais informaï¿½ï¿½es',
+        'Invalid POST source' => 'O formulï¿½rio aparentemente foi enviado de uma fonte nï¿½o autorizada',
+        'You are here' => 'Estï¿½ aqui',
+        'whats this?' => 'O que ï¿½ isto?',
+        'denotes required field' => 'campo obrigatï¿½rio',
+
 /*  Date and Time  */
 /*  'at time' used at Output:showDateSelector  */
-        'at time' => 'ás', 
+        'at time' => 'ï¿½s',
 
         'aMonths' => array(
             13 => 'Janeiro',
             14 => 'Fevereiro',
-            15 => 'Março',
+            15 => 'Marï¿½o',
             16 => 'Abril',
             17 => 'Maio',
             18 => 'Junho',
@@ -106,23 +106,47 @@
 */
         'Manage' => 'Gerir',
         'Return to browse' => 'Retornar ao browser',
-        'ModuleManager Mgr' => 'Gestor de Módulos',
+        'ModuleManager Mgr' => 'Gestor de Mï¿½dulos',
         'Add' => 'Adicionar',
         'Delete' => 'Remover',
-        'With selected module(s)' => 'Com o(s) módulo(s) selecionado(s)', //table footer
+        'With selected module(s)' => 'Com o(s) mï¿½dulo(s) selecionado(s)', //table footer
         'Add a module' => 'Adicionar modulo',
         'Module successfully added to the manager.' => 'Modulo adicionado com sucesos.',
         'Module(s) successfully removed.' => 'Module(s) removido(s) com successo.',
         'Configurable' => 'Configuravel',
-        'Description' => 'Descrição',
+        'Description' => 'Descriï¿½ï¿½o',
         'Admin URI' => 'Admin URI',
         'Icon' => 'Icone',
-        
+
         // validation
         'Please, specify a name' => 'Por favor indique um nome',
         'Please, specify a title' => 'Por favor indique um titulo',
-        'Please, specify a description' => 'Por favor indique a descrição',
-        'Please, specify the url to link to' => 'Por favor indique o url de ligação',
+        'Please, specify a description' => 'Por favor indique a descriï¿½ï¿½o',
+        'Please, specify the url to link to' => 'Por favor indique o url de ligaï¿½ï¿½o',
         'Please, specify the name of the icon-file' => 'Por favor indique o nome do ficheiro com o icone',
+
+        'Maintenance' => 'Manutenï¿½ï¿½o',
+        'Congratulations, the target translation appears to be up to date' => 'Parabens, a traduï¿½ï¿½o esta actualizada',
+        'translation successfully updated' => 'traduï¿½ï¿½o actualizada com sucesso',
+        'There was a problem updating the translation' => 'Ocorreu um problema na actualizaï¿½ï¿½o da traduï¿½ï¿½o',
+        'Data Objects rebuilt successfully' => 'Data Objects foram reconstruidos com sucesso',
+        'Cache files successfully deleted' => 'Os ficheiso em Cache foram removidos com sucesso',
+        'Sequences rebuilt successfully' => 'A tabela de sequencias foi reconstruida com sucesso',
+
+        'Manage Translations' => 'Gerir traduï¿½ï¿½es',
+        'Rebuild DB Sequences' => 'Reconstruir sequencias BD',
+        'Rebuild Sequences Now' => 'Executar',
+		'validate' => 'validar',
+        'edit' => 'editar',
+        'Process' => 'Processar',
+        'Manage Caches' => 'Gestï¿½o da Cache',
+        'Templates' => 'Templates',
+        'Navigation & Blocks' => 'Navegaï¿½ï¿½o e Blocos',
+
+        'Templates' => 'Templates',
+
+        'Clear Selected Caches Now' => 'Limpar Cache selecionada',
+        'Rebuild Data Objects' => 'Reconstruir Data Objects',
+        'Rebuild Dataobjects Now' => 'Executar',
     );
 ?>
