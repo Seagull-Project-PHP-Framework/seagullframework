@@ -11,14 +11,17 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
+            assignments) by creating an auto-increment token in data and using
+            dynamic inserts
 09-11-05    Added ability for sql parser to auto-increment records when PK is marked
             with {SGL_NEXT_ID} token
 09-11-05    Added ability to add all or minimum modules
 09-11-05    Added ability to remove frontScriptName and have even clearner urls than
-            previously, eg, now available: http://example.com/user/login/ 
+            previously, eg, now available: http://example.com/user/login/
             Option currently only available to apache users with mod_rewrite enabled,
-            to activate set [site][frontScriptName] = false and copy 
-            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure 
+            to activate set [site][frontScriptName] = false and copy
+            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure
             the file is readable by the webserver (Julien Casanova)
 09-11-05    Added ability to backdate articles (Werner Krauss)
 09-11-05    Removed unnecessary framebuster from login page
@@ -31,11 +34,11 @@ IMPROVEMENTS
 04-11-05    New wizard can only be accessed if admin knows password stored in
             seagull/var/INSTALL_COMPLETE.php.  Installer is invoked automatically
             on first seagull install, and can be called manually by calling setup.php
-03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr, 
+03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr,
             CategoryMgr so core modules could work
 03-11-05    Added SGL_Process_ResolveManager::moduleIsRegistered() to gracefully supply
             default module if requested module is not registered.
-03-11-05    all SQL-related files that used to live in seagull/etc have been moved to 
+03-11-05    all SQL-related files that used to live in seagull/etc have been moved to
             'default' module as that's what they are, default
 03-11-05    item* tables and data moved to publisher
 03-11-05    category table and data moved to publisher
@@ -44,7 +47,7 @@ IMPROVEMENTS
 28-10-05    Blocks can now be displayed according to the role of the current user
             (Daniel Korsak)
 23-10-05	Added support for observers with SGL_Oberserver and SGL_Observable
-21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php 
+21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php
             to Process.php to respect namespace
 20-10-05    Added php4/5 compatible delegator class
 
@@ -66,26 +69,26 @@ BUGFIXES
 12-10-05    Fixed error where pages without a section id assumed html title "none"
 
 IMPROVEMENTS
-14-10-05    
+14-10-05
 14-10-05    Added SGL_Array class to accomodate the removeBlanks method
 14-10-05    All managers now fire their parents' constructors, ie: parent::SGL_Manager();
 14-10-05    Request type now context sensitive, HTTP and CLI types supported
 14-10-05    Implemented Intercepting Filter pattern so program workflow can now be
             controlled and customised with pre and post-process tasks.  See
             http://www.phpkitchen.com/index.php?/archives/725-Modularising-Workflow-with-an-Intercepting-Filter.html
-14-10-05    Added SGL_View class so template engine is now configurable, Flexy 
+14-10-05    Added SGL_View class so template engine is now configurable, Flexy
             implemented as the default driver.  See
             http://www.phpkitchen.com/index.php?/archives/724-Implementing-an-Output-Renderer-Strategy.html
 14-10-05    SGL_Url::getSignificantSegments renamed to toPartialArray
-14-10-05    SGL_Url now uses a parser strategy and can handle Seagull urls as well as 
+14-10-05    SGL_Url now uses a parser strategy and can handle Seagull urls as well as
             traditional querystring format, url object stored in SGL_Registry
-14-10-05    Moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in 
+14-10-05    Moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in
             constants.php
-14-10-05    New SGL_Config class which autodetects and handles filetype: xml, ini and php 
+14-10-05    New SGL_Config class which autodetects and handles filetype: xml, ini and php
             arrays implemented
 14-10-05    Almost all global vars removed, including $GLOBALS['_SGL']['REQUEST'] and
             $GLOBALS['_SGL']['CONF']
-14-10-05    Request object now stored in request registry ($input), renamed 
+14-10-05    Request object now stored in request registry ($input), renamed
             from SGL_HTTP_REQUEST to SGL_Request
 14-10-05    Moved SGL::getTime to SGL_Date::getTime
 12-10-05    Added 84 web tests to ensure error-free screen rendering
@@ -113,7 +116,7 @@ IMPROVEMENTS
 BUGFIXES
 16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
             an infinite Flexy loop
-15-09-05    Html title element value is now correctly drawn from the current article 
+15-09-05    Html title element value is now correctly drawn from the current article
             title, or the section name if none exists
 
 IMPROVEMENTS

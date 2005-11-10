@@ -16,6 +16,23 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr_inbox', '', @moduleId
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr_sendAlert', '', @moduleId);
 
+#member role perms
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_compose';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_delete';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_inbox';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_insert';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_outbox';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_read';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_reply';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+
+
 #
 # Dumping data for table `instant_message`
 #
