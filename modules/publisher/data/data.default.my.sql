@@ -1,5 +1,64 @@
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'publisher', 'Publisher', 'The ''Publisher'' module allows you to create content and publish it to your site.  Currently you can create various types of articles and upload and categorise any filetype, matching the two together in a browsable archive format.', 'publisher/article', 'publisher.png');
 
+SELECT @moduleId := MAX(module_id) FROM module;
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_add', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_insert', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_edit', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_update', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_delete', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'contenttypemgr_list', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'wikiscrapemgr', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'wikiscrapemgr_list', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articleviewmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'filemgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_setDownload', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_view', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentmgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'filemgr_download', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'filemgr_downloadZipped', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'filemgr_view', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articleviewmgr_view', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articleviewmgr_summary', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_changeStatus', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_view', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'articlemgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_reorder', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_reorderUpdate', NULL, @moduleId);
+
+SELECT @permissionId := permission_id FROM permission WHERE name = 'articleviewmgr_summary';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'articleviewmgr_view';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_download';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_downloadZipped';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_view';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'wikiscrapemgr_list';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+
+
+
 #
 # Dumping data for table `document_type`
 #
