@@ -57,11 +57,11 @@ php ini
 - detect and deal with safe_mode
 - magic_quotes must be off
 - file_uploads ideally enabled
-        
+
 module setup
 ============
 - choose modules and permissions must be created and set at install time
-- attempt to 
+- attempt to
     - uncompress
     - move to correct locatin
     - apply user perms
@@ -70,7 +70,7 @@ module setup
     - load module's schema + data
     - add 'section' or 'screen' navigation links
     - register module in registry
-*/ 
+*/
 
 //  initialise
 session_start();
@@ -95,24 +95,24 @@ if (isset($_GET['start'])) {
     //  remove installer info
     @session_destroy();
     $_SESSION = array();
-    
+
     //  clear session cookie
     $c = &SGL_Config::singleton();
-    $conf = $c->getAll();    
-    setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'], 
+    $conf = $c->getAll();
+    setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
-    
+
     header('Location: '.SGL_BASE_URL.'/index.php');
     exit;
 }
 
 //  check authorization
-if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php') 
+if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')
         && empty($_SESSION['valid'])) {
     SGL_Install::printHeader();
     SGL_Install::printLoginForm();
     SGL_Install::printFooter();
-    
+
     if (!empty($_POST['frmPassword'])) {
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
         $secret = trim(substr($aLines[1], 1));
@@ -156,20 +156,22 @@ class ActionProcess extends HTML_QuickForm_Action
     function perform(&$page, $actionName)
     {
         $data = $page->controller->exportValues();
-        
+
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_CreateConfig());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
-        $runner->addTask(new SGL_Task_CreateFileSystem());        
+        $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
-        
+
         set_time_limit(60);
         $ok = $runner->main();
     }
@@ -196,8 +198,8 @@ $wizard->run();
 
 if (SGL_Install::errorsExist()) {
     foreach ($_SESSION['ERRORS'] as $oError) {
-        $out =  $oError->getMessage() . '<br /> ';   
-        $out .= $oError->getUserInfo(); 
+        $out =  $oError->getMessage() . '<br /> ';
+        $out .= $oError->getUserInfo();
         print $out;
     }
 }
