@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', NULL, 'default.png');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', 'faq/maintenance', 'default.png');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
