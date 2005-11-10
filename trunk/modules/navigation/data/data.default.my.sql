@@ -1,3 +1,19 @@
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'navigation', 'Navigation', 'The ''Navigation'' module is what you use to build your site navigation, it creates menus that you can customise in terms of look and feel, and allows you to link to any site resource.', 'navigation/page', 'navigation.png');
+
+SELECT @moduleId := MAX(module_id) FROM module;
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_changeStyle', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_reorder', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pagemgr', '', @moduleId);
+
 #
 # Dumping data for table `section`
 #
