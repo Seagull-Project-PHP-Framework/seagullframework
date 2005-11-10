@@ -58,36 +58,36 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'installRoot'  => SGL_PATH,
             'webRoot'  => SGL_PATH . '/web',
             ));
-            
+
         //  setup admin user
         $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
         $this->addElement('text',  'adminRealName', 'Real name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
-        
+
         $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
         $this->addRule('adminPassword', 'Please specify the admin\'s password', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
-        
+
         //  paths
         $this->addElement('header',     null, 'Paths:');
         $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
         $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
-        
+
         $this->addRule('installRoot', 'You must specify an install root path', 'required');
         $this->addRule('webRoot', 'You must specify a web root path', 'required');
         //  test if dirs exist
-        
+
         //  general
         $this->addElement('header',     null, 'General:');
         $this->addElement('text',  'siteName',     'Site name: ');
         $this->addElement('text',  'siteKeywords',     'Keywords: ', 'size="50"');
         $this->addElement('textarea',   'siteDesc', 'Description:', array('rows' => 5, 'cols' => 40));
-        
+
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
-        
+
         //  set lang
         require_once SGL_PATH . '/lib/data/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
@@ -97,22 +97,21 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             $aLangData[$id] =  $langName . ' (' . $id . ')';
         }
         $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
-        
+
         //  set tz offset
         require_once SGL_PATH . '/lib/data/ary.timezones.en.php';
         $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $tz);
         $this->addElement('text',  'siteCookie',     'Cookie name: ');
-        
+
         //  install passwd
         $this->addElement('password',  'installPassword', 'Install password: ');
 
         $this->addRule('siteCookie', 'Please specify the cookie\'s name', 'required');
-        $this->addRule('installPassword', 'Please specify a password to be used to access the installer', 'required');        
+        $this->addRule('installPassword', 'Please specify a password to be used to access the installer', 'required');
 
-        $this->addElement('checkbox', 'installAllModules', 'Install all modules?', 
-            'Yes (If box is not ticked, only 3 core modules will be installed)');        
-      
-        
+        $this->addElement('checkbox', 'installAllModules', 'Install all modules?',
+            'Yes (If box is not ticked, only 3 core modules will be installed)');
+
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish >>');
