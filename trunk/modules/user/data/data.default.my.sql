@@ -127,7 +127,7 @@ INSERT INTO role VALUES (2,'member','has a limited set of privileges',NULL,NULL,
 # Dumping data for table `role_permission`
 #
 
-# role perms for 'guest' roles
+#guest role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_list';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_login';
@@ -145,57 +145,45 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'usermgr_requestPasswordReset';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
 
-
-
-
-INSERT INTO role_permission VALUES (14, 2, 11);
-INSERT INTO role_permission VALUES (15, 2, 10);
-INSERT INTO role_permission VALUES (16, 2, 7);
-INSERT INTO role_permission VALUES (17, 2, 6);
-INSERT INTO role_permission VALUES (18, 2, 59);
-INSERT INTO role_permission VALUES (19, 2, 58);
-INSERT INTO role_permission VALUES (20, 2, 23);
-INSERT INTO role_permission VALUES (21, 2, 122);
-INSERT INTO role_permission VALUES (22, 2, 123);
-INSERT INTO role_permission VALUES (23, 2, 98);
-INSERT INTO role_permission VALUES (24, 2, 97);
-INSERT INTO role_permission VALUES (25, 2, 93);
-INSERT INTO role_permission VALUES (26, 2, 96);
-INSERT INTO role_permission VALUES (27, 2, 94);
-INSERT INTO role_permission VALUES (28, 2, 95);
-INSERT INTO role_permission VALUES (29, 2, 37);
-INSERT INTO role_permission VALUES (30, 2, 36);
-INSERT INTO role_permission VALUES (31, 2, 38);
-INSERT INTO role_permission VALUES (32, 2, 84);
-INSERT INTO role_permission VALUES (33, 2, 85);
-INSERT INTO role_permission VALUES (34, 2, 86);
-INSERT INTO role_permission VALUES (35, 2, 239);
-INSERT INTO role_permission VALUES (36, 2, 41);
-INSERT INTO role_permission VALUES (37, 2, 40);
-INSERT INTO role_permission VALUES (38, 2, 46);
-INSERT INTO role_permission VALUES (39, 2, 43);
-INSERT INTO role_permission VALUES (40, 2, 39);
-INSERT INTO role_permission VALUES (41, 2, 42);
-INSERT INTO role_permission VALUES (42, 2, 45);
-INSERT INTO role_permission VALUES (43, 2, 117);
-INSERT INTO role_permission VALUES (44, 2, 118);
-INSERT INTO role_permission VALUES (45, 2, 121);
-INSERT INTO role_permission VALUES (46, 2, 105);
-INSERT INTO role_permission VALUES (47, 2, 106);
-INSERT INTO role_permission VALUES (48, 2, 142);
-INSERT INTO role_permission VALUES (49, 2, 143);
-INSERT INTO role_permission VALUES (50, 2, 67);
-INSERT INTO role_permission VALUES (51, 2, 60);
-INSERT INTO role_permission VALUES (52, 2, 62);
-INSERT INTO role_permission VALUES (53, 2, 61);
-INSERT INTO role_permission VALUES (54, 2, 63);
-INSERT INTO role_permission VALUES (55, 2, 66);
-INSERT INTO role_permission VALUES (59, 2, 147);
-INSERT INTO role_permission VALUES (63, 2, 149);
-INSERT INTO role_permission VALUES (73, 2, 224);
-INSERT INTO role_permission VALUES (74, 2, 150);
-INSERT INTO role_permission VALUES (75, 2, 225);
-INSERT INTO role_permission VALUES (76, 2, 263);
+#member role perms
+SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr_edit';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr_summary';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr_update';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr_viewProfile';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_list';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_login';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_logout';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_edit';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_redirectToEdit';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_update';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'preferencemgr_edit';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'preferencemgr_update';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'profilemgr_view';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_add';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_insert';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'userpreferencemgr_editAll';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'userpreferencemgr_updateAll';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 
 #
 # Dumping data for table `user_preference`
