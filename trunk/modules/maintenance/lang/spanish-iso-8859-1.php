@@ -5,45 +5,24 @@
 /*  TRANSLATION */
 
         'Maintenance' => 'Mantenimiento',
-
-        'Congratulations, the target translation appears to be up to date' => 'Enhorabuena, la traducción parece que está al día',
-
-        'translation successfully updated' => 'traducción actualizada correctamente',
-
-        'There was a problem updating the translation' => 'Apareció un problema cuando se trataba de actualizar la traducción',
-
+        'Congratulations, the target translation appears to be up to date' => 'Enhorabuena, la traducciï¿½n parece que estï¿½ al dï¿½a',
+        'translation successfully updated' => 'traducciï¿½n actualizada correctamente',
+        'There was a problem updating the translation' => 'Apareciï¿½ un problema cuando se trataba de actualizar la traducciï¿½n',
         'Data Objects rebuilt successfully' => 'Los Objetos de Datos han sido reconstruidos correctamente',
-
-        'Cache files successfully deleted' => 'Los Fichero de Caché han sido borrados',
-
-        
-
-        'Manage Translations' => 'Gestionar traducciones',        
-
+        'Cache files successfully deleted' => 'Los Fichero de Cachï¿½ han sido borrados',
+        'Manage Translations' => 'Gestionar traducciones',
         'Sequences rebuilt successfully' => 'Las secuencias han sido reconstruidas correctamente',
-
         'Rebuild DB Sequences' => 'Las secuencias de las BD ha sido reconstruidas',
-
         'Rebuild Sequences Now' => 'Reconstruir secuencias ahora',
-
 		'validate' => 'validar',
-
         'edit' => 'editar',
-
-        'Process' => 'Precesar',        
-
-        'Manage Caches' => 'Gestionar Cachés',        
-
+        'Process' => 'Precesar',
+        'Manage Caches' => 'Gestionar Cachï¿½s',
         'Templates' => 'Plantillas',
-
-        'Navigation & Blocks' => 'Navegación & Bloques',
-
+        'Navigation & Blocks' => 'Navegaciï¿½n & Bloques',
         'Templates' => 'Plantillas',
-
-        'Clear Selected Caches Now' => 'Limpiar las Cachés Seleccionadas Ahora',
-
+        'Clear Selected Caches Now' => 'Limpiar las Cachï¿½s Seleccionadas Ahora',
         'Rebuild Data Objects' => 'Recontruir los Objetos del Datos',
-
         'Rebuild Dataobjects Now' => 'Recosntruir los Objetos de Datos Ahora',
 
     );

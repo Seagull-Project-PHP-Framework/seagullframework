@@ -102,7 +102,7 @@
         'Forgot Password' => 'Forgot Your Password',
         'Not Registered' => 'Not Registered?',
         'Email' => 'Email',
-        
+
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',
         'send bug report' => 'send bug report',
@@ -320,4 +320,57 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'SMTP password' => 'SMTP password',
         'Mandatory if you use SMTP as Backend and SMTP authentication is enabled' => 'Mandatory if you use \'SMTP\' as Backend and \'SMTP authentication\' is enabled',
     );
+
+$defaultWords['Maintenance'] = 'Maintenance';
+$defaultWords['Back to Maintenance'] = 'Back to Maintenance';
+$defaultWords['Congratulations, the target translation appears to be up to date'] = 'Congratulations, the target translation appears to be up to date';
+$defaultWords['translation successfully updated'] = 'translation successfully updated';
+$defaultWords['There was a problem updating the translation'] = 'There was a problem updating the translation';
+$defaultWords['Data Objects rebuilt successfully'] = 'Data Objects rebuilt successfully';
+$defaultWords['Cache files successfully deleted'] = 'Cache files successfully deleted';
+$defaultWords['Manage Translations'] = 'Manage Translations';
+$defaultWords['Check all modules'] = 'Check all modules';
+$defaultWords['check all modules'] = 'check all modules';
+$defaultWords['update'] = 'update';
+$defaultWords['Module Name'] = 'Module Name';
+$defaultWords['ok'] = 'ok';
+$defaultWords['no file'] = 'no file';
+$defaultWords['new strings'] = 'new strings';
+$defaultWords['old strings'] = 'old strings';
+$defaultWords['File not writeable'] = 'File not writeable';
+$defaultWords['Sequences rebuilt successfully'] = 'Sequences rebuilt successfully';
+$defaultWords['Rebuild DB Sequences'] = 'Rebuild DB Sequences';
+$defaultWords['Rebuild Sequences Now'] = 'Rebuild Sequences Now';
+$defaultWords['validate'] = 'validate';
+$defaultWords['Process'] = 'Process';
+$defaultWords['Manage Caches'] = 'Manage Caches';
+$defaultWords['Templates'] = 'Templates';
+$defaultWords['navigation'] = 'navigation';
+$defaultWords['blocks'] = 'blocks';
+$defaultWords['categories'] = 'categories';
+$defaultWords['permissions'] = 'permissions';
+$defaultWords['Clear Selected Caches Now'] = 'Clear Selected Caches Now';
+$defaultWords['Rebuild Data Objects'] = 'Rebuild Data Objects';
+$defaultWords['Rebuild Dataobjects Now'] = 'Rebuild Dataobjects Now';
+$defaultWords['You are editing: Module'] = 'You\'re editing: Module';
+$defaultWords['You are updating: Module'] = 'You are updating: Module';
+$defaultWords['Master Value'] = 'Master Value';
+$defaultWords['Translated Value'] = 'Translated Value';
+$defaultWords['Save Translation'] = 'Save Translation';
+$defaultWords['Create a module'] = 'Create a module';
+$defaultWords['Manager Name'] = 'Manager Name';
+$defaultWords['Create Templates'] = 'Create Templates';
+$defaultWords['Create ini file'] = 'Create ini file';
+$defaultWords['Create Module Now'] = 'Create Module Now';
+$defaultWords['Module files successfully created'] = 'Module files successfully created';
+$defaultWords['The source translation has'] = 'The source translation has';
+$defaultWords['elements'] = 'elements';
+$defaultWords['The target translation has'] = 'The target translation has';
+$defaultWords['Please add'] = 'Please add';
+$defaultWords['values for the following keys which appear to be missing from the'] = 'values for the following keys which appear to be missing from the';
+$defaultWords['module'] = 'module';
+$defaultWords['please specify an option'] = 'please specify an option';
+$defaultWords['please check at least one box'] = 'please check at least one box';
+$defaultWords['please enter module name'] = 'please enter module name';
+$defaultWords['please enter manager name'] = 'please enter manager name';
 ?>
