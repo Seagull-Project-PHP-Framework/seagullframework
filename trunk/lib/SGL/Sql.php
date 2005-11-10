@@ -48,7 +48,7 @@
 class SGL_Sql
 {
     /**
-     * Simple function that opens a file with sql statements and executes them 
+     * Simple function that opens a file with sql statements and executes them
      * using DB
       *
      * @author  Gerry Lachac <glachac@tethermedia.com>
@@ -60,7 +60,7 @@ class SGL_Sql
     function parseAndExecute($filename, $errorReporting = E_ALL)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
-//        error_reporting($errorReporting);
+        error_reporting($errorReporting);
 
         if (! ($fp = fopen($filename, 'r')) ) {
             return false;
@@ -83,19 +83,19 @@ class SGL_Sql
 #                continue;
 #            }
 #FIXME: the above code fails in certain situations, write tests to improve regex
-            $line = trim($line);
+            #$line = trim($line);
             $cmt  = substr($line, 0, 2);
             if ($cmt == '--' || trim($cmt) == '#') {
                 continue;
-            } 
-#END:FIXME      
+            }
+#END:FIXME
 
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableName($line);
                 $nextId = $dbh->nextId($tableName);
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
-            
+
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
@@ -109,6 +109,7 @@ class SGL_Sql
 
             // Execute the statement.
             $res = $dbh->query($sql);
+
             if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
                 return $res;
             } elseif (DB::isError($res)) {
@@ -122,15 +123,15 @@ class SGL_Sql
         fclose($fp);
         return true;
     }
-    
+
     function extractTableName($str)
     {
         $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
         preg_match($pattern, $str, $matches);
-        $tableName = $matches[2]; 
-        return $tableName;       
+        $tableName = $matches[2];
+        return $tableName;
     }
-    
+
     function rewriteWithAutoIncrement($str, $nextId)
     {
         $res = str_replace('{SGL_NEXT_ID}', $nextId, $str);

@@ -36,13 +36,47 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_rebuildSequences',
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_createModule', '', @moduleId);
 
 #guest role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'defaultmgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'defaultmgr_list';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+
+INSERT INTO role_permission (role_permission_id, role_id, permission_id)
+    SELECT MAX(role_permission_id) +1 AS role_permission,
+    	0 AS role_id,
+    	p.permission_id AS permission_id
+    FROM permission p, role_permission rp
+    WHERE name = 'bugmgr'
+    GROUP BY role_id;
+
+INSERT INTO role_permission (role_permission_id, role_id, permission_id)
+    SELECT MAX(role_permission_id) +1 AS role_permission,
+    	0 AS role_id,
+    	p.permission_id AS permission_id
+    FROM permission p, role_permission rp
+    WHERE name = 'defaultmgr_list'
+    GROUP BY role_id;
+
+
 
 #member role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'defaultmgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'defaultmgr_list';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+
+INSERT INTO role_permission (role_permission_id, role_id, permission_id)
+    SELECT MAX(role_permission_id) +1 AS role_permission,
+    	2 AS role_id,
+    	p.permission_id AS permission_id
+    FROM permission p, role_permission rp
+    WHERE name = 'bugmgr'
+    GROUP BY role_id;
+
+INSERT INTO role_permission (role_permission_id, role_id, permission_id)
+    SELECT MAX(role_permission_id) +1 AS role_permission,
+    	2 AS role_id,
+    	p.permission_id AS permission_id
+    FROM permission p, role_permission rp
+    WHERE name = 'defaultmgr_list'
+    GROUP BY role_id;
