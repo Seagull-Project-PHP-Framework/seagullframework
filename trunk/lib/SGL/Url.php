@@ -541,15 +541,18 @@ class SGL_URL
      * @param string $url
      * @return void
      */
-    function addSessionInfo(&$url)
     {
-        //  determine is session propagated in cookies or URL
-        $sessionInfo = defined('SID') ? SID : '';
-        if (!empty($sessionInfo)) {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if ($conf['site']['sessionInUrl']) {
 
-            //  determine glue
-            $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
-            $url .= $glue . $sessionInfo . '&amp;/1/';
+            //  determine is session propagated in cookies or URL
+            $sessionInfo = defined('SID') ? SID : '';
+            if (!empty($sessionInfo)) {
+
+                //  determine glue
+                $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
+                $url .= $glue . $sessionInfo . '&amp;/1/';
+            }
         }
     }
     

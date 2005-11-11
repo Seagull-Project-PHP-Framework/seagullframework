@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.5.3        |
 +-----------------------+
 BUGFIXES
+11-11-05    Fix for &-related prob in thunderbird parsing of RSS
 09-11-05    Fixed small bug where backdating date comboboxes wasn't working
             (Werner Krauss)
 31-10-05	Fixed broken config calls in templates
