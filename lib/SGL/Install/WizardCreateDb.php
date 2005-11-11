@@ -43,6 +43,8 @@ function canCreateDb()
         $_SESSION['_installationWizard_container']['values']['page4']);
 
     $skipDbCreation = (bool)@$aFormValues['skipDbCreation'];
+
+    //  if we're not creating a DB, presumably a DB exists so supply DB name to dsn
     $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
@@ -80,14 +82,13 @@ function canCreateDb()
     //  attempt to create database
     $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
 
-    //  if new db, set flag to create tables
-    $_SESSION['_installationWizard_container']['values']['page4'] = 'createTables';
-
     if (PEAR::isError($ok)) {
         SGL_Install::errorPush($ok);
         return false;
 
     } else {
+        //  if new db, set flag to create tables
+        $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
         return true;
     }
 }
