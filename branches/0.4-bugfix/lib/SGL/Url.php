@@ -53,7 +53,7 @@ class SGL_Url
      * Converts querystring into/se/friendly/format.
      *
      * Returns an array of all elements after the front script name
-     * 
+     *
      * @access  public
      * @param   $url    Url to be parsed
      * @return  array   $aUriParts  An array of all significant parts of the URL, ie
@@ -119,7 +119,7 @@ class SGL_Url
         }
         return $ret;
     }
-    
+
     /**
      * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
      *
@@ -134,7 +134,7 @@ class SGL_Url
         }
         return ucfirst($name);
     }
-    
+
     /**
      * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
      *
@@ -147,13 +147,13 @@ class SGL_Url
         if (substr($name, -4) == '.php') {
             $name = substr($name, 0, -4);
         }
-        
+
         //  strip 'Mgr' if exists
         if (strtolower(substr($name, -3)) == 'mgr') {
             $name = substr($name, 0, -3);
         }
-        return strtolower($name);      
-    }    
+        return strtolower($name);
+    }
 
     /**
      * Ensures URL is fully qualified.
@@ -169,12 +169,12 @@ class SGL_Url
             $url = SGL_BASE_URL . '/' . $url;
         }
     }
-    
+
     /**
      * Parse string stored in resource_uri field in section table.
      *
      * This will always contain URL elements after the frontScriptName (index.php), never
-     * a FQDN, and never simplified names, ie section table must specify module name and 
+     * a FQDN, and never simplified names, ie section table must specify module name and
      * manager name explicitly, even if they are the same, ie user/user
      *
      * @param string $str
@@ -184,16 +184,16 @@ class SGL_Url
     {
         $ret = array();
         $default = array(
-            'module' => 'default', 
-            'manager' => 'default');        
-            
+            'module' => 'default',
+            'manager' => 'default');
+
         //  catch case for default page, ie, home
         if (empty($str)) {
             return $default;
         }
         $parts = array_filter(explode('/', $str), 'strlen');
         $numElems = count($parts);
-        
+
         //  we need at least 2 elements
         if ($numElems < 2) {
             return $default;
@@ -205,12 +205,12 @@ class SGL_Url
 
         //  parse params
         $idx = ($actionExists) ? 4 : 2;
-        
+
         //  break out if no params detected
         if ($numElems <= $idx) {
             return $ret;
-        }        
-        
+        }
+
         $aTmp = array();
         for ($x = $idx; $x < $numElems; $x++) {
             if ($x % 2) { // if index is odd
@@ -222,19 +222,19 @@ class SGL_Url
             //  if a name/value pair exists, add it to request
             if (count($aTmp) == 2) {
                 $ret['parsed_params'][$aTmp['varName']] = $aTmp['varValue'];
-                $aTmp = array();                
+                $aTmp = array();
             }
         }
-        return $ret;               
+        return $ret;
     }
-    
+
 
     /**
      * Converts querystring into/se/friendly/format.
      *
      * @access  public
      * @return  void
-     * @todo    this data structure should be more similar to the one parsed in 
+     * @todo    this data structure should be more similar to the one parsed in
      *              SGL_Url::parseResourceUri()
      * @todo    use same method for SGL_Url::parseResourceUri()
      * @todo    implement file-based caching or url combinations, simple hashmap
@@ -249,7 +249,7 @@ class SGL_Url
         $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
         $mgrCopy = array_shift($aUriParts);
         $aParsedUri['managerName'] = strtolower($mgrCopy);
-        
+
         //  if frontScriptName empty, get from config
         $default = false;
         if (empty($aParsedUri['frontScriptName'])
@@ -278,31 +278,31 @@ class SGL_Url
                 $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];
             }
         }
-        
+
         /////////////////////////////////////////////////////////////////
-        //  
+        //
         //  config loading below needs to be factored out
         //
         /////////////////////////////////////////////////////////////////
-        
+
         //  we've got module name so load and merge local and global configs
         $aModuleConfig = SGL::getModuleConfig($aParsedUri['moduleName']);
         if ($aModuleConfig) {
             SGL::configMerge($aModuleConfig);
         } else {
-            SGL::raiseError('Could not read current module\'s conf.ini file', 
+            SGL::raiseError('Could not read current module\'s conf.ini file',
                 SGL_ERROR_NOFILE);
         }
-        
+
         //  determine is moduleName is simplified, in other words, the mgr
         //  and mod names should be the same
         if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
             if (SGL_Url::mgrNameOmitted($aParsedUri)) {
                 array_unshift($aUriParts, $mgrCopy);
-                $aParsedUri['managerName'] = $aParsedUri['moduleName'];                
+                $aParsedUri['managerName'] = $aParsedUri['moduleName'];
             }
         }
-        
+
         //  catch case where when manger + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
         if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
@@ -313,7 +313,7 @@ class SGL_Url
             array_unshift($aUriParts, $conf['cookie']['name']);
         }
 
-        //  if 'action' is in manager slot, move it to querystring array, and replace 
+        //  if 'action' is in manager slot, move it to querystring array, and replace
         //  manager name with default mgr name, ie, that of the module
         if ($aParsedUri['managerName'] == 'action') {
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
@@ -335,7 +335,7 @@ class SGL_Url
 
         //  parse FC querystring params
         $aQsParams = array();
-        
+
         for ($i = 0; $i < $numParts; $i += 2) {
             $varName  = urldecode($aUriParts[$i]);
             $varValue = urldecode($aUriParts[$i+1]);
@@ -350,7 +350,7 @@ class SGL_Url
                     &&  !array_key_exists($matches[1], $aQsParams)) {
                         $aQsParams[$matches[1]] = array();
                 }
-                //  no key given => append to array                
+                //  no key given => append to array
                 if (empty($matches[2])) {
                     array_push($aQsParams[$matches[1]], $varValue);
                 } else {
@@ -363,7 +363,7 @@ class SGL_Url
         //  merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);
     }
-    
+
     /**
      * Determine if a simplified notation is being used.
      *
@@ -379,12 +379,12 @@ class SGL_Url
     {
         $fullMgrName = SGL_Url::getManagerNameFromSimplifiedName(
             $aParsedUri['managerName']);
-        
+
         //  compensate for case-sensitivity
         $corrected = SGL::caseFix($fullMgrName, true);
         $path = SGL_MOD_DIR .'/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
-        
-        //  if the file exists, mgr name is valid and has not been omitted 
+
+        //  if the file exists, mgr name is valid and has not been omitted
         return !file_exists($path);
     }
 
@@ -400,7 +400,7 @@ class SGL_Url
      * @param object $output
      * @return string
      */
-    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(), 
+    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0, $output = '')
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -437,15 +437,15 @@ class SGL_Url
                 //  or no resulset was passed (qs params are literals)
                 //  - empty array if invoked from manager (default arg)
                 //  - string equal to 0 if ## passed from template
-                if (is_array(end($aList)) 
-                    || (is_array($aList) && !is_object(end($aList))) 
-                    || !(count($aList)) 
+                if (is_array(end($aList))
+                    || (is_array($aList) && !is_object(end($aList)))
+                    || !(count($aList))
                     || $aList == 0) {
-                
+
                     //  determine type of param value
                     if (isset($aList[$idx][$listKey]) && !is_null($listKey)) { // pass referenced array element
                         $qsParamValue = $aList[$idx][$listKey];
-                        
+
                     //  we're here because a simple array was passed for $aList, ie:
                     //  makeUrl(#edit#,#orgType#,#user#,orgTypes,#frmOrgTypeID#,id)
                     //  in this case, the key from the flexy foreach is what we want to assign as the value, ie
@@ -453,24 +453,24 @@ class SGL_Url
                     //  - frmOrgTypeId/1 ... etc
                     } elseif (isset($aList[$idx]) && is_null($listKey)) {
                         $qsParamValue = $idx;
-                        
+
                     } else {
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
                             $aElems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
-                                
+
                                 //  variable is of type $output->org['organisation_id'] = 'foo';
                                 $qsParamValue = $output->{$aElems[0]}[$aElems[1]];
                             } else {
                                 $qsParamValue = $aList[$idx][$aElems[0]][$aElems[1]];
                             }
                         } elseif (is_a($output, 'SGL_Output') && isset($output->{$listKey})) {
-                            $qsParamValue = $output->{$listKey}; // pass $output property 
+                            $qsParamValue = $output->{$listKey}; // pass $output property
                         } else {
-                            //  see blocks/SiteNews, not called from template                            
-                            $qsParamValue = $listKey; // pass literal                        
+                            //  see blocks/SiteNews, not called from template
+                            $qsParamValue = $listKey; // pass literal
                         }
                     }
                     $qs .= '/' . $qsParamName . '/' . $qsParamValue;
@@ -490,10 +490,10 @@ class SGL_Url
         }
         //  add session info if necessary
         SGL_Url::addSessionInfo($url);
-        
+
         return $url;
     }
-    
+
     /**
      * Checks to see if cookies are enabled, if not, session id is added to URL.
      *
@@ -505,16 +505,20 @@ class SGL_Url
      */
     function addSessionInfo(&$url)
     {
-        //  determine is session propagated in cookies or URL
-        $sessionInfo = defined('SID') ? SID : '';
-        if (!empty($sessionInfo)) {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if ($conf['site']['sessionInUrl']) {
 
-            //  determine glue
-            $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
-            $url .= $glue . $sessionInfo . '&amp;/1/';
+            //  determine is session propagated in cookies or URL
+            $sessionInfo = defined('SID') ? SID : '';
+            if (!empty($sessionInfo)) {
+
+                //  determine glue
+                $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
+                $url .= $glue . $sessionInfo . '&amp;/1/';
+            }
         }
     }
-    
+
     /**
      * Removes the session name and session value elements from an array.
      *
