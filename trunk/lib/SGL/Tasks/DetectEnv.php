@@ -13,7 +13,7 @@ require_once 'HTML/QuickForm/Action/Display.php';
 
 function bool2words($key)
 {
-    return ($key === true || $key === 1) ? 'Yes' : 'No';        
+    return ($key === true || $key === 1) ? 'Yes' : 'No';
 }
 
 function bool2int($key)
@@ -23,17 +23,17 @@ function bool2int($key)
 
 function ini_get2($key)
 {
-    return (ini_get($key) == '1' || $key === true ? 1 : 0);        
+    return (ini_get($key) == '1' || $key === true ? 1 : 0);
 }
 
-class SGL_EnvSummaryTask extends SGL_Task 
+class SGL_EnvSummaryTask extends SGL_Task
 {
     var $aData = array();
     var $aErrors = array();
     var $aRequirements = array();
     var $title = '';
     var $mandatory = false;
-    
+
     function render()
     {
         $html = '<table width="70%" border=1>'.EOL;
@@ -44,7 +44,7 @@ class SGL_EnvSummaryTask extends SGL_Task
         foreach ($this->aData as $k => $v) {
             $discoveredValue = (is_int($v)) ? bool2words($v) : $v;
             $html .= '<tr>'.EOL;
-            $html .= '<td><strong>'.SGL_Inflector::getTitleFromCamelCase($k).'</strong></td>';               
+            $html .= '<td><strong>'.SGL_Inflector::getTitleFromCamelCase($k).'</strong></td>';
             if (is_array($v)) {
                 $html .= '<td colspan="2">'.$this->createComboBox($v).'</td>';
             } elseif ($this->mandatory) {
@@ -58,20 +58,20 @@ class SGL_EnvSummaryTask extends SGL_Task
         $html .= '</table>'.EOL;
         return $html;
     }
-    
+
     function processDependency($aRequirement, $error, $key, $actual)
     {
         $depType = key($aRequirement);
         $depValue = $aRequirement[$depType];// what value the dep requires
-        
+
         if ($depType == SGL_REQUIRED) {
-            
+
             //  small exception for php version check
             if (preg_match("/>.*/", $depValue)) {
                 $comparator = $depValue{0};
                 $value = substr($depValue, 1);
                 if (version_compare($actual, $value, 'ge')) {
-                    $status = 'green';                
+                    $status = 'green';
                 } else {
                     $status = 'red';
                     SGL_Install::errorPush(PEAR::raiseError($error));
@@ -98,7 +98,7 @@ class SGL_EnvSummaryTask extends SGL_Task
         $html = "<span style=\"color:$status\">";
         return $html;
     }
-    
+
     function processRecommended($aRequirement)
     {
         $depType = key($aRequirement);
@@ -110,7 +110,7 @@ class SGL_EnvSummaryTask extends SGL_Task
         }
         return $ret;
     }
-    
+
     function createComboBox($aData)
     {
         $html = '<select name="pearPackages" multiple="multiple">';
@@ -153,7 +153,7 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     		$this->aData[$m] = bool2int(extension_loaded($m));
     	}
     	return $this->render($this->aData);
-    }   
+    }
 }
 
 class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
@@ -172,7 +172,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
         'webserverSapi' => '',
         'webSeagullVersion' => '',
     );
-    
+
     function run()
     {
         $this->aData['phpVersion'] = phpversion();
@@ -196,8 +196,8 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         'file_uploads' => array(SGL_RECOMMENDED => 1),
         'post_max_size' => array(SGL_RECOMMENDED => '10MB'),
         'upload_max_filesize' => array(SGL_RECOMMENDED => '10MB'),
-        );    
-    
+        );
+
     function run()
     {
         $this->aData['safe_mode'] = ini_get2('safe_mode');
@@ -217,7 +217,7 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
 {
     var $title = 'Filesystem info';
     var $mandatory = true;
-    
+
     var $aRequirements = array(
         'installRoot' => array(SGL_NEUTRAL => 0),
         'varDirExists' => array(SGL_REQUIRED => 1),
@@ -228,21 +228,21 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
         'varDirExists' => 'It appears you do not have a "var" folder, please create a folder with this name in the root of your Seagull install',
         'varDirIsWritable' => 'Your "var" dir is not writable by the webserver, please chmod it to 0777',
     );
-    
+
     function run()
     {
         $this->aData['installRoot'] = SGL_PATH;
         $this->aData['varDirExists'] = bool2int(file_exists(SGL_PATH . '/var'));
         $this->aData['varDirIsWritable'] = bool2int(is_writable(SGL_PATH . '/var'));
     	return $this->render($this->aData);
-    }   
+    }
 }
 
 class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
 {
     var $title = 'PEAR Environment';
     var $mandatory = true;
-    
+
     var $aRequirements = array(
         'pearFolderExists' => array(SGL_REQUIRED => 1),
         'pearLibIsLoadable' => array(SGL_REQUIRED => 1),
@@ -252,12 +252,12 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
         'pearRegistryIsObject' => array(SGL_REQUIRED => 1),
         'pearBundledPackages' => array(SGL_NEUTRAL => 0),
     );
-    
+
     function run()
     {
         $this->aData['pearFolderExists'] = bool2int(file_exists(SGL_PATH . '/lib/pear'));
         $this->aData['pearLibIsLoadable'] = bool2int(include_once SGL_PATH . '/lib/pear/PEAR.php');
-        
+
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
         $ok = @ini_set('include_path',      '.' . $includeSeparator . SGL_PATH . '/lib/pear');
         $this->aData['pearPath'] = @ini_get('include_path');
@@ -267,7 +267,7 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
         $this->aData['pearRegistryIsObject'] = bool2int(is_object($registry));
         $this->aData['pearBundledPackages'] = $registry->_listPackages();
     	return $this->render($this->aData);
-    }   
+    }
 }
 
 
@@ -277,13 +277,13 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     function perform(&$page, $actionName)
     {
         SGL_Install::errorCheck($page);
-        return parent::perform($page, $actionName);   
+        return parent::perform($page, $actionName);
     }
-    
-    function _renderForm(&$page) 
+
+    function _renderForm(&$page)
     {
         $renderer =& $page->defaultRenderer();
-        
+        $baseUrl = SGL_BASE_URL;
         $renderer->setElementTemplate("\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\" colspan=\"2\">{element}</td>\n\t</tr>", 'tabs');
         $renderer->setFormTemplate(<<<_HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -297,9 +297,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     <meta name="Generator" content="Seagull Framework" />
 
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    
+
     <style type="text/css" media="screen">
-        @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=faq");
+        @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
     </style>
     </head>
 <body>
@@ -318,7 +318,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 </table>
 </form>
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>  
+    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
     </div>
 </body>
 </html>
