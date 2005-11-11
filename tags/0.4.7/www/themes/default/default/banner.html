@@ -1,0 +1,34 @@
+<!-- Logo and header -->
+<div id="sgl-header">
+    {if:showLogo}
+    <div id="sgl-header-left">
+        <img src="{webRoot}/themes/{theme}/images/{showLogo}" alt="{siteName} Logo" />
+    </div>
+    {else:}
+    <h1 id="sgl-header-left">{siteName}</h1>
+    {end:}
+
+    <div id="sgl-header-right">
+    {if:loggedOnUser}
+        <div id="headerUserInfo">{translate(#currently_logged_on_as#)}: <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="User profile">{loggedOnUser}</a>
+        &nbsp;{translate(#session started at#)} {loggedOnSince}</div>
+        <div id="headerLogAction"><a href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a></div>
+    {else:} 
+        <div id="headerUserInfo">{translate(#currently_logged_on_as#)}: <span class="guest">{translate(#guest#)}</span></div>
+        <div id="headerLogAction"><a href="{makeUrl(##,#login#,#user#)}" title="{translate(#login#)}">{translate(#login#)}</a></div>
+    {end:}
+    {if:GLOBALS[_SGL][CONF][debug][showBugReporterLink]}
+    <a href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
+        <img src="{webRoot}/themes/{theme}/images/bug.gif" alt="{translate(#send bug report#)}" />
+    </a>
+    {end:}
+    </div>
+</div>
+
+<!-- tab navigation -->
+<div id="sgl-nav" flexy:if="!isVerticalNav(GLOBALS[_SGL][CONF][navigation][stylesheet])">
+    {navigation:h}
+</div>
+
+<!-- Main layout -->
+<div id="sgl-main">
