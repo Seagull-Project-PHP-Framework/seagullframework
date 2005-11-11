@@ -118,7 +118,7 @@ EOF;
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
 
     <style type="text/css" media="screen">
-        @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=default");
+        @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
     </style>
     </head>
 <body>

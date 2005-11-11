@@ -109,9 +109,6 @@ if (isset($_GET['start'])) {
 //  check authorization
 if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')
         && empty($_SESSION['valid'])) {
-    SGL_Install::printHeader();
-    SGL_Install::printLoginForm();
-    SGL_Install::printFooter();
 
     if (!empty($_POST['frmPassword'])) {
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
@@ -125,6 +122,9 @@ if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')
             header('Location: setup.php');
         }
     } else {
+        SGL_Install::printHeader();
+        SGL_Install::printLoginForm();
+        SGL_Install::printFooter();
         exit;
     }
 }
