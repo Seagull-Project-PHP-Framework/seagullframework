@@ -319,6 +319,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'SMTP username' => 'SMTP username',
         'SMTP password' => 'SMTP password',
         'Mandatory if you use SMTP as Backend and SMTP authentication is enabled' => 'Mandatory if you use \'SMTP\' as Backend and \'SMTP authentication\' is enabled',
+        'If users have cookies disabled, this will allow them to use sessions with Seagull' => 'If users have cookies disabled, this will allow them to use sessions with Seagull',
+        'Allow Session in URL' => 'Allow Session in URL',
     );
 
 $defaultWords['Maintenance'] = 'Maintenance';
