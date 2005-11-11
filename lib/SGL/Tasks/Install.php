@@ -610,23 +610,25 @@ class SGL_Task_CreateAdminUser extends SGL_Task
 {
     function run($data)
     {
-        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        require_once SGL_PATH . '/lib/SGL/String.php';
-        $da = & DA_User::singleton();
-        $oUser = $da->getUserById();
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
+            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+            require_once SGL_PATH . '/lib/SGL/String.php';
+            $da = & DA_User::singleton();
+            $oUser = $da->getUserById();
 
-        $oUser->username = $data['adminUserName'];
-        $oUser->first_name = $data['adminRealName'];
-        $oUser->email = $data['adminEmail'];
-        $oUser->passwd = md5($data['adminPassword']);
-        $oUser->organisation_id = 1;
-        $oUser->is_acct_active = 1;
-        $oUser->role_id = SGL_ADMIN;
-        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
-        $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
-        $success = $da->addUser($oUser);
-        if (PEAR::isError($success)) {
-            SGL_Install::errorPush(PEAR::raiseError($success));
+            $oUser->username = $data['adminUserName'];
+            $oUser->first_name = $data['adminRealName'];
+            $oUser->email = $data['adminEmail'];
+            $oUser->passwd = md5($data['adminPassword']);
+            $oUser->organisation_id = 1;
+            $oUser->is_acct_active = 1;
+            $oUser->role_id = SGL_ADMIN;
+            $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
+            $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
+            $success = $da->addUser($oUser);
+            if (PEAR::isError($success)) {
+                SGL_Install::errorPush(PEAR::raiseError($success));
+            }
         }
     }
 }
