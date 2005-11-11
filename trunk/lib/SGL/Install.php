@@ -126,8 +126,8 @@ EOF;
 <div id="sgl">
 <!-- Logo and header -->
 <div id="header">
-    <a id="logo" href="http://localhost/seagull/trunk/www" title="Home">
-        <img src="http://localhost/seagull/trunk/www/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+    <a id="logo" href="$baseUrl" title="Home">
+        <img src="$baseUrl/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
     </a>
 </div>
 <h2>$title</h2>
