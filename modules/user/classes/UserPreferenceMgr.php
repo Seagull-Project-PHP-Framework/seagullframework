@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | UserPreferenceMgr.php                                                     |
 // +---------------------------------------------------------------------------+
@@ -45,7 +45,9 @@ require_once SGL_MOD_DIR . '/user/classes/PreferenceMgr.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @copyright Demian Turner 2004
  * @version $Revision: 1.26 $
+ * @since   PHP 4.1
  */
 class UserPreferenceMgr extends PreferenceMgr
 {
@@ -58,7 +60,7 @@ class UserPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
-        
+        $this->module       = 'user';
         $this->template     = 'prefUserEdit.html';
         $this->pageTitle    = 'User Preferences';
 
@@ -94,28 +96,30 @@ class UserPreferenceMgr extends PreferenceMgr
     function _updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $uid = SGL_HTTP_Session::getUid();
-        $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
+        $query1 = " DELETE FROM {$conf['table']['user_preference']}
                     WHERE usr_id = " . $uid;
-        $this->dbh->query($query1);
+        $dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$this->conf['table']['user_preference']} 
+            INSERT INTO {$conf['table']['user_preference']} 
                 (   user_preference_id, 
                     usr_id, 
                     preference_id, 
                     value)
             VALUES(" . 
-                    $this->dbh->nextId($this->conf['table']['user_preference']) . ", 
+                    $dbh->nextId($conf['table']['user_preference']) . ", 
                     $uid,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
-            $res = $this->dbh->query($query2);
+            $res = $dbh->query($query2);
             if (DB::isError($res)) {
                 SGL::raiseError('Error inserting prefs, exiting ...', 
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);

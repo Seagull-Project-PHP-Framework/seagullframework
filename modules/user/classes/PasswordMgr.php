@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | PasswordMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -39,22 +39,23 @@
 // $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
 
 require_once 'Validate.php';
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Usr.php';
 
 /**
  * Manages passwords.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @copyright Demian Turner 2004
  * @version $Revision: 1.26 $
+ * @since   PHP 4.1
  */
 class PasswordMgr extends SGL_Manager
 {
     function PasswordMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-
+        $this->module = 'user';
         $this->template = 'userPasswordEdit.html';
 
         $this->_aActionsMapping =  array(
@@ -159,12 +160,22 @@ class PasswordMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = & new DataObjects_Usr();
         $oUser->get(SGL_HTTP_Session::getUid());
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
+        
+        //  handle custom hook if exists
+        $conf = & $GLOBALS['_SGL']['CONF'];        
+        if (!empty($conf['custom']['hook'])) {
+            $params = array('username' => $oUser->username, 'password' => $input->password);
+            require_once SGL_MOD_DIR . '/user/classes/' . $conf['custom']['hook'] . '.php';    
+            $obj = new $conf['custom']['hook']();
+            $ok = $obj->execute($params);
+        }
+        
         if ($input->passwdResetNotify) {
-            $this->sendPassword($oUser, $input->password, $input->moduleName);
+            $this->sendPassword($oUser, $input->password);
         }
         //  redirect on success
         if ($success) {
@@ -183,14 +194,15 @@ class PasswordMgr extends SGL_Manager
     function _retrieve(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
         $query = "
             SELECT  *
-            FROM    " . $this->conf['table']['user'] ."
-            WHERE   email = " . $this->dbh->quote($input->forgotEmail) . "
+            FROM    " . $conf['table']['user'] ."
+            WHERE   email = " . $dbh->quote($input->forgotEmail) . "
             AND     security_question = " . $input->question. "
             AND     security_answer = '" . $input->answer . "'";
-        $userId = $this->dbh->getOne($query);
+        $userId = $dbh->getOne($query);
         if ($userId) {
             $aRet = $this->_resetPassword($userId);
             list($passwd, $oUser) = $aRet;
@@ -219,7 +231,7 @@ class PasswordMgr extends SGL_Manager
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = & new DataObjects_Usr();
         $oUser->get($userId);
         $oUser->passwd = md5($passwd);
         $oUser->update();
@@ -229,24 +241,24 @@ class PasswordMgr extends SGL_Manager
     function _isOriginalPassword($passwd)
     {
         if (isset($passwd)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = & new DataObjects_Usr();
             $oUser->get(SGL_HTTP_Session::getUid());
             return md5($passwd) == $oUser->passwd;
         }
     }
 
-    function sendPassword($oUser, $passwd, $moduleName)
+    function sendPassword($oUser, $passwd)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
-
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $options = array(
                 'toEmail'   => $oUser->email,
-                'fromEmail' => $this->conf['email']['admin'],
-                'replyTo'   => $this->conf['email']['admin'],
-                'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
+                'fromEmail' => $conf['email']['admin'],
+                'replyTo'   => $conf['email']['admin'],
+                'subject'   => 'Password reminder from ' . $conf['site']['name'],
                 'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $moduleName . '/email_forgot.php',
+                    $this->module . '/email_forgot.php',
                 'username'  => $oUser->username,
                 'password'  => $passwd,
         );

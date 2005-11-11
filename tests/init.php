@@ -39,6 +39,10 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
+/**
+ * @author     Andrew Hill <andrew@m3.net>
+ */
+
 //    PEAR requirements
 //     - PEAR
 //     - SimpleTest
@@ -51,26 +55,17 @@ function STR_init()
     // Database connection constants
     define('STR_DSN_ARRAY',                 0);
     define('STR_DSN_STRING',                1);
-    
-    $sessSavePath = ini_get('session.save_path');
-    if (empty($sessSavePath)) {
-        $sessSavePath = '/tmp';
-    }
-    define('STR_TMP_DIR', (isset($_ENV["TEMP"])) 
-        ? $_ENV["TEMP"] 
-        : $sessSavePath);
+    define('STR_TMP_DIR', (isset($_ENV["TEMP"])) ? $_ENV["TEMP"] : ini_get('session.save_path'));
     
     // Define the different environment configurations
     define('NO_DB',          0);
     define('DB_NO_TABLES',   1);
     define('DB_WITH_TABLES', 2);
     define('DB_WITH_DATA',   3);
-    define('DB_WITH_DATA_AND_WEB',   4);
     
     // Define the directory that tests should be stored in
     // (e.g. "tests", "tests/unit", etc.).
     define('unit_TEST_STORE', 'tests');
-    define('web_TEST_STORE', 'tests');
     
     // The different "layers" that can be tested, defined in terms of
     // layer test codes (ie. the test files for the layer will be
@@ -78,13 +73,8 @@ function STR_init()
     // requirements for the test(s) in that layer
 
     $GLOBALS['_STR']['unit_layers'] = array(
-            'wdb'   => array('DB with tables', DB_WITH_TABLES),
-            'wdd'   => array('DB with tables and data', DB_WITH_DATA),
-            'ndb'   => array('PHP only', NO_DB),
-        );
-        
-    $GLOBALS['_STR']['web_layers'] = array(
-            'web'   => array('Web tests', DB_WITH_DATA_AND_WEB),
+            'wdb'   => array('DB related',   DB_WITH_TABLES),
+            'ndb'   => array('PHP only',     NO_DB),
         );
         
     // set error reporting as verbose as possible
@@ -92,7 +82,7 @@ function STR_init()
     
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
-        // Define the project installation base path
+        // Define the Max installation base path
         define('STR_PATH', dirname(dirname(__FILE__)));
 
         // Define the PEAR installation path

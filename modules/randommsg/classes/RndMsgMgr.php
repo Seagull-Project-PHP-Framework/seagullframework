@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | RndMsgMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 // $Id: RndMsgMgr.php,v 1.19 2005/01/23 13:47:24 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Rndmsg_message.php';
 
 /**
 * RndMsgMgr class, for managing random messages
@@ -54,8 +54,7 @@ class RndMsgMgr extends SGL_Manager
     function RndMsgMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module            = 'randommsg';
         $this->pageTitle         = 'RndMsg Manager :: Browse';
         $this->masterTemplate    = 'masterLeftCol.html';
         $this->template          = 'rndMsg.html';
@@ -156,6 +155,8 @@ class RndMsgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $output->template = 'rndMsg.html';
         if ($input->msgUpload) {
             $aLines = $this->file2($_FILES['msgFile']['tmp_name']);
@@ -165,10 +166,10 @@ class RndMsgMgr extends SGL_Manager
         $success = true;
         foreach($aLines as $rndmsg) {
             if (trim($rndmsg) != '') {
-                $msg = DB_DataObject::factory('Rndmsg_message');
+                $msg = & new DataObjects_Rndmsg_message();
                 $msg->msg = $rndmsg;
                 $dbh = $msg->getDatabaseConnection();
-                $msg->rndmsg_message_id = $dbh->nextId($this->conf['table']['rndmsg_message']);
+                $msg->rndmsg_message_id = $dbh->nextId($conf['table']['rndmsg_message']);
                 $success = ($success && $msg->insert());
             }
         }
@@ -185,7 +186,7 @@ class RndMsgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->msgDelete)) {
             foreach ($input->msgDelete as $index => $msgId){
-                $rm = DB_DataObject::factory('Rndmsg_message');
+                $rm = & new DataObjects_Rndmsg_message();
                 $rm->get($msgId);
                 $rm->delete();
                 unset($rm);
@@ -200,12 +201,13 @@ class RndMsgMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $output->template = 'rndMsg.html';
+
         $query = "  SELECT
                          rndmsg_message_id, msg
-                    FROM {$this->conf['table']['rndmsg_message']}";
-        
+                    FROM {$conf['table']['rndmsg_message']}";
+        $dbh = & SGL_DB::singleton();
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -213,7 +215,7 @@ class RndMsgMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;

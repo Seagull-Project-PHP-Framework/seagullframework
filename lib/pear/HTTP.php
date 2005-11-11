@@ -22,7 +22,7 @@
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2002-2005 The Authors
  * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: HTTP.php,v 1.46 2005/05/17 11:03:04 mike Exp $
+ * @version     CVS: $Id: HTTP.php,v 1.16 2005/06/23 15:56:28 demian Exp $
  * @link        http://pear.php.net/package/HTTP
  */
 
@@ -38,7 +38,7 @@
  * @license     PHP License
  * @access      public
  * @static
- * @version     $Revision: 1.46 $
+ * @version     $Revision: 1.16 $
  */
 class HTTP
 {

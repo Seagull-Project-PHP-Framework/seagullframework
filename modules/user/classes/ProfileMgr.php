@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | ProfileMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -39,22 +39,22 @@
 // $Id: ProfileMgr.php,v 1.17 2005/06/08 10:07:28 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
 /**
  * Display user account account info.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @copyright Demian Turner 2004
  * @version $Revision: 1.17 $
+ * @since   PHP 4.1
  */
 class ProfileMgr extends SGL_Manager
 {
     function ProfileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-
+        $this->module       = 'user';
         $this->pageTitle    = 'User Profile';
         $this->template     = 'profile.html';
         $this->da           = & DA_User::singleton();
@@ -78,13 +78,9 @@ class ProfileMgr extends SGL_Manager
 
     function _view(&$input, &$output)
     {
-        require_once 'DB/DataObject.php';
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $user = DB_DataObject::factory('Usr');
-        
-        if (is_null($input->userId)) {
-            return SGL::raiseError('user id cannot be null', SGL_ERROR_INVALIDARGS);
-        }
+        require_once SGL_ENT_DIR . '/Usr.php';
+        $user = & new DataObjects_Usr();
         $user->get($input->userId);
         $output->profile = $user;
 
@@ -98,15 +94,12 @@ class ProfileMgr extends SGL_Manager
 
         //  get last login
         $output->login = $this->da->getLastLogin();
-        if ($output->login === false) {
-            return SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
-        }
+
         //  total articles
-        if (ModuleMgr::moduleIsRegistered('publisher')) {
-            $items = DB_DataObject::factory('Item');
-            $items->created_by_id = $input->userId;
-            $output->totalArticles = $items->count();
-        }
+        require_once SGL_ENT_DIR . '/Item.php';
+        $items = & new DataObjects_Item();
+        $items->created_by_id = $input->userId;
+        $output->totalArticles = $items->count();
 
         //  set conditional 'back' button
         $output->backButton = (isset($input->fromContacts)) ? $input->fromContacts : false;

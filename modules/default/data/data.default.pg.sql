@@ -1,15 +1,8 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Data for /etc
-
-BEGIN;
-
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Data Dump for /default
-
 -- 
 --  Dumping data for table `module`
 -- 
 
+BEGIN;
 
 INSERT INTO module VALUES (1,1,'block','Blocks','Use the \'Blocks\' module to configure the contents of the blocks in the left and right hand columns.','block/block','blocks.png');
 INSERT INTO module VALUES (2,0,'contactus','Contact Us','The \'Contact Us\' module can be used to present a form to your users allowing them to contact the site administrators.',NULL,'contactus.png');
@@ -25,8 +18,8 @@ INSERT INTO module VALUES (11,1,'publisher','Publisher','The \'Publisher\' modul
 INSERT INTO module VALUES (12,1,'user','Users and Security','The \'Users and Security\' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.','user/user','users.png');
 INSERT INTO module VALUES (13,1,'randommsg','Random Messages','Allows you to create a list of messages and display them randomly (fortune).','randommsg/rndmsg','rndmsg.png');
 INSERT INTO module VALUES (14, 0, 'export', 'Export Data', 'Used for exporting to various formats, ie RSS, OPML, etc.', 'export/rss', 'rndmsg.png');
--- INSERT INTO module VALUES (15,1,'shop','Shop','This is the Shop Manager. Add and edit your products, prices and discounts here.','shop/shopadmin','default.png');
--- INSERT INTO module VALUES (16,1,'rate','Currency','Here you can edit and update the currency rates.','rate/rateAdmin','default.png');
--- INSERT INTO module VALUES (17,1,'cart','Cart','Universal cart module with basket and order management.','cart/cartAdmin','default.png');
+-- INSERT INTO module VALUES (14,1,'shop','Shop','This is the Shop Manager. Add and edit your products, prices and discounts here.','shop/shopadmin','default.png');
+-- INSERT INTO module VALUES (15,1,'rate','Currency','Here you can edit and update the currency rates.','rate/rateAdmin','default.png');
+-- INSERT INTO module VALUES (16,1,'cart','Cart','Universal cart module with basket and order management.','cart/cartAdmin','default.png');
 
 COMMIT;

@@ -41,7 +41,6 @@
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
 /**
  * To administer sections.
@@ -58,8 +57,7 @@ class PageMgr extends SGL_Manager
     function PageMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module           = 'navigation';
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
@@ -178,20 +176,16 @@ class PageMgr extends SGL_Manager
         }
     }
 
-    /**
-     * Returns a hash of articles.
-     *
-     * @return array
-     *
-     * @todo move to DA_Publisher
-     */
     function _getStaticArticles()
     {
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
-                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
+             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id
@@ -201,7 +195,7 @@ class PageMgr extends SGL_Manager
              AND i.status  > " . SGL_STATUS_DELETED . "
              ORDER BY i.last_updated DESC
         ";
-        $res = $this->dbh->getAssoc($query);
+        $res = $dbh->getAssoc($query);
         return ($res)? $res : false;
     }
 
@@ -221,11 +215,7 @@ class PageMgr extends SGL_Manager
             $output->wikiSelected = '';
             
             //  build static article list
-            if (ModuleMgr::moduleIsRegistered('publisher')) {            
-                $output->aStaticArticles = $this->_getStaticArticles();
-            } else {
-                $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
-            }
+            $output->aStaticArticles = $this->_getStaticArticles();
             
         } elseif ($output->articleType == 'wiki') { 
             
@@ -289,7 +279,7 @@ class PageMgr extends SGL_Manager
         } else {
         
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
@@ -351,8 +341,7 @@ class PageMgr extends SGL_Manager
         $section = $nestedSet->getNode($input->sectionId);
         
         //  passing a non-existent section id results in null or false $section
-        if ($section) {
-                    
+        if ($section) {                    
             //  setup article type, dropdowns built in display()
             $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
@@ -367,7 +356,7 @@ class PageMgr extends SGL_Manager
                 $section = array_merge($section, $parsed);
                 
                 //  adjust friendly mgr name to class filename
-                $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
                 $section['manager'] = $className . '.php';
                 
                 //  represent additional params as string
@@ -380,7 +369,7 @@ class PageMgr extends SGL_Manager
                     $section['add_params'] = null;
                 }
                 //  deal with static articles
-                if ($section['is_static'] && ModuleMgr::moduleIsRegistered('publisher')) {
+                if ($section['is_static']) {
                     if (isset($parsed['parsed_params'])) {
                         $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
                     }
@@ -414,7 +403,7 @@ class PageMgr extends SGL_Manager
         } else {
         
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
@@ -504,7 +493,7 @@ class PageMgr extends SGL_Manager
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around
-            foreach ($input->aDelete as $index => $sectionId) {
+            foreach ($input->aDelete as $sectionId) {
                 if ($nestedSet->getNode($sectionId)){
                     $nestedSet->deleteNode($sectionId);
                 }

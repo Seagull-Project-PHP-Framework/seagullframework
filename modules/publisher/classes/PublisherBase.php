@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | PublisherBase.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -112,8 +112,7 @@ class PublisherBase
         
         //    if not in input or session, set default article type
         if (!isset($input->dataTypeID) && !$sessDatatypeID) {		           
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
+        	$conf = & $GLOBALS['_SGL']['CONF'];
 			$defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site'])) 
 			 ? $conf['site']['defaultArticleViewType'] 
 			 : 1; 
@@ -130,9 +129,8 @@ class PublisherBase
     function getDocumentListByCatID($catID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        require_once 'DB/DataObject.php';
-        $documentList = DB_DataObject::factory('Document');
+        require_once SGL_ENT_DIR . '/Document.php';
+        $documentList = & new DataObjects_Document();
         $documentList->category_id = $catID;
         $result = $documentList->find();
         $documents = array();

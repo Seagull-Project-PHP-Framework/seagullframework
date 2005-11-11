@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | NestedSet.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -46,6 +46,7 @@
  * @package SGL
  * @author  Andy Crain <andy@newslogic.com>
  * @version $Revision: 1.10 $
+ * @since   PHP 4.1
  */
 class SGL_NestedSet
 {
@@ -166,7 +167,7 @@ class SGL_NestedSet
         //  Get all descendants of each node (rootid = $rootid).
         $r = '';
         if (is_array($roots) && count($roots)) {
-            foreach($roots as $id => $root) {
+            foreach($roots as $root) {
                 $sql = "SELECT $this->_fieldListExternal $cols
                         FROM $this->_tableName $join
                         WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$root[$this->_fieldsInternal['rootid']]}

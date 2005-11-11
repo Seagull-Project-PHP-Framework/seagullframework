@@ -15,7 +15,7 @@
 // | Authors: Phillip Oertel <me@phillipoertel.com>                       |
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: PHPConstants.php,v 1.1 2005/02/27 10:00:27 demian Exp $
 
 /**
 * Config parser for PHP constant files

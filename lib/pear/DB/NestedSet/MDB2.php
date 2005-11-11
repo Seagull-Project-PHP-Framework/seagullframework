@@ -16,7 +16,7 @@
 // | Authors: Lorenzo Alberton <l dot alberton at quipo dot it>           |
 // +----------------------------------------------------------------------+
 //
-// $Id: MDB2.php,v 1.4 2004/07/25 11:55:22 datenpunk Exp $
+// $Id: MDB2.php,v 1.4 2004/10/25 06:39:22 cvsroot Exp $
 //
 
 require_once 'MDB2.php';

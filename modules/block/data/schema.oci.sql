@@ -15,7 +15,6 @@ create table block
 	blk_order            NUMBER(5)                 	null,
 	is_onleft            NUMBER(5)                 	null,
 	is_enabled           NUMBER(5)                 	null,
-	content				 CLOB,
 	constraint PK_BLOCK primary key (block_id)
 );
 
@@ -43,12 +42,4 @@ create  index block_assignment_fk on block_assignment
 create  index block_assignment_fk2 on block_assignment
 (
 	section_id
-);
-
--- ==============================================================
---  Table: block_role
--- ==============================================================
-create table block_role (
-	block_id 	NUMBER(10)	not null,
-	role_id		NUMBER(10)	not null
 );

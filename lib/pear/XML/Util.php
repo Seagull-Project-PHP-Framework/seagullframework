@@ -16,7 +16,7 @@
 // | Authors: Stephan Schmidt <schst@php-tools.net>                       |
 // +----------------------------------------------------------------------+
 //
-//    $Id: Util.php,v 1.24 2004/12/23 13:21:59 schst Exp $
+//    $Id: Util.php,v 1.11 2004/12/24 22:23:25 demian Exp $
 
 /**
  * error code for invalid chars in XML name

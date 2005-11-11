@@ -30,13 +30,13 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
-// | WikiScrapeMgr.php                                                         |
+// | WikiScrapeMgr.php                                                    |
 // +---------------------------------------------------------------------------+
-// | Author: Demian Turner <demian@phpkitchen.com>                             |
+// | Author: Admin User <admin@example.com>                                  |
 // +---------------------------------------------------------------------------+
-// $Id: WikiScrapeMgr.php,v 1.2 2005/04/17 02:15:02 demian Exp $
+// $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
 
 /**
  * Type your class description here ...
@@ -44,6 +44,7 @@
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.2 $
+ * @since   PHP 4.1
  */
 class WikiScrapeMgr extends SGL_Manager
 {
@@ -52,9 +53,10 @@ class WikiScrapeMgr extends SGL_Manager
     function WikiScrapeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $this->module       = 'publisher';
         $this->pageTitle    = 'WikiScrape Manager';
         $this->template     = 'wikiScrapeList.html';
+
         $this->_aActionsMapping =  array(
             'list'      => array('list'), 
         );
@@ -120,7 +122,7 @@ class WikiScrapeMgr extends SGL_Manager
         }
         
         /* Recurse along the children to generate the remaining nodes */
-        if ($node->hasChildren()) {
+        if($node->hasChildren()) {
             foreach($node->child as $child) {
                 $this->html .= $this->traverseTree($child);
             }

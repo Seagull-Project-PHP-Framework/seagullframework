@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Manager.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -39,12 +39,12 @@
 // $Id: Manager.php,v 1.19 2005/06/13 12:00:25 demian Exp $
 
 /**
- * Abstract model controller for all the 'manager' classes.
+ * Parent class for all Page/module objects.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.19 $
- * @abstract 
+ * @since   PHP 4.1
  */
 class SGL_Manager
 {
@@ -103,10 +103,6 @@ class SGL_Manager
      * @var     array
      */
     var $_aActionsMapping = array();
-    
-    var $conf = array();
-    var $dbh = null;
-    
 
     /**
      * Constructor.
@@ -117,16 +113,6 @@ class SGL_Manager
     function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();
-    }
-    
-    function getConfig()
-    {
-        $c = &SGL_Config::singleton();
-        return $c;
     }
 
     // +---------------------------------------+
@@ -142,14 +128,15 @@ class SGL_Manager
      *
      * Get tabID required by ALL pages, same goes for msg, action, from
      * 
-     * @abstract 
-     *
      * @access  public
-     * @param   object  $req    SGL_Request object received from user agent
+     * @param   object  $req    SGL_HTTP_Request object received from user agent
      * @param   object  $input  SGL_Output object from Controller
      * @return  void
      */
-    function validate($req, &$input) {}
+    function validate($req, &$input)
+    {
+        //  abstract
+    }
 
     /**
      * Abstract Page processing method.
@@ -164,6 +151,7 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $className = get_class($this);
 
         //  determine if action param from $_GET is valid
@@ -173,12 +161,7 @@ class SGL_Manager
         }
 
         //  don't perform checks if authentication is disabled in debug
-        if (!count($this->conf)) {
-            SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
-            'constructor - please add "parent::SGL_Manager();" in your '.
-            'manager\'s constructor.', SGL_ERROR_NOCLASS);
-        }
-        if ($this->conf['debug']['authenticationEnabled']) {
+        if ($conf['debug']['authenticationEnabled']) {
 
             //  setup classwide perm
             $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
@@ -212,9 +195,15 @@ class SGL_Manager
                             PEAR::raiseError('infinite loop detected, clear cookies and check perms', 
                                 SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
                         }
-                        //  get default params for logout page
-                        $aParams = $this->getDefaultPageParams();
-                        SGL_HTTP::redirect($aParams);
+                        //  prepare referer info for redirect after login
+                        $aParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
+                        $redir = $conf['site']['baseUrl'] .'/'.  implode('/', $aParts);
+                        
+                        //  check that session is not invalid or timed out
+                        $loginPage = array( 'moduleName'    => 'user',
+                                            'managerName'   => 'login',
+                                            'redir'         => urlencode($redir));
+                        SGL_HTTP::redirect($loginPage); 
                     }
                 }
             }
@@ -230,22 +219,19 @@ class SGL_Manager
     /**
      * Abstract page display method.
      *
-     * @abstract
-     *
      * @access  public
+     * @abstract
      * @param   object  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output) {}
-    
-    function isValid()
+    function display(&$output)
     {
-        return $this->validated;   
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
     function _redirectToDefault(&$input, &$output)
     {
-        //  must not logmessage here
+        SGL::logMessage(null, PEAR_LOG_DEBUG);      
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {    
@@ -265,9 +251,10 @@ class SGL_Manager
      */
     function getDefaultPageParams()
     {
-        $moduleName     = $this->conf['site']['defaultModule'];
-        $managerName    = $this->conf['site']['defaultManager'];
-        $defaultParams  = $this->conf['site']['defaultParams'];
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $moduleName = $conf['site']['defaultModule'];
+        $managerName = $conf['site']['defaultManager'];
+        $defaultParams = $conf['site']['defaultParams'];
         $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
         
         $aParams = array(

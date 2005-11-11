@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | DefaultMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -51,13 +51,12 @@ class DefaultMgr extends SGL_Manager
     function DefaultMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module       = 'default';
         $this->pageTitle    = 'Home';
         $this->template     = 'home.html';
 
         $this->_aActionsMapping =  array(
-//            'showNews'   => array('showNews'),
+            'showNews'   => array('showNews'),
             'list'   => array('list'),
         );
     }
@@ -70,15 +69,15 @@ class DefaultMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->pageTitle   = $this->pageTitle;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-//        $input->newsID      = $req->get('frmNewsID');
+        $input->newsID      = $req->get('frmNewsID');
     }
 
-//    function _showNews(&$input, &$output)
-//    {
-//        require_once SGL_CORE_DIR . '/Item.php';
-//        $item = & new SGL_Item($input->newsID);
-//        $output->preview = $item->preview();
-//    }
+    function _showNews(&$input, &$output)
+    {
+        require_once SGL_CORE_DIR . '/Item.php';
+        $item = & new SGL_Item($input->newsID);
+        $output->preview = $item->preview();
+    }
 
     function _list(&$input, &$output)
     {

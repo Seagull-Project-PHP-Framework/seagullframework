@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -44,9 +44,35 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
+ * @since   PHP 4.1
  */
 class SGL_Util
 {
+    function getUserOs()
+    {
+        //  detect OS
+        if (!empty($_SERVER['HTTP_USER_AGENT']) and !defined('SGL_USR_OS')) {
+            if (strstr($_SERVER['HTTP_USER_AGENT'], 'Win')) {
+                define('SGL_USR_OS', 'Win');
+            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
+                define('SGL_USR_OS', 'Mac');
+            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Linux')) {
+                define('SGL_USR_OS', 'Linux');
+            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Unix')) {
+                define('SGL_USR_OS', 'Unix');
+            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'OS/2')) {
+                define('SGL_USR_OS', 'OS/2');
+            } else {
+                define('SGL_USR_OS', 'Other');
+            }
+        } else {
+            // Could be that the file is being run natively (not through a web server)
+			if (!defined('SGL_USR_OS')) {
+            	define('SGL_USR_OS', 'None');
+			}
+        }
+    }
+
     // +---------------------------------------+
     // | Column-sorting methods                |
     // +---------------------------------------+
@@ -92,12 +118,10 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         switch ($callingPage) {
-            
         case SGL_SORTBY_GRP:
             $sortByType = 'Grp';
             $sessSortBy = SGL_HTTP_Session::get('sortByGrp');
             break;
-            
         case SGL_SORTBY_USER:
             $sortByType = 'User';
             $sessSortBy = SGL_HTTP_Session::get('sortByUser');
@@ -130,16 +154,17 @@ class SGL_Util
         $aFiles = array();
         $theme = $_SESSION['aPrefs']['theme'];
         //  get array of files in /www/css/
-        if ($fh = opendir(SGL_THEME_DIR . "/$theme/css/")) {
+        if ($fh = opendir(SGL_WEB_ROOT . "/themes/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {
 
                 //  remove unwanted dir elements
                 if ($file == '.' || $file == '..' || $file == 'CVS') {
                     continue;
                 }
-                //  and anything without .nav.php extension
-                $ext = substr($file, -8);
-                if ($ext != '.nav.php') {
+                //  and anything without css extension
+                $parts = explode('.', $file);
+                $ext = end($parts);
+                if ($ext != 'css') {
                     continue;
                 }
 
@@ -188,11 +213,6 @@ class SGL_Util
 
         //  until i get rid of this folder
         unset($ret['wizardExample']);
-        foreach ($ret as $module) {
-            if (!ModuleMgr::moduleIsRegistered($module)) {
-                unset($ret[$module]);
-            }
-        }
         return $ret;
     }
 
@@ -269,7 +289,7 @@ class SGL_Util
 
         //  propagate changes to keys as well
         $aDrivers = array();
-        foreach ($ret as $k => $v) {
+        foreach ($ret as $v) {
             $aDrivers[$v] = $v;
         }       
         return $aDrivers;
@@ -322,7 +342,7 @@ class SGL_Util
      * we can improve security in situations where browsers might be able to
      * read them.  Thanks to Georg Gell for the idea.
      *
-     * @param string $file
+     * @param unknown_type $file
      */
     function makeIniUnreadable($file)
     {

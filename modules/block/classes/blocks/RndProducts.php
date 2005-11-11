@@ -22,22 +22,25 @@ define('THUMBS_DIR','images/shop/thumb/');
 
 class RndProducts
 {
+    function RndProducts()
+    {
+        return true;
+    }
+
     function init()
     {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
         $rateMgr = & new RateMgr();
         return $this->getBlockContent();
     }
     
     function currencyConverter ($amount, $from, $to, $format = true) 
     {
-        if (!(array_key_exists($from, $this->conf['exchangeRate']) 
-                && array_key_exists($to, $this->conf['exchangeRate']))) {
-            return '';
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if (!(array_key_exists($from,$conf['exchangeRate']) && array_key_exists($to,$conf['exchangeRate']))) {
+            return '';    
         } 
         
-        $price = $amount * $this->conf['exchangeRate'][$from] / $this->conf['exchangeRate'][$to];
+        $price = $amount * $conf['exchangeRate'][$from] / $conf['exchangeRate'][$to];
         
         if ($format) {
            $decimal = $to=='RON' ? 2 : 0; 
@@ -51,9 +54,9 @@ class RndProducts
     {
         
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
-        $sql = "SELECT * FROM {$this->conf['table']['product']} WHERE promotion >= '1' ";
-        
+        $sql = "SELECT * FROM {$conf['table']['product']} WHERE promotion >= '1' ";
         // get random number (max=number of messages)
         $res = & $dbh->query($sql);
         
@@ -88,7 +91,7 @@ class RndProducts
         }
         $HTMLoutput = "";
         if (is_array($aProducts) && count($aProducts)) {
-            foreach ($aProducts as $key => $obj) {
+            foreach ($aProducts as $obj) {
               $obj->price = $this->currencyConverter($obj->price,$obj->currency,'EUR');
               $HTMLoutput .= $this->render_product($obj); 
             }

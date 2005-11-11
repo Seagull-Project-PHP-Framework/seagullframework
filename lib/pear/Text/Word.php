@@ -16,7 +16,7 @@
 // | Author: George Schlossnagle <george@omniti.com>                      | 
 // +----------------------------------------------------------------------+
 //
-// $Id$
+// $Id: Word.php,v 1.3 2004/10/25 06:39:24 cvsroot Exp $
 
 /*
  * Text_Word calculates the number of syllables in a word, based off of

@@ -24,65 +24,6 @@ function orderRightModule(down)
     return false;
 }  
 
-function time_select_reset(prefix){
-
-
-	d = new Date();
-	if( document.getElementById(prefix+'_no_expire').checked ){	
-		if( document.getElementById(prefix+'_year') ){
-			document.getElementById(prefix+'_year').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_month') ){
-			document.getElementById(prefix+'_month').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_day') ){
-			document.getElementById(prefix+'_day').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_hour') ){
-			document.getElementById(prefix+'_hour').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_minute') ){
-			document.getElementById(prefix+'_minute').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_second') ){
-			document.getElementById(prefix+'_second').options[0].selected = true;
-		}
-	}else{
-		if( document.getElementById(prefix+'_year') ){
-            relocate_select(document.getElementById(prefix+'_year'), d.getFullYear());
-		}
-		if( document.getElementById(prefix+'_month') ){
-			relocate_select(document.getElementById(prefix+'_month'), (d.getMonth()+1));
-		}
-		if( document.getElementById(prefix+'_day') ){
-			relocate_select(document.getElementById(prefix+'_day'), d.getDate());
-		}
-		if( document.getElementById(prefix+'_hour') ){
-			relocate_select(document.getElementById(prefix+'_hour'), '00');		    
-		}
-		if( document.getElementById(prefix+'_minute') ){
-            relocate_select(document.getElementById(prefix+'_minute'), '00');
-		}
-		if( document.getElementById(prefix+'_second') ){
-		    relocate_select(document.getElementById(prefix+'_second'), '00');
-		}
-
-
-	}
-}
-
-function relocate_select(obj, value){
-	if( obj ){
-		for( i=0; i<obj.options.length; i++ ){
-			if( obj.options[i].value==value )
-				obj.options[i].selected = true;
-			else
-				obj.options[i].selected = false;
-		}
-	}
-
-}
-
 function orderLeftModule(down)
 {
     sl = document.frmBlockMgr.leftItem.selectedIndex;

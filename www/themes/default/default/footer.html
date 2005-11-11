@@ -1,12 +1,12 @@
 </div> <!-- close sgl-main -->
 
-<div id="footer">
+<div id="sgl-footer">
     {translate(#Powered by#)} <a href="http://seagull.phpkitchen.com" title="{translate(#Seagull framework homepage#)}">{translate(#Seagull Framework#)}</a> v{versionAPI}<br />
     {if:executionTime}
         {translate(#Execution Time#)} = {executionTime} {translate(#ms#)}{if:queryCount}, {queryCount} {translate(#queries#)} {end:}
     {end:}
 
-    {if:conf[debug][profiling]}
+    {if:GLOBALS[_SGL][CONF][debug][profiling]}
     <p>{memoryUsage} kb {translate(#allocated#)}</p>
     {end:}
 </div>

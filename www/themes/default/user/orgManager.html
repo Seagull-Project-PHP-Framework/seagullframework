@@ -19,7 +19,7 @@
         <th><a class="header" href="{makeUrl(##,#org#,#user#,##,#frmSortBy|id||frmSortOrder|sortOrder#)}">{translate(#Org ID#)}</a></th>
         <th><a class="header" href="{makeUrl(##,#org#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Org Name#)}</a></th>
         <th>{translate(#Role#)}</th>
-        {if:conf[OrgMgr][typeEnabled]}
+        {if:GLOBALS[_SGL][CONF][OrgMgr][typeEnabled]}
         <th>{translate(#Type#)}</th>
         {end:}
         <th>{translate(#Website#)}</th>
@@ -34,7 +34,7 @@
         <td align="center">{org[organisation_id]}</td>
         <td>{foreach:org[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" border="0" alt="{org[name]}" />{end:}{org[name]}</td>
         <td align="center">{org[role_id]}</td>
-        {if:conf[OrgMgr][typeEnabled]}
+        {if:GLOBALS[_SGL][CONF][OrgMgr][typeEnabled]}
         <td align="center">{org[organisation_type_id]}</td>
         {end:}
         <td>{org[website]}</td>

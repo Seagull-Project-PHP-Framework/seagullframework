@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Jump.php,v 1.4 2005/11/04 19:16:11 avb Exp $
+// $Id: Jump.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -25,7 +25,7 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
 class HTML_QuickForm_Action_Jump extends HTML_QuickForm_Action
 {
@@ -36,7 +36,7 @@ class HTML_QuickForm_Action_Jump extends HTML_QuickForm_Action
             // we check whether *all* pages up to current are valid
             // if there is an invalid page we go to it, instead of the
             // requested one
-            $pageName = $page->getAttribute('id');
+            $pageName = $page->getAttribute('name');
             if (!$page->controller->isValid($pageName)) {
                 $pageName = $page->controller->findInvalid();
             }
@@ -49,7 +49,7 @@ class HTML_QuickForm_Action_Jump extends HTML_QuickForm_Action
         $action = $current->getAttribute('action');
         $url    = $action . (false === strpos($action, '?')? '?': '&') .
                   $current->getButtonName('display') . '=true' .
-                  ((!defined('SID') || '' == SID || ini_get('session.use_only_cookies'))? '': '&' . SID);
+                  ((!defined('SID') || '' == SID)? '': '&' . SID);
         header('Location: ' . $url);
         exit;
     }

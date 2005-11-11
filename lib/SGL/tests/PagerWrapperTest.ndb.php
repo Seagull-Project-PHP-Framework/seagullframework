@@ -3,8 +3,7 @@
 
 class PagerWrapperTest extends UnitTestCase
 {
-    function PagerWrapperTest($name='Test of Pager_Wrapper') 
-    {
+    function PagerWrapperTest($name='Test of Pager_Wrapper') {
         $this->UnitTestCase($name);
     }
     

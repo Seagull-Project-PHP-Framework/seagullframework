@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | AccountMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -40,7 +40,7 @@
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Usr.php';
 
 /**
  * Manages User's account.
@@ -56,8 +56,7 @@ class AccountMgr extends RegisterMgr
     function AccountMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::RegisterMgr();
-        
+        $this->module = 'user';
         $this->pageTitle = 'My Account';
         $this->da = & DA_User::singleton();
 
@@ -82,13 +81,14 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::display($output);
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  set user's country
         if (isset($output->user) && $output->action == 'viewProfile') {
             $output->user->country = $GLOBALS['_SGL']['COUNTRIES'][$output->user->country];
             $output->user->region = $GLOBALS['_SGL']['STATES'][$output->user->region];
         }
-        if ($this->conf['OrgMgr']['enabled']) {
+        if ($conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
         }
         $output->aRoles = $this->da->getRoles();
@@ -100,7 +100,7 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = 'My Profile :: Edit';
         $output->template = 'userAdd.html';
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = & new DataObjects_Usr();
         $oUser->get(SGL_HTTP_Session::getUid());
         $output->user = $oUser;
     }
@@ -108,11 +108,11 @@ class AccountMgr extends RegisterMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = & new DataObjects_Usr();
         $oUser->get(SGL_HTTP_Session::getUid());
         $original = clone($oUser);
         $oUser->setFrom($input->user);
-        $oUser->last_updated = SGL_Date::getTime();
+        $oUser->last_updated = SGL::getTime();
         $success = $oUser->update($original);
 
         if ($success) {
@@ -128,24 +128,23 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'account.html';
         $output->pageTitle = 'My Profile';
-        $oUser = DB_DataObject::factory('Usr');
-        $oUser->get(SGL_HTTP_Session::getUid());
-        $output->user = $oUser;
+        $user = & new DataObjects_Usr();
+        $user->get(SGL_HTTP_Session::getUid());
+        $output->user = $user;
     }
 
     function _summary(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'accountSummary.html';
-        $currentUid = SGL_HTTP_Session::getUid();
-        $oUser = DB_DataObject::factory('Usr');
-        $oUser->get($currentUid);
+        $user = & new DataObjects_Usr();
+        $user->get(SGL_HTTP_Session::getUid());
+        $user->getLinks('link_%s');
 
         //  get current remote IP
         $output->remote_ip = $_SERVER['REMOTE_ADDR'];
         $output->login = $this->da->getLastLogin();
-        $output->user = $oUser;
-        $output->user->role_name = $this->da->getRoleNameById(SGL_HTTP_Session::getRoleId());
+        $output->user = $user;
     }
 }
 ?>

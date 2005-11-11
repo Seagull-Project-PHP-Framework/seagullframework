@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -39,12 +39,12 @@
 // $Id: Output.php,v 1.22 2005/06/04 23:56:33 demian Exp $
 
 /**
- * High level HTML transform methods, 'Template Helpers' in Yahoo speak, 50% html,
- * 50% php.
+ * High level HTML transform methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
+ * @since   PHP 4.1
  * @todo    look at PEAR::Date to improve various date methods used here
  */
 class SGL_Output
@@ -65,11 +65,6 @@ class SGL_Output
     function translate($key, $filter = false)
     {
         return SGL_String::translate($key, $filter);
-    }
-    
-    function get($key)
-    {
-        return $this->aProps[$key];
     }
 
     /**
@@ -231,9 +226,9 @@ class SGL_Output
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
     */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
     {
-        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years, $noExpire);
+        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years);
     }
 
     /**
@@ -254,14 +249,15 @@ class SGL_Output
             $_id = $id;
         }
 
-        if ($curRowClass == 'backLight' && $isBold ) {
-            $curRowClass = 'backDark bold';
-        } elseif ($curRowClass == 'backLight') {
-            $curRowClass = 'backDark';
+        //  choose the next color
+        if ($curRowClass == 'sgl-row-dark' && $isBold ) {
+            $curRowClass = 'sgl-row-light-bold';
+        } elseif ($curRowClass == 'sgl-row-dark') {
+            $curRowClass = 'sgl-row-light';
         } elseif ($isBold) {
-            $curRowClass = 'backLight bold';
+            $curRowClass = 'sgl-row-dark-bold';
         } else {
-            $curRowClass = 'backLight';
+            $curRowClass = 'sgl-row-dark';
         }
 
         return $curRowClass;
@@ -358,11 +354,6 @@ class SGL_Output
         $body->outputObject($this);
     }
 
-    /**
-     * Returns true if client OS is windows.
-     *
-     * @return boolean
-     */
     function isWin()
     {
         return SGL_USR_OS == 'Win';

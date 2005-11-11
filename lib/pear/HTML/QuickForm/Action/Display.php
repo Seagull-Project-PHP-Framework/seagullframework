@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Display.php,v 1.5 2004/11/26 10:49:48 avb Exp $
+// $Id: Display.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -29,23 +29,17 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.1 $
  */
 class HTML_QuickForm_Action_Display extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
-        $pageName = $page->getAttribute('id');
+        $pageName = $page->getAttribute('name');
         // If the original action was 'display' and we have values in container then we load them
         // BTW, if the page was invalid, we should later call validate() to get the errors
         list(, $oldName) = $page->controller->getActionName();
         if ('display' == $oldName) {
-            // If the controller is "modal" we should not allow direct access to a page
-            // unless all previous pages are valid (see also bug #2323)
-            if ($page->controller->isModal() && !$page->controller->isValid($page->getAttribute('id'))) {
-                $target =& $page->controller->getPage($page->controller->findInvalid());
-                return $target->handle('jump');
-            }
             $data =& $page->controller->container();
             if (!empty($data['values'][$pageName])) {
                 $page->loadValues($data['values'][$pageName]);
@@ -59,7 +53,7 @@ class HTML_QuickForm_Action_Display extends HTML_QuickForm_Action
         if (isset($validate) && $validate) {
             $page->validate();
         }
-        return $this->_renderForm($page);
+        $this->_renderForm($page);
     }
 
 

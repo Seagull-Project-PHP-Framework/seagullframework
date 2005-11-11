@@ -78,10 +78,10 @@ INSERT INTO permission VALUES (64, 'articlemgr_changeStatus', NULL, 11);
 INSERT INTO permission VALUES (65, 'articlemgr_delete', NULL, 11);
 INSERT INTO permission VALUES (66, 'articlemgr_view', NULL, 11);
 INSERT INTO permission VALUES (67, 'articlemgr_list', NULL, 11);
-INSERT INTO permission VALUES (69, 'categorymgr_insert', NULL, 9);
-INSERT INTO permission VALUES (71, 'categorymgr_update', NULL, 9);
+INSERT INTO permission VALUES (69, 'categorymgr_insert', NULL, 11);
+INSERT INTO permission VALUES (71, 'categorymgr_update', NULL, 11);
 INSERT INTO permission VALUES (73, 'rolemgr_duplicate', NULL, 12);
-INSERT INTO permission VALUES (75, 'categorymgr_list', NULL, 9);
+INSERT INTO permission VALUES (75, 'categorymgr_list', NULL, 11);
 INSERT INTO permission VALUES (76, 'documentmgr_add', NULL, 11);
 INSERT INTO permission VALUES (77, 'documentmgr_insert', NULL, 11);
 INSERT INTO permission VALUES (78, 'documentmgr_edit', NULL, 11);
@@ -180,6 +180,8 @@ INSERT INTO permission VALUES (188, 'filemgr', NULL, 11);
 INSERT INTO permission VALUES (189, 'newslettermgr', NULL, 10);
 INSERT INTO permission VALUES (191, 'categorymgr', NULL, 9);
 INSERT INTO permission VALUES (193, 'categorymgr_delete', NULL, 9);
+INSERT INTO permission VALUES (68, 'categorymgr_reorder', NULL, 9);
+INSERT INTO permission VALUES (70, 'categorymgr_reorderUpdate', NULL, 9);
 INSERT INTO permission VALUES (194, 'navstylemgr', NULL, 9);
 INSERT INTO permission VALUES (196, 'pagemgr', NULL, 9);
 INSERT INTO permission VALUES (198, 'contactmgr', NULL, 8);
@@ -415,21 +417,20 @@ INSERT INTO user_preference VALUES (8, 0, 8, 'en_GB');
 -- Dumping data for table usr
 --
 
-#INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-#INSERT INTO usr VALUES (1, 1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'User', '', '', 'admin@example.com', '1 Seagull Drive', '', '', 'London', '', 'GB', '55555', 0, 1, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
-#INSERT INTO usr VALUES (2, 1, 2, 'seagull', '21232f297a57a5a743894a0e4a801fc3', 'Test', 'User', '', '', 'seagull@example.com', '17 Daver Court', 'Mount Avenue', '', 'Ealing', '', 'GB', '55555', 0, 1, 1, 'rover', '2004-06-10 18:04:06', 1, '2004-06-10 18:04:06', 1);
+INSERT INTO usr VALUES (0, 1, 1, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+INSERT INTO usr VALUES (1, 1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'User', '', '', 'admin@example.com', '1 Seagull Drive', '', '', 'London', '', 'GB', '55555', 0, 1, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+INSERT INTO usr VALUES (2, 1, 2, 'seagull', '21232f297a57a5a743894a0e4a801fc3', 'Test', 'User', '', '', 'seagull@example.com', '17 Daver Court', 'Mount Avenue', '', 'Ealing', '', 'GB', '55555', 0, 1, 1, 'rover', '2004-06-10 18:04:06', 1, '2004-06-10 18:04:06', 1);
 
 --
 -- Creating sequences
 -- sequence must start on the first free record id
 --
 
--- FIXME: should buildSequences take care of this?
 CREATE SEQUENCE organisation_seq START WITH 3;
 CREATE SEQUENCE permission_seq START WITH 285;
 CREATE SEQUENCE preference_seq START WITH 8;
 CREATE SEQUENCE role_seq START WITH 3;
 CREATE SEQUENCE role_permission_seq START WITH 77;
 CREATE SEQUENCE user_preference_seq START WITH 8;
-#CREATE SEQUENCE usr_seq START WITH 3;
+CREATE SEQUENCE usr_seq START WITH 3;
 CREATE SEQUENCE user_permission_seq START WITH 51;

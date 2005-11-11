@@ -16,7 +16,7 @@
 // | Authors: Andy Crain <apcrain@fuse.net>                               |
 // +----------------------------------------------------------------------+
 //
-// $Id: CoolMenu.php,v 1.3 2003/12/28 20:38:28 datenpunk Exp $
+// $Id: CoolMenu.php,v 1.12 2004/10/25 06:39:22 cvsroot Exp $
 //
 
 // {{{ DB_NestedSet_CoolMenu:: class

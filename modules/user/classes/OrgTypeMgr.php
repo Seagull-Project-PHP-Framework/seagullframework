@@ -1,48 +1,36 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
-// | All rights reserved.                                                      |
+// | Seagull 0.4                                                               |
+// +---------------------------------------------------------------------------+
+// | OrgtypeMgr.php                                                                |
+// +---------------------------------------------------------------------------+
+// | Copyright (c) 2005 Demian Turner                                          |
 // |                                                                           |
-// | Redistribution and use in source and binary forms, with or without        |
-// | modification, are permitted provided that the following conditions        |
-// | are met:                                                                  |
+// | Author: AJ Tarachanowicz <ajt@localhype.net>                                  |
+// +---------------------------------------------------------------------------+
 // |                                                                           |
-// | o Redistributions of source code must retain the above copyright          |
-// |   notice, this list of conditions and the following disclaimer.           |
-// | o Redistributions in binary form must reproduce the above copyright       |
-// |   notice, this list of conditions and the following disclaimer in the     |
-// |   documentation and/or other materials provided with the distribution.    |
-// | o The names of the authors may not be used to endorse or promote          |
-// |   products derived from this software without specific prior written      |
-// |   permission.                                                             |
+// | This library is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU Library General Public               |
+// | License as published by the Free Software Foundation; either              |
+// | version 2 of the License, or (at your option) any later version.          |
 // |                                                                           |
-// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
-// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
-// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
-// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
-// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
-// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
-// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
-// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
-// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
-// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
-// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// | This library is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         |
+// | Library General Public License for more details.                          |
+// |                                                                           |
+// | You should have received a copy of the GNU Library General Public         |
+// | License along with this library; if not, write to the Free                |
+// | Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
-// +---------------------------------------------------------------------------+
-// | OrgtypeMgr.php                                                            |
-// +---------------------------------------------------------------------------+
-// | Author: AJ Tarachanowicz <ajt@localhype.net>                              |
-// +---------------------------------------------------------------------------+
-// $Id: PreferenceMgr.php,v 1.39 2005/05/17 23:54:53 demian Exp $
+// $Id: OrgTypeMgr.php,v 1.5 2005/06/23 16:56:14 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once 'DB/DataObject.php';
-
+require_once SGL_ENT_DIR . '/Organisation_type.php';
 /**
- * Manage Org Types.
+ * Manage Org Types
  *
  * @package user
  * @author  AJ Tarachanowicz <ajt@localhype.net>
@@ -54,8 +42,7 @@ class OrgTypeMgr extends SGL_Manager
     function OrgTypeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-
+        $this->module       = 'user';
         $this->pageTitle    = 'OrgType Manager';
         $this->template     = 'orgTypeList.html';
         $this->da           = & DA_User::singleton();
@@ -113,10 +100,11 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $orgType = & new DataObjects_Organisation_type();
         $orgType->setFrom($input->orgTypes);
         $dbh = $orgType->getDatabaseConnection();
-        $orgType->organisation_type_id = $dbh->nextId($this->conf['table']['organisation_type']);        
+        $orgType->organisation_type_id = $dbh->nextId($conf['table']['organisation_type']);        
         $success = $orgType->insert();
         if ($success) {
             SGL::raiseMsg('Organisation type saved successfully');
@@ -130,7 +118,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
         $output->isEdit = true;
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $orgType = & new DataObjects_Organisation_type();
         $orgType->get($input->orgTypeId);
         $output->orgTypes = $orgType;
     }
@@ -139,7 +127,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $orgType = & new DataObjects_Organisation_type();
         $orgType->get($input->orgTypeId);
         $orgType->setFrom($input->orgTypes);      
         $success = $orgType->update();
@@ -161,8 +149,8 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
-            foreach ($input->aDelete as $index => $orgTypeId) {
-                $orgTypes = DB_DataObject::factory('Organisation_type');
+            foreach ($input->aDelete as $orgTypeId) {
+                $orgTypes = & new DataObjects_Organisation_type();
                 $orgTypes->get($orgTypeId);
                 $orgTypes->delete();
                 unset($orgTypes);

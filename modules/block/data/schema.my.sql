@@ -11,7 +11,6 @@ create table if not exists block
    blk_order                      smallint,
    is_onleft                      smallint,
    is_enabled                     smallint,
-   content longtext,
    primary key (block_id)
 );
 
@@ -39,12 +38,4 @@ create index block_assignment_fk on block_assignment
 create index block_assignment_fk2 on block_assignment
 (
    section_id
-);
--- ==============================================================
---  table block_role
---  DK 
--- ==============================================================
-create table if not exists block_role (
-    block_id integer not null,
-    role_id integer not null
 );

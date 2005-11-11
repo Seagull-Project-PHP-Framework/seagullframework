@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Wizard.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -65,6 +65,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.8 $
+ * @since   PHP 4.1
  */
 class SGL_Wizard extends SGL_Manager
 {
@@ -79,7 +80,6 @@ class SGL_Wizard extends SGL_Manager
     function SGL_Wizard()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
     }
 
     function maintainState(&$obj)
@@ -164,30 +164,18 @@ class SGL_Wizard extends SGL_Manager
         return $html;
     }
 
-    function _createRegister($moduleName)
+    function _createRegister()
     {
         $html = '';
         foreach($this->sequence as $key => $aSeq) {
             $html .= '<a class="subnavi" href="javascript:document.frmWizard.jumpID.value='.$key.';document.frmWizard.submit()">'.SGL_String::translate($aSeq['pageName']['managerName']).'</a><br/>';
         }
-        $html .= '<span class="mainnavi">'.SGL_String::translate($moduleName).'</span>';
+        $html .= '<span class="mainnavi">'.SGL_String::translate($this->module).'</span>';
         return $html;
     }
 
     function validate($req, &$input)
     {
-        // if direct entering, redirect to default page
-        // for security reasons
-        if (!isset($_SESSION['wiz_sequence'][0]['pageName']['managerName'])) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $aParams = array(
-                'moduleName'    => $conf['site']['defaultModule'],
-                'managerName'   => $conf['site']['defaultManager'],
-            );
-            SGL_HTTP::redirect($aParams);
-        }
-
         //  init sequence values from session
         $this->sequence     = &$_SESSION['wiz_sequence'];
         $input->back        = $req->get('back');
@@ -212,7 +200,7 @@ class SGL_Wizard extends SGL_Manager
     {
         //  put below in parent class
         $output->buttons = $this->_createButtons();
-        $output->register = $this->_createRegister($output->moduleName); 
+        $output->register = $this->_createRegister(); 
 
         //  catch back button
         if ($this->submit == 'back') {
@@ -236,10 +224,9 @@ class SGL_Wizard extends SGL_Manager
     function isObjEmpty($obj)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
         $aObjAttrs = get_object_vars($obj);
         if (is_array($aObjAttrs)) {
-            foreach ($aObjAttrs as $k => $v) {
+            foreach ($aObjAttrs as $v) {
                 if (!empty($v)) {
                     return false;
                 }

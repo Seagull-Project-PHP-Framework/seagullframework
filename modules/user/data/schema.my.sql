@@ -202,7 +202,7 @@ CREATE UNIQUE INDEX usr_email ON usr (
 
 CREATE UNIQUE INDEX usr_username ON usr (
    username
-);
+); 
 
 /*==============================================================*/
 /* Table: user_permission                                       */

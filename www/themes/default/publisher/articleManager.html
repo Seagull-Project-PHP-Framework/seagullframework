@@ -33,7 +33,7 @@
     <tr>
         <td>
             <h3>{translate(pageTitle)}
-                <span class="small">[<a href="#" onClick="toggleDisplay('articleHelp')">{translate(#more info#)}</a>]</span>
+                <span style="font-size: 0.5em">[<a href="#" onClick="toggleDisplay('articleHelp')">{translate(#more info#)}</a>]</span>
             </h3>
         </td>
         <span flexy:if="msgGet()">{msgGet()}</span> 
@@ -44,7 +44,7 @@
     </tr>
 </table>
 
-<div id="articleHelp" class="hide">
+<div id="articleHelp" style="display:none;">
 <table class="wide">
     <tr>
         <td colspan="2"><p>{translate(#Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:#)}
@@ -105,7 +105,7 @@
         <td>{aValue[item_id]}</td>
         <td>{aValue[addition]}</td>
         <td align="center">{formatDate(aValue[start_date])}</td>
-        <td align="center">{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
+        <td align="center">{formatDate(aValue[expiry_date])}</td>
         <td>{aValue[username]}</td>
         <td align="center">
             <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}" />

@@ -41,7 +41,8 @@
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/publisher/classes/FileMgr.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Category.php';
+require_once SGL_ENT_DIR . '/Document.php';
 
 /**
  * For performing operations on Document objects.
@@ -59,8 +60,8 @@ class DocumentMgr extends FileMgr
     function DocumentMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
 
+        $this->module       = 'publisher';
         $this->pageTitle    = 'Document Manager';
         $this->template     = 'documentManager.html';
         $this->_aAllowedFileTypes = array(
@@ -177,7 +178,7 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get current navigation cat name for publisher subnav
-        $category = DB_DataObject::factory('Category');
+        $category = & new DataObjects_Category();
         $category->get($output->catID);
         $output->catName = $category->label;
         $output->queryRange = PublisherBase::getQueryRange($output);
@@ -231,13 +232,14 @@ class DocumentMgr extends FileMgr
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         
-        $asset = DB_DataObject::factory('Document');
+        $asset = & new DataObjects_Document();
         $asset->setFrom($input->document);
         $dbh = $asset->getDatabaseConnection();
-        $asset->document_id = $dbh->nextId($this->conf['table']['document']);
+        $asset->document_id = $dbh->nextId($conf['table']['document']);
         $asset->category_id = $input->docCatID;
-        $asset->date_created  = SGL_Date::getTime();
+        $asset->date_created  = SGL::getTime();
         $asset->name = SGL_String::censor($asset->name);
         $asset->description = SGL_String::censor($asset->description);
         $asset->insert();
@@ -254,7 +256,7 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
-        $document = DB_DataObject::factory('Document');
+        $document = & new DataObjects_Document();
         $document->get($input->assetID);
         $document->getLinks('link_%s');
 
@@ -273,8 +275,8 @@ class DocumentMgr extends FileMgr
     function _setDownload(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if ($this->conf['DocumentMgr']['zipDownloads']) {
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        if ($conf['DocumentMgr']['zipDownloads']) {
             $this->_downloadZipped($input, $output);
         } else {
             $this->_download($input, $output);
@@ -284,7 +286,7 @@ class DocumentMgr extends FileMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = DB_DataObject::factory('Document');
+        $document = & new DataObjects_Document();
         $document->get($input->assetID);
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
@@ -307,8 +309,8 @@ class DocumentMgr extends FileMgr
         $output->template = 'documentMgrEdit.html';
 
         //  delete physical file
-        foreach ($input->deleteArray as $index => $assetID) {
-            $document = DB_DataObject::factory('Document');
+        foreach ($input->deleteArray as $assetID) {
+            $document = & new DataObjects_Document();
             $document->get($assetID);
             if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {
                 @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
@@ -322,6 +324,9 @@ class DocumentMgr extends FileMgr
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
                 
         $rangeWhereClause = ($input->queryRange == 'all')
             ? ''
@@ -333,8 +338,8 @@ class DocumentMgr extends FileMgr
                 dt.name AS document_type_name,
                 u.username AS document_added_by
             FROM
-                {$this->conf['table']['document']} d, {$this->conf['table']['category']} c, 
-                {$this->conf['table']['document_type']} dt, {$this->conf['table']['user']} u
+                {$conf['table']['document']} d, {$conf['table']['category']} c, 
+                {$conf['table']['document_type']} dt, {$conf['table']['user']} u
             WHERE dt.document_type_id = d.document_type_id
             AND c.category_id = d.category_id
             AND u.usr_id = d.added_by
@@ -348,7 +353,7 @@ class DocumentMgr extends FileMgr
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
@@ -378,7 +383,6 @@ class DocumentMgr extends FileMgr
         //  jpgs on linux
         case 'image/jpeg':                      $assetTypeID = 5; break;
         case 'image/x-png':                     $assetTypeID = 5; break;
-        case 'image/png':                       $assetTypeID = 5; break;
         case 'image/gif':                       $assetTypeID = 5; break;
         case 'application/pdf':                 $assetTypeID = 6; break;
         default:
@@ -390,11 +394,12 @@ class DocumentMgr extends FileMgr
     function _getType($documentTypeID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
         $query = "  SELECT  name
-                    FROM    " . $this->conf['table']['document_type'] . "
+                    FROM    " . $conf['table']['document_type'] . "
                     WHERE   document_type_id = $documentTypeID";
-        return $this->dbh->getOne($query);
+        return $dbh->getOne($query);
     }
 }
 ?>

@@ -6,16 +6,16 @@
         {foreach:aModules,key,valueObj}
             <td class="{valueObj.bgnd}" valign="top">
                 {if:valueObj.is_configurable}
-                <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
+                <a href="{makeUrl(##,valueObj.manager,valueObj.module)}" style="text-decoration: none; color:#184A84; font-weight:normal">
                 {end:}
-                <table class="moduleOverview">
+                <table id="moduleOverview">
                     <tr>
                         <td colspan="2" class="title">{valueObj.title}</td>
                     </tr>
                     <tr>
                         <td align="center" valign="top">                           
                             {if:valueObj.is_configurable}<a href="{makeUrl(##,valueObj.manager,valueObj.module)}">{end:}                                                       
-                            <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" />
+                            <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" class="{valueObj.bgnd}" />
                             {if:valueObj.is_configurable}</a>{end:}
                         </td>
                         <td valign="top">

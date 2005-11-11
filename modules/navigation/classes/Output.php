@@ -52,7 +52,7 @@ class NavigationOutput
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $radioString = '';
-        foreach ($array as $key => $valueObj) {
+        foreach ($array as $valueObj) {
             $yes    = ($valueObj->isAllowed) ? ' checked' : '';
             $no     = (!$valueObj->isAllowed) ? ' checked' : '';
             $radioString .= "<tr class=" . SGL_Output::switchRowClass() . "><td align='center'>\n";

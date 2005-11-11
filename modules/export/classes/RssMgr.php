@@ -30,18 +30,17 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | RssMgr.php                                                                |
 // +---------------------------------------------------------------------------+
-// | Authors:   Fabio Bacigalupo <seagull@open-haus.de>                        |
-// |            Demian Turner <demian@phpkitchen.com>                          |
+// | Author: Fabio Bacigalupo <Fabio Bacigalupo <seagull@open-haus.de>         |
 // +---------------------------------------------------------------------------+
 // $Id: RssMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
 
-define('SGL_FEED_RSS_VERSION', '2.0');
+//define('SGL_FEED_RSS_VERSION', '1.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
 define('SGL_ITEM_TYPE_ARTICLE_HTML', 2);
@@ -55,35 +54,39 @@ define('SGL_CATEGORY_NEWS_ID', 1);
 class RssMgr extends SGL_Manager 
 {
     var $feed;
+    var $mostRecentUpdate;
 
     function RssMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();        
         
+        $this->module   = 'export';
         $this->masterTemplate  = 'masterFeed.html';
         $this->template = 'masterRss.xml';
         
         $this->_aActionsMapping = array(
             'news' => array('news'),
             );
+        $this->mostRecentUpdate = $this->getMostRecentUpdateDate();
         
-        $this->feed = new SGL_Feed();
-        $this->feed->xml_version    = "1.0";
-        $this->feed->xml_encoding   = "utf-8";
-        $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
-        $this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
-        $this->feed->title          = $this->conf['RssMgr']['feedTitle'];
-        $this->feed->description    = $this->conf['RssMgr']['feedDescription'];
-        $this->feed->copyright      = $this->conf['RssMgr']['feedCopyright'];
-        $this->feed->managingeditor = $this->conf['RssMgr']['feedEmail'] . " (" . $this->conf['RssMgr']['feedEditor'] . ")";
-        $this->feed->webmaster      = $this->conf['RssMgr']['feedEmail'] . " (" . $this->conf['RssMgr']['feedWebmaster'] . ")";
-        $this->feed->ttl            = $this->conf['RssMgr']['feedRssTtl'];
-        $this->feed->link           = $this->conf['RssMgr']['feedUrl'];
-        $this->feed->syndicationurl = $this->conf['RssMgr']['feedSyndicationUrl'];
+        #$conf = & $GLOBALS['_SGL']['CONF'];
+        
+//        $this->feed = new SGL_Feed();
+//        $this->feed->xml_version    = "1.0";
+//        $this->feed->xml_encoding   = "utf-8";
+//        $this->feed->rss_version    = SGL_FEED_RSS_VERSION;
+        #$this->feed->docs           = 'http://blogs.law.harvard.edu/tech/rss';
+        #$this->feed->title          = $conf['RssMgr']['feedTitle'];
+        #$this->feed->description    = $conf['RssMgr']['feedDescription'];
+//        $this->feed->copyright      = $conf['RssMgr']['feedCopyright'];
+//        $this->feed->managingeditor = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedEditor'] . ")";
+//        $this->feed->webmaster      = $conf['RssMgr']['feedEmail'] . " (" . $conf['RssMgr']['feedWebmaster'] . ")";
+//        $this->feed->ttl            = $conf['RssMgr']['feedRssTtl'];
+//        $this->feed->link           = $conf['RssMgr']['feedUrl'];
+//        $this->feed->syndicationurl = $conf['RssMgr']['feedSyndicationUrl'];
 //        $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
-        $this->feed->pubdate        = $this->datetime2Rfc2822();
-        $this->feed->generator      = 'Seagull RSS Manager';
+        #$this->feed->pubdate        = $this->datetime2Rfc2822();
+        #$this->feed->generator      = 'Seagull RSS Manager';
         
 /*        $image               = new stdClass();
         $image->url          = ;
@@ -113,10 +116,9 @@ class RssMgr extends SGL_Manager
         return $input;
     }
 
-       
     /**
      *
-     * Generate a RSS feed with the latest news from the startpage.
+     * Generate a RSS feed from news articles.
      *
      * @param   object      $input
      * @param   object      $output
@@ -128,37 +130,147 @@ class RssMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $output->template = 'masterRss.xml';
-        $this->feed->category[]["content"] = $this->conf['RssMgr']['feedCategory'];
+
+        header('Content-Type: text/xml; charset=utf-8');
+        session_cache_limiter('public');
+        
+        /*
+         * Caching logic - Do not send feed if nothing has changed
+         * Implementation inspired by Simon Willison 
+         * [http://simon.incutio.com/archive/2003/04/23/conditionalGet], Thiemo Maettig
+         */
+    
+        // See if the client has provided the required headers.
+        // Always convert the provided header into GMT timezone to 
+        // allow comparing to the server-side last-modified header
+        $modified_since = !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+                        ? gmdate('D, d M Y H:i:s \G\M\T', 
+                            $this->serverOffsetHour(strtotime(stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE'])), true))
+                        : false;
+        $none_match     = !empty($_SERVER['HTTP_IF_NONE_MATCH'])
+                        ? str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH']))
+                        : false;
+    
+        if ($this->mostRecentUpdate) {
+            $last_modified = gmdate('D, d M Y H:i:s \G\M\T', 
+                $this->serverOffsetHour(strtotime($this->mostRecentUpdate), true));
+            $etag          = '"' . $last_modified . '"';
+    
+            header('Last-Modified: ' . $last_modified);
+            header('ETag: '          . $etag);
+            header('Vary: Accept-Encoding');
+    
+            if (($none_match == $last_modified && $modified_since == $last_modified) ||
+                (!$none_match && $modified_since == $last_modified) ||
+                (!$modified_since && $none_match == $last_modified)) {
+                header('HTTP/1.0 304 Not Modified');
+                return;
+            }
+        }
+        
+        // send header or data
+        $output->feed = $this->_buildXml($input);
+    }
+    
+    function serverOffsetHour($timestamp = null, $negative = false, $serverOffsetHours = 0) 
+    {
+        if ($timestamp == null) {
+            $timestamp = time();
+        }
+    
+        if (empty($serverOffsetHours) 
+                || !is_numeric($serverOffsetHours) 
+                || $serverOffsetHours == 0) {
+            return $timestamp;
+        } else {
+            return $timestamp + (($negative 
+                ? -$serverOffsetHours 
+                : $serverOffsetHours) * 60 * 60);
+        }
+    }
+
+    function _buildXml(&$input)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
+
+        require_once 'XML/Serializer.php';
         
+        //  RSS 2.0 format
+        $options = array(
+            "indent"    => "    ",
+            "linebreak" => "\n",
+            "typeHints" => false,
+            "addDecl"   => true,
+            "encoding"  => "UTF-8",
+            "rootName"   => "rss",
+            'rootAttributes' => array(
+                'version' => '2.0',
+                'xmlns:content' => 'http://purl.org/rss/1.0/modules/content/',
+                'xmlns:wfw' => 'http://wellformedweb.org/CommentAPI/',
+                'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+                ),
+            "defaultTagName" => "item",
+        );
+        
+        $lastUpdate = $this->getMostRecentUpdateDate();
+        
+        //  build data structure
+        $data['channel'] = array(
+            'title' => $conf['RssMgr']['feedTitle'],
+            'link'  => $conf['RssMgr']['feedUrl'],
+            'description' =>  $conf['RssMgr']['feedDescription'],
+            'copyright' => $conf['RssMgr']['feedCopyright'],
+            'pubDate' => $this->datetime2Rfc2822($lastUpdate),
+            'category' => $conf['RssMgr']['feedCategory'],
+            'generator' => 'Seagull RSS Manager',
+            'language' => 'en',
+            'ttl' => $conf['RssMgr']['feedRssTtl'],
+            'docs' => 'http://blogs.law.harvard.edu/tech/rss',
+            );
+                
         if (($res !== false) && (!empty($res))) {
             foreach ($res as $article) {
-                $item = array();
-                $item["title"]           = $article["title"];
-                $item["link"]            = SGL_Output::makeUrl('view','articleview','publisher', array(),
-                                            "frmArticleID|{$article["id"]}");
-                $item["description"]     = SGL_String::summariseHtml($article["description"]);# . 
-                                            #" " . SGL_String::translate("Read more");
-                $author_name             = (!empty($article["fullname"])) 
-                                            ? " (" . $article["fullname"] . ")" 
-                                            : " (" . $article["username"] . ")";
-                $item["author"]          = $this->conf['RssMgr']['feedEmail'] . $author_name;
-                $item["source"]["url"]   = '';
-                $item["source"]["content"]   = '';
-                $item["guid"]["bool"]    = "true";
-                $item["guid"]["permalink"] = $item["link"];
-                $item["comments"]        = $item["link"];
-                $item["pubdate"]         = $this->datetime2Rfc2822($article["issued"]);
                 
-                $this->feed->items[] = $item;
+                $author_name  = (!empty($article["fullname"])) 
+                                ? " (" . $article["fullname"] . ")" 
+                                : " (" . $article["username"] . ")";
+                $link = SGL_Output::makeUrl('view','articleview','publisher', array(),
+                    "frmArticleID|{$article["id"]}");
+
+                //  build items
+                $data['channel'][] = array(
+                    'title'       => $article['title'], 
+                    'link'        => $link,
+                    'description' => SGL_String::summariseHtml($article["description"]),
+                    'author'      => $conf['RssMgr']['feedEmail'] . $author_name,
+                    'comments'    => $link,
+                    'pubDate'     => $this->datetime2Rfc2822($article["issued"]),
+                );
             }
-            // Set the pubDate to the release date of the newest item
-            $this->feed->pubdate = $this->feed->items[0]["pubdate"];
+            
+            $serializer = new XML_Serializer($options);
+            if ($serializer->serialize($data)) {
+#                header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', strtotime($lastUpdate)));
+#                header("Etag: \"" . strtotime($lastUpdate)."\"");
+#                header('Cache-Control: max-age=21600');
+#                #header("Pragma: ");
+                return $serializer->getSerializedData();
+            }
         }
-        header("Content-Type: text/xml");
-        $output->feed = $this->feed;
+    }
+    
+    function getMostRecentUpdateDate()
+    {
+         $dbh = & SGL_DB::singleton();
+         $conf = & $GLOBALS['_SGL']['CONF'];
+         
+         $date = $dbh->getOne("SELECT MAX(last_updated) FROM {$conf['table']['item']}");
+         return $date;
     }
     
     function datetime2Rfc2822($date = "now")
@@ -232,9 +344,10 @@ class RssMgr extends SGL_Manager
                  LIMIT 0, ?
              ";
 
-         $aRes = $this->dbh->getAll($query,
-            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL_Date::getTime(), 
-                SGL_Date::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
+         $dbh = & SGL_DB::singleton();
+         $aRes = $dbh->getAll($query,
+            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL::getTime(), 
+                SGL::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
                 DB_FETCHMODE_ASSOC);
 
          if (DB::isError($aRes)) {

@@ -20,10 +20,10 @@ class ShopSearch
     function getBlockContent()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $catInput = '';
         $catID = 0;
-        $req = & SGL_Request::singleton();
-        $catId = $req->get('frmCatID');
+        if (isset($GLOBALS['_SGL']['REQUEST']['frmCatID'])) {
+            $catID = (int) $GLOBALS['_SGL']['REQUEST']['frmCatID'];
+        }
         
         // Make select
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';

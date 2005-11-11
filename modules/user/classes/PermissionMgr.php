@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | PermissionMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -40,7 +40,6 @@
 
 require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once 'DB/DataObject.php';
 
 /**
  * Manages user permissions.
@@ -50,14 +49,14 @@ require_once 'DB/DataObject.php';
  * @author  Jacob Hanson <jacdx@jacobhanson.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.58 $
+ * @since   PHP 4.1
  */
 class PermissionMgr extends SGL_Manager
 {
     function PermissionMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module       = 'user';
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
         $this->da           = & DA_User::singleton();
@@ -121,9 +120,10 @@ class PermissionMgr extends SGL_Manager
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_ENT_DIR . '/Permission.php';
         $output->template = 'permAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->perm = DB_DataObject::factory('Permission');
+        $output->perm = & new DataObjects_Permission();
 
         // setup module combobox
         require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
@@ -171,7 +171,9 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $oPerm = DB_DataObject::factory('Permission');
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        require_once SGL_ENT_DIR . '/Permission.php';
+        $oPerm = & new DataObjects_Permission();
 
         //  check to see if perm already exists
         $oPerm->name = $input->perm->name;
@@ -179,7 +181,7 @@ class PermissionMgr extends SGL_Manager
             $oPerm->free(); 
             $oPerm->setFrom($input->perm);
             $dbh = & $oPerm->getDatabaseConnection();
-            $oPerm->permission_id = $dbh->nextId($this->conf['table']['permission']);
+            $oPerm->permission_id = $dbh->nextId($conf['table']['permission']);
             $success = $oPerm->insert();
 
             //  update perms superset cache
@@ -205,27 +207,30 @@ class PermissionMgr extends SGL_Manager
             SGL::raiseMsg('No perms were selected');
         }
         $input->template = 'permScan.html';
+
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         //  let's go transactional
-        $this->dbh->autocommit();
+        $dbh->autocommit();
 
         $errors = 0;
-        foreach ($input->scannedPerms as $k=>$v) {
+        foreach ($input->scannedPerms as $v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
             
-            $query = "  INSERT INTO {$this->conf['table']['permission']} (permission_id, name, module_id)
-                        VALUES (" . $this->dbh->nextId($this->conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
-            if (is_a($this->dbh->query($query), 'PEAR_Error')) {
+            $query = "  INSERT INTO {$conf['table']['permission']} (permission_id, name, module_id)
+                        VALUES (" . $dbh->nextId($conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
+            if (is_a($dbh->query($query), 'PEAR_Error')) {
                 $errors++;
             }
         }
         if ($errors > 0) {
-            $this->dbh->rollBack();   
+            $dbh->rollBack();   
             SGL::raiseError('There was a problem inserting the record(s)', 
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
-            $this->dbh->commit();
+            $dbh->commit();
             
             //  update perms superset cache
             SGL::clearCache('perms');
@@ -260,9 +265,10 @@ class PermissionMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_ENT_DIR . '/Permission.php';
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPerm = DB_DataObject::factory('Permission');
+        $oPerm = & new DataObjects_Permission();
         $oPerm->get($input->permId);
         $output->perm = $oPerm;
 
@@ -275,7 +281,8 @@ class PermissionMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oPerm = DB_DataObject::factory('Permission');
+        require_once SGL_ENT_DIR . '/Permission.php';
+        $oPerm = & new DataObjects_Permission();
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
         $oPerm->setFrom($input->perm);
@@ -295,8 +302,9 @@ class PermissionMgr extends SGL_Manager
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        foreach ($input->aDelete as $index => $permId) {
-            $oPerm = DB_DataObject::factory('Permission');
+        require_once SGL_ENT_DIR . '/Permission.php';
+        foreach ($input->aDelete as $permId) {
+            $oPerm = & new DataObjects_Permission();
             $oPerm->get($permId);
             $oPerm->delete();
             unset($oPerm);
@@ -314,6 +322,8 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';
+        $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  get limit and totalNumRows
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -338,7 +348,7 @@ class PermissionMgr extends SGL_Manager
 
         $query = "
             SELECT  permission_id, name, module_id, description
-            FROM    {$this->conf['table']['permission']}
+            FROM    {$conf['table']['permission']}
             $whereClause
             $orderBy_query ";
         
@@ -350,7 +360,7 @@ class PermissionMgr extends SGL_Manager
 //            'append'    => false,
 //            'fileName'  => 'pageID/%d/'
         );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions, $disabled);
+        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions, $disabled);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
@@ -384,9 +394,9 @@ class PermissionMgr extends SGL_Manager
         
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
-        foreach ($filePerms as $k => $filePerm) {
+        foreach ($filePerms as $filePerm) {
             $found = false;
-            foreach ($dbPerms as $k2 => $dbPerm) {
+            foreach ($dbPerms as $dbPerm) {
                 if ($dbPerm['name'] == $filePerm['perm']) {
                     $found = true;
                     break;
@@ -429,9 +439,9 @@ class PermissionMgr extends SGL_Manager
         
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
-        foreach ($dbPerms as $k => $dbPerm) {
+        foreach ($dbPerms as $dbPerm) {
             $found = false;
-            foreach ($filePerms as $k2 => $filePerm) {
+            foreach ($filePerms as $filePerm) {
                 if ($dbPerm['name'] == $filePerm['perm']) {
                     $found = true;
                     break;
@@ -460,10 +470,13 @@ class PermissionMgr extends SGL_Manager
     function retrievePermsFromFiles()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $dbh = & SGL_DB::singleton();    
+        $conf = & $GLOBALS['_SGL']['CONF'];    
         
         //  get a list of modules in db
-        $query = "SELECT module_id, name FROM {$this->conf['table']['module']}";
-		$modules = $this->dbh->getAssoc($query);
+        $query = "SELECT module_id, name FROM {$conf['table']['module']}";
+		$modules = $dbh->getAssoc($query);
 		 
 		if (is_a($modules, 'PEAR_Error')) {
            return SGL::raiseError('There was a problem retrieving modules', 
@@ -476,7 +489,7 @@ class PermissionMgr extends SGL_Manager
         require_once  'System.php';
         $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
 
-        foreach ($files as $k => $v) {
+        foreach ($files as $v) {
             //  only process files in 'classes' directories
             if (stristr ($v, 'classes') === false) {
                 continue;
@@ -529,7 +542,7 @@ class PermissionMgr extends SGL_Manager
 
             //  add each method perm, if not found. store display name and a 
             //  delimited value used for form submission
-            foreach ($aActions as $k2 => $v2) {
+            foreach ($aActions as $v2) {
                 $permsFound[] = array(
                     'perm' => "{$className}_{$v2}", 
                     'module_id' => $moduleId, 

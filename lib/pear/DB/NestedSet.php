@@ -15,7 +15,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // |          Jason Rust  <jason@rustyparts.com>                          |
 // +----------------------------------------------------------------------+
-// $Id: NestedSet.php,v 1.86 2004/08/10 21:41:28 datenpunk Exp $
+// $Id: NestedSet.php,v 1.12 2004/10/25 06:39:22 cvsroot Exp $
 // CREDITS:
 // --------
 // - Thanks to Kristian Koehntopp for publishing an explanation of the Nested Set
@@ -50,7 +50,7 @@ define('NESE_SORT_PREORDER', 'SPO');
 *
 * @author Daniel Khan <dk@webcluster.at>
 * @package DB_NestedSet
-* @version $Revision: 1.86 $
+* @version $Revision: 1.12 $
 * @access public
 */
 // }}}
@@ -2086,7 +2086,7 @@ class DB_NestedSet {
         'majorversion' => $this->_majorversion,
         'minorversion' => $this->_minorversion,
         'version' => sprintf('%s.%s', $this->_majorversion, $this->_minorversion),
-        'revision' => str_replace('$', '', '$Revision: 1.86 $')
+        'revision' => str_replace('$', '', '$Revision: 1.12 $')
         );
     }
     // }}}
@@ -2470,7 +2470,7 @@ class DB_NestedSet {
 * Generic class for node objects
 *
 * @autor Daniel Khan <dk@webcluster.at>;
-* @version $Revision: 1.86 $
+* @version $Revision: 1.12 $
 * @package DB_NestedSet
 * @access private
 */

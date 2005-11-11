@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Jacob Singh                                        |
+// | Copyright (c) 2005, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Locale.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -46,6 +46,7 @@ require_once 'I18Nv2/Negotiator.php';
  * @package SGL
  * @author  Jacob Singh <jacob@calabashmusic.com>
  * @version $Revision: 1.6 $
+ * @since   PHP 4.1
  */
 class SGL_Locale
 {
@@ -77,8 +78,7 @@ class SGL_Locale
 
                 if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
-                    $c = &SGL_Config::singleton();
-                    $conf = $c->getAll();
+                    $conf = & $GLOBALS['_SGL']['CONF'];
                     
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);

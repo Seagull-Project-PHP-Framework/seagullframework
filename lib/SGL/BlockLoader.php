@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockLoader.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -46,6 +46,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.7 $
  * @access  public
+ * @since   PHP 4.1
  */
 class SGL_BlockLoader
 {
@@ -106,8 +107,6 @@ class SGL_BlockLoader
         if (isset($sectionId)) {
             $this->_currentSectionId = $sectionId;
         }
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
     }
 
     /**
@@ -145,18 +144,16 @@ class SGL_BlockLoader
     function _loadBlocks()
     {
         $dbh = & SGL_DB::singleton();
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class, 
                 b.body_class, b.is_onleft
-            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
-                    {$this->conf['table']['block_role']} br
+            FROM    {$conf['table']['block']} b, {$conf['table']['block_assignment']} ba
             WHERE   b.is_enabled = 1
-            AND     (br.block_id = b.block_id AND 
-                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
-                    )   
             AND     b.block_id = ba.block_id
-            AND     ( ba.section_id = ".SGL_ANY_SECTION." OR ba.section_id = " . $this->_currentSectionId . ' )
+            AND     ( ba.section_id = 0 OR ba.section_id = " . 
+                    $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';
 
@@ -195,7 +192,7 @@ class SGL_BlockLoader
                         SGL_ERROR_NOCLASS);
                 } else {
                     @$obj = & new $blockClass();
-                    $this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id);
+                    $this->_aData[$index]->content = $obj->init($this->output);
                 }
             }
             $this->_sort();

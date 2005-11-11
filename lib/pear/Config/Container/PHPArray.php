@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: PHPArray.php,v 1.23 2005/02/10 06:02:40 ryansking Exp $
+// $Id: PHPArray.php,v 1.7 2005/02/27 10:00:27 demian Exp $
 
 /**
 * Config parser for common PHP configuration array
@@ -84,7 +84,8 @@ class Config_Container_PHPArray {
             }
             $this->_parseArray(${$this->options['name']}, $obj->container);
         }
-        return true;
+        $ret =  true;
+        return $ret;
     } // end func parseDatasrc
 
     /**

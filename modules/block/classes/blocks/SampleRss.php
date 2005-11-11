@@ -11,17 +11,13 @@ require_once "XML/RSS.php";
 class SampleRss
 {
     var $rssSource = 'http://rss.gmane.org/messages/excerpts/gmane.comp.php.seagull.general';
-    
     function init()
     {   
         return $this->getBlockContent();
     }
 
     function getBlockContent()
-    {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        
+    {        
         $cache = & SGL::cacheSingleton();
         if ($data = $cache->get('mailingListRss', 'blocks')) {
             $html = unserialize($data);

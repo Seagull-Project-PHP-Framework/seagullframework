@@ -63,8 +63,8 @@ class STR_TestEnv
         }
     	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
-            $conf['database']['user'] . ':' .
-            $conf['database']['pass'] . '@' .
+            $conf['database']['username'] . ':' .
+            $conf['database']['password'] . '@' .
             $protocol .
             $conf['database']['host'];
         $dbh = &STR_DB::singleton($dsn);
@@ -86,8 +86,8 @@ class STR_TestEnv
         $aSchemaFiles = $GLOBALS['_STR']['CONF']['schemaFiles'];
         
         if (is_array($aSchemaFiles) && count($aSchemaFiles)) {
-            foreach ($aSchemaFiles as $schemaFile) {
-                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $schemaFile);
+            foreach ($aSchemaFiles as $schemaFiles) {
+                STR_TestEnv::parseAndExecute(STR_PATH . '/tests/' . $schemaFiles);
             }
         }
     }
@@ -97,16 +97,7 @@ class STR_TestEnv
      */
     function loadData()
     {
-        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-        
-        // get schema files
-        $aDataFiles = $GLOBALS['_STR']['CONF']['dataFiles'];
-        
-        if (is_array($aDataFiles) && count($aDataFiles)) {
-            foreach ($aDataFiles as $dataFile) {
-                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $dataFile);
-            }
-        }
+        return true;
     }
     
     /**
@@ -181,16 +172,10 @@ class STR_TestEnv
         } elseif ($envType == DB_WITH_TABLES) {
             STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
-        } elseif ($envType == DB_WITH_DATA || $envType == DB_WITH_DATA_AND_WEB) {
+        } elseif ($envType == DB_WITH_DATA) {
             STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
             STR_TestEnv::loadData();
-            
-            //  if we're testing a sgl install, update sequences after loading data
-            if (isset($GLOBALS['_SGL'])) {
-                require_once SGL_CORE_DIR . '/Sql.php';
-                STR_DB::rebuildSequences();   
-            }
         }
         // Store the layer in a global variable, so the environment
         // can be completely re-built during tests using the
@@ -211,6 +196,14 @@ class STR_TestEnv
         if ($envType != NO_DB) {
             STR_TestEnv::teardownDB();
         }
+    }
+    
+    /**
+     * A method for rebuilding the database sequences.
+     */
+    function rebuildSequences()
+    {
+        
     }
     
     /**

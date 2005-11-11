@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Sql.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -39,16 +39,17 @@
 // $Id: Sql.php,v 1.23 2005/06/14 00:19:22 demian Exp $
 
 /**
- * Provides SQL schema and data parsing/executing methods.
+ * Provides tools to manage translations and mtce tasks.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.23 $
+ * @since   PHP 4.1
  */
 class SGL_Sql
 {
     /**
-     * Simple function that opens a file with sql statements and executes them
+     * Simple function that opens a file with sql statements and executes them 
      * using DB
       *
      * @author  Gerry Lachac <glachac@tethermedia.com>
@@ -68,8 +69,7 @@ class SGL_Sql
         // Get database handle based on working config.ini
         $dbh = & SGL_DB::singleton();
         $sql = '';
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $conf = $GLOBALS['_SGL']['CONF'];
 
         // Iterate through each line in the file.
         while (!feof($fp)) {
@@ -83,19 +83,12 @@ class SGL_Sql
 #                continue;
 #            }
 #FIXME: the above code fails in certain situations, write tests to improve regex
-            #$line = trim($line);
+            $line = trim($line);
             $cmt  = substr($line, 0, 2);
             if ($cmt == '--' || trim($cmt) == '#') {
                 continue;
-            }
-#END:FIXME
-
-            if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
-                $tableName = SGL_Sql::extractTableName($line);
-                $nextId = $dbh->nextId($tableName);
-                $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
-            }
-
+            } 
+#END:FIXME            
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
@@ -109,7 +102,6 @@ class SGL_Sql
 
             // Execute the statement.
             $res = $dbh->query($sql);
-
             if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
                 return $res;
             } elseif (DB::isError($res)) {
@@ -123,19 +115,268 @@ class SGL_Sql
         fclose($fp);
         return true;
     }
-
-    function extractTableName($str)
+    
+    /**
+     * Returns true if database was setup correctly.
+     *
+     * Checks for existence of permission table and that records were inserted 
+     *
+     * @return mixed    True on success, PEAR error on failure
+     */
+    function verifyDbSetup()
     {
-        $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
-        preg_match($pattern, $str, $matches);
-        $tableName = $matches[2];
-        return $tableName;
+        $conf = $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT COUNT(*) FROM {$conf['table']['permission']}";
+        $res = $dbh->getAll($query);
+        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
+            return SGL::raiseError('No tables exist in DB - was schema created?', SGL_ERROR_DBFAILURE);
+        }
+        
+        if (!(count($res))) {
+            return SGL::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE);
+        }
+        return true;
     }
-
-    function rewriteWithAutoIncrement($str, $nextId)
+   
+    /**
+     * Regenerates dataobject entity files.
+     *
+     * @return string   Error message if any
+     */
+    function generateDataObjectEntities()
     {
-        $res = str_replace('{SGL_NEXT_ID}', $nextId, $str);
-        return $res;
+        require_once 'DB/DataObject/Generator.php';
+        ob_start();
+        $generator = new DB_DataObject_Generator();
+        $generator->start();
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
+    }
+    
+    /**
+     * Creates new or updates existing sequences, based on max(primary key).
+     * Default is to act on all tables in db, unless specified in $tables.
+     *
+     * @access  public
+     * @static
+     * @param   mixed  $tables  string table name or array of string table names
+     * @return  true | PEAR Error
+     */    
+    function rebuildSequences($tables = null)
+    {
+        $db =& SGL_DB::singleton();
+        $conf = $GLOBALS['_SGL']['CONF'];
+        
+        switch ($db->phptype) {
+
+        case 'mysql':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            
+            //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
+            $suffix = $db->getOption('seqname_format');
+            $suffixRaw = str_replace('%s', '', $suffix);
+            $suffixRawStart = (0 - strlen($suffixRaw));
+            
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                //  we only build sequences for tables that are not sequences themselves
+                if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
+                    continue;
+                }
+                    
+                $info = $db->tableInfo($table);
+                foreach ($info as $field) {
+                    if (eregi('primary_key', $field['flags'])) {
+                        $primary_field = $field['name'];
+                        break;
+                    }
+                }
+                if ($primary_field <> '') {
+                    $maxId = $db->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
+                    if (!is_null($maxId)) {
+                    	$data[] = array($table, $maxId);
+                    }
+                }
+            }
+
+            foreach ($data as $k) {
+                $tableName = $k[0];
+                $seqName = sprintf($suffix, $tableName);
+                $maxVal   = $k[1];
+                $currVal = $db->nextId($tableName, true);
+                $sql = 'UPDATE ' . $seqName . ' SET id=' . $maxVal . ' WHERE id=' . $currVal;
+                $result = $db->query($sql);
+            }
+            break;
+            
+        case 'mysql_SGL':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                if ($table <> $conf['table']['sequence']) {
+                    $info = $db->tableInfo($table);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') FROM ' . $table . ' WHERE 1'));
+                    } else {
+                        $data[] = array($table, 0);
+                    }
+                }
+            }
+            $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
+            $db->executeMultiple($sth, $data);
+            break;            
+           
+        case 'pgsql':
+            $data = array();
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            foreach ($aTables as $table) {
+                $primary_field = '';
+                if ($table <> $conf['table']['sequence']) {
+                    $info = $db->tableInfo($table);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') FROM ' . $table . ' WHERE true'));
+                    }
+                }
+            }
+            //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
+            $suffix = $db->getOption('seqname_format');
+            
+            //  we'll just create the sequences manually...why not?
+            foreach ($data as $k) {
+                $tableName = $k[0];
+                $seqName = sprintf($suffix, $tableName);
+                $maxVal   = $k[1] + 1;
+                $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
+                $result = $db->query($sql);
+                if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
+                    $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
+                    $result = $db->query($sql);
+                }
+            }
+            break;
+
+        case 'oci8':
+            $db->autoCommit(false);
+            
+            $data = '';
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('sequences');
+            foreach ($aTables as $sequence) {
+                $primary_field = '';
+                // get tablename
+                if (preg_match("/^(.*)_seq$/",$sequence,$table)) {
+                    $info = $db->tableInfo($table[1]);
+                    foreach ($info as $field) {
+                        if (eregi('primary_key', $field['flags'])) {
+                            $primary_field = $field['name'];
+                            break;
+                        }
+                    }
+                    if ($primary_field <> '') {
+                        $maxId = $db->getOne('SELECT MAX(' . 
+                            $primary_field . ') + 1 FROM ' . $table[1]);
+                    } else {
+                        $maxId = 1;
+                    }
+                    
+                    // check for NULL
+                    if (!$maxId) {
+                        $maxId = 1;
+                    }
+                    
+                    // drop and recreate sequence 
+                    $success = false;
+                    if (!DB::isError($db->dropSequence($table[1]))) {
+                        $success = $db->query('CREATE SEQUENCE ' . 
+                            $db->getSequenceName($table[1]) . ' START WITH ' . $maxId);
+                    }
+
+                    if (!$success) {
+                        $db->rollback();
+                        $db->autoCommit(true);
+                        return SGL::raiseError('Rebuild failed ', SGL_ERROR_DBFAILURE);
+                    }
+                }
+            }
+            $success = $db->commit();
+            $db->autoCommit(true);
+            if (!$success) {
+                return SGL::raiseError('Rebuild failed ', SGL_ERROR_DBTRANSACTIONFAILURE);
+            }
+            break;
+
+        default:
+            return SGL::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.', 
+                SGL_ERROR_INVALIDCALL);
+        }
+        return true;
+    }
+    
+    /**
+     * Optimizes db tables.
+     *
+     * Default is to act on all tables in db, unless specified in $tables.
+     *
+     * @access  public
+     * @static
+     * @param   mixed  $tables  string table name or array of string table names
+     * @return  true | PEAR Error
+     */
+    function optimizeTables($tables = null)
+    {
+        $db =& SGL_DB::singleton();
+        switch ($db->phptype) {
+    
+        case 'mysql':
+            $data = array();
+            $aTables = count((array)$tables) ? (array)$tables : $db->getListOf('tables');
+    
+            $sql = 'OPTIMIZE TABLE ' . implode(', ', $aTables);
+            $err = $db->query($sql);
+            if (PEAR::isError($err)) {
+                return $err;
+            }
+            $sql = 'ANALYZE TABLE ' . implode(', ', $aTables);
+            $err = $db->query($sql);
+            if (PEAR::isError($err)) {
+                return $err;
+            }
+    
+        case 'pgsql':
+            if (empty($tables)) {
+                $sql = 'VACUUM FULL ANALYZE';
+                $err = $db->query($sql);
+                if (PEAR::isError($err)) {
+                    return $err;
+                }
+            } else {
+                foreach ((array)$tables as $table) {
+                    $sql = 'VACUUM FULL ANALYZE ' . $table;
+                    $err = $db->query($sql);
+                    if (PEAR::isError($err)) {
+                        return $err;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
 ?>

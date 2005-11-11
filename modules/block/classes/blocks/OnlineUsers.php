@@ -1,5 +1,8 @@
 <?php
-
+/*
+    This block is alpha, use at your own risk, there have been db corruptions in the 
+    user_session table associated with it's usage --demian
+*/
 require_once SGL_MOD_DIR . '/user/classes/UserPreferenceMgr.php';
 $theme = $_SESSION['aPrefs']['theme'];
 $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
@@ -22,6 +25,10 @@ class OnlineUsers
 {
     var $template = "OnlineUsers.html";
 
+    function OnlineUsers()
+    {
+    }
+
     function init($output)
     {
         return $this->getBlockContent($output);
@@ -29,9 +36,6 @@ class OnlineUsers
 
     function getBlockContent($output)
     {
-        // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
-
         $theme = $_SESSION['aPrefs']['theme'];
         $output->webRoot = SGL_BASE_URL;
         $output->theme = $theme;

@@ -39,6 +39,7 @@
 // $Id: BlockForm.php,v 1.11 2005/05/28 21:15:50 demian Exp $
 
 require_once 'HTML/QuickForm.php';
+require_once SGL_ENT_DIR . '/Section.php';
 
 /**
  * Quickform Block wrapper class.
@@ -58,14 +59,9 @@ class BlockForm
 
     function BlockForm($action = '')
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $dbh = & SGL_DB::singleton();        
-        
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
-        require_once 'DB/DataObject.php';
-        $sectionList = DB_DataObject::factory('Section');
+        $sectionList = & new DataObjects_Section();
         $sectionList->whereAdd('parent_id = 0');        
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
@@ -76,14 +72,6 @@ class BlockForm
         }
         $sections[0] = 'All sections';
         $this->sections = $sections;
-        $query = "SELECT role_id, name FROM {$conf['table']['role']}";
-        $res = & $dbh->getAll($query);
-        $roles = array();
-        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
-        foreach ($res as $key => $value) {
-            $roles[$value->role_id] = $value->name;
-        }
-        $this->roles = $roles;
     }
 
     function init( $data = null )
@@ -100,7 +88,6 @@ class BlockForm
             $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
-            $defaultValues['block[roles]']        = SGL_ANY_ROLE;
             $this->form->setDefaults( $defaultValues );
         }
 
@@ -127,10 +114,6 @@ class BlockForm
         $this->form->addElement('text', 'block[body_class]', SGL_String::translate('Body class')) ;
         // Field sections
         $this->form->addElement('select', 'block[sections]', SGL_String::translate('Sections'), $this->sections );
-        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Can view'), $this->roles);        
-        $roles = &$this->form->getElement('block[roles]');
-        $roles->setMultiple(true);
-        $roles->setSize(5);
         $select = &$this->form->getElement('block[sections]');
         $select->setMultiple(true);
         $select->setSize(15);
@@ -167,7 +150,7 @@ class BlockForm
         return $this->form;
     }
 
-    function classAvailable($element, $compareTo) 
+    function classAvailable($element) 
     {
         if ($element) {
             $blockClass = $this->form->getElementValue('block[name]');

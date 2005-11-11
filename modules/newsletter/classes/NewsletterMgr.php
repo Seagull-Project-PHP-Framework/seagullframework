@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | NewsletterMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -40,11 +40,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: NewsletterMgr.php,v 1.24 2005/06/12 18:19:18 demian Exp $
 
+require_once SGL_ENT_DIR . '/Newsletter.php';
+require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
 require_once 'Validate.php';
-require_once 'DB/DataObject.php';
 
 /**
  * For distributing 'newsletter' type email to users.
@@ -53,14 +54,14 @@ require_once 'DB/DataObject.php';
  * @author  Benea Rares <rbenea@bluestardesign.ro>
  * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
  * @version $Revision: 1.24 $
+ * @since   PHP 4.1
  */
 class NewsletterMgr extends SGL_Manager
 {
     function NewsletterMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module           = 'newsletter';
         $this->pageTitle        = 'Newsletter';
         $this->template         = 'list.html';
 
@@ -92,7 +93,7 @@ class NewsletterMgr extends SGL_Manager
 
         if ($req->get('frmUserID')) {
             $input->userID = $req->get('frmUserID');
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = & new DataObjects_Usr();
             $oUser->get($input->userID);
             $input->email       = $oUser->email;
             $input->name        = $oUser->first_name . $oUser->last_name;                       
@@ -172,12 +173,13 @@ class NewsletterMgr extends SGL_Manager
     function _subscribe(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $errorLists = false;
 
         // Process registration for every list selected
         foreach ($input->listName as $list) {
-            $oList = DB_DataObject::factory('Newsletter');
+            $oList = & new DataObjects_Newsletter();
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find();
@@ -191,12 +193,12 @@ class NewsletterMgr extends SGL_Manager
             }
             
             $dbh = $oList->getDatabaseConnection();
-            $oList->newsletter_id = $dbh->nextId($this->conf['table']['newsletter']);  
+            $oList->newsletter_id = $dbh->nextId($conf['table']['newsletter']);  
             if (!empty($input->name)) {
                 $oList->name = $input->name;
             }
             // If emailConfirmation not required - registration active by default
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+            if ($conf['NewsletterMgr']['emailConfirmation']) {
                 $oList->status = 1;
                 $oList->action_request = 'subscribe';
                 $oList->action_key = $this->_generateKey($input->email);
@@ -204,13 +206,12 @@ class NewsletterMgr extends SGL_Manager
                $oList->status = 0;
             }
             
-            $oList->date_created = $oList->last_updated = SGL_Date::getTime();
+            $oList->date_created = $oList->last_updated = SGL::getTime();
             $success = $oList->insert();
             if ($success) {
-                if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-                    
+                if ($conf['NewsletterMgr']['emailConfirmation']) {
                     // Send email confirmation
-                    $output->emailSiteName = $this->conf['site']['name'];
+                    $output->emailSiteName = $conf['site']['name'];
                     $output->emailSubject = SGL_String::translate('Action confirmation for newsletter').' '.$input->validNewsList[$list]['name'];
                     $output->emailAction = SGL_String::translate('subscribe');
                     $output->emailName = $input->name ? $input->name : 'User';
@@ -228,10 +229,11 @@ class NewsletterMgr extends SGL_Manager
             unset($oList);
         }
         
+        
         if ($errorLists) {
             SGL::raiseMsg('Unable to subscribe you to some lists');
         } else {
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+            if ($conf['NewsletterMgr']['emailConfirmation']) {
                 SGL::raiseMsg('Thank you subscribe email confirmation');
             } else {
                 SGL::raiseMsg('Thank you subscribe');
@@ -246,15 +248,14 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _unsubscribe(&$input, &$output) 
-    {
+    function _unsubscribe(&$input, &$output) {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $errorLists = false;
-        
         // Process request for every list selected
         foreach($input->listName as $list) {
-            $oList = DB_DataObject::factory('Newsletter');
+            $oList = & new DataObjects_Newsletter();
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find(true);
@@ -266,13 +267,13 @@ class NewsletterMgr extends SGL_Manager
                 continue;
             }
             
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+            if ($conf['NewsletterMgr']['emailConfirmation']) {
                 $oList->action_request = 'unsubscribe';
                 $oList->action_key = $this->_generateKey($input->email);
-                $oList->last_updated = SGL_Date::getTime();
+                $oList->last_updated = SGL::getTime();
                 $success = $oList->update();
                 if ($success) {
-                    $output->emailSiteName = $this->conf['site']['name'];
+                    $output->emailSiteName = $conf['site']['name'];
                     $output->emailSubject = SGL_String::translate('Action confirmation for newsletter').' '.$input->validNewsList[$list]['name'];;
                     $output->emailAction = SGL_String::translate('unsubscribe');
                     $output->emailName = $input->name;
@@ -299,7 +300,7 @@ class NewsletterMgr extends SGL_Manager
         if ($errorLists) {
             SGL::raiseMsg('Unable to unsubscribe you to some lists');
         } else {
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+            if ($conf['NewsletterMgr']['emailConfirmation']) {
                 SGL::raiseMsg('Thank you unsubscribe email confirmation');
             } else {
                 SGL::raiseMsg('Thank you unsubscribe');
@@ -324,7 +325,7 @@ class NewsletterMgr extends SGL_Manager
             return;
         }
         
-        $oList = DB_DataObject::factory('Newsletter');
+        $oList = & new DataObjects_Newsletter();
         $oList->email = $input->email;
         $oList->action_key = $input->actionKey;
         $noRows = $oList->find(true);
@@ -339,7 +340,7 @@ class NewsletterMgr extends SGL_Manager
             $oList->action_request = '';
             $oList->action_key = '';
             $oList->status = 0;
-            $oList->last_updated = SGL_Date::getTime();
+            $oList->last_updated = SGL::getTime();
             $success = $oList->update();
             if ($success) {
                 SGL::raiseMsg('Authorization accepted! Thank you for subscribing to our newsletter.');
@@ -360,7 +361,7 @@ class NewsletterMgr extends SGL_Manager
         if ($oList->action_request == 'update') {
             $oList->action_request = '';
             $oList->action_key = '';
-            $oList->last_updated = SGL_Date::getTime();
+            $oList->last_updated = SGL::getTime();
             $success = $oList->update();
             if ($success) {
                 SGL::raiseMsg('Authorization accepted! Thank you for updating your subscription.');
@@ -381,16 +382,16 @@ class NewsletterMgr extends SGL_Manager
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $theme = $_SESSION['aPrefs']['theme'];
         $template = 'email_confim_action.html';
-        $output->webRoot = SGL_BASE_URL;
+        $output->webRoot          = SGL_BASE_URL;
  
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $input->moduleName . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $input->moduleName . PATH_SEPARATOR .
+            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $this->module . PATH_SEPARATOR .
+                                    SGL_THEME_DIR . '/default/' . $this->module . PATH_SEPARATOR .
                                     SGL_THEME_DIR . '/' . $theme . '/default'. PATH_SEPARATOR .
                                     SGL_THEME_DIR . '/default/default',
             'templateDirOrder'  => 'reverse',
@@ -410,9 +411,9 @@ class NewsletterMgr extends SGL_Manager
 
         // Configure Flexy to use SGL ModuleOutput Plugin 
         // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $input->moduleName . '/classes/Output.php';
+        $customOutput = SGL_MOD_DIR . '/' . $this->module . '/classes/Output.php';
         if (is_readable($customOutput)) {
-            $className = ucfirst($input->moduleName) . 'Output';
+            $className = ucfirst($this->module) . 'Output';
             if (isset($options['plugins'])) {
                 $options['plugins'] = $options['plugins'] + array($className => $customOutput);
             } else {
@@ -435,7 +436,7 @@ class NewsletterMgr extends SGL_Manager
         $bodyHtml = $templ->bufferedOutputObject($output, $elements);
  
  
-        $headers['From'] = $this->conf['email']['admin'];
+        $headers['From'] = $conf['email']['admin'];
         $headers['Subject'] = $output->emailSubject;
         $crlf = SGL_String::getCrlf();
         $mime = & new Mail_mime($crlf);
@@ -464,7 +465,6 @@ class NewsletterMgr extends SGL_Manager
     * @param    string  $list   List name, if empty: return an array with all lists
     * @return   array    $ret   'id', 'name', 'descrisption'; False = list not exist
     * 
-    * @todo please use constants for statuses
     */
     function _getList($listName = '')
     {
@@ -475,13 +475,16 @@ class NewsletterMgr extends SGL_Manager
             return false;
         }
         
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $dbh = & SGL_DB :: singleton();
+        
         if ($listName == '') {
-            $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE status=9";
+            $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE status=9";
         } else {
-            $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE list='$listName' AND status=9";
+            $query = "SELECT * FROM {$conf['table']['newsletter']} WHERE list='$listName' AND status=9";
         }
         
-        $result = $this->dbh->query($query);
+        $result = $dbh->query($query);
         if (is_a($result, 'PEAR_Error')) {
             return false;
         }
@@ -540,14 +543,16 @@ class NewsletterMgr extends SGL_Manager
      */
      function getSubscribedLists($userID) 
      {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);        
+        $conf = & $GLOBALS['_SGL']['CONF'];
 
-        //  get user details
-        $oUser = DB_DataObject::factory('Usr');
+        //  get user details        
+        $oUser = & new DataObjects_Usr();
         $oUser->get($userID);
 
-        $query = "SELECT * FROM ". $this->conf['table']['newsletter'] ." WHERE email='". $oUser->email ."' AND status=0"; 
-        $result = $this->dbh->getAssoc($query);
+        $dbh = SGL_DB::singleton();
+        $query = "SELECT * FROM ". $conf['table']['newsletter'] ." WHERE email='". $oUser->email ."' AND status=0"; 
+        $result = $dbh->getAssoc($query);
 
         return $result;        
      }
@@ -569,7 +574,7 @@ class NewsletterMgr extends SGL_Manager
         $subscribedLists = $this->getSubscribedLists($userID);
 
         foreach ($newsLists as $nKey => $nValues) {
-            foreach ($subscribedLists as $sKey => $sValues) {
+            foreach ($subscribedLists as $sValues) {
                 if ($nValues['name'] == $sValues->list) {
                     unset($newsLists[$nKey]);
                 }   

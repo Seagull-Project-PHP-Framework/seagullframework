@@ -16,7 +16,7 @@
 // | Authors: Davey Shafik <davey@php.net>                                |
 // +----------------------------------------------------------------------+
 //
-// $Id: Cli.php,v 1.6 2005/03/06 00:38:55 davey Exp $
+// $Id: Cli.php,v 1.3 2005/03/17 17:30:14 demian Exp $
 
 /**
  * CLI Script to Check Compatibility of chunk of PHP code

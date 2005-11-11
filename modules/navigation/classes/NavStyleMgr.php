@@ -53,8 +53,7 @@ class NavStyleMgr extends SGL_Manager
     function NavStyleMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-
+        $this->module       = 'navigation';
         $this->pageTitle    = 'Navigation Style Manager';
         $this->template     = 'navStyleList.html';
         $this->da           = & DA_User::singleton();
@@ -89,13 +88,18 @@ class NavStyleMgr extends SGL_Manager
         if (array_key_exists($input->newStyle, SGL_Util::getStyleFiles($this->getCurrentStyle()))) {
 
             //  change [navigation][stylesheet] to $newStyle in default.conf.ini
-            $c = &SGL_Config::singleton();
-            $c->set('navigation', array('stylesheet' => $input->newStyle));
+            require_once 'Config.php';
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            $conf['navigation']['stylesheet'] = $input->newStyle;
+            $c = new Config();
+
+            //  read configuration data and get reference to root
+            $root = & $c->parseConfig($conf, 'phparray');
 
             //  write configuration to file
-            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
-            
-            if (!is_a($ok, 'PEAR_Error')) {
+            $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
+            SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
+            if (!is_a($result, 'PEAR_Error')) {
                 $this->_currentStyle = $input->newStyle;
                 SGL::raiseMsg('Current style successfully changed');
             } else {
@@ -122,7 +126,7 @@ class NavStyleMgr extends SGL_Manager
         $output->currentStyle = $this->getCurrentStyle();
         $output->staticId = (is_numeric($input->staticId)) ? $input->staticId : $this->generateStaticId();
 
-        //  build string of radio buttons html for selecting group
+        //  build string of radio buttons html for selecting group       
         
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
@@ -136,13 +140,11 @@ class NavStyleMgr extends SGL_Manager
         }
         //  build html unordered list of sections
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
-        
-        $nav = & new SimpleNav($input);
+        $nav = & new SimpleNav();
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
         $nav->setDisableLinks(true);
-        $aRes = $nav->render();
-        list($sectionId, $html) = $aRes;
+        $nav->render($sectionId, $html);
         $output->navListPreview = $html;
         if (!$output->navListPreview) {
             $output->navListPreview = 'There are no sections accessible to members of the selected role: ' . 
@@ -162,8 +164,8 @@ class NavStyleMgr extends SGL_Manager
      */
     function generateStaticId()
     {
-        require_once 'DB/DataObject.php';
-        $section = DB_DataObject::factory('Section');
+        require_once SGL_ENT_DIR . '/Section.php';
+        $section = & new DataObjects_Section();
         
         //  get only top-level sections
         $section->level_id = 1;
@@ -183,14 +185,15 @@ class NavStyleMgr extends SGL_Manager
     function getCurrentStyle()
     {
         if (!isset($this->_currentStyle)) {
-            $this->_currentStyle = $this->conf['navigation']['stylesheet'];
+            $conf = & $GLOBALS['_SGL']['CONF'];
+            $this->_currentStyle = $conf['navigation']['stylesheet'];
         }
         return $this->_currentStyle;
     }
 
     function _redirectToDefault(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);       
 
         //  if no errors have occured, redirect
         if (!(count($GLOBALS['_SGL']['ERRORS']))) {

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | BugMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -50,8 +50,7 @@ class BugMgr extends SGL_Manager
     function BugMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
-        
+        $this->module      = 'default';
         $this->pageTitle   = 'Bug Report';
         $this->template    = 'bugReport.html';
 
@@ -130,14 +129,13 @@ class BugMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
         $output->environment = $this->buildEnvironmentReport();
         $output->aSeverityTypes = $this->aSeverityTypes;          
     }
     
     function _send(&$input, &$output)
     {
-        $ok = $this->sendEmail($input->bug, $input->moduleName);
+        $ok = $this->sendEmail($input->bug);
         if (!PEAR::isError($ok)) {
             SGL::raiseMsg('email submitted successfully');
         } else {
@@ -147,18 +145,19 @@ class BugMgr extends SGL_Manager
 
     function getServerInfo()
     {
+        $conf = & $GLOBALS['_SGL']['CONF'];        
         $aServerInfo = array();
         //  get db info
-        $lastQuery = $this->dbh->last_query;
-        $aServerInfo['lastSql'] = isset($this->dbh->last_query) ? 
-            $this->dbh->last_query : null;
+        $dbh = & SGL_DB::singleton();
+        $aServerInfo['lastSql'] = isset($dbh->last_query) ? 
+            $dbh->last_query : null;
         $aServerInfo['phpSapi'] = php_sapi_name();
         $aServerInfo['phpOs'] = PHP_OS;
-        $aServerInfo['dbType'] = $this->conf['db']['type'];
+        $aServerInfo['dbType'] = $conf['db']['type'];
         $aServerInfo['phpVersion'] = PHP_VERSION;
         $aServerInfo['serverPort'] = $_SERVER['SERVER_PORT'];
         $aServerInfo['serverSoftware'] = $_SERVER['SERVER_SOFTWARE'];   
-        $aServerInfo['sglVersion'] = SGL_SEAGULL_VERSION;
+        $aServerInfo['sglVersion'] = $GLOBALS['_SGL']['VERSION'];
         return $aServerInfo;
     }
     
@@ -176,8 +175,8 @@ class BugMgr extends SGL_Manager
     function getCurrentUserInfo()
     {
         //  instantiate new User entity
-		require_once 'DB/DataObject.php';        
-        $user = DB_DataObject::factory('Usr');
+        require_once SGL_ENT_DIR . '/Usr.php';        
+        $user = & new DataObjects_Usr();    
         $user->get(SGL_HTTP_Session::getUid());
         return $user;
     }
@@ -192,10 +191,8 @@ class BugMgr extends SGL_Manager
         return $html;
     }
     
-    function sendEmail($oData, $moduleName)
-    {
-        $body = "The following bug report was submitted: \n\n";
-        
+    function sendEmail($oData)
+    {        
         $report = new BugReport($oData);
         
         $options = array(
@@ -207,7 +204,7 @@ class BugMgr extends SGL_Manager
             'subject'       => '[Seagull Bug report]',
             'body'          => $report->toString(),
             'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $moduleName . '/emailBugReport.php',
+                    $this->module . '/emailBugReport.php',
             'siteUrl'       => SGL_BASE_URL,
             'siteName'      => 'Seagull',
         );

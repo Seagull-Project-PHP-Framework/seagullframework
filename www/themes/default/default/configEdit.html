@@ -103,36 +103,6 @@
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate(#Template Engine#)}</td>
-        <td class="fieldValue">
-            <div class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</div>
-            <select name="conf[site][templateEngine]">
-                {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
-            </select>
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#Seagull allows you to use the template engine of your choice#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{translate(#URL handler#)}</td>
-        <td class="fieldValue">
-            <div class="error" flexy:if="error[urlHandler]">{error[urlHandler]}</div>
-            <select name="conf[site][urlHandler]">
-                {generateSelect(aUrlHandlers,conf[site][urlHandler]):h}
-            </select>
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#What format would you like your URLs, Seagull Search Engine Friendly is the default#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
         <td class="fieldName">{translate(#Session handler#)}</td>
         <td class="fieldValue">
             <select name="conf[site][sessionHandler]">
@@ -249,7 +219,7 @@
             </span>
         </td>
     </tr>
-    
+
     <tr>
         <td class="fieldName">{translate(#Default params#)}</td>
         <td class="fieldValue">
@@ -261,8 +231,8 @@
                 <span class="tipText">{translate(#Use these params to specify, eg, a static article for your homepage#)}</span>
             </span>
         </td>
-    </tr>   
-    
+    </tr>
+
     <tr>
         <td class="fieldName">{translate(#Editor type#)}</td>
         <td class="fieldValue">
@@ -274,7 +244,7 @@
                 <span class="tipText">{translate(#Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir#)}</span>
             </span>
         </td>
-    </tr>      
+    </tr>
 
     <tr>
         <td colspan="3" align="center">&nbsp;</td>

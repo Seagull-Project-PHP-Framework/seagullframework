@@ -30,21 +30,13 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_User.php                                                               |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
-
-require_once 'DB/DataObject.php';
-
-//  role sync constants
-define('SGL_ROLESYNC_ADD',              1);
-define('SGL_ROLESYNC_REMOVE',           2);
-define('SGL_ROLESYNC_ADDREMOVE',        3);
-define('SGL_ROLESYNC_VIEWONLY',         4);
 
 /**
  * Data access methods for the user module.
@@ -64,15 +56,14 @@ class DA_User
      */
     function DA_User()
     {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
+        $this->conf = & $GLOBALS['_SGL']['CONF'];
         $this->dbh = & SGL_DB::singleton();
     }
-
+    
     /**
      * Returns a singleton DA_User instance.
      *
-     * example usage:
+     * example usage: 
      * $da = & DA_User::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
@@ -92,74 +83,7 @@ class DA_User
         }
         return $instance;
     }
-
-    //  //////////////////////////////////////////////////
-    //  /////////////////   USERS   //////////////////////
-    //  //////////////////////////////////////////////////
-
-    function addUser($oUser)
-    {
-        $dbh = & $oUser->getDatabaseConnection();
-        SGL_DB::setConnection($dbh);
-        $dbh->autocommit();
-
-        $oUser->usr_id = $dbh->nextId($this->conf['table']['user']);
-        $ok = $oUser->insert();
-
-        if (!$ok) {
-            return PEAR::raiseError('Problem inserting user DataObject');
-        }
-
-        //  assign permissions associated with role user belongs to
-        //  first get all perms associated with user's role
-        $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
-
-        //  then assign them to the user_permission table
-        $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
-        if ((PEAR::isError($ok))) {
-            return PEAR::raiseError($ok);
-        }
-
-        //  assign preferences associated with org user belongs to
-        //  first get all prefs associated with user's org or default
-        //  prefs if orgs are disabled
-        if (@$this->conf['OrgMgr']['enabled']) {
-            $aPrefs = $this->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
-        } else {
-            $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
-        }
-        //  then assign them to the user_preference table
-        $ok = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
-        if ((PEAR::isError($ok))) {
-            return PEAR::raiseError($ok);
-        }
-
-        if ($ok && !(count($GLOBALS['_SGL']['ERRORS']))) {
-            $dbh->commit();
-            return true;
-        } else {
-            $dbh->rollback();
-            return PEAR::raiseError('Problem encountered adding user');
-        }
-    }
-
-    /**
-     * Returns a DataObjects Usr object.
-     *
-     * @access private
-     * @param integer   $id optional user id
-     * @return object   A DataObjects user object
-     */
-    function getUserById($id = null)
-    {
-        $oUser = DB_DataObject::factory('Usr');
-        if (!is_null($id)) {
-            $oUser->get($id);
-        }
-        return $oUser;
-    }
-
-
+        
     //  //////////////////////////////////////////////////
     //  /////////////////   PERMS   //////////////////////
     //  //////////////////////////////////////////////////
@@ -178,13 +102,13 @@ class DA_User
         $this->dbh->autocommit();
 
         $errors = 0;
-        foreach ($aPerms as $k => $v) {
+        foreach ($aPerms as $v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
-
+            
             $query = "
-                DELETE FROM {$this->conf['table']['permission']}
-                WHERE name='{$p[0]}'
+                DELETE FROM {$this->conf['table']['permission']} 
+                WHERE name='{$p[0]}' 
                 AND module_id = {$p[1]}";
             if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                 $errors++;
@@ -199,28 +123,29 @@ class DA_User
         }
         return $ret;
     }
-
+    
     /**
      * Returns an array of permissions for the given role.
-     *
+     * 
      * @access public
      * @param integer $id   The id of the role to retrieve perms for
      * @return array        An array of permissions
      */
     function getPermsByRoleId($roleId = 0)
     {
-        //  no logMessage allowed here
-        $query = "  SELECT  permission_id
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $query = "  SELECT  permission_id 
                     FROM    {$this->conf['table']['role_permission']}
                     WHERE   role_id = " . $roleId;
 
         $aRolePerms = $this->dbh->getCol($query);
         if (is_a($aRolePerms, 'PEAR_Error')) {
-           return PEAR::raiseError('There was a problem retrieving perms');
+           return SGL::raiseError('There was a problem retrieving perms', 
+                SGL_ERROR_NODATA);
 		}
         return $aRolePerms;
     }
-
+    
     /**
      * Returns assoc array of all perms per given role id.
      *
@@ -233,7 +158,7 @@ class DA_User
     function getPermNamesByRoleId($roleId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        
         $query = "
             SELECT  rp.permission_id, p.name
             FROM    {$this->conf['table']['role_permission']} rp, {$this->conf['table']['permission']} p
@@ -243,7 +168,7 @@ class DA_User
 
         $aRolePerms = $this->dbh->getAssoc($query);
         return $aRolePerms;
-    }
+    }    
 
     /**
      * Returns an array of permissions by user id.
@@ -255,14 +180,14 @@ class DA_User
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "
-            SELECT  permission_id
-            FROM    {$this->conf['table']['user_permission']}
+        $query = "  
+            SELECT  permission_id 
+            FROM    {$this->conf['table']['user_permission']} 
             WHERE   usr_id = $userId
                 ";
         $aUserPerms = $this->dbh->getCol($query);
         if (is_a($aUserPerms, 'PEAR_Error')) {
-           return SGL::raiseError('There was a problem retrieving perms',
+           return SGL::raiseError('There was a problem retrieving perms', 
                 SGL_ERROR_NODATA);
 		}
         return $aUserPerms;
@@ -283,7 +208,7 @@ class DA_User
         switch ($type) {
 
         case SGL_RET_ARRAY:
-            $filter = (!empty($moduleId)) ?
+            $filter = (!empty($moduleId)) ? 
                 "  AND p.module_id = $moduleId" : '';
             $query = "
                 SELECT permission_id, p.name, m.name AS module_name, p.module_id
@@ -296,7 +221,7 @@ class DA_User
 
         case SGL_RET_ID_VALUE:
         default:
-            $filter = (!empty($moduleId)) ?
+            $filter = (!empty($moduleId)) ? 
                 "WHERE  module_id = $moduleId" : '';
 
             $query = "
@@ -308,15 +233,15 @@ class DA_User
         }
 
         if (is_a($aAllPerms, 'PEAR_Error')) {
-            return SGL::raiseError('There was a problem retrieving perms',
+            return SGL::raiseError('There was a problem retrieving perms', 
                 SGL_ERROR_NODATA);
         }
         return $aAllPerms;
     }
-
+    
     /**
      * Inserts permissions to the user_permission table.
-     *
+     * 
      * @access public
      * @param array $aRolePerms     An array of permissions
      * @param integer $userId       The id of the user perms are being inserted for
@@ -324,21 +249,17 @@ class DA_User
      */
     function addPermsByUserId($aRolePerms, $userId)
     {
-        //  no logMessage allowed here
         if (count($aRolePerms)) {
             foreach ($aRolePerms as $permId) {
-                $ok = $this->dbh->query('
+                $this->dbh->query('   
                     INSERT INTO ' . $this->conf['table']['user_permission'] . '
                     (user_permission_id, usr_id, permission_id)
                     VALUES (' . $this->dbh->nextId($this->conf['table']['user_permission']) . ', ' . $userId . ", $permId)");
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
             }
         }
         return true;
     }
-
+    
     /**
      * Adds perms to the master set.
      *
@@ -346,28 +267,25 @@ class DA_User
      *
      * @param array $aPerms A hash of perm name => description
      * @param int $moduleId
-     * @return boolean              True on success, PEAR error on failure
+     * @return boolean
      */
     function addMasterPerms($aPerms, $moduleId)
     {
         if (count($aPerms)) {
             $this->dbh->autocommit();
             foreach ($aPerms as $name => $description) {
-                $query = "
+                $query = "  
                     INSERT INTO {$this->conf['table']['permission']}
                         (permission_id, name, description, module_id)
-                    VALUES (". $this->dbh->nextId($this->conf['table']['permission']) .
+                    VALUES (". $this->dbh->nextId($this->conf['table']['permission']) . 
                         ", '$name', '$description', $moduleId)";
-                $ok = $this->dbh->query($query);
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
+                $ret = $this->dbh->query($query);
             }
-            $this->dbh->commit();
+            $this->dbh->commit();            
         }
         return true;
     }
-
+    
     /**
      * Deletes perms from the master set.
      *
@@ -382,19 +300,16 @@ class DA_User
             $this->dbh->autocommit();
             foreach ($aPerms as $name) {
                 $query = "DELETE FROM {$this->conf['table']['permission']} WHERE name = '$name'";
-                $ok = $this->dbh->query($query);
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
+                $ret = $this->dbh->query($query);
             }
-            $this->dbh->commit();
+            $this->dbh->commit();            
         }
         return true;
     }
-
+    
     /**
      * Deletes permissions for a given user.
-     *
+     * 
      * @access public
      * @param integer $userId       The id of the user perms are being deleted for
      * @return boolean              True on success, PEAR error on failure
@@ -407,7 +322,7 @@ class DA_User
 
     /**
      * Deletes a permission given a user id and the perm id.
-     *
+     * 
      * @access public
      * @param integer $userId       The id of the user perms are being deleted for
      * @param integer $permId       The id of the perm to be deleted
@@ -415,13 +330,13 @@ class DA_User
      */
     function deletePermByUserIdAndPermId($userId, $permId)
     {
-        $query = "  DELETE FROM {$this->conf['table']['user_permission']}
+        $query = "  DELETE FROM {$this->conf['table']['user_permission']} 
                     WHERE usr_id = $userId
                     AND permission_id = $permId
         ";
         return $this->dbh->query($query);
     }
-
+    
     /**
      * Like a 'difference' operation, returns the balance of getPermNamesByRoleId
      *
@@ -447,7 +362,7 @@ class DA_User
         $query = "
             SELECT  p.permission_id, p.name
             FROM    {$this->conf['table']['permission']} p";
-
+        
         if (count($aRolePerms) > 0) {
             $query .= " WHERE $whereClause";
         }
@@ -458,17 +373,18 @@ class DA_User
     //  //////////////////////////////////////////////////
     //  /////////////////   PREFS   //////////////////////
     //  //////////////////////////////////////////////////
-
+    
     /**
      * Returns an array of preferences for the given org.
-     *
+     * 
      * @access public
      * @param integer $orgId    The id of the org to retrieve preferences for
      * @return array            An array of preferences
      */
     function getUserPrefsByOrgId($orgId = 0, $type = SGL_RET_NAME_VALUE)
     {
-        //  no logMessage allowed here
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         switch ($type) {
         case SGL_RET_ID_VALUE:
             $term = 'op.preference_id';
@@ -492,11 +408,11 @@ class DA_User
         } elseif ($orgId != 0) {
             return $this->getMasterPrefs($type);
         } else {
-            SGL::raiseError('There was a db error, there are no prefs associated with the org',
+            SGL::raiseError('There was a db error, there are no prefs associated with the org', 
                 SGL_ERROR_NODATA);
         }
     }
-
+    
     /**
      * Returns an array of preferences by user id.
      *
@@ -514,9 +430,9 @@ class DA_User
             SELECT  name, value
             FROM    {$this->conf['table']['preference']} p, {$this->conf['table']['user_preference']} up
             WHERE   p.preference_id = up.preference_id
-            AND     up.usr_id = " . $uid;
+            AND     up.usr_id = " . $uid;        
         $aRes = $this->dbh->getAssoc($query);
-
+        
         if (!DB::isError($aRes) && count($aRes)) {
             return $aRes;
         } elseif (!DB::isError($aRes)) {
@@ -534,7 +450,7 @@ class DA_User
             SGL::raiseError('Unknown DB error occurred, pls file bug', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
     }
-
+    
     /**
      * Gets master set of preferences, two return types available.
      *
@@ -544,7 +460,7 @@ class DA_User
      */
     function getMasterPrefs($type = SGL_RET_NAME_VALUE)
     {
-        //  no logMessage allowed here
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         switch ($type) {
         case SGL_RET_ID_VALUE:
@@ -562,11 +478,11 @@ class DA_User
         if (!DB::isError($aRes)) {
             return $aRes;
         } else {
-            PEAR::raiseError('Could not find any prefs in db',
-                SGL_ERROR_NODATA);
+            SGL::raiseError('Could not find any prefs in db, exiting ...', 
+                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
     }
-
+    
     /**
      * Get preferences mapping.
      *
@@ -583,11 +499,11 @@ class DA_User
         if (!DB::isError($aRes)) {
             return array_flip($aRes);
         } else {
-            SGL::raiseError('Error occured getting prefs mapping, exiting ...',
+            SGL::raiseError('Error occured getting prefs mapping, exiting ...', 
                 SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
     }
-
+    
     /**
      * Syncs the default preferences.
      *
@@ -598,36 +514,30 @@ class DA_User
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . SGL_GUEST;
-        $ok = $this->dbh->query($query1);
-        if (PEAR::isError($ok)) {
-            return PEAR::raiseError($ok);
-        }
+        $this->dbh->query($query1);
 
         //  get master set of prefs
         $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
         foreach ($aPrefs as $prefId => $prefValue) {
             $query2 ="
-            INSERT INTO {$this->conf['table']['user_preference']}
-                (   user_preference_id,
-                    usr_id,
+            INSERT INTO {$this->conf['table']['user_preference']} 
+                (   user_preference_id, 
+                    usr_id, 
                     preference_id,
                     value)
-            VALUES(" .
+            VALUES(" . 
                     $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' .
                     SGL_GUEST . ",
                     $prefId,
                     '$prefValue'
             )";
-            $ok = $this->dbh->query($query2);
-            if (PEAR::isError($ok)) {
-                return PEAR::raiseError($ok);
-            }
+            $this->dbh->query($query2);
         }
-    }
+    }    
 
     /**
      * Inserts preferences to the user_preference table.
-     *
+     * 
      * @access public
      * @param array $aPrefs         An hash of preferences (prefId, prefValue)
      * @param integer $userId       The id of the user prefs are being inserted for
@@ -637,18 +547,15 @@ class DA_User
     {
         if (count($aPrefs)) {
             foreach ($aPrefs as $prefId => $prefValue) {
-                $ok = $this->dbh->query("
+                $this->dbh->query("
                     INSERT INTO {$this->conf['table']['user_preference']}
                     (user_preference_id, usr_id, preference_id, value)
                     VALUES (" . $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' . $userId . ", '$prefId', '$prefValue')");
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
             }
         }
         return true;
     }
-
+    
     /**
      * Adds new master preferences.
      *
@@ -662,19 +569,16 @@ class DA_User
     {
         if (count($aPrefs)) {
             foreach ($aPrefs as $prefId => $prefValue) {
-                $ok = $this->dbh->query("
+                $this->dbh->query("
                     INSERT INTO {$this->conf['table']['preference']}
                     (preference_id, name, default_value)
-                    VALUES (" . $this->dbh->nextId($this->conf['table']['preference']) . ",
+                    VALUES (" . $this->dbh->nextId($this->conf['table']['preference']) . ", 
                     '$prefId', '$prefValue')");
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
             }
         }
         return true;
     }
-
+    
     /**
      * Complement of addMasterPrefs().
      *
@@ -686,18 +590,15 @@ class DA_User
         if (count($aPrefs)) {
             foreach ($aPrefs as $pref) {
                 $query = "DELETE FROM {$this->conf['table']['preference']} WHERE name = '$pref'";
-                $ok = $ret = $this->dbh->query($query);
-                if (PEAR::isError($ok)) {
-                    return PEAR::raiseError($ok);
-                }
+                $ret = $this->dbh->query($query);
             }
         }
         return true;
-    }
+    }  
 
     /**
      * Deletes preferences for a given user.
-     *
+     * 
      * @access public
      * @param integer $userId       The id of the user preferences are being deleted for
      * @return boolean              True on success, PEAR error on failure
@@ -706,14 +607,14 @@ class DA_User
     {
         $query = "DELETE FROM {$this->conf['table']['user_preference']} WHERE usr_id = " . $userId;
         return $this->dbh->query($query);
-    }
-
-
+    }      
+          
+    
     //  //////////////////////////////////////////////////
     //  /////////////////   ROLES   //////////////////////
     //  //////////////////////////////////////////////////
-
-
+    
+    
     /**
      * Returns an assoc array of all roles.
      *
@@ -730,18 +631,18 @@ class DA_User
         $query = "
             SELECT role_id, name
             FROM    " . $this->conf['table']['role'] . "
-            WHERE  role_id <> " . SGL_GUEST . "
+            WHERE  role_id <> " . SGL_GUEST . " 
             AND    role_id <> " . SGL_UNASSIGNED .
             $whereClause;
         $aAllRoles = $this->dbh->getAssoc($query);
-
+        
         //  remove roles that have no perms set
         foreach ($aAllRoles as $roleId => $name) {
             if ($roleId === SGL_ADMIN) {
                 continue;
             }
-            $query =
-                'SELECT COUNT(*) FROM ' . $this->conf['table']['role_permission'] .
+            $query = 
+                'SELECT COUNT(*) FROM ' . $this->conf['table']['role_permission'] . 
                 ' WHERE role_id =' . $roleId;
             $count = $this->dbh->getOne($query);
             if ($count < 1) {
@@ -750,18 +651,7 @@ class DA_User
         }
         return $aAllRoles;
     }
-
-    function getRoleNameById($id)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $query = "
-            SELECT name
-            FROM    " . $this->conf['table']['role'] . "
-            WHERE  role_id = " . $id;
-        return $this->dbh->getOne($query);
-    }
-
+    
     /**
      * Returns a string of all emails per given group.
      *
@@ -791,14 +681,14 @@ class DA_User
     function getUsersByRoleId($roleId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "  SELECT  usr_id
+        $query = "  SELECT  usr_id 
                     FROM    {$this->conf['table']['user']}
                     WHERE   role_id = " . $roleId;
 
         $aRoleUsers = $this->dbh->getCol($query);
         return $aRoleUsers;
     }
-
+    
     /**
      * Returns an array of user ids.
      *
@@ -808,14 +698,14 @@ class DA_User
     function getUsersByOrgId($orgId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "  SELECT  usr_id
+        $query = "  SELECT  usr_id 
                     FROM    {$this->conf['table']['user']}
                     WHERE   organisation_id = " . $orgId;
 
         $aOrgUsers = $this->dbh->getCol($query);
         return $aOrgUsers;
-    }
-
+    }    
+    
     /**
      * Updates role-permission assignments.
      *
@@ -844,12 +734,12 @@ class DA_User
             }
         }
     }
-
-
+    
+    
     //  //////////////////////////////////////////////////
     //  /////////////////   ORGS   //////////////////////
     //  //////////////////////////////////////////////////
-
+    
     /**
      * Returns all organisations.
      *
@@ -865,25 +755,7 @@ class DA_User
         $aAllOrgs = $this->dbh->getAssoc($query);
         return $aAllOrgs;
     }
-
-    /**
-     * Returns an organisation by org id.
-     *
-     * @param integer $orgId
-     * @return array $aOrg
-     */
-    function getOrgById($orgId)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $query = "  SELECT  *
-                    FROM    {$this->conf['table']['organisation']}
-                    WHERE   organisation_id = " . $orgId;
-
-        $aOrg = $this->dbh->getRow($query);
-        return $aOrg;
-    }
-
+    
     /**
      * Returns all organisations by role id.
      *
@@ -893,14 +765,14 @@ class DA_User
     function getOrgsByRoleId($roleId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "
+        $query = " 
             SELECT  organisation_id
             FROM    {$this->conf['table']['organisation']}
             WHERE   role_id = " . $roleId;
 
         $aRoleOrgs = $this->dbh->getCol($query);
         return $aRoleOrgs;
-    }
+    }    
 
     /**
      * Returns a hash or organisation types.
@@ -922,7 +794,7 @@ class DA_User
         array_unshift($aAllTypes, 'default');
         return $aAllTypes;
     }
-
+    
 
     /**
      * Determines if a username is unique.
@@ -934,7 +806,7 @@ class DA_User
     function isUniqueUsername($username)
     {
         if (isset($username)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = & new DataObjects_Usr();
             $oUser->whereAdd("username = '$username'");
             $numRows = $oUser->find();
 
@@ -953,7 +825,7 @@ class DA_User
     function isUniqueEmail($email)
     {
         if (isset($email)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = & new DataObjects_Usr();
             $oUser->whereAdd("email = '$email'");
             $numRows = $oUser->find();
 
@@ -961,7 +833,7 @@ class DA_User
             return (boolean)$numRows == 0;
         }
     }
-
+    
     /**
      * Returns the datetime of last login.
      *
@@ -972,19 +844,19 @@ class DA_User
     {
         $id = (is_null($userId)) ? SGL_HTTP_Session::getUid() : $userId;
         $query = "
-            SELECT date_time AS last_login
+            SELECT date_time AS last_login 
             FROM  {$this->conf['table']['login']}
             WHERE usr_id = " . $id . '
             ORDER BY date_time DESC';
-
+            
         //  grab penultimate record
         $res = $this->dbh->limitQuery($query, 1, 1);
         $res->fetchInto($login);
         return $login;
     }
-
+    
     //ModuleMgr::retrieveAllModules
-
+    
     //OrgPreferenceMgr::_updateAll
 }
 ?>

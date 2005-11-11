@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: GenericConf.php,v 1.6 2003/03/24 14:16:52 mansion Exp $
+// $Id: GenericConf.php,v 1.7 2005/02/27 10:00:27 demian Exp $
 
 /**
 * Config parser for  generic .conf files like

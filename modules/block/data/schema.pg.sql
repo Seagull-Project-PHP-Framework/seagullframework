@@ -1,6 +1,13 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- ==========================================================================
+-- Seagull PHP Framework: Default Data for PostgreSQL 
+-- ==========================================================================
+
 -- Schema for /modules/block
 
+
+-- Begin a transaction
+-- This is not really necessary, but is very useful in developing phase. ;-)
+--
 BEGIN;
 
 -- ==============================================================
@@ -16,7 +23,6 @@ create table block
    blk_order            INT2                 null,
    is_onleft            INT2                 null,
    is_enabled           INT2                 null,
-   content		text,
    constraint PK_BLOCK primary key (block_id)
 );
 
@@ -33,7 +39,7 @@ create table block_assignment
 -- ==============================================================
 --  Index: block_assignment_fk                                   
 -- ==============================================================
-create index block_assignment_fk on block_assignment 
+create  index block_assignment_fk on block_assignment 
 (
    block_id
 );
@@ -41,18 +47,10 @@ create index block_assignment_fk on block_assignment
 -- ==============================================================
 --  Index: block_assignment_fk2                                  
 -- ==============================================================
-create index block_assignment_fk2 on block_assignment 
+create  index block_assignment_fk2 on block_assignment 
 (
    section_id
 );
 
--- ==============================================================
---  table block_role
---  DK 
--- ==============================================================
-create table block_role (
-    block_id integer not null,
-    role_id integer not null
-);
 
 COMMIT;

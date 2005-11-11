@@ -16,8 +16,7 @@ class DB_mysql_SGL extends DB_mysql
       ** Note that REPLACE query below correctly creates a new sequence
       ** when needed
       */
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $conf = & $GLOBALS['_SGL']['CONF'];
         $result = $this->getOne("SELECT GET_LOCK('sequence_lock',10)");
         if (DB::isError($result)) {
             return $this->raiseError($result);
@@ -26,12 +25,10 @@ class DB_mysql_SGL extends DB_mysql
             // Failed to get the lock, bail with a DB_ERROR_NOT_LOCKED error
             return $this->mysqlRaiseError(DB_ERROR_NOT_LOCKED);
         }
-        
-        $id = $this->getOne("SELECT id FROM {$conf['table']['sequence']} WHERE name = '$name'");
+
+        $id = $this->getOne("SELECT id FROM {$conf['table']['sequence']} WHERE name = '$name'") + 1;
         if (DB::isError($id)) {
             return $this->raiseError($id);
-        } else {
-            $id += 1;
         }
 
         $result = $this->query("REPLACE INTO {$conf['table']['sequence']} VALUES ('$name', '$id')");
@@ -58,7 +55,7 @@ class DB_mysql_SGL extends DB_mysql
      */
     function simpleQuery($query)
     {
-        @$GLOBALS['_SGL']['QUERY_COUNT'] ++;
+        $GLOBALS['_SGL']['QUERY_COUNT'] ++;
         return parent::simpleQuery($query);
     }    
 }

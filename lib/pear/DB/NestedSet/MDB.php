@@ -18,7 +18,7 @@
 // Thanks to Hans Lellelid for suggesting support for PEAR::MDB
 // and for his help in implementing this.
 //
-// $Id: MDB.php,v 1.16 2004/07/29 11:31:04 datenpunk Exp $
+// $Id: MDB.php,v 1.11 2004/10/25 06:39:22 cvsroot Exp $
 //
 
 require_once 'MDB.php';
@@ -29,7 +29,7 @@ require_once 'MDB.php';
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.16 $
+* @version      $Revision: 1.11 $
 * @access       public
 */
 // }}}

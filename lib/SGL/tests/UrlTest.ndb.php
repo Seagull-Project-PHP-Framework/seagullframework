@@ -1,11 +1,4 @@
 <?php
-/*
-FIXME: note from wiki, verify:
- about 5–10% of all URLs are not in makeUrl() format
-    * one fix for some of these is the need to parse obj.method format vars in templates, currently only array[element] are dealt with
-    * array[element] [subelement] are not dealt with either
-*/
-
 require_once dirname(__FILE__) . '/../Url.php';
 require_once dirname(__FILE__) . '/../Output.php';
 
@@ -25,9 +18,8 @@ class UrlTest extends UnitTestCase {
     
     function setup()
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $this->url = new SGL_Url(null, false, new stdClass());
+        $conf = & $GLOBALS['_SGL']['CONF'];
+        $this->url = new SGL_Url();
         $this->baseUrlString = SGL_BASE_URL . '/' . $conf['site']['frontScriptName'] . '/';
     }
 
@@ -61,80 +53,80 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('manager', $ret));
     }
     
-    function xtestToPartialArray()
+    function testGetSignificantSegments()
     {
         //  test random string
         $url = 'foo/bar/baz/quux';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertEqual($ret, array());
         
         //  test with valid frontScriptName, should return 4 elements
         $url = 'index.php/bar/baz/quux';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName + leading slash, should return 4 elements
         $url = '/index.php/bar/baz/quux';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName + trailing slash, should return 4 elements
         $url = '/index.php/bar/baz/quux/';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertTrue(count($ret), 4);
         
         //  test with valid frontScriptName, should return 3 elements
         $url = '/bar/index.php/baz/quux/';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertTrue(count($ret), 3);
         
         //  test with valid frontScriptName, should return 1 element
         $url = '/foo/bar/baz/index.php/';
-        $ret = $this->url->toPartialArray($url);
+        $ret = $this->url->getSignificantSegments($url);
         $this->assertTrue(count($ret), 1);
     }
     
-    function testUrlContainsDuplicates()
+    function testContainsDuplicates()
     {
         $url = '/index.php/faq/faq/';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue($this->url->containsDuplicates($url));
         
         $url = 'http://example.com/index.php/foo/foo';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue($this->url->containsDuplicates($url));
         
         //  ignores whitespace
         $url = 'http://example.com/index.php/foo/foo /';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue($this->url->containsDuplicates($url));
         
         $url = 'http://example.com/index.php/foo/fooo';
-        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertFalse($this->url->containsDuplicates($url));
         
         //  case sensitive
         $url = 'FOO/foo';
-        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertFalse($this->url->containsDuplicates($url));
         
         //  minimal
         $url = 'baz/baz';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue($this->url->containsDuplicates($url));
     }
     
-    function testIsUrlSimplified()
+    function testIsSimplified()
     {
         //  basic example
         $url = 'example.com/index.php/faq';
         $sectionName = 'example.com/index.php/faq/faq';
-        $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
+        $this->assertTrue($this->url->isSimplified($url, $sectionName));
         
         //  minimal
         $url = 'index.php/faq';
         $sectionName = 'index.php/faq/faq';
-        $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
+        $this->assertTrue($this->url->isSimplified($url, $sectionName));
     }
     
     function testGetManagerNameFromSimplifiedName()
     {
         $url = 'foobar';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FoobarMgr');
         
         //  test case sensitivity
@@ -142,35 +134,35 @@ class UrlTest extends UnitTestCase {
         
         //  cannot deal with arbitrary bumpy caps
         $url = 'foobarbaz';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
         $this->assertNotEqual($ret, 'FooBarBazMgr'); //  returns FoobarbazMgr
         
         //  does not fix incorrect case
         $url = 'FoObArMGr';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
         $this->assertNotEqual($ret, 'FoobarMgr'); // returns FoObArMGr
         
         $url = 'FooBarMgr';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = $this->url->getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FooBarMgr');
     }
     
     function testGetSimplifiedNameFromManagerName()
     {
         $url = 'FooBarMgr';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBar';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBarMgr.php';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
         
         $url = 'FooBar.php';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = $this->url->getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
     }
     
@@ -271,7 +263,7 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['parsed_params']['enquiry_type'], 'Get a quote');
     }
     
-    function xtestMakeSearchEngineFriendlyBasic()
+    function testMakeSearchEngineFriendlyBasic()
     {
         $aUrlSegments = array (
           0 => 'index.php',
@@ -300,7 +292,7 @@ class UrlTest extends UnitTestCase {
     }
     
     //  remove explicit contactus/contactus module/mgr mapping, see if FC can deduce
-    function xtestMakeSearchEngineFriendlySimplified()
+    function testMakeSearchEngineFriendlySimplified()
     {
         $aUrlSegments = array (
           0 => 'index.php',
@@ -328,7 +320,7 @@ class UrlTest extends UnitTestCase {
     }
     
     //  simplified mod/mgr name, no action + params
-    function xtestMakeSearchEngineFriendlySimplifiedWithParams()
+    function testMakeSearchEngineFriendlySimplifiedWithParams()
     {
         $aUrlSegments = array (
           0 => 'index.php',
@@ -353,7 +345,7 @@ class UrlTest extends UnitTestCase {
     }
     
     //  test Zend debug GET noise [position 1]
-    function xtestMakeSearchEngineFriendlyWithZendDebugInfoInFrontScriptNamePosition()
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInFrontScriptNamePosition()
     {
         $aUrlSegments = array (
             '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
@@ -372,7 +364,7 @@ class UrlTest extends UnitTestCase {
     }
     
     //  test Zend debug GET noise [position 2]
-    function xtestMakeSearchEngineFriendlyWithZendDebugInfoInModulePosition()
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInModulePosition()
     {
         $aUrlSegments = array (
             'index.php',
@@ -392,7 +384,7 @@ class UrlTest extends UnitTestCase {
     }
     
     //  test Zend debug GET noise [position 3]
-    function xtestMakeSearchEngineFriendlyWithZendDebugInfoInMgrPosition()
+    function testMakeSearchEngineFriendlyWithZendDebugInfoInMgrPosition()
     {
         $aUrlSegments = array (
             'index.php',
@@ -412,7 +404,7 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['managerName'], 'user');
     }
     
-    function xtestMakeSearchEngineFriendlyWithSessionInfo()
+    function testMakeSearchEngineFriendlyWithSessionInfo()
     {
         $aUrlSegments = array (
             'index.php',
@@ -433,7 +425,7 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['managerName'], 'user');
     }
     
-    function xtestMakeSearchEngineFriendlyWithArrayParams()
+    function testMakeSearchEngineFriendlyWithArrayParams()
     {
         $aUrlSegments = array (
             'index.php',
@@ -748,7 +740,7 @@ class UrlTest extends UnitTestCase {
         $ret = $this->url->makeLink($action = 'foo', $mgr = 'bar', $mod = 'baz', array(), 
             "frmUserID|loggedOnUserID", 0, $output);
         $this->assertEqual($target, $ret);
-    }
+    }    
 }
 
 class Usr

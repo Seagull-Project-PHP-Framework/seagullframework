@@ -17,7 +17,7 @@
 // | Based on OLE::Storage_Lite by Kawai, Takanori                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: OLE.php,v 1.7 2003/08/21 15:15:40 xnoguer Exp $
+// $Id: OLE.php,v 1.1 2005/05/07 20:29:23 demian Exp $
 
 
 /**

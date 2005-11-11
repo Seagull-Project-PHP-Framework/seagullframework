@@ -76,8 +76,7 @@ INTRO;
     function retrieveAll()
     {
         $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $conf = & $GLOBALS['_SGL']['CONF'];
         
         $query = "
                 SELECT      i.item_id,
@@ -88,8 +87,8 @@ INTRO;
                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id
                 AND     i.item_id = ia.item_id
-                AND     i.start_date < '" . SGL_Date::getTime() . "'
-                AND     i.expiry_date  > '" . SGL_Date::getTime() . "'
+                AND     i.start_date < '" . SGL::getTime() . "'
+                AND     i.expiry_date  > '" . SGL::getTime() . "'
                 AND     itm.field_name = 'title'
                 AND     it.item_type_id  = 4
                 AND     i.status  = " . SGL_STATUS_PUBLISHED . "
@@ -108,7 +107,7 @@ INTRO;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $newItems = '<ul class="noindent">';
         if (is_array($aNewsItems) && count($aNewsItems)) {
-            foreach ($aNewsItems as $key => $obj) {
+            foreach ($aNewsItems as $obj) {
                 $newItems   .= '<li> <a href="'
                             . SGL_Url::makeLink('showNews', 'default', 'default', array(), "frmNewsID|$obj->item_id") . '">'
                             . $obj->addition . "</a></li>\n";

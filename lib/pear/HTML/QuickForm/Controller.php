@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Controller.php,v 1.10 2004/10/01 09:48:35 avb Exp $
+// $Id: Controller.php,v 1.1 2003/11/19 10:00:29 cvsroot Exp $
 
 require_once 'HTML/QuickForm/Page.php';
 
@@ -32,7 +32,7 @@ require_once 'HTML/QuickForm/Page.php';
  *
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.1 $
  */
 class HTML_QuickForm_Controller
 {
@@ -155,7 +155,7 @@ class HTML_QuickForm_Controller
     function addPage(&$page)
     {
         $page->controller =& $this;
-        $this->_pages[$page->getAttribute('id')] =& $page;
+        $this->_pages[$page->getAttribute('name')] =& $page;
     }
 
 
@@ -203,7 +203,7 @@ class HTML_QuickForm_Controller
                 return $this->_actions[$actionName]->perform($page, $actionName);
                 break;
             default:
-                return PEAR::raiseError('HTML_QuickForm_Controller: Unhandled action "' . $actionName . '" in page "' . $page->getAttribute('id') . '"');
+                return PEAR::raiseError('HTML_QuickForm_Controller: Unhandled action "' . $actionName . '" in page "' . $page->getAttribute('name') . '"');
         } // switch
     }
 
@@ -348,14 +348,12 @@ class HTML_QuickForm_Controller
     *
     * @access public
     * @param  array  default values
-    * @param  mixed  filter(s) to apply to default values
-    * @throws PEAR_Error
     */
-    function setDefaults($defaultValues = null, $filter = null)
+    function setDefaults($defaultValues = null)
     {
         if (is_array($defaultValues)) {
             $data =& $this->container();
-            return $this->_setDefaultsOrConstants($data['defaults'], $defaultValues, $filter);
+            $data['defaults'] = array_merge($data['defaults'], $defaultValues);
         }
     }
 
@@ -366,66 +364,12 @@ class HTML_QuickForm_Controller
     *
     * @access public
     * @param  array  constant values
-    * @param  mixed  filter(s) to apply to constant values
-    * @throws PEAR_Error
     */
-    function setConstants($constantValues = null, $filter = null)
+    function setConstants($constantValues = null)
     {
         if (is_array($constantValues)) {
             $data =& $this->container();
-            return $this->_setDefaultsOrConstants($data['constants'], $constantValues, $filter);
-        }
-    }
-
-
-   /**
-    * Adds new values to defaults or constants array
-    *
-    * @access   private
-    * @param    array   array to add values to (either defaults or constants)
-    * @param    array   values to add
-    * @param    mixed   filters to apply to new values
-    * @throws   PEAR_Error
-    */
-    function _setDefaultsOrConstants(&$values, $newValues, $filter = null)
-    {
-        if (isset($filter)) {
-            if (is_array($filter) && (2 != count($filter) || !is_callable($filter))) {
-                foreach ($filter as $val) {
-                    if (!is_callable($val)) {
-                        return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Callback function does not exist in QuickForm_Controller::_setDefaultsOrConstants()", 'HTML_QuickForm_Error', true);
-                    } else {
-                        $newValues = $this->_arrayMapRecursive($val, $newValues);
-                    }
-                }
-            } elseif (!is_callable($filter)) {
-                return PEAR::raiseError(null, QUICKFORM_INVALID_FILTER, null, E_USER_WARNING, "Callback function does not exist in QuickForm_Controller::_setDefaultsOrConstants()", 'HTML_QuickForm_Error', true);
-            } else {
-                $newValues = $this->_arrayMapRecursive($val, $newValues);
-            }
-        }
-        $values = HTML_QuickForm::arrayMerge($values, $newValues);
-    }
-
-
-   /**
-    * Recursively applies the callback function to the value
-    * 
-    * @param    mixed   Callback function
-    * @param    mixed   Value to process
-    * @access   private
-    * @return   mixed   Processed values
-    */
-    function _arrayMapRecursive($callback, $value)
-    {
-        if (!is_array($value)) {
-            return call_user_func($callback, $value);
-        } else {
-            $map = array();
-            foreach ($value as $k => $v) {
-                $map[$k] = $this->_arrayMapRecursive($callback, $v);
-            }
-            return $map;
+            $data['constants'] = array_merge($data['constants'], $constantValues);
         }
     }
 
@@ -467,12 +411,8 @@ class HTML_QuickForm_Controller
         foreach ($pages as $page) {
             // skip elements representing actions
             foreach ($data['values'][$page] as $key => $value) {
-                if (0 !== strpos($key, '_qf_')) {
-                    if (isset($values[$key]) && is_array($value)) {
-                        $values[$key] = HTML_QuickForm::arrayMerge($values[$key], $value);
-                    } else {
-                        $values[$key] = $value;
-                    }
+                if (!preg_match('/^_qf_/', $key)) {
+                    $values[$key] = $value;
                 }
             }
         }

@@ -56,6 +56,7 @@ class Page1WizMgr extends SGL_Wizard
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Wizard();
+        $this->module = 'wizardexample';
     }
 
     function validate($req, &$input)

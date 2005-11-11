@@ -23,7 +23,7 @@
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: msql.php,v 1.57 2005/02/22 07:26:46 danielc Exp $
+ * @version    CVS: $Id: msql.php,v 1.16 2005/04/21 06:34:09 demian Exp $
  * @link       http://pear.php.net/package/DB
  */
 

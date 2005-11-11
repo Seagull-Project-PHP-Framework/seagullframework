@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | Download.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -40,13 +40,14 @@
 require_once 'HTTP/Download.php';
 
 /** 
-* Wrapper around PEAR HTTP/Download class to workaround some limits of
+* wrapper around PEAR HTTP/Download class to workaround some limits of
 * that class.
 *
 * @package SGL
 * @author Pierpaolo Toniolo
 * @copyright Pierpaolo Toniolo
 * @version $Revision: 1.4 $
+* @since PHP 4.1
 *
 */
 class SGL_Download extends HTTP_Download

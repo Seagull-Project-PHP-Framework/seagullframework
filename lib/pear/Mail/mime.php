@@ -338,7 +338,8 @@ class Mail_mime
         if (is_object($obj)) {
             return $obj->addSubpart($this->_htmlbody, $params);
         } else {
-            return new Mail_mimePart($this->_htmlbody, $params);
+            $mail = new Mail_mimePart($this->_htmlbody, $params); 
+            return $mail;
         }
     }
 
@@ -589,8 +590,8 @@ class Mail_mime
             $headers = array_merge($headers, $xtra_headers);
         }
         $this->_headers = array_merge($headers, $this->_headers);
-
-        return $this->_encodeHeaders($this->_headers);
+        $tmp = $this->_encodeHeaders($this->_headers);
+        return $tmp;
     }
 
     /**

@@ -3,13 +3,12 @@
 /* Reminder: always indent with 4 spaces (no tabs). */
 // $Id: convertCategories.php,v 1.2 2005/05/09 23:33:39 demian Exp $
 
-#WARNING: this way of initialising the app is deprecated, if you need to use this script pls contact the mailing list
 require_once '../init.php';
 
 error_reporting(E_ALL);
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
-require_once SGL_CORE_DIR . '/Category.php';
+require_once SGL_MOD_DIR . '/navigation/classes/CategoryMgr.php';
 
 require_once 'DB/DataObject.php';
 
@@ -22,7 +21,7 @@ if ($result) {
 }
 $tree = &createFromSQL();
 
-$catTree = new SGL_Category();
+$catTree = new CategoryMgr();
 $nestedSet = new SGL_NestedSet($catTree->_params);
 
 $root = $tree->nodes->nodes[0];
@@ -72,9 +71,7 @@ function addToNestedSet(&$nestedSet, &$nodes, $parentId)
 function updateCategoryId($oldCategoryId, $newCategoryId)
 {
     $dbh = &SGL_DB::singleton();
-
-    $c = &SGL_Config::singleton();
-    $conf = $c->getAll();
+    $conf = & $GLOBALS['_SGL']['CONF'];
     
     // update documents
     $query = 'UPDATE ' . $conf['table']['document'] . ' SET category_id = '
@@ -88,7 +85,7 @@ function updateCategoryId($oldCategoryId, $newCategoryId)
 }
 
 /**
-* SGL_Category::createFromSQL doesn't load perms but this function does
+* CategoryMgr::createFromSQL doesn't load perms but this function does
 *
 */
 function &createFromSQL()
@@ -96,8 +93,7 @@ function &createFromSQL()
     require_once 'HTML/Tree.php';
     // get db
     $dbh = &SGL_DB::singleton();
-    $c = &SGL_Config::singleton();
-    $conf = $c->getAll();
+    $conf = & $GLOBALS['_SGL']['CONF'];
     $query = 'SELECT  category_id as id, parent AS parent_id, label, perms
                         FROM category
                         ORDER BY parent_id, category_id';

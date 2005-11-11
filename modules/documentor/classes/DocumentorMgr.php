@@ -29,7 +29,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.4                                                               |
 // +---------------------------------------------------------------------------+
 // | DocumentorMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -56,7 +56,7 @@ class DocumentorMgr extends SGL_Manager
     function DocumentorMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $this->module           = 'documentor';
         $this->pageTitle        = 'Manual Generator';
         $this->template         = 'manual.html';
         $this->_aActionsMapping =  array(

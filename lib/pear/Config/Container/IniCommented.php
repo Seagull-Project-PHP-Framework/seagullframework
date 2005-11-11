@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: IniCommented.php,v 1.19 2004/11/23 04:57:55 ryansking Exp $
+// $Id: IniCommented.php,v 1.7 2005/02/27 10:00:27 demian Exp $
 
 /**
 * Config parser for PHP .ini files with comments
