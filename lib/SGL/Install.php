@@ -131,7 +131,6 @@ EOF;
     </a>
 </div>
 <h2>$title</h2>
-
 HTML;
         print $html;
     }
