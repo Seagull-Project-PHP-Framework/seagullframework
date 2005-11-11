@@ -100,7 +100,7 @@ if (isset($_GET['start'])) {
     $c = &SGL_Config::singleton();
     $conf = $c->getAll();
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
-                    $conf['cookie']['domain'], $conf['cookie']['secure']);
+                $conf['cookie']['domain'], $conf['cookie']['secure']);
 
     header('Location: '.SGL_BASE_URL.'/index.php');
     exit;
@@ -197,10 +197,6 @@ $wizard->addAction('process', new ActionProcess());
 $wizard->run();
 
 if (SGL_Install::errorsExist()) {
-    foreach ($_SESSION['ERRORS'] as $oError) {
-        $out =  $oError->getMessage() . '<br /> ';
-        $out .= $oError->getUserInfo();
-        print $out;
-    }
+    SGL_Install::errorPrint();
 }
 ?>

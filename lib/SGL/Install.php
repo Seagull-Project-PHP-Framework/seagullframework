@@ -45,35 +45,62 @@ $_SESSION['ERRORS'] = array();
  *
  */
 class SGL_Install
-{   
+{
     function errorPush($error)
     {
         array_push($_SESSION['ERRORS'], $error);
     }
-    
+
     function errorCheck(&$page)
     {
         if (SGL_Install::errorsExist()) {
             foreach ($_SESSION['ERRORS'] as $oError) {
-                $out =  $oError->getMessage() . '<br /> ';   
-                $out .= $oError->getUserInfo();   
-                $page->addElement('static',   'errors', 'Errors:', $out);                
+                $out =  $oError->getMessage() . '<br /> ';
+                $out .= $oError->getUserInfo();
+                $page->addElement('static',   'errors', 'Errors:', $out);
             }
             $_SESSION['ERRORS'] = array();
         }
     }
-    
+
+    function errorsExist()
+    {
+        return count($_SESSION['ERRORS']);
+    }
+
+    function errorPrint()
+    {
+        foreach ($_SESSION['ERRORS'] as $oError) {
+            $msg = SGL_Install::errorObjToString($oError);
+            $html ='<div class="errorContainer">
+                        <div class="errorHeader">Error</div>
+                        <div class="errorContent">' . $msg . '</div>
+                    </div>';
+            print $html;
+        }
+    }
+
+    function errorObjToString($oError)
+    {
+        $message = $oError->getMessage();
+        $debugInfo = $oError->getDebugInfo();
+        $level = $oError->getCode();
+        $errorType = SGL::errorConstantToString($level);
+        $output = <<<EOF
+  <strong>MESSAGE</strong>: $message<br />
+  <strong>TYPE:</strong> $errorType<br />
+  <strong>DEBUG INFO:</strong> $debugInfo<br />
+  <strong>CODE:</strong> $level<br />
+EOF;
+        return $output;
+    }
+
     function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
         return $version;
     }
-    
-    function errorsExist()
-    {
-        return count($_SESSION['ERRORS']);
-    }
-    
+
     function printHeader($title = '')
     {
         $html = <<<HTML
@@ -88,7 +115,7 @@ class SGL_Install
     <meta name="Generator" content="Seagull Framework" />
 
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    
+
     <style type="text/css" media="screen">
         @import url("http://localhost/seagull/trunk/www/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel&moduleName=default");
     </style>
@@ -107,24 +134,24 @@ class SGL_Install
 HTML;
         print $html;
     }
-    
+
     function printFooter()
     {
         $html = <<<HTML
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>  
+    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
     </div>
 </body>
 </html>
 HTML;
         print $html;
     }
-    
+
     function printLoginForm()
     {
         $message = !empty($_SESSION['message']) ? $_SESSION['message'] : '';
         $_SESSION = array();
-        
+
         $html = <<<HTML
 <form name="frmLogin" method="post" action="" id="frmLogin">
     <p>&nbsp;</p>
@@ -138,7 +165,7 @@ HTML;
             <div>
                 <div class="error">
                     $message
-                </div>            
+                </div>
                 <span class="error">*&nbsp;</span>Password
                 <input type="password" name="frmPassword" maxlength="24" />
             </div>
@@ -149,13 +176,13 @@ HTML;
 HTML;
         print $html;
     }
-    
+
     /**
      * Returns an array of modules scanned from filesystem.
      *
      * @return array
      */
-    function getModuleList() 
+    function getModuleList()
     {
         $dir =  SGL_MOD_DIR;
         $fileList = array();
