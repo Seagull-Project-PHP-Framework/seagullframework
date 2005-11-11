@@ -39,18 +39,18 @@
 
 function canCreateDb()
 {
-    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page3'], 
+    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page3'],
         $_SESSION['_installationWizard_container']['values']['page4']);
 
     $skipDbCreation = (bool)@$aFormValues['skipDbCreation'];
     $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
-    $port = (!empty($aFormValues['dbPort']['port']) 
+    $port = (!empty($aFormValues['dbPort']['port'])
                 && isset($aFormValues['dbProtocol']['protocol'])
-                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
-        ? ':' . $aFormValues['dbPort']['port'] 
-        : '';     	
+                && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
+        ? ':' . $aFormValues['dbPort']['port']
+        : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
@@ -59,27 +59,37 @@ function canCreateDb()
 
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
-    
-    // if DB exists, detect if tables exist
-    
+
     if ($skipDbCreation && PEAR::isError($dbh)) {
         SGL_Install::errorPush($dbh);
         return false;
+
     } elseif ($skipDbCreation) {
-        return true;   
+
+        // if DB exists, detect if tables exists
+        $tables = $dbh->getListOf('tables');
+        if (!count($tables)) {
+            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+        }
+        return true;
+
+    } elseif (PEAR::isError($dbh)) {
+        return false;
     }
 
     //  attempt to create database
     $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
-    
+
     //  if new db, set flag to create tables
+    $_SESSION['_installationWizard_container']['values']['page4'] = 'createTables';
 
     if (PEAR::isError($ok)) {
         SGL_Install::errorPush($ok);
         return false;
+
     } else {
         return true;
-    }    
+    }
 }
 
 class WizardCreateDb extends HTML_QuickForm_Page
@@ -87,7 +97,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-        
+
         $this->setDefaults(array(
             'name' => 'seagull',
             'prefix' => 'not implemented yet',
@@ -96,17 +106,17 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
 
         //  skip db creation FIXME: improve
-        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?', 'Yes (If box is not ticked, a new Db will be created)');        
-        
+        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?', 'Yes (If box is not ticked, a new Db will be created)');
+
         //  db name
         $this->addElement('text',  'name',     'Database name: ');
         $this->addRule('name', 'Please specify the name of the database', 'required');
-        
+
         //  db prefix
         $this->addElement('text',  'prefix',     'Table prefix: ');
-        
+
         //  test db creation
-        $this->registerRule('canCreateDb','function','canCreateDb'); 
+        $this->registerRule('canCreateDb','function','canCreateDb');
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
 
         //  submit

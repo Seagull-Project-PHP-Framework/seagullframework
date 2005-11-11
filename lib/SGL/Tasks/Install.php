@@ -106,7 +106,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
 
     function getMinimumModuleList()
     {
-        return array('user', 'default', 'navigation');
+        return array('default', 'navigation', 'user');
     }
 
     function setup()
@@ -172,7 +172,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
         </div>
         <div id="additionalInfo"></div>';
         flush();
-        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
             $this->setup();
 
@@ -248,7 +248,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             $this->setup();
 
             $statusText = 'loading data';
@@ -279,7 +279,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             $this->setup();
 
             $statusText = 'loading constraints';
@@ -341,7 +341,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
                 PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
         }
 
-        if (!(array_key_exists('skipDbCreation', $data) && $data['skipDbCreation'] == 1)) {
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
             //  note: must all be on one line for DOM text replacement
             $message = 'Database initialisation complete!';
