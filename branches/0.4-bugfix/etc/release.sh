@@ -26,9 +26,9 @@ REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
 SVN_REPO_LEAF_FOLDER_NAME=0.4-bugfix
-SVN_REPO_URL=http://seagull.phpkitchen.com:8172/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
+SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
 
-SVN_REPO_TAGS_URL=http://seagull.phpkitchen.com:8172/svn/seagull/tags
+SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
 
 
 ##############################
@@ -64,13 +64,13 @@ function checkPreviousVersions()
       echo "Removing last $PROJECT_NAME export ..."
       rm -rf /tmp/$SVN_REPO_LEAF_FOLDER_NAME
     fi
-    
+
     # Check that the release directory doesn't already exist:
     if [ -d "/tmp/$PROJECT_NAME-$RELEASE_NAME" ]; then
       echo "Removing last $PROJECT_NAME renamed export ..."
       rm -rf /tmp/$PROJECT_NAME-$RELEASE_NAME
     fi
-    
+
     # Check that the last tarball doesn't exist:
     if [ -e "/tmp/$PROJECT_NAME-$RELEASE_NAME.tar.gz" ]; then
       echo "Removing last $PROJECT_NAME tarball ..."
@@ -82,7 +82,7 @@ function checkPreviousVersions()
       echo "Removing last seagull apiDocs dir ..."
       rm -rf /tmp/seagullApiDocs-$RELEASE_NAME
     fi
-    
+
     # Check that the last apiDocs tarball doesn't exist:
     if [ -e "/tmp/seagullApiDocs-$RELEASE_NAME.tar.gz" ]; then
       echo "Removing last seagull apiDocs tarball ..."
@@ -103,13 +103,13 @@ function tagRelease()
 # export svn and package
 ##############################
 function exportSvnAndPackage()
-{   
+{
     # export release
-    $SVN export $SVN_REPO_URL -r $REVISION_NUM 
-    
+    $SVN export $SVN_REPO_URL -r $REVISION_NUM
+
     #rename trunk to project name
     mv $SVN_REPO_LEAF_FOLDER_NAME $PROJECT_NAME
-    
+
     # remove unwanted dirs
     rm -f $PROJECT_NAME/etc/badBoyWebTests.bb
     rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
@@ -120,10 +120,10 @@ function exportSvnAndPackage()
     rm -rf $PROJECT_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME/modules/user/tests
     rm -f $PROJECT_NAME/www/errorTests.php
-    
+
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
-    
+
     # tar and zip
     tar cvf $PROJECT_NAME-$RELEASE_NAME.tar $PROJECT_NAME-$RELEASE_NAME
     gzip -f $PROJECT_NAME-$RELEASE_NAME.tar
@@ -135,7 +135,7 @@ function exportSvnAndPackage()
 function uploadToSfWholePackage()
 {
     # ftp upload to SF
-    
+
     $FTP -nd $FTP_HOSTNAME <<EOF
 user $FTP_USERNAME $FTP_PASSWORD
 bin
@@ -153,11 +153,11 @@ function generateApiDocs()
 {
     #make apiDocs script executable
     chmod 755 $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
-    
+
     #execute phpDoc
     $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
 
-    # rename folder    
+    # rename folder
     mv seagullApiDocs seagullApiDocs-$RELEASE_NAME
 }
 
@@ -176,7 +176,7 @@ function packageApiDocs()
 function uploadToSfApiDocs()
 {
     # ftp upload to SF
-    
+
     $FTP -nd $FTP_HOSTNAME <<EOF
 user $FTP_USERNAME $FTP_PASSWORD
 bin
@@ -222,13 +222,13 @@ exportSvnAndPackage
 
 uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
 packageApiDocs
 
 uploadToSfApiDocs
 
-scpApiDocsToSglSite
+#scpApiDocsToSglSite
 
 #scpChangelogToSglSite
 
