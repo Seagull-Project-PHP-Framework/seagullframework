@@ -11,6 +11,8 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+11-11-05    Reduced dependency on sections by modifying block listing query to use
+            LEFT JOIN instead of WHERE clauses (Julien Casanova)
 10-11-05    Moved MaintenanceMgr to 'default' module
 10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
             assignments) by creating an auto-increment token in data and using
