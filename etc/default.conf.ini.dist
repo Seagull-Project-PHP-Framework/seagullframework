@@ -5,7 +5,7 @@ host                    = localhost
 protocol                = false
 port                    = 3306
 user                    = root
-pass                    = 
+pass                    =
 name                    = seagull
 
 [site]
@@ -13,10 +13,11 @@ sessionMaxLifetime      = 0 ; until the browser is closed
 extended_session        = 0;
 single_user             = false;
 sessionHandler          = file
+sessionInUrl            = true
 name                    = Seagull Framework
 showLogo                = false
 
-; page compression can only be set in php.ini, however if it is set and 
+; page compression can only be set in php.ini, however if it is set and
 ; you wish to disable it, here is the place.
 compression             = false
 outputBuffering         = false
@@ -144,12 +145,12 @@ winWidth                = 600
 
 [cookie]
 path                    = /
-domain                  = 
+domain                  =
 secure                  = false
 name                    = SGLSESSID
 
 [censor]
-;   choose any of SGL_CENSOR_DISABLE, SGL_CENSOR_EXACT_MATCH, 
+;   choose any of SGL_CENSOR_DISABLE, SGL_CENSOR_EXACT_MATCH,
 ;   SGL_CENSOR_WORD_BEGINNING, SGL_CENSOR_WORD_FRAGMENT
 mode                    = SGL_CENSOR_DISABLE
 replaceString           = *censored*
