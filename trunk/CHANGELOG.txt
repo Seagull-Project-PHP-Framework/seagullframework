@@ -12,6 +12,9 @@ BUGFIXES
             is sent.
 
 IMPROVEMENTS
+11-11-05    Rewrote installer to handle tasks, easy to extend
+11-11-05    Added $conf[site][sessionInUrl] key and set to false to overcome
+            t-bird RSS bug listed above
 11-11-05    Reduced dependency on sections by modifying block listing query to use
             LEFT JOIN instead of WHERE clauses (Julien Casanova)
 10-11-05    Moved MaintenanceMgr to 'default' module
