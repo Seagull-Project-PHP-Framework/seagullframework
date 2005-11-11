@@ -65,8 +65,8 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  save
         $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
-        if (!$ok) {
-            return SGL_Install::errorPush(PEAR::raiseError('Problem saving config'));
+        if (PEAR::isError($ok)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok));
         }
     }
 }
@@ -332,29 +332,34 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
         $res = $dbh->getAll($query);
         if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
-            return SGL_Install::errorPush(
+            SGL_Install::errorPush(
                 PEAR::raiseError('No tables exist in DB - was schema created?'));
-        }
-
-        if (!(count($res))) {
-            return SGL_Install::errorPush(
+        } elseif (!(count($res))) {
+            SGL_Install::errorPush(
                 PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
         }
 
-        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
-
-            //  note: must all be on one line for DOM text replacement
-            $message = 'Database initialisation complete!';
-            $this->updateHtml('status', $message);
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
-
-        //  else only a DB connect was requested
-        } else {
-            $statusText = 'DB setup succeeded';
-            $statusText .= ', schema creation skipped';
+        //  create error message if appropriate
+        if (SGL_Install::errorsExist()) {
+            $statusText = 'Some problems were encountered';
             $this->updateHtml('status', $statusText);
+            $body = 'please diagnose and try again';
+        } else {
+            if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
-            $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>';
+                //  note: must all be on one line for DOM text replacement
+                $message = 'Database initialisation complete!';
+                $this->updateHtml('status', $message);
+                $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
+
+            //  else only a DB connect was requested
+            } else {
+                $statusText = 'DB setup succeeded';
+                $statusText .= ', schema creation skipped';
+                $this->updateHtml('status', $statusText);
+
+                $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>';
+            }
         }
 
         //  done, create "launch seagull" link
@@ -373,11 +378,11 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         require_once 'DB/DataObject/Generator.php';
         $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
         if (PEAR::isError($cacheDir)) {
-            return SGL_Install::errorPush(PEAR::raiseError('Problem creating cache dir'));
+            SGL_Install::errorPush(PEAR::raiseError('Problem creating cache dir'));
         }
         $entDir = System::mkDir(array(SGL_ENT_DIR));
         if (PEAR::isError($entDir)) {
-            return SGL_Install::errorPush(PEAR::raiseError('Problem creating entity dir'));
+            SGL_Install::errorPush(PEAR::raiseError('Problem creating entity dir'));
         }
     }
 }
@@ -411,7 +416,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         ob_end_clean();
 
         if (PEAR::isError($out)) {
-            return SGL_Install::errorPush(
+            SGL_Install::errorPush(
                 PEAR::raiseError('generating DB_DataObject entities failed'));
         }
 
@@ -583,19 +588,19 @@ class SGL_Task_SyncSequences extends SGL_Task
                     if (!$success) {
                         $db->rollback();
                         $db->autoCommit(true);
-                        return SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+                        SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
                     }
                 }
             }
             $success = $db->commit();
             $db->autoCommit(true);
             if (!$success) {
-                return SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+                SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
             }
             break;
 
         default:
-            return SGL_Install::errorPush(
+            SGL_Install::errorPush(
                 PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
         }
     }
@@ -620,6 +625,9 @@ class SGL_Task_CreateAdminUser extends SGL_Task
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
         $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
         $success = $da->addUser($oUser);
+        if (PEAR::isError($success)) {
+            SGL_Install::errorPush(PEAR::raiseError($success));
+        }
     }
 }
 

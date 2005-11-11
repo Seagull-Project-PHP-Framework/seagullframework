@@ -51,18 +51,19 @@
 
     $modtimes = array();
 
-    if (file_exists($vars = './vars.php')) {
-        $modTimes['vars'] = filemtime($vars);
+    if (file_exists($tmp = './vars.php')) {
+        $modTimes['vars'] = filemtime($tmp);
     }
-    if (file_exists($core = './core.php')) {
-        $modTimes['core'] = filemtime($core);
+    if (file_exists($tmp = './core.php')) {
+        $modTimes['core'] = filemtime($tmp);
     }
-    if (file_exists($navigation = 
-                            './' . @$_REQUEST['navStylesheet'] . '.nav.php')) {
-        $modTimes['navigation'] = filemtime($navigation);
+    $frmNavStyleSheet = @$_REQUEST['navStylesheet'];
+    if (file_exists($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
+        $modTimes['navigation'] = filemtime($navStyleSheet);
     }
-    if (file_exists($module = './' . @$_REQUEST['moduleName'] . '.php')) {
-        $modTimes['module'] = filemtime($module);
+    $frmModuleName = @$_REQUEST['moduleName'];
+    if (file_exists($moduleName = realpath("./$frmModuleName.php"))) {
+        $modTimes['module'] = filemtime($moduleName);
     }
 
     // Get last modified time of file
@@ -93,17 +94,17 @@
     $aPath = array_filter($aPath);
     array_pop($aPath);
     $baseUrl = join('/', $aPath);
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on') 
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on')
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
-    require_once $vars;
-    require_once $core;
+    require_once './vars.php';
+    require_once './core.php';
     if (isset($modTimes['navigation'])) {
-        require_once $navigation;
+        require_once realpath("./$frmNavStyleSheet.nav.php");
     }
     if (isset($modTimes['module'])) {
-        require_once $module;
+        require_once  realpath("./$frmModuleName.php");
     }
 
     // copied from PEAR HTTP Header.php (comments stripped)
@@ -119,7 +120,7 @@
 
     // copied from PEAR HTTP.php Date function (comments stripped)
     // Author: Stig Bakken <ssb@fast.no>
-    function timestampToDate($time) 
+    function timestampToDate($time)
     {
         if (ini_get("y2k_compliance") == true) {
             return gmdate("D, d M Y H:i:s \G\M\T", $time);
