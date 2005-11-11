@@ -201,6 +201,7 @@ HTML;
                }
            }
        }
+       sort($fileList);
        return $fileList;
     }
 }
