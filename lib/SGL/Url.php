@@ -541,7 +541,7 @@ class SGL_URL
      * @param string $url
      * @return void
      */
-    function addSessionInfo()
+    function addSessionInfo(&$url)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
