@@ -543,7 +543,8 @@ class SGL_URL
      */
     function addSessionInfo()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         if ($conf['site']['sessionInUrl']) {
 
             //  determine is session propagated in cookies or URL
