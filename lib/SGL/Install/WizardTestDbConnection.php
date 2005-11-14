@@ -42,22 +42,24 @@ function canConnectToDbServer()
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page3'];
 
 	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
-    $port = (!empty($aFormValues['dbPort']['port']) 
+    $port = (!empty($aFormValues['dbPort']['port'])
                 && isset($aFormValues['dbProtocol']['protocol'])
-                && ($aFormValues['dbProtocol']['protocol'] == 'tcp')) 
-        ? ':' . $aFormValues['dbPort']['port'] 
-        : '';     	
+                && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
+        ? ':' . $aFormValues['dbPort']['port']
+        : '';
+    $dbName = ($aFormValues['dbType']['type'] == 'pgsql')
+                ? '/template1'
+                : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
         $protocol .
-        $aFormValues['host'] . $port;
-
+        $aFormValues['host'] . $port . $dbName;
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
 
     if (PEAR::isError($dbh)) {
-        SGL_Install::errorPush($dbh);        
+        SGL_Install::errorPush($dbh);
         return false;
     } else {
         return true;
@@ -70,7 +72,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
     {
         $this->_formBuilt = true;
         $this->addElement('header', null, 'Test DB Connection: page 3 of 5');
-        
+
         //  FIXME: use detect.php info to supply sensible defaults
         $this->setDefaults(array(
             'host' => 'localhost',
@@ -78,7 +80,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbType'  => array('type' => 'mysql_SGL'),
             'dbPort'  => array('port' => 3306),
             ));
-        
+
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
@@ -87,18 +89,18 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
-        
+
         //  host
         $this->addElement('text',  'host',     'Host: ');
         $this->addRule('host', 'Please specify the hostname', 'required');
-        
+
         //  protocol
         unset($radio);
         $radio[] = &$this->createElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 'unix');
         $radio[] = &$this->createElement('radio', 'protocol', '',"tcp", 'tcp');
         $this->addGroup($radio, 'dbProtocol', 'Protocol:', '<br />');
         $this->addGroupRule('dbProtocol', 'Please specify a db protocol', 'required');
-        
+
         //  port
         unset($radio);
         $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)", 3306);
@@ -107,16 +109,16 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
         $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
         $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
-        
+
         //  credentials
         $this->addElement('text',  'user',    'Database username: ');
         $this->addElement('password', 'pass', 'Database password: ');
         $this->addRule('user', 'Please specify the db username', 'required');
 
         //  test db connect
-        $this->registerRule('canConnectToDbServer','function','canConnectToDbServer'); 
+        $this->registerRule('canConnectToDbServer','function','canConnectToDbServer');
         $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
-        
+
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');

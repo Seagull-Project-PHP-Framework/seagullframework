@@ -47,7 +47,12 @@ function canCreateDb()
     //  if we're not creating a DB, presumably a DB exists so supply DB name to dsn
     $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
 
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
+    //  postgres however does not support logins with no db name
+    if ($dbName = '' && ($aFormValues['dbType']['type'] == 'pgsql')) {
+        $dbName = '/template1';
+    }
+
+    $protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
     $port = (!empty($aFormValues['dbPort']['port'])
                 && isset($aFormValues['dbProtocol']['protocol'])
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))

@@ -1,6 +1,15 @@
 -- Last edited: Pierpaolo Toniolo 26-07-2005
 -- Schema for default
 
+-- add the plpgsql language to the database
+-- WARNING: very experimental code
+SELECT oid FROM pg_language WHERE lanname = 'plpgsql';
+SELECT oid FROM pg_proc WHERE proname = 'plpgsql_call_handler' AND prorettype = 'pg_catalog.language_handler'::regtype AND pronargs = 0;
+SELECT oid FROM pg_proc WHERE proname = 'plpgsql_validator' AND proargtypes[0] = 'pg_catalog.oid'::regtype AND pronargs = 1;
+CREATE FUNCTION "plpgsql_call_handler" () RETURNS language_handler AS '$libdir/plpgsql' LANGUAGE C;
+CREATE FUNCTION "plpgsql_validator" (oid) RETURNS void AS '$libdir/plpgsql' LANGUAGE C;
+CREATE TRUSTED LANGUAGE "plpgsql" HANDLER "plpgsql_call_handler" VALIDATOR "plpgsql_validator";
+
 -- ==============================================================
 --  Table: log_table                                             
 -- ==============================================================
