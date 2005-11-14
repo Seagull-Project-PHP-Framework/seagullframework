@@ -1,4 +1,7 @@
 <?php
+$words['FAQ Manager :: Reorder'] = 'Gestionnaire de FAQ :: Réordonner';
+$words['FAQ Manager :: Add'] = 'Gestionnaire de FAQ :: Ajouter';
+$words['FAQ Manager :: Edit'] = 'Gestionnaire de FAQ :: Editer';
 $words['FAQs'] = 'FAQs';
 $words['FAQ Manager'] = 'Gestionnaire de FAQ';
 $words['FAQ Manager :: Browse'] = 'Gestionnaire de FAQ :: Naviguer';

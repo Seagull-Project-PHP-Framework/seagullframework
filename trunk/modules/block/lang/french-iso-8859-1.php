@@ -1,4 +1,10 @@
 <?php
+$words['With selected block(s)'] = 'Avec le(s) bloc(s) sélectionné(s)';
+$words['Left'] = 'Gauche';
+$words['Right'] = 'Droite';
+$words['New Html block'] = 'Nouveau bloc Html';
+$words['Can view'] = 'Rôle(s) autotisé(s)';
+$words['All roles'] = 'Tous les rôles';
 $words['Blocks Manager'] = 'Gestionnaire de blocs';
 $words['Browse'] = 'Naviguer';
 $words['Edit block'] = 'Editer un bloc';
