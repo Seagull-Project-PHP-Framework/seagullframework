@@ -471,7 +471,8 @@ class MaintenanceMgr extends SGL_Manager
         } else {
             $res = version_compare($localVersion, $remoteVersion);
             if ($res < 0) {
-                $msg = 'There is a newer version available:' . $remoteVersion . ', please upgrade';
+                $msg = 'There is a newer version available: ' . $remoteVersion . ', please upgrade '.
+                '<a href="http://seagull.phpkitchen.com/index.php/publisher/articleview/frmArticleID/12/staticId/20/">here</a>';
             } else {
                 $msg = "Your current version, $localVersion, is up to date";
             }
