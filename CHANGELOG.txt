@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
 14-11-05    Improved integration of page offset id in seagull SEF urls
             (Andreas Singer)
 
