@@ -45,9 +45,9 @@ if (isset($_GET['cmd'])) {
     if (PEAR::isError($res)) {
         echo '<pre>'; print_r($res).'\n';
     }
+    print '<pre>'; print_r($res);
 }
 
-print '<pre>'; print_r($res);
 
 ?>
 <html>
