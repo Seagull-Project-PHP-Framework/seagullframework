@@ -56,7 +56,7 @@ class MaintenanceMgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->pageTitle    = 'Maintenance';
-        $this->template     = 'langList.html';
+        $this->template     = 'maintenance.html';
         $this->redirect     = true;
 
         $this->_aActionsMapping =  array(
