@@ -69,6 +69,7 @@ class MaintenanceMgr extends SGL_Manager
             'rebuildSequences' => array('rebuildSequences'),
             'clearCache' => array('clearCache'),
             'createModule' => array('createModule', 'redirectToDefault'),
+            'checkLatestVersion' => array('checkLatestVersion', 'redirectToDefault'),
             'list'      => array('list'),
         );
     }
@@ -453,6 +454,29 @@ class MaintenanceMgr extends SGL_Manager
         $res = SGL_Task_CreateDataObjectEntities::run();
         SGL::raiseMsg('Data Objects rebuilt successfully');
         SGL::logMessage($res, PEAR_LOG_DEBUG);
+    }
+
+    function _checkLatestVersion(&$input, &$output)
+    {
+        require_once SGL_CORE_DIR . '/Install.php';
+        $localVersion = SGL_Install::getFrameworkVersion();
+
+        require_once SGL_CORE_DIR . '/XML/RPC/Remote.php';
+        $config = SGL_CORE_DIR . '/tests/xmlrpc_conf.ini';
+        $remote = new SGL_XML_RPC_Remote($config);
+        $remoteVersion = $remote->call('framework.determineLatestVersion');
+
+        if (PEAR::isError($remoteVersion)) {
+            SGL::raiseError('remote interface problem');
+        } else {
+            $res = version_compare($localVersion, $remoteVersion);
+            if ($res < 0) {
+                $msg = 'There is a newer version available:' . $remoteVersion . ', please upgrade';
+            } else {
+                $msg = "Your current version, $localVersion, is up to date";
+            }
+            SGL::raiseMsg($msg, false);
+        }
     }
 
     function _rebuildSequences(&$input, &$output)

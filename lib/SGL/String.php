@@ -67,7 +67,7 @@ class SGL_String
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $editedText = $text;
         if ($conf['censor']['mode'] != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
@@ -214,7 +214,7 @@ class SGL_String
 
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         if (       !$conf['site']['tidyhtml']
                 || !function_exists('tidy_parse_string')
                 || SGL::isPhp5()) { // tidy 2 in PHP5 has different API
@@ -243,7 +243,7 @@ class SGL_String
      */
     function translate($key, $filter = false)
     {
-        $trans = &$GLOBALS['_SGL']['TRANSLATION'];
+        $trans = $GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
             $ret = $trans[$key];
             if ($filter && function_exists($filter)) {
@@ -285,7 +285,7 @@ class SGL_String
      *
      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
      */
-    function char2entity($char, $encoding = 'H') 
+    function char2entity($char, $encoding = 'H')
     {
         $pad = 1;
         if ($encoding == 'R' || $encoding == 'E') {
@@ -508,7 +508,7 @@ class SGL_String
          $s = preg_replace($find, $replace, $s);
          return $s;
     }
-    
+
     /**
      * Removes chars that are illegal in ini files.
      *
