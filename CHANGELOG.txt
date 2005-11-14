@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.5.4        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+14-11-05    Improved integration of page offset id in seagull SEF urls
+            (Andreas Singer)
+
++-----------------------+
 | VERSION: 0.5.3        |
 +-----------------------+
 BUGFIXES

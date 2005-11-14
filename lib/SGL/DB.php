@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | SGL_DB.php                                                                |
+// | DB.php                                                                    |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
@@ -222,8 +222,6 @@ class SGL_DB
         $page = array();
         $page['totalItems'] = $pager_options['totalItems'];
         $page['links'] = str_replace("/pageID/".$pager->getCurrentPageID()."/", "/", $pager->links);
-        // End
-
         $page['page_numbers'] = array(
             'current' => $pager->getCurrentPageID(),
             'total'   => $pager->numPages()
