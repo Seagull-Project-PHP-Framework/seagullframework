@@ -95,6 +95,11 @@ EOF;
         return $output;
     }
 
+    /**
+     * Returns a string indicating the framework version.
+     *
+     * @return string
+     */
     function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
