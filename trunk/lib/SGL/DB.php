@@ -209,12 +209,21 @@ class SGL_DB
             }
             $pager_options['totalItems'] = $totalItems;
         }
-        require_once 'Pager/Pager.php';
+
+        // To get Seagull URL Style working for Pager
+        $req =& SGL_Request::singleton();
+		$pager_options['currentPage'] = $req->get('pageID');
+
+		require_once 'Pager/Pager.php';
+		$pager_options['append'] = false;
+        $pager_options['fileName'] = '/pageID/%d/';
         $pager = Pager::factory($pager_options);
 
         $page = array();
         $page['totalItems'] = $pager_options['totalItems'];
-        $page['links'] = $pager->links;
+        $page['links'] = str_replace("/pageID/".$pager->getCurrentPageID()."/", "/", $pager->links);
+        // End
+
         $page['page_numbers'] = array(
             'current' => $pager->getCurrentPageID(),
             'total'   => $pager->numPages()
