@@ -37,8 +37,10 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
-$GLOBALS['_SGL'] = array();
-$_SESSION['ERRORS'] = array();
+if (!isset($GLOBALS['_SGL'])) {
+    $GLOBALS['_SGL'] = array();
+    $_SESSION['ERRORS'] = array();
+}
 
 /**
  * Provides various static methods required for install routine.
