@@ -1,4 +1,21 @@
 --
+-- Dumping data for table module
+--
+
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'block', 'Blocks', 'Use the ''Blocks'' module to configure the contents of the blocks in the left and right hand columns.', 'block/block', 'blocks.png');
+
+--
+-- Dumping data for table permission
+--
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr', 'Permission to use block manager', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_add', 'Permission to add new block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_edit', 'Permission to edit existing block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_delete', 'Permission to remove block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_reorder', 'Permission to reorder blocks', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_list', 'Permission to view block listing', (SELECT MAX(module_id) FROM module));
+
+--
 -- Dumping data for table block
 --
 
@@ -21,7 +38,6 @@ INSERT INTO block VALUES (18, 'Exchange', 'Exchange', '', '', 9, 1, 0, NULL);
 -- Dumping data for table block_assignment
 --
 
-
 INSERT INTO block_assignment VALUES (1, 0);
 INSERT INTO block_assignment VALUES (3, 0);
 INSERT INTO block_assignment VALUES (4, 0);
@@ -41,7 +57,6 @@ INSERT INTO block_assignment VALUES (18, 0);
 --
 -- Dumping data for table block_role
 --
-
 
 INSERT INTO block_role VALUES (1, -2);
 INSERT INTO block_role VALUES (2, -2);
@@ -65,3 +80,4 @@ INSERT INTO block_role VALUES (18, -2);
 
 CREATE SEQUENCE block_seq START WITH 19;
 CREATE SEQUENCE block_assignment_seq START WITH 19;
+CREATE SEQUENCE block_role_seq START WITH 19;
