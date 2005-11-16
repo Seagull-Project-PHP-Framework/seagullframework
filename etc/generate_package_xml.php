@@ -53,9 +53,8 @@ EOT;
 
     // Longer description
 	$description = <<<EOT
-Seagull is a PHP framework (BSD License).
-
-Blah.
+Seagull is a PHP application framework with a number of
+modules available that deliver CMS functionality.
 EOT;
 
     // License information
@@ -63,10 +62,65 @@ EOT;
 
     // Notes, function to grab them directly from S9Y in
     // generate_package_xml_functions.php
-	$notes = 'see CHANGELOG.txt';#retreiveSerendipityNotes($packagedir);
+	$notes = <<<EOT
+BUGFIXES
+11-11-05    Fix for &-related prob in thunderbird parsing of RSS
+09-11-05    Fixed small bug where backdating date comboboxes wasn't working
+            (Werner Krauss)
+31-10-05	Fixed broken config calls in templates
+26-10-05    Registration emails are no longer CCed to admin, separate notification
+            is sent.
+
+IMPROVEMENTS
+11-11-05    Rewrote installer to handle tasks, easy to extend
+11-11-05    Added conf[site][sessionInUrl] key and set to false to overcome
+            t-bird RSS bug listed above
+11-11-05    Reduced dependency on sections by modifying block listing query to use
+            LEFT JOIN instead of WHERE clauses (Julien Casanova)
+10-11-05    Moved MaintenanceMgr to 'default' module
+10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
+            assignments) by creating an auto-increment token in data and using
+            dynamic inserts
+09-11-05    Added ability for sql parser to auto-increment records when PK is marked
+            with {SGL_NEXT_ID} token
+09-11-05    Added ability to add all or minimum modules
+09-11-05    Added ability to remove frontScriptName and have even clearner urls than
+            previously, eg, now available: http://example.com/user/login/
+            Option currently only available to apache users with mod_rewrite enabled,
+            to activate set [site][frontScriptName] = false and copy
+            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure
+            the file is readable by the webserver (Julien Casanova)
+09-11-05    Added ability to backdate articles (Werner Krauss)
+09-11-05    Removed unnecessary framebuster from login page
+06-11-05    Split web tests into modules
+06-11-05    Moved all core classes that doubled up with other classes to reduce
+            file loading to seagull/lib/SGL/Other.php.  Currently this contains
+            SGL_Array, SGL_Date and SGL_Inflector.  Should make libs easier to find:
+            if you don't see a file named the same as the lib you want, it will most
+            likely be in Other.php
+04-11-05    New wizard can only be accessed if admin knows password stored in
+            seagull/var/INSTALL_COMPLETE.php.  Installer is invoked automatically
+            on first seagull install, and can be called manually by calling setup.php
+03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr,
+            CategoryMgr so core modules could work
+03-11-05    Added SGL_Process_ResolveManager::moduleIsRegistered() to gracefully supply
+            default module if requested module is not registered.
+03-11-05    all SQL-related files that used to live in seagull/etc have been moved to
+            'default' module as that's what they are, default
+03-11-05    item* tables and data moved to publisher
+03-11-05    category table and data moved to publisher
+03-11-05    Improved timezone list
+02-11-05    Global config file renamed to <host_name>.conf.php
+28-10-05    Blocks can now be displayed according to the role of the current user
+            (Daniel Korsak)
+23-10-05	Added support for observers with SGL_Oberserver and SGL_Observable
+21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php
+            to Process.php to respect namespace
+20-10-05    Added php4/5 compatible delegator class
+EOT;
 
     // Instanciate package file manager
-	$pkg = new PEAR_PackageFileManager2;
+	$pkg = new PEAR_PackageFileManager2();
 
     // Setting options
 	$e = $pkg->setOptions(
@@ -79,7 +133,9 @@ EOT;
             // Where should the package file be generated
             'pathtopackagefile' => $packagedir,
             // Just simple output, no MD5 sums and <provides> tags
-            'simpleoutput'      => true,
+            #'simpleoutput'      => true,
+
+            'packagefile'       => 'package2.xml',
             // Use standard file list generator, choose CVS, if you
             // have your code in CVS
             'filelistgenerator' => 'file',
@@ -91,6 +147,7 @@ EOT;
                 'package2.xml',
                 'generate_package_xml.php',
                 'lib/pear/',
+                '*tests*',
                 '*.svn',
 		    ),
 
@@ -118,12 +175,11 @@ EOT;
             'exceptions'        =>
             array(
                 'CHANGELOG.txt' => 'doc',
-                'COPYING.txt' => 'doc',
+                'CODING_STANDARDS.txt' => 'doc',
+                'README.txt' => 'doc',
+                'COPYING.txt' => 'data',
                 'INSTALL.txt' => 'data',
-                'README.txt' => 'data',
                 'VERSION.txt' => 'data',
-                'etc/mysql_SGL.php' => 'php',
-                'etc/Tree.php' => 'php',
             ),
 
             'installexceptions' =>
@@ -166,7 +222,30 @@ EOT;
     #$pkg->addPackageDepWithChannel('required', 'CustomInstallerFiles', 'pear.schlitt.info');
 
     // Require PEAR_DB package for initializing the database in the post install script
-    $pkg->addPackageDepWithChannel('required', 'DB', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'Cache_Lite', 'pear.php.net', '1.5.2');
+    $pkg->addPackageDepWithChannel('required', 'Config', 'pear.php.net', '1.10.4');
+    $pkg->addPackageDepWithChannel('required', 'DB', 'pear.php.net', '1.7.6');
+    $pkg->addPackageDepWithChannel('required', 'DB_DataObject', 'pear.php.net', '1.7.15');
+    $pkg->addPackageDepWithChannel('required', 'DB_NestedSet', 'pear.php.net', '1.3.6');
+    $pkg->addPackageDepWithChannel('required', 'Date', 'pear.php.net', '1.4.6');
+    $pkg->addPackageDepWithChannel('required', 'File', 'pear.php.net', '1.2.2');
+    $pkg->addPackageDepWithChannel('required', 'HTML_Common', 'pear.php.net', '1.2.2');
+    #$pkg->addPackageDepWithChannel('required', 'HTML_TreeMenu', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm', 'pear.php.net', '3.2.5');
+    $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm_Controller', 'pear.php.net', '1.0.5');
+    $pkg->addPackageDepWithChannel('required', 'HTML_Template_Flexy', 'pear.php.net', '1.2.3');
+    #$pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'Log', 'pear.php.net', '1.9.2');
+    $pkg->addPackageDepWithChannel('required', 'Mail_Mime', 'pear.php.net', '1.3.1');
+    $pkg->addPackageDepWithChannel('required', 'Net_Socket', 'pear.php.net', '1.0.6');
+    #$pkg->addPackageDepWithChannel('required', 'Net_Useragent_Detect', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'Pager', 'pear.php.net', '2.3.4');
+    $pkg->addPackageDepWithChannel('required', 'Text_Password', 'pear.php.net', '1.1.0');
+    #$pkg->addPackageDepWithChannel('required', 'Text_Statistics', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'Validate', 'pear.php.net', '0.6.2');
+    $pkg->addPackageDepWithChannel('required', 'XML_Parser', 'pear.php.net', '1.2.7');
+#    $pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
+    $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');
@@ -215,14 +294,14 @@ EOT;
 
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $pkg->generateContents();
-#    $packagexml = &$pkg->exportCompatiblePackageFile1();
+    $packagexml = &$pkg->exportCompatiblePackageFile1();
 
     // If called without "make" parameter, we just want to debug the generated
     // package.xml file and want to receive additional information on error.
     if (isset($_GET['make']) || (isset($_SERVER['argv'][2]) &&
             $_SERVER['argv'][2] == 'make')) {
-    	$e = $pkg->writePackageFile();
- #       $e = $packagexml->writePackageFile();
+#    	$e = $pkg->writePackageFile();
+        $e = $packagexml->writePackageFile();
 	} else {
     	$e = $pkg->debugPackageFile();
     	#$e = $packagexml->debugPackageFile();
