@@ -4,15 +4,15 @@ SEAGULL APPLICATION FRAMEWORK
 What is Seagull?
 ----------------
 
-Seagull is an object-oriented PHP framework for managing basic application 
+Seagull is an object-oriented PHP framework for managing basic application
 tasks:
 
 - authentication/permissions
-- templating 
-- workflow 
-- identity management 
-- messaging 
-- error handling 
+- templating
+- workflow
+- identity management
+- messaging
+- error handling
 - logging
 
 
@@ -34,7 +34,7 @@ PHP     4.1.x
 MySQL   3.23.x
 Apache  1.3.x
 
-NOTE: Apache 2.x will probably work but is not recommended, same is true 
+NOTE: Apache 2.x will probably work but is not recommended, same is true
     for the PHP 4.4.x branch though previous and later version are fine. Also,
     MySQL 4.1 branch can be difficult to get to work with PHP's mysql client libs,
     therefore 4.0.x is recommended.
@@ -45,16 +45,16 @@ Documentation
 
 The API documentation is available at
 
-http://seagull.phpkitchen.com/#api
+http://seagullfiles.phpkitchen.com/apidocs/
 
 and a wiki with end-user documentation at
 
-http://seagull.phpkitchen.com/docs
+http://trac.seagullproject.org/wiki
 
 
 Installation instructions
 -------------------------
-Please see the file INSTALL.txt
+Just unzip and load http://web_root/seagull/www in your browser to start the wizard.
 
 
 Licensing
@@ -66,8 +66,8 @@ COPYING.txt in this distribution.
 
 Credits
 -------
-Check out the 'meet the developers' section for info on all who have contributed 
-at http://seagull.phpkitchen.com/docs
+Check out our Frappr site to find Seagull devs in your area:
+http://www.frappr.com/seagull/
 
 Thanks,
 
