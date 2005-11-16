@@ -237,7 +237,7 @@ class SGL_URL
                             }
                         } else {
                             $this->path = dirname($_SERVER['SCRIPT_NAME']);
-                            $this->querystring = ltrim(str_replace($this->path, '', $urlinfo['path']), '/');
+                            $this->querystring = str_replace($this->path, '', $urlinfo['path']);
                         }
                         if (!array_key_exists('query', $urlinfo)) {
                             $this->aQueryData = $this->parseQueryString($conf);
