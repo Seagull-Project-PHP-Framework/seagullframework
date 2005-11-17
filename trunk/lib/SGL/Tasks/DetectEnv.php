@@ -194,8 +194,8 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         'session.use_trans_sid' => array(SGL_RECOMMENDED => 0),
         'allow_url_fopen' => array(SGL_RECOMMENDED => 0),
         'file_uploads' => array(SGL_RECOMMENDED => 1),
-        'post_max_size' => array(SGL_RECOMMENDED => '10MB'),
-        'upload_max_filesize' => array(SGL_RECOMMENDED => '10MB'),
+        'post_max_size' => array(SGL_RECOMMENDED => '10M'),
+        'upload_max_filesize' => array(SGL_RECOMMENDED => '10M'),
         );
 
     function run()
