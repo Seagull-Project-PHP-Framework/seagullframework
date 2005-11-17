@@ -144,7 +144,7 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertNoUnwantedPattern("/errorContent/");
 
         //  mtce
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/maintenance/');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/default/maintenance/');
         $this->assertTitle('Seagull Framework :: Maintenance');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
