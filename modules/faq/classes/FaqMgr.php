@@ -54,7 +54,7 @@ class FaqMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'FAQ Manager';
         $this->template     = 'faqList.html';
 
@@ -117,7 +117,7 @@ class FaqMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get new order number
-		$faq = DB_DataObject::factory('Faq');        
+		$faq = DB_DataObject::factory('Faq');
         $faq->selectAdd();
         $faq->selectAdd('MAX(item_order) AS new_order');
         $faq->groupBy('item_order');
@@ -125,7 +125,7 @@ class FaqMgr extends SGL_Manager
         unset($faq);
 
         //  insert record
-        $faq = DB_DataObject::factory('Faq');        
+        $faq = DB_DataObject::factory('Faq');
         $faq->setFrom($input->faq);
         $dbh = $faq->getDatabaseConnection();
         $faq->faq_id = $dbh->nextId('faq');
@@ -135,7 +135,7 @@ class FaqMgr extends SGL_Manager
         if ($success) {
             SGL::raiseMsg('faq saved successfully');
         } else {
-           SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 
