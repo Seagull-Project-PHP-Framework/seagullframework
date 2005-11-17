@@ -3,7 +3,7 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 <script language="JavaScript" type="text/javascript">
 function randomPassword(length)
-{    
+{
   chars = "abcdefghijklmnopqrstuvwxyz1234567890";
   pass = "";
   for(x=0;x<length;x++)
@@ -14,7 +14,7 @@ function randomPassword(length)
   return pass;
 }
 </script>
-  
+
 
 <form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
     <input type="hidden" name="action" value="updateList" />
@@ -39,8 +39,8 @@ function randomPassword(length)
              </td>
         </tr>
         <td align="center" colspan="2">
-          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" /> 
-          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listLists#,#list#,#newsletter#)}{sessID}'" />
+          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />
+          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listLists#,#list#,#newsletter#)}'" />
         </td>
         </tr>
     </table>
