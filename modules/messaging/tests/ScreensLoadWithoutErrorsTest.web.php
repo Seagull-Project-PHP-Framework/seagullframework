@@ -1,14 +1,14 @@
 <?php
 
-class ScreensLoadWithoutErrorsTest extends WebTestCase
+class MessagingScreensLoadWithoutErrorsTest extends WebTestCase
 {
-    function ScreensLoadWithoutErrorsTest()
+    function MessagingScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
     }
-    
+
     function testAdminScreens()
     {
         $this->addHeader('User-agent: foo-bar');
@@ -18,10 +18,10 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->clickSubmit('Login');
 
         //  messaging
-        $this->clickLink('Messages');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/imessage/');
         $this->assertTitle('Seagull Framework :: Messages');
         $this->assertNoUnwantedPattern("/errorContent/");
-        
+
         $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/contact/');
         $this->assertTitle('Seagull Framework :: Contact Manager');
         $this->assertNoUnwantedPattern("/errorContent/");

@@ -1,27 +1,27 @@
 <?php
 
-class ScreensLoadWithoutErrorsTest extends WebTestCase
+class FaqScreensLoadWithoutErrorsTest extends WebTestCase
 {
-    function ScreensLoadWithoutErrorsTest()
+    function FaqScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
     }
 
-    
+
     function testPublicScreens()
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
         $this->assertTitle('Seagull Framework :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
-        
-        $this->clickLink('FAQ');
-        $this->assertTitle('Seagull Framework :: FAQ');
+
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
+        $this->assertTitle('Seagull Framework :: FAQs');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
-    
+
     function testAdminScreens()
     {
         $this->addHeader('User-agent: foo-bar');
@@ -30,8 +30,8 @@ class ScreensLoadWithoutErrorsTest extends WebTestCase
         $this->setField('frmPassword', 'admin');
         $this->clickSubmit('Login');
 
-        $this->clickLink('FAQ');
-        $this->assertTitle('Seagull Framework :: FAQ');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
+        $this->assertTitle('Seagull Framework :: FAQ Manager :: Browse');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

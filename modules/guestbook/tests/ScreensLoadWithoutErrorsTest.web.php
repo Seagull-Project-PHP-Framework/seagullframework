@@ -1,28 +1,28 @@
 <?php
 
-class ScreensLoadWithoutErrorsTest extends WebTestCase
+class GuestBookScreensLoadWithoutErrorsTest extends WebTestCase
 {
-    function ScreensLoadWithoutErrorsTest()
+    function GuestBookScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
     }
 
-    
+
     function testPublicScreens()
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
         $this->assertTitle('Seagull Framework :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
-        
+
         //  guestbook
         $this->get($this->conf['site']['baseUrl'] . '/index.php/guestbook/');
         $this->assertTitle('Seagull Framework :: Welcome to our Guestbook');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
-    
+
     function testAdminScreens()
     {
         $this->addHeader('User-agent: foo-bar');

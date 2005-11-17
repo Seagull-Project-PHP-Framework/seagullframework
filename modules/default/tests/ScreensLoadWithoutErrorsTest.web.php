@@ -1,8 +1,8 @@
 <?php
 
-class ScreensLoadWithoutErrorsTest extends WebTestCase
+class DefaultScreensLoadWithoutErrorsTest extends WebTestCase
 {
-    function ScreensLoadWithoutErrorsTest()
+    function DefaultScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
         $c = &SGL_Config::singleton();
