@@ -243,16 +243,18 @@ class SGL_String
      */
     function translate($key, $filter = false)
     {
-        $trans = $GLOBALS['_SGL']['TRANSLATION'];
-        if (isset($trans[$key])) {
-            $ret = $trans[$key];
-            if ($filter && function_exists($filter)) {
-                $ret = $filter($ret);
+        if (isset($GLOBALS['_SGL']['TRANSLATION'])) {
+            $trans = $GLOBALS['_SGL']['TRANSLATION'];
+            if (isset($trans[$key])) {
+                $ret = $trans[$key];
+                if ($filter && function_exists($filter)) {
+                    $ret = $filter($ret);
+                }
+                return $ret;
+            } else {
+                SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
+                return '>' . $key . '<';
             }
-            return $ret;
-        } else {
-            SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
-            return '>' . $key . '<';
         }
     }
 

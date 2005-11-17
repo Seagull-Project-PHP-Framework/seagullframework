@@ -708,7 +708,12 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  unless we're running the setup wizard
         if (!isset($conf['setup'])) {
             $c = &SGL_Config::singleton();
-            $aModuleConfig = $c->load(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
+            $path = realpath(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
+            if (!$path) {
+                return PEAR::raiseError('Could not read current module\'s conf.ini file',
+                    SGL_ERROR_NOFILE);
+            }
+            $aModuleConfig = $c->load($path);
 
             if ($aModuleConfig) {
                 $c->merge($aModuleConfig);
