@@ -55,16 +55,16 @@ class RndMsgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle         = 'RndMsg Manager :: Browse';
         $this->masterTemplate    = 'masterLeftCol.html';
         $this->template          = 'rndMsg.html';
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->_allowedFileTypes = array(
@@ -155,7 +155,7 @@ class RndMsgMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->template = 'rndMsg.html';
         if ($input->msgUpload) {
             $aLines = $this->file2($_FILES['msgFile']['tmp_name']);
@@ -166,7 +166,7 @@ class RndMsgMgr extends SGL_Manager
         foreach($aLines as $rndmsg) {
             if (trim($rndmsg) != '') {
                 $msg = DB_DataObject::factory('Rndmsg_message');
-                $msg->msg = $rndmsg;
+                $msg->msg = trim($rndmsg);
                 $dbh = $msg->getDatabaseConnection();
                 $msg->rndmsg_message_id = $dbh->nextId($this->conf['table']['rndmsg_message']);
                 $success = ($success && $msg->insert());
@@ -191,7 +191,7 @@ class RndMsgMgr extends SGL_Manager
                 unset($rm);
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . 
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         SGL::raiseMsg('Message(s) successfully removed.');
@@ -205,7 +205,7 @@ class RndMsgMgr extends SGL_Manager
         $query = "  SELECT
                          rndmsg_message_id, msg
                     FROM {$this->conf['table']['rndmsg_message']}";
-        
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
