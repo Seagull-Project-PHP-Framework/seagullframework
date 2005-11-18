@@ -16,6 +16,8 @@
         'Title class' => 'Title class',
         'Body class' => 'Body class',
         'Sections' => 'Sections',
+        'Block Class Name' => 'Block Class Name',
+        'Display Title' => 'Display Title',
         'Order' => 'Order',
         'Position' => 'Position',
         'Block Details' => 'Block Details',
@@ -24,6 +26,7 @@
         'Block successfully added' => 'Block successfully added',
         'Block details successfully updated' => 'Block details successfully updated',
         'The selected block(s) have successfully been deleted' => 'The selected block(s) have successfully been deleted',
+        'There was a problem, block did not validate' => 'There was a problem, block did not validate',
 
         // Errors
         'You must enter a name for your block' => 'You must enter a name for your block',
