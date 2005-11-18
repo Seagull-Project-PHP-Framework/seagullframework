@@ -48,7 +48,7 @@ function canCreateDb()
     $dbName = ($skipDbCreation) ? "/{$aFormValues['name']}" : '';
 
     //  postgres however does not support logins with no db name
-    if ($dbName = '' && ($aFormValues['dbType']['type'] == 'pgsql')) {
+    if ($dbName == '' && ($aFormValues['dbType']['type'] == 'pgsql')) {
         $dbName = '/template1';
     }
 
