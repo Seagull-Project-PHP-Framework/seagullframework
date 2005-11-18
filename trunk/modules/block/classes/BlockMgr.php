@@ -251,6 +251,7 @@ class BlockMgr extends SGL_Manager
             $oBlock = (object)$output->form->getSubmitValue('block');
             $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
             $block->setFrom($oBlock);
+
             // Update record in DB
             $block->update(false, true); // This takes into account block assignments as well
 
@@ -258,6 +259,7 @@ class BlockMgr extends SGL_Manager
             $query = "DELETE FROM {$this->conf['table']['block_role']} WHERE block_id ='" .$oBlock->block_id . "'";
             $dbh->query($query);
             $query = '';
+
             // delete 'all roles' option
             if (count($oBlock->roles) > 2) {
                 foreach ($oBlock->roles as $key => $value) {
@@ -275,9 +277,13 @@ class BlockMgr extends SGL_Manager
                 $dbh->query($query);
             }
 
-            //clear cache so a new cache file is built reflecting changes
+            // clear cache so a new cache file is built reflecting changes
             SGL::clearCache('blocks');
             SGL::raiseMsg('Block details successfully updated');
+            SGL_HTTP::redirect(array());
+
+        } elseif ($this->submitted) {
+            SGL::raiseMsg('There was a problem, block did not validate');
             SGL_HTTP::redirect(array());
         }
     }

@@ -351,21 +351,19 @@ class SGL_String
      }
 
     /**
-     * Returns a shortened version of text string.
+     * Returns a shortened version of text string resolved by word boundaries.
      *
      * @access  public
      * @param   string  $str    Text to be shortened
-     * @param   integer $limit  Number of characters to cut to
+     * @param   integer $limit  Number of words to cut to
      * @param   string  $appendString  Trailing string to be appended
      * @return  string  $processedString    Correctly shortened text
-     * @author  Lukas Feiler <lukas.feiler@endlos.at>
      */
     function summarise($str, $limit=50, $appendString=' ...')
     {
-         if (strlen($str) > $limit) {
-            $str = substr($str, 0, $limit) . $appendString;
-         }
-         return $str;
+        $words = explode(' ', $str);
+        $sliced = (count($words > $limit)) ? array_slice($words, 0, $limit) : $words;
+        return implode(' ', $sliced) . $appendString;
     }
 
     /**

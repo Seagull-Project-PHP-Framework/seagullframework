@@ -60,13 +60,13 @@ class BlockForm
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        $dbh = & SGL_DB::singleton();        
-        
+        $dbh = & SGL_DB::singleton();
+
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
         require_once 'DB/DataObject.php';
         $sectionList = DB_DataObject::factory('Section');
-        $sectionList->whereAdd('parent_id = 0');        
+        $sectionList->whereAdd('parent_id = 0');
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
         if ($result > 0) {
@@ -114,20 +114,20 @@ class BlockForm
         if ($this->action == 'edit' ) {
             // Create a label for ID
             $this->form->addElement('hidden', 'block[block_id]', $this->data['block[block_id]']);
-            $this->form->addElement('static', 'block[id_label]', 
+            $this->form->addElement('static', 'block[id_label]',
                 SGL_String::translate('ID'), $this->data['block[block_id]']);
         }
         // Field name
-        $this->form->addElement('text', 'block[name]', SGL_String::translate('Name') );
+        $this->form->addElement('text', 'block[name]', SGL_String::translate('Block Class Name') );
         // Field title
-        $this->form->addElement('text', 'block[title]', SGL_String::translate('Title') );
+        $this->form->addElement('text', 'block[title]', SGL_String::translate('Display Title') );
         // Field title_class
         $this->form->addElement('text', 'block[title_class]', SGL_String::translate('Title class') );
         // Field bgnd_colour
         $this->form->addElement('text', 'block[body_class]', SGL_String::translate('Body class')) ;
         // Field sections
         $this->form->addElement('select', 'block[sections]', SGL_String::translate('Sections'), $this->sections );
-        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Can view'), $this->roles);        
+        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Can view'), $this->roles);
         $roles = &$this->form->getElement('block[roles]');
         $roles->setMultiple(true);
         $roles->setSize(5);
@@ -157,7 +157,7 @@ class BlockForm
 
         // Buttons
         $buttons[] = HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );
-        $buttons[] = HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'), 
+        $buttons[] = HTML_QuickForm::createElement('button', 'cancel', SGL_String::translate('Cancel'),
             array( 'onClick' => "document.location.href='".SGL_URL::makeLink('list', 'block', 'block')."'" ) );
         $this->form->addGroup($buttons);
 
@@ -167,7 +167,7 @@ class BlockForm
         return $this->form;
     }
 
-    function classAvailable($element, $compareTo) 
+    function classAvailable($element, $compareTo)
     {
         if ($element) {
             $blockClass = $this->form->getElementValue('block[name]');
