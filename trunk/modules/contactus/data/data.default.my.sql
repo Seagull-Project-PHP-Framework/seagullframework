@@ -13,12 +13,6 @@ SELECT @permissionId := permission_id FROM permission WHERE name = 'contactusmgr
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
 
 #member roles perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_delete';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_insert';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'contactusmgr_list';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'contactusmgr_send';

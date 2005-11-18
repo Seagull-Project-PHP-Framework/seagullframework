@@ -20,7 +20,7 @@ class SGL_Array
             $clean = array_filter($elem);
         }
         return $clean;
-    }    
+    }
 }
 
 /**
@@ -34,10 +34,10 @@ class SGL_Date
 {
     /**
      * Returns current time in YYYY-MM-DD HH:MM:SS format.
-     * 
+     *
      * GMT format is best for logging system events, otherwise locale offset
      * will be most helpful to users.
-     * 
+     *
      * @access public
      * @static
      * @param boolean $gmt       is time GMT or locale offset
@@ -54,7 +54,7 @@ class SGL_Date
         }
         return $instance;
     }
-        
+
     /**
      * Converts date array into MySQL datetime format.
      *
@@ -73,7 +73,7 @@ class SGL_Date
             $hour   = (array_key_exists('hour',$aDate))? $aDate['hour'] : '00';
             $minute = (array_key_exists('minute',$aDate))? $aDate['minute'] : '00';
             $second = (array_key_exists('second',$aDate))? $aDate['second'] : '00';
-            
+
             if (empty($month) && empty($year) && empty($day)) {
                 return null;
             } else {
@@ -120,9 +120,11 @@ class SGL_Date
             $date = & new Date($date);
             if ($_SESSION['aPrefs']['dateFormat'] == 'FR') {
                 $output = $date->format('%d %B %Y, %H:%M');
+
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
 				// Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
+
             } else {
                 //  else UK and US
                 $output = $date->format('%B %d, %Y %H:%M');
@@ -183,7 +185,7 @@ class SGL_Date
         $monthOptions = '';
         if( $noExpire )
             $monthOptions.="<option value=\"\"> - - </option>\n";
-            
+
         if (empty($selected) && $selected != null) {
             $selected = date('m',time());
         }
@@ -216,7 +218,7 @@ class SGL_Date
         $day_options = '';
         if( $noExpire )
             $day_options.="<option value=\"\"> - - </option>\n";
-       
+
         for ($i = 1; $i <= 31; $i++) {
             if ($i < 10) {
                 $dval = '0' . $i;
@@ -248,8 +250,8 @@ class SGL_Date
         $year_options = '';
         if( $noExpire )
             $year_options.="<option value=\"\"> - - </option>\n";
-        
-        
+
+
         $cur_year = date('Y',time());
         $start_year = $cur_year;
         if (!empty($selected)) {
@@ -380,7 +382,7 @@ class SGL_Date
             $checked = ($aDate == null) ? 'checked' : '';
             $html.='<input type="checkbox" id="'.$sFormName.'_no_expire" onClick="time_select_reset(\''.$sFormName.'\');" '.$checked.'> '.SGL_Output::translate('No expire');
         }
-        
+
         return $html;
     }
 }
@@ -414,7 +416,7 @@ class SGL_Inflector
         }
         return $ret;
     }
-    
+
     /**
      * Returns true if manager name is the same of module name, ie, index.php/faq/faq/.
      *
@@ -433,7 +435,7 @@ class SGL_Inflector
         }
         return $ret;
     }
-    
+
     /**
      * Determine if a simplified notation is being used.
      *
@@ -449,15 +451,15 @@ class SGL_Inflector
     {
         $fullMgrName = SGL_Inflector::getManagerNameFromSimplifiedName(
             $aParsedUri['managerName']);
-        
+
         //  compensate for case-sensitivity
         $corrected = SGL_Inflector::caseFix($fullMgrName, true);
         $path = dirname(__FILE__) .'/../../modules/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
-        
-        //  if the file exists, mgr name is valid and has not been omitted 
+
+        //  if the file exists, mgr name is valid and has not been omitted
         return !file_exists($path);
     }
-    
+
     /**
      * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
      *
@@ -472,7 +474,7 @@ class SGL_Inflector
         }
         return ucfirst($name);
     }
-    
+
     /**
      * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
      *
@@ -485,18 +487,18 @@ class SGL_Inflector
         if (substr($name, -4) == '.php') {
             $name = substr($name, 0, -4);
         }
-        
+
         //  strip 'Mgr' if exists
         if (strtolower(substr($name, -3)) == 'mgr') {
             $name = substr($name, 0, -3);
         }
-        return strtolower($name);      
+        return strtolower($name);
     }
-    
+
     function getTitleFromCamelCase($camelCaseWord)
-    {   
+    {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
-            return $camelCaseWord;   
+            return $camelCaseWord;
         }
         $ret = '';
         for ($x = 0; $x < strlen($camelCaseWord); $x ++) {
@@ -507,7 +509,7 @@ class SGL_Inflector
         }
         return ucfirst($ret);
     }
-    
+
     function isCamelCase($str)
     {
         //  ensure no non-alpha chars
@@ -521,13 +523,13 @@ class SGL_Inflector
             }
         }
     }
-    
+
     /**
      * Makes up for case insensitive classnames in php4 with get_class().
      *
      * @access   public
-     * @static    
-     * @param    string     $str    Classname  
+     * @static
+     * @param    string     $str    Classname
      * @param    boolean    $force  Force the operation regardless of php version
      * @return   mixed              Either correct case classname or false
      */

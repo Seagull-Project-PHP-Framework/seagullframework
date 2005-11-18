@@ -17,6 +17,12 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr_sendAlert', '', @moduleId);
 
 #member role perms
+SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_delete';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_insert';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
+SELECT @permissionId := permission_id FROM permission WHERE name = 'contactmgr_list';
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_compose';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_delete';
