@@ -66,7 +66,7 @@ class SGL_Output
     {
         return SGL_String::translate($key, $filter);
     }
-    
+
     function get($key)
     {
         return $this->aProps[$key];
@@ -84,6 +84,7 @@ class SGL_Output
     function generateSelect($aValues, $selected = null, $multiple = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (!is_array($aValues)) {
             SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -121,6 +122,7 @@ class SGL_Output
     function generateCheckboxList($hElements, $aChecked, $groupName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (!is_array($hElements) || !is_array($aChecked)) {
             SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
                 SGL_ERROR_INVALIDARGS);
@@ -147,6 +149,7 @@ class SGL_Output
     function generateCheckbox($name, $value, $checked)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $isChecked = $checked ? ' checked' : '';
         $html = "<input class='noBorder' type='checkbox' name='$name' " .
             "id='$name' value='$value' $isChecked><label for='$name'>$value</label><br />\n";
@@ -164,6 +167,7 @@ class SGL_Output
     function generateRadioPair($radioName, $checked)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $radioString = '';
         if ($checked) {
             $yesChecked = ' checked';
@@ -285,6 +289,7 @@ class SGL_Output
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $message = SGL_HTTP_Session::get('message');
         if (isset($message) && $message != '') {
             SGL_HTTP_Session::remove('message');
@@ -353,9 +358,13 @@ class SGL_Output
 
     function outputBody()
     {
-        $body = new HTML_Template_Flexy();
-        $body->compile($this->template);
-        $body->outputObject($this);
+        $conf = $this->aProps['manager']->conf;
+
+        if ($conf['site']['templateEngine'] == 'flexy') {
+            $body = new HTML_Template_Flexy();
+            $body->compile($this->template);
+            $body->outputObject($this);
+        }
     }
 
     /**
