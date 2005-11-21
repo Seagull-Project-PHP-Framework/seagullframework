@@ -79,6 +79,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbProtocol'  => array('protocol' => 'unix'),
             'dbType'  => array('type' => 'mysql_SGL'),
             'dbPort'  => array('port' => 3306),
+            'dbName'  => 'not required for MySQL',
             ));
 
         //  type
@@ -103,7 +104,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
 
         //  port
         unset($radio);
-        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (Mysql default)", 3306);
+        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (MySQL default)", 3306);
         $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
         $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
         $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
@@ -113,6 +114,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         //  credentials
         $this->addElement('text',  'user',    'Database username: ');
         $this->addElement('password', 'pass', 'Database password: ');
+        $this->addElement('text',  'dbName',    'Database name: ');
         $this->addRule('user', 'Please specify the db username', 'required');
 
         //  test db connect

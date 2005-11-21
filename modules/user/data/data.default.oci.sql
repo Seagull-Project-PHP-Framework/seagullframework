@@ -157,6 +157,9 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'userpreferencemgr_editAll'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'userpreferencemgr_updateAll'));
 
+-- add 'nobody' user
+INSERT INTO usr VALUES (0, 1, 0, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+
 --
 -- Dumping data for table user_preference
 --
@@ -175,14 +178,14 @@ INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 -- Dumping data for table organisation
 --
 
-INSERT INTO organisation  VALUES (1, 0, 1, 1, 2, 1, 1, 2, 0, 'default org', 'test', 'aasdfasdf', '', '', 'asdfadf', 'AL', 'BJ', '55555', '325 652 5645', 'http:--example.com', 'test@test.com', '2004-01-12 16:13:21', NULL, '2004-06-23 10:44:52', 1);
-INSERT INTO organisation  VALUES (2, 0, 2, 1, 2, 2, 1, 2, 0, 'sainsburys', 'test', 'aasdfasdf', '', '', 'asdfadf', 'AL', 'BJ', 'asdfasdf', '325 652 5645', 'http:--sainsburys.com', 'info@sainsburys.com', '2004-01-12 16:13:21', NULL, '2004-06-23 10:44:56', 1);
+--INSERT INTO organisation  VALUES (1, 0, 1, 1, 2, 1, 1, 2, 0, 'default org', 'test', 'aasdfasdf', '', '', 'asdfadf', 'AL', 'BJ', '55555', '325 652 5645', 'http:--example.com', 'test@test.com', '2004-01-12 16:13:21', NULL, '2004-06-23 10:44:52', 1);
+--INSERT INTO organisation  VALUES (2, 0, 2, 1, 2, 2, 1, 2, 0, 'sainsburys', 'test', 'aasdfasdf', '', '', 'asdfadf', 'AL', 'BJ', 'asdfasdf', '325 652 5645', 'http:--sainsburys.com', 'info@sainsburys.com', '2004-01-12 16:13:21', NULL, '2004-06-23 10:44:56', 1);
 
 --
 -- Creating sequences
 -- sequence must start on the first free record id
 --
 
-CREATE SEQUENCE organisation_seq START WITH 3;
+--CREATE SEQUENCE organisation_seq START WITH 3;
 CREATE SEQUENCE role_seq START WITH 3;
 CREATE SEQUENCE user_preference_seq START WITH 9;
