@@ -39,15 +39,15 @@
 // +---------------------------------------------------------------------------+
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
-require_once dirname(__FILE__)  . '/Registry.php';    
-require_once dirname(__FILE__)  . '/Request.php';    
-require_once dirname(__FILE__)  . '/Other.php';    
+require_once dirname(__FILE__)  . '/Registry.php';
+require_once dirname(__FILE__)  . '/Request.php';
+require_once dirname(__FILE__)  . '/Other.php';
 require_once dirname(__FILE__)  . '/../SGL.php';
-require_once dirname(__FILE__)  . '/Config.php';    
-require_once dirname(__FILE__)  . '/Tasks/Process.php';    
-require_once dirname(__FILE__)  . '/Tasks/Setup.php';    
-require_once dirname(__FILE__)  . '/TaskRunner.php';  
-    
+require_once dirname(__FILE__)  . '/Config.php';
+require_once dirname(__FILE__)  . '/Tasks/Process.php';
+require_once dirname(__FILE__)  . '/Tasks/Setup.php';
+require_once dirname(__FILE__)  . '/TaskRunner.php';
+
 /**
  * Application controller.
  *
@@ -56,29 +56,50 @@ require_once dirname(__FILE__)  . '/TaskRunner.php';
  * @version $Revision: 1.49 $
  */
 class SGL_AppController
-{  
+{
+    function init()
+    {
+        $c = &SGL_Config::singleton();
+
+        $init = new SGL_TaskRunner();
+        $init->addData($c->getAll());
+        $init->addTask(new SGL_Task_SetupPaths());
+        $init->addTask(new SGL_Task_SetupConstants());
+        $init->addTask(new SGL_Task_ModifyIniSettings());
+        $init->addTask(new SGL_Task_SetBaseUrl());
+        $init->addTask(new SGL_Task_SetGlobals());
+        $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_EnsureBC());
+        $init->main();
+        define('SGL_INITIALISED', true);
+    }
+
     /**
      * Main invocation, init tasks plus main process.
      *
      */
     function run()
-    {       
+    {
+        if (!defined('SGL_INITIALISED')) {
+            SGL_AppController::init();
+        }
+
         //  get config singleton
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         //  resolve value for $_SERVER['PHP_SELF'] based in host
         SGL_URL::resolveServerVars($conf);
-        
+
         //  get current url object
         $urlHandler = $conf['site']['urlHandler'];
         $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
 
         //  assign to registry
-        $input = &SGL_Registry::singleton();        
-        $input->setCurrentUrl($url);        
+        $input = &SGL_Registry::singleton();
+        $input->setCurrentUrl($url);
         $input->setRequest($req = SGL_Request::singleton());
-        
+
         $process =  new SGL_Process_Init(
                     new SGL_Process_DiscoverClientOs(
                     new SGL_Process_ResolveManager(
@@ -92,7 +113,7 @@ class SGL_AppController
                     new SGL_Process_DetectBlackListing(
                     new SGL_MainProcess()
                    )))))))))));
-                   
+
         $process->process($input);
     }
 
@@ -112,7 +133,7 @@ class SGL_AppController
         if (isset($pageName)) {
 
             //  pagename, isCurrent, param
-            $aPages[] = array(  'pageName'  => $pageName, 
+            $aPages[] = array(  'pageName'  => $pageName,
                                 'current'   => false,
                                 'param'     => $param);
         }
@@ -151,7 +172,7 @@ class SGL_OutputRendererStrategy
      *
      */
     function initEngine() {}
-    
+
     /**
      * Abstract render method.
      *
@@ -171,41 +192,41 @@ define('SGL_FLEXY_COMPILER',            'Standard');
 define('SGL_FLEXY_VALID_FNS',           'include');
 define('SGL_FLEXY_GLOBAL_FNS',          true);
 define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true
-        
+
 class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
 {
-    
+
     /**
      * Director for html Flexy renderer.
      *
      * @param SGL_View $view
      * @return string   rendered html output
      */
-    function render(/*SGL_View*/ &$view) 
+    function render(/*SGL_View*/ &$view)
     {
         //  invoke html view specific post-process tasks
         $view->postProcess($view);
-        
+
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
-        
+
         //  prepare flexy object
-        require_once 'HTML/Template/Flexy.php';        
+        require_once 'HTML/Template/Flexy.php';
         $flexy = $this->initEngine($view->data);
-        
+
         $ok = $flexy->compile($view->data->masterTemplate);
 
         //  if some Flexy 'elements' exist in the output object, send them as
         //  2nd arg to Flexy::bufferedOutputObject()
-        $elements = (   isset($view->data->flexyElements) 
+        $elements = (   isset($view->data->flexyElements)
                   && is_array($view->data->flexyElements))
-                ? $view->data->flexyElements 
+                ? $view->data->flexyElements
                 : array();
 
         $data = $flexy->bufferedOutputObject($view->data, $elements);
-        
+
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         if ($conf['site']['outputBuffering']) {
@@ -213,7 +234,7 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
         }
         return $data;
     }
-    
+
     /**
      * Initialise Flexy options.
      *
@@ -245,13 +266,13 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
             'globals'           => true,
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
         );
-        
+
         $ok = $this->setupPlugins($data, $options);
-        
+
         $flexy = & new HTML_Template_Flexy();
         return $flexy;
     }
-    
+
     /**
      * Setup Flexy plugins if specified.
      *
@@ -261,7 +282,7 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
      */
     function setupPlugins(&$data, &$options)
     {
-        //  Configure Flexy to use SGL ModuleOutput Plugin 
+        //  Configure Flexy to use SGL ModuleOutput Plugin
         //   If an Output.php file exists in module's dir
         $customOutput = SGL_MOD_DIR . '/' . $data->moduleName . '/classes/Output.php';
         if (is_readable($customOutput)) {
@@ -279,7 +300,7 @@ class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
 /**
  * Container for output data and renderer strategy.
  *
- * @abstract 
+ * @abstract
  *
  */
 class SGL_View
@@ -290,14 +311,14 @@ class SGL_View
 	 * @var SGL_Output
 	 */
 	var $data;
-	
+
     /**
      * Reference to renderer strategy.
      *
      * @var SGL_OutputRendererStrategy
      */
     var $rendererStrategy;
-    
+
     /**
      * Constructor.
      *
@@ -308,27 +329,27 @@ class SGL_View
     function SGL_View($data, $rendererStrategy)
     {
     	$this->data = $data;
-    	$this->rendererStrategy = $rendererStrategy;	
+    	$this->rendererStrategy = $rendererStrategy;
     }
-    
+
     /**
      * Post processing tasks specific to view type.
      *
-     * @abstract 
+     * @abstract
      * @return boolean
      */
     function postProcess() {}
-    
-    
+
+
     /**
      * Delegates rendering strategy based on view.
      *
      * @return string   Rendered output data
      */
-    function render() 
+    function render()
     {
     	return $this->rendererStrategy->render($this);
-    }  
+    }
 }
 
 class SGL_HtmlView extends SGL_View
@@ -344,16 +365,16 @@ class SGL_HtmlView extends SGL_View
     {
     	parent::SGL_View($data, $outputRendererStrategy);
     }
-    
+
     function postProcess(/*SGL_View*/ &$view)
-    {       
+    {
         $process =  new SGL_Process_SetupNavigation(
                     new SGL_Process_SetupBlocks(
                     new SGL_Process_SetupWysiwyg(
                     new SGL_Process_GetPerformanceInfo(
                     new SGL_PostProcess()
                    ))));
-                   
+
         $process->process($view);
     }
 }
@@ -361,7 +382,7 @@ class SGL_HtmlView extends SGL_View
 /**
  * Abstract request processor.
  *
- * @abstract 
+ * @abstract
  *
  */
 class SGL_ProcessRequest
@@ -372,12 +393,12 @@ class SGL_ProcessRequest
 /**
  * Decorator.
  *
- * @abstract 
+ * @abstract
  */
 class SGL_DecorateProcess extends SGL_ProcessRequest
 {
     var $processRequest;
-    
+
     function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
     {
         $this->processRequest = $pr;

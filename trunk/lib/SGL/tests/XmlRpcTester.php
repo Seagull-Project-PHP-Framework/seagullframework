@@ -1,19 +1,7 @@
 <?php
 //  init
-require_once dirname(__FILE__) . '/../Install.php';
-require_once dirname(__FILE__) . '/../Task.php';
-require_once dirname(__FILE__) . '/../Config.php';
-require_once dirname(__FILE__) . '/../Url.php';
-require_once dirname(__FILE__) . '/../TaskRunner.php';
-require_once dirname(__FILE__) . '/../Tasks/Setup.php';
-require_once dirname(__FILE__) . '/../Tasks/Install.php';
-
-$init = new SGL_TaskRunner();
-$init->addTask(new SGL_Task_SetupPaths());
-$init->addTask(new SGL_Task_SetupConstants());
-$init->addTask(new SGL_Task_SetBaseUrlMinimal());
-$init->addTask(new SGL_Task_SetGlobals());
-$init->main();
+require_once dirname(__FILE__)  . '/../AppController.php';
+SGL_AppController::init();
 
 require_once SGL_LIB_DIR . '/SGL/XML/RPC/Remote.php';
 
