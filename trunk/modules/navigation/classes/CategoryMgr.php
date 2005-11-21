@@ -146,8 +146,10 @@ class CategoryMgr extends SGL_Manager
                $export .= $this->_genCsvLine($v);
            }
         } else {
-            $export = '';
             //TODO: optimize this...
+            $header = array('category_id', 'root_id', 'level_id', 'parent_id', 'labels...');
+            $export = $this->_genCsvLine($header);
+
             foreach ($categoryTree as $v){
                unset ($v['images']);
                unset ($v['perms']);
@@ -157,13 +159,13 @@ class CategoryMgr extends SGL_Manager
 
                $spaces = ',';
                for($i = 1; $i < (int)$v['level_id']; $i++){
-                echo $spaces .= '"",';
+                  $spaces .= '"",';
                }
                $export .= "\"{$v['category_id']}\",\"{$v['root_id']}\",\"{$v['level_id']}\",\"{$v['parent_id']}\"";
                $export .= "{$spaces}\"{$v['label']}\"\n";
            }
         }
-        $output->export = $export;
+        $output->export = $export; 
         $output->action = 'export';
     }
 
@@ -211,7 +213,10 @@ class CategoryMgr extends SGL_Manager
             //load category
             if (!$this->_category->load($input->category_id)) {
                //$input->category_id == 0 and we are adding root category.
-               $this->_category->create($input->category_id);
+               //if we want to add Root category we must make $values['parent_id'] = 0;
+               $values['parent_id'] = 0;
+
+               $this->_category->create($values);
                $output->template = 'categoryAdd.html';
             } else {
                $output->categoryTree = $this->_category->getTree();
@@ -258,8 +263,7 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $values = (array) $input->category;
-        //dumpr($input->category);
-        //die();
+
         if ($values['original_parent_id'] = 0) {
             $values['parent_id'] = 0;
         }
