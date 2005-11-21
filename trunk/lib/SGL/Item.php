@@ -37,7 +37,7 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
-        
+
 /**
  * Acts as a wrapper for content objects.
  *
@@ -50,79 +50,79 @@ class SGL_Item
 {
     /**
      * Item ID
-     * 
+     *
      * @access	public
      * @var		int
      */
     var $id;
-    
+
     /**
      * User ID of user to last update item
-     * 
+     *
      * @access	public
      * @var		int
      */
     var $lastUpdatedById;
-    
+
     /**
      * Timestamp an Item was created
-     * 
+     *
      * @access 	public
      * @var		mixed
      */
     var $dateCreated;
-    
+
     /**
      * Timestamp of last update for an Item
-     * 
+     *
      * @access	public
      * @var		mixed
      */
     var $lastUpdated;
-    
+
     /**
      * Timestamp when an Item becomes available
-     * 
+     *
      * @access	public
      * @var		mixed
      */
     var $startDate;
-    
+
     /**
      * Timestamp when an Item expires
-     * 
+     *
      * @access 	public
      * @var		mixed
      */
     var $expiryDate;
-    
+
     /**
      * Item Type Name
-     * 
+     *
      * @access	public
      * @var		string
      */
     var $type;
-    
+
     /**
      * Item Type ID
-     * 
+     *
      * @access	public
      * @var		int
      */
     var $typeID;
-    
+
     /**
      * Category ID
-     * 
+     *
      * @access 	public
      * @var		int
      */
     var $catID;
-    
+
     /**
      * Status ID
-     * 
+     *
      * @access 	pubic
      * @var		int
      */
@@ -130,7 +130,7 @@ class SGL_Item
 
     /**
      * Constructor
-     * 
+     *
      * @access	public
      * @return	void
      */
@@ -145,7 +145,7 @@ class SGL_Item
 
     /**
      * Retrieves an Item's Meta Data. Sets the corrisponding class variables.
-     * 
+     *
      * @access	private
      * @param	int		$itemID		ItemID
      * @return	void
@@ -178,7 +178,7 @@ class SGL_Item
         $result = $dbh->query($query);
         if (!DB::isError($result)) {
             $itemObj = $result->fetchRow();
-            
+
             //  catch null results
             if (is_null($itemObj)) {
                 return false;
@@ -197,28 +197,28 @@ class SGL_Item
             $this->set('catID', $itemObj->category_id);
             $this->set('statusID', $itemObj->status);
         } else {
-            SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__, 
+            SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__,
                 SGL_ERROR_NODATA);
         }
     }
 
     /**
      * Inserts Meta Items into item table.
-     * 
-     * @access 	public 
+     *
+     * @access 	public
      * @return 	int		$id	Item ID
      */
     function addMetaItems()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
-        $conf = $c->getAll(); 
+        $conf = $c->getAll();
 
-        $catID = $this->catID ? $this->catID : 1;        
+        $catID = $this->catID ? $this->catID : 1;
         $id = $dbh->nextId($conf['table']['item']);
-        $query = "  
+        $query = "
             INSERT INTO {$conf['table']['item']}(
                 item_id,
                 created_by_id,
@@ -248,8 +248,8 @@ class SGL_Item
 
     /**
      * Inserts Data Items into item_addtion table.
-     * 
-     * @access 	public 
+     *
+     * @access 	public
      * @param	int		$parentID	Parent ID
      * @param	int		$itemID		Item ID
      * @param	mixed	$itemValue	Item Value
@@ -260,8 +260,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
-        $conf = $c->getAll(); 
-                
+        $conf = $c->getAll();
+
         for ($x=0; $x < count($itemID); $x++) {
             $id = $dbh->nextId($conf['table']['item_addition']);
             if ($itemValue[$x] == '')
@@ -283,7 +283,7 @@ class SGL_Item
 
     /**
      * Inserts Item Body into item_addition table.
-     * 
+     *
      * @access	public
      * @param	int		$parentID	Parent ID
      * @param	int		$itemID		Item ID
@@ -296,7 +296,7 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $id = $dbh->nextId($conf['table']['item_addition']);
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
@@ -316,7 +316,7 @@ class SGL_Item
 
     /**
      * Update Meta Items in item table.
-     * 
+     *
      * @access	public
      * @return	voide
      */
@@ -326,8 +326,8 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
-        $query = "  
+
+        $query = "
             UPDATE {$conf['table']['item']} SET
                 updated_by_id = $this->lastUpdatedById,
                 last_updated = " . $dbh->quote($this->lastUpdated) . ",
@@ -342,7 +342,7 @@ class SGL_Item
 
     /**
      * Update Data Items in item_addtiion table.
-     * 
+     *
      * @access	public
      * @param	int		$itemID		Item ID
      * @param	mixed	$itemValue	Item Value
@@ -354,7 +354,7 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-                
+
         for ($x=0; $x < count($itemID); $x++) {
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No text entered');
@@ -374,7 +374,7 @@ class SGL_Item
 
     /**
      * Update a Data Item's Body in item_addition
-     * 
+     *
      * @access	public
      * @param	int		$itemID		Item ID
      * @param	mixed	$itemValue	Item Value
@@ -386,7 +386,7 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
         }
@@ -404,7 +404,7 @@ class SGL_Item
     /**
      * Deletes an Item from the item and item_addition table. If safe delete
      * is enabled only updates the items status to 0.
-     * 
+     *
      * @access 	public
      * @param	array     $aItems	Hash of IDs to delete.
      * @return	void
@@ -441,11 +441,11 @@ class SGL_Item
      * Builds a HTML form containing the data from the item_addition table. The
      * input types are built using the data in the item_type and
      * item_type_mapping tables.
-     * 
+     *
      * @access	public
      * @param	int		$itemID			Item ID
      * @param   int     $type           data type to return, can be SGL_RET_STRING
-     *                                  or SGL_RET_ARRAY     
+     *                                  or SGL_RET_ARRAY
      * @return	mixed	$fieldsString	HTML Form
      */
     function getDynamicContent($itemID, $type = SGL_RET_STRING)
@@ -454,12 +454,12 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition,
                     itm.field_type, itm.item_type_mapping_id
             FROM    {$conf['table']['item_addition']} ia, {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $itemID
             ORDER BY itm.item_type_mapping_id
@@ -467,20 +467,20 @@ class SGL_Item
         $result = $dbh->query($query);
 
         switch ($type) {
-            
+
         case SGL_RET_ARRAY:
             $aFields = array();
             while (list($fieldID, $fieldName, $fieldValue, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-                    $aFields[ucfirst($fieldName)] = 
+                    $aFields[ucfirst($fieldName)] =
                         $this->generateFormFields(
                         $fieldID, $fieldName, $fieldValue, $fieldType);
             }
             $res = $aFields;
-                       
-        case SGL_RET_STRING: 
+
+        case SGL_RET_STRING:
         default:
-        
+
             //  display dynamic form fields (changed default object output to standard array
             $fieldsString = '';
             while (list($fieldID, $fieldName, $fieldValue, $fieldType)
@@ -488,7 +488,7 @@ class SGL_Item
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $fieldID, $fieldName, $fieldValue, $fieldType) 
+                                          $fieldID, $fieldName, $fieldValue, $fieldType)
                                         . "</td>\n";
                 $fieldsString .= "</tr>\n";
             }
@@ -500,7 +500,7 @@ class SGL_Item
     /**
      * Builds a HTML form with the input types built using the data in the
      * item_type and item_type_mapping tables.
-     * 
+     *
      * @access  public
      * @param   int   	$typeID			Item Type ID
      * @param   int     $type           data type to return, can be SGL_RET_STRING
@@ -512,14 +512,14 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!is_numeric($typeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
         //  get template specific form fields
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $query = "
             SELECT  itm.item_type_mapping_id, itm.field_name, itm.field_type
             FROM    {$conf['table']['item_type_mapping']} itm
@@ -529,7 +529,7 @@ class SGL_Item
         $result = $dbh->query($query);
 
         switch ($type) {
-            
+
         case SGL_RET_ARRAY:
             $aFields = array();
             while (list($itemMappingID, $fieldName, $fieldType)
@@ -544,12 +544,12 @@ class SGL_Item
         case SGL_RET_STRING:
             //  display dynamic form fields (changed default object output to standard array)
             $fieldsString = '';
-            while (list($itemMappingID, $fieldName, $fieldType) 
+            while (list($itemMappingID, $fieldName, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) . "</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $itemMappingID, $fieldName, null, $fieldType) 
+                                          $itemMappingID, $fieldName, null, $fieldType)
                                         . "</td>\n";
                 $fieldsString .= "</tr>\n";
             }
@@ -561,7 +561,7 @@ class SGL_Item
     /**
      * Generates the form fields from the item_type_mapping table for the
      * methods getDynamicContent() and getDynamicFields.
-     * 
+     *
      * @access	public
      * @param	int		$fieldID	Field ID
      * @param	string	$fieldName	Field Name
@@ -574,27 +574,27 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' name='frmFieldName[]' value='$fieldValue' size='75'>";
-            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID'";
+            $formHTML = "<input type='text' name='frmFieldName[]' value='$fieldValue' size='75' />";
+            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 1:     // field type = textarea paragraph
             $formHTML = "<textarea name='frmFieldName[]' rows='10' cols='60'>$fieldValue</textarea>";
-            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID'";
+            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 2:     // field type = html paragraph
             $formHTML = "<textarea id='frmBodyName' name='frmBodyName' cols='75' rows='20'>$fieldValue</textarea>";
-            $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID'";
+            $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID' />";
             break;
         }
         return $formHTML;
     }
 
-    /**	
+    /**
      * Updates an Items Status (delete, approve, publish, archive) in the item
      * table.
-     * 
+     *
      * @access	public
      * @param	string	Item Status
      * @return	void
@@ -602,11 +602,11 @@ class SGL_Item
     function changeStatus($status)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
-        $conf = $c->getAll();        
-        
+        $conf = $c->getAll();
+
         switch($status) {
         case 'delete':
                //   mark item as deleted
@@ -650,7 +650,7 @@ class SGL_Item
     /**
      * Retierves an Item's Meta and Data items and generates the output using
      * the method generateItemOutput().
-     * 
+     *
      * @access	public
      * @param	boolean	$bPublished	Item published
      * @return	mixed	$html		HTML Output
@@ -661,13 +661,13 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition
-            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia,
                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     i.item_id = ia.item_id
             AND     ia.item_id = $this->id
@@ -684,7 +684,7 @@ class SGL_Item
             }
             return $html;
         } else {
-            return SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__, 
+            return SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__,
                 SGL_ERROR_NODATA);
         }
     }
@@ -692,9 +692,9 @@ class SGL_Item
     /**
      * Retierves and returns an array containing an an Item's Meta and Data
      * items.
-     * 
+     *
      * @access  public
-     * @return  array	$html          
+     * @return  array	$html
      */
     function manualPreview()
     {
@@ -702,11 +702,11 @@ class SGL_Item
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
             FROM    {$conf['table']['item_addition']} ia, {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $this->id
             ORDER BY itm.item_type_mapping_id
@@ -721,15 +721,15 @@ class SGL_Item
 
     /**
      * Generates the output for an Item using the template defined below.
-     * 
+     *
      * @access	public
      * @param	int		$fieldID		Field ID
      * @param	string	$fieldName		Field Name
      * @param	mixed	$fieldValue 	Field Value
      * @param	int		$itemTypeID		Item Type ID
-     * @return	array	$outputHTML		
+     * @return	array	$outputHTML
      */
-    function generateItemOutput($fieldID, $fieldName, $fieldValue, $itemTypeID) 
+    function generateItemOutput($fieldID, $fieldName, $fieldValue, $itemTypeID)
     {
         switch ($itemTypeID) {
         case 2:                //   template type = HTML article
@@ -776,7 +776,7 @@ class SGL_Item
 
     /**
      * Sets an Item's Meta Data value
-     * 
+     *
      * @access	public
      * @param	string	$attributeName
      * @param	mixed	$attributeValue
@@ -789,7 +789,7 @@ class SGL_Item
 
     /**
      * Retrieves an Item's Meta Data value
-     * 
+     *
      * @access	public
      * @param	string	$attribute
      * @return	mixed	$this->attribute
@@ -801,12 +801,12 @@ class SGL_Item
 
     /**
      * Retrieve a list of Items by CatID
-     * 
+     *
      * @access	public
      * @param	int		$catID
      * @param	int		$dataTypeID
      * @param	int		$mostRecentArticleID
-     * @return	array	$aArticleList			
+     * @return	array	$aArticleList
      * @see		retrievePaginated()
      */
     function getItemListByCatID($catID, $dataTypeID, $mostRecentArticleID)
@@ -816,7 +816,7 @@ class SGL_Item
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
         $aArticleList = $aResult['data'];
-        
+
         //  get most recent article, if array is non-empty,
         //  only if none has been passed from 'more articles' list
         if (count($aArticleList)) {
@@ -829,7 +829,7 @@ class SGL_Item
 
     /**
      * Retrieve an Items Meta and Data details.
-     * 
+     *
      * @access	public
      * @param	int		$itemID		Item ID
      * @param	boolean	$bPublished	Item Published
@@ -844,8 +844,8 @@ class SGL_Item
         if ($itemID) {
             $item = & new SGL_Item($itemID);
             if (is_null($item->id)) {
-                return SGL::raiseError('No article found for that ID', 
-                    SGL_ERROR_NODATA); 
+                return SGL::raiseError('No article found for that ID',
+                    SGL_ERROR_NODATA);
             }
             $ret = $item->preview($bPublished);
             if (!is_a($ret, 'PEAR_Error')) {
@@ -854,8 +854,8 @@ class SGL_Item
                 $ret['startDate'] = $item->startDate;
                 $ret['type'] = $item->type;
                 return $ret;
-            } else {               
-                SGL::raiseError('No preview available at ' . __FILE__ . ', ' . __LINE__, 
+            } else {
+                SGL::raiseError('No preview available at ' . __FILE__ . ', ' . __LINE__,
                     SGL_ERROR_NODATA);
             }
         } else {
@@ -875,27 +875,27 @@ class SGL_Item
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
      * @see     retrieveAll()
      */
-    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
+    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1,
         $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
         //  if published flag set, only return published articles
-        $isPublishedClause = ($bPublished)? 
+        $isPublishedClause = ($bPublished)?
             ' AND i.status  = ' . SGL_STATUS_PUBLISHED :
             ' AND i.status  > ' . SGL_STATUS_DELETED ;
 
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all')?'' : " AND i.category_id = $catID";
         $roleId = SGL_HTTP_Session::get('rid');
-        
+
         //  dataTypeID 1 = all template types, otherwise only a specific one
-        $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';     
+        $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
         $query = "
             SELECT  i.item_id,
                     ia.addition,
@@ -903,8 +903,8 @@ class SGL_Item
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, 
+            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia,
+                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm,
                     {$conf['table']['user']} u, {$conf['table']['category']} c
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
@@ -913,7 +913,7 @@ class SGL_Item
             AND     i.item_type_id = it.item_type_id
             AND     itm.field_name = 'title'" .         /*  match item addition type, 'title'    */
             $typeWhereClause .                          //  match datatype
-            $rangeWhereClause . 
+            $rangeWhereClause .
             $isPublishedClause . "
             AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
