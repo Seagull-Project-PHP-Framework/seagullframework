@@ -37,9 +37,3 @@ SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'imessagemgr_reply';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
-
-
-#
-# Dumping data for table `instant_message`
-#
-#INSERT INTO instant_message VALUES (1,1,2,'2003-08-14 00:14:41','Welcome to Seagull','This is an example message.  Once you add users to the system, they can contact eachother via this instant message interface.',3,3);
