@@ -75,19 +75,8 @@ module setup
 //  initialise
 session_start();
 require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Task.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Config.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Url.php';
-require_once dirname(__FILE__) . '/../lib/SGL/TaskRunner.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Tasks/Setup.php';
-require_once dirname(__FILE__) . '/../lib/SGL/Tasks/Install.php';
-
-$init = new SGL_TaskRunner();
-$init->addTask(new SGL_Task_SetupPaths());
-$init->addTask(new SGL_Task_SetupConstants());
-$init->addTask(new SGL_Task_SetBaseUrlMinimal());
-$init->addTask(new SGL_Task_SetGlobals());
-$init->main();
+require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
+SGL_AppController::init();
 
 //  reroute to front controller
 if (isset($_GET['start'])) {

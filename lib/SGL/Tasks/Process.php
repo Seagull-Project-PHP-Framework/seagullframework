@@ -47,21 +47,10 @@ require_once dirname(__FILE__) . '/../AppController.php';
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_Init extends SGL_DecorateProcess 
+class SGL_Process_Init extends SGL_DecorateProcess
 {
     function process(&$input)
     {
-        $init = new SGL_TaskRunner();
-        $init->addData($this->conf);
-        $init->addTask(new SGL_Task_SetupPaths());
-        $init->addTask(new SGL_Task_SetupConstants());
-        $init->addTask(new SGL_Task_ModifyIniSettings());
-        $init->addTask(new SGL_Task_SetBaseUrl());
-        $init->addTask(new SGL_Task_SetGlobals());
-        $init->addTask(new SGL_Task_RegisterTrustedIPs());
-        $init->addTask(new SGL_Task_EnsureBC());
-        $init->main();
-        
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
         }
@@ -91,7 +80,7 @@ class SGL_Process_Init extends SGL_DecorateProcess
 
         //  set PEAR error handler
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');
-        
+
         //  pre PHP 4.3.x workaround
         if (!defined('__CLASS__')) {
             define('__CLASS__', null);
@@ -125,19 +114,19 @@ class SGL_Process_Init extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DetectBlackListing extends SGL_DecorateProcess 
+class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         if ($this->conf['site']['banIpEnabled']) {
             if (in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['BANNED_IPS'])) {
                 $msg = SGL_String::translate('You have been banned');
                 SGL::raiseError($msg, SGL_ERROR_BANNEDUSER, PEAR_ERROR_DIE);
             }
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -148,12 +137,12 @@ class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DetectDebug extends SGL_DecorateProcess 
+class SGL_Process_DetectDebug extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  set debug session if allowed
         $req = $input->getRequest();
         $debug = $req->get('debug');
@@ -161,7 +150,7 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
             $debug = ($debug == 'on') ? 1 : 0;
             SGL_HTTP_Session::set('debug', $debug);
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -172,14 +161,14 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupLocale extends SGL_DecorateProcess 
+class SGL_Process_SetupLocale extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $locale = $_SESSION['aPrefs']['locale'];
-        $timezone = $_SESSION['aPrefs']['timezone'];        
+        $timezone = $_SESSION['aPrefs']['timezone'];
         if (setlocale(LC_ALL, $locale) === false) {
             setlocale(LC_TIME, $locale);
         }
@@ -188,7 +177,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
         } else {
             @putenv('TZ=');
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -201,21 +190,21 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_BuildHeaders extends SGL_DecorateProcess 
+class SGL_Process_BuildHeaders extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  don't send headers according to config
-        $mgr = $input->get('manager');        
+        $mgr = $input->get('manager');
         $currentMgr = SGL_Inflector::caseFix(get_class($mgr));
         if (!isset($this->conf[$currentMgr]['setHeaders'])
                 || $this->conf[$currentMgr]['setHeaders'] == true) {
-                    
+
             //  set compression as specified in init, can only be done here :-)
             @ini_set('zlib.output_compression', (int)$this->conf['site']['compression']);
-    
+
             //  build P3P headers
             if ($this->conf['p3p']['policies']) {
                 $p3pHeader = '';
@@ -234,7 +223,7 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
             header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
             header('X-Powered-By: Seagull ' . SGL_SEAGULL_VERSION);
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -250,15 +239,15 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess 
+class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
-        
+
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
         if (isset( $this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
@@ -269,16 +258,16 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
             $redir = $url->toString();
 
             //  check that session is not invalid or timed out
-            $loginPage = array( 'moduleName'    => 'user', 
+            $loginPage = array( 'moduleName'    => 'user',
                                 'managerName'   => 'login',
                                 'redir'         => urlencode($redir));
-                                
+
             $session = $input->get('session');
 
             if (!$session->isValid()) {
                 SGL::raiseMsg('authorization required');
                 SGL_HTTP::redirect($loginPage);
-                
+
             } elseif ($session->isTimedOut()) {
                 $session->destroy();
                 SGL::raiseMsg('session timeout');
@@ -287,7 +276,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
         } else {
             //  no authentication required
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -298,18 +287,18 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupPerms extends SGL_DecorateProcess 
+class SGL_Process_SetupPerms extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $cache = & SGL::cacheSingleton();
         if ($serialized = $cache->get('all_users', 'perms')) {
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';            
+            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
             $da = & DA_User::singleton();
             $aPerms = $da->getPermsByModuleId();
             $serialized = serialize($aPerms);
@@ -323,13 +312,13 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
         } else {
             SGL::raiseError('there was a problem initialising perms', SGL_ERROR_NODATA);
         }
-        
+
         $this->processRequest->process($input);
     }
 }
 
 /**
- * Detects if language flag exists in $_GET, loads relevant 
+ * Detects if language flag exists in $_GET, loads relevant
  * language translation file.
  *
  * @access  private
@@ -337,7 +326,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
  * @author  Erlend Stromsvik <ehs@hvorfor.no>
  * @package SGL
  */
-class SGL_Process_SetupLangSupport extends SGL_DecorateProcess 
+class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
 {
     function process(&$input)
     {
@@ -369,8 +358,8 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         if (empty($language)) {
             $language = 'english-iso-8859-15';
         }
-        
-        
+
+
         $path = SGL_MOD_DIR . '/' . $req->get('moduleName') . '/lang/';
 
         //  attempt to merge global language file with module's lang file
@@ -387,15 +376,15 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
             }
         } else {
             SGL::raiseError('Could not open module\'s language file in ' .
-                __CLASS__ . '::' . __FUNCTION__ . 
-                ', maybe it does not exist or the query parameter is incorrect', 
+                __CLASS__ . '::' . __FUNCTION__ .
+                ', maybe it does not exist or the query parameter is incorrect',
                 SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
         }
         //  extract charset from current language string
         $aTmp = split('-', $language);
         array_shift($aTmp);
         $GLOBALS['_SGL']['CHARSET'] = join('-', $aTmp);
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -406,14 +395,14 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_CreateSession extends SGL_DecorateProcess 
+class SGL_Process_CreateSession extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $input->set('session', new SGL_HTTP_Session());
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -424,12 +413,12 @@ class SGL_Process_CreateSession extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_ResolveManager extends SGL_DecorateProcess 
+class SGL_Process_ResolveManager extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get a reference to the request object
         $req = $input->getRequest();
 
@@ -440,9 +429,9 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
             if (!ModuleMgr::moduleIsRegistered($moduleName)) {
                 SGL::raiseError('module "'.$moduleName.'"does not appear to be registered', SGL_ERROR_INVALIDREQUEST);
-                return $this->getDefaultManager($input);                
+                return $this->getDefaultManager($input);
             }
-            
+
             //  get manager name if $managerName not correct attempt to load default manager w/$moduleName
             $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
             $retMgrName = $this->getManagerName($managerName, $mgrPath);
@@ -474,7 +463,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         }
         $this->processRequest->process($input);
     }
-    
+
     function getDefaultManager(&$input)
     {
         require_once SGL_MOD_DIR . '/default/classes/DefaultMgr.php';
@@ -488,7 +477,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
         $this->processRequest->process($input);
     }
-    
+
     /**
      * Returns classname suggested by URL param.
      *
@@ -500,14 +489,14 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     function getManagerName($managerName, $path)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $aMatches = array();
         $aConfValues = array_keys($this->conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
 
         //  if Mgr suffix has been left out, append it
         $managerName = SGL_Inflector::getManagerNameFromSimplifiedName($managerName);
-        
+
         //  test for full case sensitive classname in config array
         $isFound = array_search($managerName, $aConfValues);
         if ($isFound !== false) {
@@ -538,12 +527,12 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess 
+class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $ua = $_SERVER['HTTP_USER_AGENT'];
         if (!empty($ua) and !defined('SGL_USR_OS')) {
             if (strstr($ua, 'Win')) {
@@ -574,12 +563,12 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupBlocks extends SGL_DecorateProcess 
+class SGL_Process_SetupBlocks extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  load blocks
         if ($this->conf['site']['blocksEnabled'] && $this->conf['navigation']['enabled']) {
             require_once SGL_CORE_DIR . '/BlockLoader.php';
@@ -598,12 +587,12 @@ class SGL_Process_SetupBlocks extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupNavigation extends SGL_DecorateProcess 
+class SGL_Process_SetupNavigation extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  generate navigation from appropriate driver
         if ($this->conf['navigation']['enabled']) {
             $navClass = $this->conf['navigation']['driver'];
@@ -623,7 +612,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             $input->data->navigation = $html;
             $input->data->currentSectionName = $nav->getCurrentSectionName();
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -634,24 +623,24 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess 
+class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
 		// set the default WYSIWYG editor
 		if (isset($input->data->wysiwyg) && $input->data->wysiwyg == true) {
-			
+
             // you can preset this var in your code
-			if (!isset($input->data->wysiwyg_editor)) {	
-				$input->data->wysiwyg_editor = isset($this->conf['site']['wysiwyg_editor']) 
-				    ? $this->conf['site']['wysiwyg_editor'] 
+			if (!isset($input->data->wysiwyg_editor)) {
+				$input->data->wysiwyg_editor = isset($this->conf['site']['wysiwyg_editor'])
+				    ? $this->conf['site']['wysiwyg_editor']
                     : 'xinha';
 			}
-			
+
 			switch ($input->data->wysiwyg_editor) {
-			    
+
             case 'fck':
             	$input->data->wysiwyg_fck = true;
             	$input->data->addOnLoadEvent('fck_init()');
@@ -662,7 +651,7 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
             	break;
             case 'htmlarea':
             	$input->data->wysiwyg_htmlarea = true;
-            	$input->data->addOnLoadEvent('HTMLArea.init()');	
+            	$input->data->addOnLoadEvent('HTMLArea.init()');
 			}
 		}
         $this->processRequest->process($input);
@@ -675,28 +664,28 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess 
+class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get performance info
-        if (!empty($_SESSION['aPrefs']['showExecutionTimes']) 
+        if (!empty($_SESSION['aPrefs']['showExecutionTimes'])
                 && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
-                    
+
             //  prepare query count
             $input->data->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
-            
+
             //  and execution time
             $input->data->executionTime = getSystemTime() - @$GLOBALS['_SGL']['START_TIME'];
         }
-        
+
         //  send memory consumption to output
         if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
             $input->data->memoryUsage = number_format(memory_get_usage());
         }
-        
+
         $this->processRequest->process($input);
     }
 }
@@ -707,29 +696,29 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_MainProcess extends SGL_ProcessRequest 
+class SGL_MainProcess extends SGL_ProcessRequest
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $req = $input->getRequest();
-        
+
         $mgr = $input->get('manager');
         $mgr->validate($req, $input);
-        
+
         $output = & new SGL_Output();
         $input->aggregate($output);
-        
+
         //  process data if valid
         if ($mgr->isValid()) {
             $mgr->process($input, $output);
         }
-        
+
         $mgr->display($output);
-        
+
         //  build view
         $templateEngine = ucfirst($conf['site']['templateEngine']);
         $templateClass = 'SGL_Html'.$templateEngine.'RendererStrategy';
@@ -742,24 +731,24 @@ class SGL_MainProcess extends SGL_ProcessRequest
  * Assign output vars for template.
  *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com> 
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_PostProcess extends SGL_ProcessRequest 
+class SGL_PostProcess extends SGL_ProcessRequest
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         //  set isAdmin flag
-        $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) 
+        $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN)
             ? true : false;
 
         //  get all html onLoad events
         $input->data->onLoad = $input->data->getAllOnLoadEvents();
-        
+
         //  setup login stats
         if (SGL_HTTP_Session::getUserType() > SGL_GUEST) {
             $input->data->loggedOnUser = $_SESSION['username'];
@@ -787,9 +776,9 @@ class SGL_PostProcess extends SGL_ProcessRequest
  * A void object.
  *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com> 
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Void extends SGL_ProcessRequest 
+class SGL_Void extends SGL_ProcessRequest
 {
     function process(&$input)
     {

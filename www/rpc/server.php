@@ -6,20 +6,8 @@
  * @author James Floyd <jgfloyd@btinternet.com>
  */
 
-require_once dirname(__FILE__) . '/../../lib/SGL/Install.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/Task.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/Config.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/Url.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/TaskRunner.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/Tasks/Setup.php';
-require_once dirname(__FILE__) . '/../../lib/SGL/Tasks/Install.php';
-
-$init = new SGL_TaskRunner();
-$init->addTask(new SGL_Task_SetupPaths());
-$init->addTask(new SGL_Task_SetupConstants());
-$init->addTask(new SGL_Task_SetBaseUrlMinimal());
-$init->addTask(new SGL_Task_SetGlobals());
-$init->main();
+require_once dirname(__FILE__)  . '/../../lib/SGL/AppController.php';
+SGL_AppController::init();
 
 require_once 'XML/RPC/Server.php';
 
@@ -34,7 +22,7 @@ require_once 'XML/RPC/Server.php';
  *     (
  *         [agencies.getStats] => Array
  *             (
- *                 [function] => SGL_XML_RPC_Server_agenciesGetStats
+ *                 [function] => SGL_XML_RPC_Server_myFunctionName
  *                 [signature] => Array
  *                     (
  *                         [0] => Array
@@ -53,7 +41,7 @@ function SGL_XML_RPC_getDispatchMap()
 {
     $map = array();
 
-    // scan services folder for server services
+    // scan services folder
     require_once 'File/Util.php';
     $rpcModuleDir = SGL_LIB_DIR . '/SGL/XML/RPC/services';
     $aFiles = SGL_Util::listDir($rpcModuleDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE);

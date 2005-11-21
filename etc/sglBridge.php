@@ -6,6 +6,10 @@ class TestRunnerInit extends SGL_AppController
 {
     function run()
     {
+        if (!defined('SGL_INITIALISED')) {
+            SGL_AppController::init();
+        }
+
         //  get config singleton
         $c = &SGL_Config::singleton();
         $c->set('debug', array('customErrorHandler' => false));
