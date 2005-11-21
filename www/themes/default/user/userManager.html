@@ -69,7 +69,7 @@
                 <input type="submit" name="syncToRole" value="{translate(#sync perms with role#)}"
                     onclick="return confirmCustom('{translate(#You must select a user to sync#)}', '{translate(#Are you sure you want to sync this user(s)?#)}', 'users')" class="toolBtnSeparate"/>
                 <select name="roleSync">
-                    <option value="null">{translate(#(each user's current)#)}</option>
+                    <option value="null">{translate(#(each users current)#)}</option>
                     {generateSelect(aRoles):h}
                 </select>
                 <select name="roleSyncMode">

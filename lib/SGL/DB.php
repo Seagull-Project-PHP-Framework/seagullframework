@@ -153,9 +153,10 @@ class SGL_DB
             $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
 
             //  if db connect fails and seagull is already configured, die
+            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5])) {
                 return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-                    SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
+                    SGL_ERROR_DBFAILURE, $fatal);
             }
             $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
         }
