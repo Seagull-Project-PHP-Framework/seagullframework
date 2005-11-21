@@ -185,10 +185,12 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'userpreferencemgr_updateAll';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 
+# add 'nobody' user
+INSERT INTO usr VALUES (0, 1, 0, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'NN', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
+
 #
 # Dumping data for table `user_preference`
 #
-
 
 # sets default prefs
 INSERT INTO user_preference VALUES (1,0,1,'1800');
