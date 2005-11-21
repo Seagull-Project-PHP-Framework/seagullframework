@@ -52,18 +52,18 @@ class SGL_Config
 {
     var $aProps = array();
     var $fileName;
-    
+
     function SGL_Config($autoLoad = true)
     {
         if ($this->isEmpty() && $autoLoad) {
-            $configFile = dirname(__FILE__)  . '/../../var/' 
-                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';                    
+            $configFile = dirname(__FILE__)  . '/../../var/'
+                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
             $conf = $this->load($configFile);
             $this->fileName = $configFile;
             $this->replace($conf);
-        }    
+        }
     }
-    
+
     function &singleton($autoLoad = true)
     {
         static $instance;
@@ -73,7 +73,7 @@ class SGL_Config
         }
         return $instance;
     }
-    
+
     function get($key)
     {
         if (is_array($key)) {
@@ -84,11 +84,11 @@ class SGL_Config
             return $this->aProps[$key];
         }
     }
-    
+
     function set($key, $value)
     {
         if (isset($this->aProps[$key])
-                && is_array($this->aProps[$key]) 
+                && is_array($this->aProps[$key])
                 && is_array($value)) {
             $key2 = key($value);
             $this->aProps[$key][$key2] = $value[$key2];
@@ -96,12 +96,17 @@ class SGL_Config
             $this->aProps[$key] = $value;
         }
     }
-    
+
+    function add($key, $value)
+    {
+        array_push($this->aProps, $value);
+    }
+
     function replace($aConf)
     {
         $this->aProps = $aConf;
     }
-    
+
     /**
      * Return an array of all Config properties.
      *
@@ -111,12 +116,12 @@ class SGL_Config
     {
         return $this->aProps;
     }
-    
+
     function getFileName()
     {
-        return $this->fileName;   
+        return $this->fileName;
     }
-    
+
     function load($file)
     {
         $ph = &SGL_ParamHandler::singleton($file);
@@ -124,27 +129,27 @@ class SGL_Config
         if ($data !== false) {
             return $data;
         } else {
-            return SGL::raiseError('Problem reading config file', 
-                SGL_ERROR_INVALIDFILEPERMS);    
+            return SGL::raiseError('Problem reading config file',
+                SGL_ERROR_INVALIDFILEPERMS);
         }
     }
-    
+
     function save($file)
     {
         $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }
-    
+
     function merge($aConf)
     {
         $firstKey = key($aConf);
         if (!array_key_exists($firstKey, $this->aProps)) {
             $this->aProps = array_merge_recursive($this->aProps, $aConf);
-        } 
+        }
     }
-    
+
     function isEmpty()
     {
-        return count($this->aProps) ? false : true;   
+        return count($this->aProps) ? false : true;
     }
 }

@@ -71,6 +71,35 @@ class SGL_Task_CreateConfig extends SGL_Task
     }
 }
 
+class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+
+        $aModuleList = (isset($data['installAllModules']))
+            ? SGL_Install::getModuleList()
+            : $this->getMinimumModuleList();
+
+        foreach ($aModuleList as $module) {
+            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
+            if (file_exists($tableAliasIniPath)) {
+                $aData = parse_ini_file($tableAliasIniPath);
+                foreach ($aData as $k => $v) {
+                    $c->set('table', array($k => $v));
+                }
+            }
+        }
+
+        //  save
+        $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+        $ok = $c->save($configFile);
+        if (PEAR::isError($ok)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok));
+        }
+    }
+}
+
 class SGL_Task_DisableForeignKeyChecks extends SGL_Task
 {
     function run($data)
