@@ -386,7 +386,9 @@ class BlockMgr extends SGL_Manager
                     ON ba.block_id=b.block_id
                     LEFT JOIN {$this->conf['table']['section']} s
                     ON s.section_id=ba.section_id
-                    GROUP BY b.block_id
+                    GROUP BY
+                        b.block_id, b.name, b.title, b.title_class, b.body_class,
+                        b.blk_order, b.is_onleft, b.is_enabled, sections, section_title
                     ORDER BY " .
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
