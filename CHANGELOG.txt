@@ -6,6 +6,8 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+21-11-05    Factored out setup of table name aliases, these are not set on a per-module
+            basis in the file 'tableAliases.ini' parsed at setup time.
 14-11-05    Added version-checker routine to Maintenance manager
 14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
 14-11-05    Improved integration of page offset id in seagull SEF urls

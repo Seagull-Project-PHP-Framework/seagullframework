@@ -84,5 +84,14 @@ class ConfigTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
         $this->assertEqual(array('foo' => 'bar'), $this->c->aProps['quux']);
     }
+
+    function testAddConfigValue()
+    {
+        $file = dirname(__FILE__) . '/test.conf.ini';
+        $conf = $this->c->load($file);
+        $this->c->add('quux', array('foo' => 'bar'));
+        $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
+        $this->assertEqual(array('foo' => 'bar'), $this->c->aProps['quux']);
+    }
 }
 ?>
