@@ -23,6 +23,9 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr', '', (SELECT MAX(mod
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'imessagemgr_sendAlert', '', (SELECT MAX(module_id) FROM module));
 
 -- member role perms
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'contactmgr_delete'));
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'contactmgr_insert'));
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'contactmgr_list'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_compose'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_delete'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_inbox'));
@@ -30,16 +33,3 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_outbox'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_read'));
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'imessagemgr_reply'));
-
---
--- Dumping data for table instant_message
---
-
-INSERT INTO instant_message VALUES (1, 1, 2, '2003-08-14 00:14:41', 'Welcome to Seagull', 'This is an example message.  Once you add users to the system, they can contact eachother via this instant message interface.', 3, 3);
-
---
--- Creating sequences
--- sequence must start on the first free record id
---
-
-CREATE SEQUENCE instant_message_seq START WITH 2;
