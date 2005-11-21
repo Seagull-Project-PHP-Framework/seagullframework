@@ -59,7 +59,10 @@ class SGL_AppController
 {
     function init()
     {
-        $c = &SGL_Config::singleton();
+        $autoLoad = (file_exists(dirname(__FILE__)  . '/../../var/INSTALL_COMPLETE.php'))
+            ? true
+            : false;
+        $c = &SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());

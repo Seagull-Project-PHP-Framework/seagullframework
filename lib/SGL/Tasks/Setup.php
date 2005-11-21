@@ -10,16 +10,16 @@ class SGL_Task_SetupPaths extends SGL_Task
      * - SGL_PATH is the filesystem root path
      * - pear include path is setup
      * - PEAR.php included for errors, etc
-     * 
+     *
      * @param array $data
      */
     function run($data)
     {
-        define('SGL_SERVER_NAME', $this->hostnameToFilename());        
+        define('SGL_SERVER_NAME', $this->hostnameToFilename());
         define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
         define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         #define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
-        
+
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
         $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
         if (!$allowed) {
@@ -34,7 +34,7 @@ class SGL_Task_SetupPaths extends SGL_Task
         require_once 'PEAR.php';
         require_once 'DB.php';
     }
-    
+
     /**
      * Determines the name of the INI file, based on the host name.
      *
@@ -52,7 +52,7 @@ class SGL_Task_SetupPaths extends SGL_Task
             // Determine the host name
             if (!empty($_SERVER['SERVER_NAME'])) {
                 $hostName = $_SERVER['SERVER_NAME'];
-                
+
             } elseif (!empty($_SERVER['HTTP_HOST'])) {
                 //  do some spoof checking here, like
                 //  if (gethostbyname($_SERVER['HTTP_HOST']) != $_SERVER['SERVER_ADDR'])
@@ -63,8 +63,8 @@ class SGL_Task_SetupPaths extends SGL_Task
                 die('Could not determine your server name');
             }
             // Determine if the port number needs to be added onto the end
-            if (!empty($_SERVER['SERVER_PORT']) 
-                    && $_SERVER['SERVER_PORT'] != 80 
+            if (!empty($_SERVER['SERVER_PORT'])
+                    && $_SERVER['SERVER_PORT'] != 80
                     && $_SERVER['SERVER_PORT'] != 443) {
                 $hostName .= '_' . $_SERVER['SERVER_PORT'];
             }
@@ -90,7 +90,7 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
         define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
-        
+
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
         define('SGL_ERROR_INVALIDARGS',         -101);  // wrong args to function
@@ -121,44 +121,44 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_SORTBY_GRP',                1);
         define('SGL_SORTBY_USER',               2);
         define('SGL_SORTBY_ORG',                3);
-        
+
         //  Seagull user roles
-        define('SGL_ANY_ROLE', 				    -2);        
+        define('SGL_ANY_ROLE', 				    -2);
         define('SGL_UNASSIGNED',                -1);
         define('SGL_GUEST',                     0);
         define('SGL_ADMIN',                     1);
         define('SGL_MEMBER',                    2);
-        
+
         define('SGL_STATUS_DELETED',            0);
         define('SGL_STATUS_FOR_APPROVAL',       1);
         define('SGL_STATUS_BEING_EDITED',       2);
         define('SGL_STATUS_APPROVED',           3);
         define('SGL_STATUS_PUBLISHED',          4);
         define('SGL_STATUS_ARCHIVED',           5);
-        
+
         //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
         define('SGL_RET_ID_VALUE',              2);
         define('SGL_RET_ARRAY',                 3);
-        define('SGL_RET_STRING',                4); 
-        
+        define('SGL_RET_STRING',                4);
+
         //  various
         define('SGL_ANY_SECTION', 				0);
         define('SGL_NEXT_ID', 				    0);
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);
-        
-        //  with logging, you can optionally show the file + line no. where 
+
+        //  with logging, you can optionally show the file + line no. where
         //  SGL::logMessage was called from
         define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
-        
+
         //  to overcome overload problem
         define('DB_DATAOBJECT_NO_OVERLOAD', true);
-        
+
         //  include Log.php if logging enabled
-        if ($conf['log']['enabled']) {
+        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
             require_once 'Log.php';
-            
+
         } else {
             //  define log levels to avoid notices, since Log.php not included
             define('PEAR_LOG_EMERG',    0);     /** System is unusable */
@@ -170,18 +170,19 @@ class SGL_Task_SetupConstants extends SGL_Task
             define('PEAR_LOG_INFO',     6);     /** Informational */
             define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
         }
-        
+
         if (count($conf)) {
-            
+
             //  set constant to represent profiling mode so it can be used in Controller
             define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
             define('SGL_SEAGULL_VERSION',           $conf['tuples']['version']);
-            
+
             //  which degree of error severity before emailing admin
             $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
             define('SGL_EMAIL_ADMIN_THRESHOLD',     constant($const));
+            define('SGL_BASE_URL', $conf['site']['baseUrl']);
         }
-        
+
         require_once dirname(__FILE__)  . '/../Url.php';
         require_once dirname(__FILE__)  . '/../Manager.php';
         require_once dirname(__FILE__)  . '/../Output.php';
@@ -195,26 +196,23 @@ class SGL_Task_SetupConstants extends SGL_Task
 /**
  * Routine to discover the base url of the installation.
  *
- * Only necessary to invoke if user deletes URL in config.
+ * Only gets invoked if user deletes URL in config, or if we're setting up.
  */
 class SGL_Task_SetBaseUrl extends SGL_Task
 {
     function run($conf)
     {
-        //  get base url
         if (!(isset($conf['site']['baseUrl']))) {
-            $c = &SGL_Config::singleton();
-            $reg = &SGL_Registry::singleton();
-            $url = $reg->getCurrentUrl();
-            $c->set('site', array('baseUrl' => $url->getBase()));
-            $ok = $c->save($c->getFileName());
+
+            //  defines SGL_BASE_URL constant
+            require_once dirname(__FILE__)  . '/../Tasks/Install.php';
+            SGL_Task_SetBaseUrlMinimal::run();
         }
-        define('SGL_BASE_URL', $conf['site']['baseUrl']);
-    }   
+    }
 }
 
 
-class SGL_Task_SetGlobals extends SGL_Task 
+class SGL_Task_SetGlobals extends SGL_Task
 {
     function run($data)
     {
@@ -222,8 +220,8 @@ class SGL_Task_SetGlobals extends SGL_Task
         $GLOBALS['_SGL']['ERRORS'] =            array();
         $GLOBALS['_SGL']['CONNECTIONS'] =       array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;        
-    }    
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
+    }
 }
 
 //			$userInfo = posix_getpwuid(fileowner($configFile));
@@ -237,7 +235,7 @@ class SGL_Task_SetGlobals extends SGL_Task
 //                    "<code>'chmod -R 777 seagull/var'</code>");
 //			}
 
-class SGL_Task_ModifyIniSettings extends SGL_Task 
+class SGL_Task_ModifyIniSettings extends SGL_Task
 {
     function run($conf)
     {
@@ -245,10 +243,10 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
         @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
-    }    
+    }
 }
 
-class SGL_Task_RegisterTrustedIPs extends SGL_Task 
+class SGL_Task_RegisterTrustedIPs extends SGL_Task
 {
     function run($data)
     {
@@ -256,10 +254,10 @@ class SGL_Task_RegisterTrustedIPs extends SGL_Task
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
             '127.0.0.1',
         );
-    }    
+    }
 }
 
-class SGL_Task_EnsureBC extends SGL_Task 
+class SGL_Task_EnsureBC extends SGL_Task
 {
     function run($data)
     {
@@ -267,7 +265,7 @@ class SGL_Task_EnsureBC extends SGL_Task
         if (!function_exists('version_compare') || version_compare(phpversion(), "4.3.0", 'lt')) {
             require_once 'etc/bc.php';
         }
-        
+
         if (!(function_exists('file_put_contents'))) {
             function file_put_contents($location, $data)
             {
@@ -280,24 +278,24 @@ class SGL_Task_EnsureBC extends SGL_Task
                 return true;
             }
         }
-        
+
         if (!function_exists('getSystemTime')) {
             function getSystemTime()
             {
-                $time = gettimeofday();    
+                $time = gettimeofday();
                 $resultTime = $time['sec'] * 1000;
                 $resultTime += floor($time['usec'] / 1000);
                 return $resultTime;
-            }   
+            }
         }
-    }    
+    }
 }
 
 /**
  * A callback fn that sets the default PEAR error behaviour.
  *
  * @access   public
- * @static    
+ * @static
  * @param    object $oError the PEAR error object
  * @return   void
  */
