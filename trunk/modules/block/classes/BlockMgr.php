@@ -334,7 +334,7 @@ class BlockMgr extends SGL_Manager
                     $aLeftBlocks[ $leftBlocks->block_id ] = $leftBlocks->title;
                 }
             }
-            $output->aLeftBlocks = $aLeftBlocks;
+            $output->aLeftBlocks = isset($aLeftBlocks) ? $aLeftBlocks : array();
             $rightBlocks = & new Block();
             $rightBlocks->whereAdd('is_onleft = 0');
             $rightBlocks->orderBy('blk_order ASC');
@@ -419,11 +419,26 @@ class BlockMgr extends SGL_Manager
 
     function _rebuildPagedData(&$aPagedData)
     {
-        //  rebuild $aPagedData['data']
-        foreach ($aPagedData['data'] as $k => $aValue) {
-            if (isset($pKey) && isset($pBlock)) {
-                if ($pBlock == $aValue['block_id']) {
-                    $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
+        if (count($aPagedData['data'])) {
+
+            //  rebuild $aPagedData['data']
+            foreach ($aPagedData['data'] as $k => $aValue) {
+                if (isset($pKey) && isset($pBlock)) {
+                    if ($pBlock == $aValue['block_id']) {
+                        $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
+                    } else {
+                        $data[$k] = $aValue;
+                        if ($aValue['sections']) {
+                            unset ($data[$k]['sections']);
+                            $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
+                            $pKey = $k;
+                        } elseif ($aValue['sections'] == 0 ) {
+                            unset($data[$k]['sections']);
+                            $data[$k]['sections'][$aValue['sections']] = 'All Sections';
+                            $pKey = $k;
+                        }
+                    }
+                    $pBlock = $aValue['block_id'];
                 } else {
                     $data[$k] = $aValue;
                     if ($aValue['sections']) {
@@ -435,31 +450,19 @@ class BlockMgr extends SGL_Manager
                         $data[$k]['sections'][$aValue['sections']] = 'All Sections';
                         $pKey = $k;
                     }
-                }
-                $pBlock = $aValue['block_id'];
-            } else {
-                $data[$k] = $aValue;
-                if ($aValue['sections']) {
-                    unset ($data[$k]['sections']);
-                    $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
-                    $pKey = $k;
-                } elseif ($aValue['sections'] == 0 ) {
-                    unset($data[$k]['sections']);
-                    $data[$k]['sections'][$aValue['sections']] = 'All Sections';
+                    $pBlock = $aValue['block_id'];
                     $pKey = $k;
                 }
-                $pBlock = $aValue['block_id'];
-                $pKey = $k;
             }
-        }
-        unset($aPagedData['data']);
+            unset($aPagedData['data']);
 
-        //  reindex
-        $aReindexedData = array();
-        foreach ($data as $kk => $vv) {
-            $aReindexedData[$vv['block_id']] = $vv;
+            //  reindex
+            $aReindexedData = array();
+            foreach ($data as $kk => $vv) {
+                $aReindexedData[$vv['block_id']] = $vv;
+            }
+            $aPagedData['data'] = $aReindexedData;
         }
-        $aPagedData['data'] = $aReindexedData;
     }
 
     /**

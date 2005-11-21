@@ -17,8 +17,8 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/frmArticleID/1/staticId/6/');
-        $this->assertTitle('Seagull Framework :: Content Reshuffle');
-        $this->assertNoUnwantedPattern("/errorContent/");
+        $this->assertTitle('Seagull Framework :: Article Browser');
+        $this->assertWantedPattern("/No article found for that ID/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/');
         $this->assertTitle('Seagull Framework :: Article Browser');
