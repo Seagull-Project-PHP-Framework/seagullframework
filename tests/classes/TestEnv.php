@@ -39,7 +39,7 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
-require_once STR_PATH . '/tests/classes/DB.php';
+require_once STR_PATH . '/lib/SGL/DB.php';
 
 /**
  * A class for setting up and tearing down the testing environment.
@@ -67,7 +67,7 @@ class STR_TestEnv
             $conf['database']['pass'] . '@' .
             $protocol .
             $conf['database']['host'];
-        $dbh = &STR_DB::singleton($dsn);
+        $dbh = &SGL_DB::singleton($dsn);
         
         $query = 'DROP DATABASE IF EXISTS ' . $conf['database']['name'];
         $result = $dbh->query($query);
@@ -115,7 +115,7 @@ class STR_TestEnv
     function teardownDB()
     {
         $conf = $GLOBALS['_STR']['CONF'];
-        $dbh = &STR_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $query = 'DROP DATABASE ' . $conf['database']['name'];
         $result = $dbh->query($query);
     }
@@ -147,7 +147,7 @@ class STR_TestEnv
     function restore()
     {
         // Disable transactions, so that setting up the test environment works
-        $dbh = &STR_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $query = 'SET AUTOCOMMIT=1';
         $result = $dbh->query($query);
 
@@ -218,7 +218,7 @@ class STR_TestEnv
      */
     function startTransaction()
     {
-        $dbh = &STR_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $dbh->startTransaction();
     }
     
@@ -227,7 +227,7 @@ class STR_TestEnv
      */
     function rollbackTransaction()
     {
-        $dbh = &STR_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $dbh->rollback();
     }
     
@@ -247,7 +247,7 @@ class STR_TestEnv
             return false;
         }
         // Get database handle based on working config.ini
-        $dbh = & STR_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         $sql = '';
         $conf = $GLOBALS['_STR']['CONF'];
 
