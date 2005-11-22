@@ -640,7 +640,7 @@ class DA_User
                 $ok = $this->dbh->query("
                     INSERT INTO {$this->conf['table']['user_preference']}
                     (user_preference_id, usr_id, preference_id, value)
-                    VALUES (" . $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' . $userId . ", '$prefId', '$prefValue')");
+                    VALUES (" . $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' . $userId . ", $prefId, '$prefValue')");
                 if (PEAR::isError($ok)) {
                     return PEAR::raiseError($ok);
                 }
