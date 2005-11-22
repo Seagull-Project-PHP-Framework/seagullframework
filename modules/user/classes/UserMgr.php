@@ -57,14 +57,14 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle = 'User Manager';
         $this->template = 'userManager.html';
         $this->da = & DA_User::singleton();
         $this->sortBy = 'usr_id';
 
-        $this->_aActionsMapping = array(  
-            'add'                   => array('add'), 
+        $this->_aActionsMapping = array(
+            'add'                   => array('add'),
             'insert'                => array('insert', 'redirectToDefault'),
             'edit'                  => array('edit'),
             'update'                => array('update', 'redirectToDefault'),
@@ -92,7 +92,7 @@ class UserMgr extends RegisterMgr
         //determine action based on which button was pressed
         if ($req->get('delete')) { $input->action = 'delete';}
         if ($req->get('syncToRole')) { $input->action = 'syncToRole';}
-        
+
         $input->masterTemplate  = 'masterMinimal.html';
         $input->aPerms          = $req->get('frmPerms');
         $input->moduleId        = $req->get('frmModuleId');
@@ -105,14 +105,14 @@ class UserMgr extends RegisterMgr
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         $input->roleSync        = $req->get('roleSync');
-        if ($input->roleSync == 'null') { 
+        if ($input->roleSync == 'null') {
             $input->roleSync = null;
         }
         $input->roleSyncMode    = $req->get('roleSyncMode');
-        
+
         //  Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems      = $req->get('totalItems');
-        
+
         if (!isset($aErrors)) {
             $aErrors = array();
         }
@@ -138,7 +138,7 @@ class UserMgr extends RegisterMgr
         $aDisallowedMethods = array(
             'list', 'requestPasswordReset',
             'resetPassword', 'editPerms', 'updatePerms', 'insertImportedUsers');
-            
+
         if (!in_array($output->action, $aDisallowedMethods)) {
             $lang = SGL::getCurrentLang();
             if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
@@ -153,7 +153,7 @@ class UserMgr extends RegisterMgr
             $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
         }
         if (!in_array($output->action, array(
-                'requestPasswordReset', 'resetPassword', 
+                'requestPasswordReset', 'resetPassword',
                 'editPerms', 'updatePerms'))) {
             $output->aRoles = $this->da->getRoles();
             if ($this->conf['OrgMgr']['enabled']) {
@@ -196,7 +196,7 @@ class UserMgr extends RegisterMgr
         if ($success) {
             SGL::raiseMsg('user successfully added');
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -215,11 +215,10 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = $this->da->getUserById();
+        $oUser = $this->da->getUserById($input->user->usr_id);
         $dbh = & $oUser->getDatabaseConnection();
         SGL_DB::setConnection($dbh);
         $dbh->autocommit();
-        $oUser->get($input->user->usr_id);
         $oUser->setFrom($input->user);
         $oUser->last_updated = SGL_Date::getTime();
         $oUser->updated_by = SGL_HTTP_Session::getUid();
@@ -240,7 +239,7 @@ class UserMgr extends RegisterMgr
         }
 
         //  change prefs if org is modified
-        if (isset($input->user->organisation_id_orig) 
+        if (isset($input->user->organisation_id_orig)
                 && ($oUser->organisation_id  != $input->user->organisation_id_orig)) {
 
             //  first delete old preferences
@@ -259,7 +258,7 @@ class UserMgr extends RegisterMgr
             SGL::raiseMsg('details successfully updated');
         } else {
             $dbh->rollback();
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -276,7 +275,7 @@ class UserMgr extends RegisterMgr
                 if ($userId == SGL_ADMIN) {
                     continue;
                 }
-                $query = "DELETE FROM {$this->conf['table']['user']} WHERE usr_id=$userId"; 
+                $query = "DELETE FROM {$this->conf['table']['user']} WHERE usr_id=$userId";
                 if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                     $results[$userId] = 0; //log result for user
                     continue;
@@ -284,14 +283,14 @@ class UserMgr extends RegisterMgr
                 $results[$userId] = 1;
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . 
+            SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  could eventually display a list of failed/succeeded user ids--just summarize for now
         $results = array_count_values($results);
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
-        
+
         //  redirect on success
         SGL::raiseMsg("$succeeded user(s) successfully deleted. $failed user(s) failed.");
     }
@@ -389,7 +388,7 @@ class UserMgr extends RegisterMgr
         if (is_array($input->aDelete)) {
             foreach($input->aDelete as $v){
                 $qry = "DELETE FROM {$this->conf['table']['login']} WHERE login_id = $v";
-                $this->dbh->query($qry); 
+                $this->dbh->query($qry);
             }
         } else {
             SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_NOAFFECTEDROWS);
@@ -400,7 +399,7 @@ class UserMgr extends RegisterMgr
         SGL_HTTP :: redirect(array ('action' => 'viewLogin', 'frmUserID' => "{$input->userID}"));
 
     }
-    
+
     function _requestChangeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -410,7 +409,7 @@ class UserMgr extends RegisterMgr
         $oUser->get($input->userID);
         $output->user = $oUser;
     }
-    
+
     function _changeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -427,11 +426,11 @@ class UserMgr extends RegisterMgr
             SGL::raiseMsg('Status changed successfully');
         } else {
             $output->template = 'userManager.html';
-            SGL::raiseError('There was a problem modifying the record', 
+            SGL::raiseError('There was a problem modifying the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
-    
+
     function _sendStatusNotification($oUser, $isEnabled, $moduleName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -446,7 +445,7 @@ class UserMgr extends RegisterMgr
                 'fromEmail' => $this->conf['email']['admin'],
                 'replyTo'   => $this->conf['email']['admin'],
                 'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                     $moduleName . '/email_status_notification.php',
                 'username'  => $oUser->username,
         );
@@ -454,7 +453,7 @@ class UserMgr extends RegisterMgr
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
     }
-    
+
     function _requestPasswordReset(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -484,7 +483,7 @@ class UserMgr extends RegisterMgr
             SGL::raiseMsg('Password updated successfully');
         } else {
             $output->template = 'userManager.html';
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -503,7 +502,7 @@ class UserMgr extends RegisterMgr
 
         $aUserPerms = $this->da->getPermsByUserId($input->userID);
         $hAllPerms = $this->da->getPermsByModuleId($input->moduleId);
-        $output->permCheckboxes = SGL_Output::generateCheckboxList($hAllPerms, 
+        $output->permCheckboxes = SGL_Output::generateCheckboxList($hAllPerms,
             $aUserPerms, 'frmPerms[]');
     }
 
@@ -527,7 +526,7 @@ class UserMgr extends RegisterMgr
 
             if (DB::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
-                SGL::raiseError('There was a problem inserting the record', 
+                SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
@@ -548,7 +547,7 @@ class UserMgr extends RegisterMgr
 
             if (DB::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
-                SGL::raiseError('There was a problem inserting the record', 
+                SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
@@ -569,25 +568,25 @@ class UserMgr extends RegisterMgr
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
         SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false);
     }
-    
+
     /**
     * Syncs user(s) perms to role(s). Can do a complete sync or
     * only add perms that user is missing from role or only delete perms
-    * that don't exist in role. If roleId s/xmjn  
+    * that don't exist in role. If roleId s/xmjn
     *
-    * @author  Jacob Hanson <jacdx@jacobhanson.com>       
+    * @author  Jacob Hanson <jacdx@jacobhanson.com>
     * @copyright Jacob Hanson 2004
     * @access  public
     * @param   array    users   array of user(s) ids
     * @param   integer  roleId  role to assign to users. If null, each user is sync'ed to their existing role
-    * @param   integer  mode    mode constant (SGL_ROLESYNC_ADD: only add perms user is missing, 
+    * @param   integer  mode    mode constant (SGL_ROLESYNC_ADD: only add perms user is missing,
     * SGL_ROLESYNC_REMOVE: only remove extra perms user has, SGL_ROLESYNC_ADDREMOVE: do both)
     * @return  array    array of results (userId=>true/false)
     */
     function syncUsersToRole($aUsers, $roleId = null, $mode = SGL_ROLESYNC_ADDREMOVE)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  force user to be an array if it's a single value
         if (!is_array($aUsers)) {
             $aUsers = array($aUsers);
@@ -595,13 +594,13 @@ class UserMgr extends RegisterMgr
 
         //  container role(s) perms
         $aRolesPerms = array();
-        
+
         require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
-        
-        //  use specified roleId for all users (each user's own roleId is used if 
+
+        //  use specified roleId for all users (each user's own roleId is used if
         //  $roleId = null
-        $userRoleId = $roleId;            
-        
+        $userRoleId = $roleId;
+
         $results = array();
         foreach ($aUsers as $userId) {
             $this->dbh->autocommit(); //  a transaction for each user
@@ -616,21 +615,21 @@ class UserMgr extends RegisterMgr
                     continue;
                 }
             }
-                
+
             //  get user's role's perms, if not already loaded
             if (array_key_exists($userRoleId, $aRolesPerms) === false) {
 
-                //  perms for this role haven't been loaded yet    
+                //  perms for this role haven't been loaded yet
                 $aRolesPerms[$userRoleId] = $this->da->getPermsByRoleId($userRoleId);
                 if (is_a($aRolesPerms[$userRoleId], 'PEAR_Error')) {
                     $this->dbh->rollback();
                     $results[$userId] = 0; //log result for user
                     continue;
                 }
-            } 
+            }
             $rolePerms = $aRolesPerms[$userRoleId];
-            
-            //  get user's perms                
+
+            //  get user's perms
             $userPerms = $this->da->getPermsByUserId($userId);
             if (is_a($userPerms, 'PEAR_Error')) {
                 $this->dbh->rollback();
@@ -651,7 +650,7 @@ class UserMgr extends RegisterMgr
                     }
                 }
             }
-            
+
             //  add missing perms (add missing or complete sync)
             if ($mode == SGL_ROLESYNC_ADDREMOVE || $mode == SGL_ROLESYNC_ADD) {
                 $toAdd = array_diff($rolePerms, $userPerms);

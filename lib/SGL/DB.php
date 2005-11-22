@@ -67,30 +67,33 @@ class SGL_DB
     function &singleton($dsn = null, $newConn = null)
     {
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        
+
         static $aInstances;
         if (!isset($aInstances)) {
 			$aInstances = array();
         }
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
-        	
+
         	if (is_a($newConn, 'DB_common')) {
-        		$conn = $newConn;
+        		$conn = &$newConn;
         	} else {
 	        	$conn = DB::connect($dsn);
-	            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null; 
+	            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
 	            if (DB::isError($conn)) {
 	                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
 	                    SGL_ERROR_DBFAILURE, $fatal);
 	            }
         	}
             $conn->setFetchMode(DB_FETCHMODE_OBJECT);
-			$aInstances[$signature] = &$conn;
-        }
+			$aInstances[$signature] = $conn;
+
+        } elseif (is_a($newConn, 'DB_common')) {
+    		$aInstances[$signature] = $newConn;
+    	}
         return $aInstances[$signature];
     }
-    
+
     /**
      * Returns the default dsn specified in the global config.
      *
@@ -132,8 +135,8 @@ class SGL_DB
                 $conf['db']['name'];
         }
         return $dsn;
-    }    
-    
+    }
+
     /**
      * Sets the DB global DB handle for optionally specified dsn. You can
      * use this for sharing connections between PEAR::DataObjects and SGL_DB.
@@ -154,12 +157,17 @@ class SGL_DB
      */
     function setConnection(&$dbh, $dsn = null)
     {
-        #$dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        $singleton = & SGL_DB::singleton($dsn);
+        if ($dbh !== $singleton) {
+            $dbh = &$singleton;
+            #$dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+        }
         #$dsnMd5 = md5($dsn);
 
         #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
         #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
-    }    
+    }
 
     /**
      * Helper method - Rewrite the query into a "SELECT COUNT(*)" query.
