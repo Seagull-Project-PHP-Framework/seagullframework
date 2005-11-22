@@ -44,7 +44,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.19 $
- * @abstract 
+ * @abstract
  */
 class SGL_Manager
 {
@@ -103,10 +103,10 @@ class SGL_Manager
      * @var     array
      */
     var $_aActionsMapping = array();
-    
+
     var $conf = array();
     var $dbh = null;
-    
+
 
     /**
      * Constructor.
@@ -117,12 +117,23 @@ class SGL_Manager
     function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();
+        $this->dbh = $this->_getDb();
     }
-    
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
+    }
+
     function getConfig()
     {
         $c = &SGL_Config::singleton();
@@ -141,8 +152,8 @@ class SGL_Manager
      * Page validation method, extended by all Manager classes.
      *
      * Get tabID required by ALL pages, same goes for msg, action, from
-     * 
-     * @abstract 
+     *
+     * @abstract
      *
      * @access  public
      * @param   object  $req    SGL_Request object received from user agent
@@ -168,7 +179,7 @@ class SGL_Manager
 
         //  determine if action param from $_GET is valid
         if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
-            SGL::raiseError('The specified method, ' . $input->action . 
+            SGL::raiseError('The specified method, ' . $input->action .
                 ' does not exist', SGL_ERROR_NOMETHOD, PEAR_ERROR_DIE);
         }
 
@@ -188,7 +199,7 @@ class SGL_Manager
 
                 // ...and if linked methods to be called are allowed
                 foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-                
+
                     //  allow redirects without perms
                     if ($methodName == 'redirectToDefault') {
                         continue;
@@ -197,11 +208,11 @@ class SGL_Manager
 
                     //  build relevant perms constant
                     $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
-                    
+
                     //  redirect if user doesn't have method specific or classwide perms
                     if (! SGL_HTTP_Session::hasPerms($perm)) {
                         SGL::raiseMsg('you do not have perms');
-                        SGL::logMessage('You do not have the required perms for ' . 
+                        SGL::logMessage('You do not have the required perms for ' .
                             $className . '::' .$methodName, PEAR_LOG_NOTICE);
 
                         //  make sure no infinite redirections
@@ -209,7 +220,7 @@ class SGL_Manager
                         $now = time();
                         SGL_HTTP_Session::set('redirected', $now);
                         if ($now - $lastRedirected < 2) {
-                            PEAR::raiseError('infinite loop detected, clear cookies and check perms', 
+                            PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                                 SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
                         }
                         //  get default params for logout page
@@ -237,10 +248,10 @@ class SGL_Manager
      * @return  void
      */
     function display(&$output) {}
-    
+
     function isValid()
     {
-        return $this->validated;   
+        return $this->validated;
     }
 
     function _redirectToDefault(&$input, &$output)
@@ -248,7 +259,7 @@ class SGL_Manager
         //  must not logmessage here
 
         //  if no errors have occured, redirect
-        if (!(count($GLOBALS['_SGL']['ERRORS']))) {    
+        if (!(count($GLOBALS['_SGL']['ERRORS']))) {
             SGL_HTTP::redirect(array());
 
         //  else display error with blank template
@@ -256,7 +267,7 @@ class SGL_Manager
             $output->template = 'docBlank.html';
         }
     }
-    
+
     /**
      * Returns details of the module/manager/params defaults
      * set in configuration, used for logouts and redirects.
@@ -269,14 +280,14 @@ class SGL_Manager
         $managerName    = $this->conf['site']['defaultManager'];
         $defaultParams  = $this->conf['site']['defaultParams'];
         $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
-        
+
         $aParams = array(
             'moduleName'    => $moduleName,
             'managerName'   => $managerName,
             );
-            
+
         //  convert string into hash and merge with $aParams
-        $aRet = array();            
+        $aRet = array();
         if ($numElems = count($aDefaultParams)) {
             $aTmp = array();
             for ($x = 0; $x < $numElems; $x++) {
@@ -289,7 +300,7 @@ class SGL_Manager
                 //  if a name/value pair exists, add it to request
                 if (count($aTmp) == 2) {
                     $aRet[$aTmp['varName']] = $aTmp['varValue'];
-                    $aTmp = array();                
+                    $aTmp = array();
                 }
             }
         }

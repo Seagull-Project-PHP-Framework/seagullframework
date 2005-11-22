@@ -41,12 +41,11 @@
 
 $projectMnemonic = $GLOBALS['_STR']['CONF']['project']['projectMnemonic'];
 $GLOBALS[$projectMnemonic]['CONNECTIONS'] = array();
-require_once 'DB.php';
+#require_once 'DB.php';
 
 /**
  * Class for handling DB resources.
  *
- * @package    MaxDal
  * @author     Demian Turner <demian@m3.net>
  */
 class STR_DB
@@ -68,9 +67,9 @@ class STR_DB
         if (is_null($dsn)) {
             $dsn = STR_DB::getDsn();
         }
-        
+
         $projectMnemonic = $GLOBALS['_STR']['CONF']['project']['projectMnemonic'];
-        
+
         $dsnMd5 = md5($dsn);
         $aConnections = array_keys($GLOBALS[$projectMnemonic]['CONNECTIONS']);
         if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
@@ -80,7 +79,7 @@ class STR_DB
             if (DB::isError($GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5])) {
                 die('Cannot connect to DB, check your credentials');
             }
-            $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);            
+            $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
         }
         return $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5];
     }
@@ -94,10 +93,10 @@ class STR_DB
     function getDsn()
     {
         $conf = $GLOBALS['_STR']['CONF'];
-        $dbType = $conf['database']['type'];        
+        $dbType = $conf['database']['type'];
         if ($dbType == 'mysql') {
             $dbType = 'mysql_SGL';
-        }        
+        }
 
     	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
@@ -106,37 +105,37 @@ class STR_DB
             $protocol .
             $conf['database']['host'] . '/' .
             $conf['database']['name'];
-            
+
         //   override SGL dsn with temporary testing one
         $GLOBALS['_SGL']['CONF']['db'] = $conf['database'];
-         
+
         return $dsn;
     }
-    
+
     function rebuildSequences($tables = null)
     {
         $db =& SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         switch ($db->phptype) {
 
         case 'mysql':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
-            
+
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
             $suffix = $db->getOption('seqname_format');
             $suffixRaw = str_replace('%s', '', $suffix);
             $suffixRawStart = (0 - strlen($suffixRaw));
-            
+
             foreach ($aTables as $table) {
                 $primary_field = '';
                 //  we only build sequences for tables that are not sequences themselves
                 if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
                     continue;
                 }
-                    
+
                 $info = $db->tableInfo($table);
                 foreach ($info as $field) {
                     if (eregi('primary_key', $field['flags'])) {
@@ -161,7 +160,7 @@ class STR_DB
                 $result = $db->query($sql);
             }
             break;
-            
+
         case 'mysql_SGL':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
@@ -176,7 +175,7 @@ class STR_DB
                         }
                     }
                     if ($primary_field <> '') {
-                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                        $data[] = array($table, $db->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE 1'));
                     } else {
                         $data[] = array($table, 0);
@@ -185,8 +184,8 @@ class STR_DB
             }
             $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
             $db->executeMultiple($sth, $data);
-            break;            
-           
+            break;
+
         case 'pgsql':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
@@ -201,14 +200,14 @@ class STR_DB
                         }
                     }
                     if ($primary_field <> '') {
-                        $data[] = array($table, $db->getOne('SELECT MAX(' . 
+                        $data[] = array($table, $db->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE true'));
                     }
                 }
             }
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
             $suffix = $db->getOption('seqname_format');
-            
+
             //  we'll just create the sequences manually...why not?
             foreach ($data as $k) {
                 $tableName = $k[0];
@@ -225,7 +224,7 @@ class STR_DB
 
         case 'oci8':
             $db->autoCommit(false);
-            
+
             $data = '';
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('sequences');
             foreach ($aTables as $sequence) {
@@ -240,21 +239,21 @@ class STR_DB
                         }
                     }
                     if ($primary_field <> '') {
-                        $maxId = $db->getOne('SELECT MAX(' . 
+                        $maxId = $db->getOne('SELECT MAX(' .
                             $primary_field . ') + 1 FROM ' . $table[1]);
                     } else {
                         $maxId = 1;
                     }
-                    
+
                     // check for NULL
                     if (!$maxId) {
                         $maxId = 1;
                     }
-                    
-                    // drop and recreate sequence 
+
+                    // drop and recreate sequence
                     $success = false;
                     if (!DB::isError($db->dropSequence($table[1]))) {
-                        $success = $db->query('CREATE SEQUENCE ' . 
+                        $success = $db->query('CREATE SEQUENCE ' .
                             $db->getSequenceName($table[1]) . ' START WITH ' . $maxId);
                     }
 
@@ -276,6 +275,6 @@ class STR_DB
             return SGL_Install::errorPush(
                 PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
         }
-    }       
+    }
 }
 ?>

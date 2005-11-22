@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | TestEnv.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -39,8 +39,6 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
-require_once STR_PATH . '/lib/SGL/DB.php';
-
 /**
  * A class for setting up and tearing down the testing environment.
  *
@@ -48,85 +46,61 @@ require_once STR_PATH . '/lib/SGL/DB.php';
  */
 class STR_TestEnv
 {
-        
-    /**
-     * A method for setting up a test database.
-     */
-    function setupDB()
-    {   
-        $conf = $GLOBALS['_STR']['CONF'];
-
-        // Create a DSN to create DB (must not include database name from config)
-        $dbType = $conf['database']['type'];        
-        if ($dbType == 'mysql') {
-            $dbType = 'mysql_SGL';
-        }
-    	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
-        $dsn = $dbType . '://' .
-            $conf['database']['user'] . ':' .
-            $conf['database']['pass'] . '@' .
-            $protocol .
-            $conf['database']['host'];
-        $dbh = &SGL_DB::singleton($dsn);
-        
-        $query = 'DROP DATABASE IF EXISTS ' . $conf['database']['name'];
-        $result = $dbh->query($query);
-        $query = 'CREATE DATABASE ' . $conf['database']['name'];
-        $result = $dbh->query($query);
-    }
-    
     /**
      * A method for setting up the core tables in the test database.
      */
     function buildSchema()
     {
         $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-        
+
         // get schema files
         $aSchemaFiles = $GLOBALS['_STR']['CONF']['schemaFiles'];
-        
+
         if (is_array($aSchemaFiles) && count($aSchemaFiles)) {
             foreach ($aSchemaFiles as $schemaFile) {
                 STR_TestEnv::parseAndExecute(STR_PATH .'/'. $schemaFile);
             }
         }
     }
-    
+
     /**
      * A method for setting up the default data set for testing.
      */
     function loadData()
     {
         $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-        
+
         // get schema files
         $aDataFiles = $GLOBALS['_STR']['CONF']['dataFiles'];
-        
+
         if (is_array($aDataFiles) && count($aDataFiles)) {
             foreach ($aDataFiles as $dataFile) {
                 STR_TestEnv::parseAndExecute(STR_PATH .'/'. $dataFile);
             }
         }
     }
-    
+
     /**
      * A method for tearing down (dropping) the test database.
      */
     function teardownDB()
     {
         $conf = $GLOBALS['_STR']['CONF'];
-        $dbh = &SGL_DB::singleton();
+
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+
         $query = 'DROP DATABASE ' . $conf['database']['name'];
         $result = $dbh->query($query);
     }
-    
+
     /**
      * A method for re-parsing the testing environment configuration
      * file, to restore it in the event it needed to be changed
      * during a test.
      */
     function restoreConfig()
-    {     
+    {
         // Re-parse the config file
         $newConf = @parse_ini_file(STR_TMP_DIR . '/test.conf.ini', true);
         foreach ($newConf as $configGroup => $configGroupSettings) {
@@ -135,7 +109,7 @@ class STR_TestEnv
             }
         }
     }
-    
+
     /**
      * A method for restoring the testing environment database setup.
      * This method can normaly be avoided by using transactions to
@@ -147,7 +121,8 @@ class STR_TestEnv
     function restore()
     {
         // Disable transactions, so that setting up the test environment works
-        $dbh = &SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
         $query = 'SET AUTOCOMMIT=1';
         $result = $dbh->query($query);
 
@@ -160,7 +135,7 @@ class STR_TestEnv
         // Re-set up the test environment
         STR_TestEnv::setup($GLOBALS['_STR']['layerEnv']);
     }
-    
+
     /**
      * A method to set up the environment based on
      * the layer the test/s is/are in.
@@ -171,25 +146,24 @@ class STR_TestEnv
     {
         $type = $GLOBALS['_STR']['test_type'];
         $envType = $GLOBALS['_STR'][$type . '_layers'][$layer][1];
-        
+
         // Ensure the config file is fresh
         STR_TestEnv::restoreConfig();
-        
+
         // Setup the database, if needed
         if ($envType == DB_NO_TABLES) {
-            STR_TestEnv::setupDB();
+
         } elseif ($envType == DB_WITH_TABLES) {
-            STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
+
         } elseif ($envType == DB_WITH_DATA || $envType == DB_WITH_DATA_AND_WEB) {
-            STR_TestEnv::setupDB();
             STR_TestEnv::buildSchema();
             STR_TestEnv::loadData();
-            
+
             //  if we're testing a sgl install, update sequences after loading data
             if (isset($GLOBALS['_SGL'])) {
                 require_once SGL_CORE_DIR . '/Sql.php';
-                STR_DB::rebuildSequences();   
+                STR_DB::rebuildSequences();
             }
         }
         // Store the layer in a global variable, so the environment
@@ -197,7 +171,7 @@ class STR_TestEnv
         // STR_TestEnv::restore() method
         $GLOBALS['_STR']['layerEnv'] = $layer;
     }
-    
+
     /**
      * A method to tear down the environment based on
      * the layer the test/s is/are in.
@@ -212,27 +186,29 @@ class STR_TestEnv
             STR_TestEnv::teardownDB();
         }
     }
-    
+
     /**
      * A method for starting a transaction when testing database code.
      */
     function startTransaction()
     {
-        $dbh = &SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
         $dbh->startTransaction();
     }
-    
+
     /**
      * A method for ending a transaction when testing database code.
      */
     function rollbackTransaction()
     {
-        $dbh = &SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
         $dbh->rollback();
     }
-    
+
     /**
-     * Simple function that opens a file with sql statements and executes them 
+     * Simple function that opens a file with sql statements and executes them
      * using DB
       *
      * @author  Gerry Lachac <glachac@tethermedia.com>
@@ -247,7 +223,8 @@ class STR_TestEnv
             return false;
         }
         // Get database handle based on working config.ini
-        $dbh = & SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
         $sql = '';
         $conf = $GLOBALS['_STR']['CONF'];
 
@@ -271,7 +248,7 @@ class STR_TestEnv
             if (($conf['database']['type'] == 'oci8_SGL') || ($conf['database']['type'] == 'odbc')){
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
-            
+
             // Execute the statement.
             $res = $dbh->query($sql);
             if (DB::isError($res, DB_ERROR_ALREADY_EXISTS)) {
@@ -287,7 +264,7 @@ class STR_TestEnv
         fclose($fp);
         return true;
     }
-    
+
 }
 
 ?>

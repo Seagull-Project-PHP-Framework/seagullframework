@@ -66,7 +66,18 @@ class DA_User
     {
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();
+        $this->dbh = $this->_getDb();
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
     }
 
     /**

@@ -189,7 +189,7 @@ class SGL_Task_SetupConstants extends SGL_Task
         require_once dirname(__FILE__)  . '/../String.php';
         require_once dirname(__FILE__)  . '/../Tasks/Process.php';
         require_once dirname(__FILE__)  . '/../HTTP.php';
-
+        require_once dirname(__FILE__)  . '/../ServiceLocator.php';
     }
 }
 

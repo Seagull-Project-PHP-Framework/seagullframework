@@ -1,6 +1,7 @@
 <?php
 //  setup seagull environment
 require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
+require_once dirname(__FILE__)  . '/../tests/classes/DB.php';
 
 class TestRunnerInit extends SGL_AppController
 {
@@ -29,6 +30,8 @@ class TestRunnerInit extends SGL_AppController
 
         $process =  new SGL_Process_Init(
                     new SGL_Process_DiscoverClientOs(
+                    new SGL_Process_SetupTestDb(
+                    new SGL_Process_SetupTestDbResource(
                     new SGL_Process_ResolveManager(
                     new SGL_Process_CreateSession(
                     new SGL_Process_SetupLangSupport(
@@ -37,9 +40,50 @@ class TestRunnerInit extends SGL_AppController
                     new SGL_Process_BuildHeaders(
                     new SGL_Process_SetupLocale(
                     new SGL_Void()
-                   )))))))));
+                   )))))))))));
 
         $process->process($input);
+    }
+}
+
+class SGL_Process_SetupTestDb extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        $conf = $GLOBALS['_STR']['CONF'];
+
+        // Create a DSN to create DB (must not include database name from config)
+        $dbType = $conf['database']['type'];
+        if ($dbType == 'mysql') {
+            $dbType = 'mysql_SGL';
+        }
+    	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
+        $dsn = $dbType . '://' .
+            $conf['database']['user'] . ':' .
+            $conf['database']['pass'] . '@' .
+            $protocol .
+            $conf['database']['host'];
+        $dbh = &SGL_DB::singleton($dsn);
+
+        $query = 'DROP DATABASE IF EXISTS ' . $conf['database']['name'];
+        $result = $dbh->query($query);
+        $query = 'CREATE DATABASE ' . $conf['database']['name'];
+        $result = $dbh->query($query);
+        $this->processRequest->process($input);
+    }
+}
+
+class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        //  in case
+        $locator->remove('DB');
+        $dbh =& STR_DB::singleton();
+        $locator->register('DB', $dbh);
+
+        $this->processRequest->process($input);
     }
 }
 
