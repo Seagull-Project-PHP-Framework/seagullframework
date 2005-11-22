@@ -104,6 +104,7 @@ class ArticleMgr extends SGL_Manager
         $input->createdByID     = $req->get('frmCreatedByID');
         $input->aStartDate      = $req->get('frmStartDate');
         $input->aExpiryDate     = $req->get('frmExpiryDate');
+        $input->noExpiry        = $req->get('frmExpiryDateNoExpire');
         $input->aDataItemValue  = $req->get('frmFieldName');
         $input->aDataItemID     = $req->get('frmDataItemID');
         $input->bodyValue       = $req->get('frmBodyName', $allowTags = true);
@@ -140,16 +141,10 @@ class ArticleMgr extends SGL_Manager
             $output->wysiwyg = true;
         }
         $output->todaysDate = SGL_Date::getTime();
-        list($day, $month, $year, $hour, $minute, $second) =
-            explode('/', date('d/m/Y/H/i/s'));
 
         //  initialise input array with current date/time
-        $aDate = array( 'day' => $day,
-                        'month' => $month,
-                        'year' => $year,
-                        'hour' => $hour,
-                        'minute' => $minute,
-                        'second' => $second);
+        $aDate = SGL_Date::stringToArray(mktime());
+
         if ($this->conf['ArticleMgr']['backDateNumYears'] > 0) {
             $aDate['year'] = $aDate['year'] - $this->conf['ArticleMgr']['backDateNumYears'];
             $years         = $this->conf['ArticleMgr']['backDateNumYears'] + 5;
@@ -157,17 +152,17 @@ class ArticleMgr extends SGL_Manager
             $years         = 5;
         }
         $output->dateSelectorStart =
-            SGL_Output::showDateSelector($aDate, 'frmStartDate', true, true, $years, false);
+            SGL_Output::showDateSelector($aDate, 'frmStartDate', true, true, $years);
 
-        //  increment year for expiry
-        $aDate['year'] = $aDate['year'] + 5;
+        //  increment year for expiry and set time to midnight
+        $aDate = SGL_Date::stringToArray(mktime(0,0,0,date('m'),date('d'),date('Y')+5));
 
-        //  set time to midnight
-        $aDate['hour'] = 0;
-        $aDate['minute'] = 0;
-        $aDate['second'] = 0;
         $output->dateSelectorExpiry =
-            SGL_Output::showDateSelector($aDate, 'frmExpiryDate', true, true, 5, true);
+            SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
+        if ($this->conf['ArticleMgr']['noExpiry']) $aDate = '';
+        $output->noExpiry = SGL_Output::getNoExpiryCheckbox($aDate, 'frmExpiryDate');
+        $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
+
         $item = & new SGL_Item();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID);
 
@@ -203,7 +198,7 @@ class ArticleMgr extends SGL_Manager
         $item->set('dateCreated', SGL_Date::getTime());
         $item->set('lastUpdated', SGL_Date::getTime());
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
-        $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
+        $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
 
@@ -238,16 +233,19 @@ class ArticleMgr extends SGL_Manager
         $output->dateSelectorStart =
             SGL_Output::showDateSelector(SGL_Date::stringToArray($item->startDate),
                 'frmStartDate');
+        $aExpiryDate = $item->expiryDate
+            ? SGL_Date::stringToArray($item->expiryDate)
+            : SGL_Date::stringToArray(mktime(0,0,0,date('m'),date('d'),date('Y')+5));
         $output->dateSelectorExpiry =
-            SGL_Output::showDateSelector(SGL_Date::stringToArray($item->expiryDate),
-                'frmExpiryDate', true, true, 5, true);
-
+            SGL_Output::showDateSelector($aExpiryDate,'frmExpiryDate');
+        $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
+        $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
         //  get dynamic content
         $output->dynaContent = $item->getDynamicContent($input->articleID);
 
-        //  generate flesch html link        
-        $output->fleschLink = $this->conf['site']['baseUrl'] 
-            . '/themes/'.$_SESSION['aPrefs']['theme'].'/publisher/flesch.' 
+        //  generate flesch html link
+        $output->fleschLink = $this->conf['site']['baseUrl']
+            . '/themes/'.$_SESSION['aPrefs']['theme'].'/publisher/flesch.'
             . $_SESSION['aPrefs']['language'] . '.html';
 
         //  calculate flesch score if enabled
@@ -315,7 +313,7 @@ class ArticleMgr extends SGL_Manager
         }
         $item->set('lastUpdated', SGL_Date::getTime());
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
-        $item->set('expiryDate', SGL_Date::arrayToString($input->aExpiryDate));
+        $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('statusID', SGL_STATUS_FOR_APPROVAL);
 
         //  updateMetaItems
@@ -571,5 +569,6 @@ EOF;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->aElements = $mElement;
     }
+
 }
 ?>

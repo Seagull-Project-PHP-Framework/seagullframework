@@ -122,7 +122,7 @@ class SGL_Date
                 $output = $date->format('%d %B %Y, %H:%M');
 
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR') {
-				// Brazilian date format
+                // Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
 
             } else {
@@ -148,14 +148,14 @@ class SGL_Date
         if (is_string($date)) {
             include_once 'Date.php';
             $date = & new Date($date);
-			// Neither elegant nor efficient way of doing that
-			// (what if we have 30 formats/locales?).
-			// We should move that to a language/locale dependent file.
+            // Neither elegant nor efficient way of doing that
+            // (what if we have 30 formats/locales?).
+            // We should move that to a language/locale dependent file.
             if ($_SESSION['aPrefs']['dateFormat'] == 'UK') {
                 $output = $date->format('%d.%m.%Y');
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR'
                      || $_SESSION['aPrefs']['dateFormat'] == 'FR') {
-				// Brazilian/French date format
+                // Brazilian/French date format
                 $output = $date->format('%d/%m/%Y');
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
                 $output = $date->format('%m.%d.%Y');
@@ -178,14 +178,11 @@ class SGL_Date
      * @return  string  $month_options  select month options
      * @see     showDateSelector()
      */
-    function getMonthFormOptions($selected = '', $noExpire = false)
+    function getMonthFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aMonths = SGL_String::translate('aMonths');
         $monthOptions = '';
-        if( $noExpire )
-            $monthOptions.="<option value=\"\"> - - </option>\n";
-
         if (empty($selected) && $selected != null) {
             $selected = date('m',time());
         }
@@ -212,13 +209,10 @@ class SGL_Date
      * @return  string  $day_options    select day options
      * @see     showDateSelector()
      */
-    function getDayFormOptions($selected = '', $noExpire = false)
+    function getDayFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $day_options = '';
-        if( $noExpire )
-            $day_options.="<option value=\"\"> - - </option>\n";
-
         for ($i = 1; $i <= 31; $i++) {
             if ($i < 10) {
                 $dval = '0' . $i;
@@ -244,14 +238,10 @@ class SGL_Date
      * @return  string  $year_options   select year options
      * @see     showDateSelector()
      */
-    function getYearFormOptions($selected = '', $asc = true, $number = 5, $noExpire = false)
+    function getYearFormOptions($selected = '', $asc = true, $number = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $year_options = '';
-        if( $noExpire )
-            $year_options.="<option value=\"\"> - - </option>\n";
-
-
         $cur_year = date('Y',time());
         $start_year = $cur_year;
         if (!empty($selected)) {
@@ -287,12 +277,10 @@ class SGL_Date
      * @return  string  $hour_options   select hour options
      * @see     showDateSelector()
      */
-    function getHourFormOptions($selected = '', $noExpire = false)
+    function getHourFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $hour_options = '';
-        if( $noExpire )
-            $hour_options.="<option value=\"\"> - - </option>\n";
 
         for ($i = 0; $i <= 23; $i++) {
             $hval = sprintf("%02d",  $i);
@@ -313,12 +301,10 @@ class SGL_Date
      * @return  string  $minute_options select minute/second options
      * @see     showDateSelector()
      */
-    function getMinSecOptions($selected = '', $noExpire = false)
+    function getMinSecOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $minute_options = '';
-        if( $noExpire )
-            $minute_options.="<option value=\"\"> - - </option>\n";
 
         for ($i = 0; $i <= 59; $i++) {
             if ($i < 10) {
@@ -363,26 +349,21 @@ class SGL_Date
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
 */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $html = '';
-        $html .= "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month'], $noExpire) . '</select> / ';
-        $html .= "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day'], $noExpire) . '</select> / ';
-        $html .= "\n<select name='" . $sFormName . "[year]' id='".$sFormName."_year'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years, $noExpire) . '</select>';
+        $html .= "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
+        $html .= "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
+        $html .= "\n<select name='" . $sFormName . "[year]' id='".$sFormName."_year'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years) . '</select>';
         if ($bShowTime) {
             $html .= '&nbsp;&nbsp; ';
             $html .= SGL_String::translate('at time');
             $html .= ' &nbsp;&nbsp;';
-            $html .= "\n<select name='" . $sFormName . "[hour]'  id='".$sFormName."_hour'>" . SGL_Date::getHourFormOptions($aDate['hour'], $noExpire) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[minute]' id='".$sFormName."_minute'>" . SGL_Date::getMinSecOptions($aDate['minute'], $noExpire) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[second]' id='".$sFormName."_second'>" . SGL_Date::getMinSecOptions($aDate['second'], $noExpire) . '</select>';
+            $html .= "\n<select name='" . $sFormName . "[hour]'  id='".$sFormName."_hour'>" . SGL_Date::getHourFormOptions($aDate['hour']) . '</select> : ';
+            $html .= "\n<select name='" . $sFormName . "[minute]' id='".$sFormName."_minute'>" . SGL_Date::getMinSecOptions($aDate['minute']) . '</select> : ';
+            $html .= "\n<select name='" . $sFormName . "[second]' id='".$sFormName."_second'>" . SGL_Date::getMinSecOptions($aDate['second']) . '</select>';
         }
-        if ($noExpire) {
-            $checked = ($aDate == null) ? 'checked' : '';
-            $html.='<input type="checkbox" id="'.$sFormName.'_no_expire" onClick="time_select_reset(\''.$sFormName.'\');" '.$checked.'> '.SGL_Output::translate('No expire');
-        }
-
         return $html;
     }
 }

@@ -84,7 +84,6 @@ class SGL_Output
     function generateSelect($aValues, $selected = null, $multiple = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         if (!is_array($aValues)) {
             SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -122,7 +121,6 @@ class SGL_Output
     function generateCheckboxList($hElements, $aChecked, $groupName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         if (!is_array($hElements) || !is_array($aChecked)) {
             SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
                 SGL_ERROR_INVALIDARGS);
@@ -149,7 +147,6 @@ class SGL_Output
     function generateCheckbox($name, $value, $checked)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $isChecked = $checked ? ' checked' : '';
         $html = "<input class='noBorder' type='checkbox' name='$name' " .
             "id='$name' value='$value' $isChecked><label for='$name'>$value</label><br />\n";
@@ -167,7 +164,6 @@ class SGL_Output
     function generateRadioPair($radioName, $checked)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $radioString = '';
         if ($checked) {
             $yesChecked = ' checked';
@@ -235,9 +231,23 @@ class SGL_Output
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
     */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5, $noExpire = false)
+    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
     {
-        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years, $noExpire);
+        return SGL_Date::showDateSelector($aDate, $sFormName, $bShowTime, $asc, $years);
+    }
+
+    /**
+     * Creates a checkbox for infinite Articles (no expiry)
+     *
+     * @access public
+     * @param  array $aDate if NULL checkbox is checked
+     * @param  string $sFormName Name of Date Selector to reset if checkbox is clicked
+     * @return string with checkbox. Name of checkbox will be $sFormName.NoExpire, e.g. ExpiryDateNoExpire
+     */
+    function getNoExpiryCheckbox($aDate,$sFormName)
+    {
+        $checked = ($aDate == null) ? 'checked' : '';
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.'> '.SGL_Output::translate('No expire');
     }
 
     /**
@@ -247,6 +257,7 @@ class SGL_Output
      * @access  public
      * @return  string  $curRowClass string representing class found in stylesheet
     */
+
     function switchRowClass($isBold, $id = 'default')
     {
         //  remember the last color we used
@@ -289,7 +300,6 @@ class SGL_Output
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $message = SGL_HTTP_Session::get('message');
         if (isset($message) && $message != '') {
             SGL_HTTP_Session::remove('message');
@@ -358,13 +368,9 @@ class SGL_Output
 
     function outputBody()
     {
-        $conf = $this->aProps['manager']->conf;
-
-        if ($conf['site']['templateEngine'] == 'flexy') {
-            $body = new HTML_Template_Flexy();
-            $body->compile($this->template);
-            $body->outputObject($this);
-        }
+        $body = new HTML_Template_Flexy();
+        $body->compile($this->template);
+        $body->outputObject($this);
     }
 
     /**

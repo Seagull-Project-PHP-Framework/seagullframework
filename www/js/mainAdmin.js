@@ -1,5 +1,5 @@
 //  for block manager
-function orderRightModule(down) 
+function orderRightModule(down)
 {
     sl = document.frmBlockMgr.rightItem.selectedIndex;
     if (sl != -1) {
@@ -20,66 +20,71 @@ function orderRightModule(down)
         }
     } else {
         alert("you must select an item to move");
-    }    
+    }
     return false;
-}  
-
-function time_select_reset(prefix){
+}
 
 
-	d = new Date();
-	if( document.getElementById(prefix+'_no_expire').checked ){	
-		if( document.getElementById(prefix+'_year') ){
-			document.getElementById(prefix+'_year').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_month') ){
-			document.getElementById(prefix+'_month').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_day') ){
-			document.getElementById(prefix+'_day').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_hour') ){
-			document.getElementById(prefix+'_hour').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_minute') ){
-			document.getElementById(prefix+'_minute').options[0].selected = true;
-		}
-		if( document.getElementById(prefix+'_second') ){
-			document.getElementById(prefix+'_second').options[0].selected = true;
-		}
-	}else{
-		if( document.getElementById(prefix+'_year') ){
-            relocate_select(document.getElementById(prefix+'_year'), d.getFullYear());
-		}
-		if( document.getElementById(prefix+'_month') ){
-			relocate_select(document.getElementById(prefix+'_month'), (d.getMonth()+1));
-		}
-		if( document.getElementById(prefix+'_day') ){
-			relocate_select(document.getElementById(prefix+'_day'), d.getDate());
-		}
-		if( document.getElementById(prefix+'_hour') ){
-			relocate_select(document.getElementById(prefix+'_hour'), '00');		    
-		}
-		if( document.getElementById(prefix+'_minute') ){
-            relocate_select(document.getElementById(prefix+'_minute'), '00');
-		}
-		if( document.getElementById(prefix+'_second') ){
-		    relocate_select(document.getElementById(prefix+'_second'), '00');
-		}
+var oldDate;
+oldDate = new Array();
 
+function time_select_reset(prefix, changeBack){
+    /*
+     * adds a empty node as first node of a date selector
+     * @param object dateSelector Select object to add node
+     * returns old value of selector
+     */
+    function setEmpty(id) {
+        if (dateSelector = document.getElementById(id)) {
+            if (dateSelector.firstChild.value != ''){
+                newNode = document.createElement("option");
+                newNode.value = '';
+                newNode.appendChild(document.createTextNode(" -- "));
+                dateSelector.insertBefore(newNode, dateSelector.options[0]);
+            }
+            oldValue = dateSelector.value;
+            dateSelector.options[0].selected = true;
+            dateSelector.disabled = true;
+            return oldValue;
+        }
+    }
 
-	}
+    function setActive(id) {
+        if (dateSelector = document.getElementById(id)) {
+            relocate_select(dateSelector, oldDate[id]);
+            dateSelector.disabled = false;
+        }
+
+    }
+
+    selectors = new Array(prefix+'_year', prefix+'_month', prefix+'_day', prefix+'_hour', prefix+'_minute', prefix+'_second');
+    d = new Date();
+
+    if (oldDate.length == 0){
+    }
+
+    if( document.getElementById(prefix+'NoExpire').checked ){
+        for (var i = 0; i <= selectors.length; i++){
+            oldDate[(selectors[i])] = setEmpty(selectors[i]);
+        }
+    }else{
+        if(changeBack == true){
+            for (var i = 0; i <= selectors.length; i++){
+                setActive(selectors[i]);
+            }
+        }
+    }
 }
 
 function relocate_select(obj, value){
-	if( obj ){
-		for( i=0; i<obj.options.length; i++ ){
-			if( obj.options[i].value==value )
-				obj.options[i].selected = true;
-			else
-				obj.options[i].selected = false;
-		}
-	}
+    if( obj ){
+        for( i=0; i<obj.options.length; i++ ){
+            if( obj.options[i].value==value )
+                obj.options[i].selected = true;
+            else
+                obj.options[i].selected = false;
+        }
+    }
 
 }
 
@@ -105,9 +110,9 @@ function orderLeftModule(down)
     } else {
         alert("you must select an item to move");
     }
-    
+
     return false;
-}  
+}
 
 function doSubBlock()
 {
@@ -117,18 +122,18 @@ function doSubBlock()
         leftVal += document.frmBlockMgr.leftItem.options[i].value;
     }
     document.frmBlockMgr["_leftItems"].value = leftVal;
-    
+
     rightVal = "";
     for (i=0;i<document.frmBlockMgr.rightItem.length;i++) {
         if (i!=0) { rightVal += ","; }
         rightVal += document.frmBlockMgr.rightItem.options[i].value;
-    } 
-    document.frmBlockMgr["_rightItems"].value = rightVal;    
+    }
+    document.frmBlockMgr["_rightItems"].value = rightVal;
     return true;
 }
 
 //  same fns again for faq & section managers!
-function orderModule(down) 
+function orderModule(down)
 {
     sl = document.fm.item.selectedIndex;
     if (sl != -1) {
@@ -151,17 +156,17 @@ function orderModule(down)
      alert("you must select an item to move");
     }
     return false;
-}  
+}
 
-function doSub() 
+function doSub()
 {
     val = '';
     for (i=0;i<document.fm.item.length;i++) {
-        if (i!=0) { 
+        if (i!=0) {
             val += ",";
         }
         val += document.fm.item.options[i].value;
-    } 
+    }
     document.fm[".items"].value = val;
     return true;
 }
