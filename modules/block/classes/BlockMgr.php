@@ -232,11 +232,10 @@ class BlockMgr extends SGL_Manager
         }
 
         $data = $block->toArray('block[%s]');
-        $dbh = & SGL_DB::singleton();
         $query = "
             SELECT role_id FROM {$this->conf['table']['block_role']}
             WHERE block_id = '" .$data['block[block_id]'] . "'";
-        $res = & $dbh->getAll($query);
+        $res = & $this->dbh->getAll($query);
         $data['block[roles]'] = array();
         foreach ($res as $key => $value) {
             $data['block[roles]'][] = $value->role_id;
@@ -255,9 +254,8 @@ class BlockMgr extends SGL_Manager
             // Update record in DB
             $block->update(false, true); // This takes into account block assignments as well
 
-            $dbh = & SGL_DB::singleton();
             $query = "DELETE FROM {$this->conf['table']['block_role']} WHERE block_id ='" .$oBlock->block_id . "'";
-            $dbh->query($query);
+            $this->dbh->query($query);
             $query = '';
 
             // delete 'all roles' option
@@ -274,7 +272,7 @@ class BlockMgr extends SGL_Manager
                     VALUES(" . $oBlock->block_id . ", $value);";
             }
             if ($query <> '') {
-                $dbh->query($query);
+                $this->dbh->query($query);
             }
 
             // clear cache so a new cache file is built reflecting changes
