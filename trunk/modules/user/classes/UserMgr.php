@@ -204,6 +204,7 @@ class UserMgr extends RegisterMgr
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $output->template = 'userAdd.html';
         $oUser = $this->da->getUserById();
