@@ -51,6 +51,47 @@ define('SGL_DSN_STRING',                1);
 class SGL_DB
 {
     /**
+     * Returns a singleton reference to the DB resource.
+     *
+     * example usage:
+     * $dbh = & SGL_DB::singleton();
+     * warning: in order to work correctly, DB handle
+     * singleton must be instantiated statically and
+     * by reference
+     *
+     * @access  public
+     * @static
+     * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
+     * @return  mixed           reference to DB resource or false on failure to connect
+     */
+    function &singleton($dsn = null, $newConn = null)
+    {
+        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        
+        static $aInstances;
+        if (!isset($aInstances)) {
+			$aInstances = array();
+        }
+        $signature = md5($dsn);
+        if (!isset($aInstances[$signature])) {
+        	
+        	if (is_a($newConn, 'DB_common')) {
+        		$conn = $newConn;
+        	} else {
+	        	$conn = DB::connect($dsn);
+	            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null; 
+	            if (DB::isError($conn)) {
+	                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+	                    SGL_ERROR_DBFAILURE, $fatal);
+	            }
+        	}
+            $conn->setFetchMode(DB_FETCHMODE_OBJECT);
+			$aInstances[$signature] = &$conn;
+        }
+        return $aInstances[$signature];
+    }
+    
+    /**
      * Returns the default dsn specified in the global config.
      *
      * @access  public
@@ -91,8 +132,8 @@ class SGL_DB
                 $conf['db']['name'];
         }
         return $dsn;
-    }
-
+    }    
+    
     /**
      * Sets the DB global DB handle for optionally specified dsn. You can
      * use this for sharing connections between PEAR::DataObjects and SGL_DB.
@@ -111,57 +152,14 @@ class SGL_DB
      * @param   object  $dbh    PEAR::DB instance
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      */
-    function setConnection (&$dbh, $dsn = null)
+    function setConnection(&$dbh, $dsn = null)
     {
-        $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        $dsnMd5 = md5($dsn);
+        #$dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        #$dsnMd5 = md5($dsn);
 
-        //  if we're using SimpleTestRunner, reassign STR db resource
-        if (isset($GLOBALS['_STR'])) {
-            $dbh = $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
-            $dbh->setFetchMode(DB_FETCHMODE_OBJECT);
-        } else {
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
-        }
-    }
-
-    /**
-     * Returns a singleton DB handle.
-     *
-     * example usage:
-     * $dbh = & SGL_DB::singleton();
-     * warning: in order to work correctly, DB handle
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
-     * @return  mixed           reference to DB resource or false on failure to connect
-     */
-    function &singleton($dsn = null)
-    {
-        $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        $dsnMd5 = md5($dsn);
-        if (!is_array(@$GLOBALS['_SGL']['CONNECTIONS'])) {
-            $GLOBALS['_SGL']['CONNECTIONS'] = array();
-        }
-        $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
-
-        if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
-
-            //  if db connect fails and seagull is already configured, die
-            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
-            if (DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5])) {
-                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-                    SGL_ERROR_DBFAILURE, $fatal);
-            }
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
-        }
-        return $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
-    }
+        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
+        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+    }    
 
     /**
      * Helper method - Rewrite the query into a "SELECT COUNT(*)" query.
