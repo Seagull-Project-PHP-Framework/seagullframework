@@ -74,7 +74,7 @@ module setup
 
 //  initialise
 session_start();
-require_once dirname(__FILE__) . '/../lib/SGL/Install.php';
+require_once dirname(__FILE__)  . '/../lib/SGL/Install.php';
 require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
 SGL_AppController::init();
 
@@ -139,6 +139,7 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 
 //  load tasks
 require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Tasks/Install.php';
 
 class ActionProcess extends HTML_QuickForm_Action
 {
