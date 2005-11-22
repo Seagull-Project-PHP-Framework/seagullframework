@@ -1,4 +1,11 @@
 <?php
+/**
+ * ServiceLocator.php
+ *
+ * @package    SGL
+ * @author     Luis Correa d'Almeida <luis@awarez.net>
+ * @author     Andrew Hill <andrew@awarez.net>
+ */
 
 /**
   * A class that allows services to be globally registered, so that they
