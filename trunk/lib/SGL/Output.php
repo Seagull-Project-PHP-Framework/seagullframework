@@ -368,9 +368,22 @@ class SGL_Output
 
     function outputBody()
     {
-        $body = new HTML_Template_Flexy();
-        $body->compile($this->template);
-        $body->outputObject($this);
+	    $conf = $this->aProps['manager']->conf; 
+	
+	    if ($conf['site']['templateEngine'] == 'flexy') { 
+	        $body = new HTML_Template_Flexy(); 
+	        $body->compile($this->template); 
+	        $body->outputObject($this); 
+	        
+	    } elseif ($conf['site']['templateEngine'] == 'smarty') {
+	        
+	    	//  grab current moduleName to build path to smarty template
+	        $reg = &SGL_Registry::singleton();        
+	        $moduleName = $reg->moduleName;
+	        $templateName = $moduleName . '/' . $this->template;
+	        $smarty = & SGL_Smarty::singleton(); 
+    	    $ok = $smarty->display($templateName);	    	
+	    }
     }
 
     /**
