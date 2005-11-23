@@ -1,0 +1,869 @@
+<div id="dhtmltooltip"></div>
+<script type="text/javascript" src="{$result->webRoot}/js/tooltip.js"></script>
+
+<h1 class="pageTitle">{translate var=$result->pageTitle}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+<p class="alignCenter">{translate var="Please use the following form to edit your config file"}.</p>
+
+<form name="conf" method="post" flexy:ignore>
+<input type="hidden" name="action" value="update" />
+<input type="hidden" name="conf[db][bootstrap]" value="0" />
+<table class="narrow">
+    <tr>
+        <th colspan="3">{translate var="General Site Options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Base URL"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[baseUrl]">{error[baseUrl]}</div>
+            <input type="text" name="conf[site][baseUrl]" value="{conf[site][baseUrl]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Session max lifetime (secs)"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][sessionMaxLifetime]" value="{conf[site][sessionMaxLifetime]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="Zero means until the browser is closed"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Site name"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][name]" value="{conf[site][name]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Show logo"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[showLogo]">{error[showLogo]}</div>
+            <input type="text" name="conf[site][showLogo]" value="{conf[site][showLogo]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="If path to image is specified, image will be shown; if left blank, Site name from above will appear as text"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Gzip compression"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][compression]#,conf[site][compression]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Output buffering"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][outputBuffering]#,conf[site][outputBuffering]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable IP banning"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][banIpEnabled]#,conf[site][banIpEnabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Handy if you dont have access to Apache configuration"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable Safe deleting"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][safeDelete]#,conf[site][safeDelete]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="This way no content items are really deleting from DB, just marked as deleted"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable Tidy html cleaning"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][tidyhtml]#,conf[site][tidyhtml]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Requires the tidy extension to be installed"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Template Engine"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</div>
+            <select name="conf[site][templateEngine]">
+                {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Seagull allows you to use the template engine of your choice"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="URL handler"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[urlHandler]">{error[urlHandler]}</div>
+            <select name="conf[site][urlHandler]">
+                {generateSelect(aUrlHandlers,conf[site][urlHandler]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="What format would you like your URLs, Seagull Search Engine Friendly is the default"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Session handler"}</td>
+        <td class="fieldValue">
+            <select name="conf[site][sessionHandler]">
+                {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Use the database session handler if youre running a load-balanced environment"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Extended Session"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[extended_session]">{error[extended_session]}</div>
+            {generateRadioPair(#conf[site][extended_session]#,conf[site][extended_session]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Enables extended session API when using database sessions. This allows the site to enforce one session per user."}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enforce Single User"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[single_user]">{error[single_user]}</div>
+            {generateRadioPair(#conf[site][single_user]#,conf[site][single_user]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Enforces one session per user on this site (requires database session handling, and extended session to be on)."}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Allow Session in URL"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[sessionInUrl]">{error[sessionInUrl]}</div>
+            {generateRadioPair(#conf[site][sessionInUrl]#,conf[site][sessionInUrl]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="If users have cookies disabled, this will allow them to use sessions with Seagull"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable left/right columns"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][blocksEnabled]#,conf[site][blocksEnabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="You can turn the left/right columns off globally"}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate var="Default article view type"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][defaultArticleViewType]" value="{conf[site][defaultArticleViewType]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)"}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate var="Front controller script name"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][frontScriptName]" value="{conf[site][frontScriptName]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="The name of your Seagull index file"}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate var="Default module"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][defaultModule]" value="{conf[site][defaultModule]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)"}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate var="Default manager"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][defaultManager]" value="{conf[site][defaultManager]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="This is the manager class that will be loaded if none are specified (FC only)"}</span>
+            </span>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="fieldName">{translate var="Default params"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][defaultParams]" value="{conf[site][defaultParams]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="Use these params to specify, eg, a static article for your homepage"}</span>
+            </span>
+        </td>
+    </tr>   
+    
+    <tr>
+        <td class="fieldName">{translate var="Editor type"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][wysiwyg_editor]" value="{conf[site][wysiwyg_editor]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir"}</span>
+            </span>
+        </td>
+    </tr>      
+
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Navigation Options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable Navigation"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[navigation][enabled]#,conf[navigation][enabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Disable navigation altogether with this switch"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Navigation type (driver)"}</td>
+        <td class="fieldValue">
+            <select name="conf[navigation][driver]">
+                {generateSelect(aNavDrivers,conf[navigation][driver]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Use this option to choose from various menu types - currently only 1 provided"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Navigation menu stylesheet"}</td>
+        <td class="fieldValue">
+            <select name="conf[navigation][stylesheet]">
+                {generateSelect(aStyleFiles,conf[navigation][stylesheet]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager"}.</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Debugging Options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable authentication"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][authenticationEnabled]#,conf[debug][authenticationEnabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Debugging easier when this is disabled"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable custom error handler"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][customErrorHandler]#,conf[debug][customErrorHandler]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Customise the way errors are handled"}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate var="Enable debug session"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][sessionDebugAllowed]#,conf[debug][sessionDebugAllowed]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="If your IP appears in the TRUSTED_IPS array, you will be able to view system errors on screen even in production mode (see below)"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Production website"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][production]#,conf[debug][production]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Setting this to true will disable all screen-based error messages"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Show backtrace"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][showBacktrace]#,conf[debug][showBacktrace]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable Profiling"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][profiling]#,conf[debug][profiling]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Requires to Xdebug extension to be installed"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Email admin threshold"}</td>
+        <td class="fieldValue">
+            <select name="conf[debug][emailAdminThreshold]">
+                {generateSelect(aEmailThresholds,conf[debug][emailAdminThreshold]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Errors must be >= this level before they are emailed to the site admin"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Show debug reporting link"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[debug][showBugReporterLink]#,conf[debug][showBugReporterLink]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Send feedback to project for bugs"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Caching Options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable caching"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[cache][enabled]#,conf[cache][enabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate var="It is recommended to disable this while developing"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Cache lifetime (secs)"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[cache][lifetime]" value="{conf[cache][lifetime]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Default is 24 hours"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Database Options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Type"}</td>
+        <td class="fieldValue">
+            <select name="conf[db][type]">
+                {generateSelect(aDbTypes,conf[db][type]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Make sure you load the relevant schema"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Host"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[db][host]" value="{conf[db][host]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Port"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[db][port]" value="{conf[db][port]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Protocol"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[db][protocol]" value="{conf[db][protocol]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="DB username"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[db][user]" value="{conf[db][user]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="DB password"}</td>
+        <td class="fieldValue">
+            <input type="password" name="conf[db][pass]" value="{conf[db][pass]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="DB name"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[db][name]" value="{conf[db][name]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Database Table Mappings"}</th>
+    </tr>
+    <tr flexy:foreach="conf[table],key,var">
+        <td class="fieldName">{key}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[table][{key}]" value="{var}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Logging options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Enable logs"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[log][enabled]#,conf[log][enabled]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="It is recommended to disable logging if you are running < PHP 4.3.x"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Type"}</td>
+        <td class="fieldValue">
+            <select name="conf[log][type]">
+                {generateSelect(aLogTypes,conf[log][type]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="If sql is used, use log_table as the log table name below"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Log name"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[log][name]" value="{conf[log][name]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Use an absolute path or one relative to the Seagull root dir"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Priority"}</td>
+        <td class="fieldValue">
+            <select name="conf[log][priority]">
+                {generateSelect(aLogPriorities,conf[log][priority]):h}
+            </select>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Identifier"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[log][ident]" value="{conf[log][ident]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Target username"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[log][paramsUsername]" value="{conf[log][paramsUsername]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Target password"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[log][paramsPassword]" value="{conf[log][paramsPassword]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="MTA options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Backend"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[mtaBackend]">{error[mtaBackend]}</div>
+            <select name="conf[mta][backend]">
+                {generateSelect(aMtaBackends,conf[mta][backend]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="PEAR::Mail backend"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Sendmail path"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[sendmailPath]">{error[sendmailPath]}</div>
+            <input type="text" name="conf[mta][sendmailPath]" value="{conf[mta][sendmailPath]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Mandatory if you use Sendmail as Backend"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Sendmail arguments"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[sendmailArgs]">{error[sendmailArgs]}</div>
+            <input type="text" name="conf[mta][sendmailArgs]" value="{conf[mta][sendmailArgs]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Optional if you use Sendmail as Backend"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="SMTP host"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[mta][smtpHost]" value="{conf[mta][smtpHost]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Optional if you use SMTP as Backend. Default: localhost"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="SMTP port"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[mta][smtpPort]" value="{conf[mta][smtpPort]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Optional if you use SMTP as Backend. Default: 25"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Use SMTP authentication"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[mta][smtpAuth]#,conf[mta][smtpAuth]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="SMTP username"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[smtpUsername]">{error[smtpUsername]}</div>
+            <input type="text" name="conf[mta][smtpUsername]" value="{conf[mta][smtpUsername]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Mandatory if you use SMTP as Backend and SMTP authentication is enabled"}</span>
+            </span>
+        </td>
+    </tr>
+     <tr>
+        <td class="fieldName">{translate var="SMTP password"}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[smtpPassword]">{error[smtpPassword]}</div>
+            <input type="password" name="conf[mta][smtpPassword]" value="{conf[mta][smtpPassword]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Mandatory if you use SMTP as Backend and SMTP authentication is enabled"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Email options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Admin contact"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[email][admin]" value="{conf[email][admin]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Error messages get sent here"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Support contact"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[email][support]" value="{conf[email][support]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Info contact"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[email][info]" value="{conf[email][info]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="Contact us enquiries get sent here"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Popup window options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Default popup window height"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[popup][winHeight]" value="{conf[popup][winHeight]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Default popup window width"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[popup][winWidth]" value="{conf[popup][winWidth]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Cookie options"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Name"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[cookie][name]" value="{conf[cookie][name]}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate var="This will be your session identifier"}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Path"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[cookie][path]" value="{conf[cookie][path]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Domain"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[cookie][domain]" value="{conf[cookie][domain]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Secure"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[cookie][secure]#,conf[cookie][secure]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="Censorship"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Mode"}</td>
+        <td class="fieldValue">
+            <select name="conf[censor][mode]">
+                {generateSelect(aCensorModes,conf[censor][mode]):h}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Replace word with"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[censor][replaceString]" value="{conf[censor][replaceString]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Disallowed words"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[censor][badWords]" value="{conf[censor][badWords]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate var="P3P privacy policy"}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Policies"}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[p3p][policies]#,conf[p3p][policies]):h}
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Policy location"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[p3p][policy_location]" value="{conf[p3p][policy_location]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate var="Compact policy"}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[p3p][compact_policy]" value="{conf[p3p][compact_policy]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">
+            <input class="wideButton" type="submit" name="submitted" value="{translate var="Save"}" />&nbsp;
+            <input class="wideButton" type="button" name="cancel" value="{translate var="Cancel"}" onClick="document.location.href='{makeUrl(##,#module#,#default":h}'" />
+        </td>
+    </tr>
+</table>
+</form>
