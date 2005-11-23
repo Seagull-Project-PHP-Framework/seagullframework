@@ -7,13 +7,9 @@
     <table class="wide">
 
         <tr>
-            <td align="center" colspan="7">
-                <input type="button" value="{translate(#Export category tree (Simple table)#)}"
-                    onclick="javascript:document.location.href='{makeUrl(#export#,#category#,#navigation#)}'" />
-                <input type="button" value="{translate(#Export category tree (Hierarchy table)#)}"
-                    onclick="javascript:document.location.href='{makeUrl(#export#,#category#,#navigation#,##,#mode|hierarchy#)}'" />
-                <input type="button"  name="category" value="{translate(#Add Root Category#)}"
-                    onclick="document.location.href = '{makeUrl(#add#,#category#,#navigation#,##,#frmCatID|0#)}'" />
+            <td align="center" colspan="5">
+                <input type="button" value="{translate(#return to category manager#)}" 
+                    onclick="javascript:document.location.href='{makeUrl(#list#,#category#,#navigation#)}'" />
             </td>
         </tr>
     
@@ -23,12 +19,9 @@
             <th>{translate(#Move/Edit#)}</th>
             <th>{translate(#Parent ID#)}</th>
             <th>{translate(#Order#)}</th>
-            <th>{translate(#Add#)}</th>
-            <th>{translate(#Delete#)}</th>
-
         </tr>
-{foreach:categoryTree,k,category}
-        <tr class="{switchRowClass()}">
+
+        <tr class="{switchRowClass()}" flexy:foreach="categoryTree,k,category">
             <td align="center">{category[category_id]}</td>
             <td width="1%"><nobr>{foreach:category[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" border="0" alt="{category[label]}" />{end:} <strong>{category[label]}</strong></nobr></td>
             <td align="center">&nbsp; 
@@ -47,37 +40,11 @@
                 {end:}
                 
                 &nbsp;&nbsp; 
-                <a href="{makeUrl(#edit#,#category#,#navigation#,categoryTree,#frmCatID|category_id#,k)}">{translate(#Edit#)}</a>
+                <a href="{makeUrl(#list#,#category#,#navigation#,categoryTree,#frmCatID|category_id#,k)}">{translate(#Edit#)}</a>
             </td>
             <td align="center">{category[parent_id]}</td>
             <td align="center">{category[order_id]}</td>
-            <td align="center"><a href="{makeUrl(#add#,#category#,#navigation#)}frmCatID/{category[category_id]}">Add branch</a></td>
-            <td align="center"><a href="{makeUrl(#delete#,#category#,#navigation#)}frmDelete/{category[category_id]}">delete</a>
-
- <!--           <form name="aDelete" action="" method="post" flexy:ignore id="aDelete">
-                <input type="hidden" name="action" value="delete" />
-                <input type="hidden" name="frmDelete[{category[category_id]}]" value="{category[category_id]}" />
-                    <input type="submit" name="Delete" class="wideButton" value="{translate(#Delete#)}"
-                        onclick="return confirmCategoryDelete('category')" />
-            </form> -->
-
-            </td>
         </tr>
 
-
-        {if:category[open]}
-        <tr class="{switchRowClass()}">
-           <td colspan="7">
-
-<flexy:include src="categoryMgr.html" />
-
-
-
-            </td>
-        </tr>
-        {end:}
-        
-
-{end:}
     </table>
 </form>
