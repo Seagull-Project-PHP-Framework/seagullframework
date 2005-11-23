@@ -59,22 +59,17 @@ class CategoryMgr extends SGL_Manager
         parent::SGL_Manager();
                 
         $this->aggregateOutput = true;
-        $this->module           = 'navigation';
         $this->pageTitle        = 'Category Manager';
         $this->template         = 'categoryMgr.html';
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'list'),
-            'update'    => array('update', 'list'),
-            'delete'    => array('delete', 'list'),
-            'edit'      => array('edit'),
+            'insert'    => array('insert', 'redirectToDefault'), 
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'), 
             'list'      => array('list'),
-            'reorder'   => array('reorder', 'list'),
-            'reorderUpdate'   => array('reorderUpdate', 'list'),
-            'export'    => array('export'),
-            'genCsvLine'=> array('genCsvLine'),
+            'reorder'   => array('reorder'), 
+            'reorderUpdate'   => array('reorderUpdate', 'reorder'),            
         );
         
         $this->_category = & new SGL_Category();
@@ -83,6 +78,7 @@ class CategoryMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated        = true;
         $input->error           = array();
         $input->pageTitle       = $this->pageTitle;
@@ -96,181 +92,38 @@ class CategoryMgr extends SGL_Manager
         $input->category        = $req->get('category');
         $input->move            = $req->get('move');
         $input->targetId        = $req->get('targetId');
-        $input->aDelete         = (array)$req->get('frmDelete');
+        $input->aDelete         = $req->get('frmDelete');
         $input->fromPublisher   = $req->get('frmFromPublisher');
-        $input->add             = $req->get('add');
-        $input->mode            = $req->get('mode');
-
-        $input->category_id = $req->get('frmCatID');
-
+        
         if ($input->action == 'update') {
-            $input->category_id           = $input->category['category_id'];
-            $input->label                 = $input->category['label'];
-            $input->parent_id             = $input->category['parent_id'];
-            $input->perms                 = $input->category['perms'];
-            $input->orginial_parent_id    = $input->category['original_parent_id'];
-            $input->parent_id             = $input->category['parent_id'];
-
+            $input->category_id         = $input->category['category_id'];
+            $input->label               = $input->category['label'];
+            $input->parent_id           = $input->category['parent_id'];
+            $input->perms               = $input->category['perms'];
+            $input->orginial_parent_id  = $input->category['original_parent_id']; 
+        } elseif ($input->action =='insert') {
+            $input->category['parent_id'] = $req->get('frmCatID'); 
+        } else {
+            $input->category_id = $req->get('frmCatID');
         }
+
     }
 
     function display(&$output)
     {
         //  prepare subnav
         $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
-        
-        if($output->action == 'export') {
-        // export headers
-           header("Content-type: application/ofx");
-           header("Content-Disposition: attachment; filename=category.csv");
-           echo $output->export;
-           exit();
-        }
     }
 
-    function _export(&$input, &$output){
-        $categoryTree = $this->_category->getTree();
-
-        if (empty($input->mode)) {
-            $header = array('category_id', 'root_id', 'level_id', 'parent_id', 'label');
-            $export = $this->_genCsvLine($header);
-
-            // export column names
-            foreach ($categoryTree as $v){
-               unset ($v['images']);
-               unset ($v['perms']);
-               unset ($v['left_id']);
-               unset ($v['right_id']);
-               unset ($v['order_id']);
-
-               $export .= $this->_genCsvLine($v);
-           }
-        } else {
-            //TODO: optimize this...
-            $header = array('category_id', 'root_id', 'level_id', 'parent_id', 'labels...');
-            $export = $this->_genCsvLine($header);
-
-            foreach ($categoryTree as $v){
-               unset ($v['images']);
-               unset ($v['perms']);
-               unset ($v['left_id']);
-               unset ($v['right_id']);
-               unset ($v['order_id']);
-
-               $spaces = ',';
-               for($i = 1; $i < (int)$v['level_id']; $i++){
-                  $spaces .= '"",';
-               }
-               $export .= "\"{$v['category_id']}\",\"{$v['root_id']}\",\"{$v['level_id']}\",\"{$v['parent_id']}\"";
-               $export .= "{$spaces}\"{$v['label']}\"\n";
-           }
-        }
-        $output->export = $export; 
-        $output->action = 'export';
-    }
-
-    /**
-    * Generates a CSV row filled with data from one product
-    * Taken from PHP help file.
-    *
-    * @access public
-    *
-    */
-    function _genCsvLine($inArray, $deliminator = ",")
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $line = "";
-        foreach ($inArray as $val) {
-            # remove any windows new lines,
-            # as they interfere with the parsing at the other end
-            $val = str_replace("\r\n", "\n", $val);
-
-            # if a deliminator char, a double quote char or a newline
-            # are in the field, add quotes
-            if (ereg("[$deliminator\"\n\r]", $val)) {
-                $val = '"'.str_replace('"', '""', $val).'"';
-            } #end if
-
-            $line .= $val.$deliminator;
-
-        } #end foreach
-
-        # strip the last deliminator
-        $line = substr($line, 0, (strlen($deliminator) * -1));
-        # add the newline
-        $line .= "\n";
-        return $line;
-    }
-
-    function _add(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->add = $input->add;
-        $output->action = 'insert';
-
-        if(isset($input->category_id) && is_numeric($input->category_id)){
-            //load category
-            if (!$this->_category->load($input->category_id)) {
-               //$input->category_id == 0 and we are adding root category.
-               //if we want to add Root category we must make $values['parent_id'] = 0;
-               $values['parent_id'] = 0;
-
-               $this->_category->create($values);
-               $output->template = 'categoryAdd.html';
-            } else {
-               $output->categoryTree = $this->_category->getTree();
-               $output->categoryTree[$input->category_id]['open'] = true;
-            }
-            $output->category = $this->_category->getValues();
-            $output->breadCrumbs = $this->_category->getBreadCrumbs($input->category_id);
-            $output->perms = $this->_category->getPerms();
-
-            //$options = array('exclude' => $output->add);
-            $menu = & new MenuBuilder('SelectBox', '');
-            $aCategories = $menu->toHtml();
-            $output->aCategories = $aCategories;
-        } 
-    }
-
-    function _edit(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'categoryMgr.html';
-        $output->action = 'update';
-        $output->categoryTree = $this->_category->getTree();
-        if(!empty($input->category_id) && is_numeric($input->category_id)){
-            $output->categoryTree[$input->category_id]['open'] = true;
-
-            //load category
-            if (!$this->_category->load($input->category_id)) {
-               echo "cant load category";
-            } else {
-               $output->category = $this->_category->getValues();
-               $output->breadCrumbs = $this->_category->getBreadCrumbs($input->category_id);
-               $output->perms = $this->_category->getPerms();
-
-               //  categories select box
-               //$options = array('exclude' => $output->add);
-               $menu = & new MenuBuilder('SelectBox', '');
-               $aCategories = $menu->toHtml();
-               $output->aCategories = $aCategories;
-            }
-        }
-    }
-    
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+		
         $values = (array) $input->category;
-
-        if ($values['original_parent_id'] = 0) {
-            $values['parent_id'] = 0;
-        }
         $this->_redirectCatId = $this->_category->create($values);
     }
 
-    function _reorder(&$input, &$output)
+    function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -312,7 +165,6 @@ class CategoryMgr extends SGL_Manager
 
         //  do not allow deletion of root category
         if ($input->category_id == 1) {
-          //^^^ here we should have not deleteable categories - PubRoot, shopRoot
             SGL::raiseMsg('do not delete root category');
 
             $aParams = array(
@@ -329,14 +181,13 @@ class CategoryMgr extends SGL_Manager
         $output->category_id = 0;
 
         SGL::raiseMsg('The category has successfully been deleted');
-        
     }
 
-    function _list(&$input, &$output)
+    function _reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'categoryMgr.html';
-        $output->categoryTree = $this->_category->getTree();
+        $output->template = 'categoryReorder.html';
+        $output->categoryTree = $this->_category->getTree();              
     }
     
     function _reorderUpdate(&$input, &$output)
