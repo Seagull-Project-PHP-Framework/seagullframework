@@ -37,7 +37,7 @@
 // | Author: Malaney J. Hill  <malaney@gmail.com>                              |
 // +---------------------------------------------------------------------------+
 
-define('SGL_SMARTY_DIR', SGL_LIB_DIR .'/other/Smarty');
+define('SGL_SMARTY_DIR', SGL_LIB_DIR  . '/other/Smarty');
 require_once SGL_SMARTY_DIR . '/libs/Smarty.class.php';
 
 class SGL_Smarty extends Smarty
@@ -56,7 +56,6 @@ class SGL_Smarty extends Smarty
         $this->config_dir = SGL_SMARTY_DIR . '/unit_test/configs';
         $this->cache_dir = SGL_CACHE_DIR;
 
-        //  starts session for page execution
         if (!is_writable($this->compile_dir)) {
             require_once 'System.php';
 
@@ -69,6 +68,7 @@ class SGL_Smarty extends Smarty
             }
         }
     }
+
     /**
      * Returns a singleton Smarty instance.
      *
