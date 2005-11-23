@@ -149,35 +149,40 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->dbType = 'pgsql';
             $this->filename1 = '/schema.pg.sql';
             $this->filename2 = '/data.default.pg.sql';
-            $this->filename3 = '/constraints.pg.sql';
+            $this->filename3 = '/data.sample.pg.sql';
+            $this->filename4 = '/constraints.pg.sql';
             break;
 
         case 'mysql':
             $this->dbType = 'mysql';
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
-            $this->filename3 = '/constraints.my.sql';
+            $this->filename3 = '/data.sample.my.sql';
+            $this->filename4 = '/constraints.my.sql';
             break;
 
         case 'mysql_SGL':
             $this->dbType = 'mysql_SGL';
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
-            $this->filename3 = '/constraints.my.sql';
+            $this->filename3 = '/data.sample.my.sql';
+            $this->filename4 = '/constraints.my.sql';
             break;
 
         case 'oci8_SGL':
             $this->dbType = 'oci8';
             $this->filename1 = '/schema.oci.sql';
             $this->filename2 = '/data.default.oci.sql';
-            $this->filename3 = '/constraints.oci.sql';
+            $this->filename3 = '/data.sample.oci.sql';
+            $this->filename4 = '/constraints.oci.sql';
             break;
 
         case 'maxdb_SGL':
             $this->dbType = 'maxdb_SGL';
             $this->filename1 = '/schema.mx.sql';
             $this->filename2 = '/data.default.mx.sql';
-            $this->filename3 = '/constraints.mx.sql';
+            $this->filename3 = '/data.sample.mx.sql';
+            $this->filename4 = '/constraints.mx.sql';
             break;
         }
 
@@ -209,32 +214,37 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  Print table shell, with module names; we'll update statuses as we execute sql below
-            echo '<table class="wide">
-                <tr>
-                    <th class="alignCenter">Module</th>
-                    <th class="alignCenter">Create Table</th>
-                    <th class="alignCenter">Load Data</th>
-                    <th class="alignCenter">Add Constraints</th>
-                </tr>
-                <!--tr>
-                    <td class="title">Main</td>
-                    <td id="etc_schema" class="alignCenter"></td>
-                    <td id="etc_data" class="alignCenter"></td>
-                    <td id="etc_constraints" class="alignCenter"></td>
-                </tr-->
+            $out = '<table class="wide">
+                        <tr>
+                            <th class="alignCenter">Module</th>
+                            <th class="alignCenter">Create Table</th>
+                            <th class="alignCenter">Load Default Data</th>
+                            ';
+            if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
+                $out .=    '<th class="alignCenter">Load Sample Data</th>';
+            }
+            $out .=        '<th class="alignCenter">Add Constraints</th>
+                        </tr>
             ';
+
+            echo $out;
 
             $aModuleList = (isset($data['installAllModules']))
                 ? SGL_Install::getModuleList()
                 : $this->getMinimumModuleList();
 
             foreach ($aModuleList as $module) {
-                echo '<tr>
-                        <td class="title">' . ucfirst($module) . '</td>
-                        <td id="' . $module . '_schema" class="alignCenter"></td>
-                        <td id="' . $module . '_data" class="alignCenter"></td>
-                        <td id="' . $module . '_constraints" class="alignCenter"></td>
-                    </tr>';
+                $out = '<tr>
+                            <td class="title">' . ucfirst($module) . '</td>
+                            <td id="' . $module . '_schema" class="alignCenter"></td>
+                            <td id="' . $module . '_data" class="alignCenter"></td>
+                            ';
+                if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
+                    $out .='<td id="' . $module . '_dataSample" class="alignCenter"></td>';
+                }
+                $out .=    '<td id="' . $module . '_constraints" class="alignCenter"></td>
+                        </tr>';
+                echo $out;
             }
             echo '</table>';
             flush();
@@ -280,7 +290,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             $this->setup();
 
-            $statusText = 'loading data';
+            $statusText = 'loading default data';
             $this->updateHtml('status', $statusText);
 
             //  Go back and load each module's default data, if there is a sql file in /data
@@ -304,6 +314,39 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
     }
 }
 
+
+class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
+            $this->setup();
+
+            $statusText = 'loading sample data';
+            $this->updateHtml('status', $statusText);
+
+            //  Go back and load each module's default data, if there is a sql file in /data
+            $aModuleList = (isset($data['installAllModules']))
+                ? SGL_Install::getModuleList()
+                : $this->getMinimumModuleList();
+
+            foreach ($aModuleList as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+
+                //  Load the module's data
+                if (file_exists($modulePath . $this->filename3)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename3, 0);
+                    $displayHtml = $result ? $this->success : $this->failure;
+                    $this->updateHtml($module . '_dataSample', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_dataSample', $this->noFile);
+                }
+            }
+        }
+    }
+}
+
+
 class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -321,8 +364,8 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 
             foreach ($aModuleList as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
-                if (file_exists($modulePath . $this->filename3)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename3, 0);
+                if (file_exists($modulePath . $this->filename4)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename, 0);
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {

@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+23-11-05    Implemented ability to load default data in installer
 23-11-05	Implemented Smarty renderer (Malaney J. Hill)
 22-11-05    Added ServiceLocator class and fixed db independence for testing
 21-11-05    Factored out setup of table name aliases, these are not set on a per-module
