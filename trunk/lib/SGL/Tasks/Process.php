@@ -726,7 +726,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
         	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
         } else {
-        	PEAR::raiseError('Could not find renderer', 
+        	PEAR::raiseError('Could not find renderer',
         		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
         }
         $view = new SGL_HtmlView($output, new $rendererClass());
@@ -794,4 +794,3 @@ class SGL_Void extends SGL_ProcessRequest
     }
 }
 ?>
-
