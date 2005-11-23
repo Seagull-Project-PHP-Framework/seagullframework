@@ -1,15 +1,6 @@
 -- Last edited: Pierpaolo Toniolo 26-07-2005
 -- Schema for default
 
--- add the plpgsql language to the database
--- WARNING: very experimental code
-SELECT oid FROM pg_language WHERE lanname = 'plpgsql';
-SELECT oid FROM pg_proc WHERE proname = 'plpgsql_call_handler' AND prorettype = 'pg_catalog.language_handler'::regtype AND pronargs = 0;
-SELECT oid FROM pg_proc WHERE proname = 'plpgsql_validator' AND proargtypes[0] = 'pg_catalog.oid'::regtype AND pronargs = 1;
-CREATE FUNCTION "plpgsql_call_handler" () RETURNS language_handler AS '$libdir/plpgsql' LANGUAGE C;
-CREATE FUNCTION "plpgsql_validator" (oid) RETURNS void AS '$libdir/plpgsql' LANGUAGE C;
-CREATE TRUSTED LANGUAGE "plpgsql" HANDLER "plpgsql_call_handler" VALIDATOR "plpgsql_validator";
-
 -- ==============================================================
 --  Table: log_table                                             
 -- ==============================================================
@@ -73,23 +64,6 @@ create  index user_session_username on user_session (
 );
 
 
-
--- ==============================================================
---  Function: unix_timestamp
--- ==============================================================
--- for this to work, you have to activate the language plpgsql by calling
--- "createlang plpgsql <dbname>" from commandline.
-
-CREATE or replace FUNCTION unix_timestamp (timestamp)
-RETURNS integer AS ' DECLARE datum ALIAS FOR $1; BEGIN RETURN EXTRACT (EPOCH FROM datum); END; ' LANGUAGE plpgsql;
-
-
-
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Schema for /modules/default
-
-BEGIN;
-
 -- ==============================================================
 --  Table: module                                                 
 -- ==============================================================
@@ -106,4 +80,14 @@ create table module
    constraint PK_MODULE primary key (module_id)
 );
 
-COMMIT;
+-- ==============================================================
+--  Function: unix_timestamp
+-- some functions for better compatibility with mysql master schema file
+-- ==============================================================
+
+CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
+
+CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
+
+CREATE OR REPLACE FUNCTION FROM_UNIXTIME(BIGINT, VARCHAR) RETURNS TIMESTAMP WITH TIME ZONE LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT TIMESTAMP WITH TIME ZONE \'epoch\' + $1 * interval \'1 second\';';
+

@@ -692,14 +692,14 @@ class SGL_HTTP_Session
         } else {
             $timeStamp = SGL_Date::getTime(true);
             if (!empty($conf['site']['extended_session'])) {
-                $uid = $_SESSION['uid'];
+                $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
                 $username = $_SESSION['username'];
                 $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
                     ? $_SESSION['aPrefs']['sessionTimeout'] 
                     : 900;
                 $query = "
                     INSERT INTO {$user_session} (session_id, last_updated, data_value, usr_id, username, expiry) 
-                    VALUES ('$sessId', '$timeStamp', '', '$uid', '$username', '$timeout')";
+                    VALUES ('$sessId', '$timeStamp', '', $uid, '$username', $timeout)";
             } else {
                 $query = "
                     INSERT INTO {$user_session} (session_id, last_updated, data_value) 
@@ -772,6 +772,7 @@ class SGL_HTTP_Session
      */
     function dbGc($max_expiry)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();

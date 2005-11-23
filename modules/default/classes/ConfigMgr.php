@@ -135,11 +135,6 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
             }
             
-            //  catch invalid template engine
-//            if ($input->conf['site']['templateEngine'] == 'smarty') {
-//                $aErrors['templateEngine'] = 'The Smarty template hooks have not been implemented yet';
-//            }
-            
             //  catch invalid URL handler
             if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
                 $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
