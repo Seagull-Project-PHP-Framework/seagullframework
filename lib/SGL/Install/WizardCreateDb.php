@@ -121,6 +121,9 @@ class WizardCreateDb extends HTML_QuickForm_Page
         //  db prefix
         $this->addElement('text',  'prefix',     'Table prefix: ');
 
+        //  sample data
+        $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes');
+
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb');
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
