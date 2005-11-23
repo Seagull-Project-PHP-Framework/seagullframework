@@ -136,9 +136,9 @@ class ConfigMgr extends SGL_Manager
             }
             
             //  catch invalid template engine
-            if ($input->conf['site']['templateEngine'] == 'smarty') {
-                $aErrors['templateEngine'] = 'The Smarty template hooks have not been implemented yet';
-            }
+//            if ($input->conf['site']['templateEngine'] == 'smarty') {
+//                $aErrors['templateEngine'] = 'The Smarty template hooks have not been implemented yet';
+//            }
             
             //  catch invalid URL handler
             if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {

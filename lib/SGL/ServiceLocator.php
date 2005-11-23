@@ -64,7 +64,7 @@ class SGL_ServiceLocator
         if (isset($this->aServices[$serviceName])) {
             return $this->aServices[$serviceName];
         }
-        return false;
+        #return false;
     }
 
     /**
