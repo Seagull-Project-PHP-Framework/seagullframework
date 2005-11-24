@@ -59,7 +59,7 @@ class DocumentMgr extends FileMgr
     function DocumentMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::FileMgr();
 
         $this->pageTitle    = 'Document Manager';
         $this->template     = 'documentManager.html';
@@ -71,14 +71,14 @@ class DocumentMgr extends FileMgr
         );
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'setDownload' => array('setDownload'), 
-            'list'      => array('list'), 
-            'view'      => array('view'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'setDownload' => array('setDownload'),
+            'list'      => array('list'),
+            'view'      => array('view'),
         );
     }
 
@@ -112,7 +112,7 @@ class DocumentMgr extends FileMgr
         $input->assetFileSize         = $input->assetFileArray['size'];
 
         //  determine user type
-        $input->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ? 
+        $input->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
             true : false;
 
         //  request values for save upload
@@ -158,15 +158,15 @@ class DocumentMgr extends FileMgr
         //  session var persistence
         PublisherBase::maintainState($input);
 
-        //  if document category has been changed, update input, 
-        //  or if catChangeToID is 0 leave catID as is 
+        //  if document category has been changed, update input,
+        //  or if catChangeToID is 0 leave catID as is
         //  (in the case of logged on user browsing documents)
         if (!$input->docCatID) {  //  true in case of adding doc
-            $input->docCatID = 
+            $input->docCatID =
                 ($input->catID == $input->catChangeToID || !$input->catChangeToID)
                 ? $input->catID : $input->catChangeToID;
         } else {                  //  true in case of editing
-            $input->docCatID = 
+            $input->docCatID =
                 ($input->docCatID == $input->catChangeToID || !$input->catChangeToID)
                 ? $input->docCatID : $input->catChangeToID;
         }
@@ -188,8 +188,8 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->docCatID = $input->docCatID;
         $output->template = 'documentMgrAdd.html';
-        if ($input->submit) { // if file uploaded 
-        
+        if ($input->submit) { // if file uploaded
+
             //  check id dir exists, create if not
             if (!is_writable(SGL_UPLOAD_DIR)) {
                 include_once 'System.php';
@@ -211,16 +211,16 @@ class DocumentMgr extends FileMgr
                 $output->currentCat = $input->docCatID;
 
                 $output->breadCrumbs = $menu->getBreadCrumbs($input->docCatID, false);
-            }           
+            }
         } else { // display upload screen
-            if ($input->isAdmin) {     
-               
+            if ($input->isAdmin) {
+
                 //  prepare breadcrumbs and category changer
                 $menu = & new MenuBuilder('SelectBox');
                 $htmlOptions = $menu->toHtml();
                 $output->aCategories = $htmlOptions;
                 $output->currentCat = $input->catID;
-    
+
                 $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
             }
             $output->save = false;
@@ -231,7 +231,7 @@ class DocumentMgr extends FileMgr
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $asset = DB_DataObject::factory('Document');
         $asset->setFrom($input->document);
         $dbh = $asset->getDatabaseConnection();
@@ -241,10 +241,10 @@ class DocumentMgr extends FileMgr
         $asset->name = SGL_String::censor($asset->name);
         $asset->description = SGL_String::censor($asset->description);
         $asset->insert();
-        
+
         //  if file has been renamed
         if ($input->document->orig_name != $asset->name) {
-            rename(SGL_UPLOAD_DIR . '/' . $input->document->orig_name, 
+            rename(SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
                 SGL_UPLOAD_DIR . '/' . $asset->name);
         $output->asset = $asset;
         }
@@ -294,7 +294,7 @@ class DocumentMgr extends FileMgr
 
         //  if file has been renamed
         if ($input->document->orig_name != $document->name) {
-            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name, 
+            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
                     SGL_UPLOAD_DIR . '/' . $document->name);
         }
         $output->asset = $document;
@@ -322,7 +322,7 @@ class DocumentMgr extends FileMgr
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
+
         $rangeWhereClause = ($input->queryRange == 'all')
             ? ''
             : " AND c.category_id = $input->catID";
@@ -333,7 +333,7 @@ class DocumentMgr extends FileMgr
                 dt.name AS document_type_name,
                 u.username AS document_added_by
             FROM
-                {$this->conf['table']['document']} d, {$this->conf['table']['category']} c, 
+                {$this->conf['table']['document']} d, {$this->conf['table']['category']} c,
                 {$this->conf['table']['document_type']} dt, {$this->conf['table']['user']} u
             WHERE dt.document_type_id = d.document_type_id
             AND c.category_id = d.category_id
