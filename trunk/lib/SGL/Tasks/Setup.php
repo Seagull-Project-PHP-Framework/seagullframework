@@ -184,6 +184,7 @@ class SGL_Task_SetupConstants extends SGL_Task
         }
 
         require_once dirname(__FILE__)  . '/../Url.php';
+        require_once dirname(__FILE__)  . '/../UrlParserSefStrategy.php';
         require_once dirname(__FILE__)  . '/../Manager.php';
         require_once dirname(__FILE__)  . '/../Output.php';
         require_once dirname(__FILE__)  . '/../String.php';
