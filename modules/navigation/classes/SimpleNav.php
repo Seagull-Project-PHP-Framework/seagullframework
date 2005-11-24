@@ -143,6 +143,9 @@ class SimpleNav
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
         } else {
             $aSectionNodes = $this->getSectionsByRoleId();
+            if (PEAR::isError($aSectionNodes)) {
+                return $aSectionNodes;
+            }
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
@@ -186,6 +189,9 @@ class SimpleNav
         $url = $reg->getCurrentUrl();
         $aQueryData = $url->getQueryData();
 
+        if (PEAR::isError($aQueryData)) {
+            return $aQueryData;
+        }
         // replace +'s in array elements with spaces
         $aQueryData = array_map(create_function('$a', 'return str_replace("+", " ", $a);'),
             $aQueryData);
