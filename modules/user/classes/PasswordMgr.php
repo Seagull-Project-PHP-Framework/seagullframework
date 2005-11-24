@@ -58,10 +58,10 @@ class PasswordMgr extends SGL_Manager
         $this->template = 'userPasswordEdit.html';
 
         $this->_aActionsMapping =  array(
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToEdit'), 
-            'retrieve'  => array('retrieve', 'redirectToDefault'), 
-            'forgot'    => array('forgot'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToEdit'),
+            'retrieve'  => array('retrieve', 'redirectToDefault'),
+            'forgot'    => array('forgot'),
         );
     }
 
@@ -108,7 +108,7 @@ class PasswordMgr extends SGL_Manager
                 $this->validated = false;
             }
             unset($v);
-        } 
+        }
         //  password update validation for AccountMgr
         if ($input->submit && ($input->action == 'edit') || ($input->action == 'update')) {
             $v = & new Validate();
@@ -235,7 +235,7 @@ class PasswordMgr extends SGL_Manager
         }
     }
 
-    function sendPassword($oUser, $passwd, $moduleName)
+    function sendPassword($oUser, $passwd)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
@@ -245,8 +245,8 @@ class PasswordMgr extends SGL_Manager
                 'fromEmail' => $this->conf['email']['admin'],
                 'replyTo'   => $this->conf['email']['admin'],
                 'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $moduleName . '/email_forgot.php',
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                    . '/user/email_forgot.php',
                 'username'  => $oUser->username,
                 'password'  => $passwd,
         );
@@ -254,10 +254,10 @@ class PasswordMgr extends SGL_Manager
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
     }
-    
+
     function _redirectToEdit(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);  
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         SGL_HTTP::redirect(array('action' => 'edit'));
     }
 }
