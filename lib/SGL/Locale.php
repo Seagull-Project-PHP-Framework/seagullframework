@@ -56,10 +56,10 @@ class SGL_Locale
      *
      *   $locale =& SGL_Locale::singleton($locale = '');
      *   // setting locale here would override defaults.
-     *   
+     *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
      *   echo $locale->formatDate(time());
-     *      
+     *
      * @param string $locale Overrides getting the locale from session/usr
      * @return I18Nv2 Returns a single instance of I18Nv2
      */
@@ -72,14 +72,14 @@ class SGL_Locale
             if ($newLocale) {
                 $locale = &I18Nv2::createLocale($newLocale);
             } else {
-                //  Get the language shortcode from the session                
+                //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
 
                 if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
                     $c = &SGL_Config::singleton();
                     $conf = $c->getAll();
-                    
+
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);
 
@@ -99,12 +99,8 @@ class SGL_Locale
         return $locale;
     }
 
-    function setTimeZone($tzone) 
+    function setTimeZone($tzone)
     {
-        /***
-        This Really doesn't belong here, I'm not sure where to dump this code.
-        ***/
-
         setlocale(LC_TIME, $tzone);
         @putenv('TZ=' . $tzone);
     }
