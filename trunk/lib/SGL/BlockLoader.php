@@ -39,7 +39,7 @@
 // $Id: BlockLoader.php,v 1.7 2005/05/16 23:55:23 demian Exp $
 
 /**
- * BlockLoader manages units of content that can be dynamically positioned in a 
+ * BlockLoader manages units of content that can be dynamically positioned in a
  * page's left or right columns.
  *
  * @package SGL
@@ -125,7 +125,7 @@ class SGL_BlockLoader
         $cache = & SGL::cacheSingleton();
         $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'blocks')) {
-            $this->aBlocks = unserialize($data);            
+            $this->aBlocks = unserialize($data);
             SGL::logMessage('blocks from cache', PEAR_LOG_DEBUG);
         } else {
             $this->_loadBlocks();
@@ -147,14 +147,14 @@ class SGL_BlockLoader
         $dbh = & SGL_DB::singleton();
         $query = "
             SELECT
-                b.block_id, b.name, b.title, b.title_class, 
+                b.block_id, b.name, b.title, b.title_class,
                 b.body_class, b.is_onleft
             FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
-            AND     (br.block_id = b.block_id AND 
+            AND     (br.block_id = b.block_id AND
                       (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
-                    )   
+                    )
             AND     b.block_id = ba.block_id
             AND     ( ba.section_id = ".SGL_ANY_SECTION." OR ba.section_id = " . $this->_currentSectionId . ' )
             ORDER BY b.blk_order
@@ -175,7 +175,7 @@ class SGL_BlockLoader
     /**
      * With block structures in place, block contents are built.
      *
-     * Each block is a class in the modules/block/classes/blocks directory, 
+     * Each block is a class in the modules/block/classes/blocks directory,
      * containing static HTML or dynamic content
      *
      * @access  private
@@ -191,7 +191,7 @@ class SGL_BlockLoader
                 @include_once $blockPath;
                 if (!class_exists($blockClass)) {
                     unset($this->_aData[$index]);
-                    SGL::raiseError($blockClass . ' is not a valid block classname', 
+                    SGL::raiseError($blockClass . ' is not a valid block classname',
                         SGL_ERROR_NOCLASS);
                 } else {
                     @$obj = & new $blockClass();

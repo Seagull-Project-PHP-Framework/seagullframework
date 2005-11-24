@@ -744,10 +744,12 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             }
             $nav = & new $navClass($input);
             $aRes = $nav->render();
-            list($sectionId, $html) = $aRes;
-            $input->data->sectionId = $sectionId;
-            $input->data->navigation = $html;
-            $input->data->currentSectionName = $nav->getCurrentSectionName();
+            if (!PEAR::isError($aRes)) {
+                list($sectionId, $html) = $aRes;
+                $input->data->sectionId = $sectionId;
+                $input->data->navigation = $html;
+                $input->data->currentSectionName = $nav->getCurrentSectionName();
+            }
         }
 
         $this->processRequest->process($input);
@@ -773,6 +775,7 @@ class SGL_Process_SetupBlocks extends SGL_ProcessRequest
         //  load blocks
         if ($conf['site']['blocksEnabled'] && $conf['navigation']['enabled']) {
             require_once SGL_CORE_DIR . '/BlockLoader.php';
+            $input->data->sectionId = empty($input->data->sectionId) ? 0 : $input->data->sectionId;
             $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
             $aBlocks = $blockLoader->render($input->data);
             $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
