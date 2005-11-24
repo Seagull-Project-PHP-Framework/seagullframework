@@ -40,7 +40,6 @@
 
 require_once dirname(__FILE__)  . '/Util.php';
 require_once dirname(__FILE__)  . '/Manager.php';
-require_once dirname(__FILE__)  . '/Url.php';
 
 /**
  * Provides HTTP functionality including redirects.
@@ -86,10 +85,10 @@ class SGL_HTTP
                 }
             }
             $qs = (count($aParams)) ? implode('/', $aParams): '';
-            $url = ($conf['site']['frontScriptName']) 
-                ? $conf['site']['frontScriptName'] . '/' . $moduleName 
-                : $moduleName;            
-                
+            $url = ($conf['site']['frontScriptName'])
+                ? $conf['site']['frontScriptName'] . '/' . $moduleName
+                : $moduleName;
+
             if (!empty($managerName)) {
                 $url .=  '/' . $managerName;
             }
@@ -138,11 +137,11 @@ class SGL_HTTP
                 [showExecutionTimes] => 1
                 [locale] => en_GB
             )
-    
+
         [aPerms] => Array
             (
             )
-    
+
         [currentCatId] => 1
         [dataTypeId] => 1
     )
@@ -188,30 +187,30 @@ class SGL_HTTP_Session
         //  set session timeout to 0 (until the browser is closed) initially,
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
-            0, 
+            0,
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
 
         if ($conf['site']['sessionHandler'] == 'database') {
              $ok = session_set_save_handler(
-                array(& $this, 'dbOpen'), 
-                array(& $this, 'dbClose'), 
-                array(& $this, 'dbRead'), 
-                array(& $this, 'dbWrite'), 
-                array(& $this, 'dbDestroy'), 
+                array(& $this, 'dbOpen'),
+                array(& $this, 'dbClose'),
+                array(& $this, 'dbRead'),
+                array(& $this, 'dbWrite'),
+                array(& $this, 'dbDestroy'),
                 array(& $this, 'dbGc')
                 );
         } else {
             session_save_path(SGL_TMP_DIR);
         }
-     
+
         //  start PHP session handler
 //        if (!(defined('SID'))) {
 //            $req = & SGL_Request::singleton();
 //            define('SID', $conf['cookie']['name'] . '=' . $req->get('SGLSESSID'));
 //        }
-        @session_start();       
+        @session_start();
 
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
@@ -236,7 +235,7 @@ class SGL_HTTP_Session
     function _init($oUser = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get DA_User object
         require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
         $da = & DA_User::singleton();
@@ -258,8 +257,8 @@ class SGL_HTTP_Session
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
                 'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id),
-                'aPerms'            => ($oUser->role_id == SGL_ADMIN) 
-                    ? array() 
+                'aPerms'            => ($oUser->role_id == SGL_ADMIN)
+                    ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
             );
         //  otherwise it's a guest session, these values always get
@@ -285,20 +284,20 @@ class SGL_HTTP_Session
             foreach ($aSessVars as $k => $v) {
                 $_SESSION[$k] = $v;
             }
-        }       
+        }
 
-        //  make session more secure if possible      
+        //  make session more secure if possible
         if  (function_exists('session_regenerate_id')) {
             $c = &SGL_Config::singleton();
-            $conf = $c->getAll(); 
+            $conf = $c->getAll();
             $oldSessionId = session_id();
             session_regenerate_id();
 
             if ($conf['site']['sessionHandler'] == 'file') {
-                
+
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
                 @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
-                
+
             } elseif ($conf['site']['sessionHandler'] == 'database') {
                 $value = $this->dbRead($oldSessionId);
                 $this->dbDestroy($oldSessionId);
@@ -336,7 +335,7 @@ class SGL_HTTP_Session
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $userAgent = @$_SERVER['HTTP_USER_AGENT'];
-        $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] . 
+        $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] .
             $acceptLang . $userAgent);
 
         //  compare actual key with session key, and that UID is not 0 (guest)
@@ -482,9 +481,9 @@ class SGL_HTTP_Session
     function get($sessVarName)
     {
         if (isset($sessVarName)) {
-            return is_array($_SESSION) 
+            return is_array($_SESSION)
                 ? (array_key_exists($sessVarName, $_SESSION) ? $_SESSION[$sessVarName] : '')
-                : ''; 
+                : '';
         }
     }
 
@@ -543,12 +542,12 @@ class SGL_HTTP_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'], 
+        setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
 
         $sess = & new SGL_HTTP_Session();
     }
-    
+
     /**
      * Returns active session count for a particular user.
      *
@@ -564,16 +563,16 @@ class SGL_HTTP_Session
             $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
         } else {
             $query = "
-                SELECT count(*) 
-                FROM {$conf['table']['user_session']} 
-                WHERE usr_id = $uid 
+                SELECT count(*)
+                FROM {$conf['table']['user_session']}
+                WHERE usr_id = $uid
                 AND session_id != '$sessId'";
         }
         $res = $dbh->getOne($query);
         return $res;
 
     }
-    
+
     /**
      * Destroys all active sessions for a particular user.
      *
@@ -592,12 +591,12 @@ class SGL_HTTP_Session
             $query = "DELETE FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
         } else {
             $query = "
-                DELETE FROM {$conf['table']['user_session']} 
+                DELETE FROM {$conf['table']['user_session']}
                 WHERE usr_id = $uid AND session_id != '$sessId'";
         }
         $dbh->query($query);
     }
-    
+
     /**
      * Returns all active guest session count.
      *
@@ -608,12 +607,12 @@ class SGL_HTTP_Session
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
         $res = $dbh->getOne($query);
         return $res;
     }
-    
+
     /**
      * Returns all active members session count.
      *
@@ -640,7 +639,7 @@ class SGL_HTTP_Session
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-    
+
         $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
         $res = $dbh->getOne($query);
         return $res;
@@ -653,8 +652,8 @@ class SGL_HTTP_Session
      */
     function dbOpen()
     {
-        $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
-            ? $_SESSION['aPrefs']['sessionTimeout'] 
+        $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+            ? $_SESSION['aPrefs']['sessionTimeout']
             : 900;
         $this->dbGc($timeout);
         return true;
@@ -680,7 +679,7 @@ class SGL_HTTP_Session
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $user_session = $conf['table']['user_session'];
         $query = "SELECT data_value FROM {$user_session} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
@@ -694,15 +693,15 @@ class SGL_HTTP_Session
             if (!empty($conf['site']['extended_session'])) {
                 $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
                 $username = $_SESSION['username'];
-                $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
-                    ? $_SESSION['aPrefs']['sessionTimeout'] 
+                $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+                    ? $_SESSION['aPrefs']['sessionTimeout']
                     : 900;
                 $query = "
-                    INSERT INTO {$user_session} (session_id, last_updated, data_value, usr_id, username, expiry) 
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value, usr_id, username, expiry)
                     VALUES ('$sessId', '$timeStamp', '', $uid, '$username', $timeout)";
             } else {
                 $query = "
-                    INSERT INTO {$user_session} (session_id, last_updated, data_value) 
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value)
                     VALUES ('$sessId', '$timeStamp', '')";
             }
             $dbh->query($query);
@@ -727,22 +726,22 @@ class SGL_HTTP_Session
         if (!empty($conf['site']['extended_session'])) {
             $uid = $_SESSION['uid'];
             $username = $_SESSION['username'];
-            $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
-                ? $_SESSION['aPrefs']['sessionTimeout'] 
+            $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+                ? $_SESSION['aPrefs']['sessionTimeout']
                 : 900;
             $query = "
-                UPDATE {$user_session} 
-                SET data_value = $qval, 
-                    last_updated = '$timeStamp', 
-                    usr_id='$uid', 
-                    username='$username', 
-                    expiry='$timeout' 
+                UPDATE {$user_session}
+                SET data_value = $qval,
+                    last_updated = '$timeStamp',
+                    usr_id='$uid',
+                    username='$username',
+                    expiry='$timeout'
                 WHERE session_id = '$sessId'";
         } else {
             $query = "
-            UPDATE {$user_session} 
-            SET data_value = $qval, 
-                last_updated = '$timeStamp' 
+            UPDATE {$user_session}
+            SET data_value = $qval,
+                last_updated = '$timeStamp'
                 WHERE session_id = '$sessId'";
         }
         $res = $dbh->query($query);
@@ -759,7 +758,7 @@ class SGL_HTTP_Session
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-                
+
         $query = "DELETE FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         return true;
@@ -783,12 +782,12 @@ class SGL_HTTP_Session
         // For extended sessions, enforce session deletion per user expiry setting
         if (!empty($conf['site']['extended_session'])) {
             $query = "
-                DELETE  FROM {$user_session} 
+                DELETE  FROM {$user_session}
                 WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry
                 AND     (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) >  expiry";
         } else {
             $query = "
-                DELETE FROM {$user_session} 
+                DELETE FROM {$user_session}
                 WHERE UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated ) > $max_expiry";
         }
         $dbh->query($query);
