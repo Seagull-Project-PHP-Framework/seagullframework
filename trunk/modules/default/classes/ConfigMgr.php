@@ -71,6 +71,7 @@ class ConfigMgr extends SGL_Manager
             'pgsql' => 'pgsql',
             'oci8_SGL' => 'oci8',
             'maxdb_SGL' => 'maxdb_SGL',
+            'db2_SGL' => 'db2',
             );
         $this->aLogTypes = array(
             'file' => 'file',
