@@ -32,15 +32,8 @@ class TestRunnerInit extends SGL_AppController
                     new SGL_Process_DiscoverClientOs(
                     new SGL_Process_SetupTestDb(
                     new SGL_Process_SetupTestDbResource(
-                    new SGL_Process_ResolveManager(
-                    new SGL_Process_CreateSession(
-                    new SGL_Process_SetupLangSupport(
-                    new SGL_Process_SetupPerms(
-                    new SGL_Process_AuthenticateRequest(
-                    new SGL_Process_BuildHeaders(
-                    new SGL_Process_SetupLocale(
                     new SGL_Void()
-                   )))))))))));
+                   ))));
 
         $process->process($input);
     }
