@@ -119,8 +119,11 @@ class SGL_URL
     *
     * @see __construct()
     */
-    function SGL_URL($url = null, $useBrackets = true,
-        /*SGL_UrlParserStrategy*/ $parserStrategy = null, $conf = null)
+    function SGL_URL(
+        $url = null,
+        $useBrackets = true,
+        /*SGL_UrlParserStrategy*/ $parserStrategy = null,
+        $conf = null)
     {
         $this->__construct($url, $useBrackets, $parserStrategy, $conf);
     }
@@ -316,6 +319,9 @@ class SGL_URL
 
     function parseQueryString($conf)
     {
+        if (is_null($this->parserStrategy)) {
+            $this->parserStrategy = new SGL_UrlParserSefStrategy();
+        }
         return $this->parserStrategy->parseQueryString($this, $conf);
     }
 
