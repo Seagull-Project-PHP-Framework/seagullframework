@@ -7,6 +7,7 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+24-11-05    DB2 support added (Tobias Kuckuck)
 23-11-05    Implemented ability to load default data in installer
 23-11-05	Implemented Smarty renderer (Malaney J. Hill)
 22-11-05    Added ServiceLocator class and fixed db independence for testing
