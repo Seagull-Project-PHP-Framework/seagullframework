@@ -54,12 +54,13 @@ class FileMgr extends SGL_Manager
     function FileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+        parent::SGL_Manager();
+
         $this->pageTitle        = 'File Manager';
         $this->_aActionsMapping =  array(
-            'download'   => array('download'), 
-            'downloadZipped'   => array('downloadZipped'), 
-            'view'   => array('view'), 
+            'download'   => array('download'),
+            'downloadZipped'   => array('downloadZipped'),
+            'view'   => array('view'),
         );
     }
 
@@ -79,6 +80,7 @@ class FileMgr extends SGL_Manager
     function _download(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
@@ -90,7 +92,7 @@ class FileMgr extends SGL_Manager
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {
-            SGL::raiseError('There was an error attempting to download the file', 
+            SGL::raiseError('There was an error attempting to download the file',
                 SGL_ERROR_NOFILE);
         }
     }
@@ -98,6 +100,7 @@ class FileMgr extends SGL_Manager
     function _downloadZipped(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         require_once SGL_LIB_DIR . '/other/Zip.php';
         $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
@@ -119,12 +122,13 @@ class FileMgr extends SGL_Manager
     function _view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'docBlank.html';
         $document = DB_DataObject::factory('Document');
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         if (!@file_exists($fileName)) {
-            SGL::raiseError('The specified file does not appear to exist', 
+            SGL::raiseError('The specified file does not appear to exist',
                 SGL_ERROR_NOFILE);
             return false;
         }
@@ -136,10 +140,10 @@ class FileMgr extends SGL_Manager
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {
-            SGL::raiseError('There was an error displaying the file', 
+            SGL::raiseError('There was an error displaying the file',
                 SGL_ERROR_NOFILE);
-        exit;
         }
+        exit;
     }
 }
 ?>
