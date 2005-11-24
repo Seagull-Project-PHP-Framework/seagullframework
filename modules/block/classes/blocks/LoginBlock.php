@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginBlock.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -43,7 +43,7 @@
  * Shows login form if not logged in, user data (username and "session started at") if logged in
  *
  * @package block
- * @author  Werner M. Krauss <werner.krauss@hallstatt.net>   
+ * @author  Werner M. Krauss <werner.krauss@hallstatt.net>
  * @version $Revision: 1.5 $
  * @since   PHP 4.1
  */
@@ -82,7 +82,7 @@ class LoginBlock
                     <input name="frmPassword" size="15" maxlength="24" type="password" />
                     <p><input style="width: 150px;" class="formsubmit" name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
                     <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
-                    <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>            
+                    <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>
                     <span class="small"><span class="error">*</span>'.SGL_String::translate('denotes required field').'</span></form>';
         return $login;
     }

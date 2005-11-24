@@ -558,60 +558,88 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
 }
 
 /**
- * Initialises block loading.
+ * Core data processing routine.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupBlocks extends SGL_DecorateProcess
+class SGL_MainProcess extends SGL_ProcessRequest
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  load blocks
-        if ($this->conf['site']['blocksEnabled'] && $this->conf['navigation']['enabled']) {
-            require_once SGL_CORE_DIR . '/BlockLoader.php';
-            $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
-            $aBlocks = $blockLoader->render($input->data);
-            $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
-            $input->data->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $req = $input->getRequest();
+
+        $mgr = $input->get('manager');
+        $mgr->validate($req, $input);
+
+        $output = & new SGL_Output();
+        $input->aggregate($output);
+
+        //  process data if valid
+        if ($mgr->isValid()) {
+            $mgr->process($input, $output);
         }
-        $this->processRequest->process($input);
+
+        $mgr->display($output);
+
+        //  build view
+        $templateEngine = ucfirst($conf['site']['templateEngine']);
+        $rendererClass = 'SGL_Html'.$templateEngine.'RendererStrategy';
+        $rendererFile = 'Html'.$templateEngine.'RendererStrategy.php';
+        if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
+        	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
+        } else {
+        	PEAR::raiseError('Could not find renderer',
+        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+        }
+        $view = new SGL_HtmlView($output, new $rendererClass());
+        echo $view->render();
     }
 }
 
 /**
- * Builds navigation menus.
+ * Assign output vars for template.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupNavigation extends SGL_DecorateProcess
+class SGL_Process_BuildOutputData extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  generate navigation from appropriate driver
-        if ($this->conf['navigation']['enabled']) {
-            $navClass = $this->conf['navigation']['driver'];
-            $navDriver = $navClass . '.php';
-            if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
-                require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
-            } else {
-                SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
-            }
-            if (!class_exists($navClass)) {
-                SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
-            }
-            $nav = & new $navClass($input);
-            $aRes = $nav->render();
-            list($sectionId, $html) = $aRes;
-            $input->data->sectionId = $sectionId;
-            $input->data->navigation = $html;
-            $input->data->currentSectionName = $nav->getCurrentSectionName();
+        //  set isAdmin flag
+        $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN)
+            ? true : false;
+
+        //  get all html onLoad events
+        $input->data->onLoad = $input->data->getAllOnLoadEvents();
+
+        //  setup login stats
+        if (SGL_HTTP_Session::getUserType() > SGL_GUEST) {
+            $input->data->loggedOnUser = $_SESSION['username'];
+            $input->data->loggedOnUserID = SGL_HTTP_Session::getUid();
+            $input->data->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);
+            $input->data->loggedOnDate = strftime("%B %d", $_SESSION['startTime']);
+            $input->data->remoteIp = $_SERVER['REMOTE_ADDR'];
+            $input->data->isMember = true;
         }
+        $input->data->currUrl          = $_SERVER['PHP_SELF'];
+        $input->data->currLang         = SGL::getCurrentLang();
+        $input->data->theme            = $_SESSION['aPrefs']['theme'];
+        $input->data->charset          = $GLOBALS['_SGL']['CHARSET'];
+        $input->data->webRoot          = SGL_BASE_URL;
+        $input->data->imagesDir        = SGL_BASE_URL . '/themes/' . $input->data->theme . '/images';
+        $input->data->versionAPI       = SGL_SEAGULL_VERSION;
+        $input->data->sessID           = SID;
+        $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
+        $input->data->scriptClose      = "\n//--> </script>\n";
+		$input->data->conf = $this->conf;
 
         $this->processRequest->process($input);
     }
@@ -691,56 +719,49 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
 }
 
 /**
- * Core data processing routine.
+ * Builds navigation menus.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_MainProcess extends SGL_ProcessRequest
+class SGL_Process_SetupNavigation extends SGL_DecorateProcess
 {
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $req = $input->getRequest();
-
-        $mgr = $input->get('manager');
-        $mgr->validate($req, $input);
-
-        $output = & new SGL_Output();
-        $input->aggregate($output);
-
-        //  process data if valid
-        if ($mgr->isValid()) {
-            $mgr->process($input, $output);
+        //  generate navigation from appropriate driver
+        if ($this->conf['navigation']['enabled']) {
+            $navClass = $this->conf['navigation']['driver'];
+            $navDriver = $navClass . '.php';
+            if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
+                require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
+            } else {
+                SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
+            }
+            if (!class_exists($navClass)) {
+                SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
+            }
+            $nav = & new $navClass($input);
+            $aRes = $nav->render();
+            list($sectionId, $html) = $aRes;
+            $input->data->sectionId = $sectionId;
+            $input->data->navigation = $html;
+            $input->data->currentSectionName = $nav->getCurrentSectionName();
         }
 
-        $mgr->display($output);
-
-        //  build view
-        $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass = 'SGL_Html'.$templateEngine.'RendererStrategy';
-        $rendererFile = 'Html'.$templateEngine.'RendererStrategy.php';
-        if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
-        	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
-        } else {
-        	PEAR::raiseError('Could not find renderer',
-        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
-        $view = new SGL_HtmlView($output, new $rendererClass());
-        echo $view->render();
+        $this->processRequest->process($input);
     }
 }
 
+
 /**
- * Assign output vars for template.
+ * Initialises block loading.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_PostProcess extends SGL_ProcessRequest
+class SGL_Process_SetupBlocks extends SGL_ProcessRequest
 {
     function process(&$input)
     {
@@ -749,33 +770,14 @@ class SGL_PostProcess extends SGL_ProcessRequest
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        //  set isAdmin flag
-        $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN)
-            ? true : false;
-
-        //  get all html onLoad events
-        $input->data->onLoad = $input->data->getAllOnLoadEvents();
-
-        //  setup login stats
-        if (SGL_HTTP_Session::getUserType() > SGL_GUEST) {
-            $input->data->loggedOnUser = $_SESSION['username'];
-            $input->data->loggedOnUserID = SGL_HTTP_Session::getUid();
-            $input->data->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);
-            $input->data->loggedOnDate = strftime("%B %d", $_SESSION['startTime']);
-            $input->data->remoteIp = $_SERVER['REMOTE_ADDR'];
-            $input->data->isMember = true;
+        //  load blocks
+        if ($conf['site']['blocksEnabled'] && $conf['navigation']['enabled']) {
+            require_once SGL_CORE_DIR . '/BlockLoader.php';
+            $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
+            $aBlocks = $blockLoader->render($input->data);
+            $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
+            $input->data->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
         }
-        $input->data->currUrl          = $_SERVER['PHP_SELF'];
-        $input->data->currLang         = SGL::getCurrentLang();
-        $input->data->theme            = $_SESSION['aPrefs']['theme'];
-        $input->data->charset          = $GLOBALS['_SGL']['CHARSET'];
-        $input->data->webRoot          = SGL_BASE_URL;
-        $input->data->imagesDir        = SGL_BASE_URL . '/themes/' . $input->data->theme . '/images';
-        $input->data->versionAPI       = SGL_SEAGULL_VERSION;
-        $input->data->sessID           = SID;
-        $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
-        $input->data->scriptClose      = "\n//--> </script>\n";
-		$input->data->conf = $conf;
     }
 }
 
