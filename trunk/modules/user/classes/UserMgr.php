@@ -420,7 +420,7 @@ class UserMgr extends RegisterMgr
         $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
         $success = $oUser->update();
         if ($input->changeStatusNotify && $success) {
-            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active, $input->moduleName);
+            $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
         }
         //  redirect on success
         if ($success) {
@@ -432,7 +432,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _sendStatusNotification($oUser, $isEnabled, $moduleName)
+    function _sendStatusNotification($oUser, $isEnabled)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
@@ -446,8 +446,8 @@ class UserMgr extends RegisterMgr
                 'fromEmail' => $this->conf['email']['admin'],
                 'replyTo'   => $this->conf['email']['admin'],
                 'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $moduleName . '/email_status_notification.php',
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                    . '/user/email_status_notification.php',
                 'username'  => $oUser->username,
         );
         $message = & new SGL_Emailer($options);
