@@ -81,8 +81,6 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
      */
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        #$conf = $c->getAll();
-
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
         //  remap
