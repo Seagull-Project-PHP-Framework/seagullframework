@@ -47,8 +47,8 @@ function canConnectToDbServer()
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
         ? ':' . $aFormValues['dbPort']['port']
         : '';
-    $dbName = ($aFormValues['dbType']['type'] == 'pgsql')
-                ? '/template1'
+    $dbName = (!empty($aFormValues['dbName']) && ($aFormValues['dbName'] != 'not required for MySQL'))
+                ? '/'.$aFormValues['dbName']
                 : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
         $aFormValues['user'] . ':' .
@@ -88,6 +88,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
         $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
         $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
+        $radio[] = &$this->createElement('radio', 'type',     '', "db2", 'db2_SGL');
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
@@ -108,6 +109,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
         $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
         $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
+        $radio[] = &$this->createElement('radio', 'port',     '',"50001 (DB2 default)", 50001);
         $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
         $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
 

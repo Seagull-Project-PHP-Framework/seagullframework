@@ -184,6 +184,14 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename3 = '/data.sample.mx.sql';
             $this->filename4 = '/constraints.mx.sql';
             break;
+
+        case 'db2_SGL':
+            $this->dbType = 'db2';
+            $this->filename1 = '/schema.db2.sql';
+            $this->filename2 = '/data.default.db2.sql';
+            $this->filename3 = '/data.sample.db2.sql';
+            $this->filename4 = '/constraints.db2.sql';
+            break;
         }
 
         //  these hold what to display in results grid, depending on outcome
@@ -365,7 +373,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             foreach ($aModuleList as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
                 if (file_exists($modulePath . $this->filename4)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename, 0);
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename4, 0);
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {
@@ -623,6 +631,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             break;
 
         case 'oci8':
+        case 'db2':
             $db->autoCommit(false);
 
             $data = '';
@@ -698,6 +707,7 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
             $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
             $success = $da->addUser($oUser);
+
             if (PEAR::isError($success)) {
                 SGL_Install::errorPush(PEAR::raiseError($success));
             }

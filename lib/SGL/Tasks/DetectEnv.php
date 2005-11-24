@@ -134,6 +134,7 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
         'mysqli' => array(SGL_NEUTRAL => 0),
         'pgsql' => array(SGL_NEUTRAL => 0),
         'oci8' => array(SGL_NEUTRAL => 0),
+        'odbc' => array(SGL_NEUTRAL => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
         'open_ssl' => array(SGL_RECOMMENDED => 1),
         'pcre' => array(SGL_REQUIRED => 1),
