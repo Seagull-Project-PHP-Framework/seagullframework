@@ -158,12 +158,24 @@ class SGL_DB
     function setConnection(&$dbh, $dsn = null)
     {
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        $singleton = & SGL_DB::singleton($dsn);
-        if ($dbh !== $singleton) {
-            $dbh = &$singleton;
-            #$dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+        $dsnMd5 = md5($dsn);
+
+        $locator = &SGL_ServiceLocator::singleton();
+        $singleton = $locator->get('DB');
+        if (!$singleton) {
+            $singleton = & SGL_DB::singleton();
+            $locator->register('DB', $singleton);
         }
+//        if ($dbh !== $singleton) {
+//            unset($dbh);
+//            $dbh = &$singleton;
+//            #$dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+//        }
         #$dsnMd5 = md5($dsn);
+
+        unset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]);
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = &$singleton;
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_ASSOC);
 
         #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
         #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);

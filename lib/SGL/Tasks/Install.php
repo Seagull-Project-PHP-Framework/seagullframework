@@ -520,20 +520,25 @@ class SGL_Task_SyncSequences extends SGL_Task
      */
     function run($data = null)
     {
-        $db =& SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         $tables = null;
 
-        switch ($db->phptype) {
+        switch ($dbh->phptype) {
 
         case 'mysql':
             $data = array();
-            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
 
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
-            $suffix = $db->getOption('seqname_format');
+            $suffix = $dbh->getOption('seqname_format');
             $suffixRaw = str_replace('%s', '', $suffix);
             $suffixRawStart = (0 - strlen($suffixRaw));
 
@@ -544,7 +549,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     continue;
                 }
 
-                $info = $db->tableInfo($table);
+                $info = $dbh->tableInfo($table);
                 foreach ($info as $field) {
                     if (eregi('primary_key', $field['flags'])) {
                         $primary_field = $field['name'];
@@ -552,7 +557,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     }
                 }
                 if ($primary_field <> '') {
-                    $maxId = $db->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
+                    $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
                     if (!is_null($maxId)) {
                     	$data[] = array($table, $maxId);
                     }
@@ -563,19 +568,19 @@ class SGL_Task_SyncSequences extends SGL_Task
                 $tableName = $k[0];
                 $seqName = sprintf($suffix, $tableName);
                 $maxVal   = $k[1];
-                $currVal = $db->nextId($tableName, true);
+                $currVal = $dbh->nextId($tableName, true);
                 $sql = 'UPDATE ' . $seqName . ' SET id=' . $maxVal . ' WHERE id=' . $currVal;
-                $result = $db->query($sql);
+                $result = $dbh->query($sql);
             }
             break;
 
         case 'mysql_SGL':
             $data = array();
-            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
                 if ($table <> $conf['table']['sequence']) {
-                    $info = $db->tableInfo($table);
+                    $info = $dbh->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
@@ -583,24 +588,24 @@ class SGL_Task_SyncSequences extends SGL_Task
                         }
                     }
                     if ($primary_field <> '') {
-                        $data[] = array($table, $db->getOne('SELECT MAX(' .
+                        $data[] = array($table, $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE 1'));
                     } else {
                         $data[] = array($table, 0);
                     }
                 }
             }
-            $sth = $db->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
-            $db->executeMultiple($sth, $data);
+            $sth = $dbh->prepare("REPLACE INTO {$conf['table']['sequence']} (name, id) VALUES(?,?)");
+            $dbh->executeMultiple($sth, $data);
             break;
 
         case 'pgsql':
             $data = array();
-            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('tables');
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
                 if ($table <> $conf['table']['sequence']) {
-                    $info = $db->tableInfo($table);
+                    $info = $dbh->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
@@ -608,13 +613,13 @@ class SGL_Task_SyncSequences extends SGL_Task
                         }
                     }
                     if ($primary_field <> '') {
-                        $data[] = array($table, $db->getOne('SELECT MAX(' .
+                        $data[] = array($table, $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE true'));
                     }
                 }
             }
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
-            $suffix = $db->getOption('seqname_format');
+            $suffix = $dbh->getOption('seqname_format');
 
             //  we'll just create the sequences manually...why not?
             foreach ($data as $k) {
@@ -622,25 +627,25 @@ class SGL_Task_SyncSequences extends SGL_Task
                 $seqName = sprintf($suffix, $tableName);
                 $maxVal   = $k[1] + 1;
                 $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
-                $result = $db->query($sql);
+                $result = $dbh->query($sql);
                 if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
                     $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
-                    $result = $db->query($sql);
+                    $result = $dbh->query($sql);
                 }
             }
             break;
 
         case 'oci8':
         case 'db2':
-            $db->autoCommit(false);
+            $dbh->autoCommit(false);
 
             $data = '';
-            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $db->getListOf('sequences');
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('sequences');
             foreach ($aTables as $sequence) {
                 $primary_field = '';
                 // get tablename
                 if (preg_match("/^(.*)_seq$/",$sequence,$table)) {
-                    $info = $db->tableInfo($table[1]);
+                    $info = $dbh->tableInfo($table[1]);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
@@ -648,7 +653,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                         }
                     }
                     if ($primary_field <> '') {
-                        $maxId = $db->getOne('SELECT MAX(' .
+                        $maxId = $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') + 1 FROM ' . $table[1]);
                     } else {
                         $maxId = 1;
@@ -661,20 +666,20 @@ class SGL_Task_SyncSequences extends SGL_Task
 
                     // drop and recreate sequence
                     $success = false;
-                    if (!DB::isError($db->dropSequence($table[1]))) {
-                        $success = $db->query('CREATE SEQUENCE ' .
-                            $db->getSequenceName($table[1]) . ' START WITH ' . $maxId);
+                    if (!DB::isError($dbh->dropSequence($table[1]))) {
+                        $success = $dbh->query('CREATE SEQUENCE ' .
+                            $dbh->getSequenceName($table[1]) . ' START WITH ' . $maxId);
                     }
 
                     if (!$success) {
-                        $db->rollback();
-                        $db->autoCommit(true);
+                        $dbh->rollback();
+                        $dbh->autoCommit(true);
                         SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
                     }
                 }
             }
-            $success = $db->commit();
-            $db->autoCommit(true);
+            $success = $dbh->commit();
+            $dbh->autoCommit(true);
             if (!$success) {
                 SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
             }

@@ -39,6 +39,7 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
+require_once SGL_CORE_DIR . '/Sql.php';
 /**
  * A class for setting up and tearing down the testing environment.
  *
@@ -58,7 +59,7 @@ class STR_TestEnv
 
         if (is_array($aSchemaFiles) && count($aSchemaFiles)) {
             foreach ($aSchemaFiles as $schemaFile) {
-                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $schemaFile);
+                SGL_Sql::parseAndExecute(STR_PATH .'/'. $schemaFile);
             }
         }
     }
@@ -75,7 +76,7 @@ class STR_TestEnv
 
         if (is_array($aDataFiles) && count($aDataFiles)) {
             foreach ($aDataFiles as $dataFile) {
-                STR_TestEnv::parseAndExecute(STR_PATH .'/'. $dataFile);
+                SGL_Sql::parseAndExecute(STR_PATH .'/'. $dataFile);
             }
         }
     }
@@ -162,8 +163,8 @@ class STR_TestEnv
 
             //  if we're testing a sgl install, update sequences after loading data
             if (isset($GLOBALS['_SGL'])) {
-                require_once SGL_CORE_DIR . '/Sql.php';
-                STR_DB::rebuildSequences();
+                require_once SGL_CORE_DIR . '/Tasks/Install.php';
+                SGL_Task_SyncSequences::run();
             }
         }
         // Store the layer in a global variable, so the environment
@@ -206,65 +207,6 @@ class STR_TestEnv
         $dbh = $locator->get('DB');
         $dbh->rollback();
     }
-
-    /**
-     * Simple function that opens a file with sql statements and executes them
-     * using DB
-      *
-     * @author  Gerry Lachac <glachac@tethermedia.com>
-     * @access  public
-     * @static
-     * @param   string  $filename   File with SQL statements to execute
-     * @return  void
-     */
-    function parseAndExecute($filename)
-    {
-        if (! ($fp = fopen($filename, 'r')) ) {
-            return false;
-        }
-        // Get database handle based on working config.ini
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        $sql = '';
-        $conf = $GLOBALS['_STR']['CONF'];
-
-        // Iterate through each line in the file.
-        while (!feof($fp)) {
-
-            // Read lines, concat together until we see a semi-colon
-            $line = fgets($fp, 32768);
-            $line = trim($line);
-            $cmt  = substr($line, 0, 2);
-            if ($cmt == '--' || trim($cmt) == '#') {
-                continue;
-            }
-            $sql .= $line;
-
-            if (!preg_match("/;\s*$/", $sql)) {
-                continue;
-            }
-
-            // replace ; for MaxDB and Oracle
-            if (($conf['database']['type'] == 'oci8_SGL') || ($conf['database']['type'] == 'odbc')){
-                $sql = preg_replace("/;\s*$/", '', $sql);
-            }
-
-            // Execute the statement.
-            $res = $dbh->query($sql);
-            if (DB::isError($res, DB_ERROR_ALREADY_EXISTS)) {
-                return $res;
-            } elseif (DB::isError($res)) {
-
-                // Print out info on bad statements
-                echo '<pre>'.$res->getMessage().'</pre>';
-                echo '<pre>'. $res->getUserInfo() . '</pre>';
-            }
-            $sql = '';
-        }
-        fclose($fp);
-        return true;
-    }
-
 }
 
 ?>

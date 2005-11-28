@@ -21,9 +21,11 @@ initBridge          = /etc/sglBridge.php
 ; Path should be relative to the tests install directory
 [schemaFiles]
 file1               = etc/sequence.my.sql
-file2               = modules/user/data/schema.my.sql
-file3               = modules/block/data/schema.my.sql
+file2               = modules/default/data/schema.my.sql
+file3               = modules/user/data/schema.my.sql
+file4               = modules/block/data/schema.my.sql
 
 [dataFiles]
-file1               = modules/user/data/data.default.my.sql
-file2               = modules/block/data/data.default.my.sql
+file1               = modules/default/data/data.default.my.sql
+file2               = modules/user/data/data.default.my.sql
+file3               = modules/block/data/data.default.my.sql
