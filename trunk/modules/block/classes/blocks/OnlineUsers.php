@@ -1,6 +1,5 @@
 <?php
-
-require_once SGL_MOD_DIR . '/user/classes/UserPreferenceMgr.php';
+require_once 'HTML/Template/Flexy.php';
 $theme = $_SESSION['aPrefs']['theme'];
 $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
 $config = parse_ini_file('OnlineUsers.ini',TRUE);
@@ -42,7 +41,8 @@ class OnlineUsers
         return $this->process($output);
     }
 
-    function process($output) {
+    function process($output)
+    {
         $templ = new HTML_Template_Flexy();
         $templ->compile($this->template);
         return $templ->bufferedOutputObject($output);
