@@ -8,7 +8,7 @@ require_once dirname(__FILE__). '/../classes/LoginMgr.php';
  * @package user
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: TestLoginMgr.php,v 1.3 2005/05/08 21:29:06 demian Exp $
- */  
+ */
 class TestLoginMgr extends UnitTestCase {
 
     function TestLoginMgr()
@@ -41,8 +41,10 @@ class TestLoginMgr extends UnitTestCase {
         $oUser->is_acct_active = 1;
 
         //  assign to input object
-        $oInput->user = $oUser;        
+        $oInput->user = $oUser;
 
+        session_start();
+        $_SESSION['uid'] = 1;
         $userMgr = new UserMgr();
         $userMgr->_insert($oInput, $oOutput);
 

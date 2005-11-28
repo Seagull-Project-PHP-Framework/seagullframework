@@ -66,7 +66,12 @@ class SGL_Sql
             return false;
         }
         // Get database handle based on working config.ini
-        $dbh = & SGL_DB::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
         $sql = '';
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
