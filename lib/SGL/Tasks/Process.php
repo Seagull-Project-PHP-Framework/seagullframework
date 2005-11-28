@@ -617,9 +617,6 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN)
             ? true : false;
 
-        //  get all html onLoad events
-        $input->data->onLoad = $input->data->getAllOnLoadEvents();
-
         //  setup login stats
         if (SGL_HTTP_Session::getUserType() > SGL_GUEST) {
             $input->data->loggedOnUser = $_SESSION['username'];
@@ -682,6 +679,9 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
             	$input->data->addOnLoadEvent('HTMLArea.init()');
 			}
 		}
+        //  get all html onLoad events
+        $input->data->onLoad = $input->data->getAllOnLoadEvents();
+
         $this->processRequest->process($input);
     }
 }
