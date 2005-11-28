@@ -2,9 +2,9 @@
 -- Schema for default
 
 -- ==============================================================
---  Table: log_table                                             
+--  Table: log_table
 -- ==============================================================
-create table log_table 
+create table log_table
 (
    id                   INT4                 not null,
    logtime              TIMESTAMP            not null,
@@ -15,9 +15,9 @@ create table log_table
 );
 
 -- ==============================================================
---  Table: table_lock                                            
+--  Table: table_lock
 -- ==============================================================
-create table table_lock 
+create table table_lock
 (
    lockID               CHAR(32)             not null,
    lockTable            CHAR(32)             not null,
@@ -28,19 +28,19 @@ create table table_lock
 -- ==============================================================
 --  Table: session
 -- ==============================================================
-create table user_session 
+create table user_session
 (
    session_id                    VARCHAR(255)    not null,
    last_updated                  TIMESTAMP       null,
    data_value                    TEXT            null,
-   usr_id                        INT4            not null,
+   usr_id                        INT4            not null default 0,
    username                      VARCHAR(64)     null,
-   expiry                        INT4            not null,   
+   expiry                        INT4            not null,
    constraint PK_SESSION primary key (session_id)
 );
 
 -- ==============================================================
---  Index: user_session_last_updated                        
+--  Index: user_session_last_updated
 -- ==============================================================
 
 create  index user_session_last_updated on user_session (
@@ -48,15 +48,15 @@ create  index user_session_last_updated on user_session (
 );
 
 -- ==============================================================
---  Index: user_session_usr_id                        
+--  Index: user_session_usr_id
 -- ==============================================================
 
 create  index user_session_usr_id on user_session (
     usr_id
 );
-    
+
 -- ==============================================================
---  Index: user_session_username                        
+--  Index: user_session_username
 -- ==============================================================
 
 create  index user_session_username on user_session (
@@ -65,10 +65,10 @@ create  index user_session_username on user_session (
 
 
 -- ==============================================================
---  Table: module                                                 
+--  Table: module
 -- ==============================================================
 
-create table module 
+create table module
 (
    module_id         INT4 not null,
    is_configurable   INT2 null,
