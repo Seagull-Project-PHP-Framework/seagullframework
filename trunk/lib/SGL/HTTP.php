@@ -724,7 +724,7 @@ class SGL_HTTP_Session
         $qval = $dbh->quote($value);
         $user_session = $conf['table']['user_session'];
         if (!empty($conf['site']['extended_session'])) {
-            $uid = $_SESSION['uid'];
+            $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
             $username = $_SESSION['username'];
             $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
                 ? $_SESSION['aPrefs']['sessionTimeout']

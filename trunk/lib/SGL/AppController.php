@@ -86,7 +86,6 @@ class SGL_AppController
         if (!defined('SGL_INITIALISED')) {
             SGL_AppController::init();
         }
-
         //  get config singleton
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
