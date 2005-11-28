@@ -7,7 +7,7 @@
 	<title>{$result->conf.site.name} :: {$result->currentSectionName}</title>
     {/if}
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
-    <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta http-equiv="Content-Language" content="{$result->currLang}" />
     <meta name="ROBOTS" content="ALL" />
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
@@ -20,23 +20,23 @@
 
     <script language="javascript">
         var SGL_JS_WEBROOT="{$result->webRoot}";
-        var SGL_JS_WINHEIGHT={conf[popup][winHeight]};
-        var SGL_JS_WINWIDTH={conf[popup][winWidth]};
-        var SGL_JS_SESSID="{sessID}";
-        var SGL_JS_CURRURL="{currUrl}";
+        var SGL_JS_WINHEIGHT={$result->conf.popup.winHeight};
+        var SGL_JS_WINWIDTH={$result->conf.popup.winWidth};
+        var SGL_JS_SESSID="{$result->sessID}";
+        var SGL_JS_CURRURL="{$result->currUrl}";
     </script>
 
-    {if $resul->isAdmin}
+    {if $result->isAdmin}
     <script type="text/javascript" src="{$result->webRoot}/js/mainAdmin.js"></script>
     {/if}
     <script type="text/javascript" src="{$result->webRoot}/js/mainPublic.js"></script>
 
-    {foreach:javascriptSrc,file}
-    <script type="text/javascript" src="{$result->webRoot}/js/{file}"></script>
-    {end:}
+    {foreach from=$result->javascriptSrc item="file"}
+    <script type="text/javascript" src="{$result->webRoot}/js/{$file}"></script>
+    {/foreach}
 
     {if $result->wysiwyg}
-    {if:wysiwyg_htmlarea}
+    {if $result->wysiwyg_htmlarea}
     <script type="text/javascript">
         _editor_url = SGL_JS_WEBROOT + "/htmlarea/";
         _editor_lang = "en";
@@ -67,7 +67,7 @@
         }
         HTMLArea.onload = initDocument;
     </script>
-    {end:}
+    {/if}
     {if $result->wysiwyg_xinha}
     <script type="text/javascript">
         _editor_url = SGL_JS_WEBROOT + "/xinha/";
@@ -94,9 +94,9 @@
     {/if}
     {/if}
 </head>
-{if:GLOBALS.empty(onLoad)}
+{if !$result->onLoad}
 <body>
-{else:}
-<body onload="{onLoad}">
-{end:}
+{else}
+<body onload="{$result->onLoad}">
+{/if}
 <div id="sgl">
