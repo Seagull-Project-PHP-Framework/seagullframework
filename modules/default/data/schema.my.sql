@@ -35,7 +35,7 @@ CREATE TABLE user_session (
   session_id varchar(255) NOT NULL,
   last_updated datetime,
   data_value text,
-  usr_id int(11) NOT NULL,
+  usr_id int(11) NOT NULL default '0',
   username varchar(64) default NULL,
   expiry int(11) NOT NULL,
   PRIMARY KEY  (session_id),
