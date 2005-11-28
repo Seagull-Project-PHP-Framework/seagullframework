@@ -1,0 +1,57 @@
+<flexy:include src="userModuleSubNav.html" />
+
+<form name="orgs" method="post" flexy:ignore>
+<input type="hidden" name="action" value="delete" />
+<h1 class="pageTitle">{translate(pageTitle)} :: {translate(#Browse#)}</h1>
+<span flexy:if="msgGet()">{t.msgGet()}</span>
+
+<table class="wide">
+    <tr>
+        <td colspan="5">
+        <input type="button" value="{translate(#add organisation#)}" 
+            onClick="javascript:document.location.href='{makeUrl(#add#,#org#,#user#)}'" />
+        <input type="button" value="{translate(#manage organisation types#)}" 
+            onClick="javascript:document.location.href='{makeUrl(#list#,#orgtype#,#user#)}'" />
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Select#)}</th>
+        <th><a class="header" href="{makeUrl(##,#org#,#user#,##,#frmSortBy|id||frmSortOrder|sortOrder#)}">{translate(#Org ID#)}</a></th>
+        <th><a class="header" href="{makeUrl(##,#org#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Org Name#)}</a></th>
+        <th>{translate(#Role#)}</th>
+        {if:conf[OrgMgr][typeEnabled]}
+        <th>{translate(#Type#)}</th>
+        {end:}
+        <th>{translate(#Website#)}</th>
+        <th>{translate(#Telephone#)}</th>
+        <th>{translate(#Edit#)}</th>
+        <th>{translate(#Preferences#)}</th>
+    </tr>
+    <tr class="{switchRowClass()}" flexy:foreach="results,k,org">
+        <td align="center">
+            <input class="noBorder" type="checkbox" name="frmDelete[]" value="{org[organisation_id]}" />
+        </td>
+        <td align="center">{org[organisation_id]}</td>
+        <td>{foreach:org[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" border="0" alt="{org[name]}" />{end:}{org[name]}</td>
+        <td align="center">{org[role_id]}</td>
+        {if:conf[OrgMgr][typeEnabled]}
+        <td align="center">{org[organisation_type_id]}</td>
+        {end:}
+        <td>{org[website]}</td>
+        <td>{org[telephone]}</td>
+        <td align="center"><a href="{makeUrl(#edit#,#org#,#user#,results,#frmOrgId|organisation_id#,k)}">
+            <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#edit#)}" /></a>
+        </td>
+            <td align="center">
+                <input type="button" name="frmReset" value="{translate(#change#)}"
+                    onClick="javascript:document.location.href='{makeUrl(#editAll#,#orgpreference#,#user#,results,#frmOrgId|organisation_id#,k)}'" />
+            </td>
+    </tr>
+    <tr>
+        <td colspan="7">
+            {translate(#With selected organisation(s)#)} : 
+            <input type="submit" name="delete" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
+        </td>
+    </tr>
+</table>
+</form>

@@ -37,7 +37,7 @@
 // | Author: Malaney J. Hill  <malaney@gmail.com>                              |
 // +---------------------------------------------------------------------------+
 
-define('SGL_SMARTY_DIR', SGL_LIB_DIR  . '/other/Smarty');
+define('SGL_SMARTY_DIR' , SGL_LIB_DIR  . '/other/Smarty');
 require_once SGL_SMARTY_DIR . '/libs/Smarty.class.php';
 
 class SGL_Smarty extends Smarty
@@ -55,11 +55,15 @@ class SGL_Smarty extends Smarty
         $this->compile_dir = SGL_CACHE_DIR . '/templates_c';
         $this->config_dir = SGL_SMARTY_DIR . '/unit_test/configs';
         $this->cache_dir = SGL_CACHE_DIR;
+        $this->plugins_dir = SGL_SMARTY_DIR . '/libs/plugins';
+
+        //  Define alternative mechanism for locating templates
+        $this->default_template_handler_func = array($this, 'locate_template');
 
         if (!is_writable($this->compile_dir)) {
             require_once 'System.php';
 
-            //  pass path as array to avoid widows space parsing prob
+            //  pass path as array to avoid windows space parsing prob
             $success = System::mkDir(array($this->compile_dir));
             if (!$success) {
                 SGL::raiseError('The tmp directory does not '.
@@ -68,6 +72,42 @@ class SGL_Smarty extends Smarty
             }
         }
     }
+
+    /**
+     *  Default template handler for Smarty
+     *  Provides an alternative mechanism to Smarty 
+     *  for finding templates when one is not found at original
+     *  file location.  Only called by Smarty
+     *
+     *  @access public
+     *  @param  string $resource_type       (i.e. file, db, ldap)
+     *  @param  string $resource_name       template file name
+     *  @param  string $resource_name       template file name
+     *  @param  string $template_source     source of template file 
+     *  @param  string $template_timestamp  mtime of template file 
+     *  @param  object $smarty_obj          Smarty object
+     *  @return true if template found, false if not
+     */
+    function locate_template($resource_type, $resource_name, &$template_source, &$template_timestamp, &$smarty_obj)
+	{
+		if (!is_readable($resource_name))
+		{
+			//  parse module_name
+			list($module_name, $template_name) = split('/', $resource_name);
+			$arr = array('default', $template_name);
+			$new_resource_name = $smarty_obj->template_dir . '/' . join('/', $arr);
+			if (file_exists($new_resource_name))
+			{
+				$template_source = file_get_contents($new_resource_name);
+				$template_timestamp = filemtime($new_resource_name);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 
     /**
      * Returns a singleton Smarty instance.

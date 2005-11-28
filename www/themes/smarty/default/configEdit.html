@@ -1,277 +1,277 @@
 <div id="dhtmltooltip"></div>
 <script type="text/javascript" src="{$result->webRoot}/js/tooltip.js"></script>
 
-<h1 class="pageTitle">{translate var=$result->pageTitle}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
-<p class="alignCenter">{translate var="Please use the following form to edit your config file"}.</p>
+<h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+{if $result->msgGet()}<span>{$result->msgGet()}</span>{/if}
+<p class="alignCenter">{$result->translate('Please use the following form to edit your config file')}.</p>
 
-<form name="conf" method="post" flexy:ignore>
+<form name="conf" method="post">
 <input type="hidden" name="action" value="update" />
 <input type="hidden" name="conf[db][bootstrap]" value="0" />
 <table class="narrow">
     <tr>
-        <th colspan="3">{translate var="General Site Options"}</th>
+        <th colspan="3">{$result->translate('General Site Options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Base URL"}</td>
+        <td class="fieldName">{$result->translate('Base URL')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[baseUrl]">{error[baseUrl]}</div>
-            <input type="text" name="conf[site][baseUrl]" value="{conf[site][baseUrl]}" size="50" />
+            {if $result->error.baseUrl}<div class="error">{$result->error.baseUrl}</div>{/if}
+            <input type="text" name="conf[site][baseUrl]" value="{$result->conf.site.baseUrl}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Session max lifetime (secs)"}</td>
+        <td class="fieldName">{$result->translate('Session max lifetime (secs)')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][sessionMaxLifetime]" value="{conf[site][sessionMaxLifetime]}" size="50" />
+            <input type="text" name="conf[site][sessionMaxLifetime]" value="{$result->conf.site.sessionMaxLifetime}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="Zero means until the browser is closed"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('Zero means until the browser is closed')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Site name"}</td>
+        <td class="fieldName">{$result->translate('Site name')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][name]" value="{conf[site][name]}" size="50" />
+            <input type="text" name="conf[site][name]" value="{$result->conf.site.name}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Show logo"}</td>
+        <td class="fieldName">{$result->translate('Show logo')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[showLogo]">{error[showLogo]}</div>
-            <input type="text" name="conf[site][showLogo]" value="{conf[site][showLogo]}" size="50" />
+            {if $result->error.showLogo}<div class="error">{$result->error.showLogo}</div>{/if}
+            <input type="text" name="conf[site][showLogo]" value="{$result->conf.site.showLogo}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="If path to image is specified, image will be shown; if left blank, Site name from above will appear as text"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('If path to image is specified, image will be shown; if left blank, Site name from above will appear as text')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Gzip compression"}</td>
+        <td class="fieldName">{$result->translate('Gzip compression')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][compression]#,conf[site][compression]):h}
+            {$result->generateRadioPair('conf[site][compression]',$result->conf.site.compression)}
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Output buffering"}</td>
+        <td class="fieldName">{$result->translate('Output buffering')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][outputBuffering]#,conf[site][outputBuffering]):h}
+            {$result->generateRadioPair('conf[site][outputBuffering]',$result->conf.site.outputBuffering)}
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable IP banning"}</td>
+        <td class="fieldName">{$result->translate('Enable IP banning')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][banIpEnabled]#,conf[site][banIpEnabled]):h}
+            {$result->generateRadioPair('conf[site][banIpEnabled]',$result->conf.site.banIpEnabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Handy if you dont have access to Apache configuration"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Handy if you dont have access to Apache configuration')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable Safe deleting"}</td>
+        <td class="fieldName">{$result->translate('Enable Safe deleting')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][safeDelete]#,conf[site][safeDelete]):h}
+            {$result->generateRadioPair('conf[site][safeDelete]',$result->conf.site.safeDelete)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="This way no content items are really deleting from DB, just marked as deleted"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('This way no content items are really deleting from DB, just marked as deleted')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable Tidy html cleaning"}</td>
+        <td class="fieldName">{$result->translate('Enable Tidy html cleaning')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][tidyhtml]#,conf[site][tidyhtml]):h}
+            {$result->generateRadioPair('conf[site][tidyhtml]',$result->conf.site.tidyhtml)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Requires the tidy extension to be installed"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Requires the tidy extension to be installed')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Template Engine"}</td>
+        <td class="fieldName">{$result->translate('Template Engine')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</div>
+            {if $result->error.templateEngine}<div class="error">{$result->error.templateEngine}</div>{/if}
             <select name="conf[site][templateEngine]">
-                {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
+                {$result->generateSelect($result->aTemplateEngines,$result->conf.site.templateEngine)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Seagull allows you to use the template engine of your choice"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Seagull allows you to use the template engine of your choice')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="URL handler"}</td>
+        <td class="fieldName">{$result->translate('URL handler')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[urlHandler]">{error[urlHandler]}</div>
+            {if $result->error.urlHandler}<div class="error">{$result->error.urlHandler}</div>{/if}
             <select name="conf[site][urlHandler]">
-                {generateSelect(aUrlHandlers,conf[site][urlHandler]):h}
+                {$result->generateSelect($result->aUrlHandlers,$result->conf.site.urlHandler)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="What format would you like your URLs, Seagull Search Engine Friendly is the default"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('What format would you like your URLs, Seagull Search Engine Friendly is the default')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Session handler"}</td>
+        <td class="fieldName">{$result->translate('Session handler')}</td>
         <td class="fieldValue">
             <select name="conf[site][sessionHandler]">
-                {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
+                {$result->generateSelect($result->aSessHandlers,$result->conf.site.sessionHandler)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Use the database session handler if youre running a load-balanced environment"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Use the database session handler if youre running a load-balanced environment')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Extended Session"}</td>
+        <td class="fieldName">{$result->translate('Extended Session')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[extended_session]">{error[extended_session]}</div>
-            {generateRadioPair(#conf[site][extended_session]#,conf[site][extended_session]):h}
+            {if $result->error.extended_session}<div class="error">{$result->error.extended_session}</div>{/if}
+            {$result->generateRadioPair('conf[site][extended_session]',$result->conf.site.extended_session)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Enables extended session API when using database sessions. This allows the site to enforce one session per user."}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Enables extended session API when using database sessions. This allows the site to enforce one session per user.')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enforce Single User"}</td>
+        <td class="fieldName">{$result->translate('Enforce Single User')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[single_user]">{error[single_user]}</div>
-            {generateRadioPair(#conf[site][single_user]#,conf[site][single_user]):h}
+            {if $result->error.single_user}<div class="error">{$result->error.single_user}</div>{/if}
+            {$result->generateRadioPair('conf[site][single_user]',$result->conf.site.single_user)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Enforces one session per user on this site (requires database session handling, and extended session to be on)."}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Enforces one session per user on this site (requires database session handling, and extended session to be on).')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Allow Session in URL"}</td>
+        <td class="fieldName">{$result->translate('Allow Session in URL')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[sessionInUrl]">{error[sessionInUrl]}</div>
-            {generateRadioPair(#conf[site][sessionInUrl]#,conf[site][sessionInUrl]):h}
+            {if $result->error.sessionInUrl}<div class="error">{$result->error.sessionInUrl}</div>{/if}
+            {$result->generateRadioPair('conf[site][sessionInUrl]',$result->conf.site.sessionInUrl)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="If users have cookies disabled, this will allow them to use sessions with Seagull"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('If users have cookies disabled, this will allow them to use sessions with Seagull')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable left/right columns"}</td>
+        <td class="fieldName">{$result->translate('Enable left/right columns')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[site][blocksEnabled]#,conf[site][blocksEnabled]):h}
+            {$result->generateRadioPair('conf[site][blocksEnabled]',$result->conf.site.blocksEnabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="You can turn the left/right columns off globally"}</span>
-            </span>
-        </td>
-    </tr>
-
-    <tr>
-        <td class="fieldName">{translate var="Default article view type"}</td>
-        <td class="fieldValue">
-            <input type="text" name="conf[site][defaultArticleViewType]" value="{conf[site][defaultArticleViewType]}" size="50" />
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('You can turn the left/right columns off globally')}</span>
             </span>
         </td>
     </tr>
 
     <tr>
-        <td class="fieldName">{translate var="Front controller script name"}</td>
+        <td class="fieldName">{$result->translate('Default article view type')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][frontScriptName]" value="{conf[site][frontScriptName]}" size="50" />
+            <input type="text" name="conf[site][defaultArticleViewType]" value="{$result->conf.site.defaultArticleViewType}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="The name of your Seagull index file"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)')}</span>
             </span>
         </td>
     </tr>
 
     <tr>
-        <td class="fieldName">{translate var="Default module"}</td>
+        <td class="fieldName">{$result->translate('Front controller script name')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][defaultModule]" value="{conf[site][defaultModule]}" size="50" />
+            <input type="text" name="conf[site][frontScriptName]" value="{$result->conf.site.frontScriptName}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('The name of your Seagull index file')}</span>
             </span>
         </td>
     </tr>
 
     <tr>
-        <td class="fieldName">{translate var="Default manager"}</td>
+        <td class="fieldName">{$result->translate('Default module')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][defaultManager]" value="{conf[site][defaultManager]}" size="50" />
+            <input type="text" name="conf[site][defaultModule]" value="{$result->conf.site.defaultModule}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="This is the manager class that will be loaded if none are specified (FC only)"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)')}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{$result->translate('Default manager')}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[site][defaultManager]" value="{$result->conf.site.defaultManager}" size="50" />
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('This is the manager class that will be loaded if none are specified (FC only)')}</span>
             </span>
         </td>
     </tr>
     
     <tr>
-        <td class="fieldName">{translate var="Default params"}</td>
+        <td class="fieldName">{$result->translate('Default params')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][defaultParams]" value="{conf[site][defaultParams]}" size="50" />
+            <input type="text" name="conf[site][defaultParams]" value="{$result->conf.site.defaultParams}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="Use these params to specify, eg, a static article for your homepage"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('Use these params to specify, eg, a static article for your homepage')}</span>
             </span>
         </td>
     </tr>   
     
     <tr>
-        <td class="fieldName">{translate var="Editor type"}</td>
+        <td class="fieldName">{$result->translate('Editor type')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][wysiwyg_editor]" value="{conf[site][wysiwyg_editor]}" size="50" />
+            <input type="text" name="conf[site][wysiwyg_editor]" value="{$result->conf.site.wysiwyg_editor}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir')}</span>
             </span>
         </td>
     </tr>      
@@ -280,45 +280,45 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Navigation Options"}</th>
+        <th colspan="3">{$result->translate('Navigation Options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable Navigation"}</td>
+        <td class="fieldName">{$result->translate('Enable Navigation')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[navigation][enabled]#,conf[navigation][enabled]):h}
+            {$result->generateRadioPair('conf[navigation][enabled]',$result->conf.navigation.enabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Disable navigation altogether with this switch"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Disable navigation altogether with this switch')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Navigation type (driver)"}</td>
+        <td class="fieldName">{$result->translate('Navigation type (driver)')}</td>
         <td class="fieldValue">
             <select name="conf[navigation][driver]">
-                {generateSelect(aNavDrivers,conf[navigation][driver]):h}
+                {$result->generateSelect($result->aNavDrivers,$result->conf.navigation.driver)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Use this option to choose from various menu types - currently only 1 provided"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Use this option to choose from various menu types - currently only 1 provided')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Navigation menu stylesheet"}</td>
+        <td class="fieldName">{$result->translate('Navigation menu stylesheet')}</td>
         <td class="fieldValue">
             <select name="conf[navigation][stylesheet]">
-                {generateSelect(aStyleFiles,conf[navigation][stylesheet]):h}
+                {$result->generateSelect($result->aStyleFiles,$result->conf.navigation.stylesheet)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager"}.</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager')}.</span>
             </span>
         </td>
     </tr>
@@ -326,99 +326,99 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Debugging Options"}</th>
+        <th colspan="3">{$result->translate('Debugging Options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable authentication"}</td>
+        <td class="fieldName">{$result->translate('Enable authentication')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][authenticationEnabled]#,conf[debug][authenticationEnabled]):h}
+            {$result->generateRadioPair('conf[debug][authenticationEnabled]',$result->conf.debug.authenticationEnabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Debugging easier when this is disabled"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Debugging easier when this is disabled')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable custom error handler"}</td>
+        <td class="fieldName">{$result->translate('Enable custom error handler')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][customErrorHandler]#,conf[debug][customErrorHandler]):h}
+            {$result->generateRadioPair('conf[debug][customErrorHandler]',$result->conf.debug.customErrorHandler)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Customise the way errors are handled"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Customise the way errors are handled')}</span>
             </span>
         </td>
     </tr>
 
     <tr>
-        <td class="fieldName">{translate var="Enable debug session"}</td>
+        <td class="fieldName">{$result->translate('Enable debug session')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][sessionDebugAllowed]#,conf[debug][sessionDebugAllowed]):h}
+            {$result->generateRadioPair('conf[debug][sessionDebugAllowed]',$result->conf.debug.sessionDebugAllowed)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="If your IP appears in the TRUSTED_IPS array, you will be able to view system errors on screen even in production mode (see below)"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('If your IP appears in the TRUSTED_IPS array, you will be able to view system errors on screen even in production mode (see below)')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Production website"}</td>
+        <td class="fieldName">{$result->translate('Production website')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][production]#,conf[debug][production]):h}
+            {$result->generateRadioPair('conf[debug][production]',$result->conf.debug.production)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Setting this to true will disable all screen-based error messages"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Setting this to true will disable all screen-based error messages')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Show backtrace"}</td>
+        <td class="fieldName">{$result->translate('Show backtrace')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][showBacktrace]#,conf[debug][showBacktrace]):h}
+            {$result->generateRadioPair('conf[debug][showBacktrace]',$result->conf.debug.showBacktrace)}
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable Profiling"}</td>
+        <td class="fieldName">{$result->translate('Enable Profiling')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][profiling]#,conf[debug][profiling]):h}
+            {$result->generateRadioPair('conf[debug][profiling]',$result->conf.debug.profiling)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Requires to Xdebug extension to be installed"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Requires to Xdebug extension to be installed')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Email admin threshold"}</td>
+        <td class="fieldName">{$result->translate('Email admin threshold')}</td>
         <td class="fieldValue">
             <select name="conf[debug][emailAdminThreshold]">
-                {generateSelect(aEmailThresholds,conf[debug][emailAdminThreshold]):h}
+                {$result->generateSelect($result->aEmailThresholds,$result->conf.debug.emailAdminThreshold)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Errors must be >= this level before they are emailed to the site admin"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Errors must be >= this level before they are emailed to the site admin')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Show debug reporting link"}</td>
+        <td class="fieldName">{$result->translate('Show debug reporting link')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[debug][showBugReporterLink]#,conf[debug][showBugReporterLink]):h}
+            {$result->generateRadioPair('conf[debug][showBugReporterLink]',$result->conf.debug.showBugReporterLink)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Send feedback to project for bugs"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Send feedback to project for bugs')}</span>
             </span>
         </td>
     </tr>
@@ -426,29 +426,29 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Caching Options"}</th>
+        <th colspan="3">{$result->translate('Caching Options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable caching"}</td>
+        <td class="fieldName">{$result->translate('Enable caching')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[cache][enabled]#,conf[cache][enabled]):h}
+            {$result->generateRadioPair('conf[cache][enabled]',$result->conf.cache.enabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="" />
-                <span class="tipText">{translate var="It is recommended to disable this while developing"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
+                <span class="tipText">{$result->translate('It is recommended to disable this while developing')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Cache lifetime (secs)"}</td>
+        <td class="fieldName">{$result->translate('Cache lifetime (secs)')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[cache][lifetime]" value="{conf[cache][lifetime]}" size="50" />
+            <input type="text" name="conf[cache][lifetime]" value="{$result->conf.cache.lifetime}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Default is 24 hours"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Default is 24 hours')}</span>
             </span>
         </td>
     </tr>
@@ -456,74 +456,61 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Database Options"}</th>
+        <th colspan="3">{$result->translate('Database Options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Type"}</td>
+        <td class="fieldName">{$result->translate('Type')}</td>
         <td class="fieldValue">
             <select name="conf[db][type]">
-                {generateSelect(aDbTypes,conf[db][type]):h}
+                {$result->generateSelect($result->aDbTypes,$result->conf.db.type)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Make sure you load the relevant schema"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Make sure you load the relevant schema')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Host"}</td>
+        <td class="fieldName">{$result->translate('Host')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][host]" value="{conf[db][host]}" size="50" />
+            <input type="text" name="conf[db][host]" value="{$result->conf.db.host}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Port"}</td>
+        <td class="fieldName">{$result->translate('Port')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][port]" value="{conf[db][port]}" size="50" />
+            <input type="text" name="conf[db][port]" value="{$result->conf.db.port}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Protocol"}</td>
+        <td class="fieldName">{$result->translate('Protocol')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][protocol]" value="{conf[db][protocol]}" size="50" />
+            <input type="text" name="conf[db][protocol]" value="{$result->conf.db.protocol}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="DB username"}</td>
+        <td class="fieldName">{$result->translate('DB username')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][user]" value="{conf[db][user]}" size="50" />
+            <input type="text" name="conf[db][user]" value="{$result->conf.db.user}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="DB password"}</td>
+        <td class="fieldName">{$result->translate('DB password')}</td>
         <td class="fieldValue">
-            <input type="password" name="conf[db][pass]" value="{conf[db][pass]}" size="50" />
+            <input type="password" name="conf[db][pass]" value="{$result->conf.db.pass}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="DB name"}</td>
+        <td class="fieldName">{$result->translate('DB name')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][name]" value="{conf[db][name]}" size="50" />
-        </td>
-        <td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center">&nbsp;</td>
-    </tr>
-    <tr>
-        <th colspan="3">{translate var="Database Table Mappings"}</th>
-    </tr>
-    <tr flexy:foreach="conf[table],key,var">
-        <td class="fieldName">{key}</td>
-        <td class="fieldValue">
-            <input type="text" name="conf[table][{key}]" value="{var}" size="50" />
+            <input type="text" name="conf[db][name]" value="{$result->conf.db.name}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -531,73 +518,88 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Logging options"}</th>
+        <th colspan="3">{$result->translate('Database Table Mappings')}</th>
+    </tr>
+    {foreach from=$result->conf.table key=key item=var}
+    <tr>
+        <td class="fieldName">{$key}</td>
+        <td class="fieldValue">
+            <input type="text" name="conf[table][{$key}]" value="{$var}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    {/foreach}
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Enable logs"}</td>
+        <th colspan="3">{$result->translate('Logging options')}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{$result->translate('Enable logs')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[log][enabled]#,conf[log][enabled]):h}
+            {$result->generateRadioPair('conf[log][enabled]',$result->conf.log.enabled)}
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="It is recommended to disable logging if you are running < PHP 4.3.x"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('It is recommended to disable logging if you are running < PHP 4.3.x')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Type"}</td>
+        <td class="fieldName">{$result->translate('Type')}</td>
         <td class="fieldValue">
             <select name="conf[log][type]">
-                {generateSelect(aLogTypes,conf[log][type]):h}
+                {$result->generateSelect($result->aLogTypes,$result->conf.log.type)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="If sql is used, use log_table as the log table name below"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('If sql is used, use log_table as the log table name below')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Log name"}</td>
+        <td class="fieldName">{$result->translate('Log name')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[log][name]" value="{conf[log][name]}" size="50" />
+            <input type="text" name="conf[log][name]" value="{$result->conf.log.name}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Use an absolute path or one relative to the Seagull root dir"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Use an absolute path or one relative to the Seagull root dir')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Priority"}</td>
+        <td class="fieldName">{$result->translate('Priority')}</td>
         <td class="fieldValue">
             <select name="conf[log][priority]">
-                {generateSelect(aLogPriorities,conf[log][priority]):h}
+                {$result->generateSelect($result->aLogPriorities,$result->conf.log.priority)}
             </select>
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Identifier"}</td>
+        <td class="fieldName">{$result->translate('Identifier')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[log][ident]" value="{conf[log][ident]}" size="50" />
+            <input type="text" name="conf[log][ident]" value="{$result->conf.log.ident}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Target username"}</td>
+        <td class="fieldName">{$result->translate('Target username')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[log][paramsUsername]" value="{conf[log][paramsUsername]}" size="50" />
+            <input type="text" name="conf[log][paramsUsername]" value="{$result->conf.log.paramsUsername}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Target password"}</td>
+        <td class="fieldName">{$result->translate('Target password')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[log][paramsPassword]" value="{conf[log][paramsPassword]}" size="50" />
+            <input type="text" name="conf[log][paramsPassword]" value="{$result->conf.log.paramsPassword}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -605,103 +607,103 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="MTA options"}</th>
+        <th colspan="3">{$result->translate('MTA options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Backend"}</td>
+        <td class="fieldName">{$result->translate('Backend')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[mtaBackend]">{error[mtaBackend]}</div>
+            {if $result->error.mtaBackend}<div class="error">{$result->error.mtaBackend}</div>{/if}
             <select name="conf[mta][backend]">
-                {generateSelect(aMtaBackends,conf[mta][backend]):h}
+                {$result->generateSelect($result->aMtaBackends,$result->conf.mta.backend)}
             </select>
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="PEAR::Mail backend"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('PEAR::Mail backend')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Sendmail path"}</td>
+        <td class="fieldName">{$result->translate('Sendmail path')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[sendmailPath]">{error[sendmailPath]}</div>
-            <input type="text" name="conf[mta][sendmailPath]" value="{conf[mta][sendmailPath]}" size="50" />
+            {if $result->error.sendmailPath}<div class="error">{$result->error.sendmailPath}</div>{/if}
+            <input type="text" name="conf[mta][sendmailPath]" value="{$result->conf.mta.sendmailPath}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Mandatory if you use Sendmail as Backend"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Mandatory if you use Sendmail as Backend')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Sendmail arguments"}</td>
+        <td class="fieldName">{$result->translate('Sendmail arguments')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[sendmailArgs]">{error[sendmailArgs]}</div>
-            <input type="text" name="conf[mta][sendmailArgs]" value="{conf[mta][sendmailArgs]}" size="50" />
+            {if $result->error.sendmailArgs}<div class="error">{$result->error.sendmailArgs}</div>{/if}
+            <input type="text" name="conf[mta][sendmailArgs]" value="{$result->conf.mta.sendmailArgs}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Optional if you use Sendmail as Backend"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Optional if you use Sendmail as Backend')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="SMTP host"}</td>
+        <td class="fieldName">{$result->translate('SMTP host')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[mta][smtpHost]" value="{conf[mta][smtpHost]}" size="50" />
+            <input type="text" name="conf[mta][smtpHost]" value="{$result->conf.mta.smtpHost}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Optional if you use SMTP as Backend. Default: localhost"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Optional if you use SMTP as Backend. Default: localhost')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="SMTP port"}</td>
+        <td class="fieldName">{$result->translate('SMTP port')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[mta][smtpPort]" value="{conf[mta][smtpPort]}" size="50" />
+            <input type="text" name="conf[mta][smtpPort]" value="{$result->conf.mta.smtpPort}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Optional if you use SMTP as Backend. Default: 25"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Optional if you use SMTP as Backend. Default: 25')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Use SMTP authentication"}</td>
+        <td class="fieldName">{$result->translate('Use SMTP authentication')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[mta][smtpAuth]#,conf[mta][smtpAuth]):h}
+            {$result->generateRadioPair('conf[mta][smtpAuth]',$result->conf.mta.smtpAuth)}
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="SMTP username"}</td>
+        <td class="fieldName">{$result->translate('SMTP username')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[smtpUsername]">{error[smtpUsername]}</div>
-            <input type="text" name="conf[mta][smtpUsername]" value="{conf[mta][smtpUsername]}" size="50" />
+            {if $result->error.smtpUsername}<div class="error">{$result->error.smtpUsername}</div>{/if}
+            <input type="text" name="conf[mta][smtpUsername]" value="{$result->conf.mta.smtpUsername}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Mandatory if you use SMTP as Backend and SMTP authentication is enabled"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Mandatory if you use SMTP as Backend and SMTP authentication is enabled')}</span>
             </span>
         </td>
     </tr>
      <tr>
-        <td class="fieldName">{translate var="SMTP password"}</td>
+        <td class="fieldName">{$result->translate('SMTP password')}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[smtpPassword]">{error[smtpPassword]}</div>
-            <input type="password" name="conf[mta][smtpPassword]" value="{conf[mta][smtpPassword]}" size="50" />
+            {if $result->error.smtpPassword}<div class="error">{$result->error.smtpPassword}</div>{/if}
+            <input type="password" name="conf[mta][smtpPassword]" value="{$result->conf.mta.smtpPassword}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Mandatory if you use SMTP as Backend and SMTP authentication is enabled"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Mandatory if you use SMTP as Backend and SMTP authentication is enabled')}</span>
             </span>
         </td>
     </tr>
@@ -709,36 +711,36 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Email options"}</th>
+        <th colspan="3">{$result->translate('Email options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Admin contact"}</td>
+        <td class="fieldName">{$result->translate('Admin contact')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[email][admin]" value="{conf[email][admin]}" size="50" />
+            <input type="text" name="conf[email][admin]" value="{$result->conf.email.admin}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Error messages get sent here"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Error messages get sent here')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Support contact"}</td>
+        <td class="fieldName">{$result->translate('Support contact')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[email][support]" value="{conf[email][support]}" size="50" />
+            <input type="text" name="conf[email][support]" value="{$result->conf.email.support}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Info contact"}</td>
+        <td class="fieldName">{$result->translate('Info contact')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[email][info]" value="{conf[email][info]}" size="50" />
+            <input type="text" name="conf[email][info]" value="{$result->conf.email.info}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="Contact us enquiries get sent here"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Contact us enquiries get sent here')}</span>
             </span>
         </td>
     </tr>
@@ -746,19 +748,19 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Popup window options"}</th>
+        <th colspan="3">{$result->translate('Popup window options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Default popup window height"}</td>
+        <td class="fieldName">{$result->translate('Default popup window height')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[popup][winHeight]" value="{conf[popup][winHeight]}" size="50" />
+            <input type="text" name="conf[popup][winHeight]" value="{$result->conf.popup.winHeight}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Default popup window width"}</td>
+        <td class="fieldName">{$result->translate('Default popup window width')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[popup][winWidth]" value="{conf[popup][winWidth]}" size="50" />
+            <input type="text" name="conf[popup][winWidth]" value="{$result->conf.popup.winWidth}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -766,38 +768,38 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Cookie options"}</th>
+        <th colspan="3">{$result->translate('Cookie options')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Name"}</td>
+        <td class="fieldName">{$result->translate('Name')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[cookie][name]" value="{conf[cookie][name]}" size="50" />
+            <input type="text" name="conf[cookie][name]" value="{$result->conf.cookie.name}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate var="This will be your session identifier"}</span>
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('This will be your session identifier')}</span>
             </span>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Path"}</td>
+        <td class="fieldName">{$result->translate('Path')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[cookie][path]" value="{conf[cookie][path]}" size="50" />
+            <input type="text" name="conf[cookie][path]" value="{$result->conf.cookie.path}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Domain"}</td>
+        <td class="fieldName">{$result->translate('Domain')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[cookie][domain]" value="{conf[cookie][domain]}" size="50" />
+            <input type="text" name="conf[cookie][domain]" value="{$result->conf.cookie.domain}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Secure"}</td>
+        <td class="fieldName">{$result->translate('Secure')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[cookie][secure]#,conf[cookie][secure]):h}
+            {$result->generateRadioPair('conf[cookie][secure]',$result->conf.cookie.secure)}
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -805,27 +807,27 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="Censorship"}</th>
+        <th colspan="3">{$result->translate('Censorship')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Mode"}</td>
+        <td class="fieldName">{$result->translate('Mode')}</td>
         <td class="fieldValue">
             <select name="conf[censor][mode]">
-                {generateSelect(aCensorModes,conf[censor][mode]):h}
+                {$result->generateSelect($result->aCensorModes,$result->conf.censor.mode)}
             </select>
         </td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Replace word with"}</td>
+        <td class="fieldName">{$result->translate('Replace word with')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[censor][replaceString]" value="{conf[censor][replaceString]}" size="50" />
+            <input type="text" name="conf[censor][replaceString]" value="{$result->conf.censor.replaceString}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Disallowed words"}</td>
+        <td class="fieldName">{$result->translate('Disallowed words')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[censor][badWords]" value="{conf[censor][badWords]}" size="50" />
+            <input type="text" name="conf[censor][badWords]" value="{$result->conf.censor.badWords}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -833,26 +835,26 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
-        <th colspan="3">{translate var="P3P privacy policy"}</th>
+        <th colspan="3">{$result->translate('P3P privacy policy')}</th>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Policies"}</td>
+        <td class="fieldName">{$result->translate('Policies')}</td>
         <td class="fieldValue">
-            {generateRadioPair(#conf[p3p][policies]#,conf[p3p][policies]):h}
+            {$result->generateRadioPair('conf[p3p][policies]',$result->conf.p3p.policies)}
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Policy location"}</td>
+        <td class="fieldName">{$result->translate('Policy location')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][policy_location]" value="{conf[p3p][policy_location]}" size="50" />
+            <input type="text" name="conf[p3p][policy_location]" value="{$result->conf.p3p.policy_location}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td class="fieldName">{translate var="Compact policy"}</td>
+        <td class="fieldName">{$result->translate('Compact policy')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][compact_policy]" value="{conf[p3p][compact_policy]}" size="50" />
+            <input type="text" name="conf[p3p][compact_policy]" value="{$result->conf.p3p.compact_policy}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
@@ -861,8 +863,8 @@
     </tr>
     <tr>
         <td colspan="3" align="center">
-            <input class="wideButton" type="submit" name="submitted" value="{translate var="Save"}" />&nbsp;
-            <input class="wideButton" type="button" name="cancel" value="{translate var="Cancel"}" onClick="document.location.href='{makeUrl(##,#module#,#default":h}'" />
+            <input class="wideButton" type="submit" name="submitted" value="{$result->translate('Save')}" />&nbsp;
+            <input class="wideButton" type="button" name="cancel" value="{$result->translate('Cancel')}" onClick="document.location.href='{$result->makeUrl('','module','default')}'" />
         </td>
     </tr>
 </table>

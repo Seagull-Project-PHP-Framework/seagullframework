@@ -1,13 +1,15 @@
-<h1 class="pageTitle">{translate(#Welcome to#)} {conf[site][name]}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
- {if:preview}
+<h1 class="pageTitle">{$result->translate('Welcome to')} {$result->conf.site.name}</h1>
+{if $result->msgGet()}
+<span>{$result->msgGet()}</span>
+{/if}
+ {if $result->preview}
 
 <div class="newsItem">
-    <h3>{preview[title]}</h3>
-    <p>{preview[newsHtml]:h}</p>
+    <h3>{$result->preview.title}</h3>
+    <p>{$result->preview.newsHtml}</p>
 </div>
 <br /><br />
-{end:}
+{/if}
 
 <p>Welcome to the <strong>Seagull Framework</strong> project. Seagull is an OO <a href="http://php.net" title="PHP"><acronym title="PHP: Hypertext Preprocessor">PHP</acronym></a> framework, with core components <acronym title="Berkeley Software Distribution">BSD</acronym> licensed, that has the following design goals:</p>
 

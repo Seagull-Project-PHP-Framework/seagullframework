@@ -1,0 +1,48 @@
+
+<form action="" method="post" name="frmPrefAdd" flexy:ignore id="frmPrefAdd">
+    <input type="hidden" name="action" value="insert" />
+
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="narrow">
+        <tr>
+            <th colspan="2">{translate(#Details#)}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="50%"><span class="error">*</span><strong>{translate(#Name#)}</strong></td>
+            <td width="50%">
+                <div class="error" flexy:if="error[name]">
+                    {translate(error[name])}
+                </div><input name="pref[name]" type="text" value="{pref.name}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span><strong>{translate(#Default value#)}</strong></td>
+            <td width="50%">
+                <div class="error" flexy:if="error[default_value]">
+                    {translate(error[default_value])}
+                </div><input name="pref[default_value]" type="text" value="{pref.default_value}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+
+        <tr>
+            <td valign="top" align="center" colspan="2">
+                <input class="wideButton" name="submitted" value="{translate(#Submit#)}" type="submit" />
+        		<input class="wideButton" type="button" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(##,#preference#,#user#)}'" />
+            </td>
+        </tr>
+
+        <tr>
+            <td valign="top" align="center" colspan="2">
+                <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
+            </td>
+        </tr>
+    </table>
+</form>
