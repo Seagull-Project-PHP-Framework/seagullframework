@@ -1,9 +1,5 @@
 <?php
 
-#require_once dirname(__FILE__) . '/../Url.php';
-#require_once dirname(__FILE__) . '/../UrlParserSefStrategy.php';
-#require_once dirname(__FILE__) . '/../Output.php';
-
 /**
  * Test suite.
  *
@@ -14,9 +10,9 @@
 class UrlStrategySefTest extends UnitTestCase
 {
 
-    function StrategySefTest()
+    function UrlStrategySefTest()
     {
-        $this->UrlStrategySefTest('SEF strategy test');
+        $this->UnitTestCase('SEF strategy test');
     }
 
     function setup()
@@ -42,22 +38,13 @@ class UrlStrategySefTest extends UnitTestCase
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
 
-//        $obj = new stdClass();
-//        $obj->url = 'http://example.com/' . implode('/', $aUrlSegments);
-//        $strat = new SGL_UrlParserSefStrategy();
-//        $c = &SGL_Config::singleton();
-//        $conf = $c->getAll();
-//        $ret = $strat->parseQueryString($obj, $conf);
-
         //  assert expected keys present
-        $this->assertTrue(array_key_exists('frontScriptName', $ret));
         $this->assertTrue(array_key_exists('moduleName', $ret));
         $this->assertTrue(array_key_exists('managerName', $ret));
         $this->assertTrue(array_key_exists('action', $ret));
         $this->assertTrue(array_key_exists('enquiry_type', $ret));
 
         //  assert expected values present
-        $this->assertEqual($ret['frontScriptName'], 'index.php');
         $this->assertEqual($ret['moduleName'], 'contactus');
         $this->assertEqual($ret['managerName'], 'contactus');
         $this->assertEqual($ret['action'], 'list');

@@ -203,7 +203,7 @@ class SGL_URL
         }
 
         // Parse the url and store the various parts
-        if (!empty($url)) {
+        if (!is_null($url)) {
             $urlinfo = parse_url($url);
 
             // Default query data
