@@ -11,12 +11,12 @@
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: UrlTest.ndb.php,v 1.1 2005/06/23 14:56:01 demian Exp $
  */
-class StrategySefTest extends UnitTestCase
+class UrlStrategySefTest extends UnitTestCase
 {
 
     function StrategySefTest()
     {
-        $this->UnitTestCase('foo bar');
+        $this->UrlStrategySefTest('SEF strategy test');
     }
 
     function setup()
@@ -39,15 +39,15 @@ class StrategySefTest extends UnitTestCase
           5 => 'enquiry_type',
           6 => 'Hosting+info',
         );
-#        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-#        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
+        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
 
-        $obj = new stdClass();
-        $obj->url = 'http://example.com/' . implode('/', $aUrlSegments);
-        $strat = new SGL_UrlParserSefStrategy();
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $ret = $strat->parseQueryString($obj, $conf);
+//        $obj = new stdClass();
+//        $obj->url = 'http://example.com/' . implode('/', $aUrlSegments);
+//        $strat = new SGL_UrlParserSefStrategy();
+//        $c = &SGL_Config::singleton();
+//        $conf = $c->getAll();
+//        $ret = $strat->parseQueryString($obj, $conf);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('frontScriptName', $ret));
