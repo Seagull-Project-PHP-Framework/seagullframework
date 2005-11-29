@@ -37,6 +37,18 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
+function appRootExists()
+{
+	$aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+	return file_exists($aFormValues['installRoot']);
+}
+
+function webRootExists()
+{
+	$aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+	return file_exists($aFormValues['webRoot']);
+}
+
 class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
@@ -56,7 +68,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'serverTimeOffset'  => 'UTC',
             'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_PATH,
-            'webRoot'  => SGL_PATH . '/web',
+            'webRoot'  => SGL_PATH . '/www',
             ));
 
         //  setup admin user
@@ -78,7 +90,12 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         $this->addRule('installRoot', 'You must specify an install root path', 'required');
         $this->addRule('webRoot', 'You must specify a web root path', 'required');
+        
         //  test if dirs exist
+        $this->registerRule('appRootExists','function','appRootExists');        
+        $this->registerRule('webRootExists','function','webRootExists');        
+        $this->addRule('installRoot','path does not appear to exist','appRootExists');        
+        $this->addRule('webRoot','path does not appear to exist','webRootExists');        
 
         //  general
         $this->addElement('header',     null, 'General:');

@@ -97,6 +97,7 @@ class SGL_Emailer
     function prepare()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $includePath = $this->options['template'];
         if (is_readable($includePath)) {
             include $includePath; // populates $body
@@ -113,13 +114,14 @@ class SGL_Emailer
     function send()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
         if (!empty($this->options['filepath'])) {
             $mime->addAttachment($this->options['filepath'],$this->options['mimetype']);
         }
         // Add Cc-address
-        if(!empty($this->options['Cc'])) {
+        if (!empty($this->options['Cc'])) {
             $mime->addCc($this->options['Cc']);
         }
         $body = $mime->get(array(
