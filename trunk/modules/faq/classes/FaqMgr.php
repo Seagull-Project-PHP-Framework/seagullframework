@@ -116,6 +116,7 @@ class FaqMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         //  get new order number
 		$faq = DB_DataObject::factory('Faq');
         $faq->selectAdd();
@@ -127,8 +128,7 @@ class FaqMgr extends SGL_Manager
         //  insert record
         $faq = DB_DataObject::factory('Faq');
         $faq->setFrom($input->faq);
-        $dbh = $faq->getDatabaseConnection();
-        $faq->faq_id = $dbh->nextId('faq');
+        $faq->faq_id = $this->dbh->nextId('faq');
         $faq->last_updated = $faq->date_created = SGL_Date::getTime(true);
         $faq->item_order = $maxItemOrder + 1;
         $success = $faq->insert();

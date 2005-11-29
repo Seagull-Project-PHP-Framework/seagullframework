@@ -54,18 +54,18 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->template     = 'prefManager.html';
         $this->pageTitle    = 'Preference Manager';
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->aThemes = SGL_Util::getAllThemes();
@@ -130,7 +130,7 @@ class PreferenceMgr extends SGL_Manager
             $this->validated = false;
         }
     }
-    
+
     function display(&$output)
     {
         //  load available languages
@@ -141,17 +141,17 @@ class PreferenceMgr extends SGL_Manager
             $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
         }
         $output->aLangs = $aLangOptions;
-        
+
         //  FIXME: unix-only, create fallback for windows
         $locales = explode("\n", @shell_exec('locale -a'));
 
         //  remap to hash
         foreach ($locales as $locale) {
             $aLocales[$locale] = $locale;
-        }        
+        }
         $output->aLocales = $aLocales;
         require_once SGL_DAT_DIR . '/ary.timezones.en.php';
-        $output->aTimezones = $tz;        
+        $output->aTimezones = $tz;
     }
 
     function _add(&$input, &$output)
@@ -165,18 +165,19 @@ class PreferenceMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_DB::setConnection($this->dbh);
         $oPref = DB_DataObject::factory('Preference');
         $oPref->setFrom($input->pref);
-        $dbh = & $oPref->getDatabaseConnection();
-        
-        $oPref->preference_id = $dbh->nextId($this->conf['table']['preference']);
+
+        $oPref->preference_id = $this->dbh->nextId($this->conf['table']['preference']);
         $success = $oPref->insert();
         if ($success) {
             //  synchronise with user_preference table
             $ret = $this->da->syncDefaultPrefs();
             SGL::raiseMsg('pref successfully added');
         } else {
-           SGL::raiseError('There was a problem inserting the record', 
+           SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -198,7 +199,7 @@ class PreferenceMgr extends SGL_Manager
         $oPref->get($input->pref->preference_id);
         $oPref->setFrom($input->pref);
         unset($oPref->name);
-        
+
         //  don't check for success because pref.name must remain the same
         $changed = $oPref->update();
 

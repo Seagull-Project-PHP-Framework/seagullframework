@@ -57,22 +57,22 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'scanNew'   => array('scanNew'), 
-            'insertNew' => array('insertNew', 'redirectToDefault'), 
-            'scanOrphaned' => array('scanOrphaned'), 
-            'deleteOrphaned' => array('deleteOrphaned', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'scanNew'   => array('scanNew'),
+            'insertNew' => array('insertNew', 'redirectToDefault'),
+            'scanOrphaned' => array('scanOrphaned'),
+            'deleteOrphaned' => array('deleteOrphaned', 'redirectToDefault'),
+            'list'      => array('list'),
         );
     }
 
@@ -109,8 +109,8 @@ class PermissionMgr extends SGL_Manager
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $input->template = ($input->action == 'update') ? 'permEdit.html' : 'permAdd.html';
-            $input->pageTitle = ($input->action == 'update') 
-                ? $this->pageTitle . ' :: Edit' 
+            $input->pageTitle = ($input->action == 'update')
+                ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
             include_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
             $input->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
@@ -158,7 +158,7 @@ class PermissionMgr extends SGL_Manager
         //  switch for template re-use
         $output->isNewForm = false;
         $output->pageTitle = $this->pageTitle . ' :: Detect Orphaned';
-        
+
         //  manually generate listbox options, due to data structure
         $output->scannedOptions = '';
         foreach ($this->scanForOrphanedPerms() as $k => $v) {
@@ -170,16 +170,16 @@ class PermissionMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
+        SGL_DB::setConnection($this->dbh);
         $oPerm = DB_DataObject::factory('Permission');
 
         //  check to see if perm already exists
         $oPerm->name = $input->perm->name;
         if (!$oPerm->find()) {
-            $oPerm->free(); 
+            $oPerm->free();
             $oPerm->setFrom($input->perm);
-            $dbh = & $oPerm->getDatabaseConnection();
-            $oPerm->permission_id = $dbh->nextId($this->conf['table']['permission']);
+            $oPerm->permission_id = $this->dbh->nextId($this->conf['table']['permission']);
             $success = $oPerm->insert();
 
             //  update perms superset cache
@@ -188,7 +188,7 @@ class PermissionMgr extends SGL_Manager
             if ($success) {
                 SGL::raiseMsg('perm successfully added');
             } else {
-                SGL::raiseError('There was a problem inserting the record', 
+                SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_NOAFFECTEDROWS);
             }
         } else {
@@ -199,13 +199,13 @@ class PermissionMgr extends SGL_Manager
     function _insertNew(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
             SGL::raiseMsg('No perms were selected');
         }
         $input->template = 'permScan.html';
-        
+
         //  let's go transactional
         $this->dbh->autocommit();
 
@@ -213,7 +213,7 @@ class PermissionMgr extends SGL_Manager
         foreach ($input->scannedPerms as $k=>$v) {
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
-            
+
             $query = "  INSERT INTO {$this->conf['table']['permission']} (permission_id, name, module_id)
                         VALUES (" . $this->dbh->nextId($this->conf['table']['permission']) . ",'{$p[0]}',{$p[1]} )";
             if (is_a($this->dbh->query($query), 'PEAR_Error')) {
@@ -221,12 +221,12 @@ class PermissionMgr extends SGL_Manager
             }
         }
         if ($errors > 0) {
-            $this->dbh->rollBack();   
-            SGL::raiseError('There was a problem inserting the record(s)', 
+            $this->dbh->rollBack();
+            SGL::raiseError('There was a problem inserting the record(s)',
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
             $this->dbh->commit();
-            
+
             //  update perms superset cache
             SGL::clearCache('perms');
             SGL::raiseMsg('perm(s) successfully added');
@@ -236,27 +236,27 @@ class PermissionMgr extends SGL_Manager
     function _deleteOrphaned(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
             SGL::raiseMsg('No perms were selected');
             return;
         }
         $input->template = 'permScan.html';
-        
+
         $ret = $this->da->deleteOrphanedPerms($input->scannedPerms);
-        
+
         if ($ret !== true) {
-            SGL::raiseError('There was a problem deleting the record(s)', 
+            SGL::raiseError('There was a problem deleting the record(s)',
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
-            
+
             //  update perms superset cache
             SGL::clearCache('perms');
             SGL::raiseMsg('perm successfully deleted');
         }
     }
-    
+
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -280,14 +280,14 @@ class PermissionMgr extends SGL_Manager
         $original = clone($oPerm);
         $oPerm->setFrom($input->perm);
         $success = $oPerm->update($original);
-        
+
         //  update perms superset cache
         SGL::clearCache('perms');
 
         if ($success) {
             SGL::raiseMsg('perm successfully updated');
         } else {
-            SGL::raiseError('There was a problem updating the record', 
+            SGL::raiseError('There was a problem updating the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -341,7 +341,7 @@ class PermissionMgr extends SGL_Manager
             FROM    {$this->conf['table']['permission']}
             $whereClause
             $orderBy_query ";
-        
+
         $pagerOptions = array(
             'mode'      => 'Sliding',
             'delta'     => 3,
@@ -375,13 +375,13 @@ class PermissionMgr extends SGL_Manager
     function scanForNewPerms()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get all perms currently in db
         $dbPerms = $this->da->getPermsByModuleId('', SGL_RET_ARRAY);
-        
+
         $filePerms = $this->retrievePermsFromFiles();
         $newPerms = array();
-        
+
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
         foreach ($filePerms as $k => $filePerm) {
@@ -392,16 +392,16 @@ class PermissionMgr extends SGL_Manager
                     break;
                 }
             }
-            //  add each, if not found. store display name and a 
+            //  add each, if not found. store display name and a
             //  delimited value used for form submission
             if (!$found) {
-            
+
                 //  ignore 'redirectToDefault' type perms
                 if (strpos($filePerm['perm'], 'redirectToDefault') !== false) {
                     continue;
                 }
                 $permType = (strpos($filePerm['perm'], '_') === false) ? 'class' : 'method';
-                $newPerms[] = array("{$filePerm['perm']} - $permType perm ({$filePerm['module_name']})", 
+                $newPerms[] = array("{$filePerm['perm']} - $permType perm ({$filePerm['module_name']})",
                     "{$filePerm['perm']}^{$filePerm['module_id']}");
             }
         }
@@ -419,14 +419,14 @@ class PermissionMgr extends SGL_Manager
     function scanForOrphanedPerms()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get all perms currently in db
         $dbPerms = $this->da->getPermsByModuleId('', SGL_RET_ARRAY);
-        
+
         $filePerms = $this->retrievePermsFromFiles();
-        
+
         $orphanedPerms = array();
-        
+
         //  attempt to find each file perm in the db perms.
         //  if not found, add it to $newPerms
         foreach ($dbPerms as $k => $dbPerm) {
@@ -437,18 +437,18 @@ class PermissionMgr extends SGL_Manager
                     break;
                 }
             }
-            
-            //  add each, if not found. store display name and a 
-            //  delimited value used for form submission            
+
+            //  add each, if not found. store display name and a
+            //  delimited value used for form submission
             if (!$found) {
                 $permType = (strpos($dbPerm['name'], '_') === false) ? 'class' : 'method';
-                $orphanedPerms[] = array("{$dbPerm['name']} - $permType perm ({$dbPerm['module_name']})", 
-                    "{$dbPerm['name']}^{$dbPerm['module_id']}");    
+                $orphanedPerms[] = array("{$dbPerm['name']} - $permType perm ({$dbPerm['module_name']})",
+                    "{$dbPerm['name']}^{$dbPerm['module_id']}");
             }
         }
         return $orphanedPerms;
-    }    
-    
+    }
+
    /**
     * Scans class files and retrieves an array of class and method perms using the aAllowedActions property
     *
@@ -460,13 +460,13 @@ class PermissionMgr extends SGL_Manager
     function retrievePermsFromFiles()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get a list of modules in db
         $query = "SELECT module_id, name FROM {$this->conf['table']['module']}";
 		$modules = $this->dbh->getAssoc($query);
-		 
+
 		if (is_a($modules, 'PEAR_Error')) {
-           return SGL::raiseError('There was a problem retrieving modules', 
+           return SGL::raiseError('There was a problem retrieving modules',
                 SGL_ERROR_NODATA);
 		}
 
@@ -481,7 +481,7 @@ class PermissionMgr extends SGL_Manager
             if (stristr ($v, 'classes') === false) {
                 continue;
             }
-            
+
             //  grab class name from path (platform independent)
             preg_match('/[\\\\\/](\\w+)\\.php/', $v, $className);
             if (isset($className[1])) {
@@ -496,11 +496,11 @@ class PermissionMgr extends SGL_Manager
             } else {
                 continue;
             }
-            //  load file as string (note: just for curiosity, I tried reading 
+            //  load file as string (note: just for curiosity, I tried reading
             //  line by line and 1K and 4K chunks, so I wouldn't have to load the whole file
             //  and file_get_contents was a little faster! ...and it's 1 line of code
             $t = file_get_contents($v);
-            
+
             //  find first actionsMapping statement, if any
             $pos1 = strpos($t, '$this->_aActionsMapping');
             if ($pos1 === false) continue;
@@ -510,33 +510,33 @@ class PermissionMgr extends SGL_Manager
             //  narrow down to actionsMapping statement only, so preg
             //  doesn't have to work so hard
             $actionStr = substr($t, $pos1, $pos2 - $pos1);
-            
+
             //  grab all allowed actions into an array
             $aTmp = array();
             preg_match_all("/[^']*'(\w*)'[^']*/s", $actionStr, $aTmp);
 
             //  remove duplicates
             $aActions = array_unique($aTmp[1]);
-            
+
             //  find moduleId for moduleName
             $moduleId = array_search($moduleName, $modules);
 
             //  add class perm
             $permsFound[] = array(
                 'perm' => $className,
-                'module_id' => $moduleId, 
+                'module_id' => $moduleId,
                 'module_name' => $moduleName);
 
-            //  add each method perm, if not found. store display name and a 
+            //  add each method perm, if not found. store display name and a
             //  delimited value used for form submission
             foreach ($aActions as $k2 => $v2) {
                 $permsFound[] = array(
-                    'perm' => "{$className}_{$v2}", 
-                    'module_id' => $moduleId, 
+                    'perm' => "{$className}_{$v2}",
+                    'module_id' => $moduleId,
                     'module_name' => $moduleName);
             }
             unset($aActions);
-                        
+
         }
         return $permsFound;
     }

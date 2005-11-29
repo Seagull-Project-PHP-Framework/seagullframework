@@ -232,10 +232,10 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $asset = DB_DataObject::factory('Document');
         $asset->setFrom($input->document);
-        $dbh = $asset->getDatabaseConnection();
-        $asset->document_id = $dbh->nextId($this->conf['table']['document']);
+        $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
         $asset->date_created  = SGL_Date::getTime();
         $asset->name = SGL_String::censor($asset->name);
@@ -244,9 +244,9 @@ class DocumentMgr extends FileMgr
 
         //  if file has been renamed
         if ($input->document->orig_name != $asset->name) {
-            rename(SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
-                SGL_UPLOAD_DIR . '/' . $asset->name);
-        $output->asset = $asset;
+            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
+                    SGL_UPLOAD_DIR . '/' . $asset->name);
+            $output->asset = $asset;
         }
     }
 

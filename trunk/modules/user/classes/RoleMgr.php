@@ -65,7 +65,7 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->template     = 'roleManager.html';
         $this->pageTitle    = 'Role Manager';
         $this->da           = & DA_User::singleton();
@@ -78,7 +78,7 @@ class RoleMgr extends SGL_Manager
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
 
-            'editPerms' => array('editPerms'), 
+            'editPerms' => array('editPerms'),
             'updatePerms' => array('updatePerms', 'redirectToDefault'),
             'duplicate' => array('duplicate', 'redirectToDefault'),
         );
@@ -129,18 +129,18 @@ class RoleMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
+        SGL_DB::setConnection($this->dbh);
         $oRole = DB_DataObject::factory('Role');
         $oRole->setFrom($input->role);
-        $dbh = & $oRole->getDatabaseConnection();
-        $oRole->role_id = $dbh->nextId($this->conf['table']['role']);
+        $oRole->role_id = $this->dbh->nextId($this->conf['table']['role']);
         $oRole->date_created = $oRole->last_updated = SGL_Date::getTime();
         $oRole->created_by = $oRole->updated_by = SGL_HTTP_Session::getUid();
         $success = $oRole->insert();
         if ($success) {
             SGL::raiseMsg('role successfully added');
         } else {
-           SGL::raiseError('There was a problem inserting the record', 
+           SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -167,7 +167,7 @@ class RoleMgr extends SGL_Manager
         if ($success) {
             SGL::raiseMsg('role successfully updated');
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -196,7 +196,7 @@ class RoleMgr extends SGL_Manager
     }
 
     /**
-     * Updates any users whose role has been deleted to a role status of 
+     * Updates any users whose role has been deleted to a role status of
      * SGL_UNASSIGNED (-1).
      *
      * @access  private
@@ -224,7 +224,7 @@ class RoleMgr extends SGL_Manager
         }
 
         //  and update orgs to 'unassigned' role
-        $aOrgs = $this->da->getOrgsByRoleId($roleId);        
+        $aOrgs = $this->da->getOrgsByRoleId($roleId);
         if (count($aOrgs)) {
             foreach ($aOrgs as $orgId) {
                 $this->dbh->query('   UPDATE ' . $this->conf['table']['organisation'] . '
@@ -251,8 +251,8 @@ class RoleMgr extends SGL_Manager
         }
 
         $query = "  SELECT
-                        role_id, name, description, date_created, 
-                        created_by, last_updated, updated_by 
+                        role_id, name, description, date_created,
+                        created_by, last_updated, updated_by
                     FROM {$this->conf['table']['role']} " .$orderBy_query;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -298,7 +298,7 @@ class RoleMgr extends SGL_Manager
         }
         if (DB::isError($res1) || $isError) {
             $this->dbh->rollback();
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_DBTRANSACTIONFAILURE);
         } else {
             $this->dbh->commit();

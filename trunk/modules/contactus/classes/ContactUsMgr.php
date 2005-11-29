@@ -60,8 +60,8 @@ class ContactUsMgr extends SGL_Manager
         $this->template    = 'contact.html';
 
         $this->_aActionsMapping =  array(
-            'list'  => array('list'), 
-            'send'  => array('send', 'redirectToDefault'), 
+            'list'  => array('list'),
+            'send'  => array('send', 'redirectToDefault'),
         );
     }
 
@@ -140,6 +140,7 @@ class ContactUsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         //  1. Take data from validated contact object and pass
         //  to sendEmail() method
         $bEmailSent = $this->sendEmail($input->contact, $input->moduleName);
@@ -149,8 +150,7 @@ class ContactUsMgr extends SGL_Manager
             //  3. insert contact details in the contact table
             $contact = DB_DataObject::factory('Contact_us');
             $contact->setFrom($input->contact);
-            $dbh = $contact->getDatabaseConnection();
-            $contact->contact_us_id = $dbh->nextId($this->conf['table']['contact_us']);
+            $contact->contact_us_id = $this->dbh->nextId($this->conf['table']['contact_us']);
             $contact->insert();
 
             //  4. redirect on success - inherited redirectToDefault method forwards user to default page
@@ -169,13 +169,13 @@ class ContactUsMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  1. Set template
-        //  The default template set in the class vars is copied to the 
+        //  The default template set in the class vars is copied to the
         //  input object in validate which in turn gets passed to process.
-        //  In some cases you'll want different templates for each case 
+        //  In some cases you'll want different templates for each case
         //  statement, do this by setting $output->template = 'yourTemplates.html'
 
         //  2. Detect user status
-        //  If user is logged on, prepopulate form with his/her 
+        //  If user is logged on, prepopulate form with his/her
         //  details.
 
         //  check user auth level
@@ -215,7 +215,7 @@ class ContactUsMgr extends SGL_Manager
                 'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
-                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                     $this->module . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);

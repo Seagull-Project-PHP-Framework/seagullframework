@@ -156,6 +156,7 @@ class RndMsgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $output->template = 'rndMsg.html';
         if ($input->msgUpload) {
             $aLines = $this->file2($_FILES['msgFile']['tmp_name']);
@@ -167,8 +168,7 @@ class RndMsgMgr extends SGL_Manager
             if (trim($rndmsg) != '') {
                 $msg = DB_DataObject::factory('Rndmsg_message');
                 $msg->msg = trim($rndmsg);
-                $dbh = $msg->getDatabaseConnection();
-                $msg->rndmsg_message_id = $dbh->nextId($this->conf['table']['rndmsg_message']);
+                $msg->rndmsg_message_id = $this->dbh->nextId($this->conf['table']['rndmsg_message']);
                 $success = ($success && $msg->insert());
             }
         }

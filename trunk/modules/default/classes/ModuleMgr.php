@@ -62,13 +62,13 @@ class ModuleMgr extends SGL_Manager
         $this->template     = 'moduleOverview.html';
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
-            'overview'  => array('overview'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
+            'overview'  => array('overview'),
         );
     }
 
@@ -132,18 +132,18 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "  SELECT is_configurable, title, description, admin_uri, icon 
+        $query = "  SELECT is_configurable, title, description, admin_uri, icon
                     FROM {$this->conf['table']['module']}
                     ORDER BY module_id";
         $aModules = $this->dbh->getAll($query);
         if (!DB::isError($aModules)) {
             $ret = array();
             foreach ($aModules as $k => $oModule) {
-                
+
                 //  split module/manager values out as object properties
                 if (strpos($oModule->admin_uri, '/') !== false) {
                     list($oModule->module, $oModule->manager) = explode('/', $oModule->admin_uri);
-                    
+
                 } elseif (!empty($oModule->admin_uri)) {
                     $oModule->module = $oModule->admin_uri;
                     $oModule->manager = '';
@@ -151,7 +151,7 @@ class ModuleMgr extends SGL_Manager
                     $oModule->module = '';
                     $oModule->manager = '';
                 }
-                
+
                 $oModule->bgnd = ($oModule->is_configurable) ? 'bgnd' : 'outline';
                 $oModule->breakRow = !((count($ret)+1) % SGL_ICONS_PER_ROW);
                 $ret[] = $oModule;
@@ -173,13 +173,14 @@ class ModuleMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_DB::setConnection($this->dbh);
         $output->template = 'moduleList.html';
-        
+
         require_once 'DB/DataObject.php';
         $newEntry = DB_DataObject::factory('Module');
         $newEntry->setFrom($input->module);
-        $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->module_id = $dbh->nextId($this->conf['table']['module']);
+        $newEntry->module_id = $this->dbh->nextId($this->conf['table']['module']);
         if ($newEntry->insert()) {
             SGL::raiseMsg('Module successfully added to the manager.');
         } else {
@@ -214,7 +215,7 @@ class ModuleMgr extends SGL_Manager
         if ($success) {
             SGL::raiseMsg('module successfully updated');
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -234,7 +235,7 @@ class ModuleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->template = 'moduleList.html';
         $query = "SELECT * FROM {$this->conf['table']['module']} ORDER BY name";
 
@@ -271,7 +272,7 @@ class ModuleMgr extends SGL_Manager
     function retrieveAllModules($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
@@ -286,8 +287,8 @@ class ModuleMgr extends SGL_Manager
 
         case SGL_RET_NAME_VALUE:
         default:
-            $query = "  SELECT name, title 
-                        FROM {$conf['table']['module']} 
+            $query = "  SELECT name, title
+                        FROM {$conf['table']['module']}
                         ORDER BY name";
             $aModules = $dbh->getAll($query);
             foreach ($aModules as $k => $oVal) {
@@ -312,11 +313,11 @@ class ModuleMgr extends SGL_Manager
     function getModuleIdByPermId($permId = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        $dbh = & SGL_DB::singleton();        
-        
+        $dbh = & SGL_DB::singleton();
+
         $permId = ($permId === null) ? 0 : $permId;
         $query = "  SELECT  module_id
                     FROM    {$conf['table']['permission']}
@@ -325,7 +326,7 @@ class ModuleMgr extends SGL_Manager
         $moduleId = $dbh->getOne($query);
         return $moduleId;
     }
-    
+
     /**
      * Returns true if module record exists in db.
      *
@@ -334,8 +335,8 @@ class ModuleMgr extends SGL_Manager
     function moduleIsRegistered($moduleName)
     {
 
-        $dbh = & SGL_DB::singleton();        
-        $query = " 
+        $dbh = & SGL_DB::singleton();
+        $query = "
             SELECT  module_id
             FROM    {$this->conf['table']['module']}
             WHERE   name = '$moduleName'";

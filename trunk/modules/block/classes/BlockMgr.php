@@ -106,6 +106,7 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $output->template = 'blockFormdynamic.html';
         $output->mode = 'New block';
         $output->wysiwyg = true;
@@ -125,14 +126,12 @@ class BlockMgr extends SGL_Manager
                 $block->setFrom($oBlock);
 
                 // Find next available blk_order for targetted column
-                $dbh = $block->getDatabaseConnection();
-
-                $dbh->autocommit();
+                $this->dbh->autocommit();
                 $query = "SELECT MAX(blk_order) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
-                $next_order = (int)$dbh->getOne($query) + 1;
+                $next_order = (int)$this->dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 $block->insert(); // This takes into account block assignments as well
-                $dbh->commit();
+                $this->dbh->commit();
 
                 //  clear cache so a new cache file is built reflecting changes
                 SGL::clearCache('blocks');
@@ -146,6 +145,7 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $output->template = 'blockForm.html';
         $output->mode = 'New block';
 
@@ -161,11 +161,9 @@ class BlockMgr extends SGL_Manager
                 $block->setFrom($oBlock);
 
                 // Find next available blk_order for targetted column
-                $dbh = $block->getDatabaseConnection();
-
-                $dbh->autocommit();
+                $this->dbh->autocommit();
                 $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
-                $next_order = (int)$dbh->getOne($query) + 1;
+                $next_order = (int)$this->dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
                 $block->insert(); // This takes into account block assignments as well
@@ -350,12 +348,13 @@ class BlockMgr extends SGL_Manager
 
     function _reorderUpdate($orderList)
     {
+        SGL_DB::setConnection($this->dbh);
         $orderArray = explode(',', $orderList);
+
         //  Reorder blocks
         $pos = 1;
         $block = & new Block();
-        $dbh = $block->getDatabaseConnection();
-        $dbh->autocommit();
+        $this->dbh->autocommit();
         foreach ($orderArray as $blockId) {
             $block->get($blockId);
             $block->blk_order =  $pos;
@@ -364,7 +363,7 @@ class BlockMgr extends SGL_Manager
             $block = & new Block();
             $pos++;
         }
-        $dbh->commit();
+        $this->dbh->commit();
     }
 
     function _list(&$input, &$output)

@@ -216,10 +216,9 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $oUser = $this->da->getUserById($input->user->usr_id);
-        $dbh = & $oUser->getDatabaseConnection();
-        SGL_DB::setConnection($dbh);
-        $dbh->autocommit();
+        $this->dbh->autocommit();
         $oUser->setFrom($input->user);
         $oUser->last_updated = SGL_Date::getTime();
         $oUser->updated_by = SGL_HTTP_Session::getUid();
@@ -255,10 +254,10 @@ class UserMgr extends RegisterMgr
         }
 
         if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
-            $dbh->commit();
+            $this->dbh->commit();
             SGL::raiseMsg('details successfully updated');
         } else {
-            $dbh->rollback();
+            $this->dbh->rollback();
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
