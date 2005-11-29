@@ -45,6 +45,7 @@ define('SGL_FEED_RSS_VERSION', '2.0');
 define('SGL_FEED_ITEM_LIMIT', 10);
 define('SGL_FEED_ITEM_LIMIT_MAXIMUM', 50);
 define('SGL_ITEM_TYPE_ARTICLE_HTML', 2);
+define('SGL_ITEM_TYPE_ARTICLE_NEWS', 4);
 define('SGL_CATEGORY_NEWS_ID', 1);
 
 /**
@@ -61,6 +62,7 @@ class RssMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();        
         
+        $this->module   = 'export';
         $this->masterTemplate  = 'masterFeed.html';
         $this->template = 'masterRss.xml';
         
@@ -132,7 +134,7 @@ class RssMgr extends SGL_Manager
         
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
-        
+
         if (($res !== false) && (!empty($res))) {
             foreach ($res as $article) {
                 $item = array();
@@ -198,6 +200,9 @@ class RssMgr extends SGL_Manager
      {
          SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+         $dbh = & SGL_DB::singleton();
+         $c = &SGL_Config::singleton();
+         $conf = $c->getAll();
          $query = "
                  SELECT  i.item_id AS id,
                          i.date_created AS created,
@@ -208,38 +213,37 @@ class RssMgr extends SGL_Manager
                          u.username AS username,
                          CONCAT(first_name, ' ', last_name) AS fullname
                  FROM
-                         item i,
-                         item_type it,
-                         item_addition ia,
-                         item_addition ia2,
-                         item_type_mapping itm,
-                         item_type_mapping itm2,
-                         usr u
+                         {$conf['table']['item']} i, 
+                         {$conf['table']['item_type']} it,
+                         {$conf['table']['item_addition']} ia, 
+                         {$conf['table']['item_addition']} ia2, 
+                         {$conf['table']['item_type_mapping']} itm,
+                         {$conf['table']['item_type_mapping']} itm2,
+                         {$conf['table']['user']} u
                  WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                  AND     i.created_by_id = u.usr_id
                  AND     ia2.item_type_mapping_id = itm2.item_type_mapping_id
                  AND     i.item_id = ia.item_id
                  AND     i.item_id = ia2.item_id
                  AND     it.item_type_id = itm.item_type_id
-                 AND     itm.field_type \!= itm2.field_type
+                 AND     itm.field_type <> itm2.field_type
                  AND     it.item_type_id = ?
                  AND     i.start_date < ?
                  AND     i.expiry_date  > ?
                  AND     i.status  = ?
-                 AND     i.category_id = ?
                  GROUP BY i.item_id
                  ORDER BY i.date_created DESC
                  LIMIT 0, ?
              ";
 
-         $aRes = $this->dbh->getAll($query,
-            array(SGL_ITEM_TYPE_ARTICLE_HTML, SGL_Date::getTime(), 
-                SGL_Date::getTime(), SGL_STATUS_PUBLISHED, SGL_CATEGORY_NEWS_ID, $limit),
-                DB_FETCHMODE_ASSOC);
+         $aRes = $dbh->getAll($query,
+                              array(SGL_ITEM_TYPE_ARTICLE_NEWS, SGL_Date::getTime(), 
+                                    SGL_Date::getTime(),  SGL_STATUS_PUBLISHED,  $limit),
+                              DB_FETCHMODE_ASSOC);
 
          if (DB::isError($aRes)) {
              SGL::raiseError('problem getting news: ' . 
-                $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS, PEAR_ERROR_RETURN);
+                             $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS, PEAR_ERROR_RETURN);
              return false;
          }
 
