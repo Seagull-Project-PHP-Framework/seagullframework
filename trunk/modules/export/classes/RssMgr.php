@@ -51,25 +51,24 @@ define('SGL_CATEGORY_NEWS_ID', 1);
 /**
  * A class to build RSS 1.0 compliant export.
  * @author Fabio Bacigalupo
- * 
+ *
  */
-class RssMgr extends SGL_Manager 
+class RssMgr extends SGL_Manager
 {
     var $feed;
 
     function RssMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();        
-        
-        $this->module   = 'export';
+        parent::SGL_Manager();
+
         $this->masterTemplate  = 'masterFeed.html';
         $this->template = 'masterRss.xml';
-        
+
         $this->_aActionsMapping = array(
             'news' => array('news'),
             );
-        
+
         $this->feed = new SGL_Feed();
         $this->feed->xml_version    = "1.0";
         $this->feed->xml_encoding   = "utf-8";
@@ -86,20 +85,20 @@ class RssMgr extends SGL_Manager
 //        $this->feed->lastbuilddate  = $this->datetime2Rfc2822();
         $this->feed->pubdate        = $this->datetime2Rfc2822();
         $this->feed->generator      = 'Seagull RSS Manager';
-        
+
 /*        $image               = new stdClass();
         $image->url          = ;
         $image->title        = ;
         $image->link         = ;
-        $image->width        = ""; # Maximum value for width is 144, default value is 88. 
+        $image->width        = ""; # Maximum value for width is 144, default value is 88.
         $image->height       = ""; # Maximum value for height is 400, default value is 31.
         $image->description  = ;
         $this->feed->image   = $image;*/
-        
+
         #$this->feed->mrss["ns"] = 'xmlns:media="http://search.yahoo.com/mrss"';
         #$this->feed->itunes["ns"] = 'xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd"';
     }
-    
+
 
     function validate($req, &$input)
     {
@@ -115,7 +114,7 @@ class RssMgr extends SGL_Manager
         return $input;
     }
 
-       
+
     /**
      *
      * Generate a RSS feed with the latest news from the startpage.
@@ -128,10 +127,10 @@ class RssMgr extends SGL_Manager
     function _news(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->template = 'masterRss.xml';
         $this->feed->category[]["content"] = $this->conf['RssMgr']['feedCategory'];
-        
+
         $limit = $this->normalizeLimit($input->limit);
         $res = $this->getNews($limit);
 
@@ -141,10 +140,10 @@ class RssMgr extends SGL_Manager
                 $item["title"]           = $article["title"];
                 $item["link"]            = SGL_Output::makeUrl('view','articleview','publisher', array(),
                                             "frmArticleID|{$article["id"]}");
-                $item["description"]     = SGL_String::summariseHtml($article["description"]);# . 
+                $item["description"]     = SGL_String::summariseHtml($article["description"]);# .
                                             #" " . SGL_String::translate("Read more");
-                $author_name             = (!empty($article["fullname"])) 
-                                            ? " (" . $article["fullname"] . ")" 
+                $author_name             = (!empty($article["fullname"]))
+                                            ? " (" . $article["fullname"] . ")"
                                             : " (" . $article["username"] . ")";
                 $item["author"]          = $this->conf['RssMgr']['feedEmail'] . $author_name;
                 $item["source"]["url"]   = '';
@@ -153,7 +152,7 @@ class RssMgr extends SGL_Manager
                 $item["guid"]["permalink"] = $item["link"];
                 $item["comments"]        = $item["link"];
                 $item["pubdate"]         = $this->datetime2Rfc2822($article["issued"]);
-                
+
                 $this->feed->items[] = $item;
             }
             // Set the pubDate to the release date of the newest item
@@ -162,7 +161,7 @@ class RssMgr extends SGL_Manager
         header("Content-Type: text/xml");
         $output->feed = $this->feed;
     }
-    
+
     function datetime2Rfc2822($date = "now")
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -172,13 +171,13 @@ class RssMgr extends SGL_Manager
         }
         return date("r", strtotime($date));
     }
-    
+
     function normalizeLimit($limit = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if ((strtolower($limit) == "all") || ($limit > SGL_FEED_ITEM_LIMIT_MAXIMUM)) {
-            
+
             //   Keep the transferred data limited
             $limit = SGL_FEED_ITEM_LIMIT_MAXIMUM;
         } elseif (is_int($limit) === true) {
@@ -188,7 +187,7 @@ class RssMgr extends SGL_Manager
         }
         return $limit;
     }
-    
+
      /**
       *
       * Fetch news
@@ -213,10 +212,10 @@ class RssMgr extends SGL_Manager
                          u.username AS username,
                          CONCAT(first_name, ' ', last_name) AS fullname
                  FROM
-                         {$conf['table']['item']} i, 
+                         {$conf['table']['item']} i,
                          {$conf['table']['item_type']} it,
-                         {$conf['table']['item_addition']} ia, 
-                         {$conf['table']['item_addition']} ia2, 
+                         {$conf['table']['item_addition']} ia,
+                         {$conf['table']['item_addition']} ia2,
                          {$conf['table']['item_type_mapping']} itm,
                          {$conf['table']['item_type_mapping']} itm2,
                          {$conf['table']['user']} u
@@ -236,19 +235,20 @@ class RssMgr extends SGL_Manager
                  LIMIT 0, ?
              ";
 
-         $aRes = $dbh->getAll($query,
-                              array(SGL_ITEM_TYPE_ARTICLE_NEWS, SGL_Date::getTime(), 
-                                    SGL_Date::getTime(),  SGL_STATUS_PUBLISHED,  $limit),
-                              DB_FETCHMODE_ASSOC);
+        $aRes = $dbh->getAll($query, array(
+            SGL_ITEM_TYPE_ARTICLE_HTML,
+            SGL_Date::getTime(),
+            SGL_Date::getTime(),
+            SGL_STATUS_PUBLISHED,
+            $limit), DB_FETCHMODE_ASSOC);
 
-         if (DB::isError($aRes)) {
-             SGL::raiseError('problem getting news: ' . 
-                             $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS, PEAR_ERROR_RETURN);
-             return false;
-         }
-
-         return $aRes;
-     }
+        if (DB::isError($aRes)) {
+            SGL::raiseError('problem getting news: ' .
+                $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS);
+            return false;
+        }
+        return $aRes;
+    }
 }
 
 class SGL_Feed
