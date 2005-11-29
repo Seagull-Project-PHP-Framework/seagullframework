@@ -49,8 +49,7 @@ define('SGL_ITEM_TYPE_ARTICLE_NEWS', 4);
 define('SGL_CATEGORY_NEWS_ID', 1);
 
 /**
- * A class to build RSS 1.0 compliant export.
- * @author Fabio Bacigalupo
+ * A class to build RSS 2.0 compliant export.
  *
  */
 class RssMgr extends SGL_Manager
