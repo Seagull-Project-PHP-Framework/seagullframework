@@ -6,12 +6,6 @@
  * 
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category    HTTP
  * @package     HTTP
  * @author      Stig Bakken <ssb@fast.no>
@@ -21,8 +15,8 @@
  * @author      Philippe Jausions <Philippe.Jausions@11abacus.com>
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2002-2005 The Authors
- * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: HTTP.php,v 1.46 2005/05/17 11:03:04 mike Exp $
+ * @license     BSD, revised
+ * @version     CVS: $Id: HTTP.php,v 1.48 2005/11/08 20:11:54 mike Exp $
  * @link        http://pear.php.net/package/HTTP
  */
 
@@ -35,10 +29,9 @@
  *
  * @package     HTTP
  * @category    HTTP
- * @license     PHP License
  * @access      public
  * @static
- * @version     $Revision: 1.46 $
+ * @version     $Revision: 1.48 $
  */
 class HTTP
 {
@@ -134,11 +127,11 @@ class HTTP
 
         if (count($matches)) {
             asort($matches, SORT_NUMERIC);
-            return $supp[array_pop(array_keys($matches))];
+            return $supp[end($l = array_keys($matches))];
         }
         
         if (isset($_SERVER['REMOTE_HOST'])) {
-            $lang = strtolower(array_pop(explode('.', $_SERVER['REMOTE_HOST'])));
+            $lang = strtolower(end($h = explode('.', $_SERVER['REMOTE_HOST'])));
             if (isset($supp[$lang])) {
                 return $supp[$lang];
             }
@@ -285,7 +278,7 @@ class HTTP
                 return $url;
             }
             if (!empty($protocol)) {
-                $url = $protocol .':'. array_pop(explode(':', $url, 2));
+                $url = $protocol .':'. end($array = explode(':', $url, 2));
             }
             if (!empty($port)) {
                 $url = preg_replace('!^(([a-z0-9]+)://[^/:]+)(:[\d]+)?!i', 

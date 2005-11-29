@@ -15,7 +15,7 @@
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: System.php,v 1.50 2005/09/11 17:46:55 cellog Exp $
+ * @version    CVS: $Id: System.php,v 1.51 2005/11/16 03:28:56 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -55,7 +55,7 @@ $GLOBALS['_System_temp_files'] = array();
 * @author     Tomas V.V. Cox <cox@idecnet.com>
 * @copyright  1997-2005 The PHP Group
 * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
-* @version    Release: 1.4.4
+* @version    Release: 1.4.5
 * @link       http://pear.php.net/package/PEAR
 * @since      Class available since Release 0.1
 */
@@ -544,6 +544,8 @@ class System
                             // prepend drive
                             $args[$i+1] = addslashes(substr(getcwd(), 0, 2) . $args[$i + 1]);
                         }
+                        // escape path separators to avoid PCRE problems
+                        $args[$i+1] = str_replace('\\', '\\\\', $args[$i+1]);
                     }
                     $patterns[] = "(" . preg_replace(array('/\./', '/\*/'),
                                                      array('\.', '.*', ),

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.38 2005/11/02 03:49:13 cellog Exp $
+ * @version    CVS: $Id: 10.php,v 1.39 2005/11/16 03:34:17 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -304,6 +304,9 @@ class PEAR_REST_10
         $packagelist = $this->_rest->retrieveData($base . 'p/packages.xml');
         if (PEAR::isError($packagelist)) {
             return $packagelist;
+        }
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            return array();
         }
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
