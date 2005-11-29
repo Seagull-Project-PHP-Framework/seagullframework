@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.85 2005/11/02 18:20:23 cellog Exp $
+ * @version    CVS: $Id: Remote.php,v 1.86 2005/11/14 14:11:05 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -543,7 +543,9 @@ parameter.
                 } else {
                     $caption .= ' (' . implode(', ', PEAR_Common::betterStates($state, true)) . ')';
                 }
+                PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
                 $latest = $rest->listLatestUpgrades($base, $state, $inst, $channel, $reg);
+                PEAR::staticPopErrorHandling();
             } else {
                 $remote = &$this->config->getRemote();
                 $remote->pushErrorHandling(PEAR_ERROR_RETURN);
