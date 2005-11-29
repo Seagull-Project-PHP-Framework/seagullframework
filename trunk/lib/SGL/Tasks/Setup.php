@@ -78,7 +78,7 @@ class SGL_Task_SetupConstants extends SGL_Task
     function run($conf)
     {
         // framework file structure
-        define('SGL_WEB_ROOT',                  SGL_PATH . '/www');
+        define('SGL_WEB_ROOT',                  $conf['path']['webRoot']);
         define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
         define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
         define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
