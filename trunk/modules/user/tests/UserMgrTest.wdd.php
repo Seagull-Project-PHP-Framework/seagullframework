@@ -8,13 +8,31 @@ Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'))
  *
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Id: TestUserMgr.php,v 1.5 2005/05/17 23:54:53 demian Exp $
- */  
+ */
 class TestUserMgr extends UnitTestCase {
 
     function TestUserMgr()
     {
         $this->da = & DA_User::singleton();
         $this->UnitTestCase('UserMgr Test');
+    }
+
+    function setup()
+    {
+        session_start();
+        $_SESSION['uid'] = 1;
+        $locator = &SGL_ServiceLocator::singleton();
+        $this->dbh = $locator->get('DB');
+        if (!$this->dbh) {
+            $this->dbh = & SGL_DB::singleton();
+            $locator->register('DB', $this->dbh);
+        }
+        SGL_DB::setConnection($this->dbh);
+    }
+
+    function teardown()
+    {
+        session_destroy();
     }
 
     function testInsertingAUserIncrementsTotalCount()
@@ -30,13 +48,10 @@ class TestUserMgr extends UnitTestCase {
             $oOutput = new stdClass();
 
             // get initial count of usr records
-            $dbh = & SGL_DB::singleton();
-        
-            $initialCountUser = $dbh->getOne('SELECT COUNT(*) FROM usr');
+            $initialCountUser = $this->dbh->getOne('SELECT COUNT(*) FROM usr');
 
             // get initial count of user_permission records
-
-            $initialCountPerms = $dbh->getOne('SELECT COUNT(*) FROM user_permission');
+            $initialCountPerms = $this->dbh->getOne('SELECT COUNT(*) FROM user_permission');
 
             //  build user object
             $oUser = new stdClass();
@@ -50,7 +65,7 @@ class TestUserMgr extends UnitTestCase {
             $oUser->is_acct_active = 1;
 
             //  assign to input object
-            $oInput->user = $oUser;        
+            $oInput->user = $oUser;
 
             $userMgr = new UserMgr();
             $userMgr->_insert($oInput, $oOutput);
@@ -58,14 +73,14 @@ class TestUserMgr extends UnitTestCase {
             // get final count of user records
             unset($oInput, $oOutput, $userMgr);
 
-            $finalCountUser = $dbh->getOne('SELECT COUNT(*) FROM usr');
+            $finalCountUser = $this->dbh->getOne('SELECT COUNT(*) FROM usr');
 
             //  test user record inserted
             $this->assertTrue($initialCountUser + 1 == $finalCountUser);
 
             //  test perms inserted
             //  get final count of user_permission records added
-            $finalCountPerms = $dbh->getOne('SELECT COUNT(*) FROM user_permission');
+            $finalCountPerms = $this->dbh->getOne('SELECT COUNT(*) FROM user_permission');
             $permsAdded = $finalCountPerms - $initialCountPerms;
 
             //  determine user's role inherited from parent
@@ -73,7 +88,7 @@ class TestUserMgr extends UnitTestCase {
 
             //  get count of perms required for given role
             $requireNumPerms = count($this->da->getPermsByRoleId($roleId));
-#            $this->assertTrue($requireNumPerms == $permsAdded);
+            $this->assertTrue($requireNumPerms == $permsAdded);
 
             //  unset all vars for next round
             unset($doUser, $doUsrPerms, $oOrg, $oUser);
@@ -98,6 +113,7 @@ class TestUserMgr extends UnitTestCase {
     {
         //  in summary, insert a new user, get last inserted id,
         //  update that user, compare results
+
         $oInput = new stdClass();
         $oOutput = new stdClass();
 
@@ -116,7 +132,7 @@ class TestUserMgr extends UnitTestCase {
         $oUser->email = 'foo@example.com';
 
         //  assign to input object
-        $oInput->user = $oUser;        
+        $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
         $userMgr->_insert($oInput, $oOutput);
@@ -131,7 +147,7 @@ class TestUserMgr extends UnitTestCase {
 
         //  get id of last inserted user
         $query = '
-            SELECT MAX(usr_id) AS last_inserted_id 
+            SELECT MAX(usr_id) AS last_inserted_id
             FROM  usr';
         $doUser->query($query);
         $doUser->fetch();
@@ -158,7 +174,7 @@ class TestUserMgr extends UnitTestCase {
         $oUser->email = 'bar@example.com';
 
         //  assign to input object
-        $oInput->user = $oUser;        
+        $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
         $userMgr->_update($oInput, $oOutput);
@@ -246,7 +262,7 @@ class TestUserMgr extends UnitTestCase {
         $oUser->email = 'foo@example.com';
 
         //  assign to input object
-        $oInput->user = $oUser;        
+        $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
         $userMgr->_insert($oInput, $oOutput);
@@ -285,7 +301,7 @@ class TestUserMgr extends UnitTestCase {
         $oUser->email = $email;
 
         //  assign to input object
-        $oInput->user = $oUser;        
+        $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
         $userMgr->_insert($oInput, $oOutput);

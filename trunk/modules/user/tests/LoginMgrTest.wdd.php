@@ -16,6 +16,12 @@ class TestLoginMgr extends UnitTestCase {
         $this->UnitTestCase('LoginMgr Test');
     }
 
+    function setup()
+    {
+        session_start();
+        $_SESSION['uid'] = 1;
+    }
+
     function testLogin()
     {
         //  create random username/password, add test user, test login
@@ -43,8 +49,6 @@ class TestLoginMgr extends UnitTestCase {
         //  assign to input object
         $oInput->user = $oUser;
 
-        session_start();
-        $_SESSION['uid'] = 1;
         $userMgr = new UserMgr();
         $userMgr->_insert($oInput, $oOutput);
 
