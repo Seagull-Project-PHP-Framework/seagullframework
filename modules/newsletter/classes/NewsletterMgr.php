@@ -173,6 +173,7 @@ class NewsletterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        SGL_DB::setConnection($this->dbh);
         $errorLists = false;
 
         // Process registration for every list selected
@@ -190,8 +191,7 @@ class NewsletterMgr extends SGL_Manager
                 continue;
             }
 
-            $dbh = $oList->getDatabaseConnection();
-            $oList->newsletter_id = $dbh->nextId($this->conf['table']['newsletter']);
+            $oList->newsletter_id = $this->dbh->nextId($this->conf['table']['newsletter']);
             if (!empty($input->name)) {
                 $oList->name = $input->name;
             }

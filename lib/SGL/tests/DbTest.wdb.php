@@ -24,39 +24,17 @@ class DbTest extends UnitTestCase {
         $this->assertReference($dbh1, $dbh2);
     }
 
-    function testDataObjectRef()
+    function xtestDataObjectRef()
     {
-		$dbh1 = & SGL_DB::singleton($this->dsn);
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh1 = $locator->get('DB');
+		SGL_DB::setConnection($dbh1);
 
     	require_once 'DB/DataObject.php';
     	$dbdo = DB_DataObject::factory('module');
-    	$tmp = & $dbdo->getDatabaseConnection();
-		$dbh2 = & SGL_DB::singleton($this->dsn, $tmp);
+    	$dbh2 = $dbdo->getDatabaseConnection();
 
         $this->assertReference($dbh1, $dbh2);
-    }
-
-    function testDataAccessRef()
-    {
-        $dbh1 = & SGL_DB::singleton($this->dsn);
-
-        $oUser = DB_DataObject::factory('Usr');
-        $oUser->get(1);
-        $tmp = $oUser->getDatabaseConnection();
-        $dbh = &SGL_DB::singleton(null, $tmp);
-        $this->assertReference($dbh1, $dbh);
-    }
-
-    function testSetConnection()
-    {
-        $dbh = & SGL_DB::singleton();
-
-        $oUser = DB_DataObject::factory('Usr');
-        $tmp = $oUser->getDatabaseConnection();
-        SGL_DB::setConnection($tmp);
-
-
-        $this->assertReference($tmp, $dbh);
     }
 }
 

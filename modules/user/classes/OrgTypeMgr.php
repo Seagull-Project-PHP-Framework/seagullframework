@@ -61,12 +61,12 @@ class OrgTypeMgr extends SGL_Manager
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
     }
 
@@ -87,7 +87,7 @@ class OrgTypeMgr extends SGL_Manager
         if ($input->action == 'update') {
             $input->orgTypeId = $input->orgTypes->organisation_type_id;
         }
-                
+
         $aErrors = array();
         if ($input->submit) {
             if (empty($input->orgTypes->name)) {
@@ -112,17 +112,17 @@ class OrgTypeMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
+        SGL_DB::setConnection($this->dbh);
         $orgType = DB_DataObject::factory('Organisation_type');
         $orgType->setFrom($input->orgTypes);
-        $dbh = $orgType->getDatabaseConnection();
-        $orgType->organisation_type_id = $dbh->nextId($this->conf['table']['organisation_type']);        
+        $orgType->organisation_type_id = $this->dbh->nextId($this->conf['table']['organisation_type']);
         $success = $orgType->insert();
         if ($success) {
             SGL::raiseMsg('Organisation type saved successfully');
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
-        }        
+        }
     }
 
     function _edit(&$input, &$output)
@@ -141,7 +141,7 @@ class OrgTypeMgr extends SGL_Manager
         $output->template = 'orgTypeAdd.html';
         $orgType = DB_DataObject::factory('Organisation_type');
         $orgType->get($input->orgTypeId);
-        $orgType->setFrom($input->orgTypes);      
+        $orgType->setFrom($input->orgTypes);
         $success = $orgType->update();
         if ($success) {
             SGL::raiseMsg('Organisation type has been updated successfully');
@@ -152,7 +152,7 @@ class OrgTypeMgr extends SGL_Manager
 
     function _list(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->orgTypes = $this->da->getOrgTypes();
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
     }
@@ -168,10 +168,10 @@ class OrgTypeMgr extends SGL_Manager
                 unset($orgTypes);
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . 
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('Org type(s) deleted successfully');        
+        SGL::raiseMsg('Org type(s) deleted successfully');
     }
 }
 ?>

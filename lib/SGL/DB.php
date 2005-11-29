@@ -64,7 +64,7 @@ class SGL_DB
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      * @return  mixed           reference to DB resource or false on failure to connect
      */
-    function &singleton($dsn = null, $newConn = null)
+    function &singleton($dsn = null)
     {
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
 
@@ -75,22 +75,17 @@ class SGL_DB
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
 
-        	if (is_a($newConn, 'DB_common')) {
-        		$conn = &$newConn;
-        	} else {
-	        	$conn = DB::connect($dsn);
-	            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
-	            if (DB::isError($conn)) {
-	                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-	                    SGL_ERROR_DBFAILURE, $fatal);
-	            }
-        	}
+        	$conn = DB::connect($dsn);
+            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
+            if (DB::isError($conn)) {
+                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                    SGL_ERROR_DBFAILURE, $fatal);
+            }
+
             $conn->setFetchMode(DB_FETCHMODE_OBJECT);
 			$aInstances[$signature] = $conn;
 
-        } elseif (is_a($newConn, 'DB_common')) {
-    		$aInstances[$signature] = $newConn;
-    	}
+        }
         return $aInstances[$signature];
     }
 

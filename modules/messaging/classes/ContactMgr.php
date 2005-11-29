@@ -57,14 +57,14 @@ class ContactMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'Contact Manager';
         $this->template     = 'contacts.html';
 
         $this->_aActionsMapping =  array(
-            'insert' => array('insert', 'redirectToDefault'), 
-            'delete' => array('delete', 'redirectToDefault'), 
-            'list'   => array('list'), 
+            'insert' => array('insert', 'redirectToDefault'),
+            'delete' => array('delete', 'redirectToDefault'),
+            'list'   => array('list'),
         );
     }
 
@@ -98,7 +98,7 @@ class ContactMgr extends SGL_Manager
                 unset($user);
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . __FUNCTION__, 
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . __FUNCTION__,
                 SGL_ERROR_INVALIDARGS);
         }
         SGL::raiseMsg('contacts successfully deleted');
@@ -107,15 +107,15 @@ class ContactMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
+            SGL_DB::setConnection($this->dbh);
             $savedUser = DB_DataObject::factory('Contact');
-            $dbh = $savedUser->getDatabaseConnection();
 
             //  skip if user already exists
             $savedUser->usr_id = $input->userID;
             $savedUser->originator_id  = SGL_HTTP_Session::getUid();
             $numRows = $savedUser->find();
             if ($numRows < 1) {
-                $savedUser->contact_id       = $dbh->nextId($this->conf['table']['contact']);
+                $savedUser->contact_id       = $this->dbh->nextId($this->conf['table']['contact']);
                 $savedUser->date_created     = SGL_Date::getTime();
                 $savedUser->originator_id    = SGL_HTTP_Session::getUid();
                 $savedUser->usr_id           = $input->userID;
@@ -148,7 +148,7 @@ class ContactMgr extends SGL_Manager
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $query = "
             SELECT  u.usr_id, u.username, u.first_name, u.last_name
-            FROM    {$this->conf['table']['user']} u, {$this->conf['table']['contact']} c 
+            FROM    {$this->conf['table']['user']} u, {$this->conf['table']['contact']} c
             WHERE   c.originator_id = " . SGL_HTTP_Session::getUid() . "
             AND     u.usr_id = c.usr_id
             ORDER BY u.last_updated DESC

@@ -63,14 +63,14 @@ class IMessageMgr extends SGL_Manager
         $this->template     = 'imInbox.html';
 
         $this->_aActionsMapping =  array(
-            'read'      => array('read'), 
+            'read'      => array('read'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'compose'   => array('compose'), 
-            'reply'     => array('reply'), 
-            'sendAlert' => array('sendAlert', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'inbox'     => array('inbox'), 
-            'outbox'    => array('outbox'), 
+            'compose'   => array('compose'),
+            'reply'     => array('reply'),
+            'sendAlert' => array('sendAlert', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'inbox'     => array('inbox'),
+            'outbox'    => array('outbox'),
         );
     }
 
@@ -120,14 +120,14 @@ class IMessageMgr extends SGL_Manager
 
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
-        
-        $query = 
-            " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name 
-              FROM      {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u 
-              WHERE     im.user_id_to = $uid 
-              AND       u.usr_id = im.user_id_from 
-              AND       im.delete_status in (2, 3) 
-              ORDER BY msg_time DESC 
+
+        $query =
+            " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name
+              FROM      {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u
+              WHERE     im.user_id_to = $uid
+              AND       u.usr_id = im.user_id_from
+              AND       im.delete_status in (2, 3)
+              ORDER BY msg_time DESC
             ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -166,14 +166,14 @@ class IMessageMgr extends SGL_Manager
 
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
-                
-        $query = 
-            " SELECT * 
-              FROM {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u 
-              WHERE im.user_id_from = $uid 
-              AND u.usr_id = im.user_id_to 
-              AND im.delete_status <> 2 
-              ORDER BY msg_time DESC 
+
+        $query =
+            " SELECT *
+              FROM {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u
+              WHERE im.user_id_from = $uid
+              AND u.usr_id = im.user_id_to
+              AND im.delete_status <> 2
+              ORDER BY msg_time DESC
             ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -277,7 +277,7 @@ class IMessageMgr extends SGL_Manager
         if ($instantMessage->user_id_to == $uid && $instantMessage->delete_status < 2) {
             // disable receiver reading messages he deleted
             return false;
-        } elseif ($instantMessage->user_id_from == $uid && 
+        } elseif ($instantMessage->user_id_from == $uid &&
             ($instantMessage->delete_status == 2 || $instantMessage->delete_status == 0) ) {
 
             // disable sender reading messages he deleted
@@ -293,6 +293,7 @@ class IMessageMgr extends SGL_Manager
     function _reply(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL_DB::setConnection($this->dbh);
 
         //  as compose and reply are very similar, they use the same template
         $output->template = 'imCompose.html';
@@ -302,7 +303,7 @@ class IMessageMgr extends SGL_Manager
 
         $user = DB_DataObject::factory('Usr');
         if (!is_numeric($input->msgFromID)) {
-            SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__, 
+            SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__,
                             SGL_ERROR_INVALIDARGS);
         }
         $user->get($input->msgFromID);
@@ -412,9 +413,8 @@ class IMessageMgr extends SGL_Manager
             }
 
             $message = DB_DataObject::factory('Instant_message');
-            $dbh = $message->getDatabaseConnection();
 
-            $message->instant_message_id = $dbh->nextId('instant_message');
+            $message->instant_message_id = $this->dbh->nextId('instant_message');
             $message->user_id_from = $uid;  // or $sender_id
             $message->user_id_to = $receiver_id;
             $message->msg_time = SGL_Date::getTime();
@@ -427,7 +427,7 @@ class IMessageMgr extends SGL_Manager
             // set default unread/undeleted status see $this->inbox()
             // delete status should come from user preference...keep sent email (3) or not (2)
             $message->read_status = 3;
-            $message->delete_status = 3;  
+            $message->delete_status = 3;
 
             if ($message->insert() == false) {
                 $counter++;
@@ -465,7 +465,7 @@ class IMessageMgr extends SGL_Manager
             SGL_HTTP::redirect($aParams);
         }
 
-        $message->getLinks('link_%s');        
+        $message->getLinks('link_%s');
         $res = $this->verifyUserAccess($message);
         if (empty($res)) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -562,7 +562,7 @@ class IMessageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ($input->alertType > 0) {
             switch ($input->alertType) {
-                
+
             case SGL_ALERT_OBSCENITY:
                 $messageBody =  'This alert has been sent because a user would like to'
                     . ' advise you of obscene content.';
@@ -611,7 +611,7 @@ class IMessageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         switch ($iCurrentCode) {
-            
+
         case 3:
             $iStatusCode = ($currentUser == 'sender')? 2:1;
             break;

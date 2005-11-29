@@ -55,14 +55,14 @@ class GuestbookMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'Guestbook Manager';
         $this->template     = 'guestbookList.html';
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'list'      => array('list'), 
+            'list'      => array('list'),
         );
     }
 
@@ -110,22 +110,22 @@ class GuestbookMgr extends SGL_Manager
         //  build ordering select object
         $output->guestbook = DB_DataObject::factory('Guestbook');
     }
-    
+
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
+        SGL_DB::setConnection($this->dbh);
         //  insert record
         $newEntry = DB_DataObject::factory('Guestbook');
         $newEntry->setFrom($input->guestbook);
-        $dbh = $newEntry->getDatabaseConnection();
-        $newEntry->guestbook_id = $dbh->nextId($this->conf['table']['guestbook']);
+        $newEntry->guestbook_id = $this->dbh->nextId($this->conf['table']['guestbook']);
         $newEntry->date_created = SGL_Date::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
             SGL::raiseMsg('new guestbook entry saved successfully');
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -133,7 +133,7 @@ class GuestbookMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
+
         $output->pageTitle = 'Welcome to our Guestbook';
         $query = "  SELECT
                         guestbook_id, date_created, name, email, message

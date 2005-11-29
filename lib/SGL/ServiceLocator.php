@@ -62,9 +62,11 @@ class SGL_ServiceLocator
     function &get($serviceName)
     {
         if (isset($this->aServices[$serviceName])) {
-            return $this->aServices[$serviceName];
+            $ret = $this->aServices[$serviceName];
+        } else {
+            $ret = false;
         }
-        #return false;
+        return $ret;
     }
 
     /**
