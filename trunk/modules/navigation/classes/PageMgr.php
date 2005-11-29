@@ -59,20 +59,20 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'reorder'   => array('reorder', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'reorder'   => array('reorder', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->_params = array(
@@ -119,7 +119,7 @@ class PageMgr extends SGL_Manager
             $input->articleType = 'static';
         }
         //  flatten group IDs for easy DB storage
-        $input->section['perms'] = (isset($input->section['perms']) 
+        $input->section['perms'] = (isset($input->section['perms'])
                 && count($input->section['perms']))
             ? join(',', $input->section['perms'])
             : null;
@@ -127,15 +127,15 @@ class PageMgr extends SGL_Manager
         //  Misc.
         $this->validated    = true;
         $this->submit       = $req->get('submitted');
-        
+
         //  fc hacks needed as a result of JS submit
         if ($input->action == 'insert' && is_null($this->submit)) {
             $input->action = 'add';
         }
         if ($input->action == 'update' && is_null($this->submit)) {
             $this->submit = true;
-            $aErrors[] = 'Please supply full nav info';         
-        }    
+            $aErrors[] = 'Please supply full nav info';
+        }
         //  validate form data
         if ($this->submit) {
             if (empty($input->section['title'])) {
@@ -151,8 +151,8 @@ class PageMgr extends SGL_Manager
                 $nestedSet = new SGL_NestedSet($this->_params);
                 $parent = $nestedSet->getNode($input->section['parent_id']);
                 if ($parent['is_enabled'] == 0 && $input->section['is_enabled'] == 1) {
-                    $aErrors[] = 'You cannot activate ' 
-                        . $input->section['title'] . ' unless you first activate ' 
+                    $aErrors[] = 'You cannot activate '
+                        . $input->section['title'] . ' unless you first activate '
                         . $parent['title'] . '.';
                 }
                 //  check child has same or subset of parents permissions
@@ -190,7 +190,7 @@ class PageMgr extends SGL_Manager
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
                      {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
@@ -208,7 +208,7 @@ class PageMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  pre-check enabled box
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
@@ -219,36 +219,36 @@ class PageMgr extends SGL_Manager
             $output->staticSelected = 'selected';
             $output->dynamicSelected = '';
             $output->wikiSelected = '';
-            
+
             //  build static article list
-            if (ModuleMgr::moduleIsRegistered('publisher')) {            
+            if (ModuleMgr::moduleIsRegistered('publisher')) {
                 $output->aStaticArticles = $this->_getStaticArticles();
             } else {
                 $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
             }
-            
-        } elseif ($output->articleType == 'wiki') { 
-            
+
+        } elseif ($output->articleType == 'wiki') {
+
             //  setup preselects for page type chooser
             $output->staticSelected = '';
             $output->dynamicSelected = '';
             $output->wikiSelected = 'selected';
-                        
+
         } else {
             $output->staticSelected = '';
-            $output->wikiSelected = '';            
-            $output->dynamicSelected = 'selected';                      
+            $output->wikiSelected = '';
+            $output->dynamicSelected = 'selected';
 
             //  build dynamic section choosers
             $output->aModules = SGL_Util::getAllModuleDirs();
-            $currentModule = isset($output->section['module']) 
-                ? $output->section['module'] 
+            $currentModule = isset($output->section['module'])
+                ? $output->section['module']
                 : key($output->aModules);
             $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
-            $currentMgr = isset($output->section['manager']) 
-                ? $output->section['manager'] 
+            $currentMgr = isset($output->section['manager'])
+                ? $output->section['manager']
                 : key($output->aManagers);
-            $output->aActions = ($currentMgr != 'none') 
+            $output->aActions = ($currentMgr != 'none')
                 ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
                 : array();
         }
@@ -275,26 +275,26 @@ class PageMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
+
         $separator = '/'; // can be configurable later
 
         //  if pageType = static, append articleId, else build page url
         if ($input->section['articleType'] == 'static') {
             $input->section['is_static'] = 1;
-            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';          
+            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
         } elseif ($input->section['articleType'] == 'wiki') {
-            
+
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
             $input->section['resource_uri'] = $string;
         } else {
-        
+
             //  strip extension and 'Mgr'
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -305,7 +305,7 @@ class PageMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -318,7 +318,7 @@ class PageMgr extends SGL_Manager
         }
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
-                    
+
         if ($input->section['parent_id'] == 0) {    //  they want a root node
             $node = $nestedSet->createRootNode($input->section);
         } elseif ((int)$input->section['parent_id'] > 0) { //    they want a sub node
@@ -326,10 +326,10 @@ class PageMgr extends SGL_Manager
         } else { //  error
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        } 
+        }
         //  clear cache so a new cache file is built reflecting changes
         SGL::clearCache('nav');
-            
+
         //  possible DO bug here as correct insert always returns int 0
         if ($node) {
             SGL::raiseMsg('Section successfully added');
@@ -341,6 +341,7 @@ class PageMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
@@ -349,10 +350,10 @@ class PageMgr extends SGL_Manager
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
-        
+
         //  passing a non-existent section id results in null or false $section
         if ($section) {
-                    
+
             //  setup article type, dropdowns built in display()
             $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
@@ -361,15 +362,18 @@ class PageMgr extends SGL_Manager
                 $section['resource_uri'] = urldecode($wikiUrl);
                 $output->articleType = 'wiki';
             } else {
-            
+
                 //  parse url details
+                #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
+                #$parsed = $url->getQueryData($strict = true);
+
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
                 $section = array_merge($section, $parsed);
-                
+
                 //  adjust friendly mgr name to class filename
                 $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
                 $section['manager'] = $className . '.php';
-                
+
                 //  represent additional params as string
                 if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
                     foreach ($parsed['parsed_params'] as $k => $v) {
@@ -386,7 +390,7 @@ class PageMgr extends SGL_Manager
                     }
                     $section['add_params'] = '';
                 }
-        
+
                 //  split off anchor if exists
                 if (stristr($section['resource_uri'], '#')) {
                     list(,$anchor) = split("#", $section['resource_uri']);
@@ -408,18 +412,18 @@ class PageMgr extends SGL_Manager
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
         } elseif ($input->section['articleType'] == 'wiki') {
-            
+
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
-            $input->section['resource_uri'] = $string;            
+            $input->section['resource_uri'] = $string;
         } else {
-        
+
             //  strip extension and 'Mgr'
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -432,7 +436,7 @@ class PageMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -471,19 +475,19 @@ class PageMgr extends SGL_Manager
             //  usual case, no change => do nothing
             $message = 'Section details successfully updated';
             break;
-            
+
         case $input->section['section_id']:
             //  cannot be parent to self => display user error
             $message = 'Section details updated, no data changed';
             break;
-            
+
         case 0:
             //  move the section, make it into a root node, just above it's own root
             $thisNode = $nestedSet->getNode($input->section['section_id']);
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $thisNode['root_id'], 'BE');
             $message = 'Section details successfully updated';
             break;
-            
+
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $input->section['parent_id'], 'SUB');

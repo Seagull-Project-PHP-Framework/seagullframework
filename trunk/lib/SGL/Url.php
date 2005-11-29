@@ -166,6 +166,11 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
+            if (is_a($parserStrategy, 'SGL_UrlParserSimpleStrategy')) {
+                $this->aQueryData = $this->parseQueryString($conf);
+                return;
+            }
+
             $this->protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
                 ? 'https'
                 : 'http';
@@ -322,7 +327,20 @@ class SGL_URL
         if (is_null($this->parserStrategy)) {
             $this->parserStrategy = new SGL_UrlParserSefStrategy();
         }
-        return $this->parserStrategy->parseQueryString($this, $conf);
+        if (is_array($this->parserStrategy) && count($this->parserStrategy)) {
+            foreach ($this->parserStrategy as $strategy) {
+
+                //  all strategies will attempt to parse url, overwriting
+                //  previous results as they do
+                $ret = $this->$strategy($this, $conf);
+            }
+        } elseif (is_a($this->parserStrategy, 'SGL_UrlParserStrategy')) {
+            $ret = $this->parserStrategy->parseQueryString($this, $conf);
+
+        } else {
+            $ret = SGL::raiseError('unrecognised url strategy');
+        }
+        return $ret;
     }
 
     function toString()

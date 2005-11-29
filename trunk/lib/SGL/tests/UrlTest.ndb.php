@@ -94,6 +94,14 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(count($ret), 1);
     }
 
+    function testToPartialArrayWithFullUrl()
+    {
+        //  test with valid frontScriptName + leading slash, should return 4 elements
+        $url = 'http://foo.com/index.php/bar/baz/quux/';
+        $ret = $this->url->toPartialArray($url, 'index.php');
+        $this->assertTrue(count($ret), 4);
+    }
+
     function testParseResourceUri()
     {
         //  empty URL returns default values
@@ -471,7 +479,22 @@ class UrlTest extends UnitTestCase {
             "frmUserID|loggedOnUserID", 0, $output);
         $this->assertEqual($target, $ret);
     }
+
+    function xtestArrayOfStrategiesParam()
+    {
+        $url1 = new SGL_Url(null, false, new stdClass());
+    }
+
+    function testOverridingKeys()
+    {
+        $a = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
+        $b = array('foo'=>'do', 'bar' => 'bar', 'baz' => 'mi');
+        $ret = array_merge($a, $b);
+        $this->assertTrue($ret, $b);
+    }
 }
+
+
 
 class Usr
 {
