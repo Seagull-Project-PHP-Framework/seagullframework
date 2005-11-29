@@ -586,12 +586,12 @@ EOF;
         $options = array(
             'templateDir'       => SGL_MOD_DIR . '/default/classes/',
             'compileDir'        => SGL_TMP_DIR,
-            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
+            'forceCompile'      => 1,
             'filters'           => array('SimpleTags','Mail'),
             'compiler'          => 'Regex',
-            'flexyIgnore'       => SGL_FLEXY_IGNORE,
+            'flexyIgnore'       => 0,
             'globals'           => true,
-            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
+            'globalfunctions'   => true,
         );
 
         $templ = & new HTML_Template_Flexy();
