@@ -165,7 +165,7 @@ class SGL_URL
 
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
-
+        	
             if (is_a($parserStrategy, 'SGL_UrlParserSimpleStrategy')) {
                 $this->aQueryData = $this->parseQueryString($conf);
                 return;
@@ -258,6 +258,9 @@ class SGL_URL
                     break;
 
                 case 'query':
+                	if (isset($urlinfo['query'])) {
+						$this->querystring = $urlinfo['query'];
+                	}
                     $this->aQueryData = $this->parseQueryString($conf);
                     break;
 
@@ -322,6 +325,12 @@ class SGL_URL
         return $this->querystring;
     }
 
+    /**
+     * Build array of strategies and execute parsers.
+     *
+     * @param array $conf
+     * @return array
+     */
     function parseQueryString($conf)
     {
         $aStrategies = array();

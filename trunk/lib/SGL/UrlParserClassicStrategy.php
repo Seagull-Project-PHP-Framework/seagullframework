@@ -69,6 +69,44 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
     
     /**
+    * Parses raw querystring and returns an array of it
+    *
+    * @param  string  $querystring The querystring to parse
+    * @return array                An array of the querystring data
+    * @access private
+    */
+    function parseQuerystring(/*SGL_Url*/$url, $conf)
+    {
+        $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'), '/') . ']/', $url->querystring, -1, PREG_SPLIT_NO_EMPTY);
+        $return = array();
+
+        foreach ($parts as $part) {
+            if (strpos($part, '=') !== false) {
+                $value = substr($part, strpos($part, '=') + 1);
+                $key   = substr($part, 0, strpos($part, '='));
+            } else {
+                $value = null;
+                $key   = $part;
+            }
+            if (substr($key, -2) == '[]') {
+                $key = substr($key, 0, -2);
+                if (@!is_array($return[$key])) {
+                    $return[$key]   = array();
+                    $return[$key][] = $value;
+                } else {
+                    $return[$key][] = $value;
+                }
+            } elseif (!$url->useBrackets && !empty($return[$key])) {
+                $return[$key]   = (array)$return[$key];
+                $return[$key][] = $value;
+            } else {
+                $return[$key] = $value;
+            }
+        }
+        return $return;
+    }
+    
+    /**
     * Resolves //, ../ and ./ from a path and returns
     * the result. Eg:
     *
@@ -177,45 +215,6 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
         }
 
         return $querystring;
-    }
-
-    /**
-    * Parses raw querystring and returns an array of it
-    *
-    * @param  string  $querystring The querystring to parse
-    * @return array                An array of the querystring data
-    * @access private
-    */
-    function parseQuerystring($querystring)
-    {
-        $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'), '/') . ']/', $querystring, -1, PREG_SPLIT_NO_EMPTY);
-        $return = array();
-
-        foreach ($parts as $part) {
-            if (strpos($part, '=') !== false) {
-                $value = substr($part, strpos($part, '=') + 1);
-                $key   = substr($part, 0, strpos($part, '='));
-            } else {
-                $value = null;
-                $key   = $part;
-            }
-            if (substr($key, -2) == '[]') {
-                $key = substr($key, 0, -2);
-                if (@!is_array($return[$key])) {
-                    $return[$key]   = array();
-                    $return[$key][] = $value;
-                } else {
-                    $return[$key][] = $value;
-                }
-            } elseif (!$this->useBrackets && !empty($return[$key])) {
-                $return[$key]   = (array)$return[$key];
-                $return[$key][] = $value;
-            } else {
-                $return[$key] = $value;
-            }
-        }
-
-        return $return;
     }
 }
 /*

@@ -492,6 +492,14 @@ class UrlTest extends UnitTestCase {
         $ret = array_merge($a, $b);
         $this->assertTrue($ret, $b);
     }
+    
+    function testOverridingKeysWithBlanks()
+    {
+        $a = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
+        $b = array();
+        $ret = array_merge($a, $b);
+        $this->assertTrue($ret, $a);
+    }
 }
 
 
