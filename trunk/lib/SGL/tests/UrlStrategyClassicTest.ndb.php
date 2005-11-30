@@ -11,7 +11,6 @@ require_once dirname(__FILE__) . '/../UrlParserClassicStrategy.php';
  */
 class UrlStrategyClassicTest extends UnitTestCase
 {
-
     function UrlStrategyClassicTest()
     {
         $this->UnitTestCase('classic strategy test');
