@@ -513,6 +513,46 @@ class UrlTest extends UnitTestCase {
         $ret = array_merge($a, $b);
         $this->assertTrue($ret, $a);
     }
+
+    function testDynaMerge()
+    {
+        $a[] = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
+        $a[] = array('df'=>'df', 'er' => 'er', 'gh' => 'gh');
+        $a[] = array();
+
+        $expected = array (
+          'foo' => 'foo',
+          'bar' => 'bar',
+          'baz' => 'baz',
+          'df' => 'df',
+          'er' => 'er',
+          'gh' => 'gh',
+        );
+        $ret = call_user_func_array('array_merge', $a);
+        $this->assertTrue($ret, $expected);
+    }
+
+    function testClassicParserSimpleWithMultipleStrats()
+    {
+        $uri = 'http://example.com?moduleName=user&managerName=account';
+
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            new SGL_UrlParserAliasStrategy()
+            );
+
+        $url = new SGL_Url($uri, true, $aStrats);
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret['moduleName'], 'user');
+        $this->assertEqual($ret['managerName'], 'account');
+    }
 }
 
 

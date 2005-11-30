@@ -458,21 +458,38 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
             $input->moduleName = $moduleName;
             $input->set('manager', new $managerName);
         } else {
-            SGL::raiseError('malformed request', SGL_ERROR_INVALIDREQUEST);
             return $this->getDefaultManager($input);
         }
         $this->processRequest->process($input);
     }
 
+    /**
+     * Returns default manager per config settings.
+     *
+     * @param SGL_Registry $input
+     * @return void
+     */
     function getDefaultManager(&$input)
     {
-        require_once SGL_MOD_DIR . '/default/classes/DefaultMgr.php';
-        $mgr = new DefaultMgr();
-        $mgr->module = 'default';
+        $defaultModule = $this->conf['site']['defaultModule'];
+        $defaultMgr = $this->conf['site']['defaultManager'];
+        $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr);
+        $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
+        if (!file_exists($path)) {
+            SGL::raiseError('could not locate default manager', SGL_ERROR_NOFILE);
+            return false;
+        }
+        require_once $path;
+        if (!class_exists($mgrName)) {
+            SGL::raiseError('invalid class name for default manager', SGL_ERROR_NOCLASS);
+            return false;
+        }
+        $mgr = new $mgrName();
+        $mgr->module = $defaultModule;
         $input->set('manager', $mgr);
         $req = $input->getRequest();
-        $req->set('moduleName', 'default');
-        $req->set('managerName', 'default');
+        $req->set('moduleName', $defaultModule);
+        $req->set('managerName', $defaultMgr);
         $input->setRequest($req); // this should take care of itself
 
         $this->processRequest->process($input);
