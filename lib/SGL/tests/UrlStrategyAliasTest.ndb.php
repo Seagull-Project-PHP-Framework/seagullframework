@@ -14,7 +14,7 @@ class UrlStrategyAliasTest extends UnitTestCase
 
     function UrlStrategySefTest()
     {
-        $this->UnitTestCase('SEF strategy test');
+        $this->UnitTestCase('alias strategy test');
     }
 
     function setup()

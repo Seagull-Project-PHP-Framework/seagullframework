@@ -21,7 +21,6 @@ class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
      */
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        #$aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
         $ret = array();
         $default = array(
             'moduleName' => 'default',

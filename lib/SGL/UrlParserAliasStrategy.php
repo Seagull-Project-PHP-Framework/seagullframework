@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
  * Concrete alias url parser strategy
  *
  */
-class SGL_UrlParserAliasStrategy extends SGL_UrlParserStrategy
+class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
 {
     /**
      * Analyzes querystring content and parses it into module/manager/action and params.
@@ -28,16 +28,17 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserStrategy
 
  		$aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
-		//    The alias will always be the second uri part in the array
+		//	The alias will always be the second uri part in the array
+		//	FIXME: needs to be more flexible
         $alias = $aUriParts[1];
 
         //  If alias exists, update the alias in the uri with the specified resource
         $ret = array();
         if (array_key_exists($alias, $aUriAliases)) {
         	$aliasUri = $aUriAliases[$alias];
-
-            $obj = new SGL_Url($aliasUri, true, new SGL_UrlParserSimpleStrategy());
-            $ret = $obj->getQueryData();
+        	$tmp = new stdClass();
+        	$tmp->url = $aliasUri;
+        	$ret = parent::parseQueryString($tmp, $conf);
         }
         return $ret;
     }
