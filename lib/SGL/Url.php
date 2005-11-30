@@ -324,21 +324,25 @@ class SGL_URL
 
     function parseQueryString($conf)
     {
+        $aStrategies = array();
         if (is_null($this->parserStrategy)) {
-            $this->parserStrategy = new SGL_UrlParserSefStrategy();
+            $aStrategies[] = new SGL_UrlParserSefStrategy();
         }
-        if (is_array($this->parserStrategy) && count($this->parserStrategy)) {
-            foreach ($this->parserStrategy as $strategy) {
+        if (!is_array($this->parserStrategy) && is_a($this->parserStrategy, 'SGL_UrlParserStrategy')) {
+            $aStrategies[] = $this->parserStrategy;
 
-                //  all strategies will attempt to parse url, overwriting
-                //  previous results as they do
-                $ret = $this->$strategy($this, $conf);
-            }
-        } elseif (is_a($this->parserStrategy, 'SGL_UrlParserStrategy')) {
-            $ret = $this->parserStrategy->parseQueryString($this, $conf);
+        } elseif (is_array($this->parserStrategy)) {
+            $aStrategies = $this->parserStrategy;
 
         } else {
             $ret = SGL::raiseError('unrecognised url strategy');
+        }
+
+        foreach ($aStrategies as $strategy) {
+
+            //  all strategies will attempt to parse url, overwriting
+            //  previous results as they do
+            $ret = $strategy->parseQueryString($this, $conf);
         }
         return $ret;
     }
