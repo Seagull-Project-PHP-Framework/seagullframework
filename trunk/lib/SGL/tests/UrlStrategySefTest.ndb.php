@@ -220,5 +220,18 @@ class UrlStrategySefTest extends UnitTestCase
         $this->assertEqual($ret['baz'][1], 'quux2');
     }
 
+    function testClassicParserSimpleWithMultipleStrats()
+    {
+        $uri = 'http://example.com?moduleName=user&managerName=account';
+
+        $url = new SGL_Url($uri, true, new SGL_UrlParserSefStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
+        $this->assertEqual($ret, array());
+    }
+
 }
 ?>

@@ -165,7 +165,7 @@ class SGL_URL
 
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
-        	
+
             if (is_a($parserStrategy, 'SGL_UrlParserSimpleStrategy')) {
                 $this->aQueryData = $this->parseQueryString($conf);
                 return;
@@ -347,12 +347,14 @@ class SGL_URL
             $ret = SGL::raiseError('unrecognised url strategy');
         }
 
+        $aRes = array();
         foreach ($aStrategies as $strategy) {
 
             //  all strategies will attempt to parse url, overwriting
             //  previous results as they do
-            $ret = $strategy->parseQueryString($this, $conf);
+            $aRes[] = $strategy->parseQueryString($this, $conf);
         }
+        $ret = call_user_func_array('array_merge', $aRes);
         return $ret;
     }
 

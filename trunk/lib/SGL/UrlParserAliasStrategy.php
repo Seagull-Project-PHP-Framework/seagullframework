@@ -30,16 +30,18 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
 
 		//	The alias will always be the second uri part in the array
 		//	FIXME: needs to be more flexible
-        $alias = $aUriParts[1];
-
-        //  If alias exists, update the alias in the uri with the specified resource
         $ret = array();
-        if (array_key_exists($alias, $aUriAliases)) {
-        	$aliasUri = $aUriAliases[$alias];
-        	$tmp = new stdClass();
-        	$tmp->url = $aliasUri;
-        	$ret = parent::parseQueryString($tmp, $conf);
-        }
+		if (count($aUriParts) > 1) {
+            $alias = $aUriParts[1];
+
+            //  If alias exists, update the alias in the uri with the specified resource
+            if (array_key_exists($alias, $aUriAliases)) {
+            	$aliasUri = $aUriAliases[$alias];
+            	$tmp = new stdClass();
+            	$tmp->url = $aliasUri;
+            	$ret = parent::parseQueryString($tmp, $conf);
+            }
+		}
         return $ret;
     }
 }
