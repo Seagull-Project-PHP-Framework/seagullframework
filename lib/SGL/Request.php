@@ -48,7 +48,7 @@
 class SGL_Request
 {
     var $aProps;
-    
+
     /**
      * Sets up a request object.
      *
@@ -64,37 +64,37 @@ class SGL_Request
             $this->initCli();
         }
     }
-    
+
     function initCli()
     {
         die("CLI interface not implemented yet\n");
     }
-    
+
     function initHttp()
     {
         //  merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_REQUEST, $_FILES);
-        
+
         //  remove slashes if necessary
         SGL_String::dispelMagicQuotes($this->aProps);
-        
+
         //  merge results with cleaned $_REQUEST values and $_POST
         SGL_String::dispelMagicQuotes($_POST);
-        
+
         //  also merge with SEF url params
         $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
         $aUrlParams = $url->getQueryData();
-        
+
         $this->aProps = array_merge($this->aProps, $aUrlParams, $_POST);
-        
+
         return;
     }
-    
+
     /**
      * Returns a singleton Request instance.
      *
-     * example usage: 
+     * example usage:
      * $req = & SGL_Request::singleton();
      * warning: in order to work correctly, the request
      * singleton must be instantiated statically and
@@ -114,7 +114,7 @@ class SGL_Request
         }
         return $instance;
     }
-    
+
     /**
      * Retrieves values from Request object.
      *
@@ -123,29 +123,29 @@ class SGL_Request
      * @param   boolean $allowTags  If html/php tags are allowed or not
      * @return  mixed               Request param value or null if not exists
      */
-    function get($key, $allowTags = false) 
+    function get($key, $allowTags = false)
     {
         if (isset($this->aProps[$key])) {
-            
+
             //  don't operate on reference to avoid segfault :-(
             $copy = $this->aProps[$key];
-            
+
             //  if html not allowed, run an enhanced strip_tags()
             if (!$allowTags) {
                 $clean = SGL_String::clean($copy);
-            
+
             //  if html is allowed, at least remove javascript
             } else {
                 $clean = SGL_String::removeJs($copy);
             }
             $this->set($key, $clean);
             return $this->aProps[$key];
-        
+
         } else {
             return null;
         }
     }
-    
+
     /**
      * Set a value for Request object.
      *
@@ -154,11 +154,15 @@ class SGL_Request
      * @param   mixed   $value  Request param value
      * @return  void
      */
-    function set($key, $value) 
+    function set($key, $value)
     {
         $this->aProps[$key] = $value;
     }
-    
+
+    function add($aParams)
+    {
+        $this->aProps = array_merge_recursive($this->aProps, $aParams);
+    }
     /**
      * Return an array of all Request properties.
      *
@@ -166,19 +170,19 @@ class SGL_Request
      */
     function getAll()
     {
-        return $this->aProps;   
+        return $this->aProps;
     }
-    
+
     function getModuleName()
     {
         return $this->aProps['moduleName'];
     }
-    
+
     function getManagerName()
     {
         return $this->aProps['managerName'];
     }
-    
+
     function debug()
     {
         $GLOBALS['_SGL']['site']['blocksEnabled'] = 0;
