@@ -7,6 +7,7 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+30-11-05    Polish translation updated (Tomasz Osmialowski)
 29-11-05	RSS query more configurable (bluetoad)
 29-11-05	Web root path now configurable from installer
 24-11-05    DB2 support added (Tobias Kuckuck)
@@ -15,6 +16,7 @@ IMPROVEMENTS
 22-11-05    Added ServiceLocator class and fixed db independence for testing
 21-11-05    Factored out setup of table name aliases, these are not set on a per-module
             basis in the file 'tableAliases.ini' parsed at setup time.
+16-11-05    Chinese translation updated (Finjon Kiang)
 14-11-05    Added version-checker routine to Maintenance manager
 14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
 14-11-05    Improved integration of page offset id in seagull SEF urls
