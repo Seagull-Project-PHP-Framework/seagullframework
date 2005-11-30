@@ -17,7 +17,7 @@ class UrlStrategyClassicTest extends UnitTestCase
         $this->UnitTestCase('classic strategy test');
     }
 
-    function testClassicParser()
+    function testClassicParserSimple()
     {
         $uri = 'http://example.com?moduleName=user&managerName=account';
         $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
@@ -30,6 +30,18 @@ class UrlStrategyClassicTest extends UnitTestCase
         //  assert expected values present
         $this->assertEqual($ret['moduleName'], 'user');
         $this->assertEqual($ret['managerName'], 'account');
+    }
+
+    function testClassicParserNoQueryStr()
+    {
+        $uri = 'http://example.com';
+        $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
+        $this->assertEqual($ret, array());
     }
 }
 ?>

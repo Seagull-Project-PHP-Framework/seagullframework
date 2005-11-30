@@ -31,7 +31,7 @@ class UrlStrategyAliasTest extends UnitTestCase
         unset($this->strategy, $this->obj);
     }
 
-    function testMakeSearchEngineFriendlyBasic()
+    function testGetSimpleAlias()
     {
         $aUrlSegments = array (
           0 => 'index.php',
