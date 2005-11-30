@@ -532,7 +532,7 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue($ret, $expected);
     }
 
-    function testClassicParserSimpleWithMultipleStrats()
+    function testCorrerctClassicResultsWithMultipleStrats()
     {
         $uri = 'http://example.com?moduleName=user&managerName=account';
 
@@ -552,6 +552,50 @@ class UrlTest extends UnitTestCase {
         //  assert expected values present
         $this->assertEqual($ret['moduleName'], 'user');
         $this->assertEqual($ret['managerName'], 'account');
+    }
+
+    function testCorrerctSefResultsWithMultipleStrats()
+    {
+        $uri = 'http://example.com/index.php/default/bug/';
+
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            new SGL_UrlParserAliasStrategy()
+            );
+
+        $url = new SGL_Url($uri, true, $aStrats);
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret['moduleName'], 'default');
+        $this->assertEqual($ret['managerName'], 'bug');
+    }
+
+    function testCorrerctAliasResultsWithMultipleStrats()
+    {
+        $uri = 'http://example.com/index.php/seagull-php-framework/';
+
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            new SGL_UrlParserAliasStrategy()
+            );
+
+        $url = new SGL_Url($uri, true, $aStrats);
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret['moduleName'], 'default');
+        $this->assertEqual($ret['managerName'], 'default');
     }
 }
 

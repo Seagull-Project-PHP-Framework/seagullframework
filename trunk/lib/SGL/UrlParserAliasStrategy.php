@@ -24,7 +24,10 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
      */
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
- 		require_once SGL_DAT_DIR . '/ary.uriAliases.php';
+        static $aUriAliases;
+        if (!isset($aUriAliases)) {
+            require_once SGL_DAT_DIR . '/ary.uriAliases.php';
+        }
 
  		$aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 

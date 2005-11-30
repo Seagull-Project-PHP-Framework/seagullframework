@@ -118,12 +118,11 @@ class UrlStrategySefTest extends UnitTestCase
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
 
         //  assert expected keys present
-        $this->assertTrue(array_key_exists('moduleName', $ret));
-        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
 
         //  assert expected values present
-        $this->assertEqual($ret['moduleName'], 'default');
-        $this->assertEqual($ret['managerName'], 'default');
+        $this->assertEqual($ret, array());
     }
 
     //  test Zend debug GET noise [position 2]
@@ -137,12 +136,11 @@ class UrlStrategySefTest extends UnitTestCase
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
 
         //  assert expected keys present
-        $this->assertTrue(array_key_exists('moduleName', $ret));
-        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
 
         //  assert expected values present
-        $this->assertEqual($ret['moduleName'], 'default');
-        $this->assertEqual($ret['managerName'], 'default');
+        $this->assertEqual($ret, array());
     }
 
     //  test Zend debug GET noise [position 3]
@@ -231,6 +229,14 @@ class UrlStrategySefTest extends UnitTestCase
         $this->assertTrue(!array_key_exists('moduleName', $ret));
         $this->assertTrue(!array_key_exists('managerName', $ret));
         $this->assertEqual($ret, array());
+    }
+
+    function testResolveArrayElems()
+    {
+        $str = 'frmArticleId/3/foo/bar';
+        $res = SGL_UrlParserSefStrategy::resolveArrayElems(explode('/', $str));
+        $expected = array ( 'frmArticleId' => '3', 'foo' => 'bar', );
+        $this->assertEqual($res, $expected);
     }
 
 }

@@ -94,37 +94,23 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             }
         }
 
-        $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
+        $str = strtolower(array_shift($aUriParts));
+        $aParsedUri['moduleName'] = (preg_match('/start_debug/', $str))
+            ? ''
+            :$str;
         $mgrCopy = array_shift($aUriParts);
         $aParsedUri['managerName'] = strtolower($mgrCopy);
 
-        //  if no module name present, get from config
-        //  catch case where debugging with Zend supplies querystring params
-        $default = false;
-        if (empty(  $aParsedUri['moduleName'])
-                || (preg_match('/start_debug/', $aParsedUri['moduleName']))
-                || (preg_match('/\?/i', $aParsedUri['moduleName']))) {
-            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
-            $default = true;
-        }
-
         //  if no manager name, must be default manager, ie, has same name as module
         //  the exception is when the moduleName comes from the conf
-        if ((empty( $aParsedUri['managerName']) && !$default)
+        if ((empty($aParsedUri['managerName']))
                 || (preg_match('/start_debug/', $aParsedUri['managerName']))) {
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
-
-        //  we are here because we're using defaults from config
-        } elseif ($default) {
-            $aParsedUri['managerName'] = $conf['site']['defaultManager'];
-            if (!empty($conf['site']['defaultParams'])) {
-                $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];
-            }
         }
 
         //  we've got module name so load and merge local and global configs
         //  unless we're running the setup wizard
-        if (!isset($conf['setup'])) {
+        if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
             $c = &SGL_Config::singleton();
             $path = realpath(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
             if (!$path) {
@@ -139,14 +125,13 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
                 return PEAR::raiseError('Could not read current module\'s conf.ini file',
                     SGL_ERROR_NOFILE);
             }
-        }
-
-        //  determine is moduleName is simplified, in other words, the mgr
-        //  and mod names should be the same
-        if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
-            if (SGL_Inflector::isMgrNameOmitted($aParsedUri)) {
-                array_unshift($aUriParts, $mgrCopy);
-                $aParsedUri['managerName'] = $aParsedUri['moduleName'];
+            //  determine is moduleName is simplified, in other words, the mgr
+            //  and mod names should be the same
+            if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
+                if (SGL_Inflector::isMgrNameOmitted($aParsedUri)) {
+                    array_unshift($aUriParts, $mgrCopy);
+                    $aParsedUri['managerName'] = $aParsedUri['moduleName'];
+                }
             }
         }
 
@@ -167,11 +152,23 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             array_unshift($aUriParts, 'action');
         }
 
-        //  if default params exist, append them to the uri array
-        if (!empty($aParsedUri['defaultParams'])) {
-            $aUriParts = array_merge($aUriParts, explode('/', $aParsedUri['defaultParams']));
+        $aQsParams = $this->resolveArrayElems($aUriParts, $aParsedUri);
+
+        //  remove frontScriptName
+        unset($aParsedUri['frontScriptName']);
+        if (empty($aParsedUri['moduleName'])) {
+            unset($aParsedUri['moduleName']);
+        }
+        if (empty($aParsedUri['managerName'])) {
+            unset($aParsedUri['managerName']);
         }
 
+        //  and merge the default request fields with extracted param k/v pairs
+        return array_merge($aParsedUri, $aQsParams);
+    }
+
+    function resolveArrayElems($aUriParts, $aParsedUri = array())
+    {
         $numParts = count($aUriParts);
 
         //  if varName/varValue don't match, assign a null varValue to the last varName
@@ -208,12 +205,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
                 $aQsParams[$varName] = $varValue;
             }
         }
-
-        //  remove frontScriptName
-        unset($aParsedUri['frontScriptName']);
-
-        //  and merge the default request fields with extracted param k/v pairs
-        return array_merge($aParsedUri, $aQsParams);
+        return $aQsParams;
     }
 
     /**
@@ -239,6 +231,8 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;
         $mod = (empty($mod)) ? $req->get('moduleName'): $mod;
+        $mgr = (empty($mgr)) ? 'default' : $mgr;
+        $mod = (empty($mod)) ? 'default' : $mod;
         $url = ($conf['site']['frontScriptName'] != false) ? $conf['site']['frontScriptName'] . '/' : '';
 
         //  allow for default managers, ie, in faqMgr, don't
