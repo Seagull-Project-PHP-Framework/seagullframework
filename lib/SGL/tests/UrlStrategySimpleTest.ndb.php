@@ -17,7 +17,7 @@ class UrlStrategySimpleTest extends UnitTestCase
         $this->UnitTestCase('simple strategy test');
     }
 
-    function testSimpleParser()
+    function testSimpleParserTwoParams()
     {
         $qs = 'user/account';
         $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
@@ -30,6 +30,21 @@ class UrlStrategySimpleTest extends UnitTestCase
         //  assert expected values present
         $this->assertEqual($ret['moduleName'], 'user');
         $this->assertEqual($ret['managerName'], 'account');
+    }
+
+    function testSimpleParserNoParams()
+    {
+        $qs = '';
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret, array());
+
     }
 }
 ?>

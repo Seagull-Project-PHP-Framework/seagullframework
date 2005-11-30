@@ -22,13 +22,10 @@ class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
         $ret = array();
-        $default = array(
-            'moduleName' => 'default',
-            'manager' => 'default');
 
         //  catch case for default page, ie, home
         if (empty($url->url)) {
-            return $default;
+            return $ret;
         }
         $parts = array_filter(explode('/', $url->url), 'strlen');
         $numElems = count($parts);

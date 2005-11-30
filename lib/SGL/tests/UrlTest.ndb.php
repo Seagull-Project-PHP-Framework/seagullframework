@@ -8,6 +8,9 @@ FIXME: note from wiki, verify:
 
 require_once dirname(__FILE__) . '/../Url.php';
 require_once dirname(__FILE__) . '/../Output.php';
+require_once dirname(__FILE__) . '/../UrlParserAliasStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParserClassicStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParserSimpleStrategy.php';
 
 /**
  * Test suite.
@@ -480,9 +483,19 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($target, $ret);
     }
 
-    function xtestArrayOfStrategiesParam()
+    function testArrayOfStrategiesParam()
     {
-        $url1 = new SGL_Url(null, false, new stdClass());
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            new SGL_UrlParserAliasStrategy()
+            );
+
+        $url = new SGL_Url(null, true, $aStrats);
+        $this->assertTrue(count($url->parserStrategy), 3);
+        foreach ($url->parserStrategy as $strat) {
+            $this->assertIsA($strat, 'SGL_UrlParserStrategy');
+        }
     }
 
     function testOverridingKeys()
@@ -492,7 +505,7 @@ class UrlTest extends UnitTestCase {
         $ret = array_merge($a, $b);
         $this->assertTrue($ret, $b);
     }
-    
+
     function testOverridingKeysWithBlanks()
     {
         $a = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
