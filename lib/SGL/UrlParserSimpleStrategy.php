@@ -1,6 +1,6 @@
 <?php
 /**
- * Strategy for handling URL aliases.
+ * Strategy for handling simple URL parsing, ie records from the section table.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -9,7 +9,7 @@
 require_once dirname(__FILE__) . '/Url.php';
 
 /**
- * Concrete alias url parser strategy
+ * Concrete simple url parser strategy.
  *
  */
 class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
