@@ -75,86 +75,6 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(count($ret), 4);
     }
 
-    function testParseResourceUri()
-    {
-        //  empty URL returns default values
-        $url = '';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertEqual($ret['module'], 'default');
-        $this->assertEqual($ret['manager'], 'default');
-
-        //  less than 2 elements returns default values
-        $url = 'foo';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertEqual($ret['module'], 'default');
-        $this->assertEqual($ret['manager'], 'default');
-
-        //  basic module/manager names
-        $url = 'publisher/articleview';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertEqual($ret['module'], 'publisher');
-        $this->assertEqual($ret['manager'], 'articleview');
-        $this->assertNull($ret['actionMapping']);
-
-        //  with one set of params
-        $url = 'publisher/articleview/frmArticleID/1';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertEqual($ret['module'], 'publisher');
-        $this->assertEqual($ret['manager'], 'articleview');
-        $this->assertNull($ret['actionMapping']);
-        $this->assertTrue(is_array($ret['parsed_params']));
-        $this->assertTrue(array_key_exists('frmArticleID', $ret['parsed_params']));
-        $this->assertEqual($ret['parsed_params']['frmArticleID'], 1);
-
-        //  with action and params, returns following:
-
-        //    Array
-        //    (
-        //        [module] => publisher
-        //        [manager] => articleview
-        //        [actionMapping] => foo
-        //        [parsed_params] => Array
-        //            (
-        //                [bar] => baz
-        //            )
-        //
-        //    )
-        $url = 'publisher/articleview/action/foo/bar/baz';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertEqual($ret['module'], 'publisher');
-        $this->assertEqual($ret['manager'], 'articleview');
-        $this->assertEqual($ret['actionMapping'], 'foo');
-        $this->assertTrue(is_array($ret['parsed_params']));
-        $this->assertTrue(array_key_exists('bar', $ret['parsed_params']));
-        $this->assertEqual($ret['parsed_params']['bar'], 'baz');
-
-        //  test removing URL encoding
-        $url = 'contactus/contactus/action/list/enquiry_type/Get+a+quote';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertEqual($ret['module'], 'contactus');
-        $this->assertEqual($ret['manager'], 'contactus');
-        $this->assertEqual($ret['actionMapping'], 'list');
-        $this->assertTrue(is_array($ret['parsed_params']));
-        $this->assertTrue(array_key_exists('enquiry_type', $ret['parsed_params']));
-        $this->assertEqual($ret['parsed_params']['enquiry_type'], 'Get a quote');
-    }
-
     function testToAbsolute()
     {
         $url = 'example.com/index.php/Foo/Bar';
@@ -462,8 +382,8 @@ class UrlTest extends UnitTestCase {
             );
 
         $url = new SGL_Url(null, true, $aStrats);
-        $this->assertTrue(count($url->parserStrategy), 3);
-        foreach ($url->parserStrategy as $strat) {
+        $this->assertTrue(count($url->aStrategies), 3);
+        foreach ($url->aStrategies as $strat) {
             $this->assertIsA($strat, 'SGL_UrlParserStrategy');
         }
     }

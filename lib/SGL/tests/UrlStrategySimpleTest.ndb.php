@@ -17,21 +17,6 @@ class UrlStrategySimpleTest extends UnitTestCase
         $this->UnitTestCase('simple strategy test');
     }
 
-    function testSimpleParserTwoParams()
-    {
-        $qs = 'user/account';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
-        $ret = $url->getQueryData();
-
-        //  assert expected keys present
-        $this->assertTrue(array_key_exists('moduleName', $ret));
-        $this->assertTrue(array_key_exists('managerName', $ret));
-
-        //  assert expected values present
-        $this->assertEqual($ret['moduleName'], 'user');
-        $this->assertEqual($ret['managerName'], 'account');
-    }
-
     function testSimpleParserNoParams()
     {
         $qs = '';
@@ -47,34 +32,82 @@ class UrlStrategySimpleTest extends UnitTestCase
 
     }
 
-    function testParseResourceUriFullString()
-    {
-        $qs = 'contactus/contactus/action/list/enquiry_type/Hosting info';
-        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
-        $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertTrue(is_array($ret['parsed_params']));
-        $this->assertTrue(array_key_exists('enquiry_type', $ret['parsed_params']));
-    }
-
     function testParseResourceUriSlash()
     {
         $qs = '/';
-        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
-        $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
+        $this->assertTrue(!array_key_exists('module', $ret));
+        $this->assertTrue(!array_key_exists('manager', $ret));
+        //  assert expected values present
+        $this->assertEqual($ret, array());
     }
 
-    function testParseResourceUriEmpty()
+    function testSimpleParserOneParam()
     {
-        $qs = '';
-        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $qs = 'faq';
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret['moduleName'], 'faq');
+        $this->assertEqual($ret['managerName'], 'faq');
+    }
+
+    function testSimpleParserTwoParams()
+    {
+        $qs = 'user/account';
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+
+        //  assert expected values present
+        $this->assertEqual($ret['moduleName'], 'user');
+        $this->assertEqual($ret['managerName'], 'account');
+    }
+
+    function testParseResourceUriFullString()
+    {
+        $qs = 'contactus/contactus/action/list/enquiry_type/Hosting info';
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
         $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('action', $ret));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret));
+
+        $this->assertEqual($ret['moduleName'], 'contactus');
+        $this->assertEqual($ret['managerName'], 'contactus');
+        $this->assertEqual($ret['action'], 'list');
+        $this->assertEqual($ret['enquiry_type'], 'Hosting info');
+    }
+
+    function testParseResourceUriFullStringWithEncoding()
+    {
+        $qs = 'contactus/contactus/action/list/enquiry_type/Get+a+quote';
+        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $ret = $url->getQueryData();
+
+        $this->assertTrue(is_array($ret));
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        $this->assertTrue(array_key_exists('action', $ret));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret));
+
+        $this->assertEqual($ret['moduleName'], 'contactus');
+        $this->assertEqual($ret['managerName'], 'contactus');
+        $this->assertEqual($ret['action'], 'list');
+        $this->assertEqual($ret['enquiry_type'], 'Get a quote');
     }
 }
 ?>
