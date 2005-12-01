@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: HTTP.php,v 1.36 2005/06/06 22:05:35 demian Exp $
 
+define('SGL_SESSION_UPDATE_WINDOW', 10);
+
 require_once dirname(__FILE__)  . '/Util.php';
 require_once dirname(__FILE__)  . '/Manager.php';
 
@@ -359,7 +361,9 @@ class SGL_HTTP_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            $_SESSION['lastRefreshed'] = mktime();
+            if (mktime() -$lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
+                $_SESSION['lastRefreshed'] = mktime();
+            }
             return false;
         }
     }
@@ -687,7 +691,11 @@ class SGL_HTTP_Session
             return $res;
         }
         if ($res->numRows() == 1) {
-            return $dbh->getOne($query);
+            $sessionContent = $dbh->getOne($query);
+            if (!defined('SGL_SESSION_DATA')) {
+                define('SGL_SESSION_DATA', $sessionContent);
+            }
+            return $sessionContent;
         } else {
             $timeStamp = SGL_Date::getTime(true);
             if (!empty($conf['site']['extended_session'])) {
@@ -716,6 +724,11 @@ class SGL_HTTP_Session
      */
     function dbWrite($sessId, $value)
     {
+        /* If session havent changed, return here. */
+        if ($value == SGL_SESSION_DATA) {
+            return true;
+        }
+
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
