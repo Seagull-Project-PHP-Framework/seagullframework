@@ -375,23 +375,30 @@ class SGL_Date
 class SGL_Inflector
 {
     /**
-    * Returns true if URL has been abbreviated
+    * Returns true if querystring has been simplified.
     *
     * This happens when a manager name is the same as its module name, ie
     * UserManger in the 'user' module would become user/user which gets
     * reduced to user
     *
-    * @param string $url            From the querystring
+    * $querystring does not include the frontScriptName, ie, index.php
+    *
+    * @param string $querystring    From the querystring fragment onwards, ie /user/account/userid/2/
     * @param string $sectionName    From the database
     * @return boolean
     */
-    function isUrlSimplified($url, $sectionName)
+    function isUrlSimplified($querystring, $sectionName)
     {
-        if (!(empty($url))) {
-            $aUrlPieces = explode('/', $url);
-            $moduleNameUrl = $aUrlPieces[0];
-            $aSections =  explode('/', $sectionName);
-            $ret = in_array($moduleNameUrl, $aSections) && (SGL_Inflector::urlContainsDuplicates($sectionName));
+        if (!(empty($querystring))) {
+            if (SGL_Inflector::urlContainsDuplicates($querystring)) {
+                $ret = false;
+            } else {
+                $aUrlPieces = explode('/', $querystring);
+                $moduleName = $aUrlPieces[0];
+                $aSections =  explode('/', $sectionName);
+                $ret = in_array($moduleName, $aSections)
+                    && (SGL_Inflector::urlContainsDuplicates($sectionName));
+            }
         } else {
             $ret = false;
         }

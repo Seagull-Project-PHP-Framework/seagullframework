@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SimpleNav.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -187,6 +187,8 @@ class SimpleNav
 
         $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
+
+        //  query data never includes frontScriptName, ie, index.php
         $aQueryData = $url->getQueryData();
 
         if (PEAR::isError($aQueryData)) {
@@ -200,17 +202,17 @@ class SimpleNav
         SGL_Url::removeSessionInfo($aQueryData);
 
         //  return to string
-        $baseUri = implode('/', $aQueryData);
+        $querystring = implode('/', $aQueryData);
 
         //  find current section
         $aSectionNodes = array();
-        $tmpBaseUri = $baseUri;
+        $tmpQuerystring = $querystring;
         while ($result->fetchInto($section)) {
             if (!(in_array($this->_rid, explode(',', $section->perms)))) {
                 continue;
             }
-            //  get orig $baseUri value for each iteration
-            $baseUri = $tmpBaseUri;
+            //  get orig $querystring value for each iteration
+            $querystring = $tmpQuerystring;
 
             //  set all defaults to false, then test
             $section->children = false;
@@ -233,20 +235,20 @@ class SimpleNav
             }
             //  first check if querystring is a simplified version of section name,
             //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
-            if (SGL_Inflector::isUrlSimplified($baseUri, $section->resource_uri)) {
+            if (SGL_Inflector::isUrlSimplified($querystring, $section->resource_uri)) {
 
                 //  module name and manager name are identical, temporarily unshorten
                 //  querystring name so match can be possible
-                $aParts = explode('/', $baseUri);
+                $aParts = explode('/', $querystring);
                 $moduleName = $aParts[0];
                 array_unshift($aParts, $moduleName);
 
                 //  return to string
-                $baseUri = implode('/', $aParts);
+                $querystring = implode('/', $aParts);
             }
             //  compare querystring and section name from db, is it:
 /*
-            $conda1 = $section->resource_uri == $baseUri;
+            $conda1 = $section->resource_uri == $querystring;
             $conda2 = $this->_staticId == 0;
             $evala = $conda1 && $conda2;
 
@@ -254,21 +256,21 @@ class SimpleNav
             $condb2 = $section->section_id == $this->_staticId;
             $evalb = $condb1 && $condb2;
 
-            $condc1 = strpos($baseUri, 'articleview') !== false;
-            $condc2 = strpos($baseUri, 'frmCatID') !== false;
+            $condc1 = strpos($querystring, 'articleview') !== false;
+            $condc2 = strpos($querystring, 'frmCatID') !== false;
             $condc3 = $section->is_static == 0;
             $evalc = $condc1 && $condc2 && $condc3;
 */
             //  a. the strings are identical and it's not a static article
-            if (($section->resource_uri == $baseUri && $this->_staticId == 0 )
+            if (($section->resource_uri == $querystring && $this->_staticId == 0 )
 
                     //  b. it is a static article, so staticId must be non-zero
                     || ($section->section_id != 0 && $section->section_id == $this->_staticId)
 
                     //  c. we're browsing articles by category ID
-                    || (strpos($baseUri, 'articleview') !== false)
+                    || (strpos($querystring, 'articleview') !== false)
                         && strpos($section->resource_uri, 'articleview') !== false
-                        && strpos($baseUri, 'frmCatID') !== false
+                        && strpos($querystring, 'frmCatID') !== false
                         && $section->is_static == 0) {
                 $section->isCurrent = true;
                 $this->_currentSectionId = $section->section_id;
@@ -278,9 +280,9 @@ class SimpleNav
                 $this->_aParentsOfCurrentPage[] = $section->parent_id;
             } elseif (empty($section->resource_uri)) {
 
-                if (    $baseUri == $this->conf['site']['defaultModule']
-                    || ($baseUri == $this->conf['site']['defaultModule'] . '/' .
-                                    $this->conf['site']['defaultManager'])) {
+                if (    $querystring == $this->conf['site']['defaultModule']
+                    || ($querystring == $this->conf['site']['defaultModule'] . '/' .
+                                        $this->conf['site']['defaultManager'])) {
                     $section->isCurrent = true;
                     $this->_currentSectionId = $section->section_id;
                     $exactMatch = true;
@@ -293,7 +295,7 @@ class SimpleNav
             } elseif (!isset($exactMatch)) {
 
                 // explode and rebuild baseUri. Compare current segment against $section->resource_uri
-                $aPieces = explode('/', $baseUri);
+                $aPieces = explode('/', $querystring);
                 $tmpUri = '';
                 $bFlag = false;
                 foreach ($aPieces as $k => $v) {

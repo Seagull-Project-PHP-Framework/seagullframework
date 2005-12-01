@@ -7,6 +7,7 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+01-12-05    Improved performance for DB-based sessions (Eric Persson)
 30-11-05    Polish translation updated (Tomasz Osmialowski)
 29-11-05	RSS query more configurable (bluetoad)
 29-11-05	Web root path now configurable from installer

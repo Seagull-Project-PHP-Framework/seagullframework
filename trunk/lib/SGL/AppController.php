@@ -47,6 +47,10 @@ require_once dirname(__FILE__)  . '/Config.php';
 require_once dirname(__FILE__)  . '/Tasks/Process.php';
 require_once dirname(__FILE__)  . '/Tasks/Setup.php';
 require_once dirname(__FILE__)  . '/TaskRunner.php';
+require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
+require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
+require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
+require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
 
 /**
  * Application controller.
@@ -94,8 +98,13 @@ class SGL_AppController
         SGL_URL::resolveServerVars($conf);
 
         //  get current url object
-        $urlHandler = $conf['site']['urlHandler'];
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
+        #$urlHandler = $conf['site']['urlHandler'];
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserAliasStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            );
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
 
         //  assign to registry
         $input = &SGL_Registry::singleton();
@@ -288,8 +297,8 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
     function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
     {
         $this->processRequest = $pr;
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
+        $this->c = &SGL_Config::singleton();
+        $this->conf = $this->c->getAll();
     }
 }
 ?>

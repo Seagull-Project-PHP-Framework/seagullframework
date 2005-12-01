@@ -67,7 +67,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
 
         return $this->url;
     }
-    
+
     /**
     * Parses raw querystring and returns an array of it
     *
@@ -77,15 +77,18 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     */
     function parseQuerystring(/*SGL_Url*/$url, $conf)
     {
-        $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'), 
-        	'/') . ']/', 
-        	$url->querystring, 
-        	-1, 
+        $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'),
+        	'/') . ']/',
+        	$url->querystring,
+        	-1,
         	PREG_SPLIT_NO_EMPTY);
-        	
+
         $return = array();
 
         foreach ($parts as $part) {
+            if ($part{0} == '/') {
+                continue;
+            }
             if (strpos($part, '=') !== false) {
                 $value = substr($part, strpos($part, '=') + 1);
                 $key   = substr($part, 0, strpos($part, '='));
@@ -110,7 +113,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
         }
         return $return;
     }
-    
+
     /**
     * Resolves //, ../ and ./ from a path and returns
     * the result. Eg:
@@ -152,7 +155,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
 
         return implode('/', $path);
     }
-    
+
     /**
     * Adds a querystring item
     *
@@ -223,7 +226,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
 }
 /*
-improved URL class for 
+improved URL class for
 - cleaner implementation in constants.php
 - works with both tradition and FC querystrings
 
@@ -264,13 +267,13 @@ SGL_Url
 
 //  building SGL URLs
     $url = new SGL_Url();
-    
+
     $url->setModule('publisher');
     $url->setManager('articleview');
     $url->setAction('list');
     $url->addQueryString('frmArticleId', 23);
     $output = $url->toString(SGL_URL_ABS);
-    
+
 //  for Flexy output:
 makeLink(#self/publisher/articleview/action/view/frmArticleID/item_id#, aPagedData[data])
 
