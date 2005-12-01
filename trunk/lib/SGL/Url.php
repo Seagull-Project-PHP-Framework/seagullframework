@@ -101,6 +101,7 @@ class SGL_URL
     var $aQueryData;
     var $frontScriptName;
     var $parserStrategy;
+    var $aStrategies = array();
     var $aRes = array();
 
     /**
@@ -156,13 +157,27 @@ class SGL_URL
         $this->aQueryData = array();
         $this->anchor      = '';
 
+        //  get default config
         if (is_null($conf)) {
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
         }
 
+        //  setup strategies array
+        if (is_null($parserStrategy)) {
+            $this->aStrategies[] = new SGL_UrlParserSefStrategy();
+        }
+        if (!is_array($parserStrategy) && is_a($parserStrategy, 'SGL_UrlParserStrategy')) {
+            $this->aStrategies[] = $parserStrategy;
+
+        } elseif (is_array($parserStrategy)) {
+            $this->aStrategies = $parserStrategy;
+
+        } else {
+            SGL::raiseError('unrecognised url strategy');
+        }
+
         $this->frontScriptName = $conf['site']['frontScriptName'];
-        $this->parserStrategy = $parserStrategy;
 
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
@@ -361,22 +376,8 @@ class SGL_URL
      */
     function parseQueryString($conf)
     {
-        $aStrategies = array();
-        if (is_null($this->parserStrategy)) {
-            $aStrategies[] = new SGL_UrlParserSefStrategy();
-        }
-        if (!is_array($this->parserStrategy) && is_a($this->parserStrategy, 'SGL_UrlParserStrategy')) {
-            $aStrategies[] = $this->parserStrategy;
-
-        } elseif (is_array($this->parserStrategy)) {
-            $aStrategies = $this->parserStrategy;
-
-        } else {
-            $ret = SGL::raiseError('unrecognised url strategy');
-        }
-
         $this->aRes = array();
-        foreach ($aStrategies as $strategy) {
+        foreach ($this->aStrategies as $strategy) {
 
             //  all strategies will attempt to parse url, overwriting
             //  previous results as they do
@@ -388,7 +389,10 @@ class SGL_URL
 
     function toString()
     {
-        return $this->parserStrategy[2]->toString($this);
+        foreach ($this->aStrategies as $strategy) {
+            if (is_a($strategy, 'SGL_UrlParserSefStrategy'))
+            return $strategy->toString($this);
+        }
     }
 
 
@@ -398,7 +402,12 @@ class SGL_URL
     {
         //  a hack for 0.4.x style of building SEF URLs
         $url = & SGL_Url::singleton();
-        return $url->parserStrategy->makeLink($action, $mgr, $mod, $aList, $params, $idx, $output);
+        foreach ($url->aStrategies as $strategy) {
+            if (is_a($strategy, 'SGL_UrlParserSefStrategy')) {
+                return $strategy->makeLink(
+                    $action, $mgr, $mod, $aList, $params, $idx, $output);
+            }
+        }
     }
 
     /**

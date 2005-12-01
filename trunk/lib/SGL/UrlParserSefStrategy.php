@@ -124,7 +124,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
                 #return PEAR::raiseError('Could not read current module\'s conf.ini file',
                  #   SGL_ERROR_NOFILE);
                 if ($aModuleConfig) {
-                    define('SGL_MODULE_CONFIG_LOADED', true);
+                    @define('SGL_MODULE_CONFIG_LOADED', true);
                     $c->merge($aModuleConfig);
                 } else {
                     return PEAR::raiseError('Could not read current module\'s conf.ini file',
