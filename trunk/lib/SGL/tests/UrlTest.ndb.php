@@ -34,36 +34,6 @@ class UrlTest extends UnitTestCase {
         $this->baseUrlString = SGL_BASE_URL . '/' . $conf['site']['frontScriptName'] . '/';
     }
 
-    function testParseResourceUriFullString()
-    {
-        $url = 'contactus/contactus/action/list/enquiry_type/Hosting info';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-        $this->assertTrue(array_key_exists('actionMapping', $ret));
-        $this->assertTrue(is_array($ret['parsed_params']));
-        $this->assertTrue(array_key_exists('enquiry_type', $ret['parsed_params']));
-    }
-
-    function testParseResourceUriSlash()
-    {
-        $url = '/';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-    }
-
-    function testParseResourceUriEmpty()
-    {
-        $url = '';
-        $ret = $this->url->parseResourceUri($url);
-        $this->assertTrue(is_array($ret));
-        $this->assertTrue(array_key_exists('module', $ret));
-        $this->assertTrue(array_key_exists('manager', $ret));
-    }
-
     function testToPartialArray()
     {
         //  test random string

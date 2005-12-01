@@ -354,7 +354,7 @@ class SGL_URL
     }
 
     /**
-     * Build array of strategies and execute parsers.
+     * Build array of strategies and executes parsers.
      *
      * @param array $conf
      * @return array
@@ -388,7 +388,7 @@ class SGL_URL
 
     function toString()
     {
-        return $this->parserStrategy[1]->toString($this);
+        return $this->parserStrategy[2]->toString($this);
     }
 
 

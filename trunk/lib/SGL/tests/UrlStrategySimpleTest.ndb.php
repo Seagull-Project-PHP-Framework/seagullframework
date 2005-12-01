@@ -46,5 +46,35 @@ class UrlStrategySimpleTest extends UnitTestCase
         $this->assertEqual($ret, array());
 
     }
+
+    function testParseResourceUriFullString()
+    {
+        $qs = 'contactus/contactus/action/list/enquiry_type/Hosting info';
+        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $this->assertTrue(is_array($ret));
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+        $this->assertTrue(array_key_exists('actionMapping', $ret));
+        $this->assertTrue(is_array($ret['parsed_params']));
+        $this->assertTrue(array_key_exists('enquiry_type', $ret['parsed_params']));
+    }
+
+    function testParseResourceUriSlash()
+    {
+        $qs = '/';
+        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $this->assertTrue(is_array($ret));
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+    }
+
+    function testParseResourceUriEmpty()
+    {
+        $qs = '';
+        $ret = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $this->assertTrue(is_array($ret));
+        $this->assertTrue(array_key_exists('module', $ret));
+        $this->assertTrue(array_key_exists('manager', $ret));
+    }
 }
 ?>

@@ -7,6 +7,9 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+01-12-05    Three url parsers loaded by default: classic querystring, standard
+            Seagull SEF, and now UrlAlias, see the 0.5.4 updates notes for details:
+            http://trac.seagullproject.org/wiki/Howto/Misc/Upgrading/05
 01-12-05    Improved performance for DB-based sessions (Eric Persson)
 30-11-05    Polish translation updated (Tomasz Osmialowski)
 29-11-05	RSS query more configurable (bluetoad)
