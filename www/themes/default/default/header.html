@@ -9,8 +9,8 @@
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework v{versionAPI}" />
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
+
     <style type="text/css" media="screen">
         @import url("{webRoot}/themes/{theme}/css/style.php?navStylesheet={conf[navigation][stylesheet]}&moduleName={moduleName}");
     </style>
@@ -41,7 +41,7 @@
     <script type="text/javascript" src="{webRoot}/htmlarea/htmlarea.js"></script>
     <script type="text/javascript">
         HTMLArea.loadPlugin("CharacterMap");
-        function initDocument() 
+        function initDocument()
         {
             var config = new HTMLArea.Config();
             config.toolbar = [
@@ -71,13 +71,13 @@
         _editor_lang = "en";
     </script>
     <script type="text/javascript" src="{webRoot}/xinha/htmlarea.js"></script>
-    <script type="text/javascript" src="{webRoot}/xinha/sgl_config.js"></script>   
+    <script type="text/javascript" src="{webRoot}/xinha/sgl_config.js"></script>
     {end:}
     {if:wysiwyg_fck}
     <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
 
     {scriptOpen:h}
-        function fck_init() 
+        function fck_init()
         {
             {if:wysiwygElementName}
         	var oFCKeditor = new FCKeditor('{wysiwygElementName}');

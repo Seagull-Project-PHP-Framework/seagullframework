@@ -6,6 +6,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
+require_once dirname(__FILE__) . '/Url.php';
 
 /**
  * Concrete alias url parser strategy
@@ -30,12 +31,12 @@ class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
         $parts = array_filter(explode('/', $url->url), 'strlen');
         $numElems = count($parts);
 
-        //  we need at least 2 elements
-        if ($numElems < 2) {
-            return $default;
+        //  we need at least 1 element
+        if ($numElems < 1) {
+            return $ret;
         }
         $ret['moduleName'] = $parts[0];
-        $ret['managerName'] = $parts[1];
+        $ret['managerName'] = isset($parts[1]) ? $parts[1] : $parts[0];
         $actionExists = (isset($parts[2]) && $parts[2] == 'action') ? true : false;
         $ret['action'] = ($actionExists) ? $parts[3] : null;
 
@@ -56,7 +57,7 @@ class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
             }
             //  if a name/value pair exists, add it to request
             if (count($aTmp) == 2) {
-                $ret['parsed_params'][$aTmp['varName']] = $aTmp['varValue'];
+                $ret[$aTmp['varName']] = $aTmp['varValue'];
                 $aTmp = array();
             }
         }

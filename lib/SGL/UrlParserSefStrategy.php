@@ -108,29 +108,35 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
         }
 
+        //  grab mod & mgr name from alias strategy if present
+        if (isset($url->aRes[1]) && array_key_exists('moduleName', $url->aRes[1])) {
+            $aParsedUri['moduleName'] = $url->aRes[1]['moduleName'];
+            $aParsedUri['managerName'] = $url->aRes[1]['managerName'];
+        }
+
         //  we've got module name so load and merge local and global configs
         //  unless we're running the setup wizard
         if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
             $c = &SGL_Config::singleton();
             $path = realpath(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
-            if (!$path) {
-                return PEAR::raiseError('Could not read current module\'s conf.ini file',
-                    SGL_ERROR_NOFILE);
-            }
-            $aModuleConfig = $c->load($path);
-
-            if ($aModuleConfig) {
-                $c->merge($aModuleConfig);
-            } else {
-                return PEAR::raiseError('Could not read current module\'s conf.ini file',
-                    SGL_ERROR_NOFILE);
-            }
-            //  determine is moduleName is simplified, in other words, the mgr
-            //  and mod names should be the same
-            if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
-                if (SGL_Inflector::isMgrNameOmitted($aParsedUri)) {
-                    array_unshift($aUriParts, $mgrCopy);
-                    $aParsedUri['managerName'] = $aParsedUri['moduleName'];
+            if ($path) {
+                $aModuleConfig = $c->load($path);
+                #return PEAR::raiseError('Could not read current module\'s conf.ini file',
+                 #   SGL_ERROR_NOFILE);
+                if ($aModuleConfig) {
+                    define('SGL_MODULE_CONFIG_LOADED', true);
+                    $c->merge($aModuleConfig);
+                } else {
+                    return PEAR::raiseError('Could not read current module\'s conf.ini file',
+                        SGL_ERROR_NOFILE);
+                }
+                //  determine is moduleName is simplified, in other words, the mgr
+                //  and mod names should be the same
+                if ($aParsedUri['moduleName'] != $aParsedUri['managerName']) {
+                    if (SGL_Inflector::isMgrNameOmitted($aParsedUri)) {
+                        array_unshift($aUriParts, $mgrCopy);
+                        $aParsedUri['managerName'] = $aParsedUri['moduleName'];
+                    }
                 }
             }
         }

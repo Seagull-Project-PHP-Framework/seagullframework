@@ -428,11 +428,32 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         if (!empty($moduleName) && !empty($managerName)) {
 
             if (!ModuleMgr::moduleIsRegistered($moduleName)) {
-                SGL::raiseError('module "'.$moduleName.'"does not appear to be registered', SGL_ERROR_INVALIDREQUEST);
+                SGL::raiseError('module "'.$moduleName.'"does not appear to be registered',
+                    SGL_ERROR_INVALIDREQUEST);
                 return $this->getDefaultManager($input);
             }
+            //  load module's config if not present
+            if (!defined('SGL_MODULE_CONFIG_LOADED')) {
+                $modConfigPath = realpath(SGL_MOD_DIR . '/' . $moduleName . '/conf.ini');
 
-            //  get manager name if $managerName not correct attempt to load default manager w/$moduleName
+                if ($modConfigPath) {
+                    $aModuleConfig = $this->c->load($modConfigPath);
+                    PEAR::raiseError('Could not read current module\'s conf.ini file',
+                        SGL_ERROR_NOFILE);
+                    if ($aModuleConfig) {
+                        $this->c->merge($aModuleConfig);
+
+                        //  remove first failed conf loading error
+                        unset($GLOBALS['_SGL']['ERRORS'][0]);
+
+                        //  reset conf keys
+                        unset($this->conf);
+                        $this->conf = $this->c->getAll();
+                    }
+                }
+            }
+            //  get manager name if $managerName not correct attempt to load default
+            //  manager w/$moduleName
             $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
             $retMgrName = $this->getManagerName($managerName, $mgrPath);
             $managerName = ($retMgrName) ? $retMgrName : $this->getManagerName($moduleName, $mgrPath);

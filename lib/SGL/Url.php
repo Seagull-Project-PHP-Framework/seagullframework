@@ -101,6 +101,7 @@ class SGL_URL
     var $aQueryData;
     var $frontScriptName;
     var $parserStrategy;
+    var $aRes = array();
 
     /**
     * Anchor
@@ -312,6 +313,33 @@ class SGL_URL
                 unset($aRet['managerName']);
             }
         }
+        if (isset($aRet['debug_fastfile'])) {
+            unset($aRet['debug_fastfile']);
+        }
+        if (isset($aRet['debug_host'])) {
+            unset($aRet['debug_host']);
+        }
+        if (isset($aRet['debug_new_session'])) {
+            unset($aRet['debug_new_session']);
+        }
+        if (isset($aRet['debug_no_cache'])) {
+            unset($aRet['debug_no_cache']);
+        }
+        if (isset($aRet['debug_port'])) {
+            unset($aRet['debug_port']);
+        }
+        if (isset($aRet['debug_stop'])) {
+            unset($aRet['debug_stop']);
+        }
+        if (isset($aRet['debug_url'])) {
+            unset($aRet['debug_url']);
+        }
+        if (isset($aRet['send_sess_end'])) {
+            unset($aRet['send_sess_end']);
+        }
+        if (isset($aRet['start_debug'])) {
+            unset($aRet['start_debug']);
+        }
         return $aRet;
     }
 
@@ -347,21 +375,23 @@ class SGL_URL
             $ret = SGL::raiseError('unrecognised url strategy');
         }
 
-        $aRes = array();
+        $this->aRes = array();
         foreach ($aStrategies as $strategy) {
 
             //  all strategies will attempt to parse url, overwriting
             //  previous results as they do
-            $aRes[] = $strategy->parseQueryString($this, $conf);
+            $this->aRes[] = $strategy->parseQueryString($this, $conf);
         }
-        $ret = call_user_func_array('array_merge', $aRes);
+        $ret = call_user_func_array('array_merge', $this->aRes);
         return $ret;
     }
 
     function toString()
     {
-        return $this->parserStrategy->toString($this);
+        return $this->parserStrategy[1]->toString($this);
     }
+
+
 
     function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0, $output = '')

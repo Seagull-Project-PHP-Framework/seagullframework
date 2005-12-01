@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . '/../Request.php'; // for now inflector is in here to minimise file loading
 
 /**
  * Test suite.
@@ -67,7 +66,7 @@ class InflectorTest extends UnitTestCase {
         $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
     }
 
-    function testIsUrlSimplified()
+    function testIsUrlSimplified1()
     {
         //  basic example
         $url = 'example.com/index.php/faq';
@@ -78,6 +77,13 @@ class InflectorTest extends UnitTestCase {
         $url = 'index.php/faq';
         $sectionName = 'index.php/faq/faq';
         $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
+    }
+
+    function testIsUrlSimplified2()
+    {
+        $url = 'contactus/contactus';
+        $sectionName = $url;
+        $this->assertFalse(SGL_Inflector::isUrlSimplified($url, $sectionName));
     }
 
     function testGetManagerNameFromSimplifiedName()

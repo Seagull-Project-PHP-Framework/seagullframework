@@ -42,5 +42,17 @@ class UrlStrategyClassicTest extends UnitTestCase
         $this->assertTrue(!array_key_exists('managerName', $ret));
         $this->assertEqual($ret, array());
     }
+
+    function testClassicParserSefQueryStr()
+    {
+        $uri = 'http://example.com/index.php/foo/bar/frmUserName/123';
+        $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
+        $ret = $url->getQueryData();
+
+        //  assert expected keys present
+        $this->assertTrue(!array_key_exists('moduleName', $ret));
+        $this->assertTrue(!array_key_exists('managerName', $ret));
+        $this->assertEqual($ret, array());
+    }
 }
 ?>

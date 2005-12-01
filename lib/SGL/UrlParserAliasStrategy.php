@@ -7,7 +7,6 @@
  * @version $Revision: 1.5 $
  */
 
-require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
 
 /**
  * Concrete alias url parser strategy
