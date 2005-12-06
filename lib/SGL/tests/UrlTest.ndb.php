@@ -487,6 +487,21 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['moduleName'], 'default');
         $this->assertEqual($ret['managerName'], 'default');
     }
+    
+    
+    function testGetStrategiesFingerprint()
+    {
+        $aStrats = array(
+            new SGL_UrlParserClassicStrategy(),
+            new SGL_UrlParserSefStrategy(),
+            new SGL_UrlParserAliasStrategy()
+            );
+
+		$url = new SGL_Url('', true, $aStrats);
+		$fingerprint = $url->getStrategiesFingerprint($url->aStrategies);
+		$target = 'sgl_urlparserclassicstrategysgl_urlparsersefstrategysgl_urlparseraliasstrategy';
+        $this->assertEqual($fingerprint, $target);
+    }    
 }
 
 

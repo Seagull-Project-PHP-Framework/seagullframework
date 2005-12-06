@@ -58,12 +58,24 @@ class SGL_Request
      */
     function SGL_Request()
     {
+    	if ($this->isEmpty()) {
+			$this->init();
+    	}
+    }
+    
+    function init()
+    {
         if (!SGL::runningFromCLI()) {
             $this->initHttp();
         } else {
             $this->initCli();
-        }
+        }    	
     }
+    
+    function isEmpty()
+    {
+        return count($this->aProps) ? false : true;
+    }    
 
     function initCli()
     {
@@ -72,24 +84,65 @@ class SGL_Request
 
     function initHttp()
     {
+        //  get config singleton
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+
+        //  get current url object
+        #$urlHandler = $conf['site']['urlHandler'];
+	    $cache = & SGL::cacheSingleton();
+	    $cacheId = md5($_SERVER['PHP_SELF']);
+
+        if ($data = $cache->get($cacheId, 'urls')) {
+            $url = unserialize($data);
+            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
+        } else {
+        	
+			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
+			require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
+			require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
+			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';        	
+	        $aStrats = array(
+	            new SGL_UrlParserClassicStrategy(),
+	            new SGL_UrlParserAliasStrategy(),
+	            new SGL_UrlParserSefStrategy(),
+	            );
+	        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);      	
+        	
+            $data = serialize($url);
+            $cache->save($data, $cacheId, 'urls');
+            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
+        }
+        $aQueryData = $url->getQueryData();
+
+        //  assign to registry        
+        $input = &SGL_Registry::singleton();
+        $input->setCurrentUrl($url); 
+                
         //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_REQUEST, $_FILES);
+        $this->aProps = array_merge($_REQUEST, $_FILES, $aQueryData);      
 
         //  remove slashes if necessary
-        SGL_String::dispelMagicQuotes($this->aProps);
+        #SGL_String::dispelMagicQuotes($this->aProps);
 
         //  merge results with cleaned $_REQUEST values and $_POST
-        SGL_String::dispelMagicQuotes($_POST);
+        #SGL_String::dispelMagicQuotes($_POST);
 
-        //  also merge with SEF url params
-        $reg = &SGL_Registry::singleton();
-        $url = $reg->getCurrentUrl();
-        $aUrlParams = $url->getQueryData();
-
-        $this->aProps = array_merge($this->aProps, $aUrlParams, $_POST);
+        #$this->aProps = array_merge($this->aProps, $_POST);
 
         return;
     }
+    
+    function merge($aHash)
+    {
+   		$firstKey = key($aHash);    	    	
+        if (!array_key_exists($firstKey, $this->aProps)) {
+            $this->aProps = array_merge_recursive($this->aProps, $aHash);
+        }
+    }    
 
     /**
      * Returns a singleton Request instance.

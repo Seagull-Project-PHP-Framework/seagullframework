@@ -246,7 +246,7 @@ class SGL_URL
                     break;
 
                 case 'path':
-                    if ($value{0} == '/') {
+                    if (isset($value{0}) && $value{0} == '/') {
                         if ($this->frontScriptName != false) {
                             $frontScriptStartIndex = strpos($value, $this->frontScriptName);
                             $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
@@ -376,15 +376,37 @@ class SGL_URL
      */
     function parseQueryString($conf)
     {
-        $this->aRes = array();
-        foreach ($this->aStrategies as $strategy) {
-
-            //  all strategies will attempt to parse url, overwriting
-            //  previous results as they do
-            $this->aRes[] = $strategy->parseQueryString($this, $conf);
-        }
-        $ret = call_user_func_array('array_merge', $this->aRes);
+	    //	check cache
+//	    $cache = & SGL::cacheSingleton();
+//	    $cacheId = md5($this->getStrategiesFingerprint($this->aStrategies) . $this->url);
+//
+//        if ($data = $cache->get($cacheId, 'urls')) {
+//            $ret = unserialize($data);
+//            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
+//        } else {
+	        foreach ($this->aStrategies as $strategy) {
+	
+	            //  all strategies will attempt to parse url, overwriting
+	            //  previous results as they do
+	            $this->aRes[] = $strategy->parseQueryString($this, $conf);
+	        }
+	        $ret = call_user_func_array('array_merge', $this->aRes);        	
+        	
+//            $data = serialize($ret);
+//            $cache->save($data, $cacheId, 'urls');
+//            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
+//        }	    
         return $ret;
+    }
+    
+    function getStrategiesFingerprint($aStrats)
+    {
+        $aStratNames = array();
+        foreach ($aStrats as $strategy) {
+        	$aStratNames[] = get_class($strategy);	
+        }
+		$fingerprint = implode('', $aStratNames);    	
+		return $fingerprint;
     }
 
     function toString()

@@ -128,6 +128,15 @@ class InflectorTest extends UnitTestCase {
         $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
     }
+    
+    function testCaseFix()
+    {
+    	$c = &SGL_Config::singleton();
+    	$c->set('DefaultMgr', array('requiresAuth' => false));
+    	$incorrect = 'defaultmgr';
+    	$ret = SGL_Inflector::caseFix($incorrect);
+    	$this->assertEqual($ret, 'DefaultMgr');
+    }
 }
 
 ?>

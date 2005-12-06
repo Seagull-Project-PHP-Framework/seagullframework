@@ -47,10 +47,6 @@ require_once dirname(__FILE__)  . '/Config.php';
 require_once dirname(__FILE__)  . '/Tasks/Process.php';
 require_once dirname(__FILE__)  . '/Tasks/Setup.php';
 require_once dirname(__FILE__)  . '/TaskRunner.php';
-require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
-require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
-require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
-require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
 
 /**
  * Application controller.
@@ -89,29 +85,14 @@ class SGL_AppController
     {
         if (!defined('SGL_INITIALISED')) {
             SGL_AppController::init();
-        }
-        //  get config singleton
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        #$urlHandler = $conf['site']['urlHandler'];
-        $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserAliasStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            );
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
+        }        
 
         //  assign to registry
         $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
         $input->setRequest($req = SGL_Request::singleton());
 
         $process =  new SGL_Process_Init(
+        			new SGL_Process_StripMagicQuotes(
                     new SGL_Process_DiscoverClientOs(
                     new SGL_Process_ResolveManager(
                     new SGL_Process_CreateSession(
@@ -123,11 +104,10 @@ class SGL_AppController
                     new SGL_Process_DetectDebug(
                     new SGL_Process_DetectBlackListing(
                     new SGL_MainProcess()
-                   )))))))))));
+                   ))))))))))));
 
         $process->process($input);
     }
-
 
     /**
      * Adds pages to a Wizard queue.
