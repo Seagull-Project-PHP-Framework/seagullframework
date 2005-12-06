@@ -608,7 +608,12 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $ua = $_SERVER['HTTP_USER_AGENT'];
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $ua = $_SERVER['HTTP_USER_AGENT'];
+        } else {
+            $ua = '';
+        }
+        
         if (!empty($ua) and !defined('SGL_USR_OS')) {
             if (strstr($ua, 'Win')) {
                 define('SGL_USR_OS', 'Win');
