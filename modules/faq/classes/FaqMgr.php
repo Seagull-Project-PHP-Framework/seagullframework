@@ -108,8 +108,6 @@ class FaqMgr extends SGL_Manager
         $output->template = 'faqEdit.html';
         $output->action   = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        //  build ordering select object
-        $output->faq = DB_DataObject::factory('Faq');
     }
 
     function _insert(&$input, &$output)
@@ -118,7 +116,7 @@ class FaqMgr extends SGL_Manager
 
         SGL_DB::setConnection($this->dbh);
         //  get new order number
-		$faq = DB_DataObject::factory('Faq');
+        $faq = DB_DataObject::factory('Faq');
         $faq->selectAdd();
         $faq->selectAdd('MAX(item_order) AS new_order');
         $faq->groupBy('item_order');
