@@ -421,7 +421,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
         $getDefaultMgr = false;
-
+        
         if (empty($moduleName) || empty($managerName)) {
 
             SGL::logMessage('Module and manager names could not be determined from request');
@@ -442,7 +442,6 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                 $managerName = ($retMgrName)
                     ? $retMgrName
                     : $this->getManagerName($moduleName, $mgrPath);
-
                 if (!empty($managerName)) {
 
                     //  build path to manager class
@@ -471,13 +470,15 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         }
         if ($getDefaultMgr) {
             $this->getDefaultManager($input);
+            #SGL::raiseError('specified manager could not be found, default loaded');
         }
         $this->processRequest->process($input);
     }
 
     function ensureModuleConfigLoaded($moduleName)
     {
-        if (!defined('SGL_MODULE_CONFIG_LOADED')) {
+        if (!defined('SGL_MODULE_CONFIG_LOADED') 
+        		|| $this->conf['localConfig']['moduleName'] != $moduleName) {
             $modConfigPath = realpath(SGL_MOD_DIR . '/' . $moduleName . '/conf.ini');
 
             if ($modConfigPath) {
@@ -510,12 +511,12 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $defaultMgr = $this->conf['site']['defaultManager'];
 
         //  load module's config if not present
-        $this->ensureModuleConfigLoaded($defaultModule);
+        $this->ensureModuleConfigLoaded($defaultModule);        
 
         $mgrName = SGL_Inflector::caseFix(SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
         if (!file_exists($path)) {
-            SGL::raiseError('could not locate default manager', SGL_ERROR_NOFILE);
+            SGL::raiseError('could not locate default manager, '.$path, SGL_ERROR_NOFILE);
             return false;
         }
         require_once $path;
@@ -523,7 +524,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
             SGL::raiseError('invalid class name for default manager', SGL_ERROR_NOCLASS);
             return false;
         }
-        $mgr = new $mgrName();
+        $mgr = new $mgrName();        
         $input->moduleName = $defaultModule;
         $input->set('manager', $mgr);
         $req = $input->getRequest();
@@ -581,6 +582,20 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     }
 }
 
+class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $req = $input->getRequest();
+		SGL_String::dispelMagicQuotes($req->aProps);
+		$input->setRequest($req);
+		
+        $this->processRequest->process($input);
+    }
+}
+
 /**
  * Set client OS constant based on user agent.
  *
@@ -629,11 +644,9 @@ class SGL_MainProcess extends SGL_ProcessRequest
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
         $req = $input->getRequest();
-
         $mgr = $input->get('manager');
+        $conf = $mgr->conf;
         $mgr->validate($req, $input);
 
         $output = & new SGL_Output();
