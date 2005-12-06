@@ -7,6 +7,7 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+06-12-05	Basic CLI request implemented (Eric Persson)
 01-12-05    Three url parsers loaded by default: classic querystring, standard
             Seagull SEF, and now UrlAlias, see the 0.5.4 updates notes for details:
             http://trac.seagullproject.org/wiki/Howto/Misc/Upgrading/05

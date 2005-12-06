@@ -79,7 +79,28 @@ class SGL_Request
 
     function initCli()
     {
-        die("CLI interface not implemented yet\n");
+        require_once 'Console/Getopt.php';
+        
+        $shortOptions = '';
+        $longOptions = array('moduleName=', 'managerName=', 'action=');
+        
+        $console = new Console_Getopt();
+        $arguments = $console->readPHPArgv();
+        array_shift($arguments);
+        $options = $console->getopt2($arguments, $shortOptions, $longOptions);
+        
+        if (!is_array($options) ) {
+            die("CLI parameters invalid\n");
+        }
+                
+        $this->aProps = array();
+        
+        /* Take all _valid_ parameters and add them into aProps. */
+        while (list($parameter, $value) = each($options[0])) {
+            $value[0] = str_replace('--', '', $value[0]);
+            $this->aProps[$value[0]] = $value[1];
+        }
+
     }
 
     function initHttp()
@@ -133,7 +154,7 @@ class SGL_Request
 
         #$this->aProps = array_merge($this->aProps, $_POST);
 
-        return;
+        #return;
     }
     
     function merge($aHash)
