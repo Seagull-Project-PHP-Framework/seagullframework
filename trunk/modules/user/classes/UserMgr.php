@@ -78,7 +78,7 @@ class UserMgr extends RegisterMgr
             'updatePerms'           => array('updatePerms', 'redirectToDefault'),
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),
             'viewLogin'             => array('viewLogin'),
-            'truncateLoginTbl'      => array('truncateLoginTbl'),
+            'truncateLoginTbl'      => array('truncateLoginTbl', 'redirectToDefault'),
         );
     }
 
@@ -89,7 +89,7 @@ class UserMgr extends RegisterMgr
         parent::validate($req, $input);
         $input->action = ($req->get('action')) ? $req->get('action') : 'list';
 
-        //determine action based on which button was pressed
+        //	determine action based on which button was pressed
         if ($req->get('delete')) { $input->action = 'delete';}
         if ($req->get('syncToRole')) { $input->action = 'syncToRole';}
 
@@ -129,7 +129,7 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  set flag to we can share add/edit templates
+        //  set flag so we can share add/edit templates
         if ($output->action == 'add' || $output->action == 'insert') {
             $output->isAdd = true;
         }
@@ -174,6 +174,7 @@ class UserMgr extends RegisterMgr
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         parent::_add($input, $output);
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
@@ -192,7 +193,7 @@ class UserMgr extends RegisterMgr
         $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
         $success = $this->da->addUser($oUser);
 
-        //  check global error stack for any error that might have occurred
+        //  check for errors
         if ($success) {
             SGL::raiseMsg('user successfully added');
         } else {
@@ -207,8 +208,7 @@ class UserMgr extends RegisterMgr
 
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $output->template = 'userAdd.html';
-        $oUser = $this->da->getUserById();
-        $oUser->get($input->userID);
+        $oUser = $this->da->getUserById($input->userID);
         $output->user = $oUser;
     }
 
@@ -301,10 +301,10 @@ class UserMgr extends RegisterMgr
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $allowedSortFields = array('usr_id','username','is_acct_active');
-        if (  !empty($input->sortBy)
-           && !empty($input->sortOrder)
-           && in_array($input->sortBy, $allowedSortFields)) {
-                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        if (      !empty($input->sortBy)
+	           && !empty($input->sortOrder)
+	           && in_array($input->sortBy, $allowedSortFields)) {
+			$orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
             $orderBy_query = ' ORDER BY u.usr_id ASC ';
         }
@@ -312,7 +312,9 @@ class UserMgr extends RegisterMgr
         if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    {$this->conf['table']['user']} u, {$this->conf['table']['organisation']} o, {$this->conf['table']['role']} r
+                FROM    {$this->conf['table']['user']} u, 
+                		{$this->conf['table']['organisation']} o, 
+                		{$this->conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id " .
                 $orderBy_query;
@@ -356,12 +358,16 @@ class UserMgr extends RegisterMgr
         } else {
             $orderBy_query = ' ORDER BY date_time DESC ';
         }
-        if (!empty($input->userID) ){
+        if (!empty($input->userID) ) {
             $query = "
                 SELECT  date_time, remote_ip, login_id
                 FROM    {$this->conf['table']['login']}
                 WHERE   usr_id = $input->userID" .
                 $orderBy_query;
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' .
+                __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -383,30 +389,29 @@ class UserMgr extends RegisterMgr
     function _truncateLoginTbl(&$input, &$output)
     {
 
-        SGL :: logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($input->aDelete)) {
-            foreach($input->aDelete as $v){
-                $qry = "DELETE FROM {$this->conf['table']['login']} WHERE login_id = $v";
-                $this->dbh->query($qry);
+            foreach ($input->aDelete as $v){
+                $query = "DELETE FROM {$this->conf['table']['login']} WHERE login_id = $v";
+                $this->dbh->query($query);
             }
+        	//  redirect on success
+        	SGL::raiseMsg('Deleted successfully');            
+        	
         } else {
-            SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, 
+            	SGL_ERROR_NOAFFECTEDROWS);
         }
-
-        //  redirect on success
-        SGL :: raiseMsg('Deleted successfully');
-        SGL_HTTP :: redirect(array ('action' => 'viewLogin', 'frmUserID' => "{$input->userID}"));
-
     }
 
     function _requestChangeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $output->pageTitle = $this->pageTitle . ' :: Change status';
         $output->template = 'userStatusChange.html';
-        $oUser = $this->da->getUserById();
-        $oUser->get($input->userID);
+        $oUser = $this->da->getUserById($input->userID);
         $output->user = $oUser;
     }
 
@@ -414,8 +419,7 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = $this->da->getUserById();
-        $oUser->get($input->userID);
+        $oUser = $this->da->getUserById($input->userID);
         $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
         $success = $oUser->update();
         if ($input->changeStatusNotify && $success) {
@@ -434,8 +438,8 @@ class UserMgr extends RegisterMgr
     function _sendStatusNotification($oUser, $isEnabled)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         require_once SGL_CORE_DIR . '/Emailer.php';
-
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
         $options = array(
@@ -457,25 +461,25 @@ class UserMgr extends RegisterMgr
     function _requestPasswordReset(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $output->pageTitle = $this->pageTitle . ' :: Reset password';
         $output->template = 'userPasswordReset.html';
-        $oUser = $this->da->getUserById();
-        $oUser->get($input->userID);
+        $oUser = $this->da->getUserById($input->userID);
         $output->user = $oUser;
     }
 
     function _resetPassword(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = $this->da->getUserById();
-        $oUser->get($input->userID);
+        $oUser = $this->da->getUserById($input->userID);
         $oUser->passwd = md5($passwd);
         $success = $oUser->update();
         if ($input->passwdResetNotify && $success) {
-            include_once SGL_MOD_DIR . '/user/classes/PasswordMgr.php';
+            require_once SGL_MOD_DIR . '/user/classes/PasswordMgr.php';
             $success = PasswordMgr::sendPassword($oUser, $passwd);
         }
         //  redirect on success
@@ -491,6 +495,7 @@ class UserMgr extends RegisterMgr
     function _editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
         $output->pageTitle = $this->pageTitle . ' :: Edit permissions';
         $output->template = 'userPermsEdit.html';

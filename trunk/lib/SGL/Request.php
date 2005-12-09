@@ -144,7 +144,7 @@ class SGL_Request
         $input->setCurrentUrl($url); 
                 
         //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_REQUEST, $_FILES, $aQueryData);      
+        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);      
 
         //  remove slashes if necessary
         #SGL_String::dispelMagicQuotes($this->aProps);
