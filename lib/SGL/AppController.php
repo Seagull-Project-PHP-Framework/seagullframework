@@ -254,6 +254,31 @@ class SGL_HtmlView extends SGL_View
     }
 }
 
+class SGL_CliView extends SGL_View
+{
+    /**
+     * Html specific implementation of view object.
+     *
+     * @param SGL_Output $data
+     * @param SGL_OutputRendererStrategy $outputRendererStrategy
+     * @return SGL_HtmlView
+     */
+    function SGL_CliView(&$data, $outputRendererStrategy)
+    {
+    	parent::SGL_View($data, $outputRendererStrategy);
+    }
+
+    function postProcess(/*SGL_View*/ &$view)
+    {
+        $process =  new SGL_Process_BuildOutputData(
+                    new SGL_Process_GetPerformanceInfo(
+                    new SGL_Void()
+                   ));
+
+        $process->process($view);
+    }
+}
+
 /**
  * Abstract request processor.
  *
