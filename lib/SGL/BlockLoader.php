@@ -203,7 +203,7 @@ class SGL_BlockLoader
     }
 
     /**
-     * Sorts tmp array $_aData into left/right blocks.
+     * Sorts tmp array $_aData into order within block positions.
      *
      * easier to manage in Controller
      *
