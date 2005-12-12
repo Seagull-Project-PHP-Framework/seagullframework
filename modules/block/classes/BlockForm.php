@@ -88,6 +88,7 @@ class BlockForm
 
     function init( $data = null )
     {
+        include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->data = $data;
 
         //  init data obj if coming from edit
@@ -97,7 +98,6 @@ class BlockForm
             //  Set default form values
             $defaultValues['block[name]']         = null;
             $defaultValues['block[title]']        = null;
-            $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
             $defaultValues['block[roles]']        = SGL_ANY_ROLE;
@@ -139,7 +139,7 @@ class BlockForm
           $select->setSelected($this->data['block[sections]']);
         }
         // Field position
-        $this->form->addElement('select', 'block[is_onleft]', SGL_String::translate('Position'), array( '0' => SGL_String::translate('Right'), '1' => SGL_String::translate('Left')));
+        $this->form->addElement('select', 'block[position]', SGL_String::translate('Position'), $aBlocksNames);
         if ($this->action == 'edit' ) {
             // Field blk_order
             $this->form->addElement('static', 'block[blk_order]', SGL_String::translate('Order'), $this->data['block[blk_order]']) ;

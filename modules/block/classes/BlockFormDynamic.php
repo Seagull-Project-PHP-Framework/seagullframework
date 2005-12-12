@@ -75,6 +75,7 @@ class BlockFormDynamic
 
     function init( $data = null )
     {
+        include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->data = $data;
 
         //  init data obj if coming from edit
@@ -87,7 +88,6 @@ class BlockFormDynamic
             $defaultValues['block[content]']      = null;
             $defaultValues['block[title_class]']  = '';
             $defaultValues['block[body_class]']   = '';
-            $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 1;
             $defaultValues['block[sections]']     = 0;
             $defaultValues['block[roles]']        = SGL_ANY_ROLE;
@@ -116,7 +116,7 @@ class BlockFormDynamic
         // Field bgnd_colour
         $this->form->addElement('text', 'block[body_class]', SGL_Output::translate('Body class')) ;
         // Field position
-        $this->form->addElement('select', 'block[is_onleft]', SGL_String::translate('Position'), array( '0' => SGL_String::translate('Right'), '1' => SGL_String::translate('Left')));
+        $this->form->addElement('select', 'block[position]', SGL_String::translate('Position'), $aBlocksNames);
 
         if( $this->action == 'edit' ) {
             // Field blk_order

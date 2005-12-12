@@ -148,7 +148,7 @@ class SGL_BlockLoader
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class,
-                b.body_class, b.is_onleft
+                b.body_class, b.position
             FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
@@ -212,14 +212,9 @@ class SGL_BlockLoader
      */
     function _sort()
     {
-        //  sort into left/right
         if (count($this->_aData) > 0) {
             foreach ($this->_aData as $oBlock) {
-                if ($oBlock->is_onleft) {
-                    $this->aBlocks['left'][] = $oBlock;
-                } else {
-                    $this->aBlocks['right'][] = $oBlock;
-                }
+                $this->aBlocks[$oBlock->position][] = $oBlock;
             }
         }
         unset($this->_aData);

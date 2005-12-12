@@ -58,6 +58,9 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
+        include SGL_DAT_DIR . '/ary.blocksNames.php';
+        $this->aBlocksNames = $aBlocksNames;
+
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
         $this->_aActionsMapping =  array(
@@ -80,9 +83,9 @@ class BlockMgr extends SGL_Manager
         $input->template    = $this->template;
 
         //  Retrieve form values
+        $input->position    = $req->get('position');
         $input->block_id    = $req->get('frmBlockId');
-        $input->leftItems   = $req->get('_leftItems');
-        $input->rightItems  = $req->get('_rightItems');
+        $input->items       = $req->get('_items');
         $input->block       = $req->get('block');
         $input->form        = '';
 
@@ -127,7 +130,7 @@ class BlockMgr extends SGL_Manager
 
                 // Find next available blk_order for targetted column
                 $this->dbh->autocommit();
-                $query = "SELECT MAX(blk_order) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
+                $query = "SELECT MAX(blk_order) FROM {$this->conf['table']['block']} WHERE position = '" . $oBlock->position . "'";
                 $next_order = (int)$this->dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 $block->insert(); // This takes into account block assignments as well
@@ -162,7 +165,7 @@ class BlockMgr extends SGL_Manager
 
                 // Find next available blk_order for targetted column
                 $this->dbh->autocommit();
-                $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE is_onleft = " . $oBlock->is_onleft;
+                $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE position = '" . $oBlock->position . "'";
                 $next_order = (int)$this->dbh->getOne($query) + 1;
                 $block->blk_order = $next_order;
                 // Insert record
@@ -311,8 +314,7 @@ class BlockMgr extends SGL_Manager
         $output->mode = 'Reorder blocks';
         $output->template = 'blockReorder.html';
         if ($this->submitted) {
-            $this->_reorderUpdate($input->leftItems);
-            $this->_reorderUpdate($input->rightItems);
+            $this->_reorderUpdate($input->items);
             //clear cache so a new cache file is built reflecting changes
             SGL::clearCache('blocks');
 
@@ -320,29 +322,18 @@ class BlockMgr extends SGL_Manager
             SGL::raiseMsg('Block details successfully updated');
             SGL_HTTP::redirect(array());
         } else {
-            $leftBlocks = & new Block();
-            $leftBlocks->whereAdd('is_onleft = 1');
-            $leftBlocks->orderBy('blk_order ASC');
-            $result = $leftBlocks->find();
+            $blocks = & new Block();
+            $blocks->whereAdd("position = '".$input->position."'");
+            $blocks->orderBy('blk_order ASC');
+            $result = $blocks->find();
             if ($result > 0) {
-                $aLeftBlocks = array();
-                while ($leftBlocks->fetch()) {
-                    $aLeftBlocks[ $leftBlocks->block_id ] = $leftBlocks->title;
+                $aBlocks = array();
+                while ($blocks->fetch()) {
+                    $aBlocks[$blocks->block_id] = $blocks->title;
                 }
             }
-            $output->aLeftBlocks = isset($aLeftBlocks) ? $aLeftBlocks : array();
-            $rightBlocks = & new Block();
-            $rightBlocks->whereAdd('is_onleft = 0');
-            $rightBlocks->orderBy('blk_order ASC');
-            $result = $rightBlocks->find();
-            $aRightBlocks = array();
-            if ($result > 0) {
-                $aRightBlocks = array();
-                while ($rightBlocks->fetch()) {
-                    $aRightBlocks[$rightBlocks->block_id] = $rightBlocks->title;
-                }
-            }
-            $output->aRightBlocks = $aRightBlocks;
+            $output->aBlocks = isset($aBlocks) ? $aBlocks : array();
+            $output->blocksName = $input->position;
         }
     }
 
@@ -376,7 +367,7 @@ class BlockMgr extends SGL_Manager
 
         $query = "  SELECT
                         b.block_id, b.name, b.title, b.title_class,
-                        b.body_class, b.blk_order, b.is_onleft, b.is_enabled,
+                        b.body_class, b.blk_order, b.position, b.is_enabled,
                         ba.section_id as sections, s.title as section_title
                     FROM {$this->conf['table']['block']} b
                     LEFT JOIN {$this->conf['table']['block_assignment']} ba
@@ -385,7 +376,7 @@ class BlockMgr extends SGL_Manager
                     ON s.section_id=ba.section_id
                     GROUP BY
                         b.block_id, b.name, b.title, b.title_class, b.body_class,
-                        b.blk_order, b.is_onleft, b.is_enabled, sections, section_title
+                        b.blk_order, b.position, b.is_enabled, sections, section_title
                     ORDER BY " .
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
@@ -409,6 +400,8 @@ class BlockMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->aBlocksNames = $this->aBlocksNames;
 
         //  format form output if any
         if ($output->form) {

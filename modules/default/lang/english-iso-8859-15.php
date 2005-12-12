@@ -200,7 +200,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Guests' => 'Guests',
         'Members' => 'Members',
         'Total' => 'Total',
-        'Enable left/right columns'=>'Enable left/right columns',
+        'Enable Blocks'=>'Enable Blocks',
         'Default article view type'=>'Default article view type',
         'Front controller script name'=>'Front controller script name',
         'Default module'=>'Default module',

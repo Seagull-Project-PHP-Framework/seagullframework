@@ -21,7 +21,7 @@ CREATE TABLE block
    title_class          VARCHAR(32)          null,
    body_class           VARCHAR(32)          null,
    blk_order            INTEGER                 null,
-   is_onleft            INTEGER                 null,
+   position             VARCHAR(16)             null,
    is_enabled           INTEGER                 null
 );
 
