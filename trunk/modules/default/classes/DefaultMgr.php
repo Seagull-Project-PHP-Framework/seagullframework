@@ -52,7 +52,7 @@ class DefaultMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'Home';
         $this->template     = 'home.html';
 
@@ -82,7 +82,7 @@ class DefaultMgr extends SGL_Manager
 
     function _list(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);    
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 }
 ?>
