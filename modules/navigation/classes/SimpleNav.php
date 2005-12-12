@@ -223,6 +223,11 @@ class SimpleNav
             if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
                 $req = & SGL_Request::singleton();
                 $req->set('articleTitle', $section->title);
+            } elseif (preg_match('/^uriAlias:(.*)/', $section->resource_uri, $aUri)) {
+	        $section->resource_uri = $aUri[1];
+            } elseif (preg_match('/^uriExternal:(.*)/', $section->resource_uri, $aUri)) {
+	        $section->resource_uri = $aUri[1];
+		$section->uriExternal = true;
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
@@ -392,6 +397,7 @@ class SimpleNav
                 //  place anchor at end
                 $url .= $namedAnchor;
             }
+            $url = (isset($section->uriExternal)) ? $section->resource_uri : $url;
             $anchor      = '<a' . ' href="' . $url . '">' . $section->title . '</a>';
             $listItems  .= "<li" . $liAtts . '>' . $anchor;
             if ($section->children) {
