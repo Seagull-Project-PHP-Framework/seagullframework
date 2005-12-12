@@ -15,7 +15,9 @@
  * File Authors:
  *      Grant French (grant@mcpuk.net)
  */
-include '../../../../../../../../constants.php';
+
+include '../../../../../../../../lib/SGL/AppController.php';
+SGL_AppController::init();
 session_start();
 
 /*------------------------------------------------------------------------------*/
