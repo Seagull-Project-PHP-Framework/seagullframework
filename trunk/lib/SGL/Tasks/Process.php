@@ -421,7 +421,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
         $getDefaultMgr = false;
-        
+
         if (empty($moduleName) || empty($managerName)) {
 
             SGL::logMessage('Module and manager names could not be determined from request');
@@ -477,7 +477,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
     function ensureModuleConfigLoaded($moduleName)
     {
-        if (!defined('SGL_MODULE_CONFIG_LOADED') 
+        if (!defined('SGL_MODULE_CONFIG_LOADED')
         		|| $this->conf['localConfig']['moduleName'] != $moduleName) {
             $modConfigPath = realpath(SGL_MOD_DIR . '/' . $moduleName . '/conf.ini');
 
@@ -511,7 +511,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $defaultMgr = $this->conf['site']['defaultManager'];
 
         //  load module's config if not present
-        $this->ensureModuleConfigLoaded($defaultModule);        
+        $this->ensureModuleConfigLoaded($defaultModule);
 
         $mgrName = SGL_Inflector::caseFix(SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
@@ -524,7 +524,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
             SGL::raiseError('invalid class name for default manager', SGL_ERROR_NOCLASS);
             return false;
         }
-        $mgr = new $mgrName();        
+        $mgr = new $mgrName();
         $input->moduleName = $defaultModule;
         $input->set('manager', $mgr);
         $req = $input->getRequest();
@@ -591,7 +591,7 @@ class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
         $req = $input->getRequest();
 		SGL_String::dispelMagicQuotes($req->aProps);
 		$input->setRequest($req);
-		
+
         $this->processRequest->process($input);
     }
 }
@@ -613,7 +613,7 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
         } else {
             $ua = '';
         }
-        
+
         if (!empty($ua) and !defined('SGL_USR_OS')) {
             if (strstr($ua, 'Win')) {
                 define('SGL_USR_OS', 'Win');
@@ -676,7 +676,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         }
         if (SGL::runningFromCLI()) {
         	$view = new SGL_CliView($output, new $rendererClass());
-        } else { 
+        } else {
         	$view = new SGL_HtmlView($output, new $rendererClass());
         }
         echo $view->render();
@@ -860,8 +860,10 @@ class SGL_Process_SetupBlocks extends SGL_ProcessRequest
             $input->data->sectionId = empty($input->data->sectionId) ? 0 : $input->data->sectionId;
             $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
             $aBlocks = $blockLoader->render($input->data);
-            $input->data->blocksLeft =  (isset($aBlocks['left'])) ? $aBlocks['left'] : '';
-            $input->data->blocksRight = (isset($aBlocks['right'])) ? $aBlocks['right'] : '';
+            foreach ($aBlocks as $key => $value) {
+                $blocksName = 'blocks'.$key;
+                $input->data->$blocksName = $value;
+            }
         }
     }
 }

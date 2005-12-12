@@ -1,29 +1,4 @@
 //  for block manager
-function orderRightModule(down)
-{
-    sl = document.frmBlockMgr.rightItem.selectedIndex;
-    if (sl != -1) {
-        oText = document.frmBlockMgr.rightItem.options[sl].text;
-        oValue = document.frmBlockMgr.rightItem.options[sl].value;
-        if (sl > 0 && down == 0) {
-            document.frmBlockMgr.rightItem.options[sl].text = document.frmBlockMgr.rightItem.options[sl-1].text;
-            document.frmBlockMgr.rightItem.options[sl].value = document.frmBlockMgr.rightItem.options[sl-1].value;
-            document.frmBlockMgr.rightItem.options[sl-1].text = oText;
-            document.frmBlockMgr.rightItem.options[sl-1].value = oValue;
-            document.frmBlockMgr.rightItem.selectedIndex--;
-        } else if (sl < document.frmBlockMgr.rightItem.length-1 && down == 1) {
-            document.frmBlockMgr.rightItem.options[sl].text = document.frmBlockMgr.rightItem.options[sl+1].text;
-            document.frmBlockMgr.rightItem.options[sl].value = document.frmBlockMgr.rightItem.options[sl+1].value;
-            document.frmBlockMgr.rightItem.options[sl+1].text = oText;
-            document.frmBlockMgr.rightItem.options[sl+1].value = oValue;
-            document.frmBlockMgr.rightItem.selectedIndex++;
-        }
-    } else {
-        alert("you must select an item to move");
-    }
-    return false;
-}
-
 
 var oldDate;
 oldDate = new Array();
@@ -88,24 +63,24 @@ function relocate_select(obj, value){
 
 }
 
-function orderLeftModule(down)
+function orderItems(down)
 {
-    sl = document.frmBlockMgr.leftItem.selectedIndex;
+    sl = document.frmBlockMgr.item.selectedIndex;
     if (sl != -1) {
-        oText = document.frmBlockMgr.leftItem.options[sl].text;
-        oValue = document.frmBlockMgr.leftItem.options[sl].value;
+        oText = document.frmBlockMgr.item.options[sl].text;
+        oValue = document.frmBlockMgr.item.options[sl].value;
         if (sl > 0 && down == 0) {
-            document.frmBlockMgr.leftItem.options[sl].text = document.frmBlockMgr.leftItem.options[sl-1].text;
-            document.frmBlockMgr.leftItem.options[sl].value = document.frmBlockMgr.leftItem.options[sl-1].value;
-            document.frmBlockMgr.leftItem.options[sl-1].text = oText;
-            document.frmBlockMgr.leftItem.options[sl-1].value = oValue;
-            document.frmBlockMgr.leftItem.selectedIndex--;
-        } else if (sl < document.frmBlockMgr.leftItem.length-1 && down == 1) {
-            document.frmBlockMgr.leftItem.options[sl].text = document.frmBlockMgr.leftItem.options[sl+1].text;
-            document.frmBlockMgr.leftItem.options[sl].value = document.frmBlockMgr.leftItem.options[sl+1].value;
-            document.frmBlockMgr.leftItem.options[sl+1].text = oText;
-            document.frmBlockMgr.leftItem.options[sl+1].value = oValue;
-            document.frmBlockMgr.leftItem.selectedIndex++;
+            document.frmBlockMgr.item.options[sl].text = document.frmBlockMgr.item.options[sl-1].text;
+            document.frmBlockMgr.item.options[sl].value = document.frmBlockMgr.item.options[sl-1].value;
+            document.frmBlockMgr.item.options[sl-1].text = oText;
+            document.frmBlockMgr.item.options[sl-1].value = oValue;
+            document.frmBlockMgr.item.selectedIndex--;
+        } else if (sl < document.frmBlockMgr.item.length-1 && down == 1) {
+            document.frmBlockMgr.item.options[sl].text = document.frmBlockMgr.item.options[sl+1].text;
+            document.frmBlockMgr.item.options[sl].value = document.frmBlockMgr.item.options[sl+1].value;
+            document.frmBlockMgr.item.options[sl+1].text = oText;
+            document.frmBlockMgr.item.options[sl+1].value = oValue;
+            document.frmBlockMgr.item.selectedIndex++;
         }
     } else {
         alert("you must select an item to move");
@@ -116,19 +91,13 @@ function orderLeftModule(down)
 
 function doSubBlock()
 {
-    leftVal = "";
-    for (i=0;i<document.frmBlockMgr.leftItem.length;i++) {
-        if (i!=0) { leftVal += ","; }
-        leftVal += document.frmBlockMgr.leftItem.options[i].value;
+    blocksVal = "";
+    for (i=0;i<document.frmBlockMgr.item.length;i++) {
+        if (i!=0) { blocksVal += ","; }
+        blocksVal += document.frmBlockMgr.item.options[i].value;
     }
-    document.frmBlockMgr["_leftItems"].value = leftVal;
+    document.frmBlockMgr["_items"].value = blocksVal;
 
-    rightVal = "";
-    for (i=0;i<document.frmBlockMgr.rightItem.length;i++) {
-        if (i!=0) { rightVal += ","; }
-        rightVal += document.frmBlockMgr.rightItem.options[i].value;
-    }
-    document.frmBlockMgr["_rightItems"].value = rightVal;
     return true;
 }
 

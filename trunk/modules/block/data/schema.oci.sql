@@ -13,7 +13,7 @@ create table block
 	title_class          VARCHAR(32)          		null,
 	body_class           VARCHAR(32)          		null,
 	blk_order            NUMBER(5)                 	null,
-	is_onleft            NUMBER(5)                 	null,
+	position             VARCHAR(16)                 	null,
 	is_enabled           NUMBER(5)                 	null,
 	content				 CLOB,
 	constraint PK_BLOCK primary key (block_id)

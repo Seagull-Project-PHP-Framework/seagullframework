@@ -7,6 +7,8 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+12-12-05    Block management enhanced - you can now create any number of arbitrarily
+            positioned blocks and assign content to them (Andrey Podshivalov)
 12-12-05    Uri aliases integrated into navigation module, external Uris handled
             (Andrey Podshivalov)
 06-12-05	Basic CLI request implemented (Eric Persson)

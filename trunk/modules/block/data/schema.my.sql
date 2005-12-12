@@ -9,7 +9,7 @@ create table if not exists block
    title_class                    varchar(32),
    body_class                     varchar(32),
    blk_order                      smallint,
-   is_onleft                      smallint,
+   position                       varchar(16),
    is_enabled                     smallint,
    content longtext,
    primary key (block_id)

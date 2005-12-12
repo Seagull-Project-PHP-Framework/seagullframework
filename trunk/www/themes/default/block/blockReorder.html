@@ -1,8 +1,7 @@
 <div align="center">
     <form name="frmBlockMgr" method="post" flexy:ignore id="frmBlockMgr">
         <input type="hidden" name="action" value="{action}" /> 
-        <input type="hidden" name="_leftItems" /> 
-        <input type="hidden" name="_rightItems" />
+        <input type="hidden" name="_items" /> 
         <h1 class="pageTitle">{translate(pageTitle)} {if:mode}:: {translate(mode)}{end:}</h1>
         <span flexy:if="msgGet()">{msgGet()}</span>
 
@@ -13,37 +12,18 @@
 
             <tr>
                 <td align="center">
-                    <strong>{translate(#Left column#)}</strong>
+                    <strong>{translate(#Reorder blocks#)}: {blocksName}</strong>
 
-                    <table class="wide">
+                    <table>
                         <tr>
-                            <td align="right">
-                                <select name="leftItem" size="15">
-                                    {generateSelect(aLeftBlocks):h}
+                            <td>
+                                <select name="item" size="15">
+                                    {generateSelect(aBlocks):h}
                                 </select>
                             </td>
                             <td>
-                                <p><a href="#here" onclick="return orderLeftModule(0)">{translate(#move up#)}</a></p>
-                                <p><a href="#here" onclick="return orderLeftModule(1)">{translate(#move down#)}</a></p>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td align="center">
-                    <strong>{translate(#Right column#)}</strong>
-
-                    <table class="wide">
-                        <tr>
-                            <td align="right">
-                                <select name="rightItem" size="15">
-                                    {generateSelect(aRightBlocks):h}
-                                </select>
-                            </td>
-
-                            <td>
-                                <p><a href="#here" onclick="return orderRightModule(0)">{translate(#move up#)}</a></p>
-                                <p><a href="#here" onclick="return orderRightModule(1)">{translate(#move down#)}</a></p>
+                                <p><a href="#here" onclick="return orderItems(0)">{translate(#move up#)}</a></p>
+                                <p><a href="#here" onclick="return orderItems(1)">{translate(#move down#)}</a></p>
                             </td>
                         </tr>
                     </table>
