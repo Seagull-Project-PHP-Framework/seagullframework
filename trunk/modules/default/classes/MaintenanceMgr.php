@@ -48,6 +48,7 @@ require_once 'Config.php';
  * @version $Revision: 1.56 $
  * @since   PHP 4.1
  */
+
 class MaintenanceMgr extends SGL_Manager
 {
     function MaintenanceMgr()
@@ -199,7 +200,6 @@ class MaintenanceMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         //  get hash of all modules
         require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
         $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_NAME_VALUE);
@@ -495,6 +495,7 @@ class MaintenanceMgr extends SGL_Manager
     function _clearCache(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $msg = '';
         if (array_key_exists('templates', $input->cache)) {
             require_once 'System.php';
@@ -532,6 +533,7 @@ class MaintenanceMgr extends SGL_Manager
 
         $modName = strtolower($input->createModule->moduleName);
         $mgrName = $input->createModule->managerName;
+        $aActions = '';
 
         //  strip final 'mgr' if necessary
         if (substr(strtolower($mgrName), -3) == 'mgr') {
@@ -554,13 +556,22 @@ class MaintenanceMgr extends SGL_Manager
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
 
-        $aPossibleMethods = array('add', 'insert', 'edit', 'update', 'list', 'delete');
-        foreach ($aPossibleMethods as $method) {
+        //  array: methodName => array (aActionsmapping string, templateName)
+        $aPossibleMethods = array(
+            'add'   => array("'add'       => array('add'),",'Add.html'),
+            'insert'=> array("'insert'    => array('insert', 'redirectToDefault'),"),
+            'edit'  => array("'edit'      => array('edit'), ",'Add.html'),
+            'update'=> array("'update'    => array('update', 'redirectToDefault'),"),
+            'list'  => array("'list'      => array('list'),",'List.html'),
+            'delete'=> array("'delete'    => array('delete', 'redirectToDefault'),"),
+        );
+        foreach ($aPossibleMethods as $method=>$mapping) {
             //  if checked add to aMethods array
             if (isset($input->createModule->$method)) {
                 $aMethods[] = $method;
+                $aActions[] = $mapping[0];
+                isset($mapping[1]) ? $aTemplates[] = $mapping[1] : '';
             }
-            //  FIXME: same for aActionsMapping...
         }
         $methods = '';
         if (isset($aMethods) && count($aMethods)) {
@@ -579,6 +590,7 @@ EOF;
         }
 
         $output->methods = $methods;
+        $output->aActionMapping = $aActions;
 
         //  initialise template engine
         require_once 'HTML/Template/Flexy.php';
@@ -601,9 +613,10 @@ EOF;
         $mgrTemplate = "<?php\n" . $data . "\n?>";
 
         //  setup directories
-        $aDirectories['module'] = SGL_MOD_DIR . '/' . $output->moduleName;
-        $aDirectories['classes'] = $aDirectories['module'] . '/classes';
-        $aDirectories['lang'] = $aDirectories['module'] . '/lang';
+        $aDirectories['module']     = SGL_MOD_DIR . '/' . $output->moduleName;
+        $aDirectories['classes']    = $aDirectories['module'] . '/classes';
+        $aDirectories['lang']       = $aDirectories['module'] . '/lang';
+        $aDirectories['templates']  = $aDirectories['module'] . '/templates';
 
         if (is_writable(SGL_MOD_DIR)) {
             require_once 'System.php';
@@ -637,11 +650,37 @@ EOF;
             @chmod($confIniName, 0666);
         }
 
+        //  create language files
+        if (isset($input->createModule->createLangFiles)){
+            $fileTemplate = "<?php\n\$words=array();\n?>";
+            foreach($GLOBALS['_SGL']['LANGUAGE'] as $language){
+                $fileName = $aDirectories['module'] . '/lang/'.$language[1].'.php';
+                $success = file_put_contents($fileName, $fileTemplate);
+                @chmod($fileName, 0666);
+            }
+        }
+
+        //  create templates
+        if (isset($input->createModule->createTemplates)){
+            foreach($aTemplates as $template){
+                $fileName = $aDirectories['templates'].'/'.$mgrLongName.$template;
+                $fileTemplate = 'Demo Template: '.$mgrLongName.$template;
+                $success = file_put_contents($fileName, $fileTemplate);
+                @chmod($fileName, 0666);
+            }
+        }
+
+        $shortTags = ini_get('short_open_tag');
+        $append = empty($shortTags)
+            ? ' However, you currently need to set "short_open_tag" to On for the templates to generate correctly.'
+            : '';
+
+
         if (!$success) {
             SGL::raiseError('There was a problem creating the files',
                 SGL_ERROR_FILEUNWRITABLE);
         } else {
-            SGL::raiseMsg('Module files successfully created');
+            SGL::raiseMsg('Module files successfully created' . $append, false);
         }
     }
 

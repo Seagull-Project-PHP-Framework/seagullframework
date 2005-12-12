@@ -367,6 +367,7 @@ $defaultWords['Create a module'] = 'Create a module';
 $defaultWords['Manager Name'] = 'Manager Name';
 $defaultWords['Create Templates'] = 'Create Templates';
 $defaultWords['Create ini file'] = 'Create ini file';
+$defaultWords['Create language files'] = 'Create language files';
 $defaultWords['Create Module Now'] = 'Create Module Now';
 $defaultWords['Module files successfully created'] = 'Module files successfully created';
 $defaultWords['The source translation has'] = 'The source translation has';

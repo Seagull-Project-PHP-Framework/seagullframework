@@ -52,13 +52,8 @@ class {t.managerName}Mgr extends SGL_Manager
         $this->pageTitle    = '{t.managerName} Manager';
         $this->template     = '{t.templatePrefix}List.html';
 
-        $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+        $this->_aActionsMapping =  array({foreach:t.aActionMapping,action}
+            {action:h}{end:}
         );
     }
 
