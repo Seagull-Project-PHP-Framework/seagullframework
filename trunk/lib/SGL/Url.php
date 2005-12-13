@@ -261,7 +261,7 @@ class SGL_URL
                                 $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);
                             }
                         } else {
-                            $this->path = dirname($_SERVER['SCRIPT_NAME']);
+                            $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR ? '' : dirname($_SERVER['SCRIPT_NAME']);
                             $this->querystring = str_replace($this->path, '', $urlinfo['path']);
                         }
                         if (!array_key_exists('query', $urlinfo)) {
@@ -385,27 +385,27 @@ class SGL_URL
 //            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
 //        } else {
 	        foreach ($this->aStrategies as $strategy) {
-	
+
 	            //  all strategies will attempt to parse url, overwriting
 	            //  previous results as they do
 	            $this->aRes[] = $strategy->parseQueryString($this, $conf);
 	        }
-	        $ret = call_user_func_array('array_merge', $this->aRes);        	
-        	
+	        $ret = call_user_func_array('array_merge', $this->aRes);
+
 //            $data = serialize($ret);
 //            $cache->save($data, $cacheId, 'urls');
 //            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
-//        }	    
+//        }
         return $ret;
     }
-    
+
     function getStrategiesFingerprint($aStrats)
     {
         $aStratNames = array();
         foreach ($aStrats as $strategy) {
-        	$aStratNames[] = get_class($strategy);	
+        	$aStratNames[] = get_class($strategy);
         }
-		$fingerprint = implode('', $aStratNames);    	
+		$fingerprint = implode('', $aStratNames);
 		return $fingerprint;
     }
 
@@ -699,12 +699,16 @@ class SGL_URL
                 }
             }
         } else {
-            $pathFromServer = dirname($_SERVER['SCRIPT_NAME']); //=> /seagull/branches/0.4-bugfix/www
-            foreach ($aUriParts as $elem) {
-                if (stristr($pathFromServer, $elem)) {
-                    array_shift($aUriParts);
-                } else {
-                    break;
+            $pathFromServer = (dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR)
+                ? ''
+                : dirname($_SERVER['SCRIPT_NAME']); //=> /seagull/trunk/www
+            if (!empty($pathFromServer)) {
+                foreach ($aUriParts as $elem) {
+                    if (stristr($pathFromServer, $elem)) {
+                        array_shift($aUriParts);
+                    } else {
+                        break;
+                    }
                 }
             }
         }
