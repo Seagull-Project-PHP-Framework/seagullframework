@@ -125,7 +125,7 @@ class ModuleMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->aAdminUris = SGL_Util::getAllModuleDirs();
+        $output->aAdminUris = SGL_Util::getAllModuleDirs($onlyRegistered = false);
     }
 
     function _overview(&$input, &$output)
