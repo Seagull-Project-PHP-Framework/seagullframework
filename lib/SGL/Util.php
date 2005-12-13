@@ -92,12 +92,12 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         switch ($callingPage) {
-            
+
         case SGL_SORTBY_GRP:
             $sortByType = 'Grp';
             $sessSortBy = SGL_HTTP_Session::get('sortByGrp');
             break;
-            
+
         case SGL_SORTBY_USER:
             $sortByType = 'User';
             $sessSortBy = SGL_HTTP_Session::get('sortByUser');
@@ -148,7 +148,7 @@ class SGL_Util
                 //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
                 if ($curStyle) {
                     $aFiles[$filename]['currentStyle'] = ($filename == $curStyle) ? true : false;
-                    $aFiles[$filename]['fileMtime'] =  strftime('%Y-%b-%d %H:%M:%S', 
+                    $aFiles[$filename]['fileMtime'] =  strftime('%Y-%b-%d %H:%M:%S',
                         filemtime(SGL_THEME_DIR . '/' . $theme . '/css/' . $file));
 
                 //  otherwise a simple hash will do for ConfigMgr
@@ -158,7 +158,7 @@ class SGL_Util
             }
             closedir($fh);
         } else {
-            SGL::raiseError('There was a problem reading the navigation style dir', 
+            SGL::raiseError('There was a problem reading the navigation style dir',
                 SGL_ERROR_INVALIDFILEPERMS);
         }
         return $aFiles;
@@ -170,26 +170,26 @@ class SGL_Util
 
         require_once 'File/Util.php';
         //  match all folders except CVS
-        $ret = SGL_Util::listDir(SGL_THEME_DIR, FILE_LIST_DIRS, $sort = FILE_SORT_NONE, 
+        $ret = SGL_Util::listDir(SGL_THEME_DIR, FILE_LIST_DIRS, $sort = FILE_SORT_NONE,
                 create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
         return $ret;
     }
 
 
-    function getAllModuleDirs()
+    function getAllModuleDirs($onlyRegistered = true)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
 
         //  match all folders except CVS
-        $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME, 
+        $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
                 create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
         //  until i get rid of this folder
         unset($ret['wizardExample']);
         foreach ($ret as $module) {
-            if (!ModuleMgr::moduleIsRegistered($module)) {
+            if ($onlyRegistered && !ModuleMgr::moduleIsRegistered($module)) {
                 unset($ret[$module]);
             }
         }
@@ -204,7 +204,7 @@ class SGL_Util
 
         //  match files with php extension
         $classDir = $moduleDir . '/classes';
-        $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME, 
+        $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
                 create_function('$a', 'return preg_match("/.*Mgr\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
@@ -218,7 +218,7 @@ class SGL_Util
         $managerFileName = basename($mgr);
         $moduleDir = dirname(dirname($mgr));
         $files = SGL_Util::getAllFilesPerModule($moduleDir);
-        
+
         //  remap 'ContactUsMgr.php => ContactUsMgr' hash to array
         foreach ($files as $k => $file) {
             $fileNames[] = $k;
@@ -227,19 +227,19 @@ class SGL_Util
         $fileNamesLowerCase = array_map('strtolower', $fileNames);
         $isFound = array_search(strtolower($managerFileName), $fileNamesLowerCase);
         $managerFileName = ($isFound !== false) ? $fileNames[$isFound] : false;
-        
+
         if (!($managerFileName)) {
             return false;
         }
-        
+
         $filePath = $moduleDir . '/classes/' . $managerFileName;
-        
+
         if (file_exists($filePath)) {
             require_once $filePath;
             $aElems = explode('/', $filePath);
             $last = array_pop($aElems);
             $className = substr($last, 0, -4);
-            
+
             $obj = new $className(); // extract classname
             $vars = get_object_vars($obj);
             $actions = array_keys($vars['_aActionsMapping']);
@@ -261,7 +261,7 @@ class SGL_Util
         $navDir = SGL_MOD_DIR . '/navigation/classes';
 
         //  match files with *Nav.php format
-        $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE, 
+        $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE,
                 create_function('$a', 'return preg_match("/.*Nav\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
@@ -271,21 +271,21 @@ class SGL_Util
         $aDrivers = array();
         foreach ($ret as $k => $v) {
             $aDrivers[$v] = $v;
-        }       
+        }
         return $aDrivers;
     }
 
     /**
      * Wrapper for the File_Util::listDir method.
-     * 
+     *
      * Instead of returning an array of objects, it returns an array of
      * strings (filenames).
-     * 
+     *
      * The final argument, $cb, is a callback that either evaluates to true or
-     * false and performs a filter operation, or it can also modify the 
-     * directory/file names returned.  To achieve the latter effect use as 
+     * false and performs a filter operation, or it can also modify the
+     * directory/file names returned.  To achieve the latter effect use as
      * follows:
-     * 
+     *
      * <code>
      * function uc(&$filename) {
      *     $filename = strtoupper($filename);
@@ -296,7 +296,7 @@ class SGL_Util
      *     echo $e->name, "\n";
      * }
      * </code>
-     * 
+     *
      * @static
      * @access  public
      * @return  array
@@ -314,7 +314,7 @@ class SGL_Util
         }
         return $aRet;
     }
-    
+
     /**
      * Ini file protection.
      *
