@@ -170,7 +170,7 @@ class BlockMgr extends SGL_Manager
                 $block->blk_order = $next_order;
                 // Insert record
                 $block->insert(); // This takes into account block assignments as well
-                $dbh->commit();
+                $this->dbh->commit();
 
                 //  clear cache so a new cache file is built reflecting changes
                 SGL::clearCache('blocks');
