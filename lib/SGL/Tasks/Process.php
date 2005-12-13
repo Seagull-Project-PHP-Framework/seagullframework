@@ -531,9 +531,9 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $req->set('moduleName', $defaultModule);
         $req->set('managerName', $defaultMgr);
 
-        if (!empty($conf['site']['defaultParams'])) {
+        if (!empty($this->conf['site']['defaultParams'])) {
             $aParams = SGL_UrlParserSefStrategy::resolveArrayElems(
-                explode('/', $conf['site']['defaultParams']));
+                explode('/', $this->conf['site']['defaultParams']));
             $req->add($aParams);
         }
         $input->setRequest($req); // this should take care of itself
