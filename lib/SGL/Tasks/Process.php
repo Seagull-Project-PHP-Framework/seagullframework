@@ -173,7 +173,8 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
 
         if ($this->conf['site']['extendedLocale'] == false) {
 
-            if (setlocale(LC_ALL, $locale) == false) {
+            $cat = constant(str_replace("'", "", $this->conf['site']['localeCategory']));
+            if (setlocale($cat, $locale) == false) {
                 setlocale(LC_TIME, $locale);
             }
             @putenv('TZ=' . $timezone);
