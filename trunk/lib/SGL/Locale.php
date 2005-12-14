@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 
 require_once 'I18Nv2.php';
-require_once 'I18Nv2/Negotiator.php';
 
 /**
  * Wraps PEAR locale package.
@@ -50,11 +49,11 @@ require_once 'I18Nv2/Negotiator.php';
 class SGL_Locale
 {
     /**
-     * Negotiates the locale from HTTP if necessary.  Get's it from _SESSION and database otherwise.
+     * Negotiates the locale from HTTP if necessary.  Gets it from _SESSION and database otherwise.
      *
      *   usage:
      *
-     *   $locale =& SGL_Locale::singleton($locale = '');
+     *   $locale =& SGL_Locale::singleton();
      *   // setting locale here would override defaults.
      *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
@@ -75,7 +74,8 @@ class SGL_Locale
                 //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
 
-                if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
+                $uid = SGL_HTTP_Session::getUid();
+                if ($uid && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
                     $c = &SGL_Config::singleton();
                     $conf = $c->getAll();
@@ -84,10 +84,11 @@ class SGL_Locale
                     $country = strtoupper($country);
 
                     if (!$country) {
+                        require_once 'I18Nv2/Negotiator.php';
                         $neg = &new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
-                    $locale = empty($country) ? $langCode : $langCode . "_" . $country;
+                    $localeId = empty($country) ? $langCode : $langCode . "_" . $country;
 
                 } else {
                     $neg = &new I18Nv2_Negotiator();

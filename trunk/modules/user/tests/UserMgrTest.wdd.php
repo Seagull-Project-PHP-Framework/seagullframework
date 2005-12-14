@@ -19,8 +19,6 @@ class TestUserMgr extends UnitTestCase {
 
     function setup()
     {
-        session_start();
-        $_SESSION['uid'] = 1;
         $locator = &SGL_ServiceLocator::singleton();
         $this->dbh = $locator->get('DB');
         if (!$this->dbh) {
@@ -28,11 +26,6 @@ class TestUserMgr extends UnitTestCase {
             $locator->register('DB', $this->dbh);
         }
         SGL_DB::setConnection($this->dbh);
-    }
-
-    function teardown()
-    {
-        session_destroy();
     }
 
     function testInsertingAUserIncrementsTotalCount()

@@ -16,12 +16,6 @@ class TestLoginMgr extends UnitTestCase {
         $this->UnitTestCase('LoginMgr Test');
     }
 
-    function setup()
-    {
-        session_start();
-        $_SESSION['uid'] = 1;
-    }
-
     function testLogin()
     {
         //  create random username/password, add test user, test login

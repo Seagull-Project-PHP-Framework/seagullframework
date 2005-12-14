@@ -169,13 +169,26 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
 
         $locale = $_SESSION['aPrefs']['locale'];
         $timezone = $_SESSION['aPrefs']['timezone'];
-        if (setlocale(LC_ALL, $locale) === false) {
-            setlocale(LC_TIME, $locale);
-        }
-        if (@SGL_USR_OS != 'Win') {
+        $language = substr($locale, 0,2);
+
+        if ($this->conf['site']['extendedLocale'] === false) {
+
+            if (setlocale(LC_ALL, $locale) == false) {
+                setlocale(LC_TIME, $locale);
+            }
             @putenv('TZ=' . $timezone);
+
+            if (strtoupper(substr(PHP_OS, 0,3)) === 'WIN') {
+                @putenv('LANG='     . $language);
+                @putenv('LANGUAGE=' . $language);
+            } else {
+                @putenv('LANG='     . $locale);
+                @putenv('LANGUAGE=' . $locale);
+            }
+
         } else {
-            @putenv('TZ=');
+            require_once dirname(__FILE__) . '/../Locale.php';
+            $setlocale = SGL_Locale::singleton($locale);
         }
 
         $this->processRequest->process($input);
@@ -343,8 +356,8 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
             $_SESSION['aPrefs']['language'] = $lang;
         } else {
             //  get it from session
-            $currLang = $_SESSION['aPrefs']['language'];
-            $globalLangFile = $aLanguages[$currLang][1] . '.php';
+            $currLang = @$_SESSION['aPrefs']['language'];
+            $globalLangFile = @$aLanguages[$currLang][1] . '.php';
 
             //  if file exists, load global lang file
             if (is_readable(SGL_MOD_DIR . '/default/lang/' . $globalLangFile)) {
@@ -354,12 +367,14 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
             }
         }
         //  resolve current language from GET or session, assign to $language
-        $language = (isset($lang)) ? @$aLanguages[$lang][1] : $aLanguages[$currLang][1];
+        $language = (isset($lang)) ? @$aLanguages[$lang][1] : @$aLanguages[$currLang][1];
         if (empty($language)) {
             $language = 'english-iso-8859-15';
+            $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
         }
 
-        $path = SGL_MOD_DIR . '/' . $req->get('moduleName') . '/lang/';
+        $module = is_null($req->get('moduleName')) ? 'default' : $req->get('moduleName');
+        $path = SGL_MOD_DIR . '/' . $module . '/lang/';
 
         //  attempt to merge global language file with module's lang file
         if (is_readable($path . $language . '.php')) {
@@ -614,23 +629,23 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
             $ua = '';
         }
 
-        if (!empty($ua) and !defined('SGL_USR_OS')) {
+        if (!empty($ua) and !defined('SGL_CLIENT_OS')) {
             if (strstr($ua, 'Win')) {
-                define('SGL_USR_OS', 'Win');
+                define('SGL_CLIENT_OS', 'Win');
             } elseif (strstr($ua, 'Mac')) {
-                define('SGL_USR_OS', 'Mac');
+                define('SGL_CLIENT_OS', 'Mac');
             } elseif (strstr($ua, 'Linux')) {
-                define('SGL_USR_OS', 'Linux');
+                define('SGL_CLIENT_OS', 'Linux');
             } elseif (strstr($ua, 'Unix')) {
-                define('SGL_USR_OS', 'Unix');
+                define('SGL_CLIENT_OS', 'Unix');
             } elseif (strstr($ua, 'OS/2')) {
-                define('SGL_USR_OS', 'OS/2');
+                define('SGL_CLIENT_OS', 'OS/2');
             } else {
-                define('SGL_USR_OS', 'Other');
+                define('SGL_CLIENT_OS', 'Other');
             }
         } else {
-			if (!defined('SGL_USR_OS')) {
-            	define('SGL_USR_OS', 'None');
+			if (!defined('SGL_CLIENT_OS')) {
+            	define('SGL_CLIENT_OS', 'None');
 			}
         }
         $this->processRequest->process($input);

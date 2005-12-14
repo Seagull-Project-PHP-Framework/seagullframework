@@ -114,11 +114,11 @@ class SGL_String
         $crlf = "\n";
 
         // Win case
-        if (SGL_USR_OS == 'Win') {
+        if (SGL_CLIENT_OS == 'Win') {
             $crlf = "\r\n";
         }
         // Mac case
-        else if (SGL_USR_OS == 'Mac') {
+        else if (SGL_CLIENT_OS == 'Mac') {
             $crlf = "\r";
         }
         // Others

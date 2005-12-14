@@ -396,7 +396,7 @@ class SGL_Output
      */
     function isWin()
     {
-        return SGL_USR_OS == 'Win';
+        return SGL_CLIENT_OS == 'Win';
     }
 }
 ?>
