@@ -32,8 +32,10 @@ class TestRunnerInit extends SGL_AppController
                     new SGL_Process_DiscoverClientOs(
                     new SGL_Process_SetupTestDb(
                     new SGL_Process_SetupTestDbResource(
+                    new SGL_Process_MinimalSession(
+                    new SGL_Process_SetupLangSupport(
                     new SGL_Void()
-                   ))));
+                   ))))));
 
         $process->process($input);
     }
@@ -75,6 +77,18 @@ class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
         $locator->remove('DB');
         $dbh =& STR_DB::singleton();
         $locator->register('DB', $dbh);
+
+        $this->processRequest->process($input);
+    }
+}
+
+class SGL_Process_MinimalSession extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        session_start();
+        $_SESSION['uid'] = 1;
+        $_SESSION['aPrefs'] = array();
 
         $this->processRequest->process($input);
     }

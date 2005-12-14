@@ -97,7 +97,7 @@ class SGL
         if ($conf['log']['enabled'] == false) {
             return;
         }
-        
+
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
@@ -116,15 +116,15 @@ class SGL
                 $logName = $conf['log']['name'];
             } else {
                 $logName = SGL_PATH . '/' . $conf['log']['name'];
-            }        
+            }
         } else {
             $logName = $conf['log']['name'];
         }
-        
+
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton( $conf['log']['type'], 
+        $logger = & Log::singleton( $conf['log']['type'],
                                     $logName,
-                                    $conf['log']['ident'], 
+                                    $conf['log']['ident'],
                                     array(  $conf['log']['paramsUsername'],
                                             $conf['log']['paramsPassword'],
                                             'dsn' => $dsn
@@ -141,7 +141,7 @@ class SGL
             }
         }
         // Obtain backtrace information, if supported by PHP
-        if (version_compare(phpversion(), '4.3.0') >= 0) {      
+        if (version_compare(phpversion(), '4.3.0') >= 0) {
             $bt = debug_backtrace();
             if (isset($bt[1]['class']) && $bt[1]['type'] && isset($bt[1]['function'])) {
                 $callInfo = $bt[1]['class'] . $bt[1]['type'] . $bt[1]['function'] . ': ';
@@ -191,7 +191,7 @@ class SGL
     /**
      * Returns a singleton Cache_Lite instance.
      *
-     * example usage: 
+     * example usage:
      * $cache = & SGL::cacheSingleton();
      * warning: in order to work correctly, the cache
      * singleton must be instantiated statically and
@@ -204,14 +204,14 @@ class SGL
     function &cacheSingleton($cacheEnabled = false)
     {
         static $instance;
-        
+
         // If the instance doesn't exist, create one
         if (!isset($instance)) {
             require_once 'Cache/Lite.php';
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             $options = array(
-                'cacheDir'  => SGL_TMP_DIR . '/', 
+                'cacheDir'  => SGL_TMP_DIR . '/',
                 'lifeTime'  => $conf['cache']['lifetime'],
                 'caching'   => $conf['cache']['enabled']);
             $instance = new Cache_Lite($options);
@@ -317,7 +317,7 @@ EOF;
 
     function raiseMsg($msg, $getTranslation = true)
     {
-        //  must not log message here        
+        //  must not log message here
         if (is_string($msg) && !empty($msg)) {
 
             $message = SGL_String::translate($msg);
@@ -360,12 +360,12 @@ EOF;
             return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
         }
     }
-    
+
     function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
-    
+
     /**
      * Returns true on success, false if resource was not found.
      *
@@ -373,7 +373,7 @@ EOF;
      */
     function import($resource)
     {
-        
+
     }
 }
 

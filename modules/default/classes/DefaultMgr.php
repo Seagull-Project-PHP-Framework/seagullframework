@@ -83,6 +83,7 @@ class DefaultMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
     }
 }
 ?>

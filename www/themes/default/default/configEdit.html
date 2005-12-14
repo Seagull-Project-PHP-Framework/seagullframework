@@ -249,7 +249,7 @@
             </span>
         </td>
     </tr>
-    
+
     <tr>
         <td class="fieldName">{translate(#Default params#)}</td>
         <td class="fieldValue">
@@ -261,8 +261,8 @@
                 <span class="tipText">{translate(#Use these params to specify, eg, a static article for your homepage#)}</span>
             </span>
         </td>
-    </tr>   
-    
+    </tr>
+
     <tr>
         <td class="fieldName">{translate(#Editor type#)}</td>
         <td class="fieldValue">
@@ -274,7 +274,20 @@
                 <span class="tipText">{translate(#Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir#)}</span>
             </span>
         </td>
-    </tr>      
+    </tr>
+
+    <tr>
+        <td class="fieldName">{translate(#Extended locale support#)}</td>
+        <td class="fieldValue">
+            {generateRadioPair(#conf[site][extendedLocale]#,conf[site][extendedLocale]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="" />
+                <span class="tipText">{translate(#locale support info#)}</span>
+            </span>
+        </td>
+    </tr>
 
     <tr>
         <td colspan="3" align="center">&nbsp;</td>
