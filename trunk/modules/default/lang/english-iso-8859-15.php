@@ -261,7 +261,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'This way no content items are really deleting from DB, just marked as deleted'=>'This way no content items are really deleting from DB, just marked as deleted',
         'Requires the tidy extension to be installed'=>'Requires the tidy extension to be installed',
         'Use the database session handler if youre running a load-balanced environment'=>'Use the database session handler if you\'re running a load-balanced environment',
-        'You can turn the left/right columns off globally'=>'You can turn the left/right columns off globally',
+        'You can turn the blocks off globally'=>'You can turn the blocks off globally',
         'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)'=>'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)',
         'The name of your Seagull index file'=>'The name of your Seagull index file',
         'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir',
