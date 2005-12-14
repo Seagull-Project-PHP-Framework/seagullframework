@@ -382,4 +382,5 @@ $defaultWords['please enter module name'] = 'please enter module name';
 $defaultWords['please enter manager name'] = 'please enter manager name';
 $defaultWords['Extended locale support'] = 'Extended locale support';
 $defaultWords['locale support info'] = 'Enabling this feature gives you access to the extensive I18Nv2 API but at the expense of performance';
+$defaultWords['Locale category'] = 'Locale category';
 ?>
