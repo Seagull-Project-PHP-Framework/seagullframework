@@ -60,7 +60,7 @@ class ProfileMgr extends SGL_Manager
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'view'   => array('view'), 
+            'view'   => array('view'),
         );
     }
 
@@ -81,19 +81,14 @@ class ProfileMgr extends SGL_Manager
         require_once 'DB/DataObject.php';
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $user = DB_DataObject::factory('Usr');
-        
+
         if (is_null($input->userId)) {
             return SGL::raiseError('user id cannot be null', SGL_ERROR_INVALIDARGS);
         }
         $user->get($input->userId);
         $output->profile = $user;
 
-        //  include countries array
-        $lang = $_SESSION['aPrefs']['language'];
-        if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-            $lang = 'en';
-        }
-        require_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
+        $countries = SGL::loadRegionList('countries');
         $output->profile->country = $countries[$user->country];
 
         //  get last login
@@ -114,8 +109,8 @@ class ProfileMgr extends SGL_Manager
         //  if current user is viewing his/her own profile,
         //  disable 'add to contacts' & 'send message'
         $output->allowContact = ($input->userId == SGL_HTTP_Session::getUid()
-                              || SGL_HTTP_Session::getUserType() == SGL_GUEST) 
-            ? false 
+                              || SGL_HTTP_Session::getUserType() == SGL_GUEST)
+            ? false
             : true;
     }
 }

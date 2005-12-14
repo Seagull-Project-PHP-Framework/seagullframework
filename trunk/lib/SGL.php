@@ -375,6 +375,36 @@ EOF;
     {
 
     }
+
+     /**
+      * Test if there is a country or state file corresponding
+      * to the current language preference/setting.
+      * If not, tries with the default file (English).
+      * In either case, load it into the GLOBALS and return the array.
+      *
+      * @param string $fileType 'states' or 'countries'
+      * @return array reference
+      *
+      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+      */
+     function loadRegionList($fileType)
+     {
+         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+         if ($fileType != 'countries' && $fileType != 'states') {
+             SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
+             return;
+         }
+         $lang = SGL::getCurrentLang();
+         $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+         if (!file_exists($file)) {
+             $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+         }
+         require_once $file;
+
+         $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+         return $a;
+     }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {

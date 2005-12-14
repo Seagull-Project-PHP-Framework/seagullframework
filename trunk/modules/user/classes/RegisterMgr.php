@@ -172,18 +172,8 @@ class RegisterMgr extends SGL_Manager
         $aDisallowedMethods = array('list', 'reset', 'passwdEdit', 'passwdUpdate',
             'requestPasswordReset', 'editPrefs');
         if (!in_array($output->action, $aDisallowedMethods)) {
-            $lang = SGL::getCurrentLang();
-
-            //  default to english as the data array, countries, etc, only exists in english
-            if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-                $lang = 'en';
-            }
-            include_once SGL_DAT_DIR . '/ary.states.' . $lang . '.php';
-            include_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
-            $output->states = $states;
-            $output->countries = $countries;
-            $GLOBALS['_SGL']['COUNTRIES'] = &$countries;
-            $GLOBALS['_SGL']['STATES'] = &$states;
+            $output->states = SGL::loadRegionList('states');
+            $output->countries = SGL::loadRegionList('countries');
             $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
         }
     }
