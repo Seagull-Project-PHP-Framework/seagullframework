@@ -171,7 +171,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
         $timezone = $_SESSION['aPrefs']['timezone'];
         $language = substr($locale, 0,2);
 
-        if ($this->conf['site']['extendedLocale'] === false) {
+        if ($this->conf['site']['extendedLocale'] == false) {
 
             if (setlocale(LC_ALL, $locale) == false) {
                 setlocale(LC_TIME, $locale);
