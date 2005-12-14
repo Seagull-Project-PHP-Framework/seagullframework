@@ -7,6 +7,8 @@ BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
 
 IMPROVEMENTS
+14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
+            (Philippe Lhoste)
 14-12-05    'localeCategory' configurable, set to LC_ALL by default although European
             users will want to change this where supplying a , for the decimal separator
             causes calculation probs (use LC_TIME)

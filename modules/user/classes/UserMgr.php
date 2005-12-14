@@ -140,16 +140,8 @@ class UserMgr extends RegisterMgr
             'resetPassword', 'editPerms', 'updatePerms', 'insertImportedUsers');
 
         if (!in_array($output->action, $aDisallowedMethods)) {
-            $lang = SGL::getCurrentLang();
-            if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-                $lang = 'en';
-            }
-            include_once SGL_DAT_DIR . '/ary.states.' . $lang . '.php';
-            include_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
-
-            $output->states = $states;
-            $output->countries = $countries;
-            $GLOBALS['_SGL']['COUNTRIES'] = &$countries;
+            $output->states = SGL::loadRegionList('states');
+            $output->countries = SGL::loadRegionList('countries');
             $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
         }
         if (!in_array($output->action, array(
@@ -174,7 +166,7 @@ class UserMgr extends RegisterMgr
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         parent::_add($input, $output);
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
@@ -312,8 +304,8 @@ class UserMgr extends RegisterMgr
         if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    {$this->conf['table']['user']} u, 
-                		{$this->conf['table']['organisation']} o, 
+                FROM    {$this->conf['table']['user']} u,
+                		{$this->conf['table']['organisation']} o,
                 		{$this->conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
                 AND     r.role_id = u.role_id " .
@@ -397,10 +389,10 @@ class UserMgr extends RegisterMgr
                 $this->dbh->query($query);
             }
         	//  redirect on success
-        	SGL::raiseMsg('Deleted successfully');            
-        	
+        	SGL::raiseMsg('Deleted successfully');
+
         } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, 
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
             	SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -408,7 +400,7 @@ class UserMgr extends RegisterMgr
     function _requestChangeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->pageTitle = $this->pageTitle . ' :: Change status';
         $output->template = 'userStatusChange.html';
         $oUser = $this->da->getUserById($input->userID);
@@ -438,7 +430,7 @@ class UserMgr extends RegisterMgr
     function _sendStatusNotification($oUser, $isEnabled)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         require_once SGL_CORE_DIR . '/Emailer.php';
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
@@ -461,7 +453,7 @@ class UserMgr extends RegisterMgr
     function _requestPasswordReset(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->pageTitle = $this->pageTitle . ' :: Reset password';
         $output->template = 'userPasswordReset.html';
         $oUser = $this->da->getUserById($input->userID);
@@ -471,7 +463,7 @@ class UserMgr extends RegisterMgr
     function _resetPassword(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
@@ -495,7 +487,7 @@ class UserMgr extends RegisterMgr
     function _editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
         $output->pageTitle = $this->pageTitle . ' :: Edit permissions';
         $output->template = 'userPermsEdit.html';
