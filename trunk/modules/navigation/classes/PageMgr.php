@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | PageMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -260,7 +260,7 @@ class PageMgr extends SGL_Manager
             $output->uriExternalSelected = 'selected';
             break;
         }
-	
+
         //  build role widget
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
@@ -299,22 +299,22 @@ class PageMgr extends SGL_Manager
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
             break;
-	    
+
         case 'wiki':
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'uriAlias':
             $string = 'uriAlias:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'uriExternal':
             $string = 'uriExternal:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'dynamic':
 
             //  strip extension and 'Mgr'
@@ -450,22 +450,22 @@ class PageMgr extends SGL_Manager
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
             break;
-	    
+
         case 'wiki':
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'uriAlias':
             $string = 'uriAlias:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'uriExternal':
             $string = 'uriExternal:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-	    
+
         case 'dynamic':
 
             //  strip extension and 'Mgr'

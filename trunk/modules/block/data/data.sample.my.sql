@@ -2,7 +2,6 @@
 # Dumping data for table `block`
 #
 INSERT INTO block VALUES (1, 'SiteNews', 'Site News', '', '', 2, 'Left', 1, NULL);
-INSERT INTO block VALUES (2, 'DirectoryNav', 'Navigation', '', 'navWidget', 1, 'Left', 1, NULL);
 INSERT INTO block VALUES (3, 'SampleBlock1', 'SourceForge Site', '', '', 3, 'Left', 1, NULL);
 INSERT INTO block VALUES (4, 'SampleBlock2', 'Syndication', '', '', 4, 'Left', 1, NULL);
 INSERT INTO block VALUES (5, 'CategoryNav', 'Categories', '', 'navWidget', 1, 'Left', 1, NULL);
