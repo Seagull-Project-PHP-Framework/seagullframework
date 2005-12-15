@@ -462,7 +462,7 @@ class MaintenanceMgr extends SGL_Manager
         $localVersion = SGL_Install::getFrameworkVersion();
 
         require_once SGL_CORE_DIR . '/XML/RPC/Remote.php';
-        $config = SGL_CORE_DIR . '/tests/xmlrpc_conf.ini';
+        $config = SGL_MOD_DIR . '/default/xmlrpc_conf.ini';
         $remote = new SGL_XML_RPC_Remote($config);
         $remoteVersion = $remote->call('framework.determineLatestVersion');
 
