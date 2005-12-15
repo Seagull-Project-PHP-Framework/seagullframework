@@ -57,21 +57,21 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-                
+
         $this->aggregateOutput = true;
         $this->pageTitle        = 'Category Manager';
         $this->template         = 'categoryMgr.html';
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'insert'    => array('insert', 'redirectToDefault'), 
+            'insert'    => array('insert', 'redirectToDefault'),
             'update'    => array('update', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'), 
+            'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
-            'reorder'   => array('reorder'), 
-            'reorderUpdate'   => array('reorderUpdate', 'reorder'),            
+            'reorder'   => array('reorder'),
+            'reorderUpdate'   => array('reorderUpdate', 'reorder'),
         );
-        
+
         $this->_category = & new SGL_Category();
     }
 
@@ -94,15 +94,15 @@ class CategoryMgr extends SGL_Manager
         $input->targetId        = $req->get('targetId');
         $input->aDelete         = $req->get('frmDelete');
         $input->fromPublisher   = $req->get('frmFromPublisher');
-        
+
         if ($input->action == 'update') {
             $input->category_id         = $input->category['category_id'];
             $input->label               = $input->category['label'];
             $input->parent_id           = $input->category['parent_id'];
             $input->perms               = $input->category['perms'];
-            $input->orginial_parent_id  = $input->category['original_parent_id']; 
+            $input->orginial_parent_id  = $input->category['original_parent_id'];
         } elseif ($input->action =='insert') {
-            $input->category['parent_id'] = $req->get('frmCatID'); 
+            $input->category['parent_id'] = $req->get('frmCatID');
         } else {
             $input->category_id = $req->get('frmCatID');
         }
@@ -118,7 +118,7 @@ class CategoryMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-		
+
         $values = (array) $input->category;
         $this->_redirectCatId = $this->_category->create($values);
     }
@@ -126,7 +126,7 @@ class CategoryMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  load category
         if (!$this->_category->load($input->category_id)) {
             $output->noEditForm = 1;
@@ -138,7 +138,7 @@ class CategoryMgr extends SGL_Manager
 
         //  categories select box
         $options = array('exclude' => $output->category['category_id']);
-        $menu = & new MenuBuilder('SelectBox', $options);       
+        $menu = & new MenuBuilder('SelectBox', $options);
         $aCategories = $menu->toHtml();
         $output->aCategories = $aCategories;
     }
@@ -146,7 +146,7 @@ class CategoryMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $values = (array) $input->category;
         $message = $this->_category->update($input->category_id, $values);
 
@@ -156,7 +156,7 @@ class CategoryMgr extends SGL_Manager
         } else {
             SGL::raiseError('Problem updating category', SGL_ERROR_NOAFFECTEDROWS);
         }
-       
+
     }
 
     function _delete(&$input, &$output)
@@ -168,14 +168,14 @@ class CategoryMgr extends SGL_Manager
             SGL::raiseMsg('do not delete root category');
 
             $aParams = array(
-                'moduleName'    => 'navigation', 
+                'moduleName'    => 'navigation',
                 'managerName'   => 'category',
                 'action'   => 'list',
                 );
             SGL_HTTP::redirect($aParams);
 
         }
-        
+
         //  delete categories
         $this->_category->delete($input->aDelete);
         $output->category_id = 0;
@@ -187,17 +187,17 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'categoryReorder.html';
-        $output->categoryTree = $this->_category->getTree();              
+        $output->categoryTree = $this->_category->getTree();
     }
-    
+
     function _reorderUpdate(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aMoveTo = array('BE' => 'up',
                          'AF' => 'down');
         if (isset($input->category_id, $input->targetId) && ($pos = array_search($input->move, $aMoveTo))) {
             $this->_category->move($input->category_id, $input->targetId, $pos);
-            SGL::raiseMsg('Categories reordered successfully');        
+            SGL::raiseMsg('Categories reordered successfully');
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
