@@ -243,7 +243,7 @@ class SGL_DB
         list($page['from'], $page['to']) = $pager->getOffsetByPageId();
 
         $res = ($disabled)
-            ? $db->limitQuery($query, 0, $totalItems, $dbparams)
+            ? $db->limitQuery($query, 0, $page['totalItems'], $dbparams)
             : $db->limitQuery($query, $page['from']-1, $pager_options['perPage'], $dbparams);
 
         if (PEAR::isError($res)) {
