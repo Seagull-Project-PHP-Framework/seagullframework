@@ -1,0 +1,128 @@
+/*make container div tall enough to hold the menu*/
+#nav {
+    height:2.7em;
+    padding:0;
+    border:0;
+    margin:0;
+}
+
+table,div {
+    clear:left;
+}/*don't like this solution but it might be the only one*/
+
+ul.navLvl1 {
+    position:absolute;
+    list-style:none; 
+    margin:0; 
+    float:left; 
+    width:100%; 
+    padding:0; 
+    background:#eeeeee; 
+    border-top:1px outset #fff; 
+    border-bottom:1px outset #fff;
+}
+
+ul.navLvl1 a{
+    display:block; 
+    text-decoration:none; 
+    padding:5px 7px; 
+    color:#000;
+}
+
+ul.navLvl1 a:hover{
+    background-color:#316AC5; 
+    color:white;
+}
+
+ul.navLvl1 li{
+    position:relative; 
+    float:left;
+    /*IE ":hover"
+    NOTE: unlike background url, behavior url is relative to current url, not to .css
+    */
+    behavior:url(themes/default/css/listItemHover.htc);
+}
+
+ul.navLvl1 li a {
+
+    display:block;
+    position:relative;
+    bottom:-1px;
+
+                /*shift down by the width of the containing LI's bottom border*/
+    z-index:100;/*so these and their borders sit above the top border of the secondary UL, which
+    we need in order to have a border extending full width of screen*/
+    
+    /*have to set a width here for IE to get around incomplete clickable region bug*/
+
+
+    background:#eeeeee;
+    border-top:1px outset #fff; 
+    border-bottom:1px outset #fff;
+/* 
+    padding:0.5em 1.5em;
+
+    margin:0px;
+   
+    background:#9DCDFE;
+    font-family:tahoma,arial,helvetica;
+    font-size:1.1em;
+    font-weight:bold;
+    color:white;
+    text-align:center;
+    text-transform:uppercase;
+    text-decoration:none;
+    white-space:nowrap;
+
+*/
+}
+
+
+/*non-IE :hover*/
+ul.navLvl1 li:hover{
+    background-color:#316AC5;
+}/*entire path highlighted; non-IE only*/
+
+ul.navLvl1 li:hover > ul{
+    display:block;
+}
+
+ul.navLvl1 > li:hover > ul{
+    left:auto;
+}
+
+ul.navLvl1 li li{
+    float:none;
+}
+
+* html ul.navLvl1 li li{
+    display:inline;
+}
+
+ul.navLvl1 li li a{
+    padding:4px;
+}
+
+* html ul.navLvl1 li li a{
+    width:100%;
+}
+
+ul.navLvl1 ul {
+    list-style:none; 
+    margin:0; 
+    display:none; 
+    position:absolute; 
+    width:13.5em; 
+    background:#ffffff; 
+    padding:2px; 
+    border:1px outset #c0c0c0;
+}
+
+ul.navLvl1 ul ul{
+    top:0; 
+    left:97%;
+}
+
+ul.navLvl1 ul a.hasKids{
+    background:url(../images/menu_arrow_black.gif) center right no-repeat;
+}
