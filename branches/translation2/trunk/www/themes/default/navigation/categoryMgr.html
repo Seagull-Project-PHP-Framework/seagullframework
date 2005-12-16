@@ -1,0 +1,94 @@
+<flexy:include src="publisherSubNav.html" />
+
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<p><span flexy:if="msgGet()">{msgGet()}</span></p>
+
+{if:noEditForm}
+<table class="wide">
+    <tr>
+        <td><p><strong>{translate(#Welcome to Category Manager#)},</strong></p>
+            <p>
+                <input type="button"  name="category" value="{translate(#Reorder Categories#)}" 
+                    onclick="document.location.href = '{makeUrl(#reorder#,#category#,#navigation#)}'" />
+                <input type="button"  name="category" value="{translate(#Add Root Category#)}" 
+                    onclick="document.location.href = '{makeUrl(#insert#,#category#,#navigation#,##,#frmCatID|0#)}'" />
+            </p>
+            <p>{translate(#Please choose a category from the left to edit#)}.<br /></p>
+        </td>
+    </tr>
+    <tr>
+        <td height="1">&nbsp;</td>
+    </tr>
+</table>
+{else:}
+<table class="wide">
+    <form name="frmCategoryMgr" action="" method="post" flexy:ignore id="frmCategoryMgr">
+    <input type="hidden" name="action" value="update" />
+    <input type="hidden" name="category[category_id]" value="{category[category_id]}" />
+    <input type="hidden" name="category[order_id]" value="{category[order_id]}" />
+    <input type="hidden" name="category[original_parent_id]" value="{category[parent_id]}" />
+        <tr>
+            <td colspan="2">
+            <strong>{translate(#You are here#)}:</strong><br />{breadCrumbs:h}<br /><br />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="button"  name="category" value="{translate(#Add Category#)}" 
+                    onclick="document.location.href = '{makeUrl(#insert#,#category#,#navigation#,##,#frmCatID|category[category_id]#)}'" />
+                <input type="button"  name="category" value="{translate(#Add Root Category#)}" 
+                    onclick="document.location.href = '{makeUrl(#insert#,#category#,#navigation#,##,#frmCatID|0#)}'" />
+                <input type="button"  name="category" value="{translate(#Reorder Categories#)}" 
+                    onclick="document.location.href = '{makeUrl(#reorder#,#category#,#navigation#)}'" />
+            </td>
+        </tr>
+        <tr>
+            <th width="30%">{translate(#Category ID#)}</th>
+            <td width="70%">{category[category_id]}</td>
+        </tr>
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Current Category Name#)}</th>
+            <td width="70%">
+                <div class="error" flexy:if="error[name]">{error[label]}</div>
+                <input type="text" name="category[label]" size="40" value="{category[label]}" />
+            </td>
+        </tr>
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Target Parent Category#)}</th>
+            <td width="70%"><select name="category[parent_id]" size="1">
+                                <option value="0">Top level (No parent)</option>
+                                {generateSelect(aCategories,category[parent_id]):h}
+                            </select>
+            </td>
+        </tr>
+        <tr>
+            <th>{translate(#Has Permissions#)} ?</th>
+            <th>{translate(#Role Name#)}</th>
+        </tr>
+        {this.plugin(#generatePermsRadioList#,perms,#category_id#):h}
+        <tr>
+            <td colspan="2">
+                <strong>{translate(#Note#)}:</strong> {translate(#Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.#)}
+            </td>
+        </tr>
+        <tr>
+            <td width="100%" colspan="2" align="center" nowrap="nowrap">
+                <input name="submitted" type="submit" class="wideButton" value="{translate(#Save#)}" />
+            </td>
+        </tr>
+    </form>
+</table>
+<table class="wide">
+    <tr>
+        <td width="100%" align="center" nowrap="nowrap"> 
+            <form name="aDelete" action="" method="post" flexy:ignore id="aDelete">
+                <input type="hidden" name="action" value="delete" />
+                <input type="hidden" name="frmDelete[{category[category_id]}]" value="{category[category_id]}" />
+                    <input type="submit" name="Delete" class="wideButton" value="{translate(#Delete#)}"
+                        onclick="return confirmCategoryDelete('category')" />
+            </form>
+        </td>
+    </tr>
+</table>
+{end:}
