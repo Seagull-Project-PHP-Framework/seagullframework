@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akkbhome.com>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Flexy.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+// $Id: Flexy.php,v 1.15 2004/06/24 06:12:06 alan_k Exp $
 //
 //  Handler code for the <flexy: namespace
 //
@@ -31,7 +31,7 @@
 *
 *
 *
-* @version    $Id: Flexy.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+* @version    $Id: Flexy.php,v 1.15 2004/06/24 06:12:06 alan_k Exp $
 */
 
 class HTML_Template_Flexy_Compiler_Standard_Flexy  {

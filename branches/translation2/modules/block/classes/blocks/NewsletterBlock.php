@@ -12,10 +12,6 @@ require_once SGL_MOD_DIR . '/newsletter/classes/Output.php';
 
 class NewsletterBlock
 {
-    function NewsletterBlock()
-    {
-    }
-
     function init($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -59,7 +55,9 @@ class NewsletterBlock
                 $unsubscribedNewsLists = '';
                 foreach ($unsubscribedLists as $k => $v) {
                     $this->listID = $k;                     
-                    $unsubscribedNewsLists .= '<strong>'. $v['name'] .'</strong> - '. $v['description'] . ' (<a href="'. SGL_Url::makeLink('subscribe', 'newsletter', 'newsletter') .'frmListName[]/'. $this->listID .'/frmUserID/'. $this->userID . '">subscribe</a>)<br />';
+                    $unsubscribedNewsLists .= '<strong>'. $v['name'] .'</strong> - '. $v['description'] 
+                        . ' (<a href="'. SGL_Url::makeLink('subscribe', 'newsletter', 'newsletter') 
+                        .'frmListName[]/'. $this->listID .'/frmUserID/'. $this->userID . '">subscribe</a>)<br />';
                 }
                 
                 $text .= '
@@ -69,10 +67,6 @@ class NewsletterBlock
                         <tr>
                             <td>'. $unsubscribedNewsLists .'</td>
                         </tr>';
-                        
-                        
-                           
-                
             }
             $text .= '
                     </table>

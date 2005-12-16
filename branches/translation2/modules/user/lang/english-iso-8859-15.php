@@ -15,6 +15,7 @@ $words['User Manager :: Edit permissions'] = 'User Manager :: Edit permissions';
 $words['User Manager :: Add'] = 'User Manager :: Add';
 $words['User Manager :: Reset password'] = 'User Manager :: Reset password';
 $words['User Manager :: Search'] = 'User Manager :: Search';
+$words['User Manager :: Change status'] = 'User Manager :: Change status';
 $words['My Profile :: Edit'] = 'My Profile :: Edit';
 $words['Change Password'] = 'Change Password';
 $words['User ID'] = 'User ID';
@@ -154,8 +155,12 @@ $words['Thanks for registering with'] = 'Thanks for registering with';
 $words['Dear'] = 'Dear';
 $words['You are being sent this email because you just registered, your logon details are as follows'] = 'You are being sent this email because you just registered, your logon details are as follows';
 $words['Your registration is being reviewed'] = 'Your registration is being reviewed, you will be notified shortly';
-$words['Your logon is'] = 'Your logon is';
+$words['Your username is'] = 'Your username is';
 $words['Your password is'] = 'Your password is';
+$words['New Registration at'] = 'New Registration at';
+$words['The following user has just registered'] = 'The following user has just registered';
+$words['to enable the new user\'s account'] = 'to enable the new user\'s account';
+$words['username'] = 'username';
 $words['Click'] = 'Click';
 $words['here'] = 'here';
 $words['to logon to the'] = 'to logon to the';
@@ -209,7 +214,7 @@ $words['none given'] = 'none given';
 $words['Real Name'] = 'Real Name';
 $words['Lives in'] = 'Lives in';
 $words['Member Since'] = 'Member Since';
-$words['first login in progress'] = 'first login in progress';
+$words['first login in progress'] = 'first session in progress';
 $words['Posting Stats for User'] = 'Posting Stats for User';
 $words['Total Articles'] = 'Total Articles';
 $words['Total Comments'] = 'Total Comments';
@@ -233,7 +238,7 @@ $words['sync perms with role'] = 'sync perms with role';
 $words['add missing perms'] = 'add missing perms';
 $words['remove extra perms'] = 'remove extra perms';
 $words['complete sync'] = 'complete sync';
-$words['(each user\\\'s current)'] = '(each user\'s current role)';
+$words['(each users current)'] = '(each users current role)';
 $words['Register Date'] = 'Register Date';
 $words['Search'] = 'Search';
 $words['Search Criteria'] = 'Search Criteria';
@@ -318,4 +323,23 @@ $words['Parent Org']='Parent Org';
 $words['Detected Perms']='Detected Perms';
 $words['Detected Orphaned Perms']='Detected Orphaned Perms';
 $words['Permission Manager :: Detect Orphaned']='Permission Manager :: Detect Orphaned';
+
+/* Login Data */
+$words['User Manager :: Login Data']='User Manager :: Login Data';
+$words['Login Time']='Login Time';
+$words['Remote IP']='Remote IP';
+$words['Deleted successfully']='Deleted successfully';
+$words['Are you sure?']='Are you sure?';
+$words['Logins']='Logins';
+
+/* status notifications */
+$words['You are being sent this email because your new account status is now']='You are being sent this email because your new account status is now';
+$words['active']='active';
+$words['disabled']='disabled';
+$words['Changing status for']='Changing status for';
+$words['Current status is']='Current status is';
+$words['Disable Now']='Disable Now';
+$words['Enable Now']='Enable Now';
+$words['Status changed successfully']='Status changed successfully';
+
 ?>

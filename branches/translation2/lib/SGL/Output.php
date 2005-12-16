@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -39,12 +39,12 @@
 // $Id: Output.php,v 1.22 2005/06/04 23:56:33 demian Exp $
 
 /**
- * High level HTML transform methods.
+ * High level HTML transform methods, 'Template Helpers' in Yahoo speak, 50% html,
+ * 50% php.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  * @todo    look at PEAR::Date to improve various date methods used here
  */
 class SGL_Output
@@ -65,6 +65,11 @@ class SGL_Output
     function translate($key, $filter = false)
     {
         return SGL_String::translate($key, $filter);
+    }
+
+    function get($key)
+    {
+        return $this->aProps[$key];
     }
 
     /**
@@ -232,16 +237,28 @@ class SGL_Output
     }
 
     /**
+     * Creates a checkbox for infinite Articles (no expiry)
+     *
+     * @access public
+     * @param  array $aDate if NULL checkbox is checked
+     * @param  string $sFormName Name of Date Selector to reset if checkbox is clicked
+     * @return string with checkbox. Name of checkbox will be $sFormName.NoExpire, e.g. ExpiryDateNoExpire
+     */
+    function getNoExpiryCheckbox($aDate,$sFormName)
+    {
+        $checked = ($aDate == null) ? 'checked' : '';
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.'> '.SGL_Output::translate('No expire');
+    }
+
+    /**
      * Generates alternate classes for rows in tables, used to switch
      * row colors.
-     *
-     * usage:
-     * <tr class="{switchRowClass()}" flexy:foreach="...">
      *
      * @access  public
      * @return  string  $curRowClass string representing class found in stylesheet
     */
-    function switchRowClass($id = 'default')
+
+    function switchRowClass($isBold, $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -252,12 +269,16 @@ class SGL_Output
             $_id = $id;
         }
 
-        //  choose the next color
-        if ($curRowClass == 'sgl-row-dark') {
-            $curRowClass = 'sgl-row-light';
+        if ($curRowClass == 'backLight' && $isBold ) {
+            $curRowClass = 'backDark bold';
+        } elseif ($curRowClass == 'backLight') {
+            $curRowClass = 'backDark';
+        } elseif ($isBold) {
+            $curRowClass = 'backLight bold';
         } else {
-            $curRowClass = 'sgl-row-dark';
+            $curRowClass = 'backLight';
         }
+
         return $curRowClass;
     }
 
@@ -347,14 +368,35 @@ class SGL_Output
 
     function outputBody()
     {
-        $body = new HTML_Template_Flexy();
-        $body->compile($this->template);
-        $body->outputObject($this);
+	    $conf = $this->aProps['manager']->conf;
+
+	    if ($conf['site']['templateEngine'] == 'flexy') {
+	        $body = new HTML_Template_Flexy();
+	        if (empty($this->template)) {
+	            $this->template = 'docBlank.html';
+	        }
+	        $body->compile($this->template);
+	        $body->outputObject($this);
+
+	    } elseif ($conf['site']['templateEngine'] == 'smarty') {
+
+	    	//  grab current moduleName to build path to smarty template
+	        $reg = &SGL_Registry::singleton();
+	        $moduleName = $reg->moduleName;
+	        $templateName = $moduleName . '/' . $this->template;
+	        $smarty = & SGL_Smarty::singleton();
+    	    $ok = $smarty->display($templateName);
+	    }
     }
 
+    /**
+     * Returns true if client OS is windows.
+     *
+     * @return boolean
+     */
     function isWin()
     {
-        return SGL_USR_OS == 'Win';
+        return SGL_CLIENT_OS == 'Win';
     }
 }
 ?>

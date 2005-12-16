@@ -39,7 +39,7 @@
 // $Id: Block.php,v 1.11 2005/05/29 00:29:08 demian Exp $
 
 require_once SGL_ENT_DIR . '/Block.php';
-require_once SGL_ENT_DIR . '/Block_assignment.php';
+require_once 'DB/DataObject.php';
 
 /**
  * This class extends the regular DataObjects_Block class
@@ -65,7 +65,7 @@ class Block extends DataObjects_Block
     {
         $this->sections = array();
 
-        $blockAssignment = & new DataObjects_Block_assignment();
+        $blockAssignment = DB_DataObject::factory('Block_assignment');
         $blockAssignment->block_id = $this->block_id;
         $result = $blockAssignment->find();
 
@@ -167,7 +167,7 @@ class Block extends DataObjects_Block
         // DataObject assumes that, if you use mysql, you are going
         // to use auto_increment which is not our case, so we have
         // to manually find the next available block id
-        $dbh = & SGL_DB::singleton();
+        $dbh = $this->getDatabaseConnection();
         $block_id = $dbh->nextId('block');
         $this->block_id = $block_id;
         parent::insert();
@@ -179,7 +179,7 @@ class Block extends DataObjects_Block
         $this->block_id = $block_id; 
 
         // Insert a block_assignment record for each assigned sections
-        $block_assignment = & new DataObjects_Block_Assignment();
+        $block_assignment = DB_DataObject::factory('Block_Assignment');
         $block_assignment->block_id = $this->block_id;
         foreach ($this->sections as $section) {
             $block_assignment->section_id = $section->section_id;
@@ -206,7 +206,7 @@ class Block extends DataObjects_Block
         if (parent::delete($useWhere)) {
 
             // Delete all block assignment records for this block
-            $block_assignment = & new DataObjects_Block_Assignment();
+            $block_assignment = DB_DataObject::factory('Block_Assignment');
             $block_assignment->block_id = $this->block_id;
             $block_assignment->delete();
             return true;
@@ -230,13 +230,13 @@ class Block extends DataObjects_Block
 
         if ($assigments) {
             // Delete all block assignment records for this block
-            $block_assignment = & new DataObjects_Block_Assignment();
+            $block_assignment = DB_DataObject::factory('Block_Assignment');
             $block_assignment->block_id = $this->block_id;
             $block_assignment->delete();
             unset($block_assignment);
             foreach ($this->sections as $section) {
                 // Insert a block_assignment record for each assigned sections
-                $block_assignment = & new DataObjects_Block_Assignment();
+                $block_assignment = DB_DataObject::factory('Block_Assignment');
                 $block_assignment->block_id = $this->block_id;                                    
                 $block_assignment->section_id = $section->section_id;
                 $block_assignment->insert();

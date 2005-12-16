@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome>                               |
 // +----------------------------------------------------------------------+
 //
-// $Id: Foreach.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+// $Id: Foreach.php,v 1.3 2004/04/03 03:44:58 alan_k Exp $
 //
  
 /**

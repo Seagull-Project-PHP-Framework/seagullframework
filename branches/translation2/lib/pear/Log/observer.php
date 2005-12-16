@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/observer.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/observer.php,v 1.14 2005/10/26 05:46:56 jon Exp $
  * $Horde: horde/lib/Log/observer.php,v 1.5 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @package Log
  */
 
@@ -65,7 +65,7 @@ class Log_observer
      *                              configuration values.
      *
      * @return object               The newly created concrete Log_observer
-     *                              instance, or an false on an error.
+     *                              instance, or null on an error.
      */
     function &factory($type, $priority = PEAR_LOG_INFO, $conf = array())
     {
@@ -99,13 +99,14 @@ class Log_observer
         if (class_exists($class)) {
             /* Support both new-style and old-style construction. */
             if ($newstyle) {
-                return new $class($priority, $conf);
+                $object =& new $class($priority, $conf);
             } else {
-                return new $class($priority);
+                $object =& new $class($priority);
             }
+            return $object;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -122,5 +123,3 @@ class Log_observer
         print_r($event);
     }
 }
-
-?>

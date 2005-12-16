@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | PreferenceMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -39,15 +39,14 @@
 // $Id: PreferenceMgr.php,v 1.39 2005/05/17 23:54:53 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages user permissions.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.39 $
- * @since   PHP 4.1
  */
 class PreferenceMgr extends SGL_Manager
 {
@@ -55,18 +54,18 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        $this->module       = 'user';
+
         $this->template     = 'prefManager.html';
         $this->pageTitle    = 'Preference Manager';
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->aThemes = SGL_Util::getAllThemes();
@@ -131,7 +130,7 @@ class PreferenceMgr extends SGL_Manager
             $this->validated = false;
         }
     }
-    
+
     function display(&$output)
     {
         //  load available languages
@@ -142,45 +141,43 @@ class PreferenceMgr extends SGL_Manager
             $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
         }
         $output->aLangs = $aLangOptions;
-        
+
         //  FIXME: unix-only, create fallback for windows
         $locales = explode("\n", @shell_exec('locale -a'));
 
         //  remap to hash
         foreach ($locales as $locale) {
             $aLocales[$locale] = $locale;
-        }        
+        }
         $output->aLocales = $aLocales;
         require_once SGL_DAT_DIR . '/ary.timezones.en.php';
-        $output->aTimezones = $tz;        
+        $output->aTimezones = $tz;
     }
 
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
         $output->template = 'prefAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->pref = & new DataObjects_Preference();
+        $output->pref = DB_DataObject::factory('Preference');
     }
 
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        $oPref = & new DataObjects_Preference();
+
+        SGL_DB::setConnection($this->dbh);
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->setFrom($input->pref);
-        $dbh = & $oPref->getDatabaseConnection();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $oPref->preference_id = $dbh->nextId($conf['table']['preference']);
+
+        $oPref->preference_id = $this->dbh->nextId($this->conf['table']['preference']);
         $success = $oPref->insert();
         if ($success) {
             //  synchronise with user_preference table
             $ret = $this->da->syncDefaultPrefs();
             SGL::raiseMsg('pref successfully added');
         } else {
-           SGL::raiseError('There was a problem inserting the record', 
+           SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -188,10 +185,9 @@ class PreferenceMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
         $output->template = 'prefEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPref = & new DataObjects_Preference();
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->get($input->prefId);
         $output->pref = $oPref;
     }
@@ -199,12 +195,11 @@ class PreferenceMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        $oPref = & new DataObjects_Preference();
+        $oPref = DB_DataObject::factory('Preference');
         $oPref->get($input->pref->preference_id);
         $oPref->setFrom($input->pref);
         unset($oPref->name);
-        
+
         //  don't check for success because pref.name must remain the same
         $changed = $oPref->update();
 
@@ -218,11 +213,9 @@ class PreferenceMgr extends SGL_Manager
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Preference.php';
-        require_once SGL_ENT_DIR . '/User_preference.php';
         $aToDelete = array();
         foreach ($input->aDelete as $index => $prefId) {
-            $oPref = & new DataObjects_Preference();
+            $oPref = DB_DataObject::factory('Preference');
             $oPref->get($prefId);
             $oPref->delete();
             $aToDelete[] = $prefId;
@@ -230,7 +223,7 @@ class PreferenceMgr extends SGL_Manager
         }
         //  delete related user_prefs
         foreach ($aToDelete as $deleteId) {
-            $oUserPref = & new DataObjects_User_preference();
+            $oUserPref = DB_DataObject::factory('User_preference');
             $oUserPref->get('preference_id', $deleteId);
             $oUserPref->delete();
             unset($oUserPref);
@@ -243,10 +236,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $query = "SELECT preference_id, name, default_value FROM {$conf['table']['preference']}";
+        $query = "SELECT preference_id, name, default_value FROM {$this->conf['table']['preference']}";
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'      => 'Sliding',
@@ -255,7 +245,7 @@ class PreferenceMgr extends SGL_Manager
             'totalItems'=> $input->totalItems,
         );
 
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;

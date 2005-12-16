@@ -8,14 +8,14 @@
                 {if:valueObj.is_configurable}
                 <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
                 {end:}
-                <table id="moduleOverview">
+                <table class="moduleOverview">
                     <tr>
                         <td colspan="2" class="title">{valueObj.title}</td>
                     </tr>
                     <tr>
                         <td align="center" valign="top">                           
                             {if:valueObj.is_configurable}<a href="{makeUrl(##,valueObj.manager,valueObj.module)}">{end:}                                                       
-                            <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" class="{valueObj.bgnd}" />
+                            <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" />
                             {if:valueObj.is_configurable}</a>{end:}
                         </td>
                         <td valign="top">

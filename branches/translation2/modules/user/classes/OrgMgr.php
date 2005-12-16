@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -50,7 +50,6 @@ require_once 'Validate.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.43 $
- * @since   PHP 4.1
  */
 class OrgMgr extends SGL_Manager
 {
@@ -65,18 +64,19 @@ class OrgMgr extends SGL_Manager
     function OrgMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->_params = array(
@@ -161,8 +161,7 @@ class OrgMgr extends SGL_Manager
             $input->template = ($input->action == 'update') ? 'orgEdit.html' : 'orgAdd.html';
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
             }
             $this->validated = false;
@@ -176,23 +175,14 @@ class OrgMgr extends SGL_Manager
         //  build country/state select boxes unless any of following methods
         $aDisallowedMethods = array('list');
         if (!in_array($output->action, $aDisallowedMethods)) {
-            $lang = SGL::getCurrentLang();            
-            //  default to english as the data array, countries, etc, only exists in english
-            if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-                $lang = 'en';
-            }
-            include_once SGL_DAT_DIR . '/ary.states.' . $lang . '.php';
-            include_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
-            $output->states = $states;
-            $output->countries = $countries;
+            $output->states = SGL::loadRegionList('states');
+            $output->countries = SGL::loadRegionList('countries');
 
             //  build org type combobox
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            if ($conf['OrgMgr']['typeEnabled']) {
+            if ($this->conf['OrgMgr']['typeEnabled']) {
                 $output->aOrgTypes = $this->da->getOrgTypes();
-                @$output->currentOrgType = $output->org->organisation_type_id;                
+                @$output->currentOrgType = $output->org->organisation_type_id;
             }
-                    
             //  build role combobox
             $aRoles = $this->da->getRoles($bExcludeAdmin = true);
             $output->aRoles = $aRoles;
@@ -219,7 +209,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['date_created'] = $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['date_created'] = $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['created_by'] = $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  create new set with first rootnode
@@ -232,7 +222,7 @@ class OrgMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         if (!($node)) {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
             SGL::raiseMsg('organisation successfully added');
@@ -249,8 +239,7 @@ class OrgMgr extends SGL_Manager
         $aOrgNode = $nestedSet->getNode($input->orgId);
 
         //  build org type combobox
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['OrgMgr']['typeEnabled']) {
+        if ($this->conf['OrgMgr']['typeEnabled']) {
             $output->currentOrgType = @$aOrgNode['organisation_type_id'];
         }
         $output->org = (object)$aOrgNode;
@@ -264,7 +253,7 @@ class OrgMgr extends SGL_Manager
 
         //  datatype must be an array for NestedSet
         $aOrg = (array) $input->org;
-        $aOrg['last_updated'] = SGL::getTime();
+        $aOrg['last_updated'] = SGL_Date::getTime();
         $aOrg['updated_by'] = SGL_HTTP_Session::getUid();
 
         //  attempt to update org values
@@ -274,20 +263,24 @@ class OrgMgr extends SGL_Manager
         }
         //  move node if needed
         switch ($aOrg['parent_id']) {
+
         case $aOrg['original_parent_id']:
             //  usual case, no change => do nothing
             $message = 'The organisation has successfully been updated';
             break;
+
         case $aOrg['organisation_id']:
             //  cannot be parent to self => display user error
             $message = 'The organisation has successfully been updated, no data changed';
             break;
+
         case 0:
             //  move the org, make it into a root node, just above its own root
             $thisNode = $nestedSet->getNode($aOrg['organisation_id']);
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $thisNode['root_id'], 'BE');
             $message = 'The organisation has successfully been updated';
             break;
+
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $aOrg['parent_id'], 'SUB');
@@ -298,27 +291,27 @@ class OrgMgr extends SGL_Manager
 
     function _delete(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);                
-        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (is_array($input->aDelete)) {
             $nestedSet = new SGL_NestedSet($this->_params);
             //  deleting parent nodes automatically deletes chilren nodes, but user
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around ...
-            
+
             // ... and also check if the organisation is not needed by any users. If a
-            // forein key to user exists, abort deletion to avoid bad integrity in the 
+            // forein key to user exists, abort deletion to avoid bad integrity in the
             // database.
-            
+
             $success = true;
-            
-            while ((list($index, $orgId) = each($input->aDelete)) && $success) {            	            	
+
+            while ((list($index, $orgId) = each($input->aDelete)) && $success) {
             	$org = $nestedSet->getNode($orgId);
                 if ($org) {
-                	
+
                 	$users = DA_User::getUsersByOrgId($orgId);
-                	
+
                 	if (empty($users)) {
                 		// ok, not dangerous to delete
                     	$nestedSet->deleteNode($orgId);
@@ -330,15 +323,15 @@ class OrgMgr extends SGL_Manager
                 	}
                 }
             }
-            
+
 	        if ($success) {
 	        	//  redirect on success
 	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
-	        }            
+	        }
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }        
+        }
     }
 
     function _list(&$input, &$output)

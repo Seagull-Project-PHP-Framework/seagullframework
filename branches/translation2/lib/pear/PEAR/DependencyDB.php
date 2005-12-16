@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DependencyDB.php,v 1.7 2005/06/23 15:56:33 demian Exp $
+ * @version    CVS: $Id: DependencyDB.php,v 1.29 2005/09/15 20:10:11 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Config.php';
  * @author     Tomas V.V.Cox <cox@idec.net.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -91,7 +91,6 @@ class PEAR_DependencyDB
 
     /**
      * Get a raw dependency database.  Calls setConfig() and assertDepsDB()
-     * @param string
      * @param PEAR_Config
      * @param string|false full path to the dependency database, or false to use default
      * @return PEAR_DependencyDB|PEAR_Error
@@ -227,7 +226,7 @@ class PEAR_DependencyDB
             foreach ($temp as $dep) {
                 if (strtolower($dep['dep']['channel']) == strtolower($channel) &&
                       strtolower($dep['dep']['name']) == strtolower($package)) {
-                    $dependencies[$info['channel']][$info['package']] = $dep;
+                    $dependencies[$info['channel']][$info['package']][] = $dep;
                 }
             }
         }
@@ -485,9 +484,14 @@ class PEAR_DependencyDB
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
         clearstatcache();
-        $data = unserialize(fread($fp, filesize($this->_depdb)));
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $data = unserialize(file_get_contents($this->_depdb));
+        } else {
+            $data = unserialize(fread($fp, filesize($this->_depdb)));
+            fclose($fp);
+        }
         set_magic_quotes_runtime($rt);
-        fclose($fp);
         $this->_cache = $data;
         return $data;
     }

@@ -111,6 +111,9 @@
         'Contributed by' =>'Contributed by',
         'contributed by' =>'contributed by',
         'full story'=> 'Continue reading',
-       // ''=>'',
+
+/* WIKISCRAPE MGR */
+        'WikiScrape Manager' => 'WikiScrape Manager',
+
     );
 ?>

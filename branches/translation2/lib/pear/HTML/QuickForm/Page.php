@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Page.php,v 1.1 2003/11/19 10:00:29 cvsroot Exp $
+// $Id: Page.php,v 1.5 2005/11/04 20:17:22 avb Exp $
 
 require_once 'HTML/QuickForm.php';
 
@@ -30,7 +30,7 @@ require_once 'HTML/QuickForm.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.5 $
  */
 class HTML_QuickForm_Page extends HTML_QuickForm
 {
@@ -58,7 +58,7 @@ class HTML_QuickForm_Page extends HTML_QuickForm
     * 
     * @access public
     */
-    function HTML_QuickForm_Page($formName, $method = 'post', $target = '_self', $attributes = null)
+    function HTML_QuickForm_Page($formName, $method = 'post', $target = '', $attributes = null)
     {
         $this->HTML_QuickForm($formName, $method, '', $target, $attributes);
     }
@@ -105,7 +105,7 @@ class HTML_QuickForm_Page extends HTML_QuickForm
     */
     function getButtonName($actionName)
     {
-        return '_qf_' . $this->getAttribute('name') . '_' . $actionName;
+        return '_qf_' . $this->getAttribute('id') . '_' . $actionName;
     }
 
 
@@ -119,6 +119,7 @@ class HTML_QuickForm_Page extends HTML_QuickForm
     */
     function loadValues($values)
     {
+        $this->_flagSubmitted = true;
         $this->_submitValues = $values;
         foreach (array_keys($this->_elements) as $key) {
             $this->_elements[$key]->onQuickFormEvent('updateValue', null, $this);
@@ -170,10 +171,30 @@ class HTML_QuickForm_Page extends HTML_QuickForm
     {
         if ($this->elementExists('_qf_default')) {
             $element =& $this->getElement('_qf_default');
-            $element->setValue($this->getAttribute('name') . ':' . $actionName);
+            $element->setValue($this->getAttribute('id') . ':' . $actionName);
         } else {
-            $this->addElement('hidden', '_qf_default', $this->getAttribute('name') . ':' . $actionName);
+            $this->addElement('hidden', '_qf_default', $this->getAttribute('id') . ':' . $actionName);
         }
+    }
+
+
+   /**
+    * Returns 'safe' elements' values
+    * 
+    * @param   mixed   Array/string of element names, whose values we want. If not set then return all elements.
+    * @param   bool    Whether to remove internal (_qf_...) values from the resultant array
+    */
+    function exportValues($elementList = null, $filterInternal = false)
+    {
+        $values = parent::exportValues($elementList);
+        if ($filterInternal) {
+            foreach (array_keys($values) as $key) {
+                if (0 === strpos($key, '_qf_')) {
+                    unset($values[$key]);
+                }
+            }
+        }
+        return $values;
     }
 }
 

@@ -16,7 +16,7 @@
 // | Authors:  nobody <nobody@localhost>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Translator.php,v 1.7 2005/02/09 11:03:44 demian Exp $
+// $Id: Translator.php,v 1.5 2004/07/26 04:39:24 alan_k Exp $
 //
 //  Controller Type Class providing translation faciliites
 //

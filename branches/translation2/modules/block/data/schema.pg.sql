@@ -14,7 +14,7 @@ create table block
    title_class          VARCHAR(32)          null,
    body_class           VARCHAR(32)          null,
    blk_order            INT2                 null,
-   is_onleft            INT2                 null,
+   position             VARCHAR(16)          null,
    is_enabled           INT2                 null,
    content		text,
    constraint PK_BLOCK primary key (block_id)
@@ -46,5 +46,13 @@ create index block_assignment_fk2 on block_assignment
    section_id
 );
 
+-- ==============================================================
+--  table block_role
+--  DK 
+-- ==============================================================
+create table block_role (
+    block_id integer not null,
+    role_id integer not null
+);
 
 COMMIT;

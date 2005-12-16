@@ -9,6 +9,7 @@
        'Documents' => 'Documents',
        'Articles' => 'Articles',
        'Permissions' => 'Permissions',
+       'No expire' => 'No expire',
 
 /*  MODULE MGR  */
         'Module Manager' => 'Module Manager',
@@ -20,6 +21,7 @@
 /*  FOOTER  */
         'Execution Time' => 'Execution Time',
         'seconds' => 'seconds',
+        'ms' => 'ms',
         'queries'=>'queries',
         'allocated'=>'allocated',
         'Powered by' => 'Powered by',
@@ -100,7 +102,7 @@
         'Forgot Password' => 'Forgot Your Password',
         'Not Registered' => 'Not Registered?',
         'Email' => 'Email',
-        
+
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',
         'send bug report' => 'send bug report',
@@ -189,7 +191,16 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Enable IP banning'=>'Enable IP banning',
         'Enable Tidy html cleaning'=>'Enable Tidy html cleaning',
         'Session handler'=>'Session handler',
-        'Enable left/right columns'=>'Enable left/right columns',
+        'Extended Session' => 'Extended Session',
+        'Enforce Single User' => 'Enforce Single User',
+        'You are allowed to connect from one computer at a time, other sessions were terminated!' => 'You are allowed to connect from one computer at a time, other sessions were terminated!',
+        'You have multiple sessions on this site!' => 'You have multiple sessions on this site!',
+        'Enables extended session API when using database sessions. This allows the site to enforce one session per user.' => 'Enables extended session API when using database sessions. This allows the site to enforce one session per user.',
+        'Enforces one session per user on this site (requires database session handling, and extended session to be on).' => 'Enforces one session per user on this site (requires database session handling, and extended session to be on).',
+        'Guests' => 'Guests',
+        'Members' => 'Members',
+        'Total' => 'Total',
+        'Enable Blocks'=>'Enable Blocks',
         'Default article view type'=>'Default article view type',
         'Front controller script name'=>'Front controller script name',
         'Default module'=>'Default module',
@@ -250,7 +261,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'This way no content items are really deleting from DB, just marked as deleted'=>'This way no content items are really deleting from DB, just marked as deleted',
         'Requires the tidy extension to be installed'=>'Requires the tidy extension to be installed',
         'Use the database session handler if youre running a load-balanced environment'=>'Use the database session handler if you\'re running a load-balanced environment',
-        'You can turn the left/right columns off globally'=>'You can turn the left/right columns off globally',
+        'You can turn the blocks off globally'=>'You can turn the blocks off globally',
         'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)'=>'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)',
         'The name of your Seagull index file'=>'The name of your Seagull index file',
         'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir',
@@ -267,7 +278,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Errors must be >= this level before they are emailed to the site admin'=>'Errors must be >= this level before they are emailed to the site admin',
         'It is recommended to disable this while developing'=>'It is recommended to disable this while developing',
         'Default is 24 hours'=>'Default is 24 hours',
-        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema',
+        'Make sure you load the relevant schema'=>'Make sure you load the relevant schema - "mysql_SGL" maintains all sequences in a single table (less clutter) whereas "mysql" uses one table per sequence giving twice as many tables (better for performance)',
         'It is recommended to disable logging if you are running < PHP 4.3.x'=>'It is recommended to disable logging if you are running < PHP 4.3.x',
         'If sql is used, use log_table as the log table name below'=>'If \'sql\' is used, use \'log_table\' as the log table name below',
         'Use an absolute path or one relative to the Seagull root dir'=>'Use an absolute path or one relative to the Seagull root dir',
@@ -280,8 +291,15 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Use these params to specify, eg, a static article for your homepage' => 'Use these params to specify, eg, a static article for your homepage',
         'file'=>'file',
         'database'=>'database',
+        'never' => 'never',
         'Show debug reporting link' => 'Show debug reporting link',
         'Send feedback to project for bugs' => 'Send feedback to project for bugs',
+        'URL handler' => 'URL handler',
+        'What format would you like your URLs, Seagull Search Engine Friendly is the default' => 'What format would you like your URLs, Seagull Search Engine Friendly is the default',
+        'The classic URL handler has not been implemented yet' => 'The classic URL handler has not been implemented yet',
+        'Template Engine' => 'Template Engine',
+        'Seagull allows you to use the template engine of your choice' => 'Seagull allows you to use the template engine of your choice',
+        'The Smarty template hooks have not been implemented yet' => 'The Smarty template hooks have not been implemented yet',
 
 /*
  ConfigMgr: MTA options
@@ -301,5 +319,68 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'SMTP username' => 'SMTP username',
         'SMTP password' => 'SMTP password',
         'Mandatory if you use SMTP as Backend and SMTP authentication is enabled' => 'Mandatory if you use \'SMTP\' as Backend and \'SMTP authentication\' is enabled',
+        'If users have cookies disabled, this will allow them to use sessions with Seagull' => 'If users have cookies disabled, this will allow them to use sessions with Seagull',
+        'Allow Session in URL' => 'Allow Session in URL',
+        'Check for Latest Version' => 'Check for Latest Version',
+        'Check Now' => 'Check Now',
+        'Your current version is up to date' => 'Your current version is up to date',
+        'remote interface problem' => 'There was a problem querying the remote interface',
     );
+
+$defaultWords['Maintenance'] = 'Maintenance';
+$defaultWords['Back to Maintenance'] = 'Back to Maintenance';
+$defaultWords['Congratulations, the target translation appears to be up to date'] = 'Congratulations, the target translation appears to be up to date';
+$defaultWords['translation successfully updated'] = 'translation successfully updated';
+$defaultWords['There was a problem updating the translation'] = 'There was a problem updating the translation';
+$defaultWords['Data Objects rebuilt successfully'] = 'Data Objects rebuilt successfully';
+$defaultWords['Cache files successfully deleted'] = 'Cache files successfully deleted';
+$defaultWords['Manage Translations'] = 'Manage Translations';
+$defaultWords['Check all modules'] = 'Check all modules';
+$defaultWords['check all modules'] = 'check all modules';
+$defaultWords['update'] = 'update';
+$defaultWords['Module Name'] = 'Module Name';
+$defaultWords['ok'] = 'ok';
+$defaultWords['no file'] = 'no file';
+$defaultWords['new strings'] = 'new strings';
+$defaultWords['old strings'] = 'old strings';
+$defaultWords['File not writeable'] = 'File not writeable';
+$defaultWords['Sequences rebuilt successfully'] = 'Sequences rebuilt successfully';
+$defaultWords['Rebuild DB Sequences'] = 'Rebuild DB Sequences';
+$defaultWords['Rebuild Sequences Now'] = 'Rebuild Sequences Now';
+$defaultWords['validate'] = 'validate';
+$defaultWords['Process'] = 'Process';
+$defaultWords['Manage Caches'] = 'Manage Caches';
+$defaultWords['Templates'] = 'Templates';
+$defaultWords['navigation'] = 'navigation';
+$defaultWords['blocks'] = 'blocks';
+$defaultWords['categories'] = 'categories';
+$defaultWords['permissions'] = 'permissions';
+$defaultWords['Clear Selected Caches Now'] = 'Clear Selected Caches Now';
+$defaultWords['Rebuild Data Objects'] = 'Rebuild Data Objects';
+$defaultWords['Rebuild Dataobjects Now'] = 'Rebuild Dataobjects Now';
+$defaultWords['You are editing: Module'] = 'You\'re editing: Module';
+$defaultWords['You are updating: Module'] = 'You are updating: Module';
+$defaultWords['Master Value'] = 'Master Value';
+$defaultWords['Translated Value'] = 'Translated Value';
+$defaultWords['Save Translation'] = 'Save Translation';
+$defaultWords['Create a module'] = 'Create a module';
+$defaultWords['Manager Name'] = 'Manager Name';
+$defaultWords['Create Templates'] = 'Create Templates';
+$defaultWords['Create ini file'] = 'Create ini file';
+$defaultWords['Create language files'] = 'Create language files';
+$defaultWords['Create Module Now'] = 'Create Module Now';
+$defaultWords['Module files successfully created'] = 'Module files successfully created';
+$defaultWords['The source translation has'] = 'The source translation has';
+$defaultWords['elements'] = 'elements';
+$defaultWords['The target translation has'] = 'The target translation has';
+$defaultWords['Please add'] = 'Please add';
+$defaultWords['values for the following keys which appear to be missing from the'] = 'values for the following keys which appear to be missing from the';
+$defaultWords['module'] = 'module';
+$defaultWords['please specify an option'] = 'please specify an option';
+$defaultWords['please check at least one box'] = 'please check at least one box';
+$defaultWords['please enter module name'] = 'please enter module name';
+$defaultWords['please enter manager name'] = 'please enter manager name';
+$defaultWords['Extended locale support'] = 'Extended locale support';
+$defaultWords['locale support info'] = 'Enabling this feature gives you access to the extensive I18Nv2 API but at the expense of performance';
+$defaultWords['Locale category'] = 'Locale category';
 ?>

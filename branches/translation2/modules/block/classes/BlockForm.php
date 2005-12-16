@@ -39,7 +39,6 @@
 // $Id: BlockForm.php,v 1.11 2005/05/28 21:15:50 demian Exp $
 
 require_once 'HTML/QuickForm.php';
-require_once SGL_ENT_DIR . '/Section.php';
 
 /**
  * Quickform Block wrapper class.
@@ -59,9 +58,14 @@ class BlockForm
 
     function BlockForm($action = '')
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $dbh = & SGL_DB::singleton();
+
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
-        $sectionList = & new DataObjects_Section();
+        require_once 'DB/DataObject.php';
+        $sectionList = DB_DataObject::factory('Section');
         $sectionList->whereAdd('parent_id = 0');        
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
@@ -69,7 +73,7 @@ class BlockForm
             while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
                     $trans = & SGL_Translation::singleton();
-					$trans->setLang(SGL_Translation::getLangID());
+                    $trans->setLang(SGL_Translation::getLangID());
                     $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', $languageID);   
                 } else {
                     $sections[ $sectionList->section_id ] = $sectionList->title;
@@ -78,10 +82,19 @@ class BlockForm
         }
         $sections[0] = 'All sections';
         $this->sections = $sections;
+        $query = "SELECT role_id, name FROM {$conf['table']['role']}";
+        $res = & $dbh->getAll($query);
+        $roles = array();
+        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
+        foreach ($res as $key => $value) {
+            $roles[$value->role_id] = $value->name;
+        }
+        $this->roles = $roles;
     }
 
     function init( $data = null )
     {
+        include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->data = $data;
 
         //  init data obj if coming from edit
@@ -91,9 +104,9 @@ class BlockForm
             //  Set default form values
             $defaultValues['block[name]']         = null;
             $defaultValues['block[title]']        = null;
-            $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 0;
             $defaultValues['block[sections]']     = 0;
+            $defaultValues['block[roles]']        = SGL_ANY_ROLE;
             $this->form->setDefaults( $defaultValues );
         }
 
@@ -111,15 +124,19 @@ class BlockForm
                 SGL_String::translate('ID'), $this->data['block[block_id]']);
         }
         // Field name
-        $this->form->addElement('text', 'block[name]', SGL_String::translate('Name') );
+        $this->form->addElement('text', 'block[name]', SGL_String::translate('Block Class Name') );
         // Field title
-        $this->form->addElement('text', 'block[title]', SGL_String::translate('Title') );
+        $this->form->addElement('text', 'block[title]', SGL_String::translate('Display Title') );
         // Field title_class
         $this->form->addElement('text', 'block[title_class]', SGL_String::translate('Title class') );
         // Field bgnd_colour
         $this->form->addElement('text', 'block[body_class]', SGL_String::translate('Body class')) ;
         // Field sections
         $this->form->addElement('select', 'block[sections]', SGL_String::translate('Sections'), $this->sections );
+        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Can view'), $this->roles);
+        $roles = &$this->form->getElement('block[roles]');
+        $roles->setMultiple(true);
+        $roles->setSize(5);
         $select = &$this->form->getElement('block[sections]');
         $select->setMultiple(true);
         $select->setSize(15);
@@ -128,7 +145,7 @@ class BlockForm
           $select->setSelected($this->data['block[sections]']);
         }
         // Field position
-        $this->form->addElement('select', 'block[is_onleft]', SGL_String::translate('Position'), array( '0' => SGL_String::translate('Right'), '1' => SGL_String::translate('Left')));
+        $this->form->addElement('select', 'block[position]', SGL_String::translate('Position'), $aBlocksNames);
         if ($this->action == 'edit' ) {
             // Field blk_order
             $this->form->addElement('static', 'block[blk_order]', SGL_String::translate('Order'), $this->data['block[blk_order]']) ;

@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Submit.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
+// $Id: Submit.php,v 1.3 2004/11/26 10:49:48 avb Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -25,7 +25,7 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.3 $
  */
 class HTML_QuickForm_Action_Submit extends HTML_QuickForm_Action
 {
@@ -33,23 +33,23 @@ class HTML_QuickForm_Action_Submit extends HTML_QuickForm_Action
     {
         // save the form values and validation status to the session
         $page->isFormBuilt() or $page->buildForm();
-        $pageName =  $page->getAttribute('name');
+        $pageName =  $page->getAttribute('id');
         $data     =& $page->controller->container();
         $data['values'][$pageName] = $page->exportValues();
         $data['valid'][$pageName]  = $page->validate();
 
         // All pages are valid, process
         if ($page->controller->isValid()) {
-            $page->handle('process');
+            return $page->handle('process');
 
         // Current page is invalid, display it
         } elseif (!$data['valid'][$pageName]) {
-            $page->handle('display');
+            return $page->handle('display');
 
         // Some other page is invalid, redirect to it
         } else {
             $target =& $page->controller->getPage($page->controller->findInvalid());
-            $target->handle('jump');
+            return $target->handle('jump');
         }
     }
 }

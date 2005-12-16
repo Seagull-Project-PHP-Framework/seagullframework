@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | IMessageMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -38,8 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: IMessageMgr.php,v 1.28 2005/05/22 10:21:39 demian Exp $
 
-require_once SGL_ENT_DIR . '/Instant_message.php';
-require_once SGL_ENT_DIR . '/Usr.php';
+require_once 'DB/DataObject.php';
 
 define('SGL_PRIVATE_MAIL', false);
 define('SGL_ALERT_OBSCENITY',   1);
@@ -57,19 +56,21 @@ class IMessageMgr extends SGL_Manager
 {
     function IMessageMgr()
     {
-        $this->module       = 'messaging';
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'Messages';
         $this->template     = 'imInbox.html';
 
         $this->_aActionsMapping =  array(
-            'read'      => array('read'), 
+            'read'      => array('read'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'compose'   => array('compose'), 
-            'reply'     => array('reply'), 
-            'sendAlert' => array('sendAlert', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'inbox'     => array('inbox'), 
-            'outbox'    => array('outbox'), 
+            'compose'   => array('compose'),
+            'reply'     => array('reply'),
+            'sendAlert' => array('sendAlert', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'inbox'     => array('inbox'),
+            'outbox'    => array('outbox'),
         );
     }
 
@@ -120,16 +121,13 @@ class IMessageMgr extends SGL_Manager
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
 
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
-        
-        $query = 
-            " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name 
-              FROM      {$conf['table']['instant_message']} AS im, {$conf['table']['user']} AS u 
-              WHERE     im.user_id_to = $uid 
-              AND       u.usr_id = im.user_id_from 
-              AND       im.delete_status in (2, 3) 
-              ORDER BY msg_time DESC 
+        $query =
+            " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name
+              FROM      {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u
+              WHERE     im.user_id_to = $uid
+              AND       u.usr_id = im.user_id_from
+              AND       im.delete_status in (2, 3)
+              ORDER BY msg_time DESC
             ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -138,7 +136,7 @@ class IMessageMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
@@ -169,14 +167,13 @@ class IMessageMgr extends SGL_Manager
         // Get the user id from the current session
         $uid = SGL_HTTP_Session::getUid();
 
-        $dbh = & SGL_DB::singleton();
-        $query = 
-            " SELECT * 
-              FROM {$conf['table']['instant_message']} AS im, {$conf['table']['user']} AS u 
-              WHERE im.user_id_from = $uid 
-              AND u.usr_id = im.user_id_to 
-              AND im.delete_status <> 2 
-              ORDER BY msg_time DESC 
+        $query =
+            " SELECT *
+              FROM {$this->conf['table']['instant_message']} AS im, {$this->conf['table']['user']} AS u
+              WHERE im.user_id_from = $uid
+              AND u.usr_id = im.user_id_to
+              AND im.delete_status <> 2
+              ORDER BY msg_time DESC
             ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -185,7 +182,7 @@ class IMessageMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
@@ -230,7 +227,7 @@ class IMessageMgr extends SGL_Manager
         $counter = 0;
         // Setup the addressees
         foreach ($input->aRecipients as $recipientID) {
-            $tmpUser = & new DataObjects_Usr();
+            $tmpUser = DB_DataObject::factory('Usr');
             $tmpUser->get($recipientID);
 
             // All users except admin types have to obey privacy settings
@@ -280,7 +277,7 @@ class IMessageMgr extends SGL_Manager
         if ($instantMessage->user_id_to == $uid && $instantMessage->delete_status < 2) {
             // disable receiver reading messages he deleted
             return false;
-        } elseif ($instantMessage->user_id_from == $uid && 
+        } elseif ($instantMessage->user_id_from == $uid &&
             ($instantMessage->delete_status == 2 || $instantMessage->delete_status == 0) ) {
 
             // disable sender reading messages he deleted
@@ -296,6 +293,7 @@ class IMessageMgr extends SGL_Manager
     function _reply(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL_DB::setConnection($this->dbh);
 
         //  as compose and reply are very similar, they use the same template
         $output->template = 'imCompose.html';
@@ -303,9 +301,9 @@ class IMessageMgr extends SGL_Manager
         $output->wysiwyg = true;
         $hiddenFields = '';
 
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         if (!is_numeric($input->msgFromID)) {
-            SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__, 
+            SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__,
                             SGL_ERROR_INVALIDARGS);
         }
         $user->get($input->msgFromID);
@@ -313,10 +311,10 @@ class IMessageMgr extends SGL_Manager
         $output->messageToIds = $hiddenFields;
         $output->messageToUsernames = $user->username;
         $output->sectionTitle = 'Reply';
-        $output->cancelRedirect = SGL_Url::makeLink('inbox', 'instantmessage', 'messaging');
+        $output->cancelRedirect = SGL_Url::makeLink('inbox', 'imessage', 'messaging');
 
         //  prepare reply message
-        $origMsg = & new DataObjects_Instant_message();
+        $origMsg = DB_DataObject::factory('Instant_message');
         $origMsg->get($input->messageID);
         if (empty($origMsg)) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -373,7 +371,7 @@ class IMessageMgr extends SGL_Manager
             SGL_HTTP::redirect($aParams);
         }
 
-        $user = & new DataObjects_Usr();
+        $user = DB_DataObject::factory('Usr');
         $user->usr_id = $sender_id;
         if ($user->find() != 1 || $user->fetch() == false) {
             SGL::raiseMsg('Sender not found');
@@ -397,7 +395,7 @@ class IMessageMgr extends SGL_Manager
         foreach ($input->instantMessage->user_id_to as $receiver_id) {
             // verify each receiver
 
-            $receiver = & new DataObjects_Usr();
+            $receiver = DB_DataObject::factory('Usr');
             $receiver->usr_id = $receiver_id;
             if ($receiver->find() != 1 || $receiver->fetch() == false) {
                 // Make sure they don't pass an invalid user id
@@ -414,23 +412,22 @@ class IMessageMgr extends SGL_Manager
                 }
             }
 
-            $message = & new DataObjects_Instant_message();
-            $dbh = $message->getDatabaseConnection();
+            $message = DB_DataObject::factory('Instant_message');
 
-            $message->instant_message_id = $dbh->nextId('instant_message');
+            $message->instant_message_id = $this->dbh->nextId('instant_message');
             $message->user_id_from = $uid;  // or $sender_id
             $message->user_id_to = $receiver_id;
-            $message->msg_time = SGL::getTime();
+            $message->msg_time = SGL_Date::getTime();
             $message->subject = $subject;
             if ($message->subject == '') {
-                $message->subject = 'No subject';
+                $message->subject = SGL_Output::translate('no subject');
             }
             $message->body = $body;
 
             // set default unread/undeleted status see $this->inbox()
             // delete status should come from user preference...keep sent email (3) or not (2)
             $message->read_status = 3;
-            $message->delete_status = 3;  
+            $message->delete_status = 3;
 
             if ($message->insert() == false) {
                 $counter++;
@@ -459,20 +456,21 @@ class IMessageMgr extends SGL_Manager
 
         $message_id = $input->messageID;
 
-        $message = & new DataObjects_Instant_message();
+        $message = DB_DataObject::factory('Instant_message');
         $message->whereAdd('instant_message_id = ' . $message_id);
         if ($message->find() != 1 || $message->fetch() == false) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 
+        $message->getLinks('link_%s');
         $res = $this->verifyUserAccess($message);
         if (empty($res)) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 
@@ -484,7 +482,7 @@ class IMessageMgr extends SGL_Manager
             // user IS a ...
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
-                              'managerName'   => 'instantmessage' );
+                              'managerName'   => 'imessage' );
             SGL_HTTP::redirect($aParams);
         }
 
@@ -513,7 +511,7 @@ class IMessageMgr extends SGL_Manager
 
         $counter = 0;
         foreach ($input->deleteArray as $index => $message_id) {
-            $message = & new DataObjects_Instant_message();
+            $message = DB_DataObject::factory('Instant_message');
             $message->whereAdd('instant_message_id = ' . $message_id);
             if ($message->find() != 1 || $message->fetch() == false) {
                 $counter++;
@@ -536,8 +534,7 @@ class IMessageMgr extends SGL_Manager
             $message->delete_status = $statusCode;
 
             //  if safeDelete is enabled, just set item status to 0, don't delete
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $safeDelete = $conf['site']['safeDelete'];
+            $safeDelete = $this->conf['site']['safeDelete'];
             if ($message->delete_status == 0 && !$safeDelete) {
                 if (!$message->delete()) {
                     $counter++;
@@ -565,7 +562,7 @@ class IMessageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ($input->alertType > 0) {
             switch ($input->alertType) {
-                
+
             case SGL_ALERT_OBSCENITY:
                 $messageBody =  'This alert has been sent because a user would like to'
                     . ' advise you of obscene content.';
@@ -580,7 +577,7 @@ class IMessageMgr extends SGL_Manager
             $accusee = DataObjects_Usr::staticGet($input->accuseeID);
             $messageBody .= "<br /><br /><strong>Complaint filed by:</strong> " . $accuser->username . " (id = $accuser->usr_id)";
             $messageBody .= '<br /><br /><strong>Person Accused:</strong> ' . $accusee->username . " (id = $accusee->usr_id)";
-            $message = & new DataObjects_Instant_message();
+            $message = DB_DataObject::factory('Instant_message');
             $message->subject = 'ALERT: profanity notice';
             $message->body = $messageBody;
 
@@ -590,7 +587,7 @@ class IMessageMgr extends SGL_Manager
             $message->delete_status = 3;
             $message->user_id_to = SGL_ADMIN;
             $message->user_id_from = $fromID;
-            $message->msg_time = SGL::getTime();
+            $message->msg_time = SGL_Date::getTime();
 
             //  insert message
             $message->insert();
@@ -614,7 +611,7 @@ class IMessageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         switch ($iCurrentCode) {
-            
+
         case 3:
             $iStatusCode = ($currentUser == 'sender')? 2:1;
             break;

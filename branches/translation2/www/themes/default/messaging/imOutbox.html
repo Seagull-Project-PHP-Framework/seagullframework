@@ -20,14 +20,18 @@
             <th>{translate(#Date#)}</th>
         </tr>
     {if:aPagedData[data]}
-        {foreach:aPagedData[data],key,valueObj} 
-            {if:valueObj[read_status]}
-       <tr class="{switchRowClass()}" style="font-weight:bold">
-            {else:}
-       <tr class="{switchRowClass()}">
-            {end:}
-            <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" /></td>
-            <td>{valueObj[username]}</td>
+        {foreach:aPagedData[data],key,valueObj}
+        <tr class="{switchRowClass(valueObj[read_status])}">
+            <td align="center">
+                <input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" />
+            </td>
+            <td class="fieldName2">
+                {if:valueObj[first_name]}
+                {valueObj[first_name]} {valueObj[last_name]}
+                {else:}
+                {valueObj[username]}
+                {end:}
+            </td>
             <td><a href="{makeUrl(#read#,#imessage#,#messaging#,aPagedData[data],#frmMessageID|instant_message_id#,key)}{urlParams}">{valueObj[subject]}</a></td>
             <td align="center" nowrap="nowrap">{formatDatePretty(valueObj[msg_time])}</td>
         </tr>

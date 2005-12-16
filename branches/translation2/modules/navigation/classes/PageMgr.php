@@ -41,6 +41,7 @@
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
 /**
  * To administer sections.
@@ -57,7 +58,8 @@ class PageMgr extends SGL_Manager
     function PageMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module           = 'navigation';
+        parent::SGL_Manager();
+
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
@@ -179,6 +181,13 @@ class PageMgr extends SGL_Manager
         }
     }
 
+    /**
+     * Returns a hash of articles.
+     *
+     * @return array
+     *
+     * @todo move to DA_Publisher
+     */
     function _getStaticArticles()
     {
         $dbh = & SGL_DB::singleton();
@@ -187,8 +196,8 @@ class PageMgr extends SGL_Manager
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
+             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
+                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id
@@ -198,29 +207,41 @@ class PageMgr extends SGL_Manager
              AND i.status  > " . SGL_STATUS_DELETED . "
              ORDER BY i.last_updated DESC
         ";
-        $res = $dbh->getAssoc($query);
+        $res = $this->dbh->getAssoc($query);
         return ($res)? $res : false;
     }
 
     function display(&$output)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         //  pre-check enabled box
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
 
-        if ($output->articleType == 'static') {
-
-            //  setup preselects for page type chooser
-            $output->staticSelected = 'selected';
+            $output->staticSelected = '';
             $output->dynamicSelected = '';
+            $output->wikiSelected = '';
+            $output->uriAliasSelected = '';
+            $output->uriExternalSelected = '';
+
+        switch ($output->articleType) {
+        case 'static':
+            $output->staticSelected = 'selected';
             
             //  build static article list
-            $output->aStaticArticles = $this->_getStaticArticles();
-        } else {
-            $output->staticSelected = '';
+            if (ModuleMgr::moduleIsRegistered('publisher')) {
+                $output->aStaticArticles = $this->_getStaticArticles();
+            } else {
+                $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
+            }
+            break;
+
+        case 'wiki':
+            $output->wikiSelected = 'selected';
+            break;
+
+        case 'dynamic':
             $output->dynamicSelected = 'selected';                      
 
             //  build dynamic section choosers
@@ -235,6 +256,15 @@ class PageMgr extends SGL_Manager
             $output->aActions = ($currentMgr != 'none') 
                 ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
                 : array();
+            break;
+
+        case'uriAlias':
+            $output->uriAliasSelected = 'selected';
+            break;
+
+        case'uriExternal':
+            $output->uriExternalSelected = 'selected';
+            break;
         }
         //  build role widget
         $aRoles = $this->da->getRoles();
@@ -246,6 +276,12 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $output->sectionNodesOptions = $this->_generateSectionNodesOptions($nestedSet->getTree(),
             @$output->section['parent_id']);
+
+        // build uriAliases select options
+        include SGL_DAT_DIR . '/ary.uriAliases.php';
+        foreach ($aUriAliases as $key => $value) {
+            $output->aUriAliases[$key] = $key . ' >> ' . $value;
+        }
     }
 
     function _add(&$input, &$output)
@@ -268,13 +304,31 @@ class PageMgr extends SGL_Manager
         $separator = '/'; // can be configurable later
 
         //  if pageType = static, append articleId, else build page url
-        if ($input->section['articleType'] == 'static') {
+        switch ( $input->section['articleType'] ) {
+        case 'static':
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';          
-        } else {
+            break;
         
+        case 'wiki':
+            $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'uriAlias':
+            $string = 'uriAlias:' . $input->section['resource_uri'];
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'uriExternal':
+            $string = 'uriExternal:' . $input->section['resource_uri'];
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'dynamic':
+
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
@@ -283,6 +337,7 @@ class PageMgr extends SGL_Manager
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
+            break;
         }
         //  deal with additional params
         if (!(empty($input->section['add_params']))) {
@@ -338,14 +393,11 @@ class PageMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = &SGL_DB::singleton();
 
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $output->isEdit = true;
 
         //  fetch available languages
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
@@ -397,40 +449,55 @@ class PageMgr extends SGL_Manager
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
                     
             //  setup article type, dropdowns built in display()
-            $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
-            
-            //  parse url details
-            $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
-            $section = array_merge($section, $parsed);
-            
-            //  adjust friendly mgr name to class filename
-            $className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
-            $section['manager'] = $className . '.php';
-            
-            //  represent additional params as string
-            if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
-                foreach ($parsed['parsed_params'] as $k => $v) {
-                    $ret[] = $k . '/' . $v;
-                }
-                $section['add_params'] = implode('/', $ret);
+            if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
+                $aElems = explode('/', $section['resource_uri']);
+                $wikiUrl = array_pop($aElems);
+                $section['resource_uri'] = urldecode($wikiUrl);
+                $output->articleType = 'wiki';
+            } elseif (preg_match('/^uriAlias:(.*)/', $section['resource_uri'], $aUri)) {
+                $section['resource_uri'] = $aUri[1];
+                $output->articleType = 'uriAlias';
+            } elseif (preg_match('/^uriExternal:(.*)/', $section['resource_uri'], $aUri)) {
+                $section['resource_uri'] = $aUri[1];
+                $output->articleType = 'uriExternal';
             } else {
-                $section['add_params'] = null;
-            }
-            //  deal with static articles
-            if ($section['is_static']) {
-                if (isset($parsed['parsed_params'])) {
-                    $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+                $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
+                
+                //  parse url details
+                    #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
+                    #$parsed = $url->getQueryData($strict = true);
+
+                $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
+                $section = array_merge($section, $parsed);
+                
+                //  adjust friendly mgr name to class filename
+                    $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                $section['manager'] = $className . '.php';
+                
+                //  represent additional params as string
+                if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
+                    foreach ($parsed['parsed_params'] as $k => $v) {
+                        $ret[] = $k . '/' . $v;
+                    }
+                    $section['add_params'] = implode('/', $ret);
+                } else {
+                    $section['add_params'] = null;
                 }
-                $section['add_params'] = '';
-            }
-    
-            //  split off anchor if exists
-            if (stristr($section['resource_uri'], '#')) {
-                list(,$anchor) = split("#", $section['resource_uri']);
-                $section['anchor'] = $anchor;
+                //  deal with static articles
+                    if ($section['is_static'] && ModuleMgr::moduleIsRegistered('publisher')) {
+                        if (isset($parsed['parsed_params'])) {
+                            $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+                        }
+                    $section['add_params'] = '';
+                }
+
+                //  split off anchor if exists
+                if (stristr($section['resource_uri'], '#')) {
+                    list(,$anchor) = split("#", $section['resource_uri']);
+                    $section['anchor'] = $anchor;
+                }
             }
         }
         $output->section = $section;
@@ -439,18 +506,35 @@ class PageMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         $separator = '/';
 
         //  if pageType = static, append articleId, else build page url
-        if ($input->section['articleType'] == 'static') {
+        switch ( $input->section['articleType'] ) {
+        case 'static':
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';          
-        } else {
+            break;
         
+        case 'wiki':
+            $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'uriAlias':
+            $string = 'uriAlias:' . $input->section['resource_uri'];
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'uriExternal':
+            $string = 'uriExternal:' . $input->section['resource_uri'];
+            $input->section['resource_uri'] = $string;
+            break;
+        
+        case 'dynamic':
+
             //  strip extension and 'Mgr'
-            $simplifiedMgrName = SGL_Url::getSimplifiedNameFromManagerName($input->section['manager']);
+            $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
             $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
@@ -461,6 +545,7 @@ class PageMgr extends SGL_Manager
                 $actionPair;
             //  must be a dynamic article, set flag
             $input->section['is_static'] = 0;
+            break;
         }
         //  deal with additional params
         if (!(empty($input->section['add_params']))) {

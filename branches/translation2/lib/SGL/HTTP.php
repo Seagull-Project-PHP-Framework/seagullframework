@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | HTTP.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -38,18 +38,17 @@
 // +---------------------------------------------------------------------------+
 // $Id: HTTP.php,v 1.36 2005/06/06 22:05:35 demian Exp $
 
-require_once SGL_CORE_DIR . '/Util.php';
-require_once SGL_CORE_DIR . '/Manager.php';
-require_once SGL_CORE_DIR . '/Url.php';
-require_once SGL_LIB_DIR  . '/SGL.php';
+define('SGL_SESSION_UPDATE_WINDOW', 10);
+
+require_once dirname(__FILE__)  . '/Util.php';
+require_once dirname(__FILE__)  . '/Manager.php';
 
 /**
- * Class for HTTP functionality including redirects.
+ * Provides HTTP functionality including redirects.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.36 $
- * @since   PHP 4.1
  */
 class SGL_HTTP
 {
@@ -61,16 +60,16 @@ class SGL_HTTP
      * @access  public
      * @static
      * @param   mixed   $url    target URL
-     * @param   array   $param  params to be appended to URL
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = null, $param = false)
+    function redirect($url = null)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  if arg is not an array of params, pass straight to header function
         if (is_array($url)) {
@@ -88,7 +87,10 @@ class SGL_HTTP
                 }
             }
             $qs = (count($aParams)) ? implode('/', $aParams): '';
-            $url = $conf['site']['frontScriptName'] . '/' . $moduleName;
+            $url = ($conf['site']['frontScriptName'])
+                ? $conf['site']['frontScriptName'] . '/' . $moduleName
+                : $moduleName;
+
             if (!empty($managerName)) {
                 $url .=  '/' . $managerName;
             }
@@ -101,121 +103,50 @@ class SGL_HTTP
             if (substr($url, -1) != '/') {
                 $url .= '/';
             }
-
             //  determine is session propagated in cookies or URL
             SGL_Url::addSessionInfo($url);
         }
-
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
         exit;
     }
 }
 
-/**
- * Request wraps all $_GET $_POST $_FILES arrays into a Request object.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.36 $
- * @since   PHP 4.1
- */
-class SGL_HTTP_Request
-{
-    /**
-     * Sets GET/POST/FILES to gpcVars attribute.
-     *
-     * @access  public
-     * @return  void
-     */
-    function SGL_HTTP_Request()
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        //  merge REQUEST AND FILES superglobal arrays
-        $GLOBALS['_SGL']['REQUEST'] = array_merge($_REQUEST, $_FILES);
-
-        //  parse $_GET and transpose values to $GLOBALS['_SGL']['REQUEST']
-        SGL_Url::dirify();
-        
-        //  remove slashes if necessary
-        SGL_String::dispelMagicQuotes($GLOBALS['_SGL']['REQUEST']);
-    }
-
-    /**
-     * Returns a singleton Request instance.
-     *
-     * example usage: 
-     * $req = & SGL_HTTP_Request::singleton();
-     * warning: in order to work correctly, the request
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @return  mixed           reference to Request object
-     */
-    function &singleton()
-    {
-        static $instance;
-
-        // If the instance is not there, create one
-        if (!isset($instance)) {
-            $instance = new SGL_HTTP_Request();
-        }
-        return $instance;
-    }
-
-    /**
-     * Retrieves values from Request object.
-     *
-     * @access  public
-     * @param   mixed   $paramName  Request param name
-     * @param   boolean $allowTags  If html/php tags are allowed or not
-     * @return  mixed               Request param value or null if not exists
-     */
-    function get($paramName, $allowTags = false)
-    {
-        $req = & $GLOBALS['_SGL']['REQUEST'];
-        if (isset($req[$paramName])) {
-
-            //  if html not allowed, run an enhanced strip_tags()
-            if (!$allowTags) {
-                SGL_String::clean($req[$paramName]);
-
-            //  if html is allowed, at least remove javascript
-            } else {
-                SGL_String::removeJs($req[$paramName]);
-            }
-            return $req[$paramName];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Set a value for Request object.
-     *
-     * @access  public
-     * @param   mixed   $name   Request param name
-     * @param   mixed   $value  Request param value
-     * @return  void
-     */
-    function set($name, $value)
-    {
-       $GLOBALS['_SGL']['REQUEST'][$name] = $value;
-    }
-
-    function debug()
-    {
-        $GLOBALS['_SGL']['site']['blocksEnabled'] = 0;
-        print '<pre>';
-        print_r($GLOBALS['_SGL']['REQUEST']);
-    }
-}
 
 /**
  * Handles session management.
+ *
+ * Typically looks like this for an admin login:
+    Array
+    (
+        [uid] => 1
+        [rid] => 1
+        [oid] => 1
+        [username] => admin
+        [startTime] => 1131308728
+        [lastRefreshed] => 1131309174
+        [key] => 0e3b45dea658ac339d26395ff528db1d
+        [currentResRange] => all
+        [sortOrder] => ASC
+        [aPrefs] => Array
+            (
+                [sessionTimeout] => 1800
+                [timezone] => UTC
+                [theme] => default
+                [dateFormat] => UK
+                [language] => en-iso-8859-15
+                [resPerPage] => 10
+                [showExecutionTimes] => 1
+                [locale] => en_GB
+            )
+
+        [aPerms] => Array
+            (
+            )
+
+        [currentCatId] => 1
+        [dataTypeId] => 1
+    )
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -248,7 +179,8 @@ class SGL_HTTP_Session
     function SGL_HTTP_Session($uid = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  customise session
         $sessName = isset($conf['cookie']['name']) ? $conf['cookie']['name'] : 'SGLSESSID';
@@ -257,35 +189,35 @@ class SGL_HTTP_Session
         //  set session timeout to 0 (until the browser is closed) initially,
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
-            0, 
+            0,
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
 
         if ($conf['site']['sessionHandler'] == 'database') {
              $ok = session_set_save_handler(
-                array(& $this, 'dbOpen'), 
-                array(& $this, 'dbClose'), 
-                array(& $this, 'dbRead'), 
-                array(& $this, 'dbWrite'), 
-                array(& $this, 'dbDestroy'), 
+                array(& $this, 'dbOpen'),
+                array(& $this, 'dbClose'),
+                array(& $this, 'dbRead'),
+                array(& $this, 'dbWrite'),
+                array(& $this, 'dbDestroy'),
                 array(& $this, 'dbGc')
                 );
         } else {
             session_save_path(SGL_TMP_DIR);
         }
-     
+
         //  start PHP session handler
 //        if (!(defined('SID'))) {
-//            $req = & SGL_HTTP_Request::singleton();
+//            $req = & SGL_Request::singleton();
 //            define('SID', $conf['cookie']['name'] . '=' . $req->get('SGLSESSID'));
 //        }
-        @session_start();       
+        @session_start();
 
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
-            include_once SGL_ENT_DIR . '/Usr.php';
-            $sessUser = & new DataObjects_Usr();
+            require_once 'DB/DataObject.php';
+            $sessUser = DB_DataObject::factory('Usr');
             $sessUser->get($uid);
             $this->_init($sessUser);
 
@@ -305,7 +237,7 @@ class SGL_HTTP_Session
     function _init($oUser = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  get DA_User object
         require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
         $da = & DA_User::singleton();
@@ -313,7 +245,7 @@ class SGL_HTTP_Session
         //  set secure session key
         $startTime = mktime();
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $userAgent = @$_SERVER['HTTP_USER_AGENT'];
 
         //  user object is passed only during login
         if (is_object($oUser)) {
@@ -327,8 +259,8 @@ class SGL_HTTP_Session
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
                 'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id),
-                'aPerms'            => ($oUser->role_id == SGL_ADMIN) 
-                    ? array() 
+                'aPerms'            => ($oUser->role_id == SGL_ADMIN)
+                    ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
             );
         //  otherwise it's a guest session, these values always get
@@ -354,15 +286,28 @@ class SGL_HTTP_Session
             foreach ($aSessVars as $k => $v) {
                 $_SESSION[$k] = $v;
             }
-        }       
+        }
 
         //  make session more secure if possible
         if  (function_exists('session_regenerate_id')) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             $oldSessionId = session_id();
             session_regenerate_id();
-            
-            //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-            @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+
+            if ($conf['site']['sessionHandler'] == 'file') {
+
+                //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+                @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+
+            } elseif ($conf['site']['sessionHandler'] == 'database') {
+                $value = $this->dbRead($oldSessionId);
+                $this->dbDestroy($oldSessionId);
+                $this->dbRead(session_id());          // creates new session record
+                $this->dbWrite(session_id(), $value); // store old session value in new session record
+            } else {
+                die('Internal Error: unknown session handler');
+            }
         }
         return true;
     }
@@ -391,8 +336,8 @@ class SGL_HTTP_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] . 
+        $userAgent = @$_SERVER['HTTP_USER_AGENT'];
+        $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] .
             $acceptLang . $userAgent);
 
         //  compare actual key with session key, and that UID is not 0 (guest)
@@ -416,7 +361,9 @@ class SGL_HTTP_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            $_SESSION['lastRefreshed'] = mktime();
+            if (mktime() -$lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
+                $_SESSION['lastRefreshed'] = mktime();
+            }
             return false;
         }
     }
@@ -478,11 +425,8 @@ class SGL_HTTP_Session
     function getUid()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['uid'];
-        }
-        return $instance;
+
+        return $_SESSION['uid'];
     }
 
     /**
@@ -494,11 +438,8 @@ class SGL_HTTP_Session
     function getRoleId()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['rid'];
-        }
-        return $instance;
+
+        return $_SESSION['rid'];
     }
 
     /**
@@ -510,11 +451,8 @@ class SGL_HTTP_Session
     function getOrganisationId()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = $_SESSION['oid'];
-        }
-        return $instance;
+
+        return $_SESSION['oid'];
     }
 
     /**
@@ -547,9 +485,9 @@ class SGL_HTTP_Session
     function get($sessVarName)
     {
         if (isset($sessVarName)) {
-            return is_array($_SESSION) 
+            return is_array($_SESSION)
                 ? (array_key_exists($sessVarName, $_SESSION) ? $_SESSION[$sessVarName] : '')
-                : ''; 
+                : '';
         }
     }
 
@@ -596,7 +534,8 @@ class SGL_HTTP_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         foreach ($_SESSION as $sessVarName => $sessVarValue) {
             if (isset($_SESSION)) {
@@ -607,10 +546,107 @@ class SGL_HTTP_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'], 
+        setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
 
         $sess = & new SGL_HTTP_Session();
+    }
+
+    /**
+     * Returns active session count for a particular user.
+     *
+     * @return integer
+     */
+    function getUserSessionCount($uid, $sessId = -1)
+    {
+        $dbh = & SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if ($sessId == -1) {
+            $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+        } else {
+            $query = "
+                SELECT count(*)
+                FROM {$conf['table']['user_session']}
+                WHERE usr_id = $uid
+                AND session_id != '$sessId'";
+        }
+        $res = $dbh->getOne($query);
+        return $res;
+
+    }
+
+    /**
+     * Destroys all active sessions for a particular user.
+     *
+     * If a session Id is passed, spare it from deletion. Sigh!
+     *
+     * @return integer
+     */
+    function destroyUserSessions($uid, $sessId = -1)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dbh = & SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if ($sessId == -1) {
+            $query = "DELETE FROM {$conf['table']['user_session']} WHERE usr_id = $uid";
+        } else {
+            $query = "
+                DELETE FROM {$conf['table']['user_session']}
+                WHERE usr_id = $uid AND session_id != '$sessId'";
+        }
+        $dbh->query($query);
+    }
+
+    /**
+     * Returns all active guest session count.
+     *
+     * @return integer
+     */
+    function getGuestSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
+        $res = $dbh->getOne($query);
+        return $res;
+    }
+
+    /**
+     * Returns all active members session count.
+     *
+     * @return integer
+     */
+    function getMemberSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username != 'guest'";
+        $res = $dbh->getOne($query);
+        return $res;
+    }
+
+    /**
+     * Returns all active subscribed users session count.
+     *
+     * @return integer
+     */
+    function getSessionCount()
+    {
+        $dbh = & SGL_DB::singleton();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
+        $res = $dbh->getOne($query);
+        return $res;
     }
 
     /**
@@ -620,8 +656,8 @@ class SGL_HTTP_Session
      */
     function dbOpen()
     {
-        $timeout = isset($_SESSION['aPrefs']['sessionTimeout']) 
-            ? $_SESSION['aPrefs']['sessionTimeout'] 
+        $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+            ? $_SESSION['aPrefs']['sessionTimeout']
             : 900;
         $this->dbGc($timeout);
         return true;
@@ -645,15 +681,37 @@ class SGL_HTTP_Session
     function dbRead($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $query = "SELECT data_value FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $user_session = $conf['table']['user_session'];
+        $query = "SELECT data_value FROM {$user_session} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
+        if (PEAR::isError($res)) {
+            return $res;
+        }
         if ($res->numRows() == 1) {
-            return $dbh->getOne($query);
+            $sessionContent = $dbh->getOne($query);
+            if (!defined('SGL_SESSION_DATA')) {
+                define('SGL_SESSION_DATA', $sessionContent);
+            }
+            return $sessionContent;
         } else {
-            $query = "INSERT INTO {$conf['table']['user_session']} (session_id, last_updated, data_value)
-            VALUES ('$sessId', '" . SGL::getTime(true) . "', '')";
+            $timeStamp = SGL_Date::getTime(true);
+            if (!empty($conf['site']['extended_session'])) {
+                $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
+                $username = $_SESSION['username'];
+                $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+                    ? $_SESSION['aPrefs']['sessionTimeout']
+                    : 900;
+                $query = "
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value, usr_id, username, expiry)
+                    VALUES ('$sessId', '$timeStamp', '', $uid, '$username', $timeout)";
+            } else {
+                $query = "
+                    INSERT INTO {$user_session} (session_id, last_updated, data_value)
+                    VALUES ('$sessId', '$timeStamp', '')";
+            }
             $dbh->query($query);
             return '';
         }
@@ -666,12 +724,39 @@ class SGL_HTTP_Session
      */
     function dbWrite($sessId, $value)
     {
+        /* If session havent changed, return here. */
+        if ($value == SGL_SESSION_DATA) {
+            return true;
+        }
+
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        $query = "  UPDATE {$conf['table']['user_session']} SET data_value = " . $dbh->quote($value) . ", 
-                        last_updated = '" . SGL::getTime(true) . "' 
-                    WHERE session_id = '$sessId'";
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $timeStamp = SGL_Date::getTime(true);
+        $qval = $dbh->quote($value);
+        $user_session = $conf['table']['user_session'];
+        if (!empty($conf['site']['extended_session'])) {
+            $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
+            $username = $_SESSION['username'];
+            $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+                ? $_SESSION['aPrefs']['sessionTimeout']
+                : 900;
+            $query = "
+                UPDATE {$user_session}
+                SET data_value = $qval,
+                    last_updated = '$timeStamp',
+                    usr_id='$uid',
+                    username='$username',
+                    expiry='$timeout'
+                WHERE session_id = '$sessId'";
+        } else {
+            $query = "
+            UPDATE {$user_session}
+            SET data_value = $qval,
+                last_updated = '$timeStamp'
+                WHERE session_id = '$sessId'";
+        }
         $res = $dbh->query($query);
         return true;
     }
@@ -684,8 +769,9 @@ class SGL_HTTP_Session
     function dbDestroy($sessId)
     {
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-                
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         $query = "DELETE FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
         $res = $dbh->query($query);
         return true;
@@ -696,13 +782,27 @@ class SGL_HTTP_Session
      *
      * @return  boolean
      */
-    function dbGc($expiry)
+    function dbGc($max_expiry)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-                
-        $query = "DELETE FROM {$conf['table']['user_session']} WHERE UNIX_TIMESTAMP('" . SGL::getTime(true) . 
-                "') - UNIX_TIMESTAMP(last_updated ) > $expiry";
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $timeStamp = SGL_Date::getTime(true);
+        $user_session = $conf['table']['user_session'];
+
+        // For extended sessions, enforce session deletion per user expiry setting
+        if (!empty($conf['site']['extended_session'])) {
+            $query = "
+                DELETE  FROM {$user_session}
+                WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry
+                AND     (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) >  expiry";
+        } else {
+            $query = "
+                DELETE FROM {$user_session}
+                WHERE UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated ) > $max_expiry";
+        }
         $dbh->query($query);
         return true;
     }

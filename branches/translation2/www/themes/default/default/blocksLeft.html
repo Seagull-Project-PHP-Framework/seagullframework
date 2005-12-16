@@ -1,6 +1,6 @@
 <div id="leftSidebar">
 
-<div id="nav" flexy:if="isVerticalNav(GLOBALS[_SGL][CONF][navigation][stylesheet])">
+<div id="nav" flexy:if="isVerticalNav(conf[navigation][stylesheet])">
     {navigation:h}
 </div>
 
@@ -14,7 +14,7 @@
     <div class="blockHeader">
         {valueObj.title}
     </div>
-    {end:} 
+    {end:}
 
     {if:valueObj.body_class}
     <div class="{valueObj.body_class}">
@@ -28,4 +28,4 @@
 </div>
 {end:}
 
-</div>   
+</div>

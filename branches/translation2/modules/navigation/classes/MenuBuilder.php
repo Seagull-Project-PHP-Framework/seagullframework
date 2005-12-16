@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | MenuBuilder.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,6 @@
  * @package navigation
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.12 $
- * @since   PHP 4.1
  */
 class MenuBuilder
 {
@@ -55,19 +54,21 @@ class MenuBuilder
     function MenuBuilder($type, $options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'navigation';
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $this->GUI = & $this->_factory($type, $options);
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $this->GUI = & $this->_factory($type, $conf, $options);
         $this->GUI->dbCatTableName  = (isset($options['table'])) ? $options['table']:
             $conf['table']['category'];
     }
 
-	function setStartId($startId = 0) {
+	function setStartId($startId = 0) 
+	{
 		SGL::logMessage(null, PEAR_LOG_DEBUG);
     	$this->_startId = $startId;
     }
 
-    function &_factory($type, $options = array())
+    function &_factory($type, $conf, $options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $guiPath = SGL_MOD_DIR . "/navigation/classes/menu/$type.php";
@@ -76,14 +77,14 @@ class MenuBuilder
         if (!class_exists($guiClass)) {
             SGL::raiseError("$guiClass is not a valid classname", SGL_ERROR_NOCLASS);
         }
-        @$obj = & new $guiClass($options);
+        @$obj = & new $guiClass($options, $conf);
         return $obj;
     }
 
     function toHtml()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $menuType = strtolower(get_class($this->GUI));
         switch ($menuType) {
 

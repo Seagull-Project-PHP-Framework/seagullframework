@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // |          Jason Rust  <jason@rustyparts.com>                          |
 // +----------------------------------------------------------------------+
-// $Id: Output.php,v 1.10 2004/10/25 06:39:22 cvsroot Exp $
+// $Id: Output.php,v 1.14 2004/07/25 11:55:22 datenpunk Exp $
 //
 
 require_once 'PEAR.php';
@@ -64,7 +64,7 @@ define('NESEO_ERROR_NO_OPTIONS',   'E2100');
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.10 $
+* @version      $Revision: 1.14 $
 * @access       public
 *
 */

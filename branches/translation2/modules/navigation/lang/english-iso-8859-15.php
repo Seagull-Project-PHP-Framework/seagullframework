@@ -20,7 +20,7 @@
         'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".' => 'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".',
 
 /* Add / Edit template */
-        
+
         'Page Manager :: Add' => 'Page Manager :: Add',
         'Page Manager :: Edit' => 'Page Manager :: Edit',
         'Section ID' => 'Section ID',
@@ -29,6 +29,11 @@
         'Page' => 'Page',
         'static articles' => 'static articles',
         'dynamic pages' => 'dynamic pages',
+        'alias' => 'alias',
+        'external URI' => 'external URI',
+        'alias URI' => 'alias URI',
+        'external page URI' => 'external page URI',
+        'Choose URI from Aliases' => 'Choose URI from Aliases',
         'Additional params' => 'Additional params',
         'do not add the ?' => 'do not add the ?',
         'Anchor' => 'Anchor',
@@ -51,7 +56,7 @@
         'Current style successfully changed' => 'Current style successfully changed',
         'Style values successfully saved' => 'Style values successfully saved',
         'Section details updated, no data changed' => 'Section details updated, no data changed',
-        
+
 /*  CATEGORY MGR    */
         'Categories' => 'Categories',
         'Category Manager' => 'Category Manager',
@@ -88,13 +93,14 @@
         'Label' => 'Label',
         'Category details successfully updated' => 'Category details successfully updated',
         'Category details updated, no data changed' => 'Category details updated, no data changed',
-                
-                
+
+
 /*  PERMISSIONS */
         'Permissions Mgr' => 'Permissions Mgr',
         'Current Category' => 'Current Category',
         'Current' => 'Current',
         'Group Name' => 'Group Name',
+        'Role Name' => 'Role Name',
         'Has Permissions' => 'Has Permissions',
         'Yes' => 'Yes',
         'No' => 'No',
@@ -104,9 +110,9 @@
         'preview' => 'preview',
         'return to navigation manager' => 'return to navigation manager',
         'Last modified' => 'Last modified',
-        'Style Name' => 'Style Name',   
-        'With selected section(s)' => 'With selected section(s)', 
-        'separate with slashes (/)' => 'separate with slashes (/)',      
+        'Style Name' => 'Style Name',
+        'With selected section(s)' => 'With selected section(s)',
+        'separate with slashes (/)' => 'separate with slashes (/)',
         'Navigation menu preview as displayed to the following role' => 'Navigation menu preview as displayed to the following role',
         'Note' => 'Note',
         'Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.' => 'Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.',

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginBlock.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -43,7 +43,7 @@
  * Shows login form if not logged in, user data (username and "session started at") if logged in
  *
  * @package block
- * @author  Werner M. Krauss <werner.krauss@hallstatt.net>   
+ * @author  Werner M. Krauss <werner.krauss@hallstatt.net>
  * @version $Revision: 1.5 $
  * @since   PHP 4.1
  */
@@ -73,16 +73,16 @@ class LoginBlock
 
     function getLoginScreen()
     {
-        $login = '<form method="post" action="login.php" id="login">
+        $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="loginBlock">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'
-                    <input name="frmUsername" value="" maxlength="36" type="text" />
+                    <input name="frmUsername" size="15" value="" maxlength="36" type="text" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Password').'
-                    <input name="frmPassword" maxlength="24" type="password" />
+                    <input name="frmPassword" size="15" maxlength="24" type="password" />
                     <p><input style="width: 150px;" class="formsubmit" name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
                     <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
-                    <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>            
+                    <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>
                     <span class="small"><span class="error">*</span>'.SGL_String::translate('denotes required field').'</span></form>';
         return $login;
     }

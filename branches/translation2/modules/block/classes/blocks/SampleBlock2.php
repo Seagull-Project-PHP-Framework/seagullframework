@@ -9,6 +9,8 @@
  */
 class SampleBlock2
 {
+    var $webRoot = SGL_BASE_URL;
+    
     function SampleBlock2()
     {
     }
@@ -20,11 +22,13 @@ class SampleBlock2
 
     function getBlockContent()
     {
-        $text = <<< NEWS
-        <br /><br /><br />
-        your block here
-        <br /><br /><br />
-NEWS;
+        $text = <<< HTML
+<p style="text-align: center;">
+<a href="http://seagull.phpkitchen.com/index.php/export/rss/">
+    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" align="absmiddle"/>
+</a>
+</p>
+HTML;
         return $text;
     }
 }

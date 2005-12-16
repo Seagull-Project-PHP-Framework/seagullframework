@@ -1,10 +1,3 @@
-<script type="text/javascript">
-    setTimeout ("changePage()", 100);
-    function changePage() {
-        if (self.parent.frames.length != 0)
-            self.parent.location = document.location;
-    }
-</script>
 <form name="frmLogin" method="post" action="" id="frmLogin" flexy:ignore>
     <p><input type="hidden" name="action" value="login" /></p>
     <input type="hidden" name="redir" value="{redir}" />
@@ -34,11 +27,10 @@
                 <input type="password" name="frmPassword" maxlength="24" />
             </div>
 
-            <p><input type="submit" class="formsubmit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
+            <p><input type="submit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
             <p><a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
         </div>
 
         <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
     </div>
-
 </form>

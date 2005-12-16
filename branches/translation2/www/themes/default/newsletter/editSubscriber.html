@@ -3,7 +3,7 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 <script language="JavaScript" type="text/javascript">
 function randomPassword(length)
-{    
+{
   chars = "abcdefghijklmnopqrstuvwxyz1234567890";
   pass = "";
   for(x=0;x<length;x++)
@@ -14,7 +14,7 @@ function randomPassword(length)
   return pass;
 }
 </script>
-  
+
 
 <form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
     <input type="hidden" name="action" value="updateSubscriber" />
@@ -50,7 +50,7 @@ function randomPassword(length)
                 <strong>{translate(#Status#)}:</strong>
             </td>
             <td> <select name="oUser[status]">
-                    {this.plugin(#statusOpts#,oUser[status]):h} 
+                    {this.plugin(#statusOpts#,oUser[status]):h}
                  </select>
             </td>
          </tr>
@@ -59,7 +59,7 @@ function randomPassword(length)
                 <strong>{translate(#Action#)}:</strong>
             </td>
             <td> <select name="oUser[action_request]">
-                    {this.plugin(#actionOpts#,oUser[action_request]):h} 
+                    {this.plugin(#actionOpts#,oUser[action_request]):h}
                  </select>
             </td>
          </tr>
@@ -73,8 +73,8 @@ function randomPassword(length)
          </tr>
         <tr>
         <td align="center" colspan="2">
-          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" /> 
-          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listSubscribers#,#list#,#newsletter#)}{sessID}'" />
+          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />
+          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listSubscribers#,#list#,#newsletter#)}'" />
         </td>
         </tr>
     </table>

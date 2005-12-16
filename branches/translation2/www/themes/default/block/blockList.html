@@ -10,7 +10,10 @@
             <td colspan="9">
                 <input type="button" value="{translate(#New block#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#block#,#block#)}'" /> 
                 <input type="button" value="{translate(#New Html block#)}" onclick="javascript:document.location.href='{makeUrl(#addDynamic#,#block#,#block#)}'" /> 
-                <input type="button" value="{translate(#Reorder blocks#)}" onclick="javascript:document.location.href='{makeUrl(#reorder#,#block#,#block#)}'" />
+                <select name="position" onchange="javascript:document.location.href='{makeUrl(#reorder#,#block#,#block#,##,#position#)}'+document.frmBlockMgr.position.value">
+                  <option>- {translate(#Reorder blocks#)} -</option>
+                  {generateSelect(aBlocksNames,##):h}
+                </select>
             </td>
         </tr>
 
@@ -26,8 +29,8 @@
                 {if:sort_title}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                 
             <th>{translate(#Sections#)}</th>
-            <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|is_onleft||frmSortOrder|sortOrder#)}">{translate(#Position#)}</a> 
-                {if:sort_is_onleft}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+            <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|position||frmSortOrder|sortOrder#)}">{translate(#Position#)}</a> 
+                {if:sort_position}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                 
             <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|blk_order||frmSortOrder|sortOrder#)}">{translate(#Order#)}</a> 
                 {if:sort_blk_order}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
@@ -43,7 +46,7 @@
             <td>{aValue[name]}</td>
             <td>{aValue[title]}</td>
             <td align="center">{if:aValue[sections]} {foreach:aValue[sections],key,section} {section}. {end:} {else:} {translate(#No section#)} {end:}</td>
-            <td align="center">{if:aValue[is_onleft]}{translate(#Left#)}{else:}{translate(#Right#)}{end:}</td>
+            <td align="center">{aValue[position]}</td>
             <td align="center">{aValue[blk_order]}</td>
             <td align="center">{if:aValue[is_enabled]} {translate(#Enabled#)} {else:} {translate(#Disabled#)} {end:}</td>
             <td align="center">

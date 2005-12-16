@@ -1,4 +1,21 @@
 <?php
+$words['Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".'] = 'Aides à la navigation supplémentaire pour une meilleure accessibilité. Utilisez des valeurs comme "Accueil", "précédent", "suivant".';
+$words['Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.'] = 'Les permissions permettent par défaut à tous les utilisateurs d\'accéder à toutes les catégories. Si vous voulez restreindre l\'accés à un groupe d\'utilisateurs, choisissez "non" pour le groupe en question.';
+$words['AccessKey'] = 'Touche d\'accès';
+$words['Rel Marker'] = 'Marqueur relatif';
+$words['Any number, which can be pressed with the ALT-key to load the page.'] = 'N\'importe quel nombre, sur lequel on peut appuyer avec la touche \'ALT\' pour charger la page.';
+$words['Role Name'] = 'Nom du rôle';
+$words['Browse'] = 'Parcourir';
+$words['current style, previewed above'] = 'style actuel, montré ci-dessus';
+$words['preview'] = 'Prévisualiser';
+$words['return to navigation manager'] = 'retourner au gestionnaire de navigation';
+$words['Last modified'] = 'Dernière modification';
+$words['Style Name'] = 'Nom du style';
+$words['With selected section(s)'] = 'Avec la(les) section(s) sélectionnée(s)';
+$words['separate with slashes (/)'] = 'séparer avec des barres obliques (/)';
+$words['Navigation menu preview as displayed to the following role'] = 'Afficher le menu tel qu\'il sera vu par le rôle suivant';
+$words['Note'] = 'Note';
+$words['return to category manager'] = 'retourner au gestionnaire de catégories';
 $words['Pages'] = 'Pages';
 $words['Page Manager :: Add'] = 'Gestionnaire de pages :: Ajout';
 $words['Page Manager :: Edit'] = 'Gestionnaire de pages :: Edition';

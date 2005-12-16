@@ -9,9 +9,9 @@ To enable the example:
 
 1. log on as admin
 2. select the 'navigation' module
-3. created a test section called 'wizard' linking to pageWiz.php
+3. created a test section called 'wizard' linking to module wizardexample and manager WizardMgr
 4. log off, select 'wizard' and away you go.
 
 KNOWN ISSUES
 ============
-Because pageWiz.php needs to forward you to the first of your sequence of pages, the wizard tab does not get selected since it breaks the logic that looks for the original start file name.
+Because WizardMgr needs to forward you to the first of your sequence of pages, the wizard tab does not get selected since it breaks the logic that looks for the original start file name.

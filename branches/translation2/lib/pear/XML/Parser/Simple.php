@@ -16,7 +16,7 @@
 // | Author: Stephan Schmidt <schst@php-tools.net>                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Simple.php,v 1.6 2005/03/29 23:17:55 demian Exp $
+// $Id: Simple.php,v 1.6 2005/03/25 17:13:10 schst Exp $
 
 /**
  * Simple XML parser class.

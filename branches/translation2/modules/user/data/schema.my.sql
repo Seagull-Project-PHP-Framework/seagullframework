@@ -25,7 +25,7 @@ create table if not exists preference
 (
    preference_id                  int                            not null,
    name                           varchar(128),
-   default_value                  varchar(64),
+   default_value                  varchar(128),
    primary key (preference_id)
 );
 
@@ -49,7 +49,7 @@ CREATE TABLE if not exists organisation (
   addr_3 varchar(128) default NULL,
   city varchar(32) NOT NULL default '',
   region varchar(32) default NULL,
-  country varchar(32) default NULL,
+  country char(2) default NULL,
   post_code varchar(16) default NULL,
   telephone varchar(32) default NULL,
   website varchar(128) default NULL,
@@ -169,7 +169,7 @@ create index preference_org_preference_fk on org_preference
 /*==============================================================*/
 CREATE TABLE if not exists usr (
   usr_id int(11) NOT NULL default '0',
-  organisation_id int(11) NOT NULL default '0',
+  organisation_id int(11) NULL default '0',
   role_id int(11) NOT NULL default '0',
   username varchar(64) default NULL,
   passwd varchar(32) default NULL,
@@ -183,7 +183,7 @@ CREATE TABLE if not exists usr (
   addr_3 varchar(128) default NULL,
   city varchar(64) default NULL,
   region varchar(32) default NULL,
-  country varchar(64) default NULL,
+  country char(2) default NULL,
   post_code varchar(16) default NULL,
   is_email_public smallint(6) default NULL,
   is_acct_active smallint(6) default NULL,
@@ -202,7 +202,7 @@ CREATE UNIQUE INDEX usr_email ON usr (
 
 CREATE UNIQUE INDEX usr_username ON usr (
    username
-); 
+);
 
 /*==============================================================*/
 /* Table: user_permission                                       */

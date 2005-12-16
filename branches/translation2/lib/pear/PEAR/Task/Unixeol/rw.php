@@ -15,14 +15,14 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: rw.php,v 1.3 2005/06/23 15:56:42 demian Exp $
+ * @version    CVS: $Id: rw.php,v 1.3 2005/10/18 23:42:13 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a10
  */
 /**
  * Base class
  */
-require_once 'PEAR/Task/Replace.php';
+require_once 'PEAR/Task/Unixeol.php';
 /**
  * Abstracts the unixeol task xml.
  * @category   pear
@@ -30,7 +30,7 @@ require_once 'PEAR/Task/Replace.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a10
  */

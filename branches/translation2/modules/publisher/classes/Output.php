@@ -43,10 +43,14 @@ class PublisherOutput
     function articleOutput($oOutput)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);       
+        
         $templ = & new HTML_Template_Flexy();
         $aCurrentType = explode(' ', $oOutput->leadArticle['type']);              
         $oOutput->articleTmpl = 'articleView';
-        foreach ($aCurrentType as $key) {$oOutput->articleTmpl .= $key;}
+        
+        foreach ($aCurrentType as $key) {
+            $oOutput->articleTmpl .= $key;
+        }
         $oOutput->articleTmpl .= '.html';
         $templ->compile($oOutput->articleTmpl);
 

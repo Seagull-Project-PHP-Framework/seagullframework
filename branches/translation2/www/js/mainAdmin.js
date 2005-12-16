@@ -1,75 +1,108 @@
 //  for block manager
-function orderRightModule(down) 
-{
-    sl = document.frmBlockMgr.rightItem.selectedIndex;
-    if (sl != -1) {
-        oText = document.frmBlockMgr.rightItem.options[sl].text;
-        oValue = document.frmBlockMgr.rightItem.options[sl].value;
-        if (sl > 0 && down == 0) {
-            document.frmBlockMgr.rightItem.options[sl].text = document.frmBlockMgr.rightItem.options[sl-1].text;
-            document.frmBlockMgr.rightItem.options[sl].value = document.frmBlockMgr.rightItem.options[sl-1].value;
-            document.frmBlockMgr.rightItem.options[sl-1].text = oText;
-            document.frmBlockMgr.rightItem.options[sl-1].value = oValue;
-            document.frmBlockMgr.rightItem.selectedIndex--;
-        } else if (sl < document.frmBlockMgr.rightItem.length-1 && down == 1) {
-            document.frmBlockMgr.rightItem.options[sl].text = document.frmBlockMgr.rightItem.options[sl+1].text;
-            document.frmBlockMgr.rightItem.options[sl].value = document.frmBlockMgr.rightItem.options[sl+1].value;
-            document.frmBlockMgr.rightItem.options[sl+1].text = oText;
-            document.frmBlockMgr.rightItem.options[sl+1].value = oValue;
-            document.frmBlockMgr.rightItem.selectedIndex++;
-        }
-    } else {
-        alert("you must select an item to move");
-    }    
-    return false;
-}  
 
-function orderLeftModule(down)
+var oldDate;
+oldDate = new Array();
+
+function time_select_reset(prefix, changeBack){
+    /*
+     * adds a empty node as first node of a date selector
+     * @param object dateSelector Select object to add node
+     * returns old value of selector
+     */
+    function setEmpty(id) {
+        if (dateSelector = document.getElementById(id)) {
+            if (dateSelector.firstChild.value != ''){
+                newNode = document.createElement("option");
+                newNode.value = '';
+                newNode.appendChild(document.createTextNode(" -- "));
+                dateSelector.insertBefore(newNode, dateSelector.options[0]);
+            }
+            oldValue = dateSelector.value;
+            dateSelector.options[0].selected = true;
+            dateSelector.disabled = true;
+            return oldValue;
+        }
+    }
+
+    function setActive(id) {
+        if (dateSelector = document.getElementById(id)) {
+            relocate_select(dateSelector, oldDate[id]);
+            dateSelector.disabled = false;
+        }
+
+    }
+
+    selectors = new Array(prefix+'_year', prefix+'_month', prefix+'_day', prefix+'_hour', prefix+'_minute', prefix+'_second');
+    d = new Date();
+
+    if (oldDate.length == 0){
+    }
+
+    if( document.getElementById(prefix+'NoExpire').checked ){
+        for (var i = 0; i <= selectors.length; i++){
+            oldDate[(selectors[i])] = setEmpty(selectors[i]);
+        }
+    }else{
+        if(changeBack == true){
+            for (var i = 0; i <= selectors.length; i++){
+                setActive(selectors[i]);
+            }
+        }
+    }
+}
+
+function relocate_select(obj, value){
+    if( obj ){
+        for( i=0; i<obj.options.length; i++ ){
+            if( obj.options[i].value==value )
+                obj.options[i].selected = true;
+            else
+                obj.options[i].selected = false;
+        }
+    }
+
+}
+
+function orderItems(down)
 {
-    sl = document.frmBlockMgr.leftItem.selectedIndex;
+    sl = document.frmBlockMgr.item.selectedIndex;
     if (sl != -1) {
-        oText = document.frmBlockMgr.leftItem.options[sl].text;
-        oValue = document.frmBlockMgr.leftItem.options[sl].value;
+        oText = document.frmBlockMgr.item.options[sl].text;
+        oValue = document.frmBlockMgr.item.options[sl].value;
         if (sl > 0 && down == 0) {
-            document.frmBlockMgr.leftItem.options[sl].text = document.frmBlockMgr.leftItem.options[sl-1].text;
-            document.frmBlockMgr.leftItem.options[sl].value = document.frmBlockMgr.leftItem.options[sl-1].value;
-            document.frmBlockMgr.leftItem.options[sl-1].text = oText;
-            document.frmBlockMgr.leftItem.options[sl-1].value = oValue;
-            document.frmBlockMgr.leftItem.selectedIndex--;
-        } else if (sl < document.frmBlockMgr.leftItem.length-1 && down == 1) {
-            document.frmBlockMgr.leftItem.options[sl].text = document.frmBlockMgr.leftItem.options[sl+1].text;
-            document.frmBlockMgr.leftItem.options[sl].value = document.frmBlockMgr.leftItem.options[sl+1].value;
-            document.frmBlockMgr.leftItem.options[sl+1].text = oText;
-            document.frmBlockMgr.leftItem.options[sl+1].value = oValue;
-            document.frmBlockMgr.leftItem.selectedIndex++;
+            document.frmBlockMgr.item.options[sl].text = document.frmBlockMgr.item.options[sl-1].text;
+            document.frmBlockMgr.item.options[sl].value = document.frmBlockMgr.item.options[sl-1].value;
+            document.frmBlockMgr.item.options[sl-1].text = oText;
+            document.frmBlockMgr.item.options[sl-1].value = oValue;
+            document.frmBlockMgr.item.selectedIndex--;
+        } else if (sl < document.frmBlockMgr.item.length-1 && down == 1) {
+            document.frmBlockMgr.item.options[sl].text = document.frmBlockMgr.item.options[sl+1].text;
+            document.frmBlockMgr.item.options[sl].value = document.frmBlockMgr.item.options[sl+1].value;
+            document.frmBlockMgr.item.options[sl+1].text = oText;
+            document.frmBlockMgr.item.options[sl+1].value = oValue;
+            document.frmBlockMgr.item.selectedIndex++;
         }
     } else {
         alert("you must select an item to move");
     }
-    
+
     return false;
-}  
+}
 
 function doSubBlock()
 {
-    leftVal = "";
-    for (i=0;i<document.frmBlockMgr.leftItem.length;i++) {
-        if (i!=0) { leftVal += ","; }
-        leftVal += document.frmBlockMgr.leftItem.options[i].value;
+    blocksVal = "";
+    for (i=0;i<document.frmBlockMgr.item.length;i++) {
+        if (i!=0) { blocksVal += ","; }
+        blocksVal += document.frmBlockMgr.item.options[i].value;
     }
-    document.frmBlockMgr["_leftItems"].value = leftVal;
-    
-    rightVal = "";
-    for (i=0;i<document.frmBlockMgr.rightItem.length;i++) {
-        if (i!=0) { rightVal += ","; }
-        rightVal += document.frmBlockMgr.rightItem.options[i].value;
-    } 
-    document.frmBlockMgr["_rightItems"].value = rightVal;    
+    document.frmBlockMgr["_items"].value = blocksVal;
+
     return true;
 }
 
 //  same fns again for faq & section managers!
-function orderModule(down) 
+function orderModule(down)
 {
     sl = document.fm.item.selectedIndex;
     if (sl != -1) {
@@ -92,17 +125,17 @@ function orderModule(down)
      alert("you must select an item to move");
     }
     return false;
-}  
+}
 
-function doSub() 
+function doSub()
 {
     val = '';
     for (i=0;i<document.fm.item.length;i++) {
-        if (i!=0) { 
+        if (i!=0) {
             val += ",";
         }
         val += document.fm.item.options[i].value;
-    } 
+    }
     document.fm[".items"].value = val;
     return true;
 }

@@ -117,7 +117,7 @@
         <td>{aValue[item_id]}</td>
         <td>{aValue[addition]}</td>
         <td align="center">{formatDate(aValue[start_date])}</td>
-        <td align="center">{formatDate(aValue[expiry_date])}</td>
+        <td align="center">{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
         <td>{aValue[username]}</td>
         <td align="center">
             <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}" />

@@ -1,6 +1,20 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
-
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2005 Pierre-Alain Joye,Tomas V.V.Cox              |
+// +----------------------------------------------------------------------+
+// | This source file is subject to the New BSD license, That is bundled  |
+// | with this package in the file LICENSE, and is available through      |
+// | the world-wide-web at                                                |
+// | http://www.opensource.org/licenses/bsd-license.php                   |
+// | If you did not receive a copy of the new BSDlicense and are unable   |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | pajoye@php.net so we can mail you a copy immediately.                |
+// +----------------------------------------------------------------------+
+// | Author: Tomas V.V.Cox  <cox@idecnet.com>                             |
+// |         Pierre-Alain Joye <pajoye@php.net>                           |
+// +----------------------------------------------------------------------+
+//
 /**
  * Validation class
  *
@@ -12,21 +26,13 @@
  *   - uri (RFC2396)
  *   - possibility valid multiple data with a single method call (::multiple)
  *
- * PHP versions 4
- *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   Validate
  * @package    Validate
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.7 2005/06/23 15:56:28 demian Exp $
+ * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
+ * @version    CVS: $Id: Validate.php,v 1.72 2005/11/01 13:12:29 pajoye Exp $
  * @link       http://pear.php.net/package/Validate
  */
 
@@ -60,8 +66,8 @@ define('VALIDATE_STREET',       VALIDATE_NAME . "/\\ºª");
  * @package    Validate
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Validate
  */
@@ -115,7 +121,7 @@ class Validate
      * Validate a email
      *
      * @param string    $email          URL to validate
-     * @param boolean   $domain_check   Check or not if the domain exists
+     * @param boolean   $check_domain   Check or not if the domain exists
      *
      * @return boolean true if valid email, false if not
      *
@@ -123,15 +129,15 @@ class Validate
      */
     function email($email, $check_domain = false)
     {
-        $regex = '/^((\"[^\"\f\n\r\t\v\b]+\")|([\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+'.
-                 '(\.[\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|'.
-                 '(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|'.
-                 '([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))'.
-                 '\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|'.
-                 '(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|'.
-                 '([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))'.
-                 '\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|'.
-                 '((([A-Za-z0-9\-])+\.)+[A-Za-z\-]+))$/';
+        // partially "Borrowed" from PEAR::HTML_QuickForm and refactored
+        $regex = '&^(?:                                               # recipient:
+         ("\s*(?:[^"\f\n\r\t\v\b\s]+\s*)+")|                          #1 quoted name
+         ([-\w!\#\$%\&\'*+~/^`|{}]+(?:\.[-\w!\#\$%\&\'*+~/^`|{}]+)*)) #2 OR dot-atom
+         @(((\[)?                     #3 domain, 4 as IPv4, 5 optionally bracketed
+         (?:(?:(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))\.){3}
+               (?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))))(?(5)\])|
+         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?))  #6 domain as hostname
+         $&xi';
         if (preg_match($regex, $email)) {
             if ($check_domain && function_exists('checkdnsrr')) {
                 list (, $domain)  = explode('@', $email);
@@ -185,7 +191,7 @@ class Validate
      * option, like this:
      * <code>
      * $options = array('allowed_schemes' => array('http', 'https', 'ftp'))
-     * var_dumpn(Validate::uri('http://www.example.org'), $options);
+     * var_dump(Validate::uri('http://www.example.org'), $options);
      * </code>
      *
      * @param string    $url        URI to validate
@@ -203,24 +209,46 @@ class Validate
      */
     function uri($url, $options = null)
     {
+        $strict = ';/?:@$,';
         $domain_check = false;
         $allowed_schemes = null;
         if (is_array($options)) {
             extract($options);
         }
         if (preg_match(
-            '!^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?!',
-            $url, $matches))
-        {
-            $scheme = $matches[2];
-            $authority = $matches[4];
+             '&^(?:([a-z][-+.a-z0-9]*):)?                             # 1. scheme
+              (?://                                                   # authority start
+              (?:((?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'();:\&=+$,])*)@)?    # 2. authority-userinfo
+              (?:((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?\.?)  # 3. authority-hostname OR
+              |([0-9]{1,3}(?:\.[0-9]{1,3}){3}))                       # 4. authority-ipv4
+              (?::([0-9]*))?)?                                        # 5. authority-port
+              ((?:/(?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'():@\&=+$,;])+)+/?)? # 6. path
+              (?:\?([^#]*))?                                          # 7. query
+              (?:\#((?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'();/?:@\&=+$,])*))? # 8. fragment
+              $&xi', $url, $matches)) {
+            $scheme = isset($matches[1]) ? $matches[1] : '';
+            $authority = isset($matches[3]) ? $matches[3] : '' ;
             if (is_array($allowed_schemes) &&
                 !in_array($scheme,$allowed_schemes)
             ) {
                 return false;
             }
-            if ($domain_check && function_exists('checkdnsrr')) {
+            if (isset($matches[4])) {
+                $parts = explode('.', $matches[4]);
+                foreach ($parts as $part) {
+                    if ($part > 255) {
+                        return false;
+                    }
+                }
+            } elseif ($domain_check && function_exists('checkdnsrr')) {
                 if (!checkdnsrr($authority, 'A')) {
+                    return false;
+                }
+            }
+            if ($strict) {
+                $strict = '#[' . preg_quote($strict, '#') . ']#';
+                if ((isset($matches[7]) && preg_match($strict, $matches[7]))
+                 || (isset($matches[8]) && preg_match($strict, $matches[8]))) {
                     return false;
                 }
             }
@@ -250,11 +278,12 @@ class Validate
     {
         $max = $min = false;
         $format = '';
-        if (is_array($options)){
+        if (is_array($options)) {
             extract($options);
         }
-        $date_len   = strlen($format);
-        for ($i = 0; $i < strlen($format); $i++) {
+
+        $date_len = strlen($format);
+        for ($i = 0; $i < $date_len; $i++) {
             $c = $format{$i};
             if ($c == '%') {
                 $next = $format{$i + 1};
@@ -343,7 +372,7 @@ class Validate
             if (!checkdate($month, $day, $year)) {
                 return false;
             }
-            
+
             if ($min) {
                 include_once 'Date/Calc.php';
                 if (is_a($min, 'Date') &&

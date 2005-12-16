@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log.php,v 1.13 2004/12/24 22:23:23 demian Exp $
+ * $Header: /repository/pear/Log/Log.php,v 1.52 2005/10/26 05:46:55 jon Exp $
  * $Horde: horde/lib/Log.php,v 1.15 2000/06/29 23:39:45 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.52 $
  * @package Log
  */
 
@@ -104,8 +104,8 @@ class Log
      *
      * @param int $level        Log messages up to and including this level.
      *
-     * @return object Log       The newly created concrete Log instance, or an
-     *                          false on an error.
+     * @return object Log       The newly created concrete Log instance, or
+     *                          null on an error.
      * @access public
      * @since Log 1.0
      */
@@ -121,14 +121,17 @@ class Log
          * a failure as fatal.  The caller may have already included their own
          * version of the named class.
          */
-        @include_once $classfile;
+        if (!class_exists($class)) {
+            @include_once $classfile;
+        }
 
         /* If the class exists, return a new instance of it. */
         if (class_exists($class)) {
-            return new $class($name, $ident, $conf, $level);
+            $obj = new $class($name, $ident, $conf, $level);
+            return $obj;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -162,8 +165,8 @@ class Log
      *
      * @param int $level        Log messages up to and including this level.
      *
-     * @return object Log       The newly created concrete Log instance, or an
-     *                          false on an error.
+     * @return object Log       The newly created concrete Log instance, or
+     *                          null on an error.
      * @access public
      * @since Log 1.0
      */
@@ -386,7 +389,11 @@ class Log
             } else if (method_exists($message, 'tostring')) {
                 $message = $message->toString();
             } else if (method_exists($message, '__tostring')) {
-                $message = (string)$message;
+                if (version_compare(PHP_VERSION, '5.0.0', 'ge')) {
+                    $message = (string)$message;
+                } else {
+                    $message = $message->__toString();
+                }
             } else {
                 $message = print_r($message, true);
             }
@@ -425,6 +432,34 @@ class Log
         );
 
         return $levels[$priority];
+    }
+
+    /**
+     * Returns the the PEAR_LOG_* integer constant for the given string
+     * representation of a priority name.  This function performs a
+     * case-insensitive search.
+     *
+     * @param string $name      String containing a priority name.
+     *
+     * @return string           The PEAR_LOG_* integer contstant corresponding
+     *                          the the specified priority name.
+     *
+     * @since   Log 1.9.0
+     */
+    function stringToPriority($name)
+    {
+        $levels = array(
+            'emergency' => PEAR_LOG_EMERG,
+            'alert'     => PEAR_LOG_ALERT,
+            'critical'  => PEAR_LOG_CRIT,
+            'error'     => PEAR_LOG_ERR,
+            'warning'   => PEAR_LOG_WARNING,
+            'notice'    => PEAR_LOG_NOTICE,
+            'info'      => PEAR_LOG_INFO,
+            'debug'     => PEAR_LOG_DEBUG
+        );
+
+        return $levels[strtolower($name)];
     }
 
     /**
@@ -631,5 +666,3 @@ class Log
         return $this->_ident;
     }
 }
-
-?>

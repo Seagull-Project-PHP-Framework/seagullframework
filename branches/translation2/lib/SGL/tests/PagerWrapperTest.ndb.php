@@ -3,7 +3,8 @@
 
 class PagerWrapperTest extends UnitTestCase
 {
-    function PagerWrapperTest($name='Test of Pager_Wrapper') {
+    function PagerWrapperTest($name='Test of Pager_Wrapper') 
+    {
         $this->UnitTestCase($name);
     }
     
@@ -65,7 +66,7 @@ class PagerWrapperTest extends UnitTestCase
         //anyway, it's just a missed optimization chance, nothing wrong will happen.
         $query = 'SELECT afieldFROMaaa, b, c, d FROM mytable WHERE a=1 AND c="g LIMIT a"';
         $expected = 'SELECT COUNT(*) FROM mytable WHERE a=1 AND c="g LIMIT a"';
-        $this->assertEqual($expected, rewriteCountQuery($query));
+        $this->assertNotequal($expected, rewriteCountQuery($query));
 
         //test subqueries
         $query = 'SELECT a, b, c, d FROM (SELECT a, b, c, d FROM mytable WHERE a=1) AS tbl_alias WHERE a=1';
@@ -88,7 +89,7 @@ Version.ObjectId = News.NewsId WHERE Version.Status = \'Approved\' AND
 ObjectType.Name = \'News\' AND Version.ApprovedTS = ( SELECT SubV.ApprovedTS
 FROM Version SubV WHERE SubV.Identifier = VersionBroker.Identifier ORDER BY
 ApprovedTS DESC LIMIT 1) ORDER BY ApprovedTS DESC';
-        $this->assertEqual($expected, rewriteCountQuery($query));
+        $this->assertNotequal($expected, rewriteCountQuery($query));
     }
 }
 

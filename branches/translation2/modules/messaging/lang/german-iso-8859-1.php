@@ -1,4 +1,7 @@
 <?php
+$words['Messages did not reach all recipients'] = 'Die Nachricht(en) haben nicht alle Empfänger erreicht';
+$words['Reply'] = 'Antworten';
+$words['Compose Message'] = 'Nachricht erstellen';
 $words['Inbox'] = 'Posteingang';
 $words['In order to send an instant message, you must select recipients from the contacts tab'] = 'Wenn Sie eine Nachricht versenden wollen müssen Sie einen Empfänger im Karteireiter Kontakte auswählen';
 $words['Sender'] = 'Abdender';

@@ -31,14 +31,16 @@
 <table class="wide">
     <tr>
         <th>{translate(#Select#)}</th>
-        <th>{translate(#Perm ID#)}</th>
-        <th>{translate(#Name#)}</th>
+        <th><a class="header" href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|permission_id||frmSortOrder|sortOrder#)}">{translate(#Perm ID#)}</a></th>
+        <th><a class="header" href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a></th>
+        <th width="60%">{translate(#Description#)}</th>
         <th>{translate(#Edit#)}</th>
     </tr>
     <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
         <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[permission_id]}" /></td>
         <td>{aValue[permission_id]}</td>
         <td>{aValue[name]}</td>
+        <td>{aValue[description]}</td>
         <td align="center"><a href="{makeUrl(#edit#,#permission#,#user#,aPagedData[data],#frmPermId|permission_id#,key)}">
             <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#edit#)}" /></a>
         </td>

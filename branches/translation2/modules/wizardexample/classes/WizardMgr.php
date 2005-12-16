@@ -53,7 +53,6 @@ class WizardMgr extends SGL_Manager
     function WizardMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'wizardexample';
     }
     
     function validate($req, &$input)

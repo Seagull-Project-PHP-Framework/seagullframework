@@ -30,33 +30,63 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | SGL_DB.php                                                                |
+// | DB.php                                                                    |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
 // $Id: DB.php,v 1.14 2005/06/20 10:56:31 demian Exp $
+
+define('SGL_DSN_ARRAY',                 0);
+define('SGL_DSN_STRING',                1);
 
 /**
  * Class for handling DB resources.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_DB
 {
     /**
-     * Constructor.
+     * Returns a singleton reference to the DB resource.
      *
-     * @return void
+     * example usage:
+     * $dbh = & SGL_DB::singleton();
+     * warning: in order to work correctly, DB handle
+     * singleton must be instantiated statically and
+     * by reference
+     *
+     * @access  public
+     * @static
+     * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
+     * @return  mixed           reference to DB resource or false on failure to connect
      */
-    function SGL_DB()
+    function &singleton($dsn = null)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+
+        static $aInstances;
+        if (!isset($aInstances)) {
+			$aInstances = array();
+        }
+        $signature = md5($dsn);
+        if (!isset($aInstances[$signature])) {
+
+        	$conn = DB::connect($dsn);
+            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
+            if (DB::isError($conn)) {
+                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                    SGL_ERROR_DBFAILURE, $fatal);
+            }
+
+            $conn->setFetchMode(DB_FETCHMODE_OBJECT);
+			$aInstances[$signature] = $conn;
+
+        }
+        return $aInstances[$signature];
     }
 
     /**
@@ -69,9 +99,10 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
-        //  override default mysql driver to allow for all sequence IDs to 
+        //  override default mysql driver to allow for all sequence IDs to
         //  be kept in a single table
         $dbType = $conf['db']['type'];
         if ($type == SGL_DSN_ARRAY) {
@@ -82,14 +113,15 @@ class SGL_DB
                 'protocol' => $conf['db']['protocol'],
                 'hostspec' => $conf['db']['host'],
                 'database' => $conf['db']['name'],
-                'port'     => $conf['db']['port']                
+                'port'     => $conf['db']['port']
             );
         } else {
-        	$protocol = ($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
-            $port = (!empty($conf['db']['port']) 
-                        && ($conf['db']['protocol'] == 'tcp')) 
-                ? ':' . $conf['db']['port'] 
-                : '';     	
+        	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
+            $port = (!empty($conf['db']['port'])
+                        && isset($conf['db']['protocol'])
+                        && ($conf['db']['protocol'] == 'tcp'))
+                ? ':' . $conf['db']['port']
+                : '';
             $dsn = $dbType . '://' .
                 $conf['db']['user'] . ':' .
                 $conf['db']['pass'] . '@' .
@@ -105,8 +137,8 @@ class SGL_DB
      * use this for sharing connections between PEAR::DataObjects and SGL_DB.
      * This enables you to use DataObjects and SGL_DB in the same transaction.
      *
-     * example usage: 
-     * $oUser = & new DataObjects_Usr();
+     * example usage:
+     * $oUser = DB_DataObject::factory('Usr');
      * $dbh = & $oUser->getDatabaseConnection();
      * SGL_DB::setConnection($dbh);
      * $dbh->autocommit();
@@ -118,59 +150,35 @@ class SGL_DB
      * @param   object  $dbh    PEAR::DB instance
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      */
-    function setConnection ($dbh, $dsn = null)
+    function setConnection(&$dbh, $dsn = null)
     {
-        $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
-        $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
-    }
 
-    /**
-     * Returns a singleton DB handle.
-     *
-     * example usage: 
-     * $dbh = & SGL_DB::singleton();
-     * warning: in order to work correctly, DB handle
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
-     * @return  mixed           reference to DB resource or false on failure to connect
-     */
-    function &singleton($dsn = null)
-    {
-        $dsn = ($dsn === null) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        $dsnMd5 = md5($dsn);
-        $aConnections = array_keys($GLOBALS['_SGL']['CONNECTIONS']);
-
-        if (!(count($aConnections)) || !(in_array($dsnMd5, $aConnections))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = DB::connect($dsn);
-
-            //  if db connect fails and we're installing, return error info
-            if ((DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]) 
-                    && isset($conf['db']['bootstrap']) 
-                    && ($conf['db']['bootstrap'] == 1))
-                    
-                    //  a connection with no DB name will still return a PEAR::DB object
-                    || empty($conf['db']['name'])) {
-                return $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
-
-            //  if db connect fails and seagull is already configured, die
-            } elseif (DB::isError($GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5])) {
-                SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-                    SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
-            }
-            $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+        $locator = &SGL_ServiceLocator::singleton();
+        $singleton = $locator->get('DB');
+        if (!$singleton) {
+            $singleton = & SGL_DB::singleton();
+            $locator->register('DB', $singleton);
         }
-        return $GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5];
+//        if ($dbh !== $singleton) {
+//            unset($dbh);
+//            $dbh = &$singleton;
+//            #$dbh->setFetchMode(DB_FETCHMODE_OBJECT);
+//        }
+        #$dsnMd5 = md5($dsn);
+
+        unset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]);
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = &$singleton;
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_ASSOC);
+
+        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
+        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
     }
-    
+
     /**
      * Helper method - Rewrite the query into a "SELECT COUNT(*)" query.
+     *
      * @param string $sql query
      * @return string rewritten query OR false if the query can't be rewritten
      * @access private
@@ -187,15 +195,15 @@ class SGL_DB
     }
 
     /**
-     * @param object PEAR::DB instance
-     * @param string db query
-     * @param array  PEAR::Pager options
-     * @param boolean Disable pagination (get all results)
-     * @param int    fetchmode to use
-     * @param mixed  array, string or numeric data passed to DB execute
+     * @param object $db            PEAR::DB instance
+     * @param string $query         db query
+     * @param array  $pager_options PEAR::Pager options
+     * @param boolean $disabled     Disable pagination (get all results)
+     * @param int    $fetchMode     fetchmode to use
+     * @param mixed  $dbparams      array, string or numeric data passed to DB execute
      * @return array with links and paged data
      */
-    function getPagedData(&$db, $query, $pager_options = array(), $disabled = false, 
+    function getPagedData(&$db, $query, $pager_options = array(), $disabled = false,
         $fetchMode = DB_FETCHMODE_ASSOC, $dbparams = array())
     {
         if (!array_key_exists('totalItems', $pager_options) || is_null($pager_options['totalItems'])) {
@@ -215,22 +223,29 @@ class SGL_DB
             }
             $pager_options['totalItems'] = $totalItems;
         }
-        require_once 'Pager/Pager.php';
+
+        // To get Seagull URL Style working for Pager
+        $req =& SGL_Request::singleton();
+		$pager_options['currentPage'] = $req->get('pageID');
+
+		require_once 'Pager/Pager.php';
+		$pager_options['append'] = false;
+        $pager_options['fileName'] = '/pageID/%d/';
         $pager = Pager::factory($pager_options);
-        
+
         $page = array();
         $page['totalItems'] = $pager_options['totalItems'];
-        $page['links'] = $pager->links;
+        $page['links'] = str_replace("/pageID/".$pager->getCurrentPageID()."/", "/", $pager->links);
         $page['page_numbers'] = array(
             'current' => $pager->getCurrentPageID(),
             'total'   => $pager->numPages()
         );
         list($page['from'], $page['to']) = $pager->getOffsetByPageId();
-        
+
         $res = ($disabled)
-            ? $db->limitQuery($query, 0, $totalItems, $dbparams)
+            ? $db->limitQuery($query, 0, $page['totalItems'], $dbparams)
             : $db->limitQuery($query, $page['from']-1, $pager_options['perPage'], $dbparams);
-        
+
         if (PEAR::isError($res)) {
             return $res;
         }

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | Locale.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 
 require_once 'I18Nv2.php';
-require_once 'I18Nv2/Negotiator.php';
 
 /**
  * Wraps PEAR locale package.
@@ -46,21 +45,20 @@ require_once 'I18Nv2/Negotiator.php';
  * @package SGL
  * @author  Jacob Singh <jacob@calabashmusic.com>
  * @version $Revision: 1.6 $
- * @since   PHP 4.1
  */
 class SGL_Locale
 {
     /**
-     * Negotiates the locale from HTTP if necessary.  Get's it from _SESSION and database otherwise.
+     * Negotiates the locale from HTTP if necessary.  Gets it from _SESSION and database otherwise.
      *
      *   usage:
      *
-     *   $locale =& SGL_Locale::singleton($locale = '');
+     *   $locale =& SGL_Locale::singleton();
      *   // setting locale here would override defaults.
-     *   
+     *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
      *   echo $locale->formatDate(time());
-     *      
+     *
      * @param string $locale Overrides getting the locale from session/usr
      * @return I18Nv2 Returns a single instance of I18Nv2
      */
@@ -73,21 +71,24 @@ class SGL_Locale
             if ($newLocale) {
                 $locale = &I18Nv2::createLocale($newLocale);
             } else {
-                //  Get the language shortcode from the session                
+                //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
 
-                if ($uid = SGL_HTTP_Session::getUid() && isset($langCode)) {
+                $uid = SGL_HTTP_Session::getUid();
+                if ($uid && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
-                    $conf = & $GLOBALS['_SGL']['CONF'];
-                    
+                    $c = &SGL_Config::singleton();
+                    $conf = $c->getAll();
+
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);
 
                     if (!$country) {
+                        require_once 'I18Nv2/Negotiator.php';
                         $neg = &new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
-                    $locale = empty($country) ? $langCode : $langCode . "_" . $country;
+                    $localeId = empty($country) ? $langCode : $langCode . "_" . $country;
 
                 } else {
                     $neg = &new I18Nv2_Negotiator();
@@ -99,12 +100,8 @@ class SGL_Locale
         return $locale;
     }
 
-    function setTimeZone($tzone) 
+    function setTimeZone($tzone)
     {
-        /***
-        This Really doesn't belong here, I'm not sure where to dump this code.
-        ***/
-
         setlocale(LC_TIME, $tzone);
         @putenv('TZ=' . $tzone);
     }

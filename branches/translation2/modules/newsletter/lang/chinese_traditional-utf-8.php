@@ -1,10 +1,10 @@
 <?php
-$words['Newsletter Mgr'] = '新聞信管理';
-$words['Newsletter sent successfully'] = '新聞信發送完成';
+$words['Newsletter Mgr'] = '電子報管理';
+$words['Newsletter sent successfully'] = '電子報發送完成';
 $words['Send mail to groups'] = '發送郵件至群組';
-$words['You managed to choose an invalid group'] = '你選擇的群組不正確';
+$words['You managed to choose an invalid group'] = '您選擇的群組不正確';
 $words['Address Book'] = '通訊錄';
-$words['address book blurb'] = '選擇群組將全體組員電子郵件地址帶入';
+$words['address book blurb'] = '選擇群組將全體組員電子郵件地址匯入';
 $words['Subject'] = '主題';
 $words['Message'] = '內容';
 $words['Send'] = '發送';

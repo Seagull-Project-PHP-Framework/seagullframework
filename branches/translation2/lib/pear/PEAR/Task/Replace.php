@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Replace.php,v 1.6 2005/06/23 15:56:42 demian Exp $
+ * @version    CVS: $Id: Replace.php,v 1.12 2005/10/02 06:29:39 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -30,7 +30,7 @@ require_once 'PEAR/Task/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -66,6 +66,13 @@ class PEAR_Task_Replace extends PEAR_Task_Common
                 return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'to', $xml['attribs']['to'],
                     $config->getKeys());
             }
+        } elseif ($xml['attribs']['type'] == 'php-const') {
+            if (defined($xml['attribs']['to'])) {
+                return true;
+            } else {
+                return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'to', $xml['attribs']['to'],
+                    array('valid PHP constant'));
+            }
         } elseif ($xml['attribs']['type'] == 'package-info') {
             if (in_array($xml['attribs']['to'],
                 array('name', 'summary', 'channel', 'notes', 'extends', 'description',
@@ -84,6 +91,7 @@ class PEAR_Task_Replace extends PEAR_Task_Common
             return array(PEAR_TASK_ERROR_WRONG_ATTRIB_VALUE, 'type', $xml['attribs']['type'],
                 array('pear-config', 'package-info'));
         }
+        return true;
     }
 
     /**
@@ -138,6 +146,16 @@ class PEAR_Task_Replace extends PEAR_Task_Common
                 }
                 if (is_null($to)) {
                     $this->logger->log(0, "$dest: invalid pear-config replacement: $a[to]");
+                    return false;
+                }
+            } elseif ($a['type'] == 'php-const') {
+                if ($this->installphase == PEAR_TASK_PACKAGE) {
+                    return false;
+                }
+                if (defined($a['to'])) {
+                    $to = constant($a['to']);
+                } else {
+                    $this->logger->log(0, "$dest: invalid php-const replacement: $a[to]");
                     return false;
                 }
             } else {

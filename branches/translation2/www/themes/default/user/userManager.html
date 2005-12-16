@@ -1,5 +1,5 @@
 <flexy:include src="userModuleSubNav.html" />
-<form name="users" method="post" flexy:ignore id="users">
+<form name="users" method="post" flexy:ignore id="users" action="{makeUrl(##,#user#,##)}">
 
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
     <span flexy:if="msgGet()">{msgGet()}</span>
@@ -11,7 +11,7 @@
     </div>
     <table class="wide">
         <tr>
-            <td colspan="10">
+            <td colspan="12">
                 <input type="button" value="{translate(#add user#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#user#,##)}'" />
                 <input type="button" value="{translate(#search#)}"                onclick="javascript:document.location.href='{makeUrl(#add#,#usersearch#,#user#)}'" />
                 <input type="button" value="{translate(#import users#)}" onclick="javascript:document.location.href='{makeUrl(##,#userImport#,##)}'" />
@@ -19,29 +19,34 @@
         </tr>
         <tr>
             <th>{translate(#Select#)}</th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|usr_id||frmSortOrder|sortOrder#)}">{translate(#User ID#)}</a></th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|username||frmSortOrder|sortOrder#)}">{translate(#Username#)}</a></th>
-            {if:GLOBALS[_SGL][CONF][OrgMgr][enabled]}
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|usr_id||frmSortOrder|sortOrder#)}">{translate(#User ID#)}</a></th>
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|username||frmSortOrder|sortOrder#)}">{translate(#Username#)}</a></th>
+            {if:conf[OrgMgr][enabled]}
                 <th>{translate(#Organisation#)}</th>
             {end:}
             <th>{translate(#Email#)}</th>
             <th>{translate(#Role#)}</th>
-            <th><a class="header" href="{makeUrl(##,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a></th>
+            <th><a class="header" href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a></th>
             <th>{translate(#Edit#)}</th>
             <th>{translate(#Password#)}</th>
             <th>{translate(#Permissions#)}</th>
+            <th>{translate(#Logins#)}</th>
         </tr>
 
         <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
             <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[usr_id]}" /></td>
             <td>{aValue[usr_id]}</td>
              <td>{aValue[username]}</td>
-            {if:GLOBALS[_SGL][CONF][OrgMgr][enabled]}
+            {if:conf[OrgMgr][enabled]}
                 <td>{aValue[org_name]}</td>
             {end:}
             <td>{aValue[email]}</td>
             <td>{aValue[role_name]}</td>
-            <td align="center">{if:aValue[is_acct_active]} {translate(#Active#)} {else:} {translate(#Disabled#)} {end:}</td>
+            <td align="center">
+                {if:aValue[is_acct_active]}<a href="{makeUrl(#requestChangeUserStatus#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#Active#)} </a>
+                {else:} <a href="{makeUrl(#requestChangeUserStatus#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#Disabled#)}</a>
+                {end:}
+            </td>
             <td align="center">
                 <a href="{makeUrl(#edit#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">
                     <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#edit#)}" />
@@ -57,13 +62,14 @@
                     onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
             </td>
             <td align="center" flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
+            <td align="center"><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">list</a></td>
         </tr>
         <tr>
             <td colspan="10">{translate(#With selected user(s)#)}: <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('{translate(#user#)}', 'users')" />
                 <input type="submit" name="syncToRole" value="{translate(#sync perms with role#)}"
                     onclick="return confirmCustom('{translate(#You must select a user to sync#)}', '{translate(#Are you sure you want to sync this user(s)?#)}', 'users')" class="toolBtnSeparate"/>
                 <select name="roleSync">
-                    <option value="null">{translate(#(each user's current)#)}</option>
+                    <option value="null">{translate(#(each users current)#)}</option>
                     {generateSelect(aRoles):h}
                 </select>
                 <select name="roleSyncMode">

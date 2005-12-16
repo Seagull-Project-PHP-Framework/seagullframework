@@ -36,6 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author: Gilles Laborderie <gillesl@users.sourceforge.net>                 |
 // +---------------------------------------------------------------------------+
+require_once 'HTML/QuickForm.php';
 class BlockFormDynamic
 {
     var $action;
@@ -44,20 +45,22 @@ class BlockFormDynamic
 
     function BlockFormDynamic($action = '')
     {
-        $this->action = $action;
-        require_once 'HTML/QuickForm.php';
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $dbh = & SGL_DB::singleton();
         
+        $this->action = $action;
         $this->form = & new HTML_QuickForm( 'frmBlock', 'POST' );
-
-        require_once SGL_ENT_DIR . '/Section.php';
-        $sectionList = & new DataObjects_Section();
+        require_once 'DB/DataObject.php';
+        $sectionList = DB_DataObject::factory('Section');
+        $sectionList->whereAdd('parent_id = 0');
         $sectionList->orderBy('section_id ASC');
         $result = $sectionList->find();
         if( $result > 0) {
             while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
                     $trans = & SGL_Translation::singleton();
-					$trans->setLang(SGL_Translation::getLangID());
+                    $trans->setLang(SGL_Translation::getLangID());
                     $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', $languageID);   
                 } else {
                     $sections[ $sectionList->section_id ] = $sectionList->title;
@@ -66,10 +69,19 @@ class BlockFormDynamic
         }
         $sections[0] = 'All sections';        
         $this->sections = $sections;
+        $query = "SELECT role_id, name FROM {$conf['table']['role']}";
+        $res = & $dbh->getAll($query);
+        $roles = array();
+        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
+        foreach ($res as $key => $value) {
+            $roles[$value->role_id] = $value->name;
+        }
+        $this->roles = $roles;
     }
 
     function init( $data = null )
     {
+        include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->data = $data;
         
         //  init data obj if coming from edit
@@ -77,14 +89,14 @@ class BlockFormDynamic
             $this->form->setDefaults( $this->data );
         } else {
             //  Set default form values
-            $defaultValues['block[name]']         = 'Dynamic1';
+            $defaultValues['block[name]']         = 'DbHtmlBlock';
             $defaultValues['block[title]']        =  null;
             $defaultValues['block[content]']        = null;
             $defaultValues['block[title_class]']  = '';
             $defaultValues['block[body_class]']  = '';
-            $defaultValues['block[is_onleft]']    = 1;
             $defaultValues['block[is_enabled]']   = 1;
             $defaultValues['block[sections]']     = 0;
+            $defaultValues['block[roles]']        = SGL_ANY_ROLE;
             $this->form->setDefaults( $defaultValues );
         }
         //  hidden fields
@@ -102,7 +114,6 @@ class BlockFormDynamic
         }
         
         // Field name
-        $this->form->addElement('html','</table><table border="0"><tr valign="top"><td><table>');
         $this->form->addElement('text', 'block[name]', SGL_Output::translate('Name') );
         // Field title
         $this->form->addElement('text', 'block[title]', SGL_Output::translate('Title') );
@@ -111,7 +122,7 @@ class BlockFormDynamic
         // Field bgnd_colour
         $this->form->addElement('text', 'block[body_class]', SGL_Output::translate('Body class')) ;
         // Field position
-        $this->form->addElement('select', 'block[is_onleft]', SGL_String::translate('Position'), array( '0' => SGL_String::translate('Right'), '1' => SGL_String::translate('Left')));
+        $this->form->addElement('select', 'block[position]', SGL_String::translate('Position'), $aBlocksNames);
   
         if( $this->action == 'edit' ) {
             // Field blk_order
@@ -120,14 +131,21 @@ class BlockFormDynamic
         // Field is_enabled
         $this->form->addElement('checkbox', 'block[is_enabled]', SGL_Output::translate('Status'), SGL_Output::translate('check to activate'));
         
-        $this->form->addElement('html',"</table></td><td><table>");
         // Field sections
         $this->form->addElement('select', 'block[sections]', SGL_Output::translate('Sections'), $this->sections );
         $select = &$this->form->getElement('block[sections]');
         $select->setMultiple(true);
         $select->setSize(15);
+        // Field roles
         
-        $this->form->addElement('html','</table></td></tr></table><table>');
+        $this->form->addElement('select', 'block[roles]', SGL_String::translate('Can view'), $this->roles);
+        $roles = &$this->form->getElement('block[roles]');
+        $roles->setMultiple(true);
+        $roles->setSize(5);
+        $select = &$this->form->getElement('block[sections]');
+        $select->setMultiple(true);
+        $select->setSize(15);
+
         // Field Content
         $this->form->addElement('textarea','block[content]', NULL,
                         array('id' => 'frmBodyName', 'rows' => '20','cols' => '90' )) ;

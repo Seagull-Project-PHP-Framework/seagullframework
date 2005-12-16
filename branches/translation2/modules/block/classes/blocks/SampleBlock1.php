@@ -20,11 +20,11 @@ class SampleBlock1
 
     function getBlockContent()
     {
-        $text = <<< NEWS
-        <br /><br /><br />
-        your block here
-        <br /><br /><br />
-NEWS;
+        $text = <<< HTML
+<p style="text-align: center;">
+<a href="https://sourceforge.net/projects/seagull/"><img src="http://sourceforge.net/sflogo.php?group_id=92482&amp;type=1" width="88" height="31" alt="SourceForge.net Logo" /></a>
+</p>
+HTML;
         return $text;
     }
 }

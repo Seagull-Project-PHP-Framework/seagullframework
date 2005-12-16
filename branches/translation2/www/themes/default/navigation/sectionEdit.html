@@ -2,12 +2,12 @@
 function addFormValue(myElement, form)
 {
     var myForm = document.getElementById(form);
-    
+
     newInput = document.createElement("input");
     newInput.setAttribute('name', myElement.name);
     newInput.setAttribute('value', myElement.value);
     newInput.setAttribute('type', 'hidden');
-    myForm.appendChild(newInput);  
+    myForm.appendChild(newInput);
 }
 </script>
 
@@ -27,7 +27,7 @@ function addFormValue(myElement, form)
     </table>
 
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit">
-        <input type="hidden" name="action" value="{action}" /> 
+        <input type="hidden" name="action" value="{action}" />
         <input type="hidden" name="page[section_id]" value="{section[section_id]}" />
         <input type="hidden" name="page[order_id]" value="{section[order_id]}" />
         <input type="hidden" name="page[original_parent_id]" value="{section[parent_id]}" />
@@ -42,7 +42,7 @@ function addFormValue(myElement, form)
             <td colspan="2" align="center">{foreach:error,error,string} <strong>{string}</strong><br />
             {end:}</td>
         </tr>
-    
+
         <tr>
             <td colspan="2">
                 <p>{translate(#intro text 1#)}</p>
@@ -50,7 +50,7 @@ function addFormValue(myElement, form)
                 <p>&nbsp;</p>
             </td>
         </tr>
-        
+
         {if:section[section_id]}
             <tr>
                 <th align="left">{translate(#Section ID#)}</th>
@@ -88,25 +88,36 @@ function addFormValue(myElement, form)
 
         <tr>
             <th align="left">{translate(#Page#)}:</th>
-            
+
             <td>
-                <select name="page[articleType]" multiple 
+                <select name="page[articleType]" multiple
                     onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
-                    
+
                 <option value="static" flexy:raw="{staticSelected}">
                     {translate(#static articles#)}
                 </option>
 
                 <option value="dynamic" flexy:raw="{dynamicSelected}">
                     {translate(#dynamic pages#)}
-                </option>  
-                </select>
+                </option>
 
+                <option value="wiki" flexy:raw="{wikiSelected}">
+                    wiki
+                </option>
+                <option value="uriAlias" flexy:raw="{uriAliasSelected}">
+                    {translate(#alias#)}
+                </option>
+                <option value="uriExternal" flexy:raw="{uriExternalSelected}">
+                    {translate(#external URI#)}
+                </option>
+                </select>
+                <br />
                 {if:staticSelected}
                     <select size="1" name="page[staticArticleId]">
                         {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
                     </select>
-                {else:}<br />
+                {end:}
+                {if:dynamicSelected}
                     <select size="1" name="page[module]"
                         onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                         {generateSelect(aModules,section[module]):h}
@@ -118,7 +129,20 @@ function addFormValue(myElement, form)
                     <select size="1" name="page[actionMapping]">
                         <option value="">none
                         {generateSelect(aActions,section[actionMapping]):h}
-                    </select> action                                       
+                    </select> action
+                {end:}
+                {if:wikiSelected}
+                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> wiki page URL
+                {end:}
+                {if:uriAliasSelected}
+                    <select name="urialiases" onChange="document.sectionEdit.elements['page[resource_uri]'].value=document.sectionEdit.urialiases.value">
+                        <option value="">- {translate(#Choose URI from Aliases#)} -</option>
+                        {generateSelect(aUriAliases,page[resource_uri]):h}
+                    </select><br />
+                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#alias URI#)}
+                {end:}
+                {if:uriExternalSelected}
+                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#external page URI#)}
                 {end:}
             </td>
         </tr>
@@ -160,8 +184,8 @@ function addFormValue(myElement, form)
 
         <tr>
             <td colspan="2" align="center">
-                <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp; 
-                <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
+                <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}"
                     onclick="document.location.href='{makeUrl(#list#,#page#,#navigation#)}'" />
             </td>
         </tr>

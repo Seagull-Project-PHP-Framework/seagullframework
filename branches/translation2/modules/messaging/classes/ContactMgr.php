@@ -30,13 +30,15 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ContactMgr.php                                                            |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: ContactMgr.php,v 1.24 2005/05/13 14:55:48 demian Exp $
+
+require_once 'DB/DataObject.php';
 
 /**
  * Manages Contacts.
@@ -45,7 +47,6 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.24 $
- * @since   PHP 4.1
  * @todo    needs to access a range of registered users, currently incomplete
  */
 class ContactMgr extends SGL_Manager
@@ -55,14 +56,15 @@ class ContactMgr extends SGL_Manager
     function ContactMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'messaging';
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'Contact Manager';
         $this->template     = 'contacts.html';
 
         $this->_aActionsMapping =  array(
-            'insert' => array('insert', 'redirectToDefault'), 
-            'delete' => array('delete', 'redirectToDefault'), 
-            'list'   => array('list'), 
+            'insert' => array('insert', 'redirectToDefault'),
+            'delete' => array('delete', 'redirectToDefault'),
+            'list'   => array('list'),
         );
     }
 
@@ -86,17 +88,17 @@ class ContactMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'docBlank.htm';
-        require_once SGL_ENT_DIR . '/Contact.php';
+
         if (is_array($input->deleteArray)) {
             foreach ($input->deleteArray as $userID) {
-                $user = & new DataObjects_Contact();
+                $user = DB_DataObject::factory('Contact');
                 $user->whereAdd("usr_id = $userID");
                 $user->whereAdd("originator_id  = " . SGL_HTTP_Session::getUid());
                 $user->delete(true);
                 unset($user);
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . __FUNCTION__, 
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' . __FUNCTION__,
                 SGL_ERROR_INVALIDARGS);
         }
         SGL::raiseMsg('contacts successfully deleted');
@@ -105,18 +107,16 @@ class ContactMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
-            require_once SGL_ENT_DIR . '/Contact.php';
-            $savedUser = & new DataObjects_Contact();
-            $dbh = $savedUser->getDatabaseConnection();
-            $conf = & $GLOBALS['_SGL']['CONF'];            
+            SGL_DB::setConnection($this->dbh);
+            $savedUser = DB_DataObject::factory('Contact');
 
             //  skip if user already exists
             $savedUser->usr_id = $input->userID;
             $savedUser->originator_id  = SGL_HTTP_Session::getUid();
             $numRows = $savedUser->find();
             if ($numRows < 1) {
-                $savedUser->contact_id       = $dbh->nextId($conf['table']['contact']);
-                $savedUser->date_created     = SGL::getTime();
+                $savedUser->contact_id       = $this->dbh->nextId($this->conf['table']['contact']);
+                $savedUser->date_created     = SGL_Date::getTime();
                 $savedUser->originator_id    = SGL_HTTP_Session::getUid();
                 $savedUser->usr_id           = $input->userID;
                 $res = $savedUser->insert();
@@ -143,13 +143,12 @@ class ContactMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
         $output->sectionTitle = 'Contacts';
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $dbh = & SGL_DB::singleton();
         $query = "
             SELECT  u.usr_id, u.username, u.first_name, u.last_name
-            FROM    {$conf['table']['user']} u, {$conf['table']['contact']} c 
+            FROM    {$this->conf['table']['user']} u, {$this->conf['table']['contact']} c
             WHERE   c.originator_id = " . SGL_HTTP_Session::getUid() . "
             AND     u.usr_id = c.usr_id
             ORDER BY u.last_updated DESC
@@ -161,7 +160,7 @@ class ContactMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
