@@ -1,2 +1,0 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Constraints for /default
