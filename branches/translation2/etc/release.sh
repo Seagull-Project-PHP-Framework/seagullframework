@@ -26,7 +26,6 @@ REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
 SVN_REPO_LEAF_FOLDER_NAME=trunk
-#SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/branches/$SVN_REPO_LEAF_FOLDER_NAME
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
@@ -120,7 +119,6 @@ function exportSvnAndPackage()
     rm -f $PROJECT_NAME/etc/release.sh
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
-    rm -f $PROJECT_NAME/www/errorTests.php
 
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME

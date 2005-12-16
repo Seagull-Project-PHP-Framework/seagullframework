@@ -18,7 +18,7 @@ class DefaultScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->clickLink('Register Now');
-        $this->assertTitle('Seagull Framework :: Register Now');
+        $this->assertTitle('Seagull Framework :: Register');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/default/bug/');
@@ -36,7 +36,7 @@ class DefaultScreensLoadWithoutErrorsTest extends WebTestCase
 #        $this->showSource();
 
         //  modules
-        $this->assertTitle('Seagull Framework :: Modules');
+        $this->assertTitle('Seagull Framework :: Module Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->clickLink('Manage');
