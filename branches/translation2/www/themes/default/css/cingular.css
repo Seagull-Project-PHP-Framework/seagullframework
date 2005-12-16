@@ -1,0 +1,43 @@
+table,div {clear:left;}/*don't like this solution but it might be the only one*/
+
+ul.navLvl1 {
+    list-style:none; 
+    margin:0; 
+    float:left; 
+    padding:0;
+    width:100%;
+    background:#eeeeee; 
+    border-top:1px outset #fff; 
+    border-bottom:1px outset #fff;
+    background-repeat:repeat-x;
+    background-position:bottom;
+    background-image:url(../images/cingMidBottom.png);}
+ul.navLvl1 ul {list-style:none; margin:0; display:none; position:absolute; width:13.5em; background:#ffffff; padding:2px; z-index:1; border:1px outset #c0c0c0;background-color:#CCFFFF;-moz-opacity:0.85;
+/*can't get to work in IE; filter works but cuts off nested ULs outside this box
+filter:alpha(opacity=90);
+filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);
+*/
+}
+ul.navLvl1 ul ul{top:0; left:97%;}
+
+ul.navLvl1 a{display:block; text-decoration:none; padding:5px 7px; color:#000;background-repeat:repeat-x;background-position:bottom;background-image:url(../images/cingMidBottom.png);}
+ul.navLvl1 a:hover{color:orange;}
+ul.navLvl1 ul a {background-image:none;}
+ul.navLvl1 ul a.hasKids{background:url(../images/menu_arrow_black.gif) center right no-repeat;}
+
+ul.navLvl1 li{position:relative; float:left;background-repeat:repeat-x;background-position:top;background-image:url(../images/cingMidTop.png);}
+ul.navLvl1 li li{float:none;background:none;}
+* html ul.navLvl1 li li{display:inline;}
+ul.navLvl1 li li a{padding:4px;}
+* html ul.navLvl1 li li a{width:100%;}
+
+
+/*IE ":hover"
+NOTE: unlike background url, behavior url is relative to current url, not to .css
+*/
+ul.navLvl1 li{behavior:url(themes/default/css/listItemHover.htc);}
+
+/*non-IE :hover*/
+ul.navLvl1 li:hover{background-color:#ffffff;}/*entire path highlighted; non-IE only*/
+ul.navLvl1 li:hover > ul{display:block; left:100%;}
+ul.navLvl1 > li:hover > ul{left:auto;}
