@@ -96,5 +96,6 @@ function SGL_XML_RPC_getDispatchMap_cache()
 }
 
 $map = SGL_XML_RPC_getDispatchMap_cache();
+#$map = SGL_XML_RPC_getDispatchMap();
 new XML_RPC_Server($map, $serviceNow = 1, $debug = 0);
 ?>

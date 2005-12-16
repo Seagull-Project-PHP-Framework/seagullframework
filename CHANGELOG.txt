@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.5.5        |
 +-----------------------+
 BUGFIXES
+16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
 
