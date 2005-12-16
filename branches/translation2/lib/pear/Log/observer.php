@@ -109,17 +109,6 @@ class Log_observer
     }
 
     /**
-<<<<<<< observer.php
-     * This is a stub method to make sure that Log_observer classes do
-     * something when they are notified of a message. The default
-     * behavior is to just print the message, which is obviously not
-     * desireable in practically any situation - which is why you need
-     * to override this method. :)
-     *
-     * @param array $messageOb    A hash containing all information - the text
-     *                      message itself, the priority, what log it came
-     *                      from, etc.
-=======
      * This is a stub method to make sure that Log_Observer classes do
      * something when they are notified of a message.  The default behavior
      * is to just print the message, which is obviously not desireable in
@@ -127,7 +116,6 @@ class Log_observer
      * method. :)
      *
      * @param array     $event      A hash describing the log event.
->>>>>>> 1.5
      */
     function notify($event)
     {
