@@ -17,6 +17,10 @@ if (isset($_GET['cmd'])) {
         $res = $remote->call('framework.determineLatestVersion');
         break;
 
+    case 'getAllModules':
+        $res = $remote->call('framework.getAllModules');
+        break;
+
     case 'listMethods':
         $res = $remote->call('system.listMethods');
         break;
@@ -42,6 +46,7 @@ if (isset($_GET['cmd'])) {
 <body>
 <p><a href="<?php echo $_SERVER['PHP_SELF'] ?>">reset</a></p>
 <p><a href="?cmd=determineLatestVersion">determineLatestVersion</a></p>
+<p><a href="?cmd=getAllModules">getAllModules</a></p>
 <p><a href="?cmd=listMethods">listMethods</a></p>
 <p><a href="?cmd=methodHelp">methodHelp</a></p>
 <p><a href="?cmd=methodSignature">methodSignature</a></p>
