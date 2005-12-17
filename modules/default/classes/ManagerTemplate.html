@@ -48,6 +48,7 @@ class {t.managerName}Mgr extends SGL_Manager
     function {t.managerName}Mgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
 
         $this->pageTitle    = '{t.managerName} Manager';
         $this->template     = '{t.templatePrefix}List.html';
