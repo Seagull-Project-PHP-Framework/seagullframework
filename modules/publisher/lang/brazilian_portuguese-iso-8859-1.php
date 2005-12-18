@@ -1,4 +1,5 @@
 <?php
+$words['WikiScrape Manager'] = 'Gerenciador do WikiScrape';
 $words['contributed by'] = 'enviado por';
 $words['Contributed by'] = 'Enviado por';
 $words['full story'] = 'leia mais...';

@@ -1,12 +1,17 @@
 <?php
-
-$words['Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".'] = 'Ajuda para melhorar a acessibilidade da navegação. Use valores como: "início", "próximo", "anterior"';
+$words['alias'] = 'apelido';
+$words['external URI'] = 'URI externa';
+$words['alias URI'] = 'apelido URI';
+$words['external page URI'] = 'página externa para URI';
+$words['Choose URI from Aliases'] = 'Escolha uma URI dos apelidos';
+$words['Role Name'] = 'Nome do papel';
+$words['Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".'] = 'Ajuda para melhorar a acessibilidade da navegação. Use valores como: \"início\", \"próximo\", \"anterior\"';
 $words['AccessKey'] = 'Telca de acesso';
 $words['Rel Marker'] = 'Marcador de ponto';
 $words['Any number, which can be pressed with the ALT-key to load the page.'] = 'Qualquer número, que pode ser precionado em conjunto com a tecla ALT para carregar a página';
 $words['Note'] = 'Nota';
 $words['return to category manager'] = 'retornar ao gerenciador de categorias';
-$words['Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.'] = 'Permisões são definidas por padrão para permitir todos usuários em todas as categorias. Se você quiser proibir certo grupo a acessar uma categoria, escolha \\\"não\\\" na resposta \\\"tem permissões\\\" para um dado grupo.';
+$words['Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.'] = 'Permisões são definidas por padrão para permitir todos usuários em todas as categorias. Se você quiser proibir certo grupo a acessar uma categoria, escolha \\\\\"não\\\\\" na resposta \\\\\"tem permissões\\\\\" para um dado grupo.';
 $words['With selected section(s)'] = 'Com a(s) seção(ões) selecionada(s)';
 $words['separate with slashes (/)'] = 'separe com barra (/)';
 $words['Browse'] = 'Navegar';

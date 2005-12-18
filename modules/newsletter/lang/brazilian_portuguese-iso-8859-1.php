@@ -1,4 +1,5 @@
 <?php
+$words['Please enter your name and e-mail address and select the newsletters that you want to subscribe.'] = 'Por favor digite seu nome e e-mail e escolha as listas que deseja se inscrever';
 $words['Newsletter'] = 'Informativo';
 $words['Subscribe'] = 'Inscrever';
 $words['subscribe'] = 'inscrever';
