@@ -1,4 +1,9 @@
 <?php
+$words['Block Class Name'] = 'Nome da classe do bloco';
+$words['Display Title'] = 'Exibir Título';
+$words['There was a problem, block did not validate'] = 'Houve um problema, o bloco não validou';
+$words['Can view'] = 'Pode ver';
+$words['All roles'] = 'Todos os papéis';
 $words['New Html block'] = 'Novo bloco HTML';
 $words['Left'] = 'Esquerda';
 $words['Right'] = 'Direita';
