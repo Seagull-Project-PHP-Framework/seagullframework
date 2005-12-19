@@ -16,6 +16,7 @@ IMPROVEMENTS
 +-----------------------+
 BUGFIXES
 24-11-05    Fixed long-standing image preview header probs
+24-11-05    Fixed config prob with FCK, images now upload correctly
 
 IMPROVEMENTS
 14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
