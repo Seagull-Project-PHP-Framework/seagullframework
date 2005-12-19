@@ -62,6 +62,12 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('blocksEnabled' => false));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
+        //  translation fallback language
+        if (array_key_exists('storeTranslationsInDB', $data) 
+            && $data['storeTranslationsInDB'] == 1) {
+            $c->set('translation', array('fallbackLang' => $data['siteLanguage']));                        
+        }
+
         //  save
         $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
@@ -229,12 +235,20 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                             <th class="alignCenter">Load Default Data</th>
                             ';
             if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
-                $out .=    '<th class="alignCenter">Load Sample Data</th>';
+                $out .=    '<th class="alignCenter">Load Sample Data</th>
+                           ';
             }
             $out .=        '<th class="alignCenter">Add Constraints</th>
-                        </tr>
-            ';
-
+                           ';
+            if (array_key_exists('storeTranslationsInDB', $data) 
+                && $data['storeTranslationsInDB'] == 1) {
+                foreach ($data['installLangs'] as $aKey => $aValues) {
+                    $out .= '<th class="alignCenter">'. $aValues .'</th>
+                            ';   
+                }                                     
+            }                        
+            $out .= '</tr>
+                    ';
             echo $out;
 
             $aModuleList = (isset($data['installAllModules']))
@@ -248,10 +262,20 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                             <td id="' . $module . '_data" class="alignCenter"></td>
                             ';
                 if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
-                    $out .='<td id="' . $module . '_dataSample" class="alignCenter"></td>';
+                    $out .='<td id="' . $module . '_dataSample" class="alignCenter"></td>
+                           ';
                 }
-                $out .=    '<td id="' . $module . '_constraints" class="alignCenter"></td>
-                        </tr>';
+                $out .= '<td id="' . $module . '_constraints" class="alignCenter"></td>
+                        ';
+                if (array_key_exists('storeTranslationsInDB', $data) 
+                    && $data['storeTranslationsInDB'] == 1) {
+                    foreach ($data['installLangs'] as $aKey => $aValues) {                            
+                            $out .= '<td id="' . $module . '_language_'. str_replace('-', '_', $aValues) .'" class="alignCenter"></td>
+                                    ';
+                    }                    
+                }                
+                $out .= '</tr>
+                        ';
                 echo $out;
             }
             echo '</table>';
@@ -354,7 +378,6 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
     }
 }
 
-
 class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -382,6 +405,102 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             }
         }
     }
+}
+
+class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
+            require_once SGL_CORE_DIR .'/Translation.php';
+
+            $this->setup();
+
+            $statusText .= 'loading languages';
+            $this->updateHtml('status', $statusText);
+
+            //  Go back and load selected languages
+            require_once 'Translation2/Admin.php';                
+
+            //  fetch available languages
+            $aLangOptions = SGL_Translation::getAllInstallableLanguages();
+            $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
+
+            //  get dsn
+            $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
+            
+            //  set translation2 params
+            $params = array(
+                'langs_avail_table' => 'langs',
+                'lang_id_col'       => 'lang_id',
+                'string_id_col'      => 'translation_id',
+            );
+    
+            //  set tranlsation2 driver
+            $driver = 'DB';
+            
+            //  instantiate translation2_admin object
+            $translation = & Translation2_Admin::factory($driver, $dsn, $params);
+
+            //  interate through languages adding to langs table
+            foreach ($data['installLangs'] as $aKey => $aLang) {
+                $globalLangFile = $availableLanguages[$aLang][1] .'.php';                                            
+                $langID = str_replace('-', '_', $aLang);                    
+                $encoding       = substr($aLang, strpos('-', $aLang));
+                $langData       = array(
+                                    'lang_id' => $langID,
+                                    'table_name' => $this->conf['table']['translation'] .'_'. $langID,
+                                    'meta' => '',
+                                    'name' => $aLangOptions[$aLang],
+                                    'error_text' => 'not available',
+                                    'encoding' => $encoding
+                                    );
+                $result = $translation->addLang($langData);
+    
+                //  add languaged to inifile container
+                $this->installedLanguages[$langID] = $langID;
+                
+                //  interate through modules  
+                $aModuleList = (isset($data['installAllModules']))
+                    ? SGL_Install::getModuleList()
+                    : $this->getMinimumModuleList();
+                                  
+                foreach ($aModuleList as $module) {
+                    $modulePath = SGL_MOD_DIR . '/' . $module  . '/lang';                    
+    
+                    if (file_exists($modulePath .'/'. $globalLangFile)) {
+                        //  load current module lang file
+                        require $modulePath .'/'. $globalLangFile;
+            
+                        //  defaultWords clause
+                        $words = ($module == 'default') ? $defaultWords : $words;                            
+                        
+                        //  add current translation to db
+                        foreach ($words as $tKey => $tValue) {                                                                                          
+                            if (is_array($tValue) && $tKey) { // if an array
+                                //  create key|value|| string
+                                $value = '';
+                                foreach ($tValue as $aKey => $aValue) {
+                                    $value .= $aKey . '|' . $aValue .'||';                                        
+                                }
+                                $string = array($langID => $value);
+                                $result = $translation->add($tKey, $module, $string);
+                            } elseif ($tKey && $tValue) {
+                                $string = array($langID => $tValue);
+                                $result =  $translation->add($tKey, $module, $string);                                    
+                            }                                    
+                        }
+                        $displayHtml = ($result) ? $this->success : $this->failure;
+
+                        $this->updateHtml($module . '_language_'. $langID, $displayHtml);
+                        unset($words);                            
+                    } else {
+                        $this->updateHtml($module . '_language_'. $langID, $this->noFile);                            
+                    }
+                }
+            }
+        }
+    }       
 }
 
 class SGL_Task_EnableForeignKeyChecks extends SGL_Task

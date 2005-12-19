@@ -53,6 +53,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
     {
+        require_once SGL_CORE_DIR .'/Translation.php'+
+
         $this->_formBuilt = true;
         $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
 
@@ -105,15 +107,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
 
-        //  set lang
-        require_once SGL_PATH . '/lib/data/ary.languages.php';
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangData[$id] =  $langName . ' (' . $id . ')';
-        }
-        $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
+        $this->addElement('select', 'siteLanguage', 'Site language:', SGL_Translation::getAllInstallableLanguages());
 
         //  set tz offset
         require_once SGL_PATH . '/lib/data/ary.timezones.en.php';

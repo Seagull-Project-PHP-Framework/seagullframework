@@ -157,6 +157,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
@@ -164,7 +165,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
-        set_time_limit(60);
+        set_time_limit(120);
         $ok = $runner->main();
     }
 }

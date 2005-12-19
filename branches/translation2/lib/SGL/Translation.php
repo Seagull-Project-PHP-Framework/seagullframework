@@ -220,5 +220,19 @@ class SGL_Translation
         }
     }
 
+    function getAllInstallableLanguages()
+    {
+        //  fetch available languages
+        require_once SGL_DAT_DIR . '/ary.languages.php';
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+    
+        //  sort and return                
+        uasort($availableLanguages, 'SGL_cmp');
+        foreach ($availableLanguages as $id => $tmplang) {
+            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangOptions[$id] =  $langName .' ('. $id .')';
+        }       
+        return $aLangOptions;
+    }
 }
 ?>
