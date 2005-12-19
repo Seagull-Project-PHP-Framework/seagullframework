@@ -381,13 +381,14 @@ class IMessageMgr extends SGL_Manager
         }
 
         //  process body according to browser type
-        require_once 'Net/UserAgent/Detect.php';
-        $browser = & new Net_UserAgent_Detect();
-        if (!isset($browser->browser) || !$browser->browser['ie5up']) {
-            $body = $input->instantMessage->body;
-            $body = chunk_split(strip_tags($body), 80, "<br />");
-            $body = "<pre>" . $body . '</pre>';
-        }
+//        require_once 'Net/UserAgent/Detect.php';
+//        $browser = & new Net_UserAgent_Detect();
+//        if (!isset($browser->browser) || !$browser->browser['ie5up']) {
+//            $body = $input->instantMessage->body;
+//            $body = chunk_split(strip_tags($body), 80, "<br />");
+//            $body = "<pre>" . $body . '</pre>';
+//            $input->instantMessage->body = $body;
+//        }
 
         $subject = strip_tags($input->instantMessage->subject);
 
@@ -422,7 +423,7 @@ class IMessageMgr extends SGL_Manager
             if ($message->subject == '') {
                 $message->subject = SGL_Output::translate('no subject');
             }
-            $message->body = $body;
+            $message->body = $input->instantMessage->body;
 
             // set default unread/undeleted status see $this->inbox()
             // delete status should come from user preference...keep sent email (3) or not (2)
