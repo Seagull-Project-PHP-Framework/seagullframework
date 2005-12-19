@@ -38,16 +38,17 @@
 // +---------------------------------------------------------------------------+
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
+require_once SGL_CORE_DIR . '/Translation.php';
+
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
  *
  * @package navigation
  * @author  Andy Crain <apcrain@fuse.net>
  * @author  Demian Turner <demian@phpkitchen.com>
- * @author  AJ Tarachanowicz <ajt@localhype.net> 
+ * @author  AJ Tarachanowicz <ajt@localhype.net>
  * @version $Revision: 1.43 $
  */
-
 class SimpleNav
 {
     /**
@@ -101,22 +102,22 @@ class SimpleNav
      * @var     array
      */
     var $_aParentsOfCurrentPage = array();
-    
+
     /**
      * Holds section title translations
-     * 
+     *
      * @access  private
      * @var     array
      */
     var $_aTranslations = array();
-    
+
     function SimpleNav($input)
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
-        
+
         //  get a reference to the request object
         $req = & SGL_Request::singleton();
-        
+
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;
         $this->input = $input;
@@ -157,10 +158,10 @@ class SimpleNav
 
             //  fetch current lang
             $lang = SGL_Translation::getLangID();
-            
+
             //  retreive nav translation
             $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);
-                                    
+
             $aSectionNodes = $this->getSectionsByRoleRid();
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($this->_aSectionNodes);
@@ -193,7 +194,7 @@ class SimpleNav
         $result = $this->dbh->query($query);
         if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
-                please delete the config file from the var directory and try the install again', 
+                please delete the config file from the var directory and try the install again',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
         if (DB::isError($result)) {
@@ -213,14 +214,14 @@ class SimpleNav
         // replace +'s in array elements with spaces
         $aQueryData = array_map(create_function('$a', 'return str_replace("+", " ", $a);'),
             $aQueryData);
-        
+
         //  temporarily remove session info
         SGL_Url::removeSessionInfo($aQueryData);
 
         //  return to string
         $querystring = implode('/', $aQueryData);
-         
-        //  find current section  
+
+        //  find current section
         $aSectionNodes = array();
         $tmpQuerystring = $querystring;
         while ($result->fetchInto($section)) {
@@ -229,7 +230,7 @@ class SimpleNav
             }
             //  get orig $querystring value for each iteration
             $querystring = $tmpQuerystring;
-            
+
             //  set all defaults to false, then test
             $section->children = false;
             $section->isCurrent = false;
@@ -249,7 +250,7 @@ class SimpleNav
             if (is_numeric($section->title)) {
                 $titleID = $section->title; unset($section->title);
                 $section->title = $this->aTranslations[$titleID];
-            }            
+            }
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
             if ($section->right_id - $section->left_id > 1) {
@@ -276,25 +277,25 @@ class SimpleNav
             $conda1 = $section->resource_uri == $querystring;
             $conda2 = $this->_staticId == 0;
             $evala = $conda1 && $conda2;
-            
+
             $condb1 = $section->section_id != 0;
             $condb2 = $section->section_id == $this->_staticId;
             $evalb = $condb1 && $condb2;
-                        
+
             $condc1 = strpos($querystring, 'articleview') !== false;
             $condc2 = strpos($querystring, 'frmCatID') !== false;
             $condc3 = $section->is_static == 0;
-            $evalc = $condc1 && $condc2 && $condc3; 
-*/            
+            $evalc = $condc1 && $condc2 && $condc3;
+*/
             //  a. the strings are identical and it's not a static article
             if (($section->resource_uri == $querystring && $this->_staticId == 0 )
-            
+
                     //  b. it is a static article, so staticId must be non-zero
                     || ($section->section_id != 0 && $section->section_id == $this->_staticId)
-                    
+
                     //  c. we're browsing articles by category ID
                     || (strpos($querystring, 'articleview') !== false)
-                        && strpos($section->resource_uri, 'articleview') !== false                    
+                        && strpos($section->resource_uri, 'articleview') !== false
                         && strpos($querystring, 'frmCatID') !== false
                         && $section->is_static == 0) {
                 $section->isCurrent = true;
@@ -315,7 +316,7 @@ class SimpleNav
                     //  add parent to parentsOfCurrentPage array
                     $this->_aParentsOfCurrentPage[] = $section->parent_id;
                 }
-                
+
             //  this case is for subtabs, ie Contact Us/Hosting Info
             } elseif (!isset($exactMatch)) {
 
@@ -332,7 +333,7 @@ class SimpleNav
                     }
                     //  create array of potential matches
                     if ($tmpUri == $section->resource_uri) {
-                    
+
                         //  make sure we don't abort too early if we're matching a static id, ie, a static article
                         if ($this->_staticId != 0 && ($section->section_id != $this->_staticId)) {
                             break;
@@ -344,14 +345,14 @@ class SimpleNav
                         //  add parent to parentsOfCurrentPage array
                         $this->_aParentsOfCurrentPage[] = $section->parent_id;
                         break;
-                    }  
+                    }
                 }
             }
             //  add section node to nodes array, only if it is enabled, ie:
             //  $this->_currentSectionId may have been set, even if tab is not to be shown
             if ($section->is_enabled) {
-                $aSectionNodes[$section->section_id] = $section;            
-            }            
+                $aSectionNodes[$section->section_id] = $section;
+            }
         }
         return $aSectionNodes;
     }
@@ -408,7 +409,7 @@ class SimpleNav
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
                 $anchorOffset = (strpos($anchorFragment, '&amp;')) + 1;
-                $anchorEnd = $anchorStart + $anchorOffset; 
+                $anchorEnd = $anchorStart + $anchorOffset;
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 
                 //  remove anchor
