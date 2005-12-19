@@ -53,7 +53,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
     {
-        require_once SGL_CORE_DIR .'/Translation.php'+
+        require_once SGL_CORE_DIR .'/Translation.php';
 
         $this->_formBuilt = true;
         $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
