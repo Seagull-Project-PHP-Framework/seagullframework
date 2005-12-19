@@ -381,7 +381,7 @@ class IMessageMgr extends SGL_Manager
         }
 
         //  process body according to browser type
-        include_once 'Net/UserAgent/Detect.php';
+        require_once 'Net/UserAgent/Detect.php';
         $browser = & new Net_UserAgent_Detect();
         if (!isset($browser->browser) || !$browser->browser['ie5up']) {
             $body = $input->instantMessage->body;
@@ -404,7 +404,7 @@ class IMessageMgr extends SGL_Manager
             }
 
             if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
-                if (PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
+                if (SGL_PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
                     // Skip users who chose to be anonymous or have inactive
                     // accounts
                     $counter++;

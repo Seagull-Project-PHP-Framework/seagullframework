@@ -5,6 +5,8 @@ CHANGELOG
 +-----------------------+
 BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
+19-12-05    Fixed incorrect constant which prevented instant messages from working
+            correctly
 
 IMPROVEMENTS
 
