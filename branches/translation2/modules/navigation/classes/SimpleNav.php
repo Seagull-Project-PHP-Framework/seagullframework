@@ -162,9 +162,9 @@ class SimpleNav
             //  retreive nav translation
             $this->aTranslations = SGL_Translation::getTranslations('nav', $lang);
 
-            $aSectionNodes = $this->getSectionsByRoleRid();
+            $aSectionNodes = $this->getSectionsByRoleId();
             $sectionId = $this->_currentSectionId;
-            $html = $this->_toHtml($this->_aSectionNodes);
+            $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
             $cache->save(serialize($aNav), $cacheId, 'nav');
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
