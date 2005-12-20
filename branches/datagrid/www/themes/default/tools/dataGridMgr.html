@@ -1,5 +1,6 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
-<form name="dataGrid" id="dataGrid" method="POST">
+<form method="post" name="dataGrid" id="dataGrid" target="_self">
+<input type="hidden" name="print" value="0" />
 <center>
 <input type=submit style="visibility:hidden" value="Filtruj">
 <!--<br><br><a href="{makeUrl(#create#,#DataGrid#,#tools#)}">make database and copy files</a>-->
