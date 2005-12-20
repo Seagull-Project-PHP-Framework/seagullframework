@@ -39,7 +39,6 @@
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
 require_once dirname(__FILE__) . '/../../../modules/default/classes/ModuleMgr.php';
-require_once dirname(__FILE__) . '/../AppController.php';
 
 /**
  * Simple init task.

@@ -4,9 +4,10 @@ CHANGELOG
 | VERSION: 0.5.5        |
 +-----------------------+
 BUGFIXES
-16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
+20-12-05    Fixed corruption of german language file in default module
 19-12-05    Fixed incorrect constant which prevented instant messages from working
             correctly
+16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
 
@@ -19,6 +20,8 @@ BUGFIXES
 24-11-05    Fixed config prob with FCK, images now upload correctly
 
 IMPROVEMENTS
+14-12-05    Module skeleton generator improved, it now: creates template files,
+            lang files and aActionsMapping array (Werner Krauss)
 14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
             (Philippe Lhoste)
 14-12-05    'localeCategory' configurable, set to LC_ALL by default although European
