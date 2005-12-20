@@ -306,6 +306,29 @@
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <tr>
+        <th colspan="3">{translate(#Paths#)}</th>
+    </tr>
+     <tr>
+        <td class="fieldName">{translate(#Install Root#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[installRoot]">{error[installRoot]}</div>
+            <input type="text" name="conf[path][installRoot]" value="{conf[path][installRoot]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+     <tr>
+        <td class="fieldName">{translate(#Web Root#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[webRoot]">{error[webRoot]}</div>
+            <input type="text" name="conf[path][webRoot]" value="{conf[path][webRoot]}" size="50" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
         <th colspan="3">{translate(#Navigation Options#)}</th>
     </tr>
     <tr>
