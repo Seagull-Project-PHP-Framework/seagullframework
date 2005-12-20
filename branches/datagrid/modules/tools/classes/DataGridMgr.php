@@ -310,17 +310,17 @@ class DataGridMgr extends SGL_Manager {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'dataGridMgr.html'; //template for all dataGrids
 
-        require_once SGL_LIB_DIR . '/other/varlib/DataGrid.php';
-        require_once SGL_LIB_DIR . '/other/varlib/DataGridDataSource.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid/DataGridDataSource.php';
 
         //create new dataGrid
         $dataGrid = & new SGL_DataGrid();
         //add columns to dataGrid
-        $col = &$dataGrid->addColumn('text', 'name', 'name', true, true);
+        $col = &$dataGrid->addColumn(array ('type'=>'text', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
         $col->setTransformInColumn(array('Adamus' => 'ad'));
-        $col2 = &$dataGrid->addColumn('text', 'surname', 'surname', true, true);
+        $col2 = &$dataGrid->addColumn(array('type'=>'text', 'name'=>'surname', 'dbName'=>'surname', 'sortable'=>true, 'filterable'=>true));
         $col2->setTransformInColumn(array('Mielcarus' => 'mtest'));
-        $dataGrid->addColumn('text', 'city','city', true, true);
+        $dataGrid->addColumn(array('type'=>'text', 'name'=>'city','dbName'=>'city', 'sortable'=>true, 'filterable'=>true));
         //create instance of data source
         $dataSource = & new SGL_DataGridDataSource();
         //add manually data to source
@@ -335,7 +335,7 @@ class DataGridMgr extends SGL_Manager {
         $dataSource->addRow(array
             ('name' => 'Tomaszus', 'surname' => 'Przybyszus', 'city' => 'Saloniki'));
         //get all data, fill prepared data to dataGrid and display the dataGrid with data
-        $dataGrid->dataGridValidate($input->inputReq);
+        $dataGrid->validate($input->inputReq);
         $dataGrid->setDataSource($dataSource);
         $dataGrid->display($output);
     }
@@ -353,21 +353,21 @@ class DataGridMgr extends SGL_Manager {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'dataGridMgr.html';
 
-        require_once SGL_LIB_DIR . '/other/varlib/DataGrid.php';
-        require_once SGL_LIB_DIR . '/other/varlib/DataGridSQLDataSource.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid/DataGridSQLDataSource.php';
 
         $dataGrid = & new SGL_DataGrid();
-        $dataGrid->addColumn('id', 'id', 'id');
-        $dataGrid->addColumn('text', 'name', 'name', true, true);
-        $dataGrid->addColumn('text', 'description', 'description', true, true);
-        $dataGrid->addColumn('real', 'salary', 'salary', true, true, true, true);
-        $dataGrid->addColumn('enclosure', 'file', 'fileattached');
-        $dataGrid->addColumn('image', 'picture', 'picture');
+        $dataGrid->addColumn(array('type'=>'id', 'name'=>'', 'dbName'=>'id'));
+        $dataGrid->addColumn(array('type'=>'text', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'text', 'name'=>'description', 'dbName'=>'description', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'real', 'name'=>'salary', 'dbName'=>'salary', 'sortable'=>true, 'filterable'=>true, 'sumable'=>true, 'sumTotalable'=>true));
+        $dataGrid->addColumn(array('type'=>'enclosure', 'name'=>'file', 'dbName'=>'fileattached'));
+        $dataGrid->addColumn(array('type'=>'image', 'name'=>'picture', 'dbName'=>'picture'));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, description, salary, fileattached, picture
             FROM people WHERE #_FILTER#
         ", 'id');
-        $dataGrid->dataGridValidate($input->inputReq);
+        $dataGrid->validate($input->inputReq);
         $dataGrid->setDataSource($dataSource);
         $dataGrid->display($output);
     }
@@ -385,20 +385,20 @@ class DataGridMgr extends SGL_Manager {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'dataGridMgr.html';
 
-        require_once SGL_LIB_DIR . '/other/varlib/DataGrid.php';
-        require_once SGL_LIB_DIR . '/other/varlib/DataGridSQLDataSource.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid/DataGridSQLDataSource.php';
 
         $dataGrid = & new SGL_DataGrid();
-        $dataGrid->addColumn('user', 'name', 'name', true, true);
-        $dataGrid->addColumn('colour', 'colour column', 'colour', true, true);
-        $dataGrid->addColumn('email', 'email', 'email', true, true);
-        $dataGrid->addColumn('link', 'www','www', true, true);
+        $dataGrid->addColumn(array('type'=>'user', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'colour', 'name'=>'colour column', 'dbName'=>'colour', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'email', 'name'=>'email', 'dbName'=>'email', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'link', 'name'=>'www','dbName'=>'www', 'sortable'=>true, 'filterable'=>true));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT name, birthdate, colour, email, www
             FROM people WHERE #_FILTER#
             ORDER BY name
         ", 'id');
-        $dataGrid->dataGridValidate($input->inputReq);
+        $dataGrid->validate($input->inputReq);
         $dataGrid->setDataSource($dataSource);
         $dataGrid->display($output);
     }
@@ -416,32 +416,32 @@ class DataGridMgr extends SGL_Manager {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'dataGridMgr.html';
 
-        require_once SGL_LIB_DIR . '/other/varlib/DataGrid.php';
-        require_once SGL_LIB_DIR . '/other/varlib/DataGridSQLDataSource.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid/DataGridSQLDataSource.php';
 
         //first dataGrid - SQLDataSource
         $dataGrid = & new SGL_DataGrid();
-        $dataGrid->addColumn('id', 'id', 'id');
-        $col = &$dataGrid->addColumn('text', 'name', 'name', true, true);
+        $dataGrid->addColumn(array('type'=>'id', 'name'=>'', 'dbName'=>'id'));
+        $col = &$dataGrid->addColumn(array('type'=>'text', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
         $col->setFilterSelect(array('Jan', 'Andrew', 'Stephen'));
-        $dataGrid->addColumn('text', 'surname', 'surname', true, true);
-        $dataGrid->addColumn('date', 'birth date', 'birthdate', true, true);
-        $dataGrid->addColumn('real', 'salary', 'salary', true, true, true, true);
+        $dataGrid->addColumn(array('type'=>'text', 'name'=>'surname', 'dbName'=>'surname', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'date', 'name'=>'birth date', 'dbName'=>'birthdate', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'real', 'name'=>'salary', 'dbName'=>'salary', 'sortable'=>true, 'filterable'=>true, 'sumable'=>true, 'sumTotalable'=>true));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, surname, birthdate, salary
             FROM people WHERE #_FILTER#
             ORDER BY id
         ", 'id');
-        $dataGrid->dataGridValidate($input->inputReq);
+        $dataGrid->validate($input->inputReq);
         $dataGrid->setDataSource($dataSource);
         $dataGrid->display($output);
 
         //second dataGrid - DataSource
         $dataGrid2 = & new SGL_DataGrid('2');
-        $dataGrid2->addColumn('id', 'id', 'id');
-        $dataGrid2->addColumn('text', 'name', 'name', true, true);
-        $dataGrid2->addColumn('date', 'birth date', 'date', true, true);
-        $dataGrid2->addColumn('real', 'salary', 'salary', true, true, true, true);
+        $dataGrid2->addColumn(array('type'=>'id', 'name'=>'', 'dbName'=>'id'));
+        $dataGrid2->addColumn(array('type'=>'text', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid2->addColumn(array('type'=>'date', 'name'=>'birth date', 'dbName'=>'date', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid2->addColumn(array('type'=>'real', 'name'=>'salary', 'dbName'=>'salary', 'sortable'=>true, 'filterable'=>true, 'sumable'=>true, 'sumTotalable'=>true));
         $dataSource2 = & new SGL_DataGridDataSource();
         $dataSource2->addRow(array
             ('id' => 12, 'name' => 'dddd', 'date' => '2005-12-09', 'salary' => 1200.3));
@@ -455,7 +455,7 @@ class DataGridMgr extends SGL_Manager {
             ('id' => 13, 'name' => 'bbb', 'date' => '1999-07-29', 'salary' => 1.8));
         $dataSource2->addRow(array
             ('id' => 14, 'name' => 'bb', 'date' => '1900-05-00', 'salary' => 1000.789));
-        $dataGrid2->dataGridValidate($input->inputReq);
+        $dataGrid2->validate($input->inputReq);
         $dataGrid2->setDataSource($dataSource2);
         $dataGrid2->display($output);
     }
@@ -473,36 +473,46 @@ class DataGridMgr extends SGL_Manager {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'dataGridMgr.html';
 
-        require_once SGL_LIB_DIR . '/other/varlib/DataGrid.php';
-        require_once SGL_LIB_DIR . '/other/varlib/DataGridSQLDataSource.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+        require_once SGL_LIB_DIR . '/SGL/DataGrid/DataGridSQLDataSource.php';
 
         //first dataGrid - SQLDataSource
         $dataGrid = & new SGL_DataGrid();
-        $dataGrid->addColumn('id', 'id', 'id');
-        $dataGrid->addColumn('user', 'name', 'name', true, true);
-        $dataGrid->addColumn('user', 'surname', 'surname', true, true);
-        $dataGrid->addColumn('colour', 'colour', 'colour', true, true);
-        $dataGrid->addColumn('real', 'salary', 'salary', true, true, true, true);
-        $col = &$dataGrid->addColumn('action', '');
-        $col->addAction('Edit', 'dialog.php?action=edit&id={id}&name={name}');
-        $col->addAction('Delete', 'dialog.php?action=delete&id={id}');
+        $dataGrid->addColumn(array('type'=>'id', 'dbName'=>'id'));
+        $dataGrid->addColumn(array('type'=>'user', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'user', 'name'=>'surname', 'dbName'=>'surname', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'colour', 'name'=>'colour', 'dbName'=>'colour', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid->addColumn(array('type'=>'real', 'name'=>'salary', 'dbName'=>'salary', 'sortable'=>true, 'filterable'=>true, 'sumable'=>true, 'sumTotalable'=>true));
+        $col = &$dataGrid->addColumn(array('type'=>'action'));
+        $col->addAction(array(
+                              'name' => 'Edit',
+                              'url' => SGL_Url::makeLink('example/id/{id}/action/edit/name/{name}','dataGrid','test'),
+                              ));
+        $col->addAction(array(
+                              'name' => 'Delete', 
+                              'url' => SGL_Url::makeLink('example/id/{id}/action/delete/','dataGrid','test'),
+                              ));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, surname, colour, salary
             FROM people WHERE #_FILTER#
             ORDER BY id", 'id');
-        $dataGrid->dataGridValidate($input->inputReq);
+        $dataGrid->validate($input->inputReq);
         $dataGrid->setDataSource($dataSource);
-        $dataGrid->display($output);
+        $dataGrid->display($output); 
 
         //second dataGrid - DataSource
         $dataGrid2 = & new SGL_DataGrid('2');
-        $dataGrid2->addColumn('id', 'id', 'id');
-        $dataGrid2->addColumn('user', 'name', 'name', true, true);
-        $dataGrid2->addColumn('colour', 'colour', 'colour', true, true);
-        $dataGrid2->addColumn('real', 'salary', 'salary', true, true, true, true);
-        $col2 = &$dataGrid2->addColumn('action', 'Actions');
-        $col2->addAction('Edit', 'dialog.php?action=edit&id={id}&name={name}');
-        $col2->addAction('Delete', 'dialog.php?action=delete&id={id}');
+        $dataGrid2->addColumn(array('type'=>'id', 'dbName'=>'id'));
+        $dataGrid2->addColumn(array('type'=>'user', 'name'=>'name', 'dbName'=>'name', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid2->addColumn(array('type'=>'colour', 'name'=>'colour', 'dbName'=>'colour', 'sortable'=>true, 'filterable'=>true));
+        $dataGrid2->addColumn(array('type'=>'real', 'name'=>'salary', 'dbName'=>'salary', 'sortable'=>true, 'filterable'=>true, 'sumable'=>true, 'sumTotalable'=>true));
+        $col2 = &$dataGrid2->addColumn(array('type'=>'action', 'name'=>'Actions'));
+        $col2->addAction(array(
+                            'name' => 'Edit',
+                            'url' => SGL_Url::makeLink('example/id/{id}/action/edit/name/{name}','dataGrid','test')));
+        $col2->addAction(array(
+                             'name' => 'Delete',
+                             'url' => SGL_Url::makeLink('example/id/{id}/action/delete/','dataGrid','test')));
         $dataSource2 = & new SGL_DataGridDataSource();
         $dataSource2->addRow(array
             ('id' => '12', 'name' => 'dddd', 'colour' => 'yellow', 'salary' => 12.56));
@@ -516,7 +526,7 @@ class DataGridMgr extends SGL_Manager {
             ('id' => '13', 'name' => 'bbb', 'colour' => 'red', 'salary' => 233.11));
         $dataSource2->addRow(array
             ('id' => '14', 'name' => 'bb', 'colour' => 'blue', 'salary' => 4.5));
-        $dataGrid2->dataGridValidate($input->inputReq);
+        $dataGrid2->validate($input->inputReq);
         $dataGrid2->setDataSource($dataSource2);
         $dataGrid2->display($output);
     }

@@ -1,6 +1,21 @@
 <?php
 
+require_once SGL_LIB_DIR . '/SGL/DataGrid.php';
+
 class ToolsOutput {
+    function makeValidPrintLink($selfUrl)
+    {
+        if (strpos($selfUrl,"?SGLSESSID") == false)
+            return $selfUrl."print/1/";
+        else 
+            return $selfUrl."print/1/";
+    }
+    
+    function makeValidLinks($links)
+    {
+        return str_replace("&nbsp;&nbsp;&nbsp;","&nbsp;",$links);
+    }
+    
     function getMultilangValue($object, $varName, $varLang, $varProp) {
 
         $varName = $varName . $varLang . $varNameEnd;
@@ -42,10 +57,17 @@ class ToolsOutput {
     {
         return SGL_Date::format($date);
     }
-    
+
     function getDateArrayValue($array, $value, $length = null) {
         $tempDate = $this->getArrayValue($array, $value, $length);
         return $this->formatDate($tempDate);
+    }
+
+    function getDateTimeArrayValue($array, $value, $length = null) {
+        $tempDate = $this->getArrayValue($array, $value, $length);
+        include_once 'Date.php';
+        $date = & new Date($tempDate);
+        return $date->format('%d.%m.%Y %H:%M');
     }
 
     function getActionValue($action, $valueObj) {
@@ -75,8 +97,8 @@ class ToolsOutput {
         return $object1 == $object2;
     }
 
-    function orEqual($firstObject, $object1, $object2, $object3) {
-        return (($firstObject == $object1) || ($firstObject == $object2) || ($firstObject == $object3));
+    function orEqual($firstObject, $object1, $object2, $object3, $object4 = '') {
+        return (($firstObject == $object1) || ($firstObject == $object2) || ($firstObject == $object3) || ($firstObject == $object4));
     }
 
     function isArray($array) {
