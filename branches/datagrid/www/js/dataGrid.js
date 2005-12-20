@@ -33,20 +33,30 @@ function resetFilters(dataGridId) {
         var form = null;
         if (col1 != null) {
             for (i = 0; i< col1.length; i++) {
-            element = col1[i];
-            if (element.id == dataGridId) {
-                element.value = '';
+                element = col1[i];
+                if (element.id == dataGridId) {
+                    element.value = '';
+                }
             }
-}
             form = element.form;
         }
         if (col2 != null) {
             for (i = 0; i< col2.length; i++) {
-            element = col2[i];
-            if (element.id == dataGridId) {
-                element.value = '';
+                element = col2[i];
+                if (element.id == dataGridId) {
+                    element.value = '';
+                }
             }
-}
+            form = element.form;
+        }
+        if (col1 != null) {
+            for (i = 0; i< col1.length; i++) {
+                element = col1[i];
+                var s = new String(element.id);
+                if ((s.indexOf("1"+dataGridId) != -1) || (s.indexOf("2"+dataGridId) != -1) || (s.indexOf(dataGridId+"1") != -1) || (s.indexOf(dataGridId+"2") != -1)) {
+                    element.value = '';
+                }
+            }
             form = element.form;
         }
         form.submit();
@@ -150,13 +160,36 @@ function resetFilters(dataGridId) {
     //  sCheckboxName  - name of checkboxes
     //  iRowNumber     - is counted from 0
     //  oEvent         - used to tetermine Ctrl key pressed
-    function ChangeSelection(oEvent, sCheckboxName, iRowNumber) {
 
+    function ChangeSelection(oEvent, sCheckboxName, iRowNumber) {
         // determine checkbox object
         oCheckBox = GetCB(sCheckboxName, iRowNumber);
-        if (oCheckBox) {
+        if (!oCheckBox) {
+            return;
+        }
+        if (!oCheckBox.checked && ((GetTR(oCheckBox).className=="") || (GetTR(oCheckBox).className=="dataGrid_row"))) {
+            oCheckBox.checked = true;
+            SetTRStyle(GetTR(oCheckBox), true);
+            return 1;
+        }
+        
+        if (oCheckBox.checked && ((GetTR(oCheckBox).className=="") || (GetTR(oCheckBox).className=="dataGrid_row"))) {
+            SetTRStyle(GetTR(oCheckBox), true);
+            return 1;
+        }
+        
+        if (!oCheckBox.checked && (GetTR(oCheckBox).className=="dataGrid_selected_row")) {
+            SetTRStyle(GetTR(oCheckBox), false);
+            return 1;
+        }
+
+        if (oCheckBox.checked && (GetTR(oCheckBox).className=="dataGrid_selected_row")) {
+            oCheckBox.checked = false;
+            SetTRStyle(GetTR(oCheckBox), false);
+            return 1;
+        }
             // how many is checked before action
-            var iChecked;
+       /*     var iChecked;
             var tr = GetTable(oCheckBox);
             var table = tr.getAttribute('dataGridName');
             if (!iSingleRow[table]) {
@@ -205,7 +238,7 @@ function resetFilters(dataGridId) {
             }
             // set proper style for current row
             SetTRStyle(GetTR(oCheckBox), oCheckBox.checked);
-        }
+        }*/
     }
 
     //select all rows
@@ -247,7 +280,7 @@ function resetFilters(dataGridId) {
             }
         }
         if (dataGridData.indexOf("{id}") != -1 ) {
-            alert('Prosz� wybra� pozycj� na li�cie.');
+            alert(messagePositionList);
             return null;
         }
         return dataGridData;
@@ -270,7 +303,7 @@ function resetFilters(dataGridId) {
         }
     }
 
-    function deleteConfirm(sCheckboxName, url, dataGridDelMsg) {
+    function deleteConfirm(sCheckboxName, url, dataGridDelMsg, defaultDelMsg) {
         var iRow = 0;
         var countRow = 0;
         oCB = GetCB(sCheckboxName, iRow);
@@ -282,12 +315,17 @@ function resetFilters(dataGridId) {
             oCB = GetCB(sCheckboxName, iRow);
         }
         if(countRow > 0) {
-            if(confirm(dataGridDelMsg + countRow)) {
+            var message;
+            if (dataGridDelMsg.indexOf('?') != -1)
+                message = dataGridDelMsg;
+            else
+                message = dataGridDelMsg  + countRow + '?';
+            if(confirm(message)) {
                 document.getElementById('dataGrid').setAttribute('action', url);
                 document.getElementById('dataGrid').submit();
             }
         }
         else {
-            alert('No rows selected');
+            alert(defaultDelMsg);
         }
     }
