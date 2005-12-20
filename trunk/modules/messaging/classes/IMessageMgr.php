@@ -340,11 +340,10 @@ class IMessageMgr extends SGL_Manager
 
         //  process body according to browser type
         require_once 'Net/UserAgent/Detect.php';
-        $browser = Net_UserAgent_Detect::singleton();
 
-        //  if browser is non IE 5 compliant, iow, i can't handle
+        //  if browser is non IE 5 compliant, iow, it can't handle
         //  the html widget
-        if (!isset($browser->browser) || !$browser->browser['ie5up']) {
+        if (Net_UserAgent_Detect::getBrowser('ie5up') != 'ie5up') {
             $output->messageBody = "\r\n\r\n > " . $body;
 
             //  if it is, format reply with html

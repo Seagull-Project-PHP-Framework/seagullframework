@@ -483,6 +483,7 @@ class MaintenanceMgr extends SGL_Manager
     function _rebuildSequences(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         require_once SGL_CORE_DIR . '/Tasks/Install.php';
         $res = SGL_Task_SyncSequences::run();
         if (PEAR::isError($res)) {
