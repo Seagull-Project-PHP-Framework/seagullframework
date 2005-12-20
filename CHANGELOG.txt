@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.5.5        |
 +-----------------------+
 BUGFIXES
+20-12-05    Added missing path vars in config template (Tomasz Osmialowski)
 20-12-05    Fixed corruption of german language file in default module
 19-12-05    Fixed incorrect constant which prevented instant messages from working
             correctly

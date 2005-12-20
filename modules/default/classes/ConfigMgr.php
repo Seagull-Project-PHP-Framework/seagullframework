@@ -62,7 +62,7 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
         $this->aDbTypes = array(
@@ -100,8 +100,8 @@ class ConfigMgr extends SGL_Manager
             'flexy' => 'Flexy',
             'smarty' => 'Smarty');
         $this->_aActionsMapping =  array(
-            'edit'   => array('edit'), 
-            'update' => array('update', 'redirectToDefault'), 
+            'edit'   => array('edit'),
+            'update' => array('update', 'redirectToDefault'),
         );
     }
 
@@ -122,27 +122,36 @@ class ConfigMgr extends SGL_Manager
         $aErrors = array();
         if ($input->submit) {
             $v = & new Validate();
-            if (empty($input->conf['site']['baseUrl']) || 
+            if (empty($input->conf['site']['baseUrl']) ||
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
-            //  filter site name for chars not suited to ini files
-            $input->conf['site']['name'] = SGL_String::stripIniFileIllegalChars($input->conf['site']['name']);
-            
+
+            //  paths
+            if (empty($input->conf['path']['webRoot'])) {
+                $aErrors['webRoot'] = 'Please enter a valid path';
+                // unset() because we use isset() in lib/SGL/Tasks/Setup.php to check this variable
+                unset($input->conf['path']['webRoot']);
+            }
+
+            if (empty($input->conf['path']['installRoot'])) {
+                $aErrors['installRoot'] = 'Please enter a valid path';
+            }
+
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
             }
-            
+
             //  catch invalid URL handler
             if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
                 $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
             }
-            
+
             switch ($input->conf['mta']['backend']) {
-                
+
             case 'sendmail':
                 if (empty($input->conf['mta']['sendmailPath']) ||
                     !file_exists($input->conf['mta']['sendmailPath'])) {
@@ -152,7 +161,7 @@ class ConfigMgr extends SGL_Manager
                     $aErrors['sendmailArgs'] = 'Please enter valid Sendmail arguments';
                 }
                 break;
-                
+
             case 'smtp':
                 if ($input->conf['mta']['smtpAuth'] == 1) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
@@ -166,11 +175,11 @@ class ConfigMgr extends SGL_Manager
             }
 
             //  session validations
-            if (  !empty($input->conf['site']['single_user']) 
+            if (  !empty($input->conf['site']['single_user'])
                 && empty($input->conf['site']['extended_session'])) {
                     $aErrors['single_user'] = 'Single session per user requires extended session';
             }
-            if (   !empty($input->conf['site']['extended_session']) 
+            if (   !empty($input->conf['site']['extended_session'])
                 && $input->conf['site']['sessionHandler'] != 'database') {
                     $aErrors['extended_session'] = 'Extended session requires database session handling';
             }
@@ -211,18 +220,18 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  add version info which is not available in form        
+        //  add version info which is not available in form
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
-        
+
         //  write configuration to file
         $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
 
         if (!is_a($ok, 'PEAR_Error')) {
             SGL::raiseMsg('config info successfully updated');
         } else {
-            SGL::raiseError('There was a problem saving your configuration, make sure /var is writable', 
+            SGL::raiseError('There was a problem saving your configuration, make sure /var is writable',
                 SGL_ERROR_FILEUNWRITABLE);
         }
     }
