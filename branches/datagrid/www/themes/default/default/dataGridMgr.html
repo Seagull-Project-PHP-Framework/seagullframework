@@ -1,5 +1,6 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
-<form name="dataGrid" id="dataGrid">
+<form method="post" name="dataGrid" id="dataGrid" target="_self">
+<input type="hidden" name="print" value="0" />
 <flexy:include src="dataGrid.html" />
-<center style="display:none"><input type=submit value="Filtruj" style='visibility: hidden;'></center>
+<input type="submit" value="" style='border:0 solid white;width:0; height:0' width="0" height="0" />
 </form>
