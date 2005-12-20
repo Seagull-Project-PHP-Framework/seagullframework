@@ -637,12 +637,12 @@ cursor:text;
 display:none;
 }
 */
-/* PK hide cbx for selected row ([type=checkbox] doesn't work in IE) */
+/* PK hide cbx for selected row ([type=checkbox] doesn't work in IE) 
 
 #dataGrid TABLE INPUT[type="checkbox"]{
    display:none;
 }
-
+*/
 
 /* cell with bubble-description */
 TD.tips{
