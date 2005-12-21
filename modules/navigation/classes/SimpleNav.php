@@ -238,6 +238,15 @@ class SimpleNav
                     $section->childIsCurrent = true;
                 }
             }
+            // loop through all children of section and see if there's an active one.
+            // if so set childIsCurrent
+            if ($section->children) {
+                 foreach ($section->children as $node) {
+                      if ($node->isCurrent || $node->childIsCurrent) {
+                           $section->childIsCurrent = true;
+                       }
+                   }
+            }
             //  first check if querystring is a simplified version of section name,
             //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
             if (SGL_Inflector::isUrlSimplified($querystring, $section->resource_uri)) {
