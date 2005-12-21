@@ -266,7 +266,9 @@ class SGL_Item
     function addDataItems($parentID, $itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                
+            
+        $trans = &SGL_Translation::singleton('admin');
+                        
         for ($x=0; $x < count($itemID); $x++) {
             $id = $this->dbh->nextId($this->conf['table']['item_addition']);
             $transID = $this->dbh->nextID($this->conf['table']['translation']);
@@ -312,8 +314,8 @@ class SGL_Item
 
         $trans = &SGL_Translation::singleton('admin');
 
-        $id = $this->dbh->nextId($conf['table']['item_addition']);
-        $transID = $this->dbh->nextID($conf['table']['translation']);
+        $id = $this->dbh->nextId($this->conf['table']['item_addition']);
+        $transID = $this->dbh->nextID($this->conf['table']['translation']);
 
         if ($itemValue == '')
             $itemValue = SGL_String::translate('No body text entered');
@@ -485,6 +487,8 @@ class SGL_Item
     function getDynamicContent($itemID, $type = SGL_RET_STRING, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $trans = &SGL_Translation::singleton();
         
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
@@ -498,8 +502,6 @@ class SGL_Item
             ORDER BY itm.item_type_mapping_id
                 ";
         $result = $this->dbh->query($query);
-
-        $trans = &SGL_Translation::singleton();
 
         switch ($type) {
 
@@ -937,8 +939,6 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
@@ -961,9 +961,9 @@ class SGL_Item
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                    {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm, 
-                    {$conf['table']['user']} u, {$conf['table']['category']} c
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
+                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, 
+                    {$this->conf['table']['user']} u, {$this->conf['table']['category']} c
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id

@@ -181,7 +181,7 @@ class SGL_Date
     function getMonthFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aMonths = SGL_String::translate('aMonths');
+        $aMonths = SGL_String::translate('aMonths', false, true);
         $monthOptions = '';
         if (empty($selected) && $selected != null) {
             $selected = date('m',time());

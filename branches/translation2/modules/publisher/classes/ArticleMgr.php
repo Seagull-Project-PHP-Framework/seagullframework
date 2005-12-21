@@ -96,7 +96,7 @@ class ArticleMgr extends SGL_Manager
         $input->catID           = (int)$req->get('frmCatID');
         $input->articleCatID    = (int)$req->get('frmArticleCatID');
         $input->catChangeToID   = (int)$req->get('frmCategoryChangeToID');
-        $input->dataTypeID      = $req->get('frmDataTypeID');
+        $input->dataTypeID      = $req->get('frmArticleTypeID');
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
@@ -245,10 +245,6 @@ class ArticleMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        $dbh = &SGL_DB::singleton();
                 
         $output->template = 'articleMgrEdit.html';
 
@@ -277,8 +273,8 @@ class ArticleMgr extends SGL_Manager
             $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
         }
 
-        $query = "SELECT languages FROM ". $conf['table']['item'] . " WHERE item_id='". $input->articleID ."'";
-        $results = $dbh->getOne($query);
+        $query = "SELECT languages FROM ". $this->conf['table']['item'] . " WHERE item_id='". $input->articleID ."'";
+        $results = $this->dbh->getOne($query);
         $langs = explode('|', $results);
         foreach ($langs as $id => $lang) {
             $key = str_replace('_', '-', $lang);
@@ -476,8 +472,6 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $dbh = &SGL_DB::singleton();
-
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
@@ -524,7 +518,7 @@ class ArticleMgr extends SGL_Manager
             'delta'    => 3,
             'perPage'  => $limit,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  fetch title translation
         $trans = &SGL_Translation::singleton();
