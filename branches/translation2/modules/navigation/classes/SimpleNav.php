@@ -124,6 +124,12 @@ class SimpleNav
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
+        if (is_null($input->get('navLang'))) {
+#FIXME: get current lang from session?
+            $input->set('navLang', 'en_iso_8859_15');
+        }
+        $this->_aTranslations =
+            SGL_Translation::getTranslations('nav', $input->get('navLang'));
     }
 
     /**
@@ -440,7 +446,7 @@ class SimpleNav
     function getCurrentSectionName()
     {
         if (!$this->_currentSectionId) {
-            $sectionName = $this->input->data->pageTitle;
+            $sectionName = $this->input->get('pageTitle');
         } else {
             $query = "
                 SELECT  title

@@ -102,8 +102,8 @@ class SGL_Translation
             $langs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params
-            foreach ($langs as $aKey) {
-                $params['strings_tables'][$aKey] = $prefix . $aKey;
+            foreach ($langs as $lang) {
+                $params['strings_tables'][$lang] = $prefix . $lang;
             }
 
         } else {

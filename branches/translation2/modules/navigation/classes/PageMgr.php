@@ -395,11 +395,14 @@ class PageMgr extends SGL_Manager
 
         //  add translations
         $trans = &SGL_Translation::singleton('admin');
-        $ok = $trans->add($titleID, 'nav', $input->section['title']);
+        $ok = $trans->add($titleId, 'nav', array($input->navLang => $input->section['title']));
 
         //  set translation id for nav title
         unset($input->section['title']);
         $input->section['title'] = $titleId;
+
+        //  add lang field
+        $input->section['languages'] = $input->navLang;
 
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -706,12 +709,12 @@ class PageMgr extends SGL_Manager
         $fallbackLang = $this->conf['translation']['fallbackLang'];
 
         //  fetch translations title
-        $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+        $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
 
         //  FIXME currently only set translation if numeric
         foreach ($sectionNodes as $k => $aValues) {
             if (is_numeric($aValues['title'])) {
-                $sectionNodes[$k]['title'] = $translations[$aValues['title']];
+                $sectionNodes[$k]['title'] = $aTranslations[$aValues['title']];
             }
         }
 
@@ -721,6 +724,7 @@ class PageMgr extends SGL_Manager
         $nestedSet->addImages($sectionNodes);
         $output->results = $sectionNodes;
         $output->sectionArrayJS = $this->_createNodesArrayJS($sectionNodes);
+        $output->fallbackLang = $fallbackLang;
     }
 
     function _generateSectionNodesOptions($sectionNodesArray, $selected = null)

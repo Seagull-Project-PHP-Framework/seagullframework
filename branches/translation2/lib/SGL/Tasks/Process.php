@@ -346,7 +346,7 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR .'/Translation.php';
-        
+
         $req = $input->getRequest();
         $lang = $req->get('lang');
 
@@ -369,8 +369,8 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         //  fetch default translation
         $langID = str_replace('-', '_', $lang);
         $defaultWords = SGL_Translation::getTranslations('default', $langID);
-        
-        //  fetch module translations        
+
+        //  fetch module translations
         $module = ($req->get('moduleName')) ? $req->get('moduleName') : SGL_Process_ResolveManager::getDefaultManager($input);
 
         if ($module !== 'default') {
@@ -831,7 +831,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             if (!class_exists($navClass)) {
                 SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
             }
-            $nav = & new $navClass($input);
+            $nav = & new $navClass($input->data);
             $aRes = $nav->render();
             if (!PEAR::isError($aRes)) {
                 list($sectionId, $html) = $aRes;
