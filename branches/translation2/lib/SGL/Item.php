@@ -247,7 +247,7 @@ class SGL_Item
                 $this->typeID," .
                 SGL_STATUS_FOR_APPROVAL . ",
                 $catID, ".
-                $dbh->quote($this->languages) ."
+                $this->dbh->quote($this->languages) ."
             )";
         $result = $this->dbh->query($query);
         return $id;
@@ -268,8 +268,8 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
                 
         for ($x=0; $x < count($itemID); $x++) {
-            $id = $dbh->nextId($this->conf['table']['item_addition']);
-            $transID = $dbh->nextID($this->conf['table']['translation']);
+            $id = $this->dbh->nextId($this->conf['table']['item_addition']);
+            $transID = $this->dbh->nextID($this->conf['table']['translation']);
             
             if ($itemValue[$x] == '')
                 $itemValue[$x] = SGL_String::translate('No other text entered');
@@ -571,7 +571,7 @@ class SGL_Item
             WHERE   itm.item_type_id = $typeID
             ORDER BY itm.item_type_mapping_id
                     ";
-        $result = $dbh->query($query);
+        $result = $this->dbh->query($query);
 
         //  get language name
         //  FIXME: getLangID() and add to $this->conf()
@@ -723,7 +723,7 @@ class SGL_Item
                 $constraint
                 ORDER BY itm.item_type_mapping_id
                 ";
-            $result = $dbh->query($query);
+            $result = $this->dbh->query($query);
 
             $trans = &SGL_Translation::singleton();
             if (!DB::isError($result)) {
@@ -977,14 +977,14 @@ class SGL_Item
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
             ORDER BY i.$orderBy DESC
             ";
-        $dbh = & SGL_DB::singleton();
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
             'delta'    => 3,
             'perPage'  => $limit,
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $trans = &SGL_Translation::singleton();
         $languageID = SGL_Translation::getLangID();
