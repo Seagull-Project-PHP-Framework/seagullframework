@@ -292,7 +292,7 @@ class PageMgr extends SGL_Manager
 
         $results = $this->dbh->getOne($query);
         $aLangs = explode('|', $results);
-        foreach ($aLangs as $id => $lang) {
+        foreach ($aLangs as $lang) {
             $key = str_replace('_', '-', $lang);
             $output->availableLangs[$lang] = $aLangDescriptions[$key];
         }
@@ -300,6 +300,8 @@ class PageMgr extends SGL_Manager
         $navLang = (isset($output->navLang) && !empty($output->navLang))
             ? $output->navLang
             : $aLangs[0];
+
+        $output->navLang = $navLang;
 
         //  add language if adding new translation
         if (!array_key_exists($navLang, $output->availableLangs)) {
@@ -389,15 +391,15 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $titleID = $this->dbh->nextID('translation');
+        $titleId = $this->dbh->nextID('translation');
 
         //  add translations
         $trans = &SGL_Translation::singleton('admin');
-        $trans->add($titleID, 'nav', $input->section['title']);
+        $ok = $trans->add($titleID, 'nav', $input->section['title']);
 
         //  set translation id for nav title
         unset($input->section['title']);
-        $input->section['title'] = $titleID;
+        $input->section['title'] = $titleId;
 
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -702,13 +704,14 @@ class PageMgr extends SGL_Manager
 
         //  fetch fallback language
         $fallbackLang = $this->conf['translation']['fallbackLang'];
+
         //  fetch translations title
         $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
 
         //  FIXME currently only set translation if numeric
-        foreach ($sectionNodes as $aKey => $aValues) {
+        foreach ($sectionNodes as $k => $aValues) {
             if (is_numeric($aValues['title'])) {
-                $sectionNodes[$aKey]['title'] = $translations[$aValues['title']];
+                $sectionNodes[$k]['title'] = $translations[$aValues['title']];
             }
         }
 
