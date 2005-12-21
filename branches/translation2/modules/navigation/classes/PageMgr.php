@@ -66,13 +66,13 @@ class PageMgr extends SGL_Manager
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'reorder'   => array('reorder', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'reorder'   => array('reorder', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
 
         $this->_params = array(
@@ -115,14 +115,14 @@ class PageMgr extends SGL_Manager
         $input->section     = $req->get('page');
         $input->section['is_enabled'] = (isset($input->section['is_enabled'])) ? 1 : 0;
         $input->navLang     = $req->get('frmNavLang');
-        $input->availableLangs = $req->get('frmAvailableLangs');       
+        $input->availableLangs = $req->get('frmAvailableLangs');
         $input->articleType = @$input->section['articleType'];
-        
+
         if (is_null($input->articleType)) {
             $input->articleType = 'static';
         }
         //  flatten group IDs for easy DB storage
-        $input->section['perms'] = (isset($input->section['perms']) 
+        $input->section['perms'] = (isset($input->section['perms'])
                 && count($input->section['perms']))
             ? join(',', $input->section['perms'])
             : null;
@@ -130,15 +130,15 @@ class PageMgr extends SGL_Manager
         //  Misc.
         $this->validated    = true;
         $this->submit       = $req->get('submitted');
-        
+
         //  fc hacks needed as a result of JS submit
         if ($input->action == 'insert' && is_null($this->submit)) {
             $input->action = 'add';
         }
         if ($input->action == 'update' && is_null($this->submit)) {
             $this->submit = true;
-            $aErrors[] = 'Please supply full nav info';         
-        }    
+            $aErrors[] = 'Please supply full nav info';
+        }
         //  validate form data
         if ($this->submit) {
             if (empty($input->section['title'])) {
@@ -154,8 +154,8 @@ class PageMgr extends SGL_Manager
                 $nestedSet = new SGL_NestedSet($this->_params);
                 $parent = $nestedSet->getNode($input->section['parent_id']);
                 if ($parent['is_enabled'] == 0 && $input->section['is_enabled'] == 1) {
-                    $aErrors[] = 'You cannot activate ' 
-                        . $input->section['title'] . ' unless you first activate ' 
+                    $aErrors[] = 'You cannot activate '
+                        . $input->section['title'] . ' unless you first activate '
                         . $parent['title'] . '.';
                 }
                 //  check child has same or subset of parents permissions
@@ -190,9 +190,6 @@ class PageMgr extends SGL_Manager
      */
     function _getStaticArticles()
     {
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
         $query = "
              SELECT  i.item_id,
                      ia.addition
@@ -214,7 +211,7 @@ class PageMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  pre-check enabled box
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
@@ -228,7 +225,7 @@ class PageMgr extends SGL_Manager
         switch ($output->articleType) {
         case 'static':
             $output->staticSelected = 'selected';
-            
+
             //  build static article list
             if (ModuleMgr::moduleIsRegistered('publisher')) {
                 $output->aStaticArticles = $this->_getStaticArticles();
@@ -242,18 +239,18 @@ class PageMgr extends SGL_Manager
             break;
 
         case 'dynamic':
-            $output->dynamicSelected = 'selected';                      
+            $output->dynamicSelected = 'selected';
 
             //  build dynamic section choosers
             $output->aModules = SGL_Util::getAllModuleDirs();
-            $currentModule = isset($output->section['module']) 
-                ? $output->section['module'] 
+            $currentModule = isset($output->section['module'])
+                ? $output->section['module']
                 : key($output->aModules);
             $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
-            $currentMgr = isset($output->section['manager']) 
-                ? $output->section['manager'] 
+            $currentMgr = isset($output->section['manager'])
+                ? $output->section['manager']
                 : key($output->aManagers);
-            $output->aActions = ($currentMgr != 'none') 
+            $output->aActions = ($currentMgr != 'none')
                 ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
                 : array();
             break;
@@ -282,6 +279,42 @@ class PageMgr extends SGL_Manager
         foreach ($aUriAliases as $key => $value) {
             $output->aUriAliases[$key] = $key . ' >> ' . $value;
         }
+        //  fetch available languages
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        foreach ($availableLanguages as $id => $tmplang) {
+            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
+        }
+        $query = "
+            SELECT languages
+            FROM ". $this->conf['table']['section'] . "
+            WHERE section_id='". $output->sectionId ."'";
+
+        $results = $this->dbh->getOne($query);
+        $langs = explode('|', $results);
+        foreach ($langs as $id => $lang) {
+            $key = str_replace('_', '-', $lang);
+            $output->availableLangs[$lang] = $aLangOptions[$key];
+        }
+
+        $input->navLang = (isset($input->navLang) && !empty($input->navLang))
+            ? $input->navLang
+            : $langs[0];
+
+        //  add language if adding new translation
+        if (!array_key_exists($input->navLang, $output->availableLangs)) {
+            $key = str_replace('_', '-', $input->navLang);
+            $output->availableLangs[$input->navLang] = $aLangOptions[$key];
+        }
+
+        //  find unavailable languages
+        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
+        foreach ($installedLangs as $uKey) {
+            if (!array_key_exists($uKey, $output->availableLangs)) {
+                $key = str_replace('_', '-', $uKey);
+                $output->availableAddLangs[$uKey] = $aLangOptions[$key];
+            }
+        }
     }
 
     function _add(&$input, &$output)
@@ -290,7 +323,7 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        
+
         // fetch installed langs
         $trans = &SGL_Translation::singleton();
         $output->aLanguages = $trans->getLangs();
@@ -299,42 +332,40 @@ class PageMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-                
+
         $separator = '/'; // can be configurable later
 
         //  if pageType = static, append articleId, else build page url
         switch ( $input->section['articleType'] ) {
         case 'static':
             $input->section['is_static'] = 1;
-            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';          
+            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
             break;
-        
+
         case 'wiki':
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'uriAlias':
             $string = 'uriAlias:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'uriExternal':
             $string = 'uriExternal:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'dynamic':
 
             //  strip extension and 'Mgr'
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -346,7 +377,7 @@ class PageMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -358,20 +389,19 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $dbh = &SGL_DB::singleton();
-        $titleID = $dbh->nextID('translation');
-        
+        $titleID = $this->dbh->nextID('translation');
+
         //  add translations
-        $trans = &SGL_Translation::singleton('admin');        
+        $trans = &SGL_Translation::singleton('admin');
         $trans->add($titleID, 'nav', $input->section['title']);
-        
+
         //  set translation id for nav title
         unset($input->section['title']);
         $input->section['title'] = $titleID;
-        
+
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
-                    
+
         if ($input->section['parent_id'] == 0) {    //  they want a root node
             $node = $nestedSet->createRootNode($input->section);
         } elseif ((int)$input->section['parent_id'] > 0) { //    they want a sub node
@@ -379,10 +409,10 @@ class PageMgr extends SGL_Manager
         } else { //  error
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        } 
+        }
         //  clear cache so a new cache file is built reflecting changes
         SGL::clearCache('nav');
-            
+
         //  possible DO bug here as correct insert always returns int 0
         if ($node) {
             SGL::raiseMsg('Section successfully added');
@@ -395,67 +425,30 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_CONFIG::singleton();
-        $conf = $c->getAll();
-
-        $dbh = &SGL_DB::singleton();
-
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
 
-        //  fetch available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-        }
-
-        $query = "SELECT languages FROM ". $conf['table']['section'] . " WHERE section_id='". $input->sectionId ."'";
-        $results = $dbh->getOne($query);
-        $langs = explode('|', $results);
-        foreach ($langs as $id => $lang) {
-            $key = str_replace('_', '-', $lang);
-            $output->availableLangs[$lang] = $aLangOptions[$key];   
-        }
-
-        $input->navLang = (isset($input->navLang) && !empty($input->navLang)) ? $input->navLang : $langs[0];
-
-        //  add language if adding new translation
-        if (!array_key_exists($input->navLang, $output->availableLangs)) {
-            $key = str_replace('_', '-', $input->navLang);
-            $output->availableLangs[$input->navLang] = $aLangOptions[$key];   
-        }
-        
-        //  find unavailable languages
-        $installedLangs = explode(',', $conf['translation']['installedLanguages']);
-        foreach ($installedLangs as $uKey) {
-            if (!array_key_exists($uKey, $output->availableLangs)) {
-                $key = str_replace('_', '-', $uKey);
-                $output->availableAddLangs[$uKey] = $aLangOptions[$key];
-            }   
-        }
-
         $trans = &SGL_Translation::singleton();
-        
+
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
 
         //  if title is numeric retreive translation else populate with current title
-        if (is_numeric($section['title'])) {    
+        if (is_numeric($section['title'])) {
             $section['title_id'] = $section['title'];
             unset($section['title']);
-            $section['title'] = $trans->get($section['title_id'], 'nav', $input->navLang);        
+            $section['title'] = $trans->get($section['title_id'], 'nav', $input->navLang);
             $section['language'] = $output->availableLangs[$input->navLang];
         } else {
             $section['language'] = $output->availableLangs[$input->navLang];
-        }       
+        }
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
-                    
+
             //  setup article type, dropdowns built in display()
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
                 $aElems = explode('/', $section['resource_uri']);
@@ -470,18 +463,18 @@ class PageMgr extends SGL_Manager
                 $output->articleType = 'uriExternal';
             } else {
                 $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
-                
+
                 //  parse url details
                     #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
                     #$parsed = $url->getQueryData($strict = true);
 
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
                 $section = array_merge($section, $parsed);
-                
+
                 //  adjust friendly mgr name to class filename
-                    $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
                 $section['manager'] = $className . '.php';
-                
+
                 //  represent additional params as string
                 if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
                     foreach ($parsed['parsed_params'] as $k => $v) {
@@ -519,33 +512,33 @@ class PageMgr extends SGL_Manager
         switch ( $input->section['articleType'] ) {
         case 'static':
             $input->section['is_static'] = 1;
-            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';          
+            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
             break;
-        
+
         case 'wiki':
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'uriAlias':
             $string = 'uriAlias:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'uriExternal':
             $string = 'uriExternal:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
-        
+
         case 'dynamic':
 
             //  strip extension and 'Mgr'
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -559,7 +552,7 @@ class PageMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -578,10 +571,10 @@ class PageMgr extends SGL_Manager
             $result = $trans->add($input->section['section_id'], 'nav', $strings);
 
             //  assign title id and languages for update
-            $input->section['title'] = $input->section['section_id'];         
+            $input->section['title'] = $input->section['section_id'];
             $input->section['languages'] = implode('|', $input->availableLangs);
         }
-        
+
         $nestedSet = new SGL_NestedSet($this->_params);
 
         //  attempt to update section values
@@ -610,19 +603,19 @@ class PageMgr extends SGL_Manager
             //  usual case, no change => do nothing
             $message = 'Section details successfully updated';
             break;
-            
+
         case $input->section['section_id']:
             //  cannot be parent to self => display user error
             $message = 'Section details updated, no data changed';
             break;
-            
+
         case 0:
             //  move the section, make it into a root node, just above it's own root
             $thisNode = $nestedSet->getNode($input->section['section_id']);
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $thisNode['root_id'], 'BE');
             $message = 'Section details successfully updated';
             break;
-            
+
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $input->section['parent_id'], 'SUB');
@@ -648,7 +641,7 @@ class PageMgr extends SGL_Manager
                     //  remove translations
                     $trans = &SGL_Translation::singleton('admin');
                     $trans->remove($section['title'], 'nav');
-                    
+
                     //  remove page
                     $nestedSet->deleteNode($sectionId);
                 }
@@ -695,25 +688,23 @@ class PageMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        
+
         $output->template = 'sectionList.html';
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $sectionNodes = $nestedSet->getTree();
 
         //  fetch available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];                
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
         //  fetch current languag
         $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
 
         //  fetch fallback language
-        $fallbackLang = $conf['translation']['fallbackLang'];
+        $fallbackLang = $this->conf['translation']['fallbackLang'];
         //  fetch translations title
-        $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);        
-        
+        $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+
         //  FIXME currently only set translation if numeric
         foreach ($sectionNodes as $aKey => $aValues) {
             if (is_numeric($aValues['title'])) {
