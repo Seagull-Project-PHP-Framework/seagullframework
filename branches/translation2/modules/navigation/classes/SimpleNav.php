@@ -246,11 +246,13 @@ class SimpleNav
                 $section->resource_uri = $aUri[1];
                 $section->uriExternal = true;
             }
+
             //  retreive translation
             if (is_numeric($section->title)) {
                 $titleID = $section->title; unset($section->title);
-                $section->title = $this->aTranslations[$titleID];
+                $section->title = $this->_aTranslations[$titleID];
             }
+
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
             if ($section->right_id - $section->left_id > 1) {

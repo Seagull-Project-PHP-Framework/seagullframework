@@ -63,19 +63,12 @@ function addFormValue(myElement, form)
                                     onChange="javascript:document.location.href='{makeUrl(#edit#,#page#,#navigation#,##,#frmSectionId|section[section_id]#)}frmNavLang/' + getSelectedValue(document.getElementById('sectionEdit').frmNavLang) + '/';">
                 {generateSelect(availableLangs,navLang):h}</select> ({translate(#switching language will cause changes to be lost#)})</td>        
         </tr>
-        {if:isEdit}
+
         <tr>        
             <th align="left">{translate(#Page Title#)} - {section[language]}</th>
             <td><input type="text" name="page[title]" value="{section[title]:h}" />
                 <input type="hidden" name="page[title_original]" value="{section[title]:h}" /></td>
         </tr>
-
-        {else:}
-        <tr>
-            <th align="left">{translate(#Page Title#)} - {section[language]}</th>
-            <td><input type="text" name="page[title]" value="{section[title]:h}" /></td>
-        </tr>        
-        {end:}
 
         <tr>
             <th align="left">{translate(#Parent Page#)}:</th>

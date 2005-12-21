@@ -398,6 +398,8 @@ class PageMgr extends SGL_Manager
         $c = &SGL_CONFIG::singleton();
         $conf = $c->getAll();
 
+        $dbh = &SGL_DB::singleton();
+
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
@@ -427,7 +429,7 @@ class PageMgr extends SGL_Manager
         }
         
         //  find unavailable languages
-        $installedLangs = expolde(',', $conf['translation']['installedLanguages']);
+        $installedLangs = explode(',', $conf['translation']['installedLanguages']);
         foreach ($installedLangs as $uKey) {
             if (!array_key_exists($uKey, $output->availableLangs)) {
                 $key = str_replace('_', '-', $uKey);
