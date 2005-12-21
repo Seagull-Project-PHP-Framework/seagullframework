@@ -99,10 +99,10 @@ class SGL_Translation
             $prefix = $conf['table']['translation'] .'_';
 
             //  fetch languages
-            $langs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
+            $langs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params
-            foreach ($langs as $aKey => $aValue) {
+            foreach ($langs as $aKey) {
                 $params['strings_tables'][$aKey] = $prefix . $aKey;
             }
 
@@ -169,13 +169,14 @@ class SGL_Translation
     function getTranslations($module, $lang, $fallbackLang = false)
     {
         if (!empty($module) && !empty($lang)) {
-            $conf = &$GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
 
             //  fallback lang clause
             $fallbackLang = ($fallbackLang) ? $fallbackLang : $conf['translation']['fallbackLang'];
 
             //  if langauge not installed resort to fallback
-            if (!array_key_exists($lang, $GLOBALS['_SGL']['INSTALLED_LANGUAGES'])) {
+            if (!in_array($lang, explode(',', $conf['translation']['installedLanguages']))) {
                 $lang = $fallbackLang;
             }
 

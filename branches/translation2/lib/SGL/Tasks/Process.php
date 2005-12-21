@@ -353,9 +353,6 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         require_once SGL_DAT_DIR . '/ary.languages.php';
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
-        //  fetch installed languages
-        $GLOBALS['_SGL']['INSTALLED_LANGUAGES'] = parse_ini_file(SGL_PATH .'/var/'. SGL_SERVER_NAME .'.languages.ini.php');
-
         //  if lang var passed in request
         if (isset($lang) && array_key_exists($lang, $aLanguages)) {
             $_SESSION['aPrefs']['language'] = $lang;

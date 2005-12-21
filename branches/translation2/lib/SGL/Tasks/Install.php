@@ -65,7 +65,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  translation fallback language
         if (array_key_exists('storeTranslationsInDB', $data) 
             && $data['storeTranslationsInDB'] == 1) {
-            $c->set('translation', array('fallbackLang' => $data['siteLanguage']));                        
+            $c->set('translation', array('fallbackLang' => str_replace('-', '_', $data['siteLanguage'])));                        
         }
 
         //  save
@@ -239,16 +239,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                            ';
             }
             $out .=        '<th class="alignCenter">Add Constraints</th>
-                           ';
-            if (array_key_exists('storeTranslationsInDB', $data) 
-                && $data['storeTranslationsInDB'] == 1) {
-                foreach ($data['installLangs'] as $aKey => $aValues) {
-                    $out .= '<th class="alignCenter">'. $aValues .'</th>
-                            ';   
-                }                                     
-            }                        
-            $out .= '</tr>
-                    ';
+                        </tr>';
             echo $out;
 
             $aModuleList = (isset($data['installAllModules']))
@@ -266,16 +257,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                            ';
                 }
                 $out .= '<td id="' . $module . '_constraints" class="alignCenter"></td>
-                        ';
-                if (array_key_exists('storeTranslationsInDB', $data) 
-                    && $data['storeTranslationsInDB'] == 1) {
-                    foreach ($data['installLangs'] as $aKey => $aValues) {                            
-                            $out .= '<td id="' . $module . '_language_'. str_replace('-', '_', $aValues) .'" class="alignCenter"></td>
-                                    ';
-                    }                    
-                }                
-                $out .= '</tr>
-                        ';
+                     </tr>';
                 echo $out;
             }
             echo '</table>';
@@ -414,6 +396,9 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
             require_once SGL_CORE_DIR .'/Translation.php';
 
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();           
+
             $this->setup();
 
             $statusText .= 'loading languages';
@@ -425,6 +410,17 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             //  fetch available languages
             $aLangOptions = SGL_Translation::getAllInstallableLanguages();
             $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
+
+            //  add languaged to inifile container
+            $this->installedLanguages = $data['installLangs'];
+
+            $c->set('translation', array('installedLanguages' => implode(',', str_replace('-', '_', $data['installLangs']))));
+
+            $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+            $ok = $c->save($configFile);
+            if (PEAR::isError($ok)) {
+                SGL_Install::errorPush(PEAR::raiseError($ok));
+            }
 
             //  get dsn
             $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
@@ -456,16 +452,16 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                                     'encoding' => $encoding
                                     );
                 $result = $translation->addLang($langData);
-    
-                //  add languaged to inifile container
-                $this->installedLanguages[$langID] = $langID;
-                
+                   
                 //  interate through modules  
                 $aModuleList = (isset($data['installAllModules']))
                     ? SGL_Install::getModuleList()
                     : $this->getMinimumModuleList();
                                   
                 foreach ($aModuleList as $module) {
+                    $statusText = 'loading languages - '. $module .' ('. str_replace('_','-', $langID) .')';
+                    $this->updateHtml('status', $statusText);
+
                     $modulePath = SGL_MOD_DIR . '/' . $module  . '/lang';                    
     
                     if (file_exists($modulePath .'/'. $globalLangFile)) {
@@ -490,12 +486,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                                 $result =  $translation->add($tKey, $module, $string);                                    
                             }                                    
                         }
-                        $displayHtml = ($result) ? $this->success : $this->failure;
-
-                        $this->updateHtml($module . '_language_'. $langID, $displayHtml);
                         unset($words);                            
-                    } else {
-                        $this->updateHtml($module . '_language_'. $langID, $this->noFile);                            
                     }
                 }
             }

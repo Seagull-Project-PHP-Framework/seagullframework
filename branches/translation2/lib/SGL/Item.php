@@ -506,7 +506,7 @@ class SGL_Item
         case SGL_RET_ARRAY:
             $aFields = array();
             while (list($fieldID, $fieldName, $fieldValue, $fieldType)
-                = $result->fetchRow(DB_FETCHMODE_ORDERED)) 
+                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     // set fieldID to tranlsation ID
                     $fieldID = $fieldValue;
                     $fieldValue = $trans->get($fieldValue, 'content', $language);
@@ -516,7 +516,7 @@ class SGL_Item
             }
             $res = $aFields;
             break;
-            
+
         case SGL_RET_STRING:
         default:
             //  get language name

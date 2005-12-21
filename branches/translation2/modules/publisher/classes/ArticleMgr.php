@@ -169,6 +169,7 @@ class ArticleViewMgr extends SGL_Manager
                     $output->articleList[$key]['newsHtml'] = 
                         SGL_String::summariseHtml($content);
                     break; 
+                }
             }
         }
     }

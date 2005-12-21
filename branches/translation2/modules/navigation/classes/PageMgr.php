@@ -299,7 +299,8 @@ class PageMgr extends SGL_Manager
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
                 
         $separator = '/'; // can be configurable later
 
@@ -394,6 +395,9 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $c = &SGL_CONFIG::singleton();
+        $conf = $c->getAll();
+
         $output->mode = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action = 'update';
@@ -423,8 +427,8 @@ class PageMgr extends SGL_Manager
         }
         
         //  find unavailable languages
-        $installedLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
-        foreach ($installedLangs as $uKey => $uValue) {
+        $installedLangs = expolde(',', $conf['translation']['installedLanguages']);
+        foreach ($installedLangs as $uKey) {
             if (!array_key_exists($uKey, $output->availableLangs)) {
                 $key = str_replace('_', '-', $uKey);
                 $output->availableAddLangs[$uKey] = $aLangOptions[$key];
@@ -689,6 +693,9 @@ class PageMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        
         $output->template = 'sectionList.html';
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
@@ -701,7 +708,7 @@ class PageMgr extends SGL_Manager
         $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
 
         //  fetch fallback language
-        $fallbackLang = $GLOBALS['_SGL']['CONF']['translation']['fallbackLang'];
+        $fallbackLang = $conf['translation']['fallbackLang'];
         //  fetch translations title
         $translations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);        
         

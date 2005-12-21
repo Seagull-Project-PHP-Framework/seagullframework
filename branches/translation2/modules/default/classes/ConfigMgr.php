@@ -182,7 +182,7 @@ class ConfigMgr extends SGL_Manager
         $output->aStyleFiles = $this->aStyleFiles;
         $output->aSessHandlers = $this->aSessHandlers;
         $output->aTranslationContainers = $this->aTranslationContainers;
-        $output->aInstalledLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
+        $output->aInstalledLangs = explode(',', $conf['translation']['installedLanguages']);
     }
 
     function _edit(&$input, &$output)
