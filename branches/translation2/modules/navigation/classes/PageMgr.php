@@ -281,36 +281,40 @@ class PageMgr extends SGL_Manager
         }
         //  fetch available languages
         $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
+
+        //  apply filter if current section is set
+        $filter = isset($output->sectionId)
+            ? ' WHERE section_id='.$output->sectionId : '';
         $query = "
             SELECT languages
-            FROM ". $this->conf['table']['section'] . "
-            WHERE section_id='". $output->sectionId ."'";
+            FROM ". $this->conf['table']['section'] .
+            $filter;
 
         $results = $this->dbh->getOne($query);
-        $langs = explode('|', $results);
-        foreach ($langs as $id => $lang) {
+        $aLangs = explode('|', $results);
+        foreach ($aLangs as $id => $lang) {
             $key = str_replace('_', '-', $lang);
             $output->availableLangs[$lang] = $aLangDescriptions[$key];
         }
 
-        $input->navLang = (isset($input->navLang) && !empty($input->navLang))
-            ? $input->navLang
-            : $langs[0];
+        $navLang = (isset($output->navLang) && !empty($output->navLang))
+            ? $output->navLang
+            : $aLangs[0];
 
         //  add language if adding new translation
-        if (!array_key_exists($input->navLang, $output->availableLangs)) {
-            $key = str_replace('_', '-', $input->navLang);
-            $output->availableLangs[$input->navLang] = $aLangDescriptions[$key];
+        if (!array_key_exists($navLang, $output->availableLangs)) {
+            $key = str_replace('_', '-', $navLang);
+            $output->availableLangs[$navLang] = $aLangDescriptions[$key];
         }
 
         //  find unavailable languages
-        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
-        foreach ($installedLangs as $uKey) {
-            if (!array_key_exists($uKey, $output->availableLangs)) {
-                $key = str_replace('_', '-', $uKey);
-                $output->availableAddLangs[$uKey] = $aLangDescriptions[$key];
-            }
-        }
+//        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
+//        foreach ($installedLangs as $uKey) {
+//            if (!array_key_exists($uKey, $output->availableLangs)) {
+//                $key = str_replace('_', '-', $uKey);
+//                $output->availableAddLangs[$uKey] = $aLangDescriptions[$key];
+//            }
+//        }
     }
 
     function _add(&$input, &$output)
