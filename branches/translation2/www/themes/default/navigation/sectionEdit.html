@@ -60,9 +60,10 @@ function addFormValue(myElement, form)
         <tr>
             <th align="left">{translate(#Language#)}</th>
             <td><select name="frmNavLang"
-                                    onChange="javascript:document.location.href='{makeUrl(#edit#,#page#,#navigation#,##,#frmSectionId|section[section_id]#)}frmNavLang/' + getSelectedValue(document.getElementById('sectionEdit').frmNavLang) + '/';">
+                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                 {generateSelect(availableLangs,navLang):h}
-                </select> ({translate(#switching language will cause changes to be lost#)})</td>
+                </select>
+            </td>
         </tr>
 
         <tr>
