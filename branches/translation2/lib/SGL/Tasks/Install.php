@@ -65,7 +65,8 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  translation fallback language
         if (array_key_exists('storeTranslationsInDB', $data) 
             && $data['storeTranslationsInDB'] == 1) {
-            $c->set('translation', array('fallbackLang' => str_replace('-', '_', $data['siteLanguage'])));                        
+            $c->set('translation', array('fallbackLang' => str_replace('-', '_', $data['siteLanguage'])));
+            $c->set('translation', array('container', 'db'));                        
         }
 
         //  save
