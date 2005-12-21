@@ -57,6 +57,7 @@ create table if not exists item
    start_date                     datetime,
    expiry_date                    datetime,
    status                         smallint,
+   languages                      varchar(255),
    primary key (item_id)
 );
 

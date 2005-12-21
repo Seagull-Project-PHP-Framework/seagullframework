@@ -68,8 +68,8 @@
                 <tr>
                     <td>{translate(#Article type#)}: </td>
                     <td>
-                        <select name="frmDataTypeID" 
-                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmDataTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmDataTypeID) + '/';" />
+                        <select name="frmArticleTypeID" 
+                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeID) + '/';" />
                             {generateSelect(aArticleTypes,dataTypeID):h}
                         </select>
                     </td>

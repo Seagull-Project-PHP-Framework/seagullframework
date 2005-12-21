@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
+// $Id: Item.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 /**
  * Acts as a wrapper for content objects.
@@ -373,6 +373,7 @@ class SGL_Item
     function updateDataItems($itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $trans = &SGL_Translation::singleton('admin');
 
         for ($x=0; $x < count($itemID); $x++) {
@@ -408,6 +409,7 @@ class SGL_Item
     function updateBody($itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $trans = &SGL_Translation::singleton('admin');
         
         if ($itemValue == '') {
@@ -426,7 +428,7 @@ class SGL_Item
         }
 
         //  add translations
-        $transAdmin->add($itemID, 'content', $strings);            
+        $trans->add($itemID, 'content', $strings);            
     }
 
     /**

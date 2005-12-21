@@ -289,8 +289,8 @@ class ArticleMgr extends SGL_Manager
         }
         
         //  find unavailable languages
-        $installedLangs = $GLOBALS['_SGL']['INSTALLED_LANGUAGES'];
-        foreach ($installedLangs as $uKey => $uValue) {
+        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
+        foreach ($installedLangs as $uKey) {
             if (!array_key_exists($uKey, $output->availableLangs)) {
                 $key = str_replace('_', '-', $uKey);
                 $output->availableAddLangs[$uKey] = $aLangOptions[$key];
