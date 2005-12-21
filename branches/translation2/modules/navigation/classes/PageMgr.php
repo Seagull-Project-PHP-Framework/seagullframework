@@ -280,11 +280,7 @@ class PageMgr extends SGL_Manager
             $output->aUriAliases[$key] = $key . ' >> ' . $value;
         }
         //  fetch available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-        }
+        $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
         $query = "
             SELECT languages
             FROM ". $this->conf['table']['section'] . "
@@ -294,7 +290,7 @@ class PageMgr extends SGL_Manager
         $langs = explode('|', $results);
         foreach ($langs as $id => $lang) {
             $key = str_replace('_', '-', $lang);
-            $output->availableLangs[$lang] = $aLangOptions[$key];
+            $output->availableLangs[$lang] = $aLangDescriptions[$key];
         }
 
         $input->navLang = (isset($input->navLang) && !empty($input->navLang))
@@ -304,7 +300,7 @@ class PageMgr extends SGL_Manager
         //  add language if adding new translation
         if (!array_key_exists($input->navLang, $output->availableLangs)) {
             $key = str_replace('_', '-', $input->navLang);
-            $output->availableLangs[$input->navLang] = $aLangOptions[$key];
+            $output->availableLangs[$input->navLang] = $aLangDescriptions[$key];
         }
 
         //  find unavailable languages
@@ -312,7 +308,7 @@ class PageMgr extends SGL_Manager
         foreach ($installedLangs as $uKey) {
             if (!array_key_exists($uKey, $output->availableLangs)) {
                 $key = str_replace('_', '-', $uKey);
-                $output->availableAddLangs[$uKey] = $aLangOptions[$key];
+                $output->availableAddLangs[$uKey] = $aLangDescriptions[$key];
             }
         }
     }
