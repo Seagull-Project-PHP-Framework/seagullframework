@@ -236,6 +236,6 @@ class SGL_Translation
             $aLangOptions[$id] =  $langName .' ('. $id .')';
         }
         return $aLangOptions;
-    }
+    }    
 }
 ?>

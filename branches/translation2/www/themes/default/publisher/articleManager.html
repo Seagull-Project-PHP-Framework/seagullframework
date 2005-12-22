@@ -4,7 +4,7 @@
 <!--
     function checkNewButton()
     {
-        var buttValue = document.getElementById('frmAddArticle').frmDataTypeID.value;
+        var buttValue = document.getElementById('frmAddArticle').frmArticleTypeID.value;
         if (buttValue == 1)
             document.getElementById('newArticleButton').disabled = true;
     }
@@ -74,14 +74,6 @@
                         </select>
                     </td>
                     <td>({translate(#select a type to create a new article#)})</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td><div class="error" flexy:if="error[articleLang]">{error[articleLang]}</div>
-                        <select name="frmArticleLang">
-                            {generateSelect(aLanguages,articleLang):h}</select> &nbsp;
-                    </td>
-                    <td>({translate(#select languages of new article#)})</td>                    
                 </tr>
                 <tr>
                     <td>&nbsp;</td>

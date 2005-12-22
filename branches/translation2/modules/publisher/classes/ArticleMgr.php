@@ -100,7 +100,7 @@ class ArticleMgr extends SGL_Manager
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
-        $input->articleLang    = $req->get('frmArticleLang');
+        $input->articleLang     = $req->get('frmArticleLang');
         $input->availableLangs  = $req->get('frmAvailableLangs');
 
         //  new article form vars
@@ -113,12 +113,6 @@ class ArticleMgr extends SGL_Manager
         $input->bodyValue       = $req->get('frmBodyName', $allowTags = true);
         $input->bodyItemID      = $req->get('frmBodyItemID');
         $input->queryRange      = $req->get('frmQueryRange');
-
-        if ($input->action == 'add') {
-            if ($input->articleLang == '0' || empty($input->articleLang)) {
-                $aErrors['articleLang'] = 'Please select an article language';
-            }
-        }
 
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
@@ -184,11 +178,10 @@ class ArticleMgr extends SGL_Manager
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox($aDate, 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
 
+        //  use fallback language to create all articles
         $item = & new SGL_Item();
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, SGL_RET_STRING, $input->articleLang);
-
-        //  output languages
-        $output->aLanguages = $input->articleLang;
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
+        $output->articleLang = $this->conf['translation']['fallbackLang'];
         
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
@@ -266,41 +259,16 @@ class ArticleMgr extends SGL_Manager
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
 
-        //  fetch available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-        }
+        $trans = &SGL_Translation::singleton();
+        $installedLanguages = $trans->getLangs();
 
-        $query = "SELECT languages FROM ". $this->conf['table']['item'] . " WHERE item_id='". $input->articleID ."'";
-        $results = $this->dbh->getOne($query);
-        $langs = explode('|', $results);
-        foreach ($langs as $id => $lang) {
-            $key = str_replace('_', '-', $lang);
-            $output->availableLangs[$lang] = $aLangOptions[$key];   
-        }
-        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) ? $input->articleLang : $langs[0];
-
-        //  add language if adding new translation
-        if (!array_key_exists($input->articleLang, $output->availableLangs)) {
-            $key = str_replace('_', '-', $input->articleLang);
-            $output->availableLangs[$input->articleLang] = $aLangOptions[$key];   
-        }
-        
-        //  find unavailable languages
-        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
-        foreach ($installedLangs as $uKey) {
-            if (!array_key_exists($uKey, $output->availableLangs)) {
-                $key = str_replace('_', '-', $uKey);
-                $output->availableAddLangs[$uKey] = $aLangOptions[$key];
-            }   
-        }
+        $output->availableLangs = $installedLanguages;   
+        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) ? $input->articleLang : $this->conf['translation']['fallbackLang'];
 
         //  get dynamic content
         $output->dynaContent = (isset($input->articleLang)) ? 
                                     $item->getDynamicContent($input->articleID, SGL_RET_STRING, $input->articleLang) : 
-                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $langs[0]);
+                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
@@ -519,22 +487,19 @@ class ArticleMgr extends SGL_Manager
             'perPage'  => $limit,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
         //  fetch title translation
         $trans = &SGL_Translation::singleton();
-        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
+        $fallbackLang = $this->conf['translation']['fallbackLang'];
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             if (is_numeric($aValues['addition'])) {
                 if ($title = $trans->get($aValues['addition'], 'content', $lang)) { //  get translation by language set in users' preference                
                     $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
                 } else {    //  get first available translation any installed language
-                    foreach ($installedLangs as $lang) {
-                        if ($title = $trans->get($aValues['addition'], 'content', $lang)) {   
-                            $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
-                        }
+                    if ($title = $trans->get($aValues['addition'], 'content', $fallbackLang)) {   
+                        $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
                     }
                 }
-            }                           
+            }
         }
 
         return $aPagedData;
