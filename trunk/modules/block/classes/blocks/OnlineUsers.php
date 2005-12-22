@@ -1,51 +1,45 @@
 <?php
-require_once 'HTML/Template/Flexy.php';
-$theme = $_SESSION['aPrefs']['theme'];
-$options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
-$config = parse_ini_file('OnlineUsers.ini',TRUE);
-$options = $config['HTML_Template_Flexy'];
-$options['multiSource'] = true;
-$options['templateDir'] = SGL_THEME_DIR . "/$theme/block/blocks";
-$options['compileDir'] = SGL_CACHE_DIR . '/tmpl/' . $theme;
-$options['forceCompile'] = SGL_FLEXY_FORCE_COMPILE;
-$options['allowPHP'] = SGL_FLEXY_ALLOW_PHP;
-$options['filters'] = SGL_FLEXY_FILTERS;
-$options['locale'] = SGL_FLEXY_LOCALE;
-$options['compiler'] = SGL_FLEXY_COMPILER;
-$options['valid_functions'] = SGL_FLEXY_VALID_FNS;
-$options['flexyIgnore'] = SGL_FLEXY_IGNORE;
-$options['globals'] = true;
-$options['globalfunctions'] = SGL_FLEXY_GLOBAL_FNS;
 
 class OnlineUsers
 {
-    var $template = "OnlineUsers.html";
+    var $template     = 'OnlineUsers.html';
+    var $templatePath = 'block/blocks';
 
-    function init($output)
+    function init(&$output, $block_id)
     {
         return $this->getBlockContent($output);
     }
 
-    function getBlockContent($output)
-    {
-        // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+    function getBlockContent(&$output)
+    { 
+        $blockOutput = new SGL_Output();
 
-        $theme = $_SESSION['aPrefs']['theme'];
-        $output->webRoot = SGL_BASE_URL;
-        $output->theme = $theme;
-        $output->guests = SGL_HTTP_Session::getGuestSessionCount();
-        $output->members = SGL_HTTP_Session::getMemberSessionCount();
-        $output->total = $output->members + $output->guests;
+        // prepare content
+        $blockOutput->guests  = SGL_HTTP_Session::getGuestSessionCount();
+        $blockOutput->members = SGL_HTTP_Session::getMemberSessionCount();
+        $blockOutput->total   = $blockOutput->members + $blockOutput->guests;
 
-        return $this->process($output);
+        // set theme name
+        $blockOutput->theme   = $output->theme;
+
+        return $this->process($blockOutput);
     }
 
-    function process($output)
-    {
-        $templ = new HTML_Template_Flexy();
-        $templ->compile($this->template);
-        return $templ->bufferedOutputObject($output);
+    function process(&$output)
+    {        
+        // use moduleName for template path setting
+        $output->moduleName     = $this->templatePath;
+        $output->masterTemplate = $this->template;
+
+        // get template engine type
+        $c              = &SGL_Config::singleton();
+        $conf           = $c->getAll();
+        $templateEngine = ucfirst($conf['site']['templateEngine']);
+        $rendererClass  = 'SGL_Html' . $templateEngine . 'RendererStrategy';
+
+        // render content
+        $view = new SGL_View($output, new $rendererClass());
+        return $view->render();    
     }
 }
 ?>

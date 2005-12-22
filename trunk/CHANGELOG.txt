@@ -12,6 +12,7 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+22-12-05    Improvement to the who's online block (Andrey Podshivalov)
 
 
 +-----------------------+
