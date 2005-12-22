@@ -246,8 +246,7 @@ class SGL_Item
                 $this->dbh->quote($this->expiryDate) . ",
                 $this->typeID," .
                 SGL_STATUS_FOR_APPROVAL . ",
-                $catID, ".
-                $this->dbh->quote($this->languages) ."
+                $catID
             )";
         $result = $this->dbh->query($query);
         return $id;
@@ -355,7 +354,6 @@ class SGL_Item
                 expiry_date = " . $this->dbh->quote($this->expiryDate) . ",
                 status = $this->statusID,
                 category_id = $this->catID,
-                languages = ". $this->dbh->quote($this->languages) . "
                 WHERE item_id = $this->id
                 ";
         $result = $this->dbh->query($query);

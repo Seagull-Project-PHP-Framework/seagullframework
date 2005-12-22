@@ -213,7 +213,6 @@ class ArticleMgr extends SGL_Manager
         $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
-        $item->set('languages', $input->articleLang);
 
         //  addMetaInfo
         $insertID = $item->addMetaItems();
