@@ -235,7 +235,6 @@ class SGL_Item
                 item_type_id,
                 status,
                 category_id,
-                languages
             ) VALUES (
                 $id,
                 $this->createdByID,
