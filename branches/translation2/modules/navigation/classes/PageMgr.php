@@ -279,35 +279,37 @@ class PageMgr extends SGL_Manager
         foreach ($aUriAliases as $key => $value) {
             $output->aUriAliases[$key] = $key . ' >> ' . $value;
         }
-        //  fetch available languages
-        $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
-
-        //  apply filter if current section is set
-        $filter = isset($output->sectionId)
-            ? ' WHERE section_id='.$output->sectionId : '';
-        $query = "
-            SELECT languages
-            FROM ". $this->conf['table']['section'] .
-            $filter;
-
-        $results = $this->dbh->getOne($query);
-        $aLangs = explode('|', $results);
-        foreach ($aLangs as $lang) {
-            $key = str_replace('_', '-', $lang);
-            $output->availableLangs[$lang] = $aLangDescriptions[$key];
-        }
+//          fetch available languages
+//        $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
+//
+//          apply filter if current section is set
+//        $filter = isset($output->sectionId)
+//            ? ' WHERE section_id='.$output->sectionId : '';
+//        $query = "
+//            SELECT languages
+//            FROM ". $this->conf['table']['section'] .
+//            $filter;
+//
+//        $results = $this->dbh->getOne($query);
+//        $aLangs = explode('|', $results);
+//        foreach ($aLangs as $lang) {
+//            $key = str_replace('_', '-', $lang);
+//            $output->availableLangs[$lang] = $aLangDescriptions[$key];
+//        }
+        $trans = &SGL_Translation::singleton('admin');
+        $output->availableLangs = $trans->getLangs();
 
         $navLang = (isset($output->navLang) && !empty($output->navLang))
             ? $output->navLang
-            : $aLangs[0];
+            : SGL_Translation::getLangID();
 
         $output->navLang = $navLang;
 
         //  add language if adding new translation
-        if (!array_key_exists($navLang, $output->availableLangs)) {
-            $key = str_replace('_', '-', $navLang);
-            $output->availableLangs[$navLang] = $aLangDescriptions[$key];
-        }
+//        if (!array_key_exists($navLang, $output->availableLangs)) {
+//            $key = str_replace('_', '-', $navLang);
+//            $output->availableLangs[$navLang] = $aLangDescriptions[$key];
+//        }
 
         //  find unavailable languages
 //        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
