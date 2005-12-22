@@ -337,7 +337,6 @@ class ArticleMgr extends SGL_Manager
         $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
         $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
         $item->set('statusID', SGL_STATUS_FOR_APPROVAL);
-        $item->set('languages', implode('|', array_merge($input->availableLangs, $input->articleLang)));
 
         //  updateMetaItems
         $item->updateMetaItems();
