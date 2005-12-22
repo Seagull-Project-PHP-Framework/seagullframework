@@ -125,8 +125,7 @@ class SimpleNav
         $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
         if (is_null($input->get('navLang'))) {
-#FIXME: get current lang from session?
-            $input->set('navLang', 'en_iso_8859_15');
+            $input->set('navLang', SGL_Translation::getLangID());
         }
         $this->_aTranslations =
             SGL_Translation::getTranslations('nav', $input->get('navLang'));

@@ -144,6 +144,10 @@ class PageMgr extends SGL_Manager
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
+            //  ensure correct translation is being sent to output
+            $trans = &SGL_Translation::singleton();
+            $input->section['title'] = $trans->get($input->section['section_id'], 'nav', $input->navLang);
+
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
@@ -327,10 +331,6 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-
-        // fetch installed langs
-        $trans = &SGL_Translation::singleton();
-        $output->aLanguages = $trans->getLangs();
     }
 
     function _insert(&$input, &$output)
