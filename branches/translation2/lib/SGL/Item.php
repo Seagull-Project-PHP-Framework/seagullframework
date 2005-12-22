@@ -352,7 +352,7 @@ class SGL_Item
                 start_date = " . $this->dbh->quote($this->startDate) . ",
                 expiry_date = " . $this->dbh->quote($this->expiryDate) . ",
                 status = $this->statusID,
-                category_id = $this->catID,
+                category_id = $this->catID
                 WHERE item_id = $this->id
                 ";
         $result = $this->dbh->query($query);
