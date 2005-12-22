@@ -139,11 +139,6 @@ class ArticleMgr extends SGL_Manager
         //  generate template type options for article type chooser
         //  returns an assoc array: typeID => typeName
         $output->aArticleTypes = $this->getTemplateTypes();
-        
-        $trans = &SGL_Translation::singleton();
-        $output->aLanguages = array(0 => 'select a language');
-        $output->aLanguages = array_merge($output->aLanguages, $trans->getLangs());
-        
     }
 
     function _add(&$input, &$output)
