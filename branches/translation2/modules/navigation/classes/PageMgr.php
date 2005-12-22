@@ -333,8 +333,7 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-
-        #$output->addOnLoadEvent("document.getElementById('frmNavLang').disabled = true");
+        $output->actionIsAdd = true;
     }
 
     function _insert(&$input, &$output)
