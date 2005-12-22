@@ -253,6 +253,7 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->wysiwyg = true;
         $output->template = 'newsletter.html';
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').newsletterCompose.disabled = true");
     }
 
     /**
@@ -291,6 +292,7 @@ class ListMgr extends NewsletterMgr
             $output->totalItems = $aPagedData['totalItems'];
             $output->aPagedData = $aPagedData;
         }
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').newsletterSubscribers.disabled = true");
     }
 
     /**
@@ -405,6 +407,7 @@ class ListMgr extends NewsletterMgr
             $output->totalItems = $aPagedData['totalItems'];
             $output->aPagedData = $aPagedData;
         }
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').newsletterLists.disabled = true");
     }
 
 
