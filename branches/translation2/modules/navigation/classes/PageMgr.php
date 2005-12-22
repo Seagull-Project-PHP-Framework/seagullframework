@@ -334,7 +334,7 @@ class PageMgr extends SGL_Manager
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
 
-        $output->addOnLoadEvent("document.getElementById('frmNavLang').disabled = true");
+        #$output->addOnLoadEvent("document.getElementById('frmNavLang').disabled = true");
     }
 
     function _insert(&$input, &$output)
