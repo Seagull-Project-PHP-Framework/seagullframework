@@ -89,7 +89,6 @@ class PageMgr extends SGL_Manager
                 'perms'         => 'perms',
                 'is_enabled'    => 'is_enabled',
                 'is_static'     => 'is_static',
-                'languages'     => 'languages',
             ),
             'tableName'      => 'section',
             'lockTableName'  => 'table_lock',
@@ -408,9 +407,6 @@ class PageMgr extends SGL_Manager
         //  set translation id for nav title
         unset($input->section['title']);
         $input->section['title'] = $sectionNextId;
-
-        //  add lang field
-        $input->section['languages'] = $input->navLang;
 
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
