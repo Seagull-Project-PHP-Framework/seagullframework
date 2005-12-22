@@ -135,8 +135,9 @@ class PageMgr extends SGL_Manager
         if ($input->action == 'insert' && is_null($this->submit)) {
             $input->action = 'add';
         }
+        $refreshScreen = false;
         if ($input->action == 'update' && is_null($this->submit)) {
-            $this->submit = true;
+            $this->submit = $refreshScreen = true;
             $aErrors[] = 'Please supply full nav info';
         }
         //  validate form data
@@ -145,8 +146,10 @@ class PageMgr extends SGL_Manager
                 $aErrors[] = 'Please fill in a title';
             }
             //  ensure correct translation is being sent to output
-            $trans = &SGL_Translation::singleton();
-            $input->section['title'] = $trans->get($input->section['section_id'], 'nav', $input->navLang);
+            if ($input->action == 'update' && $refreshScreen == true) {
+                $trans = &SGL_Translation::singleton();
+                $input->section['title'] = $trans->get($input->section['section_id'], 'nav', $input->navLang);
+            }
 
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
@@ -393,15 +396,18 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $titleId = $this->dbh->nextID('translation');
+        #$titleId = $this->dbh->nextID('translation');
+        $sectionNextId = $this->dbh->nextID('section') + 1;
 
         //  add translations
         $trans = &SGL_Translation::singleton('admin');
-        $ok = $trans->add($titleId, 'nav', array($input->navLang => $input->section['title']));
+        #$ok = $trans->add($titleId, 'nav', array($input->navLang => $input->section['title']));
+        $ok = $trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
+        #$input->section['section_id'] = $sectionNextId;
 
         //  set translation id for nav title
         unset($input->section['title']);
-        $input->section['title'] = $titleId;
+        $input->section['title'] = $sectionNextId;
 
         //  add lang field
         $input->section['languages'] = $input->navLang;
@@ -575,11 +581,13 @@ class PageMgr extends SGL_Manager
         if ($input->section['title'] != $input->section['title_original']) {
             $strings[$input->navLang] = $input->section['title'];
             $trans = & SGL_Translation::singleton('admin');
-            $result = $trans->add($input->section['section_id'], 'nav', $strings);
+            #$result = $trans->add($input->section['section_id'], 'nav', $strings);
+
+            $ok = $trans->add($input->section['section_id'], 'nav', array($input->navLang => $input->section['title']));
 
             //  assign title id and languages for update
             $input->section['title'] = $input->section['section_id'];
-            $input->section['languages'] = implode('|', $input->availableLangs);
+            #$input->section['languages'] = implode('|', $input->availableLangs);
         }
 
         $nestedSet = new SGL_NestedSet($this->_params);
