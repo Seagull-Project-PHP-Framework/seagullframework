@@ -247,8 +247,6 @@ class SGL_Item
                 SGL_STATUS_FOR_APPROVAL . ",
                 $catID
             )";
-            
-            print_r($query);
         $result = $this->dbh->query($query);
         return $id;
     }
