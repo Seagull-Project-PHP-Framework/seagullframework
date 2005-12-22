@@ -59,7 +59,7 @@ function addFormValue(myElement, form)
         {end:}
         <tr>
             <th align="left">{translate(#Language#)}</th>
-            <td><select name="frmNavLang"
+            <td><select name="frmNavLang" id="frmNavLang"
                         onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                 {generateSelect(availableLangs,navLang):h}
                 </select>
