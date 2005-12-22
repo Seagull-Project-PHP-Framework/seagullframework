@@ -808,6 +808,10 @@
             <select name="conf[translation][fallbackLang]">
                 {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}
             </select>
+        <!-- Send along installed languages -->
+        {foreach:aInstalledLangs,aKey,aValue}
+            <input type="hidden" name="conf[translation][installedLanguages][]" value="{aKey}" />
+        {end:}
         </td>
     </tr>
     <tr>

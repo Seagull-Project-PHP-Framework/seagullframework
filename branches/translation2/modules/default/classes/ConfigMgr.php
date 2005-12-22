@@ -193,18 +193,25 @@ class ConfigMgr extends SGL_Manager
         $conf = $c->getAll();
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->conf = $conf;
-        $output->aDbTypes = $this->aDbTypes;
-        $output->aLogTypes = $this->aLogTypes;
-        $output->aLogPriorities = $aLogLevels;
-        $output->aEmailThresholds = $aLogLevels;
-        $output->aMtaBackends = $this->aMtaBackends;
-        $output->aCensorModes = $this->aCensorModes;
-        $output->aNavDrivers = $this->aNavDrivers;
-        $output->aStyleFiles = $this->aStyleFiles;
-        $output->aSessHandlers = $this->aSessHandlers;
+        $output->conf               = $conf;
+        $output->aDbTypes           = $this->aDbTypes;
+        $output->aLogTypes          = $this->aLogTypes;
+        $output->aLogPriorities     = $aLogLevels;
+        $output->aEmailThresholds   = $aLogLevels;
+        $output->aMtaBackends       = $this->aMtaBackends;
+        $output->aCensorModes       = $this->aCensorModes;
+        $output->aNavDrivers        = $this->aNavDrivers;
+        $output->aStyleFiles        = $this->aStyleFiles;
+        $output->aSessHandlers      = $this->aSessHandlers;
+        $output->aUrlHandlers       = $this->aUrlHandlers;
+        $output->aTemplateEngines       = $this->aTemplateEngines;
         $output->aTranslationContainers = $this->aTranslationContainers;
-        $output->aInstalledLangs = explode(',', $conf['translation']['installedLanguages']);
+
+        //  retreive installed languages
+        $trans = &SGL_Translation::singleton();
+        $installedLanguages = $trans->getLangs();
+        $output->aInstalledLangs = $installedLanguages;
+
     }
 
     function _edit(&$input, &$output)
@@ -215,7 +222,10 @@ class ConfigMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
+        //  impload installed languages
+        $input->conf['translation']['installedLanguages'] = implode(',', $input->conf['translation']['installedLanguages']);
+                
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);
