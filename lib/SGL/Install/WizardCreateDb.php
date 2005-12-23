@@ -102,6 +102,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
 {
     function buildForm()
     {
+        require_once SGL_CORE_DIR .'/Translation.php';
+
         $this->_formBuilt = true;
 
         $this->setDefaults(array(
@@ -124,6 +126,13 @@ class WizardCreateDb extends HTML_QuickForm_Page
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes');
 
+        $this->addElement('header', null, 'Translation Setup');
+        //  store translation in db
+        $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?', 'Yes');
+        
+        //  load available languages
+        $this->addElement('select', 'installLangs', 'Install Language(s): ', SGL_Translation::getAllInstallableLanguages(), 'multiple="multitple"');
+         
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb');
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');

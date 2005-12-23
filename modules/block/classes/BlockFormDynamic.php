@@ -58,7 +58,13 @@ class BlockFormDynamic
         $result = $sectionList->find();
         if ($result > 0) {
             while ( $sectionList->fetch() ) {
-                $sections[ $sectionList->section_id ] = $sectionList->title;
+                if (is_numeric($sectionList->title)) {
+                    $trans = & SGL_Translation::singleton();
+                    $trans->setLang(SGL_Translation::getLangID());
+                    $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', $languageID);   
+                } else {
+                    $sections[ $sectionList->section_id ] = $sectionList->title;
+                }
             }
         }
         $sections[0] = 'All sections';

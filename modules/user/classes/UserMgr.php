@@ -393,7 +393,7 @@ class UserMgr extends RegisterMgr
 
         } else {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
-            	SGL_ERROR_NOAFFECTEDROWS);
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 

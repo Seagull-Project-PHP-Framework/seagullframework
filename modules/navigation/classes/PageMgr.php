@@ -88,7 +88,7 @@ class PageMgr extends SGL_Manager
                 'title'         => 'title',
                 'perms'         => 'perms',
                 'is_enabled'    => 'is_enabled',
-                'is_static'     => 'is_static'
+                'is_static'     => 'is_static',
             ),
             'tableName'      => 'section',
             'lockTableName'  => 'table_lock',
@@ -114,6 +114,8 @@ class PageMgr extends SGL_Manager
         $input->section     = $req->get('page');
         $input->section['is_enabled'] = (isset($input->section['is_enabled'])) ? 1 : 0;
 
+        $input->navLang     = $req->get('frmNavLang');
+        $input->availableLangs = $req->get('frmAvailableLangs');
         $input->articleType = @$input->section['articleType'];
         if (is_null($input->articleType)) {
             $input->articleType = 'static';
@@ -132,8 +134,9 @@ class PageMgr extends SGL_Manager
         if ($input->action == 'insert' && is_null($this->submit)) {
             $input->action = 'add';
         }
+        $refreshScreen = false;
         if ($input->action == 'update' && is_null($this->submit)) {
-            $this->submit = true;
+            $this->submit = $refreshScreen = true;
             $aErrors[] = 'Please supply full nav info';
         }
         //  validate form data
@@ -141,6 +144,12 @@ class PageMgr extends SGL_Manager
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
+            //  ensure correct translation is being sent to output
+            if ($input->action == 'update' && $refreshScreen == true) {
+                $trans = &SGL_Translation::singleton();
+                $input->section['title'] = $trans->get($input->section['section_id'], 'nav', $input->navLang);
+            }
+
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
@@ -275,8 +284,48 @@ class PageMgr extends SGL_Manager
         // build uriAliases select options
         include SGL_DAT_DIR . '/ary.uriAliases.php';
         foreach ($aUriAliases as $key => $value) {
-        $output->aUriAliases[$key] = $key . ' >> ' . $value;
+            $output->aUriAliases[$key] = $key . ' >> ' . $value;
         }
+//          fetch available languages
+//        $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
+//
+//          apply filter if current section is set
+//        $filter = isset($output->sectionId)
+//            ? ' WHERE section_id='.$output->sectionId : '';
+//        $query = "
+//            SELECT languages
+//            FROM ". $this->conf['table']['section'] .
+//            $filter;
+//
+//        $results = $this->dbh->getOne($query);
+//        $aLangs = explode('|', $results);
+//        foreach ($aLangs as $lang) {
+//            $key = str_replace('_', '-', $lang);
+//            $output->availableLangs[$lang] = $aLangDescriptions[$key];
+//        }
+        $trans = &SGL_Translation::singleton('admin');
+        $output->availableLangs = $trans->getLangs();
+
+        $navLang = (isset($output->navLang) && !empty($output->navLang))
+            ? $output->navLang
+            : SGL_Translation::getLangID();
+
+        $output->navLang = $navLang;
+
+        //  add language if adding new translation
+//        if (!array_key_exists($navLang, $output->availableLangs)) {
+//            $key = str_replace('_', '-', $navLang);
+//            $output->availableLangs[$navLang] = $aLangDescriptions[$key];
+//        }
+
+        //  find unavailable languages
+//        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
+//        foreach ($installedLangs as $uKey) {
+//            if (!array_key_exists($uKey, $output->availableLangs)) {
+//                $key = str_replace('_', '-', $uKey);
+//                $output->availableAddLangs[$uKey] = $aLangDescriptions[$key];
+//            }
+//        }
     }
 
     function _add(&$input, &$output)
@@ -285,6 +334,7 @@ class PageMgr extends SGL_Manager
         $output->template = 'sectionEdit.html';
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
+        $output->actionIsAdd = true;
     }
 
     function _insert(&$input, &$output)
@@ -347,6 +397,20 @@ class PageMgr extends SGL_Manager
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
+        //  fetch next id
+        #$titleId = $this->dbh->nextID('translation');
+        $sectionNextId = $this->dbh->nextID('section') + 1;
+
+        //  add translations
+        $trans = &SGL_Translation::singleton('admin');
+        #$ok = $trans->add($titleId, 'nav', array($input->navLang => $input->section['title']));
+        $ok = $trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
+        #$input->section['section_id'] = $sectionNextId;
+
+        //  set translation id for nav title
+        unset($input->section['title']);
+        $input->section['title'] = $sectionNextId;
+
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
 
@@ -378,9 +442,20 @@ class PageMgr extends SGL_Manager
         $output->action = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
 
+        $trans = &SGL_Translation::singleton();
+
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
+        //  if title is numeric retreive translation else populate with current title
+        if (is_numeric($section['title'])) {
+            $section['title_id'] = $section['title'];
+            unset($section['title']);
+            $section['title'] = $trans->get($section['title_id'], 'nav', $input->navLang);
+            $section['language'] = $output->availableLangs[$input->navLang];
+        } else {
+            $section['language'] = $output->availableLangs[$input->navLang];
+        }
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
@@ -500,6 +575,19 @@ class PageMgr extends SGL_Manager
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
+        //  update translations
+        if ($input->section['title'] != $input->section['title_original']) {
+            $strings[$input->navLang] = $input->section['title'];
+            $trans = & SGL_Translation::singleton('admin');
+            #$result = $trans->add($input->section['section_id'], 'nav', $strings);
+
+            $ok = $trans->add($input->section['section_id'], 'nav', array($input->navLang => $input->section['title']));
+
+            //  assign title id and languages for update
+            $input->section['title'] = $input->section['section_id'];
+            #$input->section['languages'] = implode('|', $input->availableLangs);
+        }
+
         $nestedSet = new SGL_NestedSet($this->_params);
 
         //  attempt to update section values
@@ -562,7 +650,12 @@ class PageMgr extends SGL_Manager
             //  would try to delete nodes that no longer exist, after parent deletion,
             //  and therefore error, so test first to make sure they're still around
             foreach ($input->aDelete as $index => $sectionId) {
-                if ($nestedSet->getNode($sectionId)){
+                if ($section = $nestedSet->getNode($sectionId)){
+                    //  remove translations
+                    $trans = &SGL_Translation::singleton('admin');
+                    $trans->remove($section['title'], 'nav');
+
+                    //  remove page
                     $nestedSet->deleteNode($sectionId);
                 }
             }
@@ -612,6 +705,24 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $sectionNodes = $nestedSet->getTree();
+        //  fetch available languages
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+
+        //  fetch current languag
+        $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
+
+        //  fetch fallback language
+        $fallbackLang = $this->conf['translation']['fallbackLang'];
+
+        //  fetch translations title
+        $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+
+        //  FIXME currently only set translation if numeric
+        foreach ($sectionNodes as $k => $aValues) {
+            if (is_numeric($aValues['title'])) {
+                $sectionNodes[$k]['title'] = $aTranslations[$aValues['title']];
+            }
+        }
 
         //  remove first element of array which serves as a 'no section' fk
         //  for joins from the block_assignment table
@@ -619,6 +730,7 @@ class PageMgr extends SGL_Manager
         $nestedSet->addImages($sectionNodes);
         $output->results = $sectionNodes;
         $output->sectionArrayJS = $this->_createNodesArrayJS($sectionNodes);
+        $output->fallbackLang = $fallbackLang;
     }
 
     function _generateSectionNodesOptions($sectionNodesArray, $selected = null)
@@ -631,6 +743,11 @@ class PageMgr extends SGL_Manager
             foreach ($sectionNodesArray as $k => $sectionNode) {
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
+                if (is_numeric($sectionNode['title'])) {
+                    $trans = & SGL_Translation::singleton();
+                    $trans->setLang(SGL_Translation::getLangID());
+                    $sectionNode['title'] = $trans->get($sectionNode['title'], 'nav');
+                }
                 $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer . $sectionNode['title'] . "</option>\n";
             }
         }
