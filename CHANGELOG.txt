@@ -12,6 +12,7 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+23-12-05    Added new navigation block (AJ Tarachanowicz)
 22-12-05    PEAR's Translation2 lib integrated which means application interface,
             navigation and content can now be translated into multiple languages,
             many thanks to AJ's gargantuan effort here and the patronage of
