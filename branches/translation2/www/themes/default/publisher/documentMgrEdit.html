@@ -1,0 +1,70 @@
+<form method="post" name="editAsset" flexy:ignore id="editAsset">
+    <input type="hidden" name="action" value="update" /> 
+    <input type="hidden" name="frmDocumentCatID" value="{docCatID}" /> 
+    <input type="hidden" name="document[added_by]" value="{loggedOnUserID}" /> 
+    <input type="hidden" name="document[orig_name]" value="{asset.name}" /> 
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="wide">
+        <tr>
+            <td colspan="2">
+                <h3>{translate(#Editing Asset#)} '{asset.name}'</h3>
+            </td>
+        </tr>
+    </table>
+
+    <table class="wide">
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Type#)}</th>
+            <td width="70%">{asset.link_document_type_id.name}</td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Date Added#)}</th>
+            <td width="70%">{formatDate(asset.date_created)}</td>
+        </tr>
+        {if:isAdmin}
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Category#)}</th>
+            <td width="70%">{breadCrumbs:h}</td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Change Category#)}</th>
+            <td width="70%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Owner#)}</th>
+            <td width="70%">{asset.link_added_by.username}</td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Asset Name#)}</th>
+            <td width="70%"><input type="TEXT" name="document[name]" size="40" value="{asset.name}" /></td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Description#)}</th>
+            <td width="70%">
+            <textarea cols="40" rows="5" name="document[description]">{asset.description}</textarea></td>
+        </tr>
+        {end:}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Size#)}</th>
+            <td width="70%">{formatBytes(asset.file_size)} Kb</td>
+        </tr>
+
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+
+        <tr>
+            <td width="100%" colspan="2" align="center" nowrap="nowrap">
+            <input class="wideButton" type="submit" name="submit" value="{translate(#Save#)}" /> 
+            <input class="wideButton" type="button" value="{translate(#Cancel#)}" onclick="javascript:document.location.href='{makeUrl(##,#document#,#publisher#)}'" />
+            </td>
+        </tr>
+    </table>
+</form>

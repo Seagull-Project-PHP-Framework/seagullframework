@@ -1,0 +1,37 @@
+<!-- Logo and header -->
+<div id="header">
+    <a id="logo" href="{$result->webRoot}" title="Home">
+    {if $result->conf.site.showLogo}
+    <img src="{$result->webRoot}/themes/{$result->theme}/images/{$result->conf.site.showLogo}" alt="{$result->conf.site.name} Logo" /> {$result->conf.site.name}
+    </a>
+    {else}
+    {$result->conf.site.name}
+    </a>
+    {/if}
+
+    <div id="login">
+    {if $result->loggedOnUser}
+        user: <a href="{$result->makeUrl('view','profile','user','','frmUserID|loggedOnUserID')}" title="User profile">{$result->loggedOnUser}</a>
+        &nbsp;session started at {$result->loggedOnSince}
+        <a id="logAction" href="{$result->makeUrl('logout','login','user')}" title="logout">logout</a>
+    {else}
+        user: <strong>guest</strong>
+        <a id="logAction" href="{$result->makeUrl('','login','user')}" title="login">login</a>
+    {/if}
+    {if $result->conf.debug.showBugReporterLink}
+        <a id="bugReporter" href="{$result->makeUrl('','bug','default')}" title="send bug report">
+            <img src="{$result->webRoot}/themes/{$result->theme}/images/bug.gif" alt="send bug report" />
+        </a>
+    {/if}
+    </div>
+</div>
+
+<!-- tab navigation -->
+<div id="nav">
+{if !$result->isVerticalNav($result->conf.navigation.stylesheet)}
+    {$result->navigation}
+{/if}
+</div>
+
+<!-- Main layout -->
+<div id="container">
