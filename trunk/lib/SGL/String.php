@@ -282,7 +282,7 @@ class SGL_String
 
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
 
-            $key = ($conf['debug']['production']) ? $key : '>' . $key . '<';
+            $key = ($conf['debug']['showUntranslated']) ? $key : '>' . $key . '<';
             return $key;
         }
     }
