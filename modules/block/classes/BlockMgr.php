@@ -412,15 +412,14 @@ class BlockMgr extends SGL_Manager
     function _rebuildPagedData(&$aPagedData)
     {
         if (count($aPagedData['data'])) {
+            $trans = & SGL_Translation::singleton();
 
             //  rebuild $aPagedData['data']
             foreach ($aPagedData['data'] as $k => $aValue) {
                 if (isset($pKey) && isset($pBlock)) {
                     if ($pBlock == $aValue['block_id']) {
                         if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
-                            $trans = & SGL_Translation::singleton();
-                            $trans->setLang(SGL_Translation::getLangID());
-                            $data[$pKey]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                            $data[$pKey]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                         } else {
                             $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
                         }
@@ -429,9 +428,7 @@ class BlockMgr extends SGL_Manager
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
                             if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
-                                $trans = & SGL_Translation::singleton();
-                                $trans->setLang(SGL_Translation::getLangID());
-                                $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                                $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                             } else {
                                 $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
                             }
@@ -448,9 +445,7 @@ class BlockMgr extends SGL_Manager
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
                         if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
-                            $trans = & SGL_Translation::singleton();
-                            $trans->setLang(SGL_Translation::getLangID());
-                            $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                            $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                         } else {
                             $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
                         }
