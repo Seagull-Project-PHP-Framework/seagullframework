@@ -228,13 +228,28 @@ class PageMgr extends SGL_Manager
             $output->uriAliasSelected = '';
             $output->uriExternalSelected = '';
 
+        $trans = &SGL_Translation::singleton('admin');
+        $output->availableLangs = $trans->getLangs();
+
+        $navLang = (isset($output->navLang) && !empty($output->navLang))
+            ? $output->navLang
+            : SGL_Translation::getLangID();
+
+        $output->navLang = $navLang;
+
         switch ($output->articleType) {
         case 'static':
             $output->staticSelected = 'selected';
 
             //  build static article list
             if (ModuleMgr::moduleIsRegistered('publisher')) {
-                $output->aStaticArticles = $this->_getStaticArticles();
+                $articles = $this->_getStaticArticles();
+                foreach ($articles as $key => $value) {
+                	if (is_numeric($value)){
+                        $articles[$key] = $trans->get($value, 'content', $output->navLang);
+                	}
+                }
+                $output->aStaticArticles = $articles;
             } else {
                 $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
             }
@@ -303,15 +318,6 @@ class PageMgr extends SGL_Manager
 //            $key = str_replace('_', '-', $lang);
 //            $output->availableLangs[$lang] = $aLangDescriptions[$key];
 //        }
-        $trans = &SGL_Translation::singleton('admin');
-        $output->availableLangs = $trans->getLangs();
-
-        $navLang = (isset($output->navLang) && !empty($output->navLang))
-            ? $output->navLang
-            : SGL_Translation::getLangID();
-
-        $output->navLang = $navLang;
-
         //  add language if adding new translation
 //        if (!array_key_exists($navLang, $output->availableLangs)) {
 //            $key = str_replace('_', '-', $navLang);
