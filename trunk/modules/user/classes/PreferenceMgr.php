@@ -133,14 +133,8 @@ class PreferenceMgr extends SGL_Manager
 
     function display(&$output)
     {
-        //  load available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-        }
-        $output->aLangs = $aLangOptions;
+        //  build map of available languages
+        $output->aLangs = SGL_Util::getLangsDescriptionMap();
 
         //  FIXME: unix-only, create fallback for windows
         $locales = explode("\n", @shell_exec('locale -a'));

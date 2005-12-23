@@ -174,7 +174,7 @@ class RegisterMgr extends SGL_Manager
         if (!in_array($output->action, $aDisallowedMethods)) {
             $output->states = SGL::loadRegionList('states');
             $output->countries = SGL::loadRegionList('countries');
-            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
+            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
         }
     }
 

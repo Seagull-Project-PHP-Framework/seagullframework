@@ -4,7 +4,7 @@
 <!--
     function checkNewButton()
     {
-        var buttValue = document.getElementById('newArticle').frmDataTypeID.value;
+        var buttValue = document.getElementById('frmAddArticle').frmArticleTypeID.value;
         if (buttValue == 1)
             document.getElementById('newArticleButton').disabled = true;
     }
@@ -25,8 +25,6 @@
 //-->
 </script> 
 
-<form id="newArticle" name="newArticle" flexy:ignore>
-<input type="hidden" name="action" value="delete" />
 <span flexy:if="msgGet()">{msgGet()}</span>
 
 <table class="wide">
@@ -62,6 +60,7 @@
 
 {if:pager}<flexy:include src="pager.html" />{end:}
 
+<form name="frmAddArticle" id="frmAddArticle" action="{makeUrl(#add#,#article#,#publisher#)}" method="post" flexy:ignore>
 <table class="wide">
     <tr>
         <td colspan="10">
@@ -69,20 +68,25 @@
                 <tr>
                     <td>{translate(#Article type#)}: </td>
                     <td>
-                        <select name="frmDataTypeID" 
-                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmDataTypeID/' + getSelectedValue(document.getElementById('newArticle').frmDataTypeID) + '/';" />
+                        <select name="frmArticleTypeID" 
+                            onChange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeID) + '/';" />
                             {generateSelect(aArticleTypes,dataTypeID):h}
                         </select>
                     </td>
-                    <td>
-                        <input type="button" name="newArticleButton" id="newArticleButton" value="{translate(#New Article#)}" 
-                            onClick="javascript:document.location.href='{makeUrl(#add#,#article#,#publisher#)}frmDataTypeID/' + getSelectedValue(document.newArticle.frmDataTypeID) + '/'" />
-                        &nbsp;({translate(#select a type to create a new article#)})
+                    <td>({translate(#select a type to create a new article#)})</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="2">
+                        <input type="submit" id="newArticleButton" name="newArticleButton" value="{translate(#New Article#)}" />                         
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
+</form>    
+<form name="frmDeleteArticle" id="frmDeleteArticle" flexy:ignore>
+<input type="hidden" name="action" value="delete" />
     <tr>
         <th>{translate(#Select#)}</th>
         <th>ID</th>
@@ -123,7 +127,7 @@
     <tr>
         <td colspan="9">
         {translate(#With selected article(s)#)}: 
-        <input type="submit" name="deleteButton" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#article#)}', 'newArticle')" />
+        <input type="submit" name="deleteButton" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#article#)}', 'frmDeleteArticle')" />
         </td>
     </tr>
     {else:}

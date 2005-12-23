@@ -239,22 +239,51 @@ class SGL_String
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
+     * @param boolen $array     is string an array
      * @return string
+     *
+     * @todo get rid of 3rd arg
      */
-    function translate($key, $filter = false)
+    function translate($key, $filter = false, $isArray = false)
     {
-        if (isset($GLOBALS['_SGL']['TRANSLATION'])) {
-            $trans = $GLOBALS['_SGL']['TRANSLATION'];
-            if (isset($trans[$key])) {
-                $ret = $trans[$key];
-                if ($filter && function_exists($filter)) {
-                    $ret = $filter($ret);
+        $trans = &$GLOBALS['_SGL']['TRANSLATION'];
+        if (isset($trans[$key])) {
+            if ($isArray) {
+                $queryString = $trans[$key];
+                $pieces = explode('||', $queryString);
+                foreach ($pieces as $values) {
+                    if (!empty($values)) {
+                        list($aKey, $aValue) = explode('|', $values);
+                        $ret[$aKey] = $aValue;
+                    }
                 }
-                return $ret;
             } else {
-                SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
-                return '>' . $key . '<';
+                $ret = $trans[$key];
             }
+
+            if ($filter && function_exists($filter)) {
+                $ret = $filter($ret);
+            }
+            return $ret;
+        } else {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+
+            //  get a reference to the request object
+            $req = & SGL_Request::singleton();
+            $moduleName = $req->get('moduleName');
+
+            //  fetch fallback lang
+            $fallbackLang = $conf['translation']['fallbackLang'];
+
+            //  add translation
+            $trans = &SGL_Translation::singleton('admin');
+            $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+
+            SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
+
+            $key = ($conf['debug']['production']) ? $key : '>' . $key . '<';
+            return $key;
         }
     }
 
@@ -340,7 +369,7 @@ class SGL_String
             $e = "'E'";
         }
         $encoded = preg_replace_callback(
-                '|([-?=@._emailto:])|',	// Mostly arbitrary, to mix encoded and unencoded chars...
+                '|([-?=@._emailto:])|', // Mostly arbitrary, to mix encoded and unencoded chars...
                 create_function(
                         '$matches',
                         "return char2entity(\$matches[0], $e);"
@@ -366,19 +395,21 @@ class SGL_String
         return implode(' ', $sliced) . $appendString;
     }
 
+
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
      *
-     * @param   string $str
-     * @param   integer $lines
-     * @param   string $appendString
-     * @return  string
+     * @param string $str
+     * @param integer $lines
+     * @param string $appendString
+     * @return string
      * @todo    needs to handle orphan <b> and <strong> tags
      */
     function summariseHtml($str, $lines=10)
     {
         $aLines = explode("\n", $str);
         $aSegment = array_slice($aLines, 0, $lines);
+
 
         //  close tags like <ul> so page layout doesn't break
         $unclosedListTags = 0;
@@ -409,7 +440,7 @@ class SGL_String
      function formatBytes($size, $decimals = 1, $lang = '--')
     {
         $aSizeList = array(1073741824, 1048576, 1024, 0);
-		// Should check if string is in an array, other languages may use octets
+        // Should check if string is in an array, other languages may use octets
         if ($lang == 'FR') {
             $aSizeNameList = array('&nbsp;Go', '&nbsp;Mo', '&nbsp;Ko', '&nbsp;octets');
             // Note: should also use French decimal separator (coma)
@@ -442,8 +473,8 @@ class SGL_String
          // by a non-alphanumeric character (eg. space, tag...).
 //         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
          $s = preg_replace('!&#?[A-Za-z0-9]{1,7};?!', '', $s);    ## remove HTML entities.
-         $s = preg_replace('![^\w\s]!', '', $s);      ## remove non-word/space chars.
-         $s = preg_replace('!\s+!', '_', $s);         ## change space chars to underscores.
+         $s = preg_replace('![^\w\s]!', '',$s);      ## remove non-word/space chars.
+         $s = preg_replace('!\s+!', '_',$s);         ## change space chars to underscores.
          return $s;
     }
 
@@ -457,8 +488,8 @@ class SGL_String
            "!\xe1!" => 'a',    # a'
            "!\xc2!" => 'A',    # A^
            "!\xe2!" => 'a',    # a^
-           "!\xc4!" => 'A',   # A:
-           "!\xe4!" => 'a',   # a:
+           "!\xc4!" => 'A',    # A:
+           "!\xe4!" => 'a',    # a:
            "!\xc3!" => 'A',    # A~
            "!\xe3!" => 'a',    # a~
            "!\xc8!" => 'E',    # E`
@@ -467,36 +498,36 @@ class SGL_String
            "!\xe9!" => 'e',    # e'
            "!\xca!" => 'E',    # E^
            "!\xea!" => 'e',    # e^
-           "!\xcb!" => 'E',   # E:
-           "!\xeb!" => 'e',   # e:
+           "!\xcb!" => 'E',    # E:
+           "!\xeb!" => 'e',    # e:
            "!\xcc!" => 'I',    # I`
            "!\xec!" => 'i',    # i`
            "!\xcd!" => 'I',    # I'
            "!\xed!" => 'i',    # i'
            "!\xce!" => 'I',    # I^
            "!\xee!" => 'i',    # i^
-           "!\xcf!" => 'I',   # I:
-           "!\xef!" => 'i',   # i:
+           "!\xcf!" => 'I',    # I:
+           "!\xef!" => 'i',    # i:
            "!\xd2!" => 'O',    # O`
            "!\xf2!" => 'o',    # o`
            "!\xd3!" => 'O',    # O'
            "!\xf3!" => 'o',    # o'
            "!\xd4!" => 'O',    # O^
            "!\xf4!" => 'o',    # o^
-           "!\xd6!" => 'O',   # O:
-           "!\xf6!" => 'o',   # o:
+           "!\xd6!" => 'O',    # O:
+           "!\xf6!" => 'o',    # o:
            "!\xd5!" => 'O',    # O~
            "!\xf5!" => 'o',    # o~
-           "!\xd8!" => 'O',   # O/
-           "!\xf8!" => 'o',   # o/
+           "!\xd8!" => 'O',    # O/
+           "!\xf8!" => 'o',    # o/
            "!\xd9!" => 'U',    # U`
            "!\xf9!" => 'u',    # u`
            "!\xda!" => 'U',    # U'
            "!\xfa!" => 'u',    # u'
            "!\xdb!" => 'U',    # U^
            "!\xfb!" => 'u',    # u^
-           "!\xdc!" => 'U',   # U:
-           "!\xfc!" => 'u',   # u:
+           "!\xdc!" => 'U',    # U:
+           "!\xfc!" => 'u',    # u:
            "!\xc7!" => 'C',    # ,C
            "!\xe7!" => 'c',    # ,c
            "!\xd1!" => 'N',    # N~

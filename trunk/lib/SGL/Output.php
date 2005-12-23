@@ -69,7 +69,17 @@ class SGL_Output
 
     function get($key)
     {
-        return $this->aProps[$key];
+        if (isset($this->aProps[$key])) {
+            $ret = $this->aProps[$key];
+        } else {
+            $ret = null;
+        }
+        return $ret;
+    }
+
+    function set($key, $value)
+    {
+        $this->aProps[$key] = $value;
     }
 
     /**

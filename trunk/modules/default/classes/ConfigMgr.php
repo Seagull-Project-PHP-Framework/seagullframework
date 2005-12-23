@@ -57,7 +57,8 @@ class ConfigMgr extends SGL_Manager
     var $aMtaBackends;
     var $aCensorModes;
     var $aNavDrivers;
-
+    var $aTranslationContainers;
+    
     function ConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -103,6 +104,7 @@ class ConfigMgr extends SGL_Manager
             'edit'   => array('edit'),
             'update' => array('update', 'redirectToDefault'),
         );
+        $this->aTranslationContainers = array('file' => 'file', 'db' => 'database');         
     }
 
     function validate($req, &$input)
@@ -198,17 +200,25 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->aDbTypes = $this->aDbTypes;
-        $output->aLogTypes = $this->aLogTypes;
-        $output->aLogPriorities = $aLogLevels;
-        $output->aEmailThresholds = $aLogLevels;
-        $output->aMtaBackends = $this->aMtaBackends;
-        $output->aCensorModes = $this->aCensorModes;
-        $output->aNavDrivers = $this->aNavDrivers;
-        $output->aStyleFiles = $this->aStyleFiles;
-        $output->aSessHandlers = $this->aSessHandlers;
-        $output->aUrlHandlers = $this->aUrlHandlers;
-        $output->aTemplateEngines = $this->aTemplateEngines;
+#        $output->conf               = $conf;
+        $output->aDbTypes           = $this->aDbTypes;
+        $output->aLogTypes          = $this->aLogTypes;
+        $output->aLogPriorities     = $aLogLevels;
+        $output->aEmailThresholds   = $aLogLevels;
+        $output->aMtaBackends       = $this->aMtaBackends;
+        $output->aCensorModes       = $this->aCensorModes;
+        $output->aNavDrivers        = $this->aNavDrivers;
+        $output->aStyleFiles        = $this->aStyleFiles;
+        $output->aSessHandlers      = $this->aSessHandlers;
+        $output->aUrlHandlers       = $this->aUrlHandlers;
+        $output->aTemplateEngines       = $this->aTemplateEngines;
+        $output->aTranslationContainers = $this->aTranslationContainers;
+
+        //  retreive installed languages
+        $trans = &SGL_Translation::singleton();
+        $installedLanguages = $trans->getLangs();
+        $output->aInstalledLangs = $installedLanguages;
+
     }
 
     function _edit(&$input, &$output)
@@ -220,6 +230,9 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  impload installed languages
+        $input->conf['translation']['installedLanguages'] = implode(',', $input->conf['translation']['installedLanguages']);
+                
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);

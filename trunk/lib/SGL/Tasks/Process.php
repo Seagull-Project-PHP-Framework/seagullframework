@@ -330,6 +330,99 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
     }
 }
 
+///**
+// * Detects if language flag exists in $_GET, loads relevant
+// * language translation file.
+// *
+// * @access  private
+// * @author  Demian Turner <demian@phpkitchen.com>
+// * @author  Erlend Stromsvik <ehs@hvorfor.no>
+// * @package SGL
+// */
+//class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
+//{
+//    function process(&$input)
+//    {
+//        SGL::logMessage(null, PEAR_LOG_DEBUG);
+//        require_once SGL_CORE_DIR .'/Translation.php';
+//
+//        $req = $input->getRequest();
+//        $lang = $req->get('lang');
+//        require_once SGL_DAT_DIR . '/ary.languages.php';
+//        $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+//
+//        //  if lang var passed in request
+//        if (isset($lang) && array_key_exists($lang, $aLanguages)) {
+//            include SGL_MOD_DIR . '/default/lang/' . $aLanguages[$lang][1] . '.php';
+//            $_SESSION['aPrefs']['language'] = $lang;
+//        } else {
+//            //  get it from session
+//            $currLang = @$_SESSION['aPrefs']['language'];
+//            $globalLangFile = @$aLanguages[$currLang][1] . '.php';
+//
+//            //  if file exists, load global lang file
+//            if (is_readable(SGL_MOD_DIR . '/default/lang/' . $globalLangFile)) {
+//                include SGL_MOD_DIR . '/default/lang/' . $globalLangFile;
+//            } else {
+//                SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
+//            }
+//        }
+//        //  resolve current language from GET or session, assign to $language
+//        $language = (isset($lang)) ? @$aLanguages[$lang][1] : @$aLanguages[$currLang][1];
+//        if (empty($language)) {
+//            $language = 'english-iso-8859-15';
+//            $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
+//        }
+//
+//        //  fetch default translation
+//        $langID = str_replace('-', '_', $lang);
+//        $defaultWords = SGL_Translation::getTranslations('default', $langID);
+//
+//        //  fetch module translations
+//        $module = is_null($req->get('moduleName')) ? 'default' : $req->get('moduleName');
+//#        $path = SGL_MOD_DIR . '/' . $module . '/lang/';
+//
+//        if ($module != 'default') {
+//            $words = SGL_Translation::getTranslations($module, $langID);
+//        }
+//
+//        //  attempt to merge global language file with module's lang file
+////        if (is_readable($path . $language . '.php')) {
+////            include $path . $language . '.php';
+//
+//            //  if current module is not the default module
+////            if (isset($words)) {
+////                $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
+////
+////                //  else just assign default lang array to globals
+////            } else {
+////                $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
+////            }
+////        } else {
+////            SGL::raiseError('Could not open module\'s language file in ' .
+////                __CLASS__ . '::' . __FUNCTION__ .
+////                ', maybe it does not exist or the query parameter is incorrect',
+////                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+////        }
+//
+//        //  if current module is not the default module
+//        if (isset($words)) {
+//            $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
+//
+//            //  else just assign default lang array to globals
+//        } else {
+//            $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
+//        }
+//
+//        //  extract charset from current language string
+//        $aTmp = split('-', $language);
+//        array_shift($aTmp);
+//        $GLOBALS['_SGL']['CHARSET'] = join('-', $aTmp);
+//
+//        $this->processRequest->process($input);
+//    }
+//}
+
 /**
  * Detects if language flag exists in $_GET, loads relevant
  * language translation file.
@@ -344,56 +437,47 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR .'/Translation.php';
 
         $req = $input->getRequest();
         $lang = $req->get('lang');
+
         require_once SGL_DAT_DIR . '/ary.languages.php';
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
         //  if lang var passed in request
         if (isset($lang) && array_key_exists($lang, $aLanguages)) {
-            include SGL_MOD_DIR . '/default/lang/' . $aLanguages[$lang][1] . '.php';
             $_SESSION['aPrefs']['language'] = $lang;
         } else {
-            //  get it from session
-            $currLang = @$_SESSION['aPrefs']['language'];
-            $globalLangFile = @$aLanguages[$currLang][1] . '.php';
-
-            //  if file exists, load global lang file
-            if (is_readable(SGL_MOD_DIR . '/default/lang/' . $globalLangFile)) {
-                include SGL_MOD_DIR . '/default/lang/' . $globalLangFile;
-            } else {
-                SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
-            }
+            $lang = @$_SESSION['aPrefs']['language'];
         }
         //  resolve current language from GET or session, assign to $language
-        $language = (isset($lang)) ? @$aLanguages[$lang][1] : @$aLanguages[$currLang][1];
+        $language = @$aLanguages[$lang][1];
         if (empty($language)) {
             $language = 'english-iso-8859-15';
             $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
         }
 
-        $module = is_null($req->get('moduleName')) ? 'default' : $req->get('moduleName');
-        $path = SGL_MOD_DIR . '/' . $module . '/lang/';
+        //  fetch default translation
+        $langID = str_replace('-', '_', $lang);
+        $defaultWords = SGL_Translation::getTranslations('default', $langID);
 
-        //  attempt to merge global language file with module's lang file
-        if (is_readable($path . $language . '.php')) {
-            include $path . $language . '.php';
+        //  fetch module translations
+        $module = ($req->get('moduleName')) ? $req->get('moduleName') : SGL_Process_ResolveManager::getDefaultManager($input);
 
-            //  if current module is not the default module
-            if (isset($words)) {
-                $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
-
-                //  else just assign default lang array to globals
-            } else {
-                $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
-            }
-        } else {
-            SGL::raiseError('Could not open module\'s language file in ' .
-                __CLASS__ . '::' . __FUNCTION__ .
-                ', maybe it does not exist or the query parameter is incorrect',
-                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+        if ($module !== 'default') {
+            $words = SGL_Translation::getTranslations($module, $langID);
         }
+
+        //  if current module is not the default module
+        if (isset($words)) {
+            $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
+
+            //  else just assign default lang array to globals
+        } else {
+            $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
+        }
+
         //  extract charset from current language string
         $aTmp = split('-', $language);
         array_shift($aTmp);
@@ -839,7 +923,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             if (!class_exists($navClass)) {
                 SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
             }
-            $nav = & new $navClass($input);
+            $nav = & new $navClass($input->data);
             $aRes = $nav->render();
             if (!PEAR::isError($aRes)) {
                 list($sectionId, $html) = $aRes;

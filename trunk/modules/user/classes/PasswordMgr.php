@@ -146,7 +146,7 @@ class PasswordMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
+        $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
     }
 
     function _edit(&$input, &$output)

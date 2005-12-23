@@ -331,5 +331,21 @@ class SGL_Util
         array_unshift($iniFle, $string);
         file_put_contents($file, implode("", $iniFle));
     }
+    /**
+     * Returns a hash of the form array('en-iso-8859-15' => 'English (en-iso-8859-15),) etc.
+     *
+     * @return array
+     */
+    function getLangsDescriptionMap()
+    {
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        uasort($availableLanguages, 'SGL_cmp');
+        $aLangs = array();
+        foreach ($availableLanguages as $id => $tmplang) {
+            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $aLangs[$id] =  $langName . ' (' . $id . ')';
+        }
+        return $aLangs;
+    }
 }
 ?>

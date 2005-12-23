@@ -417,12 +417,24 @@ class BlockMgr extends SGL_Manager
             foreach ($aPagedData['data'] as $k => $aValue) {
                 if (isset($pKey) && isset($pBlock)) {
                     if ($pBlock == $aValue['block_id']) {
-                        $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
+                        if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                            $trans = & SGL_Translation::singleton();
+                            $trans->setLang(SGL_Translation::getLangID());
+                            $data[$pKey]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                        } else {
+                            $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
+                        }
                     } else {
                         $data[$k] = $aValue;
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
-                            $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
+                            if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                                $trans = & SGL_Translation::singleton();
+                                $trans->setLang(SGL_Translation::getLangID());
+                                $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                            } else {
+                                $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
+                            }
                             $pKey = $k;
                         } elseif ($aValue['sections'] == 0 ) {
                             unset($data[$k]['sections']);
@@ -435,7 +447,13 @@ class BlockMgr extends SGL_Manager
                     $data[$k] = $aValue;
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
-                        $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
+                        if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                            $trans = & SGL_Translation::singleton();
+                            $trans->setLang(SGL_Translation::getLangID());
+                            $data[$k]['sections'][$aValue['sections']] = $trans->get($aValue['section_title'], 'nav');
+                        } else {
+                            $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
+                        }
                         $pKey = $k;
                     } elseif ($aValue['sections'] == 0 ) {
                         unset($data[$k]['sections']);

@@ -2,8 +2,10 @@
 <form method="post" name="article" flexy:ignore id="article">
     <input type="hidden" name="action" value="update" />
     <input type="hidden" name="frmArticleCatID" value="{article.catID}" />
-    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
-
+    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />   
+    {foreach:availableLangs,langID,langName}
+    <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
+    {end:}
     <table class="wide">
         <tr>
             <th width="30%" nowrap="nowrap">{translate(#Article type#)}</th>
@@ -44,6 +46,12 @@
         <tr>
             <th width="30%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
             <td width="70%">{dateSelectorExpiry:h}{noExpiry:h}</td>
+        </tr>
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Language#)}</th>
+            <td width="70%"><select name="frmArticleLang"
+                                    onChange="javascript:document.location.href='{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}frmArticleLang/' + getSelectedValue(document.getElementById('article').frmArticleLang) + '/';">
+                {generateSelect(availableLangs,articleLang):h}</select> ({translate(#switching language will cause changes to be lost#)})</td>        
         </tr>
         {dynaContent:h}
         <tr>

@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
+require_once SGL_CORE_DIR . '/Translation.php';
+
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
  *
@@ -101,6 +103,13 @@ class SimpleNav
      * @var     array
      */
     var $_aParentsOfCurrentPage = array();
+    /**
+     * Holds section title translations
+     *
+     * @access  private
+     * @var     array
+     */
+    var $_aTranslations = array();
 
     function SimpleNav($input)
     {
@@ -115,6 +124,11 @@ class SimpleNav
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->dbh = & SGL_DB::singleton();
+        if (is_null($input->get('navLang'))) {
+            $input->set('navLang', SGL_Translation::getLangID());
+        }
+        $this->_aTranslations =
+            SGL_Translation::getTranslations('nav', $input->get('navLang'));
     }
 
     /**
@@ -146,6 +160,13 @@ class SimpleNav
             if (PEAR::isError($aSectionNodes)) {
                 return $aSectionNodes;
             }
+            //  fetch current lang
+            $lang = SGL_Translation::getLangID();
+
+            //  retreive nav translation
+            $this->_aTranslations = SGL_Translation::getTranslations('nav', $lang);
+
+            $aSectionNodes = $this->getSectionsByRoleId();
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
@@ -226,8 +247,14 @@ class SimpleNav
             } elseif (preg_match('/^uriAlias:(.*)/', $section->resource_uri, $aUri)) {
 	        $section->resource_uri = $aUri[1];
             } elseif (preg_match('/^uriExternal:(.*)/', $section->resource_uri, $aUri)) {
-	        $section->resource_uri = $aUri[1];
-		$section->uriExternal = true;
+                $section->resource_uri = $aUri[1];
+                $section->uriExternal = true;
+            }
+
+            //  retreive translation
+            if (is_numeric($section->title)) {
+                $titleID = $section->title; unset($section->title);
+                $section->title = $this->_aTranslations[$titleID];
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
@@ -426,7 +453,7 @@ class SimpleNav
     function getCurrentSectionName()
     {
         if (!$this->_currentSectionId) {
-            $sectionName = $this->input->data->pageTitle;
+            $sectionName = $this->input->get('pageTitle');
         } else {
             $query = "
                 SELECT  title

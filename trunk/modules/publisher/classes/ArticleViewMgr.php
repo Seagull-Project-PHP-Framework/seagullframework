@@ -85,9 +85,11 @@ class ArticleViewMgr extends SGL_Manager
         $input->catID           = (int)$req->get('frmCatID');
         $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
-		$input->dataTypeID		= ($req->get('frmDataTypeID')) 
-		                              ? $req->get('frmDataTypeID') 
-		                              : $this->conf['site']['defaultArticleViewType'];
+        $input->dataTypeID      = ($req->get('frmDataTypeID'))
+                                      ? $req->get('frmDataTypeID')
+                                      : $this->conf['site']['defaultArticleViewType'];
+        $input->articleLang     = str_replace('-', '_', $req->get('frmArticleLang'));
+
         //  catch static article flag, route to view
         if ($input->staticArticle) {
             $input->action = 'view';
@@ -114,8 +116,8 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'articleView.html';
-        $ret = SGL_Item::getItemDetail($input->articleID);
-        
+        $ret = SGL_Item::getItemDetail($input->articleID, null, $input->articleLang);
+
         if (PEAR::isError($ret)) {
             return false;
         }
@@ -148,7 +150,7 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id']), 
+            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id'], null, $input->articleLang),
                                             $aResult['data'][$key]);
 
             // summarises article content
