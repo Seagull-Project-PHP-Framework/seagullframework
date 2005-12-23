@@ -73,8 +73,7 @@ class BlockForm
             while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
                     $trans = & SGL_Translation::singleton();
-                    $trans->setLang(SGL_Translation::getLangID());
-                    $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', $languageID);   
+                    $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', SGL_Translation::getLangID());   
                 } else {
                     $sections[ $sectionList->section_id ] = $sectionList->title;
                 }
