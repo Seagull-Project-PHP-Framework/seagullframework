@@ -203,16 +203,13 @@ class Block extends DataObjects_Block
      */
     function delete($useWhere = false) 
     {
-        if (parent::delete($useWhere)) {
 
-            // Delete all block assignment records for this block
-            $block_assignment = DB_DataObject::factory('Block_Assignment');
-            $block_assignment->block_id = $this->block_id;
-            $block_assignment->delete();
-            return true;
-        } else {
-            return false;
-        }
+        // Delete all block assignment records for this block
+        $block_assignment = DB_DataObject::factory('Block_Assignment');
+        $block_assignment->block_id = $this->block_id;
+        $block_assignment->delete();
+
+        return parent::delete($useWhere);
     }
 
     /**
