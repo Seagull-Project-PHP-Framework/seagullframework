@@ -236,7 +236,8 @@ class PageMgr extends SGL_Manager
             : SGL_Translation::getLangID();
 
         $output->navLang = $navLang;
-
+        $output->fullNavLang = $output->availableLangs[$navLang];
+        
         switch ($output->articleType) {
         case 'static':
             $output->staticSelected = 'selected';

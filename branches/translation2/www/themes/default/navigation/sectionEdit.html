@@ -62,7 +62,7 @@ function addFormValue(myElement, form)
             <th align="left">{translate(#Language#)}</th>
 
             {if:actionIsAdd}
-            <td><select name="frmNavLang" id="frmNavLang"><option value="{navLang}">{navLang}</option></select></td>
+            <td><select name="frmNavLang" id="frmNavLang"><option value="{navLang}">{fullNavLang}</option></select></td>
             {else:}
             <td><select name="frmNavLang" id="frmNavLang"
                         onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
@@ -73,7 +73,7 @@ function addFormValue(myElement, form)
         </tr>
 
         <tr>
-            <th align="left">{translate(#Page Title#)} - {navLang}:</th>
+            <th align="left">{translate(#Page Title#)} - {fullNavLang}:</th>
             <td><input type="text" name="page[title]" value="{section[title]:h}" />
                 <input type="hidden" name="page[title_original]" value="{section[title]:h}" /></td>
         </tr>
