@@ -40,6 +40,7 @@
 
 require_once 'Config.php';
 require_once 'Validate.php';
+require_once SGL_CORE_DIR .'/Translation.php';
 
 /**
  * To manage administering global config file.
