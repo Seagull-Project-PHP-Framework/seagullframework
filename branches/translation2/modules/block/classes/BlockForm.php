@@ -61,6 +61,7 @@ class BlockForm
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $dbh = & SGL_DB::singleton();
+        $trans = & SGL_Translation::singleton();
 
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
@@ -72,7 +73,6 @@ class BlockForm
         if ($result > 0) {
             while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
-                    $trans = & SGL_Translation::singleton();
                     $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', SGL_Translation::getLangID());   
                 } else {
                     $sections[ $sectionList->section_id ] = $sectionList->title;

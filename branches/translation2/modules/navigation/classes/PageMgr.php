@@ -40,6 +40,7 @@
 // $Id: PageMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
+require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
@@ -64,6 +65,7 @@ class PageMgr extends SGL_Manager
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
         $this->da               = & DA_User::singleton();
+        $this->trans            = & SGL_Translation::singleton('admin');
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -146,8 +148,7 @@ class PageMgr extends SGL_Manager
             }
             //  ensure correct translation is being sent to output
             if ($input->action == 'update' && $refreshScreen == true) {
-                $trans = &SGL_Translation::singleton();
-                $input->section['title'] = $trans->get($input->section['section_id'], 'nav', $input->navLang);
+                $input->section['title'] = $this->trans->get($input->section['section_id'], 'nav', $input->navLang);
             }
 
             //  zero is a valid property, refers to public group
@@ -228,8 +229,7 @@ class PageMgr extends SGL_Manager
             $output->uriAliasSelected = '';
             $output->uriExternalSelected = '';
 
-        $trans = &SGL_Translation::singleton('admin');
-        $output->availableLangs = $trans->getLangs();
+        $output->availableLangs = $this->trans->getLangs();
 
         $navLang = (isset($output->navLang) && !empty($output->navLang))
             ? $output->navLang
@@ -246,7 +246,7 @@ class PageMgr extends SGL_Manager
                 $articles = $this->_getStaticArticles();
                 foreach ($articles as $key => $value) {
                 	if (is_numeric($value)){
-                        $articles[$key] = $trans->get($value, 'content', $output->navLang);
+                        $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
                 	}
                 }
                 $output->aStaticArticles = $articles;
@@ -301,37 +301,6 @@ class PageMgr extends SGL_Manager
         foreach ($aUriAliases as $key => $value) {
             $output->aUriAliases[$key] = $key . ' >> ' . $value;
         }
-//          fetch available languages
-//        $aLangDescriptions = SGL_Util::getLangsDescriptionMap();
-//
-//          apply filter if current section is set
-//        $filter = isset($output->sectionId)
-//            ? ' WHERE section_id='.$output->sectionId : '';
-//        $query = "
-//            SELECT languages
-//            FROM ". $this->conf['table']['section'] .
-//            $filter;
-//
-//        $results = $this->dbh->getOne($query);
-//        $aLangs = explode('|', $results);
-//        foreach ($aLangs as $lang) {
-//            $key = str_replace('_', '-', $lang);
-//            $output->availableLangs[$lang] = $aLangDescriptions[$key];
-//        }
-        //  add language if adding new translation
-//        if (!array_key_exists($navLang, $output->availableLangs)) {
-//            $key = str_replace('_', '-', $navLang);
-//            $output->availableLangs[$navLang] = $aLangDescriptions[$key];
-//        }
-
-        //  find unavailable languages
-//        $installedLangs = explode(',', $this->conf['translation']['installedLanguages']);
-//        foreach ($installedLangs as $uKey) {
-//            if (!array_key_exists($uKey, $output->availableLangs)) {
-//                $key = str_replace('_', '-', $uKey);
-//                $output->availableAddLangs[$uKey] = $aLangDescriptions[$key];
-//            }
-//        }
     }
 
     function _add(&$input, &$output)
@@ -408,10 +377,7 @@ class PageMgr extends SGL_Manager
         $sectionNextId = $this->dbh->nextID('section') + 1;
 
         //  add translations
-        $trans = &SGL_Translation::singleton('admin');
-        #$ok = $trans->add($titleId, 'nav', array($input->navLang => $input->section['title']));
-        $ok = $trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
-        #$input->section['section_id'] = $sectionNextId;
+        $ok = $this->trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
 
         //  set translation id for nav title
         unset($input->section['title']);
@@ -448,8 +414,6 @@ class PageMgr extends SGL_Manager
         $output->action = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
 
-        $trans = &SGL_Translation::singleton();
-
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
@@ -457,7 +421,7 @@ class PageMgr extends SGL_Manager
         if (is_numeric($section['title'])) {
             $section['title_id'] = $section['title'];
             unset($section['title']);
-            $section['title'] = $trans->get($section['title_id'], 'nav', $input->navLang);
+            $section['title'] = $this->trans->get($section['title_id'], 'nav', $input->navLang);
             $section['language'] = $output->availableLangs[$input->navLang];
         } else {
             $section['language'] = $output->availableLangs[$input->navLang];
@@ -584,14 +548,10 @@ class PageMgr extends SGL_Manager
         //  update translations
         if ($input->section['title'] != $input->section['title_original']) {
             $strings[$input->navLang] = $input->section['title'];
-            $trans = & SGL_Translation::singleton('admin');
-            #$result = $trans->add($input->section['section_id'], 'nav', $strings);
-
-            $ok = $trans->add($input->section['section_id'], 'nav', array($input->navLang => $input->section['title']));
+            $ok = $this->trans->add($input->section['section_id'], 'nav', array($input->navLang => $input->section['title']));
 
             //  assign title id and languages for update
             $input->section['title'] = $input->section['section_id'];
-            #$input->section['languages'] = implode('|', $input->availableLangs);
         }
 
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -658,8 +618,7 @@ class PageMgr extends SGL_Manager
             foreach ($input->aDelete as $index => $sectionId) {
                 if ($section = $nestedSet->getNode($sectionId)){
                     //  remove translations
-                    $trans = &SGL_Translation::singleton('admin');
-                    $trans->remove($section['title'], 'nav');
+                    $this->trans->remove($section['title'], 'nav');
 
                     //  remove page
                     $nestedSet->deleteNode($sectionId);
@@ -750,9 +709,8 @@ class PageMgr extends SGL_Manager
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
                 if (is_numeric($sectionNode['title'])) {
-                    $trans = & SGL_Translation::singleton();
-                    $trans->setLang(SGL_Translation::getLangID());
-                    $sectionNode['title'] = $trans->get($sectionNode['title'], 'nav');
+                    $this->trans->setLang(SGL_Translation::getLangID());
+                    $sectionNode['title'] = $this->trans->get($sectionNode['title'], 'nav');
                 }
                 $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer . $sectionNode['title'] . "</option>\n";
             }
