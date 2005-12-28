@@ -286,6 +286,7 @@ class SGL_Item
                         $id,
                         $parentID,
                         $itemID[$x],
+                        $itemValue[$x],
                         $transID
                     )";
             $result = $this->dbh->query($query);
@@ -326,6 +327,7 @@ class SGL_Item
                 $id,
                 $parentID,
                 $itemID,
+                $itemValue,
                 $transID
             )";
         $result = $this->dbh->query($query);
@@ -482,7 +484,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition, 
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id,
                     itm.field_type, itm.item_type_mapping_id
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
@@ -498,11 +500,11 @@ class SGL_Item
 
         case SGL_RET_ARRAY:
             $aFields = array();
-            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     // set fieldID to tranlsation ID
                     $fieldID = $fieldValue;
-                    $fieldValue = $this->trans->get($fieldValue, 'content', $language);
+                    $fieldValue = $this->trans->get($transID, 'content', $language);
                     $aFields[ucfirst($fieldName)] =
                         $this->generateFormFields(
                         $fieldID, $fieldName, $fieldValue, $fieldType);
@@ -521,11 +523,11 @@ class SGL_Item
     
             //  display dynamic form fields (changed default object output to standard array
             $fieldsString = '';
-            while (list($fieldID, $fieldName, $fieldValue, $fieldType)
+            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                 // set fieldID to tranlsation ID
-                $fieldID = $fieldValue;
-                $fieldValue = $this->trans->get($fieldValue, 'content', $language);
+                $fieldID = $transID;
+                $fieldValue = $this->trans->get($transID, 'content', $language);
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) ." ". $languageName ."</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
