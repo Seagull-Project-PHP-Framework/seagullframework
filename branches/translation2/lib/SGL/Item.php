@@ -975,10 +975,8 @@ class SGL_Item
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
-        $languageID = SGL_Translation::getLangID();
-        $this->trans->setLang($languageID);
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            $aPagedData['data'][$aKey]['addition'] = $this->trans->get($aValues['addition'], 'content');   
+            $aPagedData['data'][$aKey]['addition'] = $this->trans->get($aValues['addition'], 'content', SGL_Translation::getLangID());   
         }
         return $aPagedData;
     }

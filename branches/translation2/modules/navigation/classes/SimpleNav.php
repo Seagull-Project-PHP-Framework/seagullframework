@@ -119,11 +119,13 @@ class SimpleNav
         $req = & SGL_Request::singleton();
 
         $key = $req->get('staticId');
-        $this->_staticId = (is_null($key)) ? 0 : $key;
-        $this->input = $input;
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();
+        $this->_staticId    = (is_null($key)) ? 0 : $key;
+        $this->input        = $input;
+        $c              = &SGL_Config::singleton();
+        $this->conf     = $c->getAll();
+        $this->dbh      = & SGL_DB::singleton();
+        $this->trans    = &SGL_Translation::singleton();
+        
         if (is_null($input->get('navLang'))) {
             $input->set('navLang', SGL_Translation::getLangID());
         }
@@ -461,6 +463,10 @@ class SimpleNav
                 WHERE   section_id = " . $this->_currentSectionId;
 
             $sectionName = $this->dbh->getOne($query);
+            
+            if (is_numeric($sectionName)) {
+                $sectionName = $this->trans->get($sectionName, 'nav', SGL_Translation::getLangID());
+            }
         }
         return $sectionName;
     }
