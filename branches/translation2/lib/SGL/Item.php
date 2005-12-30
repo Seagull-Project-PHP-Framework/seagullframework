@@ -706,7 +706,7 @@ class SGL_Item
         if (!is_null($language)) {       
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
-                SELECT  ia.item_addition_id, itm.field_name, ia.addition
+                SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id 
             FROM    {$this->conf['table']['item']} i,
                     {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
@@ -722,9 +722,9 @@ class SGL_Item
 
             if (!DB::isError($result)) {
                 $html = array();
-                while (list($fieldID, $fieldName, $fieldValue)
+                while (list($fieldID, $fieldName, $fieldValue, $trans_id)
                     = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-                    $fieldValue = $this->trans->get($fieldValue, 'content', $language);
+                    $fieldValue = $this->trans->get($trans_id, 'content', $language);
                     $html[$fieldName] = $this->generateItemOutput(
                         $fieldID, $fieldName, $fieldValue, $this->typeID);
                 }
@@ -761,8 +761,8 @@ class SGL_Item
                 ";
         $result = $this->dbh->query($query);
 
-        while (list($fieldID, $fieldName, $fieldValue) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $fieldValue = $this->trans->get($fieldValue, 'content', $this->languageID);
+        while (list($fieldID, $fieldName, $fieldValue, $trans_id) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+            $fieldValue = $this->trans->get($trans_id, 'content', $this->languageID);
             $html[$fieldName] = $fieldValue;
         }
         return $html;
@@ -948,6 +948,7 @@ class SGL_Item
         $query = "
             SELECT  i.item_id,
                     ia.addition,
+                    ia.trans_id,
                     u.username,
                     i.date_created,
                     i.start_date,
@@ -978,7 +979,7 @@ class SGL_Item
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            $aPagedData['data'][$aKey]['addition'] = $this->trans->get($aValues['addition'], 'content', SGL_Translation::getLangID());   
+            $aPagedData['data'][$aKey]['trans_id'] = $this->trans->get($aValues['trans_id'], 'content', SGL_Translation::getLangID());   
         }
         return $aPagedData;
     }
