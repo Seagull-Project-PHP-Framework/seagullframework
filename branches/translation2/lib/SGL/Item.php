@@ -285,7 +285,7 @@ class SGL_Item
                     INSERT INTO {$this->conf['table']['item_addition']} VALUES (
                         $id,
                         $parentID,
-                        $itemID[$x],".
+                        $itemID[$x], ".
                         $this->dbh->quote($itemValue[$x]) .", 
                         $transID
                     )";
