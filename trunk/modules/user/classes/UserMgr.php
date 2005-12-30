@@ -142,7 +142,7 @@ class UserMgr extends RegisterMgr
         if (!in_array($output->action, $aDisallowedMethods)) {
             $output->states = SGL::loadRegionList('states');
             $output->countries = SGL::loadRegionList('countries');
-            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
+            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
         }
         if (!in_array($output->action, array(
                 'requestPasswordReset', 'resetPassword',
@@ -267,6 +267,7 @@ class UserMgr extends RegisterMgr
                 if ($userId == SGL_ADMIN) {
                     continue;
                 }
+                $ret = $this->da->deletePrefsByUserId($userId);
                 $query = "DELETE FROM {$this->conf['table']['user']} WHERE usr_id=$userId";
                 if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                     $results[$userId] = 0; //log result for user
