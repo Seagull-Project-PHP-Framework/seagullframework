@@ -249,7 +249,7 @@ class ArticleMgr extends SGL_Manager
         $installedLanguages = $trans->getLangs();
 
         $output->availableLangs = $installedLanguages;   
-        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) ? $input->articleLang : $this->conf['translation']['fallbackLang'];
+        $output->articleLang = (!empty($input->articleLang)) ? $input->articleLang : $this->conf['translation']['fallbackLang'];
 
         //  get dynamic content
         $output->dynaContent = (isset($input->articleLang)) ? 
