@@ -447,6 +447,7 @@ class ArticleMgr extends SGL_Manager
         $query = "
             SELECT  i.item_id,
                     ia.addition,
+                    ia.trans_id,
                     u.username,
                     i.date_created,
                     i.start_date,
@@ -476,11 +477,11 @@ class ArticleMgr extends SGL_Manager
         //  fetch title translation
         $fallbackLang = $this->conf['translation']['fallbackLang'];
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            if (is_numeric($aValues['addition'])) {
-                if ($title = $this->trans->get($aValues['addition'], 'content', $lang)) { //  get translation by language set in users' preference                
+            if ($aValues['trans_id']) {
+                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) { //  get translation by language set in users' preference                
                     $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
                 } else {    //  get first available translation any installed language
-                    if ($title = $this->trans->get($aValues['addition'], 'content', $fallbackLang)) {   
+                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {   
                         $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
                     }
                 }
