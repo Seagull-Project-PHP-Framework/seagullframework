@@ -269,16 +269,19 @@ class SGL_String
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
 
-            //  get a reference to the request object
-            $req = & SGL_Request::singleton();
-            $moduleName = $req->get('moduleName');
-
-            //  fetch fallback lang
-            $fallbackLang = $conf['translation']['fallbackLang'];
-
             //  add translation
-            $trans = &SGL_Translation::singleton('admin');
-            $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+            if (!$isArray) {
+
+                //  get a reference to the request object
+                $req = & SGL_Request::singleton();
+                $moduleName = $req->get('moduleName');
+
+                //  fetch fallback lang
+                $fallbackLang = $conf['translation']['fallbackLang'];
+
+                $trans = &SGL_Translation::singleton('admin');
+                $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+            }
 
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
 
