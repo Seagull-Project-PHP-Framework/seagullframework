@@ -216,7 +216,7 @@ class ContactUsMgr extends SGL_Manager
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
                 'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $this->module . '/email_contact_us.php',
+                    $moduleName . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
         $message->prepare();
