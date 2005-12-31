@@ -468,7 +468,7 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
             : $this->conf['site']['defaultManager'];
 
         if ($moduleName != 'default') {
-            $words = SGL_Translation::getTranslations($module, $langID);
+            $words = SGL_Translation::getTranslations($moduleName, $langID);
         }
 
         //  if current module is not the default module
