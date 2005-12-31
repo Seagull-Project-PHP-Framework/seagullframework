@@ -44,7 +44,7 @@
     $package     = 'Seagull';
 
     // Version (S9Y version is 0.9, I added .0 to reflect PEAR version scheme)
-	$version     = '0.5.3';
+	$version     = '0.5.4';
 
     // Summary description
 	$summary     = <<<EOT
@@ -64,59 +64,43 @@ EOT;
     // generate_package_xml_functions.php
 	$notes = <<<EOT
 BUGFIXES
-11-11-05    Fix for &-related prob in thunderbird parsing of RSS
-09-11-05    Fixed small bug where backdating date comboboxes wasn't working
-            (Werner Krauss)
-31-10-05	Fixed broken config calls in templates
-26-10-05    Registration emails are no longer CCed to admin, separate notification
-            is sent.
+24-11-05    Fixed long-standing image preview header probs
+24-11-05    Fixed config prob with FCK, images now upload correctly
 
 IMPROVEMENTS
-11-11-05    Rewrote installer to handle tasks, easy to extend
-11-11-05    Added conf[site][sessionInUrl] key and set to false to overcome
-            t-bird RSS bug listed above
-11-11-05    Reduced dependency on sections by modifying block listing query to use
-            LEFT JOIN instead of WHERE clauses (Julien Casanova)
-10-11-05    Moved MaintenanceMgr to 'default' module
-10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
-            assignments) by creating an auto-increment token in data and using
-            dynamic inserts
-09-11-05    Added ability for sql parser to auto-increment records when PK is marked
-            with {SGL_NEXT_ID} token
-09-11-05    Added ability to add all or minimum modules
-09-11-05    Added ability to remove frontScriptName and have even clearner urls than
-            previously, eg, now available: http://example.com/user/login/
-            Option currently only available to apache users with mod_rewrite enabled,
-            to activate set [site][frontScriptName] = false and copy
-            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure
-            the file is readable by the webserver (Julien Casanova)
-09-11-05    Added ability to backdate articles (Werner Krauss)
-09-11-05    Removed unnecessary framebuster from login page
-06-11-05    Split web tests into modules
-06-11-05    Moved all core classes that doubled up with other classes to reduce
-            file loading to seagull/lib/SGL/Other.php.  Currently this contains
-            SGL_Array, SGL_Date and SGL_Inflector.  Should make libs easier to find:
-            if you don't see a file named the same as the lib you want, it will most
-            likely be in Other.php
-04-11-05    New wizard can only be accessed if admin knows password stored in
-            seagull/var/INSTALL_COMPLETE.php.  Installer is invoked automatically
-            on first seagull install, and can be called manually by calling setup.php
-03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr,
-            CategoryMgr so core modules could work
-03-11-05    Added SGL_Process_ResolveManager::moduleIsRegistered() to gracefully supply
-            default module if requested module is not registered.
-03-11-05    all SQL-related files that used to live in seagull/etc have been moved to
-            'default' module as that's what they are, default
-03-11-05    item* tables and data moved to publisher
-03-11-05    category table and data moved to publisher
-03-11-05    Improved timezone list
-02-11-05    Global config file renamed to <host_name>.conf.php
-28-10-05    Blocks can now be displayed according to the role of the current user
-            (Daniel Korsak)
-23-10-05	Added support for observers with SGL_Oberserver and SGL_Observable
-21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php
-            to Process.php to respect namespace
-20-10-05    Added php4/5 compatible delegator class
+14-12-05    Module skeleton generator improved, it now: creates template files,
+            lang files and aActionsMapping array (Werner Krauss)
+14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
+            (Philippe Lhoste)
+14-12-05    'localeCategory' configurable, set to LC_ALL by default although European
+            users will want to change this where supplying a , for the decimal separator
+            causes calculation probs (use LC_TIME)
+14-12-05    Integrated advanced locale features available via SGL_Locale, disabled
+            by default
+14-12-05    SGL_USR_OS renamed more correctly to SGL_CLIENT_OS
+12-12-05    Block management enhanced - you can now create any number of arbitrarily
+            positioned blocks and assign content to them (Andrey Podshivalov)
+12-12-05    Uri aliases integrated into navigation module, external Uris handled
+            (Andrey Podshivalov)
+06-12-05	Basic CLI request implemented (Eric Persson)
+01-12-05    Three url parsers loaded by default: classic querystring, standard
+            Seagull SEF, and now UrlAlias, see the 0.5.4 updates notes for details:
+            http://trac.seagullproject.org/wiki/Howto/Misc/Upgrading/05
+01-12-05    Improved performance for DB-based sessions (Eric Persson)
+30-11-05    Polish translation updated (Tomasz Osmialowski)
+29-11-05	RSS query more configurable (bluetoad)
+29-11-05	Web root path now configurable from installer
+24-11-05    DB2 support added (Tobias Kuckuck)
+23-11-05    Implemented ability to load default data in installer
+23-11-05	Implemented Smarty renderer (Malaney J. Hill)
+22-11-05    Added ServiceLocator class and fixed db independence for testing
+21-11-05    Factored out setup of table name aliases, these are not set on a per-module
+            basis in the file 'tableAliases.ini' parsed at setup time.
+16-11-05    Chinese translation updated (Finjon Kiang)
+14-11-05    Added version-checker routine to Maintenance manager
+14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
+14-11-05    Improved integration of page offset id in seagull SEF urls
+            (Andreas Singer)
 EOT;
 
     // Instanciate package file manager
@@ -145,6 +129,7 @@ EOT;
             array(
                 'package.xml',
                 'package2.xml',
+                'CHANGELOG-1.txt.gz',
                 'generate_package_xml.php',
                 'lib/pear/',
                 '*tests*',
@@ -300,7 +285,7 @@ EOT;
     // package.xml file and want to receive additional information on error.
     if (isset($_GET['make']) || (isset($_SERVER['argv'][2]) &&
             $_SERVER['argv'][2] == 'make')) {
-#    	$e = $pkg->writePackageFile();
+    	$e = $pkg->writePackageFile();
         $e = $packagexml->writePackageFile();
 	} else {
     	$e = $pkg->debugPackageFile();
