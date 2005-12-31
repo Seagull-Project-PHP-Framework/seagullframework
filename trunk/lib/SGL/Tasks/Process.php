@@ -463,9 +463,11 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         $defaultWords = SGL_Translation::getTranslations('default', $langID);
 
         //  fetch module translations
-        $module = ($req->get('moduleName')) ? $req->get('moduleName') : SGL_Process_ResolveManager::getDefaultManager($input);
+        $moduleName = ($req->get('moduleName'))
+            ? $req->get('moduleName')
+            : $this->conf['site']['defaultManager'];
 
-        if ($module !== 'default') {
+        if ($moduleName != 'default') {
             $words = SGL_Translation::getTranslations($module, $langID);
         }
 
