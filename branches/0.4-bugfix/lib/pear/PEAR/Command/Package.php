@@ -38,7 +38,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -793,7 +793,7 @@ used for automated conversion or learning the format.
         if (isset($options['spec-template'])) {
             $spec_template = $options['spec-template'];
         } else {
-            $spec_template = '/var/www/html/tmp_install/PEAR/template.spec';
+            $spec_template = '/usr/local/lib/php/data/PEAR/template.spec';
         }
         $info['possible_channel'] = '';
         $info['extra_config'] = '';

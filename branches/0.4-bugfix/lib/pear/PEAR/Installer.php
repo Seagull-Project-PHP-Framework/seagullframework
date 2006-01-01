@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.220 2005/11/01 22:28:41 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.222 2005/11/12 06:42:33 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -885,10 +885,12 @@ class PEAR_Installer extends PEAR_Downloader
         $p = &$pkg->fromAnyFile($descfile, PEAR_VALIDATE_INSTALLING);
         PEAR::staticPopErrorHandling();
         if (PEAR::isError($p)) {
-            foreach ($pkg->getValidationWarnings(true) as $err) {
-                $loglevel = $err['level'] == 'error' ? 0 : 1;
-                if (!isset($this->_options['soft'])) {
-                    $this->log($loglevel, ucfirst($err['level']) . ': ' . $err['message']);
+            if (is_array($p->getUserInfo())) {
+                foreach ($p->getUserInfo() as $err) {
+                    $loglevel = $err['level'] == 'error' ? 0 : 1;
+                    if (!isset($this->_options['soft'])) {
+                        $this->log($loglevel, ucfirst($err['level']) . ': ' . $err['message']);
+                    }
                 }
             }
             return $this->raiseError('Installation failed: invalid package file');
@@ -993,7 +995,11 @@ class PEAR_Installer extends PEAR_Downloader
         // {{{ checks to do when not in "force" mode
         if (empty($options['force']) && @is_dir($this->config->get('php_dir'))) {
             $testp = $channel == 'pear.php.net' ? $pkgname : array($channel, $pkgname);
-            $test = $this->_registry->checkFileMap($pkg->getInstallationFileList(true), $testp, '1.1');
+            $instfilelist = $pkg->getInstallationFileList(true);
+            if (PEAR::isError($instfilelist)) {
+                return $instfilelist;
+            }
+            $test = $this->_registry->checkFileMap($instfilelist, $testp, '1.1');
             if (PEAR::isError($test)) {
                 return $test;
             }
@@ -1142,6 +1148,9 @@ class PEAR_Installer extends PEAR_Downloader
             
             if ($pkg->getPackagexmlVersion() == '2.0') {
                 $filelist = $pkg->getInstallationFilelist();
+                if (PEAR::isError($filelist)) {
+                    return $filelist;
+                }
             } else {
                 $filelist = $pkg->getFileList();
             }

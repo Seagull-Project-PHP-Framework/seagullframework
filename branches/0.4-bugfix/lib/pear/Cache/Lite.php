@@ -19,7 +19,7 @@
 *
 * @package Cache_Lite
 * @category Caching
-* @version $Id: Lite.php,v 1.30 2005/06/13 20:50:48 fab Exp $
+* @version $Id: Lite.php,v 1.37 2005/11/24 20:10:01 fab Exp $
 * @author Fabien MARTY <fab@php.net>
 */
 
@@ -50,6 +50,8 @@ class Cache_Lite
 
     /**
     * Cache lifetime (in seconds)
+    *
+    * If null, the cache is valid forever.
     *
     * @var int $_lifeTime
     */
@@ -264,14 +266,27 @@ class Cache_Lite
     */
     function Cache_Lite($options = array(NULL))
     {
-        $availableOptions = array('hashedDirectoryUmask', 'hashedDirectoryLevel', 'automaticCleaningFactor', 'automaticSerialization', 'fileNameProtection', 'memoryCaching', 'onlyMemoryCaching', 'memoryCachingLimit', 'cacheDir', 'caching', 'lifeTime', 'fileLocking', 'writeControl', 'readControl', 'readControlType', 'pearErrorMode');
         foreach($options as $key => $value) {
-            if(in_array($key, $availableOptions)) {
-                $property = '_'.$key;
-                $this->$property = $value;
-            }
+            $this->setOption($key, $value);
         }
-        $this->_refreshTime = time() - $this->_lifeTime;
+        $this->_setRefreshTime();
+    }
+    
+    /**
+    * Generic way to set a Cache_Lite option
+    *
+    * see Cache_Lite constructor for available options
+    *
+    * @var string $name name of the option
+    * @var mixed $value value of the option
+    * @access public
+    */
+    function setOption($name, $value) {
+        $availableOptions = array('hashedDirectoryUmask', 'hashedDirectoryLevel', 'automaticCleaningFactor', 'automaticSerialization', 'fileNameProtection', 'memoryCaching', 'onlyMemoryCaching', 'memoryCachingLimit', 'cacheDir', 'caching', 'lifeTime', 'fileLocking', 'writeControl', 'readControl', 'readControlType', 'pearErrorMode');
+        if (in_array($name, $availableOptions)) {
+            $property = '_'.$name;
+            $this->$property = $value;
+        }
     }
     
     /**
@@ -303,7 +318,7 @@ class Cache_Lite
                     }
                 }
             }
-            if ($doNotTestCacheValidity) {
+            if (($doNotTestCacheValidity) || (is_null($this->_refreshTime))) {
                 if (file_exists($this->_file)) {
                     $data = $this->_read();
                 }
@@ -313,7 +328,7 @@ class Cache_Lite
                 }
             }
             if (($data) and ($this->_memoryCaching)) {
-                $this->_memoryCacheAdd($this->_file, $data);
+                $this->_memoryCacheAdd($data);
             }
             if (($this->_automaticSerialization) and (is_string($data))) {
                 $data = unserialize($data);
@@ -342,7 +357,7 @@ class Cache_Lite
                 $this->_setFileName($id, $group);
             }
             if ($this->_memoryCaching) {
-                $this->_memoryCacheAdd($this->_file, $data);
+                $this->_memoryCacheAdd($data);
                 if ($this->_onlyMemoryCaching) {
                     return true;
                 }
@@ -429,7 +444,7 @@ class Cache_Lite
     function setLifeTime($newLifeTime)
     {
         $this->_lifeTime = $newLifeTime;
-        $this->_refreshTime = time() - $newLifeTime;
+        $this->_setRefreshTime();
     }
 
     /**
@@ -499,7 +514,20 @@ class Cache_Lite
     }
     
     // --- Private methods ---
-
+    
+    /**
+    * Compute & set the refresh time
+    *
+    * @access private
+    */
+    function _setRefreshTime() {
+        if (is_null($this->_lifeTime)) {
+            $this->_refreshTime = null;
+        } else {
+            $this->_refreshTime = time() - $this->_lifeTime;
+        }
+    }
+    
     /**
     * Remove a file
     * 
@@ -535,7 +563,7 @@ class Cache_Lite
             $motif = ($group) ? 'cache_'.$group.'_' : 'cache_';
         }
         if ($this->_memoryCaching) {
-            while (list($key, $value) = each($this->_memoryCachingArray)) {
+            while (list($key, ) = each($this->_memoryCachingArray)) {
                 if (strpos($key, $motif, 0)) {
                     unset($this->_memoryCachingArray[$key]);
                     $this->_memoryCachingCounter = $this->_memoryCachingCounter - 1;
@@ -558,8 +586,10 @@ class Cache_Lite
                         switch (substr($mode, 0, 9)) {
                             case 'old':
                                 // files older than lifeTime get deleted from cache
-                                if ((mktime() - filemtime($file2)) > $this->_lifeTime) {
-                                    $result = ($result and ($this->_unlink($file2)));
+                                if (!is_null($this->_lifeTime)) {
+                                    if ((mktime() - filemtime($file2)) > $this->_lifeTime) {
+                                        $result = ($result and ($this->_unlink($file2)));
+                                    }
                                 }
                                 break;
                             case 'notingrou':
@@ -593,15 +623,14 @@ class Cache_Lite
     /**
     * Add some date in the memory caching array
     *
-    * @param string $id cache id
     * @param string $data data to cache
     * @access private
     */
-    function _memoryCacheAdd($id, $data)
+    function _memoryCacheAdd($data)
     {
         $this->_memoryCachingArray[$this->_file] = $data;
         if ($this->_memoryCachingCounter >= $this->_memoryCachingLimit) {
-            list($key, $value) = each($this->_memoryCachingArray);
+            list($key, ) = each($this->_memoryCachingArray);
             unset($this->_memoryCachingArray[$key]);
         } else {
             $this->_memoryCachingCounter = $this->_memoryCachingCounter + 1;
@@ -664,7 +693,11 @@ class Cache_Lite
             if ($this->_readControl) {
                 $hashData = $this->_hash($data, $this->_readControlType);
                 if ($hashData != $hashControl) {
-                    @touch($this->_file, time() - 2*abs($this->_lifeTime)); 
+                    if (is_null($this->_lifeTime)) {
+                        @touch($this->_file, time() - 2*abs($this->_lifeTime)); 
+                    } else {
+                        @unlink($this->_file);
+                    }
                     return false;
                 }
             }
@@ -713,7 +746,7 @@ class Cache_Lite
         $this->raiseError('Cache_Lite : Unable to write cache file : '.$this->_file, -1);
         return false;
     }
-    
+       
     /**
     * Write the given data in the cache file and control it just after to avoir corrupted cache entries
     *
@@ -748,6 +781,7 @@ class Cache_Lite
         default:
             $this->raiseError('Unknown controlType ! (available values are only \'md5\', \'crc32\', \'strlen\')', -5);
         }
+        return false;
     }
     
 } 
