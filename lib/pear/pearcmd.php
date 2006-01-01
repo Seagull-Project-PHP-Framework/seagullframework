@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.28 2005/09/28 22:45:56 cellog Exp $
+// $Id: pearcmd.php,v 1.29 2005/11/12 02:26:53 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -26,6 +26,17 @@ if (!defined('PEAR_RUNTYPE')) {
     define('PEAR_RUNTYPE', 'pear');
 }
 define('PEAR_IGNORE_BACKTRACE', 1);
+if (!function_exists('file_get_contents')) {
+    function file_get_contents($filename)
+    {
+        $fp = fopen($filename, 'rb');
+        $ret = '';
+        while (!feof($fp)) {
+            $ret .= fread($fp, 8092);;
+        }
+        return $ret;
+    }
+}
 /**
  * @nodep Gtk
  */
@@ -47,7 +58,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.4";
+$pear_package_version = "1.4.5";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';

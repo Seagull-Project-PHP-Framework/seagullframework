@@ -15,11 +15,22 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Generator.php,v 1.96 2005/06/16 02:03:45 alan_k Exp $
+ * @version    CVS: $Id: Generator.php,v 1.105 2005/11/28 05:11:30 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
  
-/**
+ /*
+ * Security Notes:
+ *   This class uses eval to create classes on the fly.
+ *   The table name and database name are used to check the database before writing the
+ *   class definitions, we now check for quotes and semi-colon's in both variables
+ *   so I cant see how it would be possible to generate code even if
+ *   for some crazy reason you took the classname and table name from User Input.
+ *   
+ *   If you consider that wrong, or can prove it.. let me know!
+ */
+ 
+ /**
  * 
  * Config _$ptions
  * [DB_DataObject_Generator]
@@ -109,6 +120,7 @@ class DB_DataObject_Generator extends DB_DataObject
             
             
             $t->_database = $databasename;
+            require_once 'DB.php';
             $dsn = DB::parseDSN($database);
             if (($dsn['phptype'] == 'sqlite') && is_file($databasename)) {
                 $t->_database = basename($t->_database);
@@ -198,8 +210,9 @@ class DB_DataObject_Generator extends DB_DataObject
             
             $defs =  $__DB->tableInfo($table);
             if (is_a($defs,'PEAR_Error')) {
-                echo $defs->toString();
-                exit;
+                // running in debug mode should pick this up as a big warning..
+                $this->raiseError('Error reading tableInfo, '. $defs->toString());
+                continue;
             }
             // cast all definitions to objects - as we deal with that better.
             
@@ -335,9 +348,11 @@ class DB_DataObject_Generator extends DB_DataObject
                
                 case 'REAL':
                 case 'DOUBLE':
+                case 'DOUBLE PRECISION': // double precision (firebird)
                 case 'FLOAT':
                 case 'FLOAT8': // double precision (postgres)
                 case 'DECIMAL':
+                case 'MONEY':  // mssql and maybe others
                 case 'NUMERIC':
                 case 'NUMBER': // oci8 
                     $type = DB_DATAOBJECT_INT; // should really by FLOAT!!! / MONEY...
@@ -424,7 +439,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 continue;
             }
             
-            if (preg_match('/not_null/i',$t->flags)) {
+            if (preg_match('/not[ _]null/i',$t->flags)) {
                 $type += DB_DATAOBJECT_NOTNULL;
             }
            
@@ -455,10 +470,15 @@ class DB_DataObject_Generator extends DB_DataObject
             
             } else if (preg_match("/(primary|unique)/i",$t->flags)) {
                 // keys.. = 1
-                if ($write_ini) {
-                    $keys_out_secondary .= "{$t->name} = K\n";
+                $key_type = 'K';
+                if (!preg_match("/(primary)/i",$t->flags)) {
+                    $key_type = 'U';
                 }
-                $ret_keys_secondary[$t->name] = 'K';
+                
+                if ($write_ini) {
+                    $keys_out_secondary .= "{$t->name} = {$key_type}\n";
+                }
+                $ret_keys_secondary[$t->name] = $key_type;
             }
             
         
@@ -576,6 +596,9 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
+        $var = !empty($options['generator_var_keyword']) ? $options['generator_var_keyword'] : $var;
+        
+        
         $body .= "    {$var} \$__table = '{$this->table}';  {$p}// table name\n";
     
         
@@ -583,11 +606,14 @@ class DB_DataObject_Generator extends DB_DataObject
         // then we should add var $_database = here
         // as database names may not always match.. 
         
+        
+            
+        
         if (isset($options["database_{$this->_database}"])) {
             $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
         
-        $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
+        
         if (!empty($options['generator_novars'])) {
             $var = '//'.$var;
         }
@@ -767,7 +793,8 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->_extends = $extends;
             $this->_extendsFile = $options['extends_location'];
         }
-
+        
+        
         
         $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
 
@@ -791,11 +818,20 @@ class DB_DataObject_Generator extends DB_DataObject
     */
     function fillTableSchema($database,$table) {
         global $_DB_DATAOBJECT;
+         // a little bit of sanity testing.
+        if ((false !== strpos($database,"'")) || (false !== strpos($database,";"))) {   
+            return PEAR::raiseError("Error: Database name contains a quote or semi-colon", null, PEAR_ERROR_DIE);
+        }
+        
         $this->_database  = $database; 
         
         $this->_connect();
         $table = trim($table);
         
+        // a little bit of sanity testing.
+        if ((false !== strpos($table,"'")) || (false !== strpos($table,";"))) {   
+            return PEAR::raiseError("Error: Table contains a quote or semi-colon", null, PEAR_ERROR_DIE);
+        }
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
         $defs =  $__DB->tableInfo($table);

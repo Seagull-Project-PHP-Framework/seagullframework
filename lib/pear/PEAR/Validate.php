@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.43 2005/09/25 16:55:58 cellog Exp $
+ * @version    CVS: $Id: Validate.php,v 1.44 2005/11/14 14:07:43 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Validator/PECL.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.4
+ * @version    Release: 1.4.5
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -452,7 +452,7 @@ class PEAR_Validate
             if ($this->_state == PEAR_VALIDATE_PACKAGING &&
                   $this->_packagexml->getDate() != date('Y-m-d')) {
                 $this->_addWarning('date', 'Release Date "' .
-                    $this->_packagexml->getDate() . '"is not today');
+                    $this->_packagexml->getDate() . '" is not today');
             }
         }
         return true;

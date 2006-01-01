@@ -6,20 +6,14 @@
  * 
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category    HTTP
  * @package     HTTP_Header
  * @author      Wolfram Kriesing <wk@visionp.de>
  * @author      Davey Shafik <davey@php.net>
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2003-2005 The Authors
- * @license     http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version     CVS: $Id: Header.php,v 1.30 2005/07/18 09:42:39 mike Exp $
+ * @license     BSD, revised
+ * @version     CVS: $Id: Header.php,v 1.32 2005/11/08 19:06:10 mike Exp $
  * @link        http://pear.php.net/package/HTTP_Header
  */
 
@@ -110,9 +104,8 @@ define('HTTP_HEADER_STATUS_SERVER_ERROR',5);
  * 
  * @package     HTTP_Header
  * @category    HTTP
- * @license     PHP License
  * @access      public
- * @version     $Revision: 1.30 $
+ * @version     $Revision: 1.32 $
  */
 class HTTP_Header extends HTTP
 {
@@ -192,7 +185,7 @@ class HTTP_Header extends HTTP
      * @return  bool    Returns true on success or false if $key was empty or
      *                  $value was not of an scalar type.
      * @param   string  $key The name of the header.
-     * @param   string  $value The value of the header.
+     * @param   string  $value The value of the header. (NULL to unset header)
      */
     function setHeader($key, $value = null)
     {
@@ -201,7 +194,6 @@ class HTTP_Header extends HTTP
         }
         
         $key = strToLower($key);
-        
         if ($key == 'last-modified') {
             if (!isset($value)) {
                 $value = HTTP::Date(time());
@@ -210,7 +202,12 @@ class HTTP_Header extends HTTP
             }
         }
         
-        $this->_headers[$key] = $value;
+        if (isset($value)) {
+            $this->_headers[$key] = $value;
+        } else {
+            unset($this->_headers[$key]);
+        }
+        
         return true;
     }
 

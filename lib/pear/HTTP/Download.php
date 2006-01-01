@@ -6,18 +6,12 @@
  * 
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   HTTP
  * @package    HTTP_Download
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Download.php,v 1.74 2005/07/19 10:15:48 mike Exp $
+ * @license    BSD, revised
+ * @version    CVS: $Id: Download.php,v 1.75 2005/11/13 19:18:53 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -92,7 +86,7 @@ define('HTTP_DOWNLOAD_E_INVALID_ARCHIVE_TYPE',  -9);
  * if you want to send already gzipped data!
  * 
  * @access   public
- * @version  $Revision: 1.74 $
+ * @version  $Revision: 1.75 $
  */
 class HTTP_Download
 {
@@ -925,7 +919,7 @@ class HTTP_Download
     {
         return (
             (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) &&
-            $this->lastModified == strtotime(array_shift(explode(
+            $this->lastModified == strtotime(current($a = explode(
                 ';', $_SERVER['HTTP_IF_MODIFIED_SINCE'])))) ||
             (isset($_SERVER['HTTP_IF_NONE_MATCH']) &&
             $this->compareAsterisk('HTTP_IF_NONE_MATCH', $this->etag))
