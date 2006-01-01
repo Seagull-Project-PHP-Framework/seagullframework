@@ -113,7 +113,7 @@ EOT;
             'packagedirectory'  => $packagedir,
             // Where will package files be installed in
             // the local PEAR repository?
-            'baseinstalldir'    => 'Seagull',
+            'baseinstalldir'    => '/Seagull',
             // Where should the package file be generated
             'pathtopackagefile' => $packagedir,
             // Just simple output, no MD5 sums and <provides> tags
@@ -145,7 +145,7 @@ EOT;
                 'lib' => 'data',
                 'modules' => 'data',
                 'var' => 'data',
-                'www' => 'data',
+                'www' => 'web',
             ),
 
             'roles'             =>
@@ -204,7 +204,7 @@ EOT;
     $pkg->setPearinstallerDep('1.4.2');
 
     // Require custom file role for our web installation
-    #$pkg->addPackageDepWithChannel('required', 'CustomInstallerFiles', 'pear.schlitt.info');
+    $pkg->addPackageDepWithChannel('required', 'Role_Web', 'pearified.com', '1.1.0');
 
     // Require PEAR_DB package for initializing the database in the post install script
     $pkg->addPackageDepWithChannel('required', 'Cache_Lite', 'pear.php.net', '1.5.2');
@@ -240,8 +240,8 @@ EOT;
     // Insert path to PEAR data dir into post install script
     #$pkg->addReplacement('Setup.php', 'pear-config', '@data_dir@', 'data_dir');
 
-    // Define that we will use our custom file role in this script
-//    $e = $pkg->addUsesRole('web', 'Webfiles');
+      // Define that we will use our custom file role in this script
+//    $e = $pkg->addUsesRole('web', 'www');
 //    if (PEAR::isError($e)) {
 //        die($e->getMessage());
 //    }
@@ -258,7 +258,7 @@ EOT;
 //        die($e->getMessage());
 //    }
 //
-//    $e = $pkg->addRole('png', 'web');
+//    $e = $pkg->addRole('html', 'web');
 //    if (PEAR::isError($e)) {
 //        die($e->getMessage());
 //    }
