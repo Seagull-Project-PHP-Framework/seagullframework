@@ -6,12 +6,14 @@ define('SGL_START_TIME', getSystemTime());
 //  set initial paths according to install type
 if (file_exists('PEAR_INSTALLED.txt')) {
     define('SGL_PEAR_INSTALLED', true);
-    require_once '@PHP-DIR@/Seagull/lib/SGL/AppController.php';
+    $rootDir = '@PHP-DIR@/Seagull';
     $varDir = '@DATA-DIR@/Seagull/var';
 } else {
-    require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
-    $varDir = dirname(__FILE__)  . '/../var';
+    $rootDir = dirname(__FILE__) . '/..';
+    $varDir = dirname(__FILE__) . '/../var';
 }
+
+require_once $rootDir .'/lib/SGL/AppController.php';
 
 // determine if setup needed
 if (!file_exists($varDir . '/INSTALL_COMPLETE.php')) {

@@ -244,8 +244,10 @@ EOT;
     $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@PHP-DIR@',  'php_dir');
     $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@DATA-DIR@', 'data_dir');
     $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@WEB-DIR@',  'web_dir');
-    $pkg->addReplacement('www/index.php', 'pear-config', '@PHP-DIR@',  'php_dir');
     $pkg->addReplacement('www/index.php', 'pear-config', '@DATA-DIR@', 'data_dir');
+    $pkg->addReplacement('www/index.php', 'pear-config', '@PHP-DIR@',  'php_dir');
+    $pkg->addReplacement('www/setup.php', 'pear-config', '@PHP-DIR@',  'php_dir');
+
 
     // Insert path to PEAR data dir into post install script
     #$pkg->addReplacement('Setup.php', 'pear-config', '@data_dir@', 'data_dir');
