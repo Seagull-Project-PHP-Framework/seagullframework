@@ -45,7 +45,7 @@ function environmentOk()
     } else {
         //  store output for later processing
         $serialized = serialize($GLOBALS['_SGL']['runner']);
-        @file_put_contents(SGL_PATH . '/var/env.php', $serialized);    
+        @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
 }
@@ -58,8 +58,8 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'detectEnv' => 1,
             ));
-                    
-        $this->addElement('header',     null, 'Detect Environment: page 2 of 5');        
+
+        $this->addElement('header',     null, 'Detect Environment: page 2 of 5');
 
         $runner = new SGL_TaskRunner();
         $runner->addTask(new SGL_Task_GetLoadedModules());
@@ -67,16 +67,16 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $runner->addTask(new SGL_Task_GetPhpIniValues());
         $runner->addTask(new SGL_Task_GetFilesystemInfo());
         $runner->addTask(new SGL_Task_GetPearInfo());
-        
+
         $html = $runner->main();
-        
+
         //  store global copy for error callback
         $GLOBALS['_SGL']['runner'] = $runner;
 
         $this->addElement('checkbox', 'detectEnv', 'Detect Env?', 'Yes');
-        $this->registerRule('environmentOk','function','environmentOk'); 
+        $this->registerRule('environmentOk','function','environmentOk');
         $this->addRule('detectEnv', 'please fix the listed errors', 'environmentOk');
-        
+
         $this->addElement('static',  'env', null, $html);
 
         //  submit

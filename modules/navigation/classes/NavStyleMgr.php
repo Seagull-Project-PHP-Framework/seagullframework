@@ -60,8 +60,8 @@ class NavStyleMgr extends SGL_Manager
         $this->da           = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'list'   => array('list'), 
-            'changeStyle' => array('changeStyle', 'redirectToDefault'), 
+            'list'   => array('list'),
+            'changeStyle' => array('changeStyle', 'redirectToDefault'),
         );
     }
 
@@ -74,7 +74,7 @@ class NavStyleMgr extends SGL_Manager
         $input->template        = $this->template;
         $input->error           = array();
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
-        //  misc.               
+        //  misc.
         $this->validated        = true;
         $this->submitted        = $req->get('submitted');
         $input->newStyle        = $req->get('newStyle');
@@ -93,13 +93,13 @@ class NavStyleMgr extends SGL_Manager
             $c->set('navigation', array('stylesheet' => $input->newStyle));
 
             //  write configuration to file
-            $ok = $c->save(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php');
-            
+            $ok = $c->save(SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php');
+
             if (!is_a($ok, 'PEAR_Error')) {
                 $this->_currentStyle = $input->newStyle;
                 SGL::raiseMsg('Current style successfully changed');
             } else {
-                SGL::raiseError('There was a problem saving your stylesheet name', 
+                SGL::raiseError('There was a problem saving your stylesheet name',
                     SGL_ERROR_FILEUNWRITABLE);
             }
         } else {
@@ -123,20 +123,20 @@ class NavStyleMgr extends SGL_Manager
         $output->staticId = (is_numeric($input->staticId)) ? $input->staticId : $this->generateStaticId();
 
         //  build string of radio buttons html for selecting group
-        
+
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
         $output->groupsRadioButtons = '';
         foreach ($aRoles as $rid => $role) {
             $radioChecked = ($rid == $input->rid)?' checked':'';
-  
-            $output->groupsRadioButtons .="\n". '<input type="radio"' . $radioChecked . 
-                ' onClick="location.href=\'' . 
+
+            $output->groupsRadioButtons .="\n". '<input type="radio"' . $radioChecked .
+                ' onClick="location.href=\'' .
                 SGL_Url::makeLink('list', 'navstyle', 'navigation', array(), "staticId|{$output->staticId}||rid|$rid"). '\'">' . $role;
         }
         //  build html unordered list of sections
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
-        
+
         $nav = & new SimpleNav($input);
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
@@ -145,7 +145,7 @@ class NavStyleMgr extends SGL_Manager
         list($sectionId, $html) = $aRes;
         $output->navListPreview = $html;
         if (!$output->navListPreview) {
-            $output->navListPreview = 'There are no sections accessible to members of the selected role: ' . 
+            $output->navListPreview = 'There are no sections accessible to members of the selected role: ' .
                 $aRoles[$input->rid] . '.';
         }
     }
@@ -164,10 +164,10 @@ class NavStyleMgr extends SGL_Manager
     {
         require_once 'DB/DataObject.php';
         $section = DB_DataObject::factory('Section');
-        
+
         //  get only top-level sections
         $section->level_id = 1;
-        
+
         //  execute query and return the id of the first section found
         $section->find();
         $section->fetch();

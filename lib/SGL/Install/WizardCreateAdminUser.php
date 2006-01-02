@@ -92,12 +92,12 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         $this->addRule('installRoot', 'You must specify an install root path', 'required');
         $this->addRule('webRoot', 'You must specify a web root path', 'required');
-        
+
         //  test if dirs exist
-        $this->registerRule('appRootExists','function','appRootExists');        
-        $this->registerRule('webRootExists','function','webRootExists');        
-        $this->addRule('installRoot','path does not appear to exist','appRootExists');        
-        $this->addRule('webRoot','path does not appear to exist','webRootExists');        
+        $this->registerRule('appRootExists','function','appRootExists');
+        $this->registerRule('webRootExists','function','webRootExists');
+        $this->addRule('installRoot','path does not appear to exist','appRootExists');
+        $this->addRule('webRoot','path does not appear to exist','webRootExists');
 
         //  general
         $this->addElement('header',     null, 'General:');
@@ -108,7 +108,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
 
         //  set lang
-        require_once SGL_PATH . '/lib/data/ary.languages.php';
+        require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         foreach ($availableLanguages as $id => $tmplang) {
@@ -118,7 +118,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
 
         //  set tz offset
-        require_once SGL_PATH . '/lib/data/ary.timezones.en.php';
+        require_once SGL_DAT_DIR . '/ary.timezones.en.php';
         $this->addElement('select', 'serverTimeOffset', 'Server time offset:', $tz);
         $this->addElement('text',  'siteCookie',     'Cookie name: ');
 

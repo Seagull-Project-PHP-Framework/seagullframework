@@ -16,10 +16,11 @@ class SGL_Task_SetupPaths extends SGL_Task
     function run($conf)
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());
-        define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
         if (defined('SGL_PEAR_INSTALLED')) {
+            define('SGL_PATH', '@PHP-DIR@/Seagull');
             define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
         } else {
+            define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         }
 
@@ -27,6 +28,7 @@ class SGL_Task_SetupPaths extends SGL_Task
         $allowed = @ini_set('include_path',      '.' . $includeSeparator
             . SGL_LIB_PEAR_DIR);
         if (!$allowed) {
+
             //  depends on PHP version being >= 4.3.0
             if (function_exists('set_include_path')) {
                 set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
