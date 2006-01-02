@@ -889,7 +889,7 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
             $input->data->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
 
             //  and execution time
-            $input->data->executionTime = getSystemTime() - @$GLOBALS['_SGL']['START_TIME'];
+            $input->data->executionTime = getSystemTime() - @SGL_START_TIME;
         }
 
         //  send memory consumption to output
