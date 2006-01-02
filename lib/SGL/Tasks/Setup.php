@@ -13,15 +13,21 @@ class SGL_Task_SetupPaths extends SGL_Task
      *
      * @param array $data
      */
-    function run($data)
+    function run($conf)
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());
         define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
-        define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
-        #define('SGL_LIB_PEAR_DIR',              '@PEAR-DIR@');
+        if (isset($conf['tuples']['pear_installed'])
+                && $conf['tuples']['pear_installed'] === true) {
+            define('SGL_LIB_PEAR_DIR',              '@PHP-DIR@');
+        } else {
+            define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
+        }
+
 
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-        $allowed = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+        $allowed = @ini_set('include_path',      '.' . $includeSeparator
+            . SGL_LIB_PEAR_DIR);
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
             if (function_exists('set_include_path')) {
@@ -81,17 +87,29 @@ class SGL_Task_SetupConstants extends SGL_Task
         $path = (isset($conf['path']['webRoot']))
             ? $conf['path']['webRoot']
             : SGL_PATH . '/www';
+
+        if (isset($conf['tuples']['pear_installed'])
+                && $conf['tuples']['pear_installed'] === true) {
+            define('SGL_VAR_DIR',              '@DATA-DIR@/Seagull');
+            define('SGL_ETC_DIR',              '@DATA-DIR@/Seagull/etc');
+            define('SGL_APP_ROOT',             '@PHP-DIR@/Seagull');
+        } else {
+            define('SGL_VAR_DIR',               SGL_PATH . '/var');
+            define('SGL_ETC_DIR',               SGL_PATH . '/etc');
+            define('SGL_APP_ROOT',              SGL_PATH);
+        }
+
         define('SGL_WEB_ROOT',                  $path);
-        define('SGL_LOG_DIR',                   SGL_PATH . '/var/log');
-        define('SGL_TMP_DIR',                   SGL_PATH . '/var/tmp');
-        define('SGL_CACHE_DIR',                 SGL_PATH . '/var/cache');
-        define('SGL_UPLOAD_DIR',                SGL_PATH . '/var/uploads');
-        define('SGL_LIB_DIR',                   SGL_PATH . '/lib');
+        define('SGL_LOG_DIR',                   SGL_VAR_DIR . '/log');
+        define('SGL_TMP_DIR',                   SGL_VAR_DIR . '/tmp');
+        define('SGL_CACHE_DIR',                 SGL_VAR_DIR . '/cache');
+        define('SGL_UPLOAD_DIR',                SGL_VAR_DIR . '/uploads');
+        define('SGL_LIB_DIR',                   SGL_APP_ROOT . '/lib');
+        define('SGL_MOD_DIR',                   SGL_APP_ROOT . '/modules');
         define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
-        define('SGL_MOD_DIR',                   SGL_PATH . '/modules');
         define('SGL_BLK_DIR',                   SGL_MOD_DIR . '/block/classes/blocks');
-        define('SGL_DAT_DIR',                   SGL_PATH . '/lib/data');
-        define('SGL_CORE_DIR',                  SGL_PATH . '/lib/SGL');
+        define('SGL_DAT_DIR',                   SGL_APP_ROOT . '/lib/data');
+        define('SGL_CORE_DIR',                  SGL_APP_ROOT . '/lib/SGL');
         define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
 
         //  error codes to use with SGL::raiseError()

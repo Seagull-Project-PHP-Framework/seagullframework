@@ -113,7 +113,7 @@ EOT;
             'packagedirectory'  => $packagedir,
             // Where will package files be installed in
             // the local PEAR repository?
-            'baseinstalldir'    => '/Seagull',
+            'baseinstalldir'    => 'Seagull',
             // Where should the package file be generated
             'pathtopackagefile' => $packagedir,
             // Just simple output, no MD5 sums and <provides> tags
@@ -143,20 +143,20 @@ EOT;
             'dir_roles'         =>
             array(
                 'docs' => 'doc',
-                'etc' => 'data',
                 'lib' => 'php',
                 'modules' => 'php',
+                'etc' => 'data',
                 'var' => 'data',
-                #'www' => 'web',
+                'www' => 'web',
             ),
 
             'roles'             =>
             array(
                 'php' => 'php',
-                'html' => 'web',
-                'png' => 'web',
-                'gif' => 'web',
-                'jpg' => 'web',
+                #'html' => 'web',
+                #'png' => 'web',
+                #'gif' => 'web',
+                #'jpg' => 'web',
                 '*' => 'php',
             ),
 
@@ -167,9 +167,9 @@ EOT;
                 'CHANGELOG.txt' => 'doc',
                 'CODING_STANDARDS.txt' => 'doc',
                 'README.txt' => 'doc',
-                'COPYING.txt' => 'data',
-                'INSTALL.txt' => 'data',
-                'VERSION.txt' => 'data',
+                'COPYING.txt' => 'doc',
+                'INSTALL.txt' => 'doc',
+                'VERSION.txt' => 'php',
             ),
 
             'installexceptions' =>
@@ -241,7 +241,8 @@ EOT;
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');
 
-    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@PEAR-DIR@', 'php_dir');
+    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@PHP-DIR@', 'php_dir');
+    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@DATA-DIR@', 'data_dir');
 
     // Insert path to PEAR data dir into post install script
     #$pkg->addReplacement('Setup.php', 'pear-config', '@data_dir@', 'data_dir');
