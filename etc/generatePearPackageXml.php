@@ -132,6 +132,8 @@ EOT;
                 'CHANGELOG-1.txt.gz',
                 'generate_package_xml.php',
                 'lib/pear/',
+                'modules/wizardexample/',
+                'www/themes/default/wizardexample/',
                 '*tests*',
                 '*.svn',
 		    ),
@@ -142,16 +144,19 @@ EOT;
             array(
                 'docs' => 'doc',
                 'etc' => 'data',
-                'lib' => 'data',
-                'modules' => 'data',
+                'lib' => 'php',
+                'modules' => 'php',
                 'var' => 'data',
-                'www' => 'web',
+                #'www' => 'web',
             ),
 
             'roles'             =>
             array(
                 'php' => 'php',
-                'html' => 'php',
+                'html' => 'web',
+                'png' => 'web',
+                'gif' => 'web',
+                'jpg' => 'web',
                 '*' => 'php',
             ),
 
@@ -172,6 +177,7 @@ EOT;
                 'mysql_SGL.php' => 'DB',
                 'oci8_SGL.php' => 'DB',
                 'maxdb_SGL.php' => 'DB',
+                'db2_SGL.php' => 'DB',
                 'Tree.php' => 'HTML',
             ),
 	    )
