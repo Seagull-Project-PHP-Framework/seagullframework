@@ -73,9 +73,18 @@ module setup
 */
 
 //  initialise
+
+//  set initial paths according to install type
+if (file_exists('PEAR_INSTALLED.txt')) {
+    define('SGL_PEAR_INSTALLED', true);
+    $rootDir = '@PHP-DIR@/Seagull';
+} else {
+    $rootDir = dirname(__FILE__) . '/..';
+}
+
 session_start();
-require_once dirname(__FILE__)  . '/../lib/SGL/Install.php';
-require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
+require_once $rootDir  . '/lib/SGL/Install.php';
+require_once $rootDir . '/lib/SGL/AppController.php';
 SGL_AppController::init();
 
 //  reroute to front controller
