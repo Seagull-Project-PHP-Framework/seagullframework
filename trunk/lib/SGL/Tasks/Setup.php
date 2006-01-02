@@ -17,13 +17,11 @@ class SGL_Task_SetupPaths extends SGL_Task
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());
         define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
-        if (isset($conf['tuples']['pear_installed'])
-                && $conf['tuples']['pear_installed'] === true) {
-            define('SGL_LIB_PEAR_DIR',              '@PHP-DIR@');
+        if (defined('SGL_PEAR_INSTALLED')) {
+            define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
         } else {
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         }
-
 
         $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
         $allowed = @ini_set('include_path',      '.' . $includeSeparator
@@ -85,12 +83,11 @@ class SGL_Task_SetupConstants extends SGL_Task
     {
 
         // framework file structure
-        $path = (isset($conf['path']['webRoot']))
-            ? $conf['path']['webRoot']
-            : SGL_PATH . '/www';
+//        $path = (isset($conf['path']['webRoot']))
+//            ? $conf['path']['webRoot']
+//            : SGL_PATH . '/www';
 
-        if (isset($conf['tuples']['pear_installed'])
-                && $conf['tuples']['pear_installed'] === true) {
+        if (defined('SGL_PEAR_INSTALLED')) {
             define('SGL_VAR_DIR',              '@DATA-DIR@/Seagull');
             define('SGL_ETC_DIR',              '@DATA-DIR@/Seagull/etc');
             define('SGL_APP_ROOT',             '@PHP-DIR@/Seagull');
@@ -99,8 +96,6 @@ class SGL_Task_SetupConstants extends SGL_Task
             define('SGL_ETC_DIR',               SGL_PATH . '/etc');
             define('SGL_APP_ROOT',              SGL_PATH);
         }
-
-        define('SGL_WEB_ROOT',                  $path);
         define('SGL_LOG_DIR',                   SGL_VAR_DIR . '/log');
         define('SGL_TMP_DIR',                   SGL_VAR_DIR . '/tmp');
         define('SGL_CACHE_DIR',                 SGL_VAR_DIR . '/cache');
@@ -111,7 +106,6 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_BLK_DIR',                   SGL_MOD_DIR . '/block/classes/blocks');
         define('SGL_DAT_DIR',                   SGL_APP_ROOT . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_APP_ROOT . '/lib/SGL');
-        define('SGL_THEME_DIR',                 SGL_WEB_ROOT . '/themes');
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
@@ -177,34 +171,6 @@ class SGL_Task_SetupConstants extends SGL_Task
         //  to overcome overload problem
         define('DB_DATAOBJECT_NO_OVERLOAD', true);
 
-        //  include Log.php if logging enabled
-        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
-            require_once 'Log.php';
-
-        } else {
-            //  define log levels to avoid notices, since Log.php not included
-            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
-            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
-            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
-            define('PEAR_LOG_ERR',      3);     /** Error conditions */
-            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
-            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
-            define('PEAR_LOG_INFO',     6);     /** Informational */
-            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
-        }
-
-        if (count($conf)) {
-
-            //  set constant to represent profiling mode so it can be used in Controller
-            define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
-            define('SGL_SEAGULL_VERSION',           $conf['tuples']['version']);
-
-            //  which degree of error severity before emailing admin
-            $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
-            define('SGL_EMAIL_ADMIN_THRESHOLD',     constant($const));
-            define('SGL_BASE_URL', $conf['site']['baseUrl']);
-        }
-
         require_once dirname(__FILE__)  . '/../Url.php';
         require_once dirname(__FILE__)  . '/../UrlParserSefStrategy.php';
         require_once dirname(__FILE__)  . '/../Manager.php';
@@ -261,6 +227,48 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
 {
     function run($conf)
     {
+//        $path = (isset($conf['path']['webRoot']))
+//            ? $conf['path']['webRoot']
+//            : SGL_PATH . '/www';
+
+        if (isset($conf['path']['webRoot'])) {
+            define('SGL_WEB_ROOT', $conf['path']['webRoot']);
+        } elseif (defined('SGL_PEAR_INSTALLED')) {
+            define('SGL_WEB_ROOT', '@WEB-DIR@/Seagull/www');
+        } else {
+            define('SGL_WEB_ROOT', SGL_PATH . '/www');
+        }
+
+        define('SGL_THEME_DIR', SGL_WEB_ROOT . '/themes');
+
+        //  include Log.php if logging enabled
+        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
+            require_once 'Log.php';
+
+        } else {
+            //  define log levels to avoid notices, since Log.php not included
+            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
+            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
+            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
+            define('PEAR_LOG_ERR',      3);     /** Error conditions */
+            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
+            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
+            define('PEAR_LOG_INFO',     6);     /** Informational */
+            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+        }
+
+        if (count($conf)) {
+
+            //  set constant to represent profiling mode so it can be used in Controller
+            define('SGL_PROFILING_ENABLED',         ($conf['debug']['profiling']) ? true : false);
+            define('SGL_SEAGULL_VERSION',           $conf['tuples']['version']);
+
+            //  which degree of error severity before emailing admin
+            $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
+            define('SGL_EMAIL_ADMIN_THRESHOLD',     constant($const));
+            define('SGL_BASE_URL', $conf['site']['baseUrl']);
+        }
+
         // set php.ini directives
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled

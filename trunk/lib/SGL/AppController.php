@@ -59,6 +59,8 @@ class SGL_AppController
 {
     function init()
     {
+        SGL_AppController::setupMinimumEnv();
+
         $autoLoad = (file_exists(dirname(__FILE__)  . '/../../var/INSTALL_COMPLETE.php'))
             ? true
             : false;
@@ -66,8 +68,8 @@ class SGL_AppController
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
-        $init->addTask(new SGL_Task_SetupPaths());
-        $init->addTask(new SGL_Task_SetupConstants());
+//        $init->addTask(new SGL_Task_SetupPaths());
+//        $init->addTask(new SGL_Task_SetupConstants());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_SetGlobals());
@@ -75,6 +77,15 @@ class SGL_AppController
         $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
         define('SGL_INITIALISED', true);
+    }
+
+    function setupMinimumEnv()
+    {
+        $init = new SGL_TaskRunner();
+        $init->addTask(new SGL_Task_SetupPaths());
+        $init->addTask(new SGL_Task_SetupConstants());
+        $init->main();
+
     }
 
     /**
@@ -85,7 +96,7 @@ class SGL_AppController
     {
         if (!defined('SGL_INITIALISED')) {
             SGL_AppController::init();
-        }        
+        }
 
         //  assign to registry
         $input = &SGL_Registry::singleton();
