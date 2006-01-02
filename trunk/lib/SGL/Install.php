@@ -67,7 +67,7 @@ class SGL_Install
 
     function errorsExist()
     {
-        return count($_SESSION['ERRORS']);
+        return @count($_SESSION['ERRORS']);
     }
 
     function errorPrint()

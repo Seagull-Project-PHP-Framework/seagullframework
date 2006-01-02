@@ -90,7 +90,7 @@ class SGL_Task_SetupConstants extends SGL_Task
 //            : SGL_PATH . '/www';
 
         if (defined('SGL_PEAR_INSTALLED')) {
-            define('SGL_VAR_DIR',              '@DATA-DIR@/Seagull');
+            define('SGL_VAR_DIR',              '@DATA-DIR@/Seagull/var');
             define('SGL_ETC_DIR',              '@DATA-DIR@/Seagull/etc');
             define('SGL_APP_ROOT',             '@PHP-DIR@/Seagull');
         } else {
