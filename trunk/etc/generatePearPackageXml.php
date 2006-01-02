@@ -167,7 +167,7 @@ EOT;
                 'CHANGELOG.txt' => 'doc',
                 'CODING_STANDARDS.txt' => 'doc',
                 'README.txt' => 'doc',
-                'COPYING.txt' => 'doc',
+                'COPYING.txt' => 'php',
                 'INSTALL.txt' => 'doc',
                 'VERSION.txt' => 'php',
             ),

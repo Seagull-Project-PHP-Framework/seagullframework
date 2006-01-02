@@ -71,7 +71,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         }
 
         //  save
-        $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
         if (PEAR::isError($ok)) {
             SGL_Install::errorPush(PEAR::raiseError($ok));
@@ -100,7 +100,7 @@ class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
         }
 
         //  save
-        $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
         if (PEAR::isError($ok)) {
             SGL_Install::errorPush(PEAR::raiseError($ok));
@@ -213,7 +213,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        require_once SGL_PATH . '/lib/SGL/Sql.php';
+        require_once SGL_CORE_DIR . '/Sql.php';
 
         SGL_Install::printHeader('Building Database');
         echo '<span class="title">Status: </span><span id="status"></span>
@@ -419,7 +419,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
             $c->set('translation', array('installedLanguages' => implode(',', str_replace('-', '_', $data['installLangs']))));
 
-            $configFile = SGL_PATH . '/var/' . SGL_SERVER_NAME . '.conf.php';
+            $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
             $ok = $c->save($configFile);
             if (PEAR::isError($ok)) {
                 SGL_Install::errorPush(PEAR::raiseError($ok));
@@ -813,7 +813,7 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            require_once SGL_PATH . '/lib/SGL/String.php';
+            require_once SGL_CORE_DIR . '/String.php';
             $da = & DA_User::singleton();
             $oUser = $da->getUserById();
 
@@ -845,7 +845,7 @@ class SGL_Task_InstallerCleanup extends SGL_Task
 #{$data['installPassword']}
 ?>
 PHP;
-        $ok = file_put_contents(SGL_PATH . '/var/INSTALL_COMPLETE.php', $newFile);
+        $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
     }
 }
 ?>
