@@ -83,6 +83,7 @@ class SGL_Task_SetupConstants extends SGL_Task
 {
     function run($conf)
     {
+
         // framework file structure
         $path = (isset($conf['path']['webRoot']))
             ? $conf['path']['webRoot']
