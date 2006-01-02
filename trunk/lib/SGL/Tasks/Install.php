@@ -27,7 +27,7 @@ class SGL_Task_CreateConfig extends SGL_Task
     function run($data)
     {
         $c = &SGL_Config::singleton($autoLoad = false);
-        $conf = $c->load(SGL_PATH . '/etc/default.conf.dist.ini');
+        $conf = $c->load(SGL_ETC_DIR . '/default.conf.dist.ini');
         $c->replace($conf);
 
         //  admin emails
@@ -63,11 +63,11 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  translation fallback language
-        if (array_key_exists('storeTranslationsInDB', $data) 
+        if (array_key_exists('storeTranslationsInDB', $data)
             && $data['storeTranslationsInDB'] == 1) {
             $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
             $c->set('translation', array('fallbackLang' => $fallbackLang));
-            $c->set('translation', array('container' => 'db'));                        
+            $c->set('translation', array('container' => 'db'));
         }
 
         //  save
@@ -270,7 +270,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
             //  load 'sequence' table
             if ($this->conf['db']['type'] == 'mysql_SGL') {
-                $result = SGL_Sql::parseAndExecute(SGL_PATH . '/etc/sequence.my.sql', 0);
+                $result = SGL_Sql::parseAndExecute(SGL_ETC_DIR . '/sequence.my.sql', 0);
             }
 
             //  Load each module's schema, if there is a sql file in /data
@@ -400,7 +400,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             require_once SGL_CORE_DIR .'/Translation.php';
 
             $c = &SGL_Config::singleton();
-            $conf = $c->getAll();           
+            $conf = $c->getAll();
 
             $this->setup();
 
@@ -408,7 +408,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  Go back and load selected languages
-            require_once 'Translation2/Admin.php';                
+            require_once 'Translation2/Admin.php';
 
             //  fetch available languages
             $aLangOptions = SGL_Translation::getAllInstallableLanguages();
@@ -427,24 +427,24 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
             //  get dsn
             $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
-            
+
             //  set translation2 params
             $params = array(
                 'langs_avail_table' => 'langs',
                 'lang_id_col'       => 'lang_id',
                 'string_id_col'      => 'translation_id',
             );
-    
+
             //  set tranlsation2 driver
             $driver = 'DB';
-            
+
             //  instantiate translation2_admin object
             $translation = & Translation2_Admin::factory($driver, $dsn, $params);
 
             //  interate through languages adding to langs table
             foreach ($data['installLangs'] as $aKey => $aLang) {
-                $globalLangFile = $availableLanguages[$aLang][1] .'.php';                                            
-                $langID = str_replace('-', '_', $aLang);                    
+                $globalLangFile = $availableLanguages[$aLang][1] .'.php';
+                $langID = str_replace('-', '_', $aLang);
                 $encoding       = substr($aLang, strpos('-', $aLang));
                 $langData       = array(
                                     'lang_id' => $langID,
@@ -455,46 +455,48 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                                     'encoding' => $encoding
                                     );
                 $result = $translation->addLang($langData);
-                   
-                //  interate through modules  
+
+                //  interate through modules
                 $aModuleList = (isset($data['installAllModules']))
                     ? SGL_Install::getModuleList()
                     : $this->getMinimumModuleList();
-                                  
+
                 foreach ($aModuleList as $module) {
                     $statusText = 'loading languages - '. $module .' ('. str_replace('_','-', $langID) .')';
                     $this->updateHtml('status', $statusText);
 
-                    $modulePath = SGL_MOD_DIR . '/' . $module  . '/lang';                    
-    
+                    $modulePath = SGL_MOD_DIR . '/' . $module  . '/lang';
+
                     if (file_exists($modulePath .'/'. $globalLangFile)) {
                         //  load current module lang file
                         require $modulePath .'/'. $globalLangFile;
-            
+
                         //  defaultWords clause
-                        $words = ($module == 'default') ? $defaultWords : $words;                            
-                        
+                        $words = ($module == 'default') ? $defaultWords : $words;
+
                         //  add current translation to db
-                        foreach ($words as $tKey => $tValue) {                                                                                          
-                            if (is_array($tValue) && $tKey) { // if an array
-                                //  create key|value|| string
-                                $value = '';
-                                foreach ($tValue as $aKey => $aValue) {
-                                    $value .= $aKey . '|' . $aValue .'||';                                        
+                        if (count($words)) {
+                            foreach ($words as $tKey => $tValue) {
+                                if (is_array($tValue) && $tKey) { // if an array
+                                    //  create key|value|| string
+                                    $value = '';
+                                    foreach ($tValue as $aKey => $aValue) {
+                                        $value .= $aKey . '|' . $aValue .'||';
+                                    }
+                                    $string = array($langID => $value);
+                                    $result = $translation->add($tKey, $module, $string);
+                                } elseif ($tKey && $tValue) {
+                                    $string = array($langID => $tValue);
+                                    $result =  $translation->add($tKey, $module, $string);
                                 }
-                                $string = array($langID => $value);
-                                $result = $translation->add($tKey, $module, $string);
-                            } elseif ($tKey && $tValue) {
-                                $string = array($langID => $tValue);
-                                $result =  $translation->add($tKey, $module, $string);                                    
-                            }                                    
+                            }
+                            unset($words);
                         }
-                        unset($words);                            
                     }
                 }
             }
         }
-    }       
+    }
 }
 
 class SGL_Task_EnableForeignKeyChecks extends SGL_Task
@@ -614,7 +616,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         }
 
         //  copy over links file
-        @copy(SGL_PATH . '/etc/links.ini.dist',
+        @copy(SGL_ETC_DIR . '/links.ini.dist',
             SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini');
     }
 }
