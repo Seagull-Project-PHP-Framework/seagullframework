@@ -70,7 +70,9 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'serverTimeOffset'  => 'UTC',
             'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_PATH,
-            'webRoot'  => SGL_PATH . '/www',
+            'webRoot'  => (defined('SGL_PEAR_INSTALLED'))
+                ? '@WEB_DIR@/Seagull/www'
+                : SGL_PATH . '/www',
             ));
 
         //  setup admin user
