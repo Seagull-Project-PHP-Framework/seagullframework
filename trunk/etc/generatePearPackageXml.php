@@ -34,7 +34,7 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$packagedir  = '/var/www/html/tmp/seagull';
+	$packagedir  = '/tmp/seagull-0.5.4';
 
     // Name of the channel, this package will be distributed through
     $channel     = 'pear.phpkitchen.com';
@@ -43,7 +43,6 @@
 	$category    = 'Frameworks';
     $package     = 'Seagull';
 
-    // Version (S9Y version is 0.9, I added .0 to reflect PEAR version scheme)
 	$version     = '0.5.4';
 
     // Summary description
@@ -294,14 +293,14 @@ EOT;
 
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $pkg->generateContents();
-    $packagexml = &$pkg->exportCompatiblePackageFile1();
+    #$packagexml = &$pkg->exportCompatiblePackageFile1();
 
     // If called without "make" parameter, we just want to debug the generated
     // package.xml file and want to receive additional information on error.
-    if (isset($_GET['make']) || (isset($_SERVER['argv'][2]) &&
-            $_SERVER['argv'][2] == 'make')) {
+    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
+            $_SERVER['argv'][1] == 'make')) {
     	$e = $pkg->writePackageFile();
-        $e = $packagexml->writePackageFile();
+        #$e = $packagexml->writePackageFile();
 	} else {
     	$e = $pkg->debugPackageFile();
     	#$e = $packagexml->debugPackageFile();
