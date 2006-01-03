@@ -56,7 +56,7 @@ class SGL_Config
     function SGL_Config($autoLoad = true)
     {
         if ($this->isEmpty() && $autoLoad) {
-            $configFile = dirname(__FILE__)  . '/../../var/'
+            $configFile = $GLOBALS['varDir']  . '/'
                 . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
             $conf = $this->load($configFile);
             $this->fileName = $configFile;
