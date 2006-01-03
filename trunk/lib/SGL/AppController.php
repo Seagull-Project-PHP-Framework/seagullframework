@@ -68,6 +68,7 @@ class SGL_AppController
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
+        $init->addTask(new SGL_Task_SetupConstantsFinish());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_SetGlobals());
@@ -81,9 +82,8 @@ class SGL_AppController
     {
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_SetupPaths());
-        $init->addTask(new SGL_Task_SetupConstants());
+        $init->addTask(new SGL_Task_SetupConstantsStart());
         $init->main();
-
     }
 
     /**
@@ -95,12 +95,13 @@ class SGL_AppController
         if (!defined('SGL_INITIALISED')) {
             SGL_AppController::init();
         }
-
-        //  assign to registry
+        //  assign request to registry
         $input = &SGL_Registry::singleton();
         $input->setRequest($req = SGL_Request::singleton());
 
         $process =  new SGL_Process_Init(
+                    new SGL_Process_SetupErrorHandling(
+                    new SGL_Process_SetupORM(
         			new SGL_Process_StripMagicQuotes(
                     new SGL_Process_DiscoverClientOs(
                     new SGL_Process_ResolveManager(
@@ -113,7 +114,7 @@ class SGL_AppController
                     new SGL_Process_DetectDebug(
                     new SGL_Process_DetectBlackListing(
                     new SGL_MainProcess()
-                   ))))))))))));
+                   ))))))))))))));
 
         $process->process($input);
     }

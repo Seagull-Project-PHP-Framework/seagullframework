@@ -118,7 +118,7 @@ class SGL_String
             $crlf = "\r\n";
         }
         // Mac case
-        else if (SGL_CLIENT_OS == 'Mac') {
+        elseif (SGL_CLIENT_OS == 'Mac') {
             $crlf = "\r";
         }
         // Others

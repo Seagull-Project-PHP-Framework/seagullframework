@@ -570,17 +570,32 @@ class SGL_Task_CreateFileSystem extends SGL_Task
     function run($data)
     {
         require_once 'System.php';
-        require_once 'DB/DataObject/Generator.php';
+
+        //  pass paths as arrays to avoid widows space parsing prob
+        //  create cache dir
         $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
-        if (PEAR::isError($cacheDir)) {
+        if (!($cacheDir)) {
             SGL_Install::errorPush(PEAR::raiseError('Problem creating cache dir'));
         }
+
+        //  create entities dir
         $entDir = System::mkDir(array(SGL_ENT_DIR));
-        if (PEAR::isError($entDir)) {
+        if (!($entDir)) {
             SGL_Install::errorPush(PEAR::raiseError('Problem creating entity dir'));
+        }
+
+        //  create tmp dir, mostly for sessions
+        if (!is_writable(SGL_TMP_DIR)) {
+
+            $tmpDir = System::mkDir(array(SGL_TMP_DIR));
+            if (!$tmpDir) {
+                SGL_Install::errorPush(SGL::raiseError('The tmp directory does not '.
+                'appear to be writable, please give the webserver permissions to write to it'));
+            }
         }
     }
 }
+
 
 class SGL_Task_CreateDataObjectEntities extends SGL_Task
 {

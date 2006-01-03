@@ -15,7 +15,8 @@ require_once dirname(__FILE__) . '/Url.php';
 class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
 {
     /**
-     * Analyzes querystring content and parses it into module/manager/action and params.
+     * Analyzes querystring content and parses it into module/manager/action
+     * and params.
      *
      * @param SGL_Url $url
      * @return array        An array to be assigned to SGL_Url::aQueryData

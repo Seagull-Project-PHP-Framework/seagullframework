@@ -34,12 +34,13 @@
 // +---------------------------------------------------------------------------+
 // | UrlParserClassicStrategy.php                                              |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Authors:   Richard Heyes <richard at php net>                             |
+// |            Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
 // $Id: Util.php,v 1.22 2005/05/11 00:19:40 demian Exp $
 
 /**
- * Classic querystring url parser strategy.
+ * Classic querystring url parser strategy, from PEAR's Net_URL class.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -157,7 +158,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
 
     /**
-    * Adds a querystring item
+    * Adds a querystring item.
     *
     * @param  string $name       Name of item
     * @param  string $value      Value of item
@@ -174,7 +175,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
 
     /**
-    * Removes a querystring item
+    * Removes a querystring item.
     *
     * @param  string $name Name of item
     * @access public
@@ -187,7 +188,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
 
     /**
-    * Sets the querystring to literally what you supply
+    * Sets the querystring to literally what you supply.
     *
     * @param  string $querystring The querystring data. Should be of the format foo=bar&x=y etc
     * @access public
@@ -198,7 +199,7 @@ class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
     }
 
     /**
-    * Returns flat querystring
+    * Returns flat querystring.
     *
     * @return string Querystring
     * @access public

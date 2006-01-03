@@ -19,6 +19,10 @@
             return $content;
         }
     }
+    //  pre PHP 4.3.x workaround
+    if (!defined('__CLASS__')) {
+        define('__CLASS__', null);
+    }
 
     //  pre PHP 4.3.x workaround
     if (!defined('__FUNCTION__')) {

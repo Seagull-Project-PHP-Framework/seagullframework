@@ -62,39 +62,39 @@ class SGL_Request
 			$this->init();
     	}
     }
-    
+
     function init()
     {
         if (!SGL::runningFromCLI()) {
             $this->initHttp();
         } else {
             $this->initCli();
-        }    	
+        }
     }
-    
+
     function isEmpty()
     {
         return count($this->aProps) ? false : true;
-    }    
+    }
 
     function initCli()
     {
         require_once 'Console/Getopt.php';
-        
+
         $shortOptions = '';
         $longOptions = array('moduleName=', 'managerName=', 'action=');
-        
+
         $console = new Console_Getopt();
         $arguments = $console->readPHPArgv();
         array_shift($arguments);
         $options = $console->getopt2($arguments, $shortOptions, $longOptions);
-        
+
         if (!is_array($options) ) {
             die("CLI parameters invalid\n");
         }
-                
+
         $this->aProps = array();
-        
+
         /* Take all _valid_ parameters and add them into aProps. */
         while (list($parameter, $value) = each($options[0])) {
             $value[0] = str_replace('--', '', $value[0]);
@@ -108,7 +108,7 @@ class SGL_Request
         //  get config singleton
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         //  resolve value for $_SERVER['PHP_SELF'] based in host
         SGL_URL::resolveServerVars($conf);
 
@@ -121,49 +121,39 @@ class SGL_Request
             $url = unserialize($data);
             SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
         } else {
-        	
+
 			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
 			require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
 			require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
-			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';        	
+			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
 	        $aStrats = array(
 	            new SGL_UrlParserClassicStrategy(),
 	            new SGL_UrlParserAliasStrategy(),
 	            new SGL_UrlParserSefStrategy(),
 	            );
-	        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);      	
-        	
+	        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
+
             $data = serialize($url);
             $cache->save($data, $cacheId, 'urls');
             SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
 
-        //  assign to registry        
+        //  assign to registry
         $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url); 
-                
+        $input->setCurrentUrl($url);
+
         //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);      
-
-        //  remove slashes if necessary
-        #SGL_String::dispelMagicQuotes($this->aProps);
-
-        //  merge results with cleaned $_REQUEST values and $_POST
-        #SGL_String::dispelMagicQuotes($_POST);
-
-        #$this->aProps = array_merge($this->aProps, $_POST);
-
-        #return;
+        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
     }
-    
+
     function merge($aHash)
     {
-   		$firstKey = key($aHash);    	    	
+   		$firstKey = key($aHash);
         if (!array_key_exists($firstKey, $this->aProps)) {
             $this->aProps = array_merge_recursive($this->aProps, $aHash);
         }
-    }    
+    }
 
     /**
      * Returns a singleton Request instance.
