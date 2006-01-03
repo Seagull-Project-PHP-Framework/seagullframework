@@ -249,6 +249,7 @@ EOT;
     $pkg->addReplacement('www/index.php', 'pear-config', '@DATA-DIR@', 'data_dir');
     $pkg->addReplacement('www/index.php', 'pear-config', '@PHP-DIR@',  'php_dir');
     $pkg->addReplacement('www/setup.php', 'pear-config', '@PHP-DIR@',  'php_dir');
+    $pkg->addReplacement('www/setup.php', 'pear-config', '@DATA-DIR@', 'data_dir');
 
 
     // Insert path to PEAR data dir into post install script
