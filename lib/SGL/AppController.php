@@ -61,15 +61,13 @@ class SGL_AppController
     {
         SGL_AppController::setupMinimumEnv();
 
-        $autoLoad = (file_exists(dirname(__FILE__)  . '/../../var/INSTALL_COMPLETE.php'))
+        $autoLoad = ($GLOBALS['varDir']  . '/INSTALL_COMPLETE.php')
             ? true
             : false;
         $c = &SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
-//        $init->addTask(new SGL_Task_SetupPaths());
-//        $init->addTask(new SGL_Task_SetupConstants());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_SetGlobals());
