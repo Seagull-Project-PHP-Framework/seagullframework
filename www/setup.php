@@ -78,8 +78,10 @@ module setup
 if (file_exists('PEAR_INSTALLED.txt')) {
     define('SGL_PEAR_INSTALLED', true);
     $rootDir = '@PHP-DIR@/Seagull';
+    $varDir = '@DATA-DIR@/Seagull/var';
 } else {
     $rootDir = dirname(__FILE__) . '/..';
+    $varDir = dirname(__FILE__) . '/../var';
 }
 
 session_start();
