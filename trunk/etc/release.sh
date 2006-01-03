@@ -216,6 +216,30 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull.$RELEASE_NAME.tgz
 
+    # remove all but core modules
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/block
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/contactus
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/documentor
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/export
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/faq
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/guestbook
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/messaging
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/newsletter
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/randommsg
+
+    #and their templates
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/block
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/contactus
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/documentor
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/export
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/faq
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/guestbook
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/messaging
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/newsletter
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/randommsg
+
     # copy PEAR overrides into root
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME-$RELEASE_NAME/
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/db2_SGL.php $PROJECT_NAME-$RELEASE_NAME/
@@ -247,7 +271,7 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 

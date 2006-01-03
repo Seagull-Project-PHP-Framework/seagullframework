@@ -13,7 +13,12 @@ if (file_exists('PEAR_INSTALLED.txt')) {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-require_once $rootDir .'/lib/SGL/AppController.php';
+if (file_exists($rootDir .'/lib/SGL/AppController.php')) {
+    require_once $rootDir .'/lib/SGL/AppController.php';
+} else {
+    die('You have a PEAR installable version and therefore must '.
+        ' have a file called "PEAR_INSTALLED.txt" in the www dir.');
+}
 
 // determine if setup needed
 if (!file_exists($varDir . '/INSTALL_COMPLETE.php')) {
