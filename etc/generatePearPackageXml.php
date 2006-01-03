@@ -14,8 +14,8 @@
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
- * @category   Applications
- * @package    Serendipity
+ * @category   Frameworks
+ * @package    Seagull
  * @author     Tobias Schlitt <toby@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
@@ -206,7 +206,7 @@ EOT;
 
     // Must be available in new package.xml format
     $pkg->setPhpDep('4.3.0');
-    $pkg->setPearinstallerDep('1.4.2');
+    $pkg->setPearinstallerDep('1.4.5');
 
     // Require custom file role for our web installation
     $pkg->addPackageDepWithChannel('required', 'Role_Web', 'pearified.com', '1.1.0');
@@ -220,22 +220,19 @@ EOT;
     $pkg->addPackageDepWithChannel('required', 'Date', 'pear.php.net', '1.4.6');
     $pkg->addPackageDepWithChannel('required', 'File', 'pear.php.net', '1.2.2');
     $pkg->addPackageDepWithChannel('required', 'HTML_Common', 'pear.php.net', '1.2.2');
-    #$pkg->addPackageDepWithChannel('required', 'HTML_TreeMenu', 'pear.php.net', '1.2.0');
     $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm', 'pear.php.net', '3.2.5');
     $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm_Controller', 'pear.php.net', '1.0.5');
     $pkg->addPackageDepWithChannel('required', 'HTML_Template_Flexy', 'pear.php.net', '1.2.3');
-    #$pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.2.0');
+    $pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.1.0');
     $pkg->addPackageDepWithChannel('required', 'Log', 'pear.php.net', '1.9.2');
     $pkg->addPackageDepWithChannel('required', 'Mail_Mime', 'pear.php.net', '1.3.1');
     $pkg->addPackageDepWithChannel('required', 'Net_Socket', 'pear.php.net', '1.0.6');
-    #$pkg->addPackageDepWithChannel('required', 'Net_Useragent_Detect', 'pear.php.net', '1.2.0');
     $pkg->addPackageDepWithChannel('required', 'Pager', 'pear.php.net', '2.3.4');
     $pkg->addPackageDepWithChannel('required', 'Text_Password', 'pear.php.net', '1.1.0');
     $pkg->addPackageDepWithChannel('required', 'Translation2', 'pear.php.net', '2.0.0beta8');
-    #$pkg->addPackageDepWithChannel('required', 'Text_Statistics', 'pear.php.net', '1.2.0');
     $pkg->addPackageDepWithChannel('required', 'Validate', 'pear.php.net', '0.6.2');
     $pkg->addPackageDepWithChannel('required', 'XML_Parser', 'pear.php.net', '1.2.7');
-#    $pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
+    #$pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
     $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
     // Insert path to our include files into S9Y global configuration
@@ -249,10 +246,6 @@ EOT;
     $pkg->addReplacement('www/index.php', 'pear-config', '@PHP-DIR@',  'php_dir');
     $pkg->addReplacement('www/setup.php', 'pear-config', '@PHP-DIR@',  'php_dir');
     $pkg->addReplacement('www/setup.php', 'pear-config', '@DATA-DIR@', 'data_dir');
-
-
-    // Insert path to PEAR data dir into post install script
-    #$pkg->addReplacement('Setup.php', 'pear-config', '@data_dir@', 'data_dir');
 
       // Define that we will use our custom file role in this script
 //    $e = $pkg->addUsesRole('web', 'www');
