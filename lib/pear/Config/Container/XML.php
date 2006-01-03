@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: XML.php,v 1.12 2004/08/07 10:11:27 mansion Exp $
+// $Id: XML.php,v 1.15 2005/12/24 02:24:30 aashley Exp $
 
 require_once('XML/Parser.php');
 require_once('XML/Util.php');
@@ -98,6 +98,7 @@ class Config_Container_XML extends XML_Parser
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $err = true;
         $this->folding = false;
         $this->cdata = null;
         $this->XML_Parser($this->options['encoding'], 'event');
@@ -116,10 +117,7 @@ class Config_Container_XML extends XML_Parser
            $this->setInput($datasrc);
            $err = $this->parse();
         }
-        if (PEAR::isError($err)) {
-            return $err;
-        }
-        return true;
+        return $err;
     } // end func parseDatasrc
 
     /**

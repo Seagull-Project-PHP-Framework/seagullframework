@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Apache.php,v 1.9 2003/04/02 11:50:52 mansion Exp $
+// $Id: Apache.php,v 1.11 2005/12/24 02:34:39 aashley Exp $
 
 /**
 * Simple config parser for apache httpd.conf files
@@ -56,6 +56,7 @@ class Config_Container_Apache {
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (!is_readable($datasrc)) {
             return PEAR::raiseError("Datasource file cannot be read.", null, PEAR_ERROR_RETURN);
         }
@@ -105,7 +106,7 @@ class Config_Container_Apache {
                 return PEAR::raiseError("Syntax error in '$datasrc' at line $n.", null, PEAR_ERROR_RETURN);
             }
         }
-        return true;
+        return $return;
     } // end func parseDatasrc
 
     /**
@@ -140,7 +141,7 @@ class Config_Container_Apache {
                 if (!$obj->isRoot()) {
                     $string = $ident.'<'.$obj->name;
                     if (is_array($obj->attributes) && count($obj->attributes) > 0) {
-                        while (list(,$val) = each($obj->attributes)) {
+                        foreach ($obj->attributes as $attr => $val) {
                             $string .= ' '.$val;
                         }
                     }

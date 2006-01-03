@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: PHPArray.php,v 1.23 2005/02/10 06:02:40 ryansking Exp $
+// $Id: PHPArray.php,v 1.27 2005/12/24 02:30:33 aashley Exp $
 
 /**
 * Config parser for common PHP configuration array
@@ -66,8 +66,9 @@ class Config_Container_PHPArray {
     * @param object $obj        reference to a config object
     * @return mixed    returns a PEAR_ERROR, if error occurs or true if ok
     */
-    function parseDatasrc($datasrc, &$obj)
+    function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (empty($datasrc)) {
             return PEAR::raiseError("Datasource file path is empty.", null, PEAR_ERROR_RETURN);
         }
@@ -75,7 +76,7 @@ class Config_Container_PHPArray {
             $this->_parseArray($datasrc, $obj->container);
         } else {
             if (!file_exists($datasrc)) {
-                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);
+                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);        
             } else {
                 include($datasrc);
                 if (!isset(${$this->options['name']}) || !is_array(${$this->options['name']})) {
@@ -84,7 +85,7 @@ class Config_Container_PHPArray {
             }
             $this->_parseArray(${$this->options['name']}, $obj->container);
         }
-        return true;
+        return $return;
     } // end func parseDatasrc
 
     /**
@@ -116,18 +117,21 @@ class Config_Container_PHPArray {
                     if (is_array($value)) {
                         if (is_integer(key($value))) {
                             foreach ($value as $nestedValue) {
-                                $section =& $container->createSection($key);
-                                $this->_parseArray($nestedValue, $section);
+                                if (is_array($nestedValue)) {
+                                    $section =& $container->createSection($key);
+                                    $this->_parseArray($nestedValue, $section);
+                                } else {
+                                    $container->createDirective($key, $nestedValue);
+                                }
                             }
                         } else {
-
                             $section =& $container->createSection($key);
                             $this->_parseArray($value, $section);
                         }
                     } else {
                         $container->createDirective($key, $value);
                     }
-
+                                                                                                                                                                
             }
         }
     } // end func _parseArray
