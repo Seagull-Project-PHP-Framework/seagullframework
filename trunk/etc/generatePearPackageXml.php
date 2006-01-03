@@ -223,7 +223,6 @@ EOT;
     $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm', 'pear.php.net', '3.2.5');
     $pkg->addPackageDepWithChannel('required', 'HTML_QuickForm_Controller', 'pear.php.net', '1.0.5');
     $pkg->addPackageDepWithChannel('required', 'HTML_Template_Flexy', 'pear.php.net', '1.2.3');
-    $pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.1.0');
     $pkg->addPackageDepWithChannel('required', 'Log', 'pear.php.net', '1.9.2');
     $pkg->addPackageDepWithChannel('required', 'Mail_Mime', 'pear.php.net', '1.3.1');
     $pkg->addPackageDepWithChannel('required', 'Net_Socket', 'pear.php.net', '1.0.6');
@@ -234,6 +233,9 @@ EOT;
     $pkg->addPackageDepWithChannel('required', 'XML_Parser', 'pear.php.net', '1.2.7');
     #$pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
     $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
+
+    require_once '../modules/publisher/generatePearPackageXml.php';
+    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
 
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');

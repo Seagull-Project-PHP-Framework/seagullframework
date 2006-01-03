@@ -34,49 +34,49 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$packagedir  = '/tmp/seagull-0.5.4/modules/publisher';
+	$publisher_packagedir  = '/tmp/seagull-0.5.4/modules/publisher';
 
     // Name of the channel, this package will be distributed through
-    $channel     = 'pear.phpkitchen.com';
+    $publisher_channel     = 'pear.phpkitchen.com';
 
     // Category and name of the package
-	$category    = 'Frameworks';
-    $package     = 'Seagull';
+	$publisher_category    = 'Frameworks';
+    $publisher_package     = 'Seagull_publisher';
 
-	$version     = '0.5.4';
+	$publisher_version     = '1.0';
 
     // Summary description
-	$summary     = <<<EOT
+	$publisher_summary     = <<<EOT
 The publisher module is Seagull's CMS.
 EOT;
 
     // Longer description
-	$description = <<<EOT
+	$publisher_description = <<<EOT
 There are a wide range of features.
 EOT;
 
     // License information
-    $license = 'BSD';
+    $publisher_license = 'BSD';
 
     // Notes, function to grab them directly from S9Y in
     // generate_package_xml_functions.php
-	$notes = <<<EOT
+	$publisher_notes = <<<EOT
 Publisher notes.
 EOT;
 
     // Instanciate package file manager
-	$pkg = new PEAR_PackageFileManager2();
+	$publisher_pkg = new PEAR_PackageFileManager2();
 
     // Setting options
-	$e = $pkg->setOptions(
+	$e = $publisher_pkg->setOptions(
 		array(
             // Where are our package files.
-            'packagedirectory'  => $packagedir,
+            'packagedirectory'  => $publisher_packagedir,
             // Where will package files be installed in
             // the local PEAR repository?
             'baseinstalldir'    => 'Seagull/modules',
             // Where should the package file be generated
-            'pathtopackagefile' => $packagedir,
+            'pathtopackagefile' => $publisher_packagedir,
             // Just simple output, no MD5 sums and <provides> tags
             #'simpleoutput'      => true,
 
@@ -91,7 +91,6 @@ EOT;
                 'package.xml',
                 'package2.xml',
                 'generate_package_xml.php',
-                'lib/pear/',
                 '*tests*',
                 '*.svn',
 		    ),
@@ -118,21 +117,6 @@ EOT;
             // this part uses real file names and no directories.
             'exceptions'        =>
             array(
-                'CHANGELOG.txt' => 'doc',
-                'CODING_STANDARDS.txt' => 'doc',
-                'README.txt' => 'doc',
-                'COPYING.txt' => 'php',
-                'INSTALL.txt' => 'doc',
-                'VERSION.txt' => 'php',
-            ),
-
-            'installexceptions' =>
-            array(
-                'mysql_SGL.php' => 'DB',
-                'oci8_SGL.php' => 'DB',
-                'maxdb_SGL.php' => 'DB',
-                'db2_SGL.php' => 'DB',
-                'Tree.php' => 'HTML',
             ),
 	    )
     );
@@ -143,60 +127,56 @@ EOT;
     }
 
     // Set misc package information
-    $pkg->setPackage($package);
-    $pkg->setSummary($summary);
-    $pkg->setDescription($description);
-    $pkg->setChannel($channel);
+    $publisher_pkg->setPackage($publisher_package);
+    $publisher_pkg->setSummary($publisher_summary);
+    $publisher_pkg->setDescription($publisher_description);
+    $publisher_pkg->setChannel($publisher_channel);
 
-    $pkg->setReleaseStability('beta');
-    $pkg->setAPIStability('stable');
-    $pkg->setReleaseVersion($version);
-    $pkg->setAPIVersion($version);
+    $publisher_pkg->setReleaseStability('beta');
+    $publisher_pkg->setAPIStability('stable');
+    $publisher_pkg->setReleaseVersion($publisher_version);
+    $publisher_pkg->setAPIVersion($publisher_version);
 
-    $pkg->setLicense($license);
-    $pkg->setNotes($notes);
+    $publisher_pkg->setLicense($publisher_license);
+    $publisher_pkg->setNotes($publisher_notes);
 
     // Our package contains PHP files (not C extension files)
-    $pkg->setPackageType('php');
+    $publisher_pkg->setPackageType('php');
 
     // Must be available in new package.xml format
-    $pkg->setPhpDep('4.3.0');
-    $pkg->setPearinstallerDep('1.4.5');
-
-    // Require custom file role for our web installation
-    $pkg->addPackageDepWithChannel('required', 'Role_Web', 'pearified.com', '1.1.0');
+    $publisher_pkg->setPhpDep('4.3.0');
+    $publisher_pkg->setPearinstallerDep('1.4.5');
 
     // Require PEAR_DB package for initializing the database in the post install script
-    $pkg->addPackageDepWithChannel('required', 'HTML_TreeMenu', 'pear.php.net', '1.2.0');
+    $publisher_pkg->addPackageDepWithChannel('required', 'HTTP', 'pear.php.net', '1.4.0');
+    $publisher_pkg->addPackageDepWithChannel('required', 'HTTP_Header', 'pear.php.net', '1.2.0');
+    $publisher_pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.1.0');
+    $publisher_pkg->addPackageDepWithChannel('required', 'HTML_TreeMenu', 'pear.php.net', '1.2.0');
     #$pkg->addPackageDepWithChannel('required', 'Net_Useragent_Detect', 'pear.php.net', '1.2.0');
 
-    $pkg->addPackageDepWithChannel('required', 'Text_Statistics', 'pear.php.net', '1.0');
-    $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
-
+    $publisher_pkg->addPackageDepWithChannel('required', 'Text_Statistics', 'pear.php.net', '1.0');
+    $publisher_pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
     // Create the current release and add it to the package definition
-    $pkg->addRelease();
+    $publisher_pkg->addRelease();
 
     // Package release needs a maintainer
-	$pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
+	$publisher_pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
 
     // Internally generate the XML for our package.xml (does not perform output!)
-    $test = $pkg->generateContents();
-    #$packagexml = &$pkg->exportCompatiblePackageFile1();
+    $test = $publisher_pkg->generateContents();
 
     // If called without "make" parameter, we just want to debug the generated
     // package.xml file and want to receive additional information on error.
-    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
-            $_SERVER['argv'][1] == 'make')) {
-    	$e = $pkg->writePackageFile();
-        #$e = $packagexml->writePackageFile();
-	} else {
-    	$e = $pkg->debugPackageFile();
-    	#$e = $packagexml->debugPackageFile();
-	}
-
-	if (PEAR::isError($e)) {
-    	echo $e->getMessage();
-	}
+//    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
+//            $_SERVER['argv'][1] == 'make')) {
+//    	$e = $pkg->writePackageFile();
+//	} else {
+//    	$e = $pkg->debugPackageFile();
+//	}
+//
+//	if (PEAR::isError($e)) {
+//    	echo $e->getMessage();
+//	}
 
 ?>
