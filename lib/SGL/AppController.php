@@ -61,7 +61,7 @@ class SGL_AppController
     {
         SGL_AppController::setupMinimumEnv();
 
-        $autoLoad = ($GLOBALS['varDir']  . '/INSTALL_COMPLETE.php')
+        $autoLoad = (file_exists($GLOBALS['varDir']  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
         $c = &SGL_Config::singleton($autoLoad);
