@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: IniFile.php,v 1.15 2004/10/19 00:57:59 ryansking Exp $
+// $Id: IniFile.php,v 1.17 2005/12/24 02:36:56 aashley Exp $
 
 /**
 * Config parser for PHP .ini files
@@ -56,6 +56,7 @@ class Config_Container_IniFile {
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (!file_exists($datasrc)) {
             return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);
         }
@@ -86,7 +87,7 @@ class Config_Container_IniFile {
                 $currentSection->createDirective($key, $value);
             }
         }
-        return true;
+        return $return;
     } // end func parseDatasrc
 
     /**
@@ -119,6 +120,7 @@ class Config_Container_IniFile {
                 } elseif (strlen(trim($content)) < strlen($content) ||
                           strpos($content, ',') !== false ||
                           strpos($content, ';') !== false ||
+                          strpos($content, '=') !== false ||
                           strpos($content, '"') !== false ||
                           strpos($content, '%') !== false ||
                           strpos($content, '~') !== false) {

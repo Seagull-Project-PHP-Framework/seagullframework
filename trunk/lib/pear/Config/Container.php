@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +---------------------------------------------------------------------+
 //
-// $Id: Container.php,v 1.35 2004/10/19 00:57:58 ryansking Exp $
+// $Id: Container.php,v 1.37 2005/12/24 02:28:42 aashley Exp $
 
 require_once 'Config.php';
 
@@ -401,7 +401,7 @@ class Config_Container {
         $count = 0;
         if (isset($name) && isset($type)) {
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name && 
+                if ($this->children[$i]->name === $name && 
                     $this->children[$i]->type == $type) {
                     $count++;
                 }
@@ -419,7 +419,7 @@ class Config_Container {
         if (isset($name)) {
             // Some directives can have the same name
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name) {
+                if ($this->children[$i]->name === $name) {
                     $count++;
                 }
             }

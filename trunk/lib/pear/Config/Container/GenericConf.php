@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: GenericConf.php,v 1.6 2003/03/24 14:16:52 mansion Exp $
+// $Id: GenericConf.php,v 1.7 2005/12/24 02:24:30 aashley Exp $
 
 /**
 * Config parser for  generic .conf files like
@@ -66,6 +66,7 @@ class Config_Container_GenericConf {
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (!is_readable($datasrc)) {
             return PEAR::raiseError("Datasource file cannot be read.", null, PEAR_ERROR_RETURN);
         }
@@ -99,7 +100,7 @@ class Config_Container_GenericConf {
                 return PEAR::raiseError("Syntax error in '$datasrc' at line $n.", null, PEAR_ERROR_RETURN);
             }
         }
-        return true;
+        return $return;
     } // end func parseDatasrc
 
     /**

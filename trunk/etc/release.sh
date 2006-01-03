@@ -105,10 +105,7 @@ function tagRelease()
 function exportSvnAndPackage()
 {
     # export release
-    $SVN export $SVN_REPO_URL -r $REVISION_NUM
-
-    #rename trunk to project name
-    mv $SVN_REPO_LEAF_FOLDER_NAME $PROJECT_NAME
+    $SVN export --force $SVN_REPO_URL -r $REVISION_NUM $PROJECT_NAME
 
     # remove unwanted dirs
     rm -f $PROJECT_NAME/etc/badBoyWebTests.bb
