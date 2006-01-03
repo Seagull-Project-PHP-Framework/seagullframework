@@ -38,10 +38,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
-require_once dirname(__FILE__) . '/../../../modules/default/classes/ModuleMgr.php';
-
 /**
- * Simple init task.
+ * Basic init tasks: enables profiling, custom error handler, logging
+ * and output buffering.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -53,10 +52,43 @@ class SGL_Process_Init extends SGL_DecorateProcess
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
         }
-
-        // load utility lib
+        // load base utility lib
         require_once SGL_LIB_DIR . '/SGL.php';
 
+        //  start output buffering
+        if ($this->conf['site']['outputBuffering']) {
+            ob_start();
+        }
+
+        $this->processRequest->process($input);
+    }
+}
+
+class SGL_Process_SetupErrorHandling extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        //  start PHP error handler
+        if ($this->conf['debug']['customErrorHandler']) {
+	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
+	        $eh = & new SGL_ErrorHandler();
+	        $eh->startHandler();
+        }
+        //  set PEAR error handler
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');
+
+        //  clean start for logs
+        error_log(' ');
+        error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
+
+        $this->processRequest->process($input);
+    }
+}
+
+class SGL_Process_SetupORM extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
             'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
@@ -70,45 +102,12 @@ class SGL_Process_Init extends SGL_DecorateProcess
             'generator_strip_schema' => 1,
         );
 
-        //  start PHP error handler
-        if ($this->conf['debug']['customErrorHandler']) {
-	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
-	        $eh = & new SGL_ErrorHandler();
-	        $eh->startHandler();
-        }
-
-        //  set PEAR error handler
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');
-
-        //  pre PHP 4.3.x workaround
-        if (!defined('__CLASS__')) {
-            define('__CLASS__', null);
-        }
-        //  clean start for logs
-        error_log(' ');
-        error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
-
-        //  start output buffering
-        if ($this->conf['site']['outputBuffering']) {
-            ob_start();
-        }
-        //  starts session for page execution
-        if (!is_writable(SGL_TMP_DIR)) {
-            require_once 'System.php';
-
-            //  pass path as array to avoid widows space parsing prob
-            $success = System::mkDir(array(SGL_TMP_DIR));
-            if (!$success) {
-                SGL::raiseError('The tmp directory does not appear to be writable, please give the
-                                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
-            }
-        }
         $this->processRequest->process($input);
     }
 }
 
 /**
- * Block certain users.
+ * Block blacklisted users by IP.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -188,7 +187,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
 
         } else {
             require_once dirname(__FILE__) . '/../Locale.php';
-            $setlocale = SGL_Locale::singleton($locale);
+            $setlocale = & SGL_Locale::singleton($locale);
         }
 
         $this->processRequest->process($input);
@@ -429,7 +428,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
  *
  * @access  private
  * @author  Demian Turner <demian@phpkitchen.com>
- * @author  Erlend Stromsvik <ehs@hvorfor.no>
+ * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
  * @package SGL
  */
 class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
@@ -518,6 +517,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
         $req = $input->getRequest();
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
@@ -844,7 +844,7 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
 			if (!isset($input->data->wysiwyg_editor)) {
 				$input->data->wysiwyg_editor = isset($this->conf['site']['wysiwyg_editor'])
 				    ? $this->conf['site']['wysiwyg_editor']
-                    : 'xinha';
+                    : 'fck';
 			}
 
 			switch ($input->data->wysiwyg_editor) {
@@ -860,6 +860,7 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
             case 'htmlarea':
             	$input->data->wysiwyg_htmlarea = true;
             	$input->data->addOnLoadEvent('HTMLArea.init()');
+            	break;
 			}
 		}
         //  get all html onLoad events
@@ -891,7 +892,6 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
             //  and execution time
             $input->data->executionTime = getSystemTime() - @SGL_START_TIME;
         }
-
         //  send memory consumption to output
         if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
             $input->data->memoryUsage = number_format(memory_get_usage());
@@ -958,7 +958,9 @@ class SGL_Process_SetupBlocks extends SGL_ProcessRequest
         //  load blocks
         if ($conf['site']['blocksEnabled'] && $conf['navigation']['enabled']) {
             require_once SGL_CORE_DIR . '/BlockLoader.php';
-            $input->data->sectionId = empty($input->data->sectionId) ? 0 : $input->data->sectionId;
+            $input->data->sectionId = empty($input->data->sectionId)
+                ? 0
+                : $input->data->sectionId;
             $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
             $aBlocks = $blockLoader->render($input->data);
             foreach ($aBlocks as $key => $value) {

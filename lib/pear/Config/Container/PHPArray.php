@@ -66,7 +66,7 @@ class Config_Container_PHPArray {
     * @param object $obj        reference to a config object
     * @return mixed    returns a PEAR_ERROR, if error occurs or true if ok
     */
-    function &parseDatasrc($datasrc, &$obj)
+    function parseDatasrc($datasrc, &$obj)
     {
         if (empty($datasrc)) {
             return PEAR::raiseError("Datasource file path is empty.", null, PEAR_ERROR_RETURN);
@@ -75,7 +75,7 @@ class Config_Container_PHPArray {
             $this->_parseArray($datasrc, $obj->container);
         } else {
             if (!file_exists($datasrc)) {
-                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);        
+                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);
             } else {
                 include($datasrc);
                 if (!isset(${$this->options['name']}) || !is_array(${$this->options['name']})) {
@@ -127,7 +127,7 @@ class Config_Container_PHPArray {
                     } else {
                         $container->createDirective($key, $value);
                     }
-                                                                                                                                                                
+
             }
         }
     } // end func _parseArray

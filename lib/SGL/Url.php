@@ -217,9 +217,6 @@ class SGL_URL
                                         ? $_SERVER['SERVER_PORT']
                                         : $this->getStandardPort($this->protocol));
             $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
-//            $this->querystring = isset($_SERVER['QUERY_STRING'])
-//                                    ? $this->_parseRawQuerystring($_SERVER['QUERY_STRING'])
-//                                    : null;
             $this->anchor      = '';
         }
 
@@ -328,6 +325,7 @@ class SGL_URL
                 unset($aRet['managerName']);
             }
         }
+        //  zend debug cleanup
         if (isset($aRet['debug_fastfile'])) {
             unset($aRet['debug_fastfile']);
         }
@@ -376,26 +374,13 @@ class SGL_URL
      */
     function parseQueryString($conf)
     {
-	    //	check cache
-//	    $cache = & SGL::cacheSingleton();
-//	    $cacheId = md5($this->getStrategiesFingerprint($this->aStrategies) . $this->url);
-//
-//        if ($data = $cache->get($cacheId, 'urls')) {
-//            $ret = unserialize($data);
-//            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
-//        } else {
-	        foreach ($this->aStrategies as $strategy) {
+        foreach ($this->aStrategies as $strategy) {
 
-	            //  all strategies will attempt to parse url, overwriting
-	            //  previous results as they do
-	            $this->aRes[] = $strategy->parseQueryString($this, $conf);
-	        }
-	        $ret = call_user_func_array('array_merge', $this->aRes);
-
-//            $data = serialize($ret);
-//            $cache->save($data, $cacheId, 'urls');
-//            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
-//        }
+            //  all strategies will attempt to parse url, overwriting
+            //  previous results as they do
+            $this->aRes[] = $strategy->parseQueryString($this, $conf);
+        }
+        $ret = call_user_func_array('array_merge', $this->aRes);
         return $ret;
     }
 
@@ -412,12 +397,11 @@ class SGL_URL
     function toString()
     {
         foreach ($this->aStrategies as $strategy) {
-            if (is_a($strategy, 'SGL_UrlParserSefStrategy'))
-            return $strategy->toString($this);
+            if (is_a($strategy, 'SGL_UrlParserSefStrategy')) {
+                return $strategy->toString($this);
+            }
         }
     }
-
-
 
     function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0, $output = '')

@@ -118,7 +118,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
         //  unless we're running the setup wizard
         if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
             $c = &SGL_Config::singleton();
-            $path = realpath(dirname(__FILE__)  . '/../../modules/' . $aParsedUri['moduleName'] . '/conf.ini');
+            $path = realpath(SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini');
             if ($path) {
                 $aModuleConfig = $c->load($path);
                 #return PEAR::raiseError('Could not read current module\'s conf.ini file',
@@ -128,7 +128,7 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
                     $c->merge($aModuleConfig);
                     $c->set('localConfig', array('moduleName' => $aParsedUri['moduleName']));
                 } else {
-                    return PEAR::raiseError('Could not read current module\'s conf.ini file',
+                    return PEAR::raiseError("Could not read current module's conf.ini file",
                         SGL_ERROR_NOFILE);
                 }
                 //  determine is moduleName is simplified, in other words, the mgr
