@@ -326,8 +326,8 @@ class SGL_Item
             INSERT INTO {$this->conf['table']['item_addition']} VALUES (
                 $id,
                 $parentID,
-                $itemID,
-                $itemValue,
+                $itemID, ".
+                $this->dbh->quote($itemValue) .",
                 $transID
             )";
         $result = $this->dbh->query($query);
@@ -929,6 +929,7 @@ class SGL_Item
         $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL_Item::SGL_Item();
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
