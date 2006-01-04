@@ -8,6 +8,8 @@
  * For further information visit:
  * 		http://www.fckeditor.net/
  * 
+ * "Support Open Source software. What about a donation today?"
+ * 
  * File Name: fck_source.html
  * 	Source editor dialog window.
  * 
@@ -29,7 +31,9 @@ var FCKConfig	= oEditor.FCKConfig ;
 
 window.onload = function()
 {
-	document.getElementById('txtSource').value = ( FCKConfig.EnableXHTML && FCKConfig.EnableSourceXHTML ? FCK.GetXHTML( FCKConfig.FormatSource ) : FCK.GetHTML( FCKConfig.FormatSource ) ) ;
+	// EnableXHTML and EnableSourceXHTML has been deprecated
+//	document.getElementById('txtSource').value = ( FCKConfig.EnableXHTML && FCKConfig.EnableSourceXHTML ? FCK.GetXHTML( FCKConfig.FormatSource ) : FCK.GetHTML( FCKConfig.FormatSource ) ) ;
+	document.getElementById('txtSource').value = FCK.GetXHTML( FCKConfig.FormatSource ) ;
 
 	// Activate the "OK" button.
 	window.parent.SetOkButton( true ) ;
