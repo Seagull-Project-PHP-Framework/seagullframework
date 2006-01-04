@@ -120,10 +120,12 @@ class SimpleNav
 
         $key = $req->get('staticId');
         $this->_staticId = (is_null($key)) ? 0 : $key;
-        $this->input = $input;
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = & SGL_DB::singleton();
+        $this->input    = $input;
+        $c              = &SGL_Config::singleton();
+        $this->conf     = $c->getAll();
+        $this->dbh      = & SGL_DB::singleton();
+        $this->trans    = &SGL_Translation::singleton();
+        
         if (is_null($input->get('navLang'))) {
             $input->set('navLang', SGL_Translation::getLangID());
         }
@@ -252,9 +254,8 @@ class SimpleNav
             }
 
             //  retreive translation
-            if (is_numeric($section->title)) {
-                $titleID = $section->title; unset($section->title);
-                $section->title = $this->_aTranslations[$titleID];
+            if ($section->trans_id) {
+                $section->title = $this->_aTranslations[$section->trans_id];
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
@@ -461,6 +462,10 @@ class SimpleNav
                 WHERE   section_id = " . $this->_currentSectionId;
 
             $sectionName = $this->dbh->getOne($query);
+            
+            if (is_numeric($sectionName)) {
+                $sectionName = $this->trans->get($sectionName, 'nav', SGL_Translation::getLangID());
+            }
         }
         return $sectionName;
     }

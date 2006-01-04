@@ -40,6 +40,7 @@
 
 require_once 'Config.php';
 require_once 'Validate.php';
+require_once SGL_CORE_DIR .'/Translation.php';
 
 /**
  * To manage administering global config file.
@@ -62,6 +63,8 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
+
+        $this->trans = &SGL_Translation::singleton();
 
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
@@ -213,8 +216,7 @@ class ConfigMgr extends SGL_Manager
         $output->aTranslationContainers = $this->aTranslationContainers;
 
         //  retrieve installed languages
-        $trans = &SGL_Translation::singleton();
-        $installedLanguages = $trans->getLangs();
+        $installedLanguages = $this->trans->getLangs();
         $output->aInstalledLangs = $installedLanguages;
 
     }

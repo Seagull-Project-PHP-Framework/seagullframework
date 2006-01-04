@@ -60,6 +60,7 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
+        $this->trans = &SGL_Translation::singleton();
         $this->pageTitle = 'Article Manager';
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -245,11 +246,12 @@ class ArticleMgr extends SGL_Manager
             SGL_Output::showDateSelector($aExpiryDate,'frmExpiryDate');
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
-        $trans = &SGL_Translation::singleton();
-        $installedLanguages = $trans->getLangs();
+        $installedLanguages = $this->trans->getLangs();
 
         $output->availableLangs = $installedLanguages;   
-        $output->articleLang = (!empty($input->articleLang)) ? $input->articleLang : $this->conf['translation']['fallbackLang'];
+        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) 
+			? $input->articleLang 
+			: $this->conf['translation']['fallbackLang'];
 
         //  get dynamic content
         $output->dynaContent = (isset($input->articleLang)) ? 
@@ -446,6 +448,7 @@ class ArticleMgr extends SGL_Manager
         $query = "
             SELECT  i.item_id,
                     ia.addition,
+                    ia.trans_id,
                     u.username,
                     i.date_created,
                     i.start_date,
@@ -473,14 +476,13 @@ class ArticleMgr extends SGL_Manager
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         //  fetch title translation
-        $trans = &SGL_Translation::singleton();
         $fallbackLang = $this->conf['translation']['fallbackLang'];
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            if (is_numeric($aValues['addition'])) {
-                if ($title = $trans->get($aValues['addition'], 'content', $lang)) { //  get translation by language set in users' preference                
+            if ($aValues['trans_id']) {
+                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) { //  get translation by language set in users' preference                
                     $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
                 } else {    //  get first available translation any installed language
-                    if ($title = $trans->get($aValues['addition'], 'content', $fallbackLang)) {   
+                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {   
                         $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
                     }
                 }
