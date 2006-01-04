@@ -459,7 +459,7 @@ class SGL_Item
                 $additionTrans = $this->dbh->getAssoc($query);
                 
                 foreach ($additionTrans as $key => $values) {
-                    $this->trans->remove($values->addition, 'content');   
+                    $this->trans->remove($values->trans_id, 'content');   
                 }
 
                 $sql = "DELETE FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
@@ -707,7 +707,7 @@ class SGL_Item
         if (!is_null($language)) {       
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
-                SELECT  ia.item_addition_id, itm.field_name, ia.addition
+                SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
             FROM    {$this->conf['table']['item']} i,
                     {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
