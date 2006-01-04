@@ -171,7 +171,7 @@ class ArticleMgr extends SGL_Manager
         $item = & new SGL_Item();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
         $output->articleLang = $this->conf['translation']['fallbackLang'];
-        
+
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
         $htmlOptions = $menu->toHtml();
@@ -248,14 +248,14 @@ class ArticleMgr extends SGL_Manager
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
         $installedLanguages = $this->trans->getLangs();
 
-        $output->availableLangs = $installedLanguages;   
-        $input->articleLang = (isset($input->articleLang) && !empty($input->articleLang)) 
-			? $input->articleLang 
-			: $this->conf['translation']['fallbackLang'];
+        $output->availableLangs = $installedLanguages;
+        $output->articleLang = (!empty($input->articleLang))
+            ? $input->articleLang
+            : $this->conf['translation']['fallbackLang'];
 
         //  get dynamic content
-        $output->dynaContent = (isset($input->articleLang)) ? 
-                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $input->articleLang) : 
+        $output->dynaContent = (isset($input->articleLang)) ?
+                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $input->articleLang) :
                                     $item->getDynamicContent($input->articleID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
@@ -377,7 +377,7 @@ class ArticleMgr extends SGL_Manager
 
         //  fetch current language
         $langID = SGL_Translation::getLangID();
-        
+
         //  grab article with template type from session preselected
         $aResult = $this->retrievePaginated(
             $input->catID,
@@ -426,7 +426,7 @@ class ArticleMgr extends SGL_Manager
                                 $queryRange = 'thisCategory', $from = '', $lang)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
@@ -479,10 +479,10 @@ class ArticleMgr extends SGL_Manager
         $fallbackLang = $this->conf['translation']['fallbackLang'];
         foreach ($aPagedData['data'] as $aKey => $aValues) {
             if ($aValues['trans_id']) {
-                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) { //  get translation by language set in users' preference                
+                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) { //  get translation by language set in users' preference
                     $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
                 } else {    //  get first available translation any installed language
-                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {   
+                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {
                         $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
                     }
                 }
