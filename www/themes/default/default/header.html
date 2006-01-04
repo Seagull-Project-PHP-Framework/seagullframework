@@ -46,18 +46,18 @@
         {
             var config = new HTMLArea.Config();
             config.toolbar = [
-        		[ "fontname", "space",
-        		  "fontsize", "space",
-        		  "formatblock", "space",
-        		  "bold", "italic", "underline", "strikethrough", "separator",
-        		  "subscript", "superscript", "separator",
-        		  "copy", "cut", "paste", "space"],
-        		[ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
-        		  "lefttoright", "righttoleft", "separator",
-        		  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
-        		  "forecolor", "hilitecolor", "separator",
-        		  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
-        		  "popupeditor", "separator", "showhelp"]
+                [ "fontname", "space",
+                  "fontsize", "space",
+                  "formatblock", "space",
+                  "bold", "italic", "underline", "strikethrough", "separator",
+                  "subscript", "superscript", "separator",
+                  "copy", "cut", "paste", "space"],
+                [ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
+                  "lefttoright", "righttoleft", "separator",
+                  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
+                  "forecolor", "hilitecolor", "separator",
+                  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
+                  "popupeditor", "separator", "showhelp"]
             ];
             var editor = new HTMLArea("frmBodyName", config);
             editor.registerPlugin(CharacterMap);
@@ -76,19 +76,35 @@
     {end:}
     {if:wysiwyg_fck}
     <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
+    <script type="text/javascript">
+        var oFCKEditors = new Array;
 
-    {scriptOpen:h}
+        /* initalises an instance of FCK and returns the object. */
+        function fck_add(id)
+        {
+            i = oFCKEditors.length;
+            oFCKEditors[i] = new FCKeditor(id);
+            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/fck/";
+            oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
+            oFCKEditors[i].ReplaceTextarea();
+        }
         function fck_init()
         {
-            {if:wysiwygElementName}
-        	var oFCKeditor = new FCKeditor('{wysiwygElementName}');
-        	{else:}
-        	var oFCKeditor = new FCKeditor('frmBodyName');
-        	{end:}
-    		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
-    		oFCKeditor.ReplaceTextarea() ;
+            if( document.getElementsByTagName ) {
+                areas = document.getElementsByTagName('textarea');
+
+                for( var i=0; i<areas.length; i++ ){
+                    if( areas[i].className.match("wysiwyg") ) {
+                        fck_add(areas[i].id);
+                    }
+                    else if( areas[i].id.match('frmBodyName') ) {
+                        /* fallback for old templates */
+                        fck_add('frmBodyName');
+                    }
+               }
+            }
         }
-    {scriptClose:h}
+   </script>
     {end:}
     {end:}
 </head>
