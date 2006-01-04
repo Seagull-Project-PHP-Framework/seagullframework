@@ -254,7 +254,7 @@ class SimpleNav
             }
 
             //  retreive translation
-            if ($section->trans_id) {
+            if ($section->trans_id && array_key_exists($section->trans_id, $this->_aTranslations) ) {
                 $section->title = $this->_aTranslations[$section->trans_id];
             }
 
