@@ -275,95 +275,117 @@ class SimpleNav
                        }
                    }
             }
-            //  first check if querystring is a simplified version of section name,
-            //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
-            if (SGL_Inflector::isUrlSimplified($querystring, $section->resource_uri)) {
+            // if we haven't  found current yet ...
+            if(!$section->childIsCurrent) {
+                //  first check if querystring is a simplified version of section name,
+                //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
+                if (SGL_Inflector::isUrlSimplified($querystring, $section->resource_uri)) {
 
-                //  module name and manager name are identical, temporarily unshorten
-                //  querystring name so match can be possible
-                $aParts = explode('/', $querystring);
-                $moduleName = $aParts[0];
-                array_unshift($aParts, $moduleName);
+                    //  module name and manager name are identical, temporarily unshorten
+                    //  querystring name so match can be possible
+                    $aParts = explode('/', $querystring);
+                    $moduleName = $aParts[0];
+                    array_unshift($aParts, $moduleName);
 
-                //  return to string
-                $querystring = implode('/', $aParts);
-            }
-            //  compare querystring and section name from db, is it:
-/*
-            $conda1 = $section->resource_uri == $querystring;
-            $conda2 = $this->_staticId == 0;
-            $evala = $conda1 && $conda2;
+                    //  return to string
+                    $querystring = implode('/', $aParts);
+                }
+                //  compare querystring and section name from db, is it:
+    /*
+                $conda1 = $section->resource_uri == $querystring;
+                $conda2 = $this->_staticId == 0;
+                $evala = $conda1 && $conda2;
 
-            $condb1 = $section->section_id != 0;
-            $condb2 = $section->section_id == $this->_staticId;
-            $evalb = $condb1 && $condb2;
+                $condb1 = $section->section_id != 0;
+                $condb2 = $section->section_id == $this->_staticId;
+                $evalb = $condb1 && $condb2;
 
-            $condc1 = strpos($querystring, 'articleview') !== false;
-            $condc2 = strpos($querystring, 'frmCatID') !== false;
-            $condc3 = $section->is_static == 0;
-            $evalc = $condc1 && $condc2 && $condc3;
-*/
-            //  a. the strings are identical and it's not a static article
-            if (($section->resource_uri == $querystring && $this->_staticId == 0 )
-
-                    //  b. it is a static article, so staticId must be non-zero
+                $condc1 = strpos($querystring, 'articleview') !== false;
+                $condc2 = strpos($querystring, 'frmCatID') !== false;
+                $condc3 = $section->is_static == 0;
+                $evalc = $condc1 && $condc2 && $condc3;
+    */
+                $realQueryS = $url->querystring;
+                // remove possible staticId flag
+                $realQueryS = preg_replace('/staticId[^$]*/','',$realQueryS);
+                // remove trailing slash
+                $realQueryS = preg_replace('/\/$/','',$realQueryS);
+    
+                if (
+                    //  a. the strings are identical and it's not a static article
+                    ($section->resource_uri == $querystring && $this->_staticId == 0 )
+                    // b. 
+                    || (
+                        $section->resource_uri !== '' &&
+                        isset($url->aQueryData['moduleName']) &&
+                        0 === strpos($url->aQueryData['moduleName'] . $realQueryS, $section->resource_uri)
+                    )
+                    // b.2 shortened form uri
+                    || (
+                        $section->resource_uri !== '' &&
+                        isset($url->aQueryData['moduleName']) &&
+                        0 === strpos($realQueryS, $section->resource_uri)
+                    )
+                    //  c. it is a static article, so staticId must be non-zero
                     || ($section->section_id != 0 && $section->section_id == $this->_staticId)
 
-                    //  c. we're browsing articles by category ID
+                    //  d. we're browsing articles by category ID
                     || (strpos($querystring, 'articleview') !== false)
-                        && strpos($section->resource_uri, 'articleview') !== false
-                        && strpos($querystring, 'frmCatID') !== false
-                        && $section->is_static == 0) {
-                $section->isCurrent = true;
-                $this->_currentSectionId = $section->section_id;
-                $exactMatch = true;
-
-                //  add parent to parentsOfCurrentPage array
-                $this->_aParentsOfCurrentPage[] = $section->parent_id;
-            } elseif (empty($section->resource_uri)) {
-
-                if (    $querystring == $this->conf['site']['defaultModule']
-                    || ($querystring == $this->conf['site']['defaultModule'] . '/' .
-                                        $this->conf['site']['defaultManager'])) {
+                    && strpos($section->resource_uri, 'articleview') !== false
+                    && strpos($querystring, 'frmCatID') !== false
+                    && $section->is_static == 0) 
+                {
                     $section->isCurrent = true;
                     $this->_currentSectionId = $section->section_id;
                     $exactMatch = true;
 
                     //  add parent to parentsOfCurrentPage array
                     $this->_aParentsOfCurrentPage[] = $section->parent_id;
-                }
+                } elseif (empty($section->resource_uri)) {
 
-            //  this case is for subtabs, ie Contact Us/Hosting Info
-            } elseif (!isset($exactMatch)) {
-
-                // explode and rebuild baseUri. Compare current segment against $section->resource_uri
-                $aPieces = explode('/', $querystring);
-                $tmpUri = '';
-                $bFlag = false;
-                foreach ($aPieces as $k => $v) {
-                    if (!$bFlag) {
-                        $tmpUri .= $v;
-                        $bFlag = true;
-                    } else {
-                        $tmpUri .= '/' . $v;
-                    }
-                    //  create array of potential matches
-                    if ($tmpUri == $section->resource_uri) {
-
-                        //  make sure we don't abort too early if we're matching a static id, ie, a static article
-                        if ($this->_staticId != 0 && ($section->section_id != $this->_staticId)) {
-                            break;
-                        }
-
+                    if (    $querystring == $this->conf['site']['defaultModule']
+                        || ($querystring == $this->conf['site']['defaultModule'] . '/' .
+                                            $this->conf['site']['defaultManager'])) {
                         $section->isCurrent = true;
                         $this->_currentSectionId = $section->section_id;
+                        $exactMatch = true;
 
                         //  add parent to parentsOfCurrentPage array
                         $this->_aParentsOfCurrentPage[] = $section->parent_id;
-                        break;
+                    }
+
+                //  this case is for subtabs, ie Contact Us/Hosting Info
+                } elseif (!isset($exactMatch)) {
+
+                    // explode and rebuild baseUri. Compare current segment against $section->resource_uri
+                    $aPieces = explode('/', $querystring);
+                    $tmpUri = '';
+                    $bFlag = false;
+                    foreach ($aPieces as $k => $v) {
+                        if (!$bFlag) {
+                            $tmpUri .= $v;
+                            $bFlag = true;
+                        } else {
+                            $tmpUri .= '/' . $v;
+                        }
+                        //  create array of potential matches
+                        if ($tmpUri == $section->resource_uri) {
+
+                            //  make sure we don't abort too early if we're matching a static id, ie, a static article
+                            if ($this->_staticId != 0 && ($section->section_id != $this->_staticId)) {
+                                break;
+                            }
+
+                            $section->isCurrent = true;
+                            $this->_currentSectionId = $section->section_id;
+
+                            //  add parent to parentsOfCurrentPage array
+                            $this->_aParentsOfCurrentPage[] = $section->parent_id;
+                            break;
+                        }
                     }
                 }
-            }
+            } // end if ! childIsCurrent
             //  add section node to nodes array, only if it is enabled, ie:
             //  $this->_currentSectionId may have been set, even if tab is not to be shown
             if ($section->is_enabled) {
