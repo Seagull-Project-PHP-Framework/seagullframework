@@ -80,17 +80,20 @@ class PageMgr extends SGL_Manager
         $this->_params = array(
             'tableStructure' => array(
                 'section_id'    => 'id',
+                'title'         => 'title',
+                'resource_uri'  => 'resource_uri',
+                'perms'         => 'perms',
+                'trans_id'      => 'trans_id',
                 'root_id'       => 'rootid',
                 'left_id'       => 'l',
                 'right_id'      => 'r',
                 'order_id'      => 'norder',
                 'level_id'      => 'level',
                 'parent_id'     => 'parent',
-                'resource_uri'  => 'resource_uri',
-                'title'         => 'title',
-                'perms'         => 'perms',
                 'is_enabled'    => 'is_enabled',
                 'is_static'     => 'is_static',
+                'access_key'    => 'access_key',
+                'rel'           => 'rel'
             ),
             'tableName'      => 'section',
             'lockTableName'  => 'table_lock',
@@ -381,8 +384,7 @@ class PageMgr extends SGL_Manager
         $ok = $this->trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
 
         //  set translation id for nav title
-        unset($input->section['title']);
-        $input->section['title'] = $sectionNextId;
+        $input->section['trans_id'] = $sectionNextId;
 
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -419,10 +421,8 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
         //  if title is numeric retreive translation else populate with current title
-        if (is_numeric($section['title'])) {
-            $section['title_id'] = $section['title'];
-            unset($section['title']);
-            $section['title'] = $this->trans->get($section['title_id'], 'nav', $input->navLang);
+        if ($section['trans_id']) {
+            $section['title'] = $this->trans->get($section['trans_id'], 'nav', $input->navLang);
             $section['language'] = $output->availableLangs[$input->navLang];
         } else {
             $section['language'] = $output->availableLangs[$input->navLang];
@@ -547,12 +547,11 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  update translations
-        if ($input->section['title'] != $input->section['title_original']) {
-            $strings[$input->navLang] = $input->section['title'];
-            $ok = $this->trans->add($input->section['section_id'], 'nav', array($input->navLang => $input->section['title']));
-
-            //  assign title id and languages for update
-            $input->section['title'] = $input->section['section_id'];
+        if ($input->section['title'] != $input->section['title_original']) {           
+            if ($input->section['trans_id']) {
+                $strings[$input->navLang] = $input->section['title'];                
+                $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
+            }
         }
 
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -685,8 +684,8 @@ class PageMgr extends SGL_Manager
 
         //  FIXME currently only set translation if numeric
         foreach ($sectionNodes as $k => $aValues) {
-            if (is_numeric($aValues['title'])) {
-                $sectionNodes[$k]['title'] = $aTranslations[$aValues['title']];
+            if ($aValues['trans_id']) {
+                $sectionNodes[$k]['title'] = $aTranslations[$aValues['trans_id']];
             }
         }
 

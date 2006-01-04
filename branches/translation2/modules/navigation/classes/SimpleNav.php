@@ -254,9 +254,8 @@ class SimpleNav
             }
 
             //  retreive translation
-            if (is_numeric($section->title)) {
-                $titleID = $section->title; unset($section->title);
-                $section->title = $this->_aTranslations[$titleID];
+            if ($section->trans_id) {
+                $section->title = $this->_aTranslations[$section->trans_id];
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
