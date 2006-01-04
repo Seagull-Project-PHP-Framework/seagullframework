@@ -53,18 +53,20 @@ class BlockFormDynamic
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
         require_once 'DB/DataObject.php';
         $sectionList = DB_DataObject::factory('Section');
-        $sectionList->whereAdd('parent_id = 0');
-        $sectionList->orderBy('section_id ASC');
+        $sectionList->groupBy('root_id, parent_id, section_id');
         $result = $sectionList->find();
         if ($result > 0) {
             $trans = & SGL_Translation::singleton();
 
             while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
-                    $sections[ $sectionList->section_id ] = $trans->get($sectionList->title, 'nav', SGL_Translation::getLangID());   
+                    $sections[$sectionList->section_id] = $trans->get($sectionList->title,
+                        'nav', SGL_Translation::getLangID());
                 } else {
-                    $sections[ $sectionList->section_id ] = $sectionList->title;
+                    $sections[$sectionList->section_id] = $sectionList->title;
                 }
+                $sections[ $sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
+                    $sections[$sectionList->section_id];
             }
         }
         $sections[0] = 'All sections';
@@ -178,6 +180,14 @@ class BlockFormDynamic
             return class_exists($blockClass);
         }
         return true;
+    }
+
+    function _addSpaces($order) {
+        $s = '';
+        for ($i = 1; $i < $order; $i++) {
+            $s .= '&nbsp;&nbsp;';
+        }
+        return $s;
     }
 }
 ?>

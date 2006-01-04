@@ -13,6 +13,7 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+04-01-06    Blocks can now be enabled/disabled for sub-sections (mstahv)
 04-01-06    Cleanup of Translation2 implementation, navigation section and items
             get their own translation id, no more sharing with titles.  section
             and item_addition both get a new trans_id field (AJ Tarachanowicz)
