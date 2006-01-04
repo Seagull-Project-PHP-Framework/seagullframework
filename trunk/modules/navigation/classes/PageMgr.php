@@ -323,6 +323,7 @@ class PageMgr extends SGL_Manager
         $separator = '/'; // can be configurable later
 
         //  if pageType = static, append articleId, else build page url
+        $input->section['is_static'] = 0;
         switch ( $input->section['articleType'] ) {
         case 'static':
             $input->section['is_static'] = 1;
@@ -491,6 +492,7 @@ class PageMgr extends SGL_Manager
         $separator = '/';
 
         //  if pageType = static, append articleId, else build page url
+        $input->section['is_static'] = 0;
         switch ( $input->section['articleType'] ) {
         case 'static':
             $input->section['is_static'] = 1;
@@ -618,7 +620,7 @@ class PageMgr extends SGL_Manager
             foreach ($input->aDelete as $index => $sectionId) {
                 if ($section = $nestedSet->getNode($sectionId)){
                     //  remove translations
-                    $this->trans->remove($section['title'], 'nav');
+                    $this->trans->remove($section['trans_id'], 'nav');
 
                     //  remove page
                     $nestedSet->deleteNode($sectionId);
