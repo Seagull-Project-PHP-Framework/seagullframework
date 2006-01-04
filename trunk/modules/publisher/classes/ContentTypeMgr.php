@@ -50,15 +50,15 @@ class ContentTypeMgr extends SGL_Manager
 {
 /**
  * Field Types
- * 
+ *
  * @access  public
- * @var     array   
+ * @var     array
  */
 var $fieldTypes;
 
     /**
      * Constructor
-     * 
+     *
      * @access  public
      * @return  void
      */
@@ -66,25 +66,25 @@ var $fieldTypes;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
 
         $this->fieldTypes   = array('0' => 'single line', '1' => 'textarea', '2' => 'HTML textarea');
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'list'      => array('list'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'list'      => array('list'),
         );
     }
 
     /**
      * Validate
-     * 
+     *
      * @access  public
      * @param   object  $req    SGL_Request
      * @param   object  $input  SGL_Output
@@ -104,12 +104,12 @@ var $fieldTypes;
         $input->submit      = $req->get('submitted');
         $input->type        = $req->get('type');
         $input->contentTypeID = $req->get('frmContentTypeID');
-        
-        if (isset($input->submit) && 
-			($input->action == 'add' || $input->action == 'insert' || $input->action == 'update')) 
-		{            
+
+        if (isset($input->submit) &&
+            ($input->action == 'add' || $input->action == 'insert' || $input->action == 'update'))
+        {
             if (empty($input->type['item_type_name'])) {
-                $aErrors['name'] = 'content type name';      
+                $aErrors['name'] = 'content type name';
             }
         }
 
@@ -122,12 +122,12 @@ var $fieldTypes;
     }
 
     /**
-     * Creates array used to create field name/type form. 
-     * 
+     * Creates array used to create field name/type form.
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
-     * @return  void     
+     * @param   object  $input
+     * @param   object  $output
+     * @return  void
      */
     function _add(&$input, &$output)
     {
@@ -135,50 +135,49 @@ var $fieldTypes;
         $output->template = 'contentTypeAdd.html';
         for ($x = 1; $x <= $input->type['fields']; $x++) {
             $output->totalFields[$x] = $x;
-        }           
+        }
         $output->fieldTypes = $this->fieldTypes;
     }
 
     /**
-     * Inserts Item Type into item_type table and Item Type fields into item_type_mapping table. 
-     * 
+     * Inserts Item Type into item_type table and Item Type fields into item_type_mapping table.
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
-     * @return  void     
+     * @param   object  $input
+     * @param   object  $output
+     * @return  void
      */
     function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  insert item type into item_type table.
         $item_type_id   = $this->dbh->nextId($this->conf['table']['item_type']);
-        $item_type_name = $input->type['item_type_name']; 
+        $item_type_name = $input->type['item_type_name'];
         $query = "
-            INSERT INTO {$this->conf['table']['item_type']} (item_type_id, item_type_name) 
+            INSERT INTO {$this->conf['table']['item_type']} (item_type_id, item_type_name)
             VALUES ($item_type_id, '". $item_type_name . "')";
-        
-        $result = $this->dbh->query($query);         
+
+        $result = $this->dbh->query($query);
         if (DB::isError($result)) {
-            SGL::raiseError('Error inserting item type name exiting ...', 
+            SGL::raiseError('Error inserting item type name exiting ...',
                 SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         } else {
             $nameInserted = true;
         }
-                
-        //  insert item type fields into item_type_mapping table.       
+
+        //  insert item type fields into item_type_mapping table.
         foreach ($input->type['field_name'] as $nKey => $nValue) {
             $field_type = $input->type['field_type'][$nKey];
             $item_type_mapping_id = $this->dbh->nextId($this->conf['table']['item_type_mapping']);
-            $subquery = "INSERT INTO {$this->conf['table']['item_type_mapping']} 
-                            (item_type_mapping_id, item_type_id, field_name, field_type) 
+            $subquery = "INSERT INTO {$this->conf['table']['item_type_mapping']}
+                            (item_type_mapping_id, item_type_id, field_name, field_type)
                          VALUES ($item_type_mapping_id, $item_type_id, '" . $nValue . "', $field_type)";
             $subresult = $this->dbh->query($subquery);
-            print_r($subresult);
             if (DB::isError($subresult)) {
-                SGL::raiseError('Error inserting item type fields exiting ...', 
+                SGL::raiseError('Error inserting item type fields exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-            } else { 
+            } else {
                 $fieldsInserted = true;
             }
         }
@@ -186,20 +185,20 @@ var $fieldTypes;
     }
 
     /**
-     * Retrieves data for selected Item Type . 
-     * 
+     * Retrieves data for selected Item Type .
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
-     * @return  void     
+     * @param   object  $input
+     * @param   object  $output
+     * @return  void
      */
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'contentTypeEdit.html';
-                
+
         $query = "SELECT    itm.item_type_id,  it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM      {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['item_type']} it                   
+                  FROM      {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['item_type']} it
                   WHERE     itm.item_type_id = $input->contentTypeID
                   AND       it.item_type_id = $input->contentTypeID";
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -211,29 +210,29 @@ var $fieldTypes;
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            foreach ($aValues as $key => $value) {                              
+            foreach ($aValues as $key => $value) {
                 switch ($key) {
-                    
+
                 case 'item_type_id':
                     $item_type_id = $value;
                     break;
                 case 'item_type_name':
-                    $data[$key] = $value; 
+                    $data[$key] = $value;
                     break;
                 case 'item_type_mapping_id':
                     $item_type_mapping_id = $value;
                     break;
                 case 'field_name':
-                    $field_name = $value;                       
+                    $field_name = $value;
                     break;
-                break;                    
+                break;
                 case 'field_type':
                     $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
                     $data['fields'][$item_type_mapping_id]['field_type'] = $value;
-                    $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;                        
+                    $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;
                     break;
                 }
-                
+
             }
         }
         $output->type = $data;
@@ -241,37 +240,37 @@ var $fieldTypes;
     }
 
     /**
-     * Updates Item Type Name on item_type table and Item Type fields on item_type_mapping table. 
-     * 
+     * Updates Item Type Name on item_type table and Item Type fields on item_type_mapping table.
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
-     * @return  void     
+     * @param   object  $input
+     * @param   object  $output
+     * @return  void
      */
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  update item type name
         if ($input->type['item_type_name'] !== $input->type['item_type_name_original']) {
             $query = "UPDATE {$this->conf['table']['item_type']} SET item_type_name='" . $input->type['item_type_name'] . "'
                       WHERE item_type_id=" . $input->contentTypeID;
             $result = $this->dbh->query($query);
             if (DB::isError($result)) {
-                SGL::raiseError('Error updating item type name exiting ...', 
+                SGL::raiseError('Error updating item type name exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
-            unset($query);                
+            unset($query);
         }
-                       
+
         //  update item type fields
 
         foreach ($input->type['fields'] as $aKey => $aValue) {
             //  field name clause
             if ($aValue['field_name'] !== $aValue['field_name_original']) {
-                $fieldNameClause = "field_name='" . $aValue['field_name'] . "'";   
+                $fieldNameClause = "field_name='" . $aValue['field_name'] . "'";
             }
-            
+
             //  field type clause
             if ($aValue['field_type'] !== $aValue['field_type_original']) {
                 $fieldTypeClause = "field_type=". $aValue['field_type'];
@@ -280,33 +279,33 @@ var $fieldTypes;
             //  build query
             if (!empty($fieldNameClause) && isset($fieldTypeClause)) {   //  update field_name & field_type
                 $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);    
-                            
+                $result = $this->dbh->query($query);
+
             } else if (isset($fieldNameClause)) {                       //  update only field_name
                 $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);  
-                                              
+                $result = $this->dbh->query($query);
+
             } else if (isset($fieldTypeClause)) {                       //  update only field_type
                 $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);                                
+                $result = $this->dbh->query($query);
             }
 
-            if (DB::isError($result)) { 
-                SGL::raiseError('Error updating item type fields exiting ...', 
-                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);                
+            if (DB::isError($result)) {
+                SGL::raiseError('Error updating item type fields exiting ...',
+                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
-            unset($query);                           
+            unset($query);
         }
         SGL::raiseMsg('content type has successfully been updated');
     }
 
     /**
-     * Retrieves all Item Types w/ field names and types. 
-     * 
+     * Retrieves all Item Types w/ field names and types.
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
-     * @return  void     
+     * @param   object  $input
+     * @param   object  $output
+     * @return  void
      */
     function _list(&$input, &$output)
     {
@@ -314,8 +313,8 @@ var $fieldTypes;
 
         $query = "SELECT it.item_type_id, it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
                   FROM {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
-                  WHERE itm.item_type_id = it.item_type_id";  
-              
+                  WHERE itm.item_type_id = it.item_type_id";
+
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',
@@ -323,33 +322,33 @@ var $fieldTypes;
             'perPage'  => $limit,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-        $output->aPagedData = $aPagedData;       
+        $output->aPagedData = $aPagedData;
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            foreach ($aValues as $key => $value) {                              
+            foreach ($aValues as $key => $value) {
                 switch ($key) {
-                
+
                 case 'item_type_mapping_id':
                     $item_type_mapping_id = $value;
                     break;
-                    
+
                 case 'item_type_id':
                     $item_type_id = $value;
                     $data[$item_type_id]['item_type_id'] = $value;
                     break;
-                    
+
                 case 'item_type_name':
-                    $data[$item_type_id][$key] = $value; 
+                    $data[$item_type_id][$key] = $value;
                     break;
-                    
+
                 case 'field_name':
-                    $field_name = $value;                       
+                    $field_name = $value;
                     break;
-                    
+
                 case 'field_type':
                     $data[$item_type_id]['fields'][$item_type_mapping_id] = array($field_name => $this->fieldTypes[$value]);
                     break;
                 }
-                
+
             }
 
         }
@@ -358,7 +357,7 @@ var $fieldTypes;
 
         //  set data array
         $output->aPagedData['data'] = $data;
-                                     
+
         //  total number of fields allowed
         $totalFields = $this->conf['ContentTypeMgr']['totalFields'];
         for($x = 1; $x <= $totalFields; $x++) {
@@ -367,11 +366,11 @@ var $fieldTypes;
     }
 
     /**
-     * Deletes selected Item Type from item_type table and Item Type fields from item_type_mapping table. 
-     * 
+     * Deletes selected Item Type from item_type table and Item Type fields from item_type_mapping table.
+     *
      * @access  private
-     * @param   object  $input  
-     * @param   object  $output 
+     * @param   object  $input
+     * @param   object  $output
      * @return  void
      */
     function _delete(&$input, &$output)
@@ -379,25 +378,25 @@ var $fieldTypes;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($input->aDelete)) {
-            
+
             foreach ($input->aDelete as $index => $itemTypeId) {
                 //  delete item type from item_type table
-                $query = "DELETE FROM {$this->conf['table']['item_type']} WHERE item_type_id=$itemTypeId"; 
+                $query = "DELETE FROM {$this->conf['table']['item_type']} WHERE item_type_id=$itemTypeId";
                 if (DB::isError($this->dbh->query($query))) {
-                    SGL::raiseError('Error updating item type name exiting ...', 
+                    SGL::raiseError('Error updating item type name exiting ...',
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 }
                 unset($query);
                 //  delete item type fields from item_type_mapping
-                $query = "DELETE FROM {$this->conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId"; 
+                $query = "DELETE FROM {$this->conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId";
                 if (DB::isError($this->dbh->query($query))) {
-                    SGL::raiseError('Error updating item type name exiting ...', 
+                    SGL::raiseError('Error updating item type name exiting ...',
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 }
-                SGL::raiseMsg('content(s) type has successfully been deleted');                
+                SGL::raiseMsg('content(s) type has successfully been deleted');
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to ' . 
+            SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
     }
