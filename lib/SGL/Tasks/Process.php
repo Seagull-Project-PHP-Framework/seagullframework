@@ -916,8 +916,11 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
         //  generate navigation from appropriate driver
         if ($this->conf['navigation']['enabled']) {
             $navClass = $this->conf['navigation']['driver'];
+
             // change driver if adminGuiAllowed
-            if ($input->data->adminGuiAllowed) $navClass = 'AdminNav';
+            if ($input->data->adminGuiAllowed) {
+                $navClass = 'AdminNav';
+            }
             $navDriver = $navClass . '.php';
             if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
                 require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
@@ -958,17 +961,17 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
         $action = $req->get('action');
 
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        $userRID = SGL_HTTP_Session::getUserType();
+        $userRid = SGL_HTTP_Session::getUserType();
         $input->data->adminGuiAllowed = false;
         $adminGuiAllowed = $adminGuiRequested = false;
 
         //  setup which GUI to load depending on user and manager
-        if (!empty($this->conf['gui']['adminGuiAllowed']) &&
-                $this->conf['gui']['adminGuiAllowed']) {
+        if (!empty($this->conf['site']['adminGuiEnabled']) &&
+                $this->conf['site']['adminGuiEnabled'] == true) {
             $input->data->adminGuiAllowed = false;
 
             // first check if userRID allows to switch to adminGUI
-            if ($userRID == SGL_ADMIN) {
+            if ($userRid == SGL_ADMIN) {
                 $adminGuiAllowed = true;
             }
 
@@ -990,7 +993,8 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
                 $input->data->adminGuiAllowed = true;
                 $input->data->theme = 'default_admin';
 
-                $this->managerPanel = &SGL_Manager_Panel::singleton($input->data);
+                require_once SGL_CORE_DIR . '/ManagerPanel.php';
+                $this->managerPanel = &SGL_ManagerPanel::singleton($input->data);
             }
         }
 
