@@ -502,7 +502,7 @@ class MaintenanceMgr extends SGL_Manager
             require_once 'System.php';
             $theme = $_SESSION['aPrefs']['theme'];
             $dir = SGL_CACHE_DIR . "/tmpl/$theme";
-            $aFiles = System::find("$dir -name *");
+            $aFiles = System::find(array($dir, "-name", "*"));
 
             //  remove last element found which is the theme folder
             array_pop($aFiles);
