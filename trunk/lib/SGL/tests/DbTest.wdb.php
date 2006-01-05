@@ -31,7 +31,7 @@ class DbTest extends UnitTestCase {
 		SGL_DB::setConnection($dbh1);
 
     	require_once 'DB/DataObject.php';
-    	$dbdo = DB_DataObject::factory('module');
+    	$dbdo = DB_DataObject::factory($this->conf['table']['module']);
     	$dbh2 = $dbdo->getDatabaseConnection();
 
         $this->assertReference($dbh1, $dbh2);

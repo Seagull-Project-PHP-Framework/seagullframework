@@ -178,7 +178,7 @@ class ModuleMgr extends SGL_Manager
         $output->template = 'moduleList.html';
 
         require_once 'DB/DataObject.php';
-        $newEntry = DB_DataObject::factory('Module');
+        $newEntry = DB_DataObject::factory($this->conf['table']['module']);
         $newEntry->setFrom($input->module);
         $newEntry->module_id = $this->dbh->nextId($this->conf['table']['module']);
         if ($newEntry->insert()) {
@@ -196,7 +196,7 @@ class ModuleMgr extends SGL_Manager
         $output->action = 'update';
         $output->template  = 'moduleEdit.html';
         require_once 'DB/DataObject.php';
-        $oModule = DB_DataObject::factory('Module');
+        $oModule = DB_DataObject::factory($this->conf['table']['module']);
         $oModule->get($input->moduleId);
         $output->module = $oModule;
         $output->isConfigurable = ($oModule->is_configurable) ? ' checked' : '';
@@ -207,7 +207,7 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
         require_once 'DB/DataObject.php';
-        $newEntry = DB_DataObject::factory('Module');
+        $newEntry = DB_DataObject::factory($this->conf['table']['module']);
         $newEntry->get($input->module->module_id);
         $newEntry->setFrom($input->module);
         $success = $newEntry->update();
@@ -225,7 +225,7 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'DB/DataObject.php';
-        $rm = DB_DataObject::factory('Module');
+        $rm = DB_DataObject::factory($this->conf['table']['module']);
         $rm->get($input->module->module_id);
         $rm->delete();
 
