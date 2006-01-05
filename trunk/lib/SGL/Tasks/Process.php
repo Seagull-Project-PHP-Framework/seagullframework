@@ -265,25 +265,25 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authenticationEnabled']) {
 
-            //  prepare referer info for redirect after login
-            $url = $input->getCurrentUrl();
-            $redir = $url->toString();
-
-            //  check that session is not invalid or timed out
-            $loginPage = array( 'moduleName'    => 'user',
-                                'managerName'   => 'login',
-                                'redir'         => urlencode($redir));
-
             $session = $input->get('session');
 
-            if (!$session->isValid()) {
-                SGL::raiseMsg('authorization required');
-                SGL_HTTP::redirect($loginPage);
+            //  check that session is not invalid or timed out
+            if (!$session->isValid() || $session->isTimedOut()) {
 
-            } elseif ($session->isTimedOut()) {
-                $session->destroy();
-                SGL::raiseMsg('session timeout');
-                SGL_HTTP::redirect($loginPage);
+                //  prepare referer info for redirect after login
+                $url = $input->getCurrentUrl();
+                $redir = $url->toString();
+                $loginPage = array( 'moduleName'    => 'user',
+                                    'managerName'   => 'login',
+                                    'redir'         => urlencode($redir));
+                if (!$session->isValid()) {
+                    SGL::raiseMsg('authorization required');
+                    SGL_HTTP::redirect($loginPage);
+                } else {
+                    $session->destroy();
+                    SGL::raiseMsg('session timeout');
+                    SGL_HTTP::redirect($loginPage);
+                }
             }
         } else {
             //  no authentication required
