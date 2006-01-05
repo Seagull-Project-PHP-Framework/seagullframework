@@ -45,7 +45,7 @@
  * @version $Revision: 1.6 $
  * @since   PHP 4.1
  */
-class SubNavigation
+class Navigation
 {
     function init($output, $block_id)
     {
@@ -60,17 +60,16 @@ class SubNavigation
         
         $nav = & new SimpleNav($output);
         $aSections = $nav->getSectionsByRoleId();
-        $subSections = $nav->getSectionsByRoleId($nav->_currentSectionId);
 
-        if ($subSections) {
-            $str = $nav->_toHtml($subSections);
-  $text = <<< NEWS
-       
-        $str
-        
-NEWS;
+        // last element in array is a top current node
+        $parentSection = sizeof($nav->_aParentsOfCurrentPage) > 1
+            ? array_pop($nav->_aParentsOfCurrentPage)
+            : $nav->_currentSectionId;
 
-            return $text;
+        $subSections = $nav->getSectionsByRoleId($parentSection);
+
+        if ($subSections && $parentSection) {
+            return $nav->_toHtml($subSections);
         } else {
             return false;
         }

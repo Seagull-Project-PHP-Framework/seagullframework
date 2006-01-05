@@ -272,6 +272,9 @@ class SimpleNav
                  foreach ($section->children as $node) {
                       if ($node->isCurrent || $node->childIsCurrent) {
                            $section->childIsCurrent = true;
+
+                           // collect all current sections
+                           $this->_aParentsOfCurrentPage[] = $section->section_id;
                        }
                    }
             }
