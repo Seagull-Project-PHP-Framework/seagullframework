@@ -6,7 +6,7 @@
  * @package SGL
  * @author  Julien Casanova <julien_casanova@yahoo.fr>
  */
-class SGL_Manager_Panel
+class SGL_ManagerPanel
 {
     /**
      * Current module
@@ -50,10 +50,10 @@ class SGL_Manager_Panel
      * @access  public
      * @return  void
      */
-    function SGL_Manager_Panel(&$input)
+    function SGL_ManagerPanel(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $req = &SGL_Request::singleton();
         $reg = &SGL_Registry::singleton();
         $this->_aData = '';
@@ -76,9 +76,9 @@ class SGL_Manager_Panel
     function &singleton(&$input)
     {
         static $instance;
-        
+
         if(!isset($instance)) {
-            $instance = new SGL_Manager_Panel($input);
+            $instance = new SGL_ManagerPanel($input);
         }
         return $instance;
     }
@@ -96,14 +96,14 @@ class SGL_Manager_Panel
         $currAction = $this->action;
 
         if (!isset($aMgrOptions[$currModule])) {
-            SGL::raiseError("Je n'ai pas trouvé le module $currModule dans le tableau de données.<br />Module $currModule, Manager $currMgr, Action $currAction", PEAR_ERROR_DIE);
+            SGL::raiseError("Je n'ai pas trouvï¿½ le module $currModule dans le tableau de donnï¿½es.<br />Module $currModule, Manager $currMgr, Action $currAction", PEAR_ERROR_DIE);
         }
         if (!isset($aMgrOptions[$currModule][$currMgr])) {
-            SGL::raiseError('Je n\'ai pas trouvé le manager '.$currMgr.' du module '.$currModule.' dans le tableau de données.', PEAR_ERROR_DIE);
+            SGL::raiseError('Je n\'ai pas trouvï¿½ le manager '.$currMgr.' du module '.$currModule.' dans le tableau de donnï¿½es.', PEAR_ERROR_DIE);
         }
         $aMgrOptions = isset($aMgrOptions[$currModule][$currMgr]) ? $aMgrOptions[$currModule][$currMgr] : '';
         if (empty($aMgrOptions)) {
-            SGL::raiseError('Je n\'ai pas trouvé les infos du Manager dans le tableau de données.', PEAR_ERROR_DIE);
+            SGL::raiseError('Je n\'ai pas trouvï¿½ les infos du Manager dans le tableau de donnï¿½es.', PEAR_ERROR_DIE);
         }
         // Select appropriate pageTitle in array
         if(isset($aMgrOptions[$currAction]['pageTitle']) && !empty($aMgrOptions[$currAction]['pageTitle'])) {
