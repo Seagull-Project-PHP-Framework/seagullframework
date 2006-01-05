@@ -1,0 +1,72 @@
+<div id="sgl-module-header"> <!-- Manager Panel -->
+    <div id="sgl-module-header-right"> <!-- ne sert pas pour l'instant -->
+        <div class="actions-desc" flexy:if="managerPanel[actionLinks]">
+            <h2>{translate(#action#,#ucfirst#)}</h2>
+            {foreach:managerPanel[actionLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="actions-desc" flexy:if="managerPanel[manageLinks]">
+            <h2>{translate(#manage#,#ucfirst#)}</h2>
+            {foreach:managerPanel[manageLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="module-desc" id="module-{managerPanel[module]}">
+            <h1>{managerPanel[pageTitle]}</h1>
+            <p>{managerPanel[instructions]:h}</p>
+            <!--<br /><p>Gestionnaires connexes : {foreach:managerPanel[manageLinks],key,res}
+                <input type="button" class="actionLinks" value="{res[title]}" onclick="document.location.href='{res[link]}'"/>
+                {end:}</p>-->
+        </div>
+        <div class="spacer">&nbsp;</div>
+    </div>
+</div> <!-- close Manager Panel -->
+<div id="sgl-module-header"> <!-- Manager Panel -->
+    <div id="sgl-module-header-right"> <!-- ne sert pas pour l'instant -->
+        <div class="actions-desc" flexy:if="managerPanel[actionLinks]">
+            <h2>{translate(#action#,#ucfirst#)}</h2>
+            {foreach:managerPanel[actionLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="actions-desc" flexy:if="managerPanel[manageLinks]">
+            <h2>{translate(#manage#,#ucfirst#)}</h2>
+            {foreach:managerPanel[manageLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="module-desc" id="module-{managerPanel[module]}">
+            <h1>{managerPanel[pageTitle]}</h1>
+            <p>{managerPanel[instructions]:h}</p>
+            <!--<br /><p>Gestionnaires connexes : {foreach:managerPanel[manageLinks],key,res}
+                <input type="button" class="actionLinks" value="{res[title]}" onclick="document.location.href='{res[link]}'"/>
+                {end:}</p>-->
+        </div>
+        <div class="spacer">&nbsp;</div>
+    </div>
+</div> <!-- close Manager Panel -->
+<div id="sgl-module-header"> <!-- Manager Panel -->
+    <div id="sgl-module-header-right"> <!-- ne sert pas pour l'instant -->
+        <div class="actions-desc" flexy:if="managerPanel[actionLinks]">
+            <h2>{translate(#action#,#ucfirst#)}</h2>
+            {foreach:managerPanel[actionLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="actions-desc" flexy:if="managerPanel[manageLinks]">
+            <h2>{translate(#manage#,#ucfirst#)}</h2>
+            {foreach:managerPanel[manageLinks],key,res}
+            <a href="{res[link]}">{res[title]}</a>
+            {end:}
+        </div>
+        <div class="module-desc" id="module-{managerPanel[module]}">
+            <h1>{managerPanel[pageTitle]}</h1>
+            <p>{managerPanel[instructions]:h}</p>
+            <!--<br /><p>Gestionnaires connexes : {foreach:managerPanel[manageLinks],key,res}
+                <input type="button" class="actionLinks" value="{res[title]}" onclick="document.location.href='{res[link]}'"/>
+                {end:}</p>-->
+        </div>
+        <div class="spacer">&nbsp;</div>
+    </div>
+</div> <!-- close Manager Panel -->

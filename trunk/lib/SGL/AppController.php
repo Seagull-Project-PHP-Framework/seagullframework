@@ -256,9 +256,10 @@ class SGL_HtmlView extends SGL_View
         $process =  new SGL_Process_BuildOutputData(
                     new SGL_Process_SetupWysiwyg(
                     new SGL_Process_GetPerformanceInfo(
+                    new SGL_Process_SetupGui(
                     new SGL_Process_SetupNavigation(
                     new SGL_Process_SetupBlocks()
-                   ))));
+                   )))));
 
         $process->process($view);
     }
