@@ -945,7 +945,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
  * Setup which Graphical User Interface to use.
  *
  * @package SGL
- * @author  
+ * @author
  */
 class SGL_Process_SetupGui extends SGL_DecorateProcess
 {
@@ -963,7 +963,8 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
         $adminGuiAllowed = $adminGuiRequested = false;
 
         //  setup which GUI to load depending on user and manager
-        if ($this->conf['gui']['adminGuiAllowed']) {
+        if (!empty($this->conf['gui']['adminGuiAllowed']) &&
+                $this->conf['gui']['adminGuiAllowed']) {
             $input->data->adminGuiAllowed = false;
 
             // first check if userRID allows to switch to adminGUI
@@ -975,7 +976,7 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
             if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                 && $this->conf[$mgrName]['adminGuiAllowed']) {
                 $adminGuiRequested = true;
-                
+
                 // exception
                 // 1. allows to preview articles with default theme
                 if ($mgrName == 'ArticleMgr' && $action == 'view') {
@@ -987,12 +988,8 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
 
                 // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
                 $input->data->adminGuiAllowed = true;
-                // CONDITION TO REMOVE, only for switching design
-                if (strstr($_SERVER['SERVER_NAME'], 'design')) {
-                    $input->data->theme = 'admin';
-                } else {
-                    $input->data->theme = 'admin';
-                }
+                $input->data->theme = 'default_admin';
+
                 $this->managerPanel = &SGL_Manager_Panel::singleton($input->data);
             }
         }
