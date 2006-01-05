@@ -1,0 +1,123 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="modules" id="modules" method="post" flexy:ignore>
+    <p><input type="hidden" name="action" value="delete" /></p><br />
+    {if:pager}<flexy:include src="pager.html" />{end:}
+
+    <div class="pinstripe">
+        <table>
+            <tr>
+                <td colspan="7">
+                    <input type="button" value="{translate(#Add a module#)}" 
+                        onclick="javascript:document.location.href='{makeUrl(#add#,#module#,#default#)}'" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>{translate(#Module#)}</th>
+                <th>{translate(#Active#)}</th>
+                <th>{translate(#Name#)}</th>
+                <th>{translate(#Description#)}</th>
+                <th>{translate(#Action#)}</th>
+            </tr>
+            <tr flexy:foreach="aPagedData[data],key,aValue">
+                <td align="center">
+                    <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">
+                        <img src="{webRoot}/themes/{theme}/images/sm_{aValue[icon]}" alt="" />
+                    </a>
+                </td>
+                <td align="center">
+                    <img src="{webRoot}/themes/{theme}/images/enabled.gif" alt="enabled" />
+                </td>
+                <td>{aValue[title]}</td>
+                <td>{aValue[description]}</td>
+                <td>
+                    <button name="activate" value="Rich button" type="button" onClick="alert('coming soon')">uninstall</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="modules" id="modules" method="post" flexy:ignore>
+    <p><input type="hidden" name="action" value="delete" /></p><br />
+    {if:pager}<flexy:include src="pager.html" />{end:}
+
+    <div class="pinstripe">
+        <table>
+            <tr>
+                <td colspan="7">
+                    <input type="button" value="{translate(#Add a module#)}" 
+                        onclick="javascript:document.location.href='{makeUrl(#add#,#module#,#default#)}'" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>{translate(#Module#)}</th>
+                <th>{translate(#Active#)}</th>
+                <th>{translate(#Name#)}</th>
+                <th>{translate(#Description#)}</th>
+                <th>{translate(#Action#)}</th>
+            </tr>
+            <tr flexy:foreach="aPagedData[data],key,aValue">
+                <td align="center">
+                    <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">
+                        <img src="{webRoot}/themes/{theme}/images/sm_{aValue[icon]}" alt="" />
+                    </a>
+                </td>
+                <td align="center">
+                    <img src="{webRoot}/themes/{theme}/images/enabled.gif" alt="enabled" />
+                </td>
+                <td>{aValue[title]}</td>
+                <td>{aValue[description]}</td>
+                <td>
+                    <button name="activate" value="Rich button" type="button" onClick="alert('coming soon')">uninstall</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="modules" id="modules" method="post" flexy:ignore>
+    <p><input type="hidden" name="action" value="delete" /></p><br />
+    {if:pager}<flexy:include src="pager.html" />{end:}
+
+    <div class="pinstripe">
+        <table>
+            <tr>
+                <td colspan="7">
+                    <input type="button" value="{translate(#Add a module#)}" 
+                        onclick="javascript:document.location.href='{makeUrl(#add#,#module#,#default#)}'" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>{translate(#Module#)}</th>
+                <th>{translate(#Active#)}</th>
+                <th>{translate(#Name#)}</th>
+                <th>{translate(#Description#)}</th>
+                <th>{translate(#Action#)}</th>
+            </tr>
+            <tr flexy:foreach="aPagedData[data],key,aValue">
+                <td align="center">
+                    <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">
+                        <img src="{webRoot}/themes/{theme}/images/sm_{aValue[icon]}" alt="" />
+                    </a>
+                </td>
+                <td align="center">
+                    <img src="{webRoot}/themes/{theme}/images/enabled.gif" alt="enabled" />
+                </td>
+                <td>{aValue[title]}</td>
+                <td>{aValue[description]}</td>
+                <td>
+                    <button name="activate" value="Rich button" type="button" onClick="alert('coming soon')">uninstall</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>

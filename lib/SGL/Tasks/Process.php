@@ -916,6 +916,8 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
         //  generate navigation from appropriate driver
         if ($this->conf['navigation']['enabled']) {
             $navClass = $this->conf['navigation']['driver'];
+            // change driver if adminGuiAllowed
+            if ($input->data->adminGuiAllowed) $navClass = 'AdminNav';
             $navDriver = $navClass . '.php';
             if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
                 require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
@@ -939,6 +941,65 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
     }
 }
 
+/**
+ * Setup which Graphical User Interface to use.
+ *
+ * @package SGL
+ * @author  
+ */
+class SGL_Process_SetupGui extends SGL_DecorateProcess
+{
+    function process(&$input)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $mgr = $input->data->get('manager');
+        $req = &SGL_Request::singleton();
+        $action = $req->get('action');
+
+        $mgrName = SGL_Inflector::caseFix(get_class($mgr));
+        $userRID = SGL_HTTP_Session::getUserType();
+        $input->data->adminGuiAllowed = false;
+        $adminGuiAllowed = $adminGuiRequested = false;
+
+        //  setup which GUI to load depending on user and manager
+        if ($this->conf['gui']['adminGuiAllowed']) {
+            $input->data->adminGuiAllowed = false;
+
+            // first check if userRID allows to switch to adminGUI
+            if ($userRID == SGL_ADMIN) {
+                $adminGuiAllowed = true;
+            }
+
+            // then check if manager requires to switch to adminGUI
+            if (isset($this->conf[$mgrName]['adminGuiAllowed'])
+                && $this->conf[$mgrName]['adminGuiAllowed']) {
+                $adminGuiRequested = true;
+                
+                // exception
+                // 1. allows to preview articles with default theme
+                if ($mgrName == 'ArticleMgr' && $action == 'view') {
+                    $adminGuiRequested = false;
+                }
+            }
+
+            if ($adminGuiAllowed && $adminGuiRequested) {
+
+                // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
+                $input->data->adminGuiAllowed = true;
+                // CONDITION TO REMOVE, only for switching design
+                if (strstr($_SERVER['SERVER_NAME'], 'design')) {
+                    $input->data->theme = 'admin';
+                } else {
+                    $input->data->theme = 'admin';
+                }
+                $this->managerPanel = &SGL_Manager_Panel::singleton($input->data);
+            }
+        }
+
+        $this->processRequest->process($input);
+    }
+}
 
 /**
  * Initialises block loading.
