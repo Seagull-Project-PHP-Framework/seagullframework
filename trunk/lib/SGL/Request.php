@@ -58,9 +58,9 @@ class SGL_Request
      */
     function SGL_Request()
     {
-    	if ($this->isEmpty()) {
-			$this->init();
-    	}
+        if ($this->isEmpty()) {
+            $this->init();
+        }
     }
 
     function init()
@@ -114,24 +114,22 @@ class SGL_Request
 
         //  get current url object
         #$urlHandler = $conf['site']['urlHandler'];
-	    $cache = & SGL::cacheSingleton();
-	    $cacheId = md5($_SERVER['PHP_SELF']);
+        $cache = & SGL::cacheSingleton();
+        $cacheId = md5($_SERVER['PHP_SELF']);
 
         if ($data = $cache->get($cacheId, 'urls')) {
             $url = unserialize($data);
             SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
         } else {
-
-			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
-			require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
-			require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
-			require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
-	        $aStrats = array(
-	            new SGL_UrlParserClassicStrategy(),
-	            new SGL_UrlParserAliasStrategy(),
-	            new SGL_UrlParserSefStrategy(),
-	            );
-	        $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
+            require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
+            $aStrats = array(
+                new SGL_UrlParserClassicStrategy(),
+                new SGL_UrlParserAliasStrategy(),
+                new SGL_UrlParserSefStrategy(),
+                );
+            $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
 
             $data = serialize($url);
             $cache->save($data, $cacheId, 'urls');
@@ -149,7 +147,7 @@ class SGL_Request
 
     function merge($aHash)
     {
-   		$firstKey = key($aHash);
+        $firstKey = key($aHash);
         if (!array_key_exists($firstKey, $this->aProps)) {
             $this->aProps = array_merge_recursive($this->aProps, $aHash);
         }
