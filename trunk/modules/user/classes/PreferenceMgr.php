@@ -167,9 +167,14 @@ class PreferenceMgr extends SGL_Manager
         $oPref->preference_id = $this->dbh->nextId($this->conf['table']['preference']);
         $success = $oPref->insert();
         if ($success) {
-            //  synchronise with user_preference table
-            $ret = $this->da->syncDefaultPrefs();
-            SGL::raiseMsg('pref successfully added');
+
+            // add new preference to all users prefs
+            $oUser = DB_DataObject::factory('Usr');
+            $oUser->find();
+            while ($oUser->fetch()) {
+                $ret = $this->da->addPrefsByUserId(array($oPref->preference_id => $oPref->default_value), $oUser->usr_id);
+            }
+
         } else {
            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -220,6 +225,9 @@ class PreferenceMgr extends SGL_Manager
             $oUserPref = DB_DataObject::factory('User_preference');
             $oUserPref->get('preference_id', $deleteId);
             $oUserPref->delete();
+            while ($oUserPref->fetch()) {
+                $oUserPref->delete();
+            }
             unset($oUserPref);
         }
         SGL::raiseMsg('pref successfully deleted');
