@@ -310,7 +310,8 @@ class SimpleNav
                 $realQueryS = preg_replace('/staticId[^$]*/','',$realQueryS);
                 // remove trailing slash
                 $realQueryS = preg_replace('/\/$/','',$realQueryS);
-    
+                // remove first slash
+                $realQueryS = preg_replace('/^\//','',$realQueryS);
                 if (
                     //  a. the strings are identical and it's not a static article
                     ($section->resource_uri == $querystring && $this->_staticId == 0 )
@@ -318,13 +319,13 @@ class SimpleNav
                     || (
                         $section->resource_uri !== '' &&
                         isset($url->aQueryData['moduleName']) &&
-                        0 === strpos($url->aQueryData['moduleName'] . $realQueryS, $section->resource_uri)
+                        0 === strpos($url->aQueryData['moduleName'] .'/'. $realQueryS.'/', $section->resource_uri.'/')
                     )
                     // b.2 shortened form uri
                     || (
                         $section->resource_uri !== '' &&
                         isset($url->aQueryData['moduleName']) &&
-                        0 === strpos($realQueryS, $section->resource_uri)
+                        0 === strpos($realQueryS.'/', $section->resource_uri.'/')
                     )
                     //  c. it is a static article, so staticId must be non-zero
                     || ($section->section_id != 0 && $section->section_id == $this->_staticId)
