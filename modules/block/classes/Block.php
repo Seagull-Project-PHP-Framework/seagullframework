@@ -55,6 +55,12 @@ class Block extends DataObjects_Block
     var $sections; // This array holds the block assignments
     var $sort_id;
 
+    function Block()
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+    }
+
     /**
      * Loads the sections where a block should appear
      *
