@@ -83,7 +83,7 @@
         function fck_add(id)
         {
             i = oFCKEditors.length;
-            oFCKEditors[i] = new FCKeditor(id);
+            oFCKEditors[i] = new FCKeditor(id, '100%', 500);
             oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/fck/";
             oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
             oFCKEditors[i].ReplaceTextarea();
