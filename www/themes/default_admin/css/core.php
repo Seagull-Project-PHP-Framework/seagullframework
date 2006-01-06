@@ -73,7 +73,7 @@ a.button {
 #header-right {
     float: right;
     margin: 10px;
-    margin-right: 20px;
+    margin-right: 10px;
     line-height: 150%;
     font-size: 0.9em;
     color: <?php echo $primaryTextLight ?>;
