@@ -13,6 +13,10 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+06-01-06    Added a wrapper to create html views easily:
+                $view = new SGL_HtmlSimpleView($output);
+                $html = $view->render();
+            (Andrey Podshivalov)
 06-01-06    Implemented post-connect query which is used to set the default
             character set for the current connection (MySQL 4.1 or higher). For
             example: SET NAMES utf8

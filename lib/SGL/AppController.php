@@ -290,6 +290,34 @@ class SGL_CliView extends SGL_View
     }
 }
 
+class SGL_HtmlSimpleView extends SGL_View
+{
+    /**
+     * HTML renderer decorator
+     *
+     * @param SGL_Output $data
+     * @return string   Rendered output data
+     */
+    function SGL_HtmlSimpleView(&$data)
+    {
+        //  prepare renderer class
+        $c              = &SGL_Config::singleton();
+        $conf           = $c->getAll();
+        $templateEngine = ucfirst($conf['site']['templateEngine']);
+        $rendererClass  = 'SGL_Html'.$templateEngine.'RendererStrategy';
+        $rendererFile   = 'Html'.$templateEngine.'RendererStrategy.php';
+        
+        if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
+        	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
+        } else {
+        	PEAR::raiseError('Could not find renderer',
+        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+        }
+        
+    	parent::SGL_View($data, new $rendererClass);
+    }
+}
+
 /**
  * Abstract request processor.
  *
