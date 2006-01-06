@@ -31,14 +31,7 @@ class OnlineUsers
         $output->moduleName     = $this->templatePath;
         $output->masterTemplate = $this->template;
 
-        // get template engine type
-        $c              = &SGL_Config::singleton();
-        $conf           = $c->getAll();
-        $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass  = 'SGL_Html' . $templateEngine . 'RendererStrategy';
-
-        // render content
-        $view = new SGL_View($output, new $rendererClass());
+        $view = new SGL_HtmlSimpleView($output);
         return $view->render();    
     }
 }
