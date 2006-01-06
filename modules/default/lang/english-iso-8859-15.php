@@ -229,6 +229,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'DB username'=>'DB username',
         'DB password'=>'DB password',
         'DB name'=>'DB name',
+        'Post-connection query'=>'Post-connection query',
         'Database Table Mappings'=>'Database Table Mappings',
         'Logging options'=>'Logging options',
         'Enable logs'=>'Enable logs',
@@ -302,6 +303,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Template Engine' => 'Template Engine',
         'Seagull allows you to use the template engine of your choice' => 'Seagull allows you to use the template engine of your choice',
         'The Smarty template hooks have not been implemented yet' => 'The Smarty template hooks have not been implemented yet',
+        'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8' => 'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8',
 
 /*
  ConfigMgr: MTA options

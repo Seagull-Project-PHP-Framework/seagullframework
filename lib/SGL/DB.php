@@ -67,24 +67,27 @@ class SGL_DB
     function &singleton($dsn = null)
     {
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         static $aInstances;
         if (!isset($aInstances)) {
-			$aInstances = array();
+            $aInstances = array();
         }
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
 
-        	$conn = DB::connect($dsn);
+            $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
                 return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                     SGL_ERROR_DBFAILURE, $fatal);
             }
-
+            if (!empty($conf['db']['post-connect'])) {
+                $conn->query($conf['db']['post-connect']);
+            }
             $conn->setFetchMode(DB_FETCHMODE_OBJECT);
-			$aInstances[$signature] = $conn;
-
+            $aInstances[$signature] = $conn;
         }
         return $aInstances[$signature];
     }
