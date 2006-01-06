@@ -219,6 +219,7 @@ class ConfigMgr extends SGL_Manager
         $installedLanguages = $this->trans->getLangs();
         $output->aInstalledLangs = $installedLanguages;
 
+        $output->addOnLoadEvent("showConfigOptions('generalSiteOptions')");
     }
 
     function _edit(&$input, &$output)

@@ -132,7 +132,7 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "  SELECT is_configurable, title, description, admin_uri, icon
+        $query = "  SELECT module_id, is_configurable, title, description, admin_uri, icon
                     FROM {$this->conf['table']['module']}
                     ORDER BY module_id";
         $aModules = $this->dbh->getAll($query);

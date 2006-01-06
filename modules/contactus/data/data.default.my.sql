@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'contactus', 'Contact Us', 'The ''Contact Us'' module can be used to present a form to your users allowing them to contact the site administrators.', NULL, 'contactus.png');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'contactus', 'Contact Us', 'The ''Contact Us'' module can be used to present a form to your users allowing them to contact the site administrators.', NULL, '48/module_contactus.png');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
