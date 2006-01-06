@@ -1,3 +1,56 @@
+/**
+    * Allows to create/modify a field value within a form before submitting it.
+    * Launches the above function depending on the status of a trigger checkbox 
+ 
+    * @param   string   formName Obviously the form name you want to submit
+    * @param   string   fieldToUpdate The element name you want to modify
+    * @param   string   fieldValue
+    * @param   bool      doCreate If you want to create a hidden input element instead of modifying an existing one
+    *
+    * @return  void Submit the form
+    */
+function formSubmit(formName, fieldName, fieldValue, doCreate)
+{
+    var form = document.forms[formName];
+    if (typeof doCreate != "undefined" && doCreate == 1) {
+        // not available currently
+    } else {
+        if (fieldName) {
+            var elm = form.elements[fieldName];
+            elm.value = fieldValue;
+        }
+    }
+    form.submit();
+}
+
+//  Allows to show/hide a block of options (defined within a fieldset) in configEdit form
+function showConfigOptions (option)
+{
+    if (!document.conf) return true;
+    var elms = document.conf.getElementsByTagName("fieldset");
+    for (i=0; i<elms.length; i++) {
+        if (elms[i].id == option) {
+            elms[i].style.display = "block";
+        } else {
+            elms[i].style.display = "none";
+        }
+    }
+}
+
+//  Mandatory function when using showConfigOptions() above
+//  Dynamically creates links to display selected block of options
+function createConfigOptionsLinks()
+{
+    if (!document.getElementById("optionsLinks")) return true;
+    var elms = document.conf.getElementsByTagName("fieldset");
+    var optionsLinks = '<ul>';
+    for (i=0; i<elms.length; i++) {
+        optionsLinks += "<li><a href='javascript:showConfigOptions(\""+elms[i].id +"\")'>"+elms[i].getElementsByTagName("h3")[0].innerHTML +"</a></li>";
+    }
+    optionsLinks += "</ul>";
+    document.getElementById("optionsLinks").innerHTML += optionsLinks;
+}
+
 //  for block manager
 
 var oldDate;
@@ -307,4 +360,22 @@ function setCheckboxes(the_form, element_name, do_check)
         elts.checked        = do_check;
     }
     return true;
+}
+
+/**
+ * Launches the above function depending on the status of a trigger checkbox 
+ *
+ * @param   string   the form name
+ * @param   string   the element name
+ * @param   boolean   the status of trigger checkbox
+ *
+ * @return  void 
+ */
+function applyToAllCheckboxes(formName, elementName, isChecked)
+{
+    if(isChecked) {
+        setCheckboxes(formName, elementName, true)
+    } else {
+        setCheckboxes(formName, elementName, false)
+    }
 }

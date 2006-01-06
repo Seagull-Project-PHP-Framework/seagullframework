@@ -195,8 +195,8 @@ $aMgrOptions = array
             'manage'        => '',
             'actions'       => array
                 (
-                'Save' => 'javascript:formSubmit("module","","submitted",1)',
-                'Delete' => 'javascript:formSubmit("module","","action","delete")',
+                'Save' => 'javascript:formSubmit("module")',
+                'Delete' => 'javascript:formSubmit("module","action","delete")',
                 'Cancel' => SGL_Url::makeLink('overview','module','default'),
                 ),
             ),
@@ -207,8 +207,8 @@ $aMgrOptions = array
             'manage'        => '',
             'actions'       => array
                 (
-                'Save' => 'javascript:formSubmit("module","","action","update")',
-                'Delete' => 'javascript:formSubmit("module","","action","delete")',
+                'Save' => 'javascript:formSubmit("module")',
+                'Delete' => 'javascript:formSubmit("module","action","delete")',
                 'Cancel' => SGL_Url::makeLink('overview','module','default'),
                 ),
             ),

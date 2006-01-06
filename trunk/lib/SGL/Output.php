@@ -182,8 +182,8 @@ class SGL_Output
             $yesChecked = '';
             $noChecked = ' checked';
         }
-        $radioString .= "<input type='radio' name='$radioName' value='0' $noChecked>".SGL_String::translate('no')."\n";
-        $radioString .= "<input type='radio' name='$radioName' value='1' $yesChecked>".SGL_String::translate('yes')."\n";
+        $radioString .= "<input type='radio' name='$radioName' id='$radioName' value='0' $noChecked>".SGL_String::translate('no')."\n";
+        $radioString .= "<input type='radio' name='$radioName' id='$radioName' value='1' $yesChecked>".SGL_String::translate('yes')."\n";
         return $radioString;
     }
 
@@ -326,7 +326,7 @@ class SGL_Output
      *
      * @access  public
      * @return  string  $curRowClass string representing class found in stylesheet
-    */
+     */
 
     function switchRowClass($isBold, $id = 'default')
     {
@@ -350,6 +350,27 @@ class SGL_Output
         }
 
         return $curRowClass;
+    }
+
+    /**
+     * Generates alternate value (false/true) to be used in template
+     *
+     * @access  public
+     * @param int $elementsToCount Number of elements to reach to switch from false/true, default 2
+     * @return  bool  $switcher
+     */
+
+    function switchTrueFalse($elementsToCount=2)
+    {
+        static $count;
+        if ($count % $elementsToCount) {
+            $switcher = false;
+        } else {
+            $switcher = true;
+        }
+        $count++;
+
+        return $switcher;
     }
 
     /**
