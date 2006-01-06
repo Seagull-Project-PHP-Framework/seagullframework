@@ -316,6 +316,12 @@
             <label for="conf">{translate(#DB name#)}</label>
             <input type="text" name="conf[db][name]" value="{conf[db][name]}" />
         </p>
+        <p>
+            <label class="tipOwner" for="conf[db][post-connect]">{translate(#Post-connection query#)}
+            <span class="tipText">{translate(#This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8#)}</span>
+            </label>
+            <input type="text" class="longText" name="conf[db][post-connect]" id="conf[db][post-connect]" value="{conf[cache][post-connect]}" />
+        </p>
     </fieldset>
     
     <fieldset id="databaseTableMappings">

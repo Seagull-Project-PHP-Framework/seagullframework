@@ -23,14 +23,12 @@ fieldset p.center {
     border: 1px solid #dfdfdf;    
 }
 #moduleOverview h2 {
-    display: inline;
-    color: <?php echo $primaryLight ?>
+    color: <?php echo $primaryLight ?>;
 }
     .moduleManageLinks {
-        margin-left: 2em;
+        float: right;
     }
     .moduleManageLinks a {
-        /*margin-right: 0.5em;*/
         color: <?php echo $tertiaryDark ?>
     }
 #moduleOverview .moduleName {

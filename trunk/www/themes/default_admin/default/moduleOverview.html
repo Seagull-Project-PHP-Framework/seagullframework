@@ -6,6 +6,12 @@
     {else:}
     <div class="moduleBlock">
     {end:}
+        {if:isAdmin}
+        <span class="moduleManageLinks">
+        <a href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}" title="{translate(#edit#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/document-properties.png" alt="{translate(#edit#)}" /></a>
+        <a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/status_disabled.gif" alt="{translate(#disable#)}" /></a>
+        </span>
+        {end:}
         {if:valueObj.is_configurable}
         <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
         {end:}
@@ -13,12 +19,7 @@
         {if:valueObj.is_configurable}
         </a>
         {end:}
-        {if:isAdmin}
-        <span class="moduleManageLinks">
-        <a href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}" title="{translate(#edit#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/document-properties.png" alt="{translate(#edit#)}" /></a>
-        <a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/status_disabled.gif" alt="{translate(#disable#)}" /></a>
-        </span>
-        {end:}
+        
         <div class="moduleName">
         {if:valueObj.is_configurable}
         <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
