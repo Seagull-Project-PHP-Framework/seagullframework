@@ -138,7 +138,7 @@ class SGL_DB
      * This enables you to use DataObjects and SGL_DB in the same transaction.
      *
      * example usage:
-     * $oUser = DB_DataObject::factory('Usr');
+     * $oUser = DB_DataObject::factory($this->conf['table']['user']);
      * $dbh = & $oUser->getDatabaseConnection();
      * SGL_DB::setConnection($dbh);
      * $dbh->autocommit();

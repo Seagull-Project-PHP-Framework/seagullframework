@@ -100,7 +100,7 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = 'My Profile :: Edit';
         $output->template = 'userAdd.html';
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_HTTP_Session::getUid());
         $output->user = $oUser;
     }
@@ -108,7 +108,7 @@ class AccountMgr extends RegisterMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_HTTP_Session::getUid());
         $original = clone($oUser);
         $oUser->setFrom($input->user);
@@ -128,7 +128,7 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'account.html';
         $output->pageTitle = 'My Profile';
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_HTTP_Session::getUid());
         $output->user = $oUser;
     }
@@ -138,7 +138,7 @@ class AccountMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'accountSummary.html';
         $currentUid = SGL_HTTP_Session::getUid();
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($currentUid);
 
         //  get current remote IP

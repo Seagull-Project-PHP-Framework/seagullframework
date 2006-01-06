@@ -177,7 +177,7 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get current navigation cat name for publisher subnav
-        $category = DB_DataObject::factory('Category');
+        $category = DB_DataObject::factory($this->conf['table']['category']);
         $category->get($output->catID);
         $output->catName = $category->label;
         $output->queryRange = PublisherBase::getQueryRange($output);
@@ -233,7 +233,7 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_DB::setConnection($this->dbh);
-        $asset = DB_DataObject::factory('Document');
+        $asset = DB_DataObject::factory($this->conf['table']['document']);
         $asset->setFrom($input->document);
         $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
@@ -254,7 +254,7 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
-        $document = DB_DataObject::factory('Document');
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->getLinks('link_%s');
 
@@ -284,7 +284,7 @@ class DocumentMgr extends FileMgr
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = DB_DataObject::factory('Document');
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
@@ -308,7 +308,7 @@ class DocumentMgr extends FileMgr
 
         //  delete physical file
         foreach ($input->deleteArray as $index => $assetID) {
-            $document = DB_DataObject::factory('Document');
+            $document = DB_DataObject::factory($this->conf['table']['document']);
             $document->get($assetID);
             if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {
                 @unlink(SGL_UPLOAD_DIR . '/' . $document->name);

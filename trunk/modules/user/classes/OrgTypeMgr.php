@@ -114,7 +114,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_DB::setConnection($this->dbh);
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->setFrom($input->orgTypes);
         $orgType->organisation_type_id = $this->dbh->nextId($this->conf['table']['organisation_type']);
         $success = $orgType->insert();
@@ -130,7 +130,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
         $output->isEdit = true;
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
         $output->orgTypes = $orgType;
     }
@@ -139,7 +139,7 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeAdd.html';
-        $orgType = DB_DataObject::factory('Organisation_type');
+        $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
         $orgType->setFrom($input->orgTypes);
         $success = $orgType->update();
@@ -162,7 +162,7 @@ class OrgTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $orgTypeId) {
-                $orgTypes = DB_DataObject::factory('Organisation_type');
+                $orgTypes = DB_DataObject::factory($this->conf['table']['organisation_type']);
                 $orgTypes->get($orgTypeId);
                 $orgTypes->delete();
                 unset($orgTypes);

@@ -169,7 +169,7 @@ class DA_User
      */
     function getUserById($id = null)
     {
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         if (!is_null($id)) {
             $oUser->get($id);
         }
@@ -964,7 +964,7 @@ class DA_User
     function isUniqueUsername($username)
     {
         if (isset($username)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->whereAdd("username = '$username'");
             $numRows = $oUser->find();
 
@@ -983,7 +983,7 @@ class DA_User
     function isUniqueEmail($email)
     {
         if (isset($email)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->whereAdd("email = '$email'");
             $numRows = $oUser->find();
 

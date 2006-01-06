@@ -80,7 +80,7 @@ class ProfileMgr extends SGL_Manager
     {
         require_once 'DB/DataObject.php';
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $user = DB_DataObject::factory('Usr');
+        $user = DB_DataObject::factory($this->conf['table']['user']);
 
         if (is_null($input->userId)) {
             return SGL::raiseError('user id cannot be null', SGL_ERROR_INVALIDARGS);
@@ -98,7 +98,7 @@ class ProfileMgr extends SGL_Manager
         }
         //  total articles
         if (ModuleMgr::moduleIsRegistered('publisher')) {
-            $items = DB_DataObject::factory('Item');
+            $items = DB_DataObject::factory($this->conf['table']['item']);
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();
         }

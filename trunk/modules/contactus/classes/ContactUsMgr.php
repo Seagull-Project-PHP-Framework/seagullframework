@@ -148,7 +148,7 @@ class ContactUsMgr extends SGL_Manager
         if ($bEmailSent) {
 
             //  3. insert contact details in the contact table
-            $contact = DB_DataObject::factory('Contact_us');
+            $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
             $contact->setFrom($input->contact);
             $contact->contact_us_id = $this->dbh->nextId($this->conf['table']['contact_us']);
             $contact->insert();
@@ -179,11 +179,11 @@ class ContactUsMgr extends SGL_Manager
         //  details.
 
         //  check user auth level
-        $contact = DB_DataObject::factory('Contact_us');
+        $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
         if (SGL_HTTP_Session::getUserType() != SGL_GUEST) {
 
             //  instantiate new User entity
-            $user = DB_DataObject::factory('Usr');
+            $user = DB_DataObject::factory($this->conf['table']['user']);
             $user->get(SGL_HTTP_Session::getUid());
 
             //  instantiate Contact_us entity which will hold User data

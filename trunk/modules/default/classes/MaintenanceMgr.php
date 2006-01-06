@@ -552,7 +552,7 @@ class MaintenanceMgr extends SGL_Manager
 
         //  set author details
         require_once 'DB/DataObject.php';
-        $user = DB_DataObject::factory('Usr');
+        $user = DB_DataObject::factory($this->conf['table']['user']);
         $user->get(SGL_HTTP_Session::getUid());
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;

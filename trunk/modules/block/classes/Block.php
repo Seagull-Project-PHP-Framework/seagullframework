@@ -61,11 +61,11 @@ class Block extends DataObjects_Block
      * @access public
      * @return  void
      */
-    function loadSections() 
+    function loadSections()
     {
         $this->sections = array();
 
-        $blockAssignment = DB_DataObject::factory('Block_assignment');
+        $blockAssignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
         $blockAssignment->block_id = $this->block_id;
         $result = $blockAssignment->find();
 
@@ -78,9 +78,9 @@ class Block extends DataObjects_Block
                     $section->title = SGL_String::translate('All sections');
                     $this->sections[] = $section;
                 } else {
-                    $this->sections[] = $blockAssignment->section_id;                  
+                    $this->sections[] = $blockAssignment->section_id;
                 }
-                
+
             }
         }
     }
@@ -97,7 +97,7 @@ class Block extends DataObjects_Block
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from, $format = '%s') 
+    function setFrom(&$from, $format = '%s')
     {
         parent::setFrom($from, $format);
 
@@ -125,7 +125,7 @@ class Block extends DataObjects_Block
      * @access  public
      * @return  boolean on success
      */
-    function fetch() 
+    function fetch()
     {
         $ret = parent::fetch();
         if ($ret) {
@@ -146,7 +146,7 @@ class Block extends DataObjects_Block
      * @access  public
      * @return  int     No. of rows
      */
-    function get($k = null, $v = null) 
+    function get($k = null, $v = null)
     {
         $ret = parent::get($k, $v);
         if ($ret > 0) {
@@ -162,7 +162,7 @@ class Block extends DataObjects_Block
      * @access public
      * @return  mixed|false key value or false on failure
      */
-    function insert() 
+    function insert()
     {
         // DataObject assumes that, if you use mysql, you are going
         // to use auto_increment which is not our case, so we have
@@ -176,10 +176,10 @@ class Block extends DataObjects_Block
         // using 'mysql_insert_id' which is zero in our case
         // since we do not use the auto_increment feature of MySQL
         // so we have to manually set it back to the correct value
-        $this->block_id = $block_id; 
+        $this->block_id = $block_id;
 
         // Insert a block_assignment record for each assigned sections
-        $block_assignment = DB_DataObject::factory('Block_Assignment');
+        $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
         $block_assignment->block_id = $this->block_id;
         foreach ($this->sections as $section) {
             $block_assignment->section_id = $section->section_id;
@@ -201,11 +201,11 @@ class Block extends DataObjects_Block
      * @access public
      * @return bool True on success
      */
-    function delete($useWhere = false) 
+    function delete($useWhere = false)
     {
 
         // Delete all block assignment records for this block
-        $block_assignment = DB_DataObject::factory('Block_Assignment');
+        $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
         $block_assignment->block_id = $this->block_id;
         $block_assignment->delete();
 
@@ -227,17 +227,17 @@ class Block extends DataObjects_Block
 
         if ($assigments) {
             // Delete all block assignment records for this block
-            $block_assignment = DB_DataObject::factory('Block_Assignment');
+            $block_assignment = DB_DataObject::factory('Block_assignment');
             $block_assignment->block_id = $this->block_id;
             $block_assignment->delete();
             unset($block_assignment);
             foreach ($this->sections as $section) {
                 // Insert a block_assignment record for each assigned sections
-                $block_assignment = DB_DataObject::factory('Block_Assignment');
-                $block_assignment->block_id = $this->block_id;                                    
+                $block_assignment = DB_DataObject::factory('Block_assignment');
+                $block_assignment->block_id = $this->block_id;
                 $block_assignment->section_id = $section->section_id;
                 $block_assignment->insert();
-                unset($block_assignment);                    
+                unset($block_assignment);
             }
         }
         return true;
@@ -250,7 +250,7 @@ class Block extends DataObjects_Block
      * @access  public
      * @return  array of key => value for row
      */
-    function toArray($format = '%s') 
+    function toArray($format = '%s')
     {
         $block_array = parent::toArray($format);
         $sections_array = array();

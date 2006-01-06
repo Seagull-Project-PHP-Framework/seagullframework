@@ -65,7 +65,7 @@ class BlockForm
         $this->action = $action;
         $this->form = & new HTML_QuickForm('frmBlock', 'POST');
         require_once 'DB/DataObject.php';
-        $sectionList = DB_DataObject::factory('Section');
+        $sectionList = DB_DataObject::factory($conf['table']['section']);
         $sectionList->groupBy('root_id, parent_id, section_id');
         $result = $sectionList->find();
         if ($result > 0) {

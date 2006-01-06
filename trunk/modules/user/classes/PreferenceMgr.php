@@ -153,7 +153,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'prefAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->pref = DB_DataObject::factory('Preference');
+        $output->pref = DB_DataObject::factory($this->conf['table']['preference']);
     }
 
     function _insert(&$input, &$output)
@@ -161,7 +161,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_DB::setConnection($this->dbh);
-        $oPref = DB_DataObject::factory('Preference');
+        $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->setFrom($input->pref);
 
         $oPref->preference_id = $this->dbh->nextId($this->conf['table']['preference']);
@@ -169,7 +169,7 @@ class PreferenceMgr extends SGL_Manager
         if ($success) {
 
             // add new preference to all users prefs
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->find();
             while ($oUser->fetch()) {
                 $ret = $this->da->addPrefsByUserId(array($oPref->preference_id => $oPref->default_value), $oUser->usr_id);
@@ -186,7 +186,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'prefEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPref = DB_DataObject::factory('Preference');
+        $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->get($input->prefId);
         $output->pref = $oPref;
     }
@@ -194,7 +194,7 @@ class PreferenceMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oPref = DB_DataObject::factory('Preference');
+        $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->get($input->pref->preference_id);
         $oPref->setFrom($input->pref);
         unset($oPref->name);
@@ -214,7 +214,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aToDelete = array();
         foreach ($input->aDelete as $index => $prefId) {
-            $oPref = DB_DataObject::factory('Preference');
+            $oPref = DB_DataObject::factory($this->conf['table']['preference']);
             $oPref->get($prefId);
             $oPref->delete();
             $aToDelete[] = $prefId;
@@ -222,7 +222,7 @@ class PreferenceMgr extends SGL_Manager
         }
         //  delete related user_prefs
         foreach ($aToDelete as $deleteId) {
-            $oUserPref = DB_DataObject::factory('User_preference');
+            $oUserPref = DB_DataObject::factory($this->conf['table']['user_preference']);
             $oUserPref->get('preference_id', $deleteId);
             $oUserPref->delete();
             while ($oUserPref->fetch()) {

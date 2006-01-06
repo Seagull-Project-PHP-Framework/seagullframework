@@ -123,7 +123,7 @@ class RoleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->role = DB_DataObject::factory('Role');
+        $output->role = DB_DataObject::factory($this->conf['table']['role']);
     }
 
     function _insert(&$input, &$output)
@@ -131,7 +131,7 @@ class RoleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_DB::setConnection($this->dbh);
-        $oRole = DB_DataObject::factory('Role');
+        $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->setFrom($input->role);
         $oRole->role_id = $this->dbh->nextId($this->conf['table']['role']);
         $oRole->date_created = $oRole->last_updated = SGL_Date::getTime();
@@ -150,7 +150,7 @@ class RoleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oRole = DB_DataObject::factory('Role');
+        $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->get($input->roleId);
         $output->role = $oRole;
     }
@@ -158,7 +158,7 @@ class RoleMgr extends SGL_Manager
     function _update($input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oRole = DB_DataObject::factory('Role');
+        $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->get($input->role->role_id);
         $oRole->setFrom($input->role);
         $oRole->last_updated = SGL_Date::getTime();
@@ -184,7 +184,7 @@ class RoleMgr extends SGL_Manager
                 $msg .= ' but please note, admin/unassigned roles cannot be deleted';
                 continue;
             }
-            $oRole = DB_DataObject::factory('Role');
+            $oRole = DB_DataObject::factory($this->conf['table']['role']);
             $oRole->get($roleId);
             $oRole->delete();
             unset($oRole);
@@ -311,7 +311,7 @@ class RoleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleEditPerms.html';
         $output->pageTitle = $this->pageTitle . ' :: Permissions';
-        $oRole = DB_DataObject::factory('Role');
+        $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->get($input->roleId);
         $output->role = $oRole;
 

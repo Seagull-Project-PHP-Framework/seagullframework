@@ -92,7 +92,7 @@ class NewsletterMgr extends SGL_Manager
 
         if ($req->get('frmUserID')) {
             $input->userID = $req->get('frmUserID');
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->get($input->userID);
             $input->email       = $oUser->email;
             $input->name        = $oUser->first_name . $oUser->last_name;
@@ -178,7 +178,7 @@ class NewsletterMgr extends SGL_Manager
 
         // Process registration for every list selected
         foreach ($input->listName as $list) {
-            $oList = DB_DataObject::factory('Newsletter');
+            $oList = DB_DataObject::factory($this->conf['table']['newsletter']);
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find();
@@ -254,7 +254,7 @@ class NewsletterMgr extends SGL_Manager
 
         // Process request for every list selected
         foreach($input->listName as $list) {
-            $oList = DB_DataObject::factory('Newsletter');
+            $oList = DB_DataObject::factory($this->conf['table']['newsletter']);
             $oList->email = $input->email;
             $oList->list = $input->validNewsList[$list]['name'];
             $noRows = $oList->find(true);
@@ -324,7 +324,7 @@ class NewsletterMgr extends SGL_Manager
             return;
         }
 
-        $oList = DB_DataObject::factory('Newsletter');
+        $oList = DB_DataObject::factory($this->conf['table']['newsletter']);
         $oList->email = $input->email;
         $oList->action_key = $input->actionKey;
         $noRows = $oList->find(true);
@@ -544,7 +544,7 @@ class NewsletterMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get user details
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($userID);
 
         $query = "SELECT * FROM ". $this->conf['table']['newsletter'] ." WHERE email='". $oUser->email ."' AND status=0";
