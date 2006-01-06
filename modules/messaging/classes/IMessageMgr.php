@@ -227,7 +227,7 @@ class IMessageMgr extends SGL_Manager
         $counter = 0;
         // Setup the addressees
         foreach ($input->aRecipients as $recipientID) {
-            $tmpUser = DB_DataObject::factory('Usr');
+            $tmpUser = DB_DataObject::factory($this->conf['table']['user']);
             $tmpUser->get($recipientID);
 
             // All users except admin types have to obey privacy settings
@@ -301,7 +301,7 @@ class IMessageMgr extends SGL_Manager
         $output->wysiwyg = true;
         $hiddenFields = '';
 
-        $user = DB_DataObject::factory('Usr');
+        $user = DB_DataObject::factory($this->conf['table']['user']);
         if (!is_numeric($input->msgFromID)) {
             SGL::raiseError('Invalid user ID passed to ' .  __CLASS__ . '::' . __FUNCTION__,
                             SGL_ERROR_INVALIDARGS);
@@ -314,7 +314,7 @@ class IMessageMgr extends SGL_Manager
         $output->cancelRedirect = SGL_Url::makeLink('inbox', 'imessage', 'messaging');
 
         //  prepare reply message
-        $origMsg = DB_DataObject::factory('Instant_message');
+        $origMsg = DB_DataObject::factory($this->conf['table']['instant_message']);
         $origMsg->get($input->messageID);
         if (empty($origMsg)) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -370,7 +370,7 @@ class IMessageMgr extends SGL_Manager
             SGL_HTTP::redirect($aParams);
         }
 
-        $user = DB_DataObject::factory('Usr');
+        $user = DB_DataObject::factory($this->conf['table']['user']);
         $user->usr_id = $sender_id;
         if ($user->find() != 1 || $user->fetch() == false) {
             SGL::raiseMsg('Sender not found');
@@ -395,7 +395,7 @@ class IMessageMgr extends SGL_Manager
         foreach ($input->instantMessage->user_id_to as $receiver_id) {
             // verify each receiver
 
-            $receiver = DB_DataObject::factory('Usr');
+            $receiver = DB_DataObject::factory($this->conf['table']['user']);
             $receiver->usr_id = $receiver_id;
             if ($receiver->find() != 1 || $receiver->fetch() == false) {
                 // Make sure they don't pass an invalid user id
@@ -412,7 +412,7 @@ class IMessageMgr extends SGL_Manager
                 }
             }
 
-            $message = DB_DataObject::factory('Instant_message');
+            $message = DB_DataObject::factory($this->conf['table']['instant_message']);
 
             $message->instant_message_id = $this->dbh->nextId('instant_message');
             $message->user_id_from = $uid;  // or $sender_id
@@ -456,7 +456,7 @@ class IMessageMgr extends SGL_Manager
 
         $message_id = $input->messageID;
 
-        $message = DB_DataObject::factory('Instant_message');
+        $message = DB_DataObject::factory($this->conf['table']['instant_message']);
         $message->whereAdd('instant_message_id = ' . $message_id);
         if ($message->find() != 1 || $message->fetch() == false) {
             SGL::raiseMsg('Message could not be retrieved');
@@ -511,7 +511,7 @@ class IMessageMgr extends SGL_Manager
 
         $counter = 0;
         foreach ($input->deleteArray as $index => $message_id) {
-            $message = DB_DataObject::factory('Instant_message');
+            $message = DB_DataObject::factory($this->conf['table']['instant_message']);
             $message->whereAdd('instant_message_id = ' . $message_id);
             if ($message->find() != 1 || $message->fetch() == false) {
                 $counter++;
@@ -577,7 +577,7 @@ class IMessageMgr extends SGL_Manager
             $accusee = DataObjects_Usr::staticGet($input->accuseeID);
             $messageBody .= "<br /><br /><strong>Complaint filed by:</strong> " . $accuser->username . " (id = $accuser->usr_id)";
             $messageBody .= '<br /><br /><strong>Person Accused:</strong> ' . $accusee->username . " (id = $accusee->usr_id)";
-            $message = DB_DataObject::factory('Instant_message');
+            $message = DB_DataObject::factory($this->conf['table']['instant_message']);
             $message->subject = 'ALERT: profanity notice';
             $message->body = $messageBody;
 

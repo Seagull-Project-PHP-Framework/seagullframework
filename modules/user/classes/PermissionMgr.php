@@ -123,7 +123,7 @@ class PermissionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'permAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->perm = DB_DataObject::factory('Permission');
+        $output->perm = DB_DataObject::factory($this->conf['table']['permission']);
 
         // setup module combobox
         require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
@@ -172,7 +172,7 @@ class PermissionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_DB::setConnection($this->dbh);
-        $oPerm = DB_DataObject::factory('Permission');
+        $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
         //  check to see if perm already exists
         $oPerm->name = $input->perm->name;
@@ -262,7 +262,7 @@ class PermissionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPerm = DB_DataObject::factory('Permission');
+        $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
         $oPerm->get($input->permId);
         $output->perm = $oPerm;
 
@@ -275,7 +275,7 @@ class PermissionMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oPerm = DB_DataObject::factory('Permission');
+        $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
         $oPerm->setFrom($input->perm);
@@ -296,7 +296,7 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         foreach ($input->aDelete as $index => $permId) {
-            $oPerm = DB_DataObject::factory('Permission');
+            $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
             $oPerm->get($permId);
             $oPerm->delete();
             unset($oPerm);

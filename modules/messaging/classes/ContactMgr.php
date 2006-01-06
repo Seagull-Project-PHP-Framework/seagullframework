@@ -91,7 +91,7 @@ class ContactMgr extends SGL_Manager
 
         if (is_array($input->deleteArray)) {
             foreach ($input->deleteArray as $userID) {
-                $user = DB_DataObject::factory('Contact');
+                $user = DB_DataObject::factory($this->conf['table']['contact']);
                 $user->whereAdd("usr_id = $userID");
                 $user->whereAdd("originator_id  = " . SGL_HTTP_Session::getUid());
                 $user->delete(true);
@@ -108,7 +108,7 @@ class ContactMgr extends SGL_Manager
     {
         if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
             SGL_DB::setConnection($this->dbh);
-            $savedUser = DB_DataObject::factory('Contact');
+            $savedUser = DB_DataObject::factory($this->conf['table']['contact']);
 
             //  skip if user already exists
             $savedUser->usr_id = $input->userID;

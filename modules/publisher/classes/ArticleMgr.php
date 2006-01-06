@@ -125,7 +125,7 @@ class ArticleMgr extends SGL_Manager
 
         //  get cat name for reschooser title
         require_once 'DB/DataObject.php';
-        $category = DB_DataObject::factory('Category');
+        $category = DB_DataObject::factory($this->conf['table']['category']);
         $category->get($output->catID);
         $output->catName = $category->label;
         $output->queryRange = PublisherBase::getQueryRange($output);

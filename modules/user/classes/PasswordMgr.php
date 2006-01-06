@@ -159,7 +159,7 @@ class PasswordMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_HTTP_Session::getUid());
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
@@ -219,7 +219,7 @@ class PasswordMgr extends SGL_Manager
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = DB_DataObject::factory('Usr');
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($userId);
         $oUser->passwd = md5($passwd);
         $oUser->update();
@@ -229,7 +229,7 @@ class PasswordMgr extends SGL_Manager
     function _isOriginalPassword($passwd)
     {
         if (isset($passwd)) {
-            $oUser = DB_DataObject::factory('Usr');
+            $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->get(SGL_HTTP_Session::getUid());
             return md5($passwd) == $oUser->passwd;
         }

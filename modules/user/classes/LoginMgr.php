@@ -178,7 +178,7 @@ class LoginMgr extends SGL_Manager
             //  record login in db for security
             if (@$this->conf['LoginMgr']['recordLogin']) {
                 require_once 'DB/DataObject.php';
-                $login = DB_DataObject::factory('Login');
+                $login = DB_DataObject::factory($this->conf['table']['login']);
                 $login->login_id = $this->dbh->nextId('login');
                 $login->usr_id = $uid;
                 $login->date_time = SGL_Date::getTime(true);

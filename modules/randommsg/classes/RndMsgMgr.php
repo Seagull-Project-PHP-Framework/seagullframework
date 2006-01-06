@@ -166,7 +166,7 @@ class RndMsgMgr extends SGL_Manager
         $success = true;
         foreach($aLines as $rndmsg) {
             if (trim($rndmsg) != '') {
-                $msg = DB_DataObject::factory('Rndmsg_message');
+                $msg = DB_DataObject::factory($this->conf['table']['rndmsg_message']);
                 $msg->msg = trim($rndmsg);
                 $msg->rndmsg_message_id = $this->dbh->nextId($this->conf['table']['rndmsg_message']);
                 $success = ($success && $msg->insert());
@@ -185,7 +185,7 @@ class RndMsgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->msgDelete)) {
             foreach ($input->msgDelete as $index => $msgId){
-                $rm = DB_DataObject::factory('Rndmsg_message');
+                $rm = DB_DataObject::factory($this->conf['table']['rndmsg_message']);
                 $rm->get($msgId);
                 $rm->delete();
                 unset($rm);

@@ -113,7 +113,7 @@ class Page2WizMgr extends SGL_Wizard
 
         if ($input->finish) {
             require_once 'DB/DataObject.php';
-            $contact = DB_DataObject::factory('Contact_us');
+            $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
             $contact->setFrom($input->contact);
             $dbh = & SGL_DB::singleton();
             $contact->contact_us_id = $dbh->nextId('contact_us');

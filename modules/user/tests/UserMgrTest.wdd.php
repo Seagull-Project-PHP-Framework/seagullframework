@@ -111,7 +111,9 @@ class TestUserMgr extends UnitTestCase {
         $oOutput = new stdClass();
 
         // get initial count of usr records
-        $doUser = DB_DataObject::factory('Usr');
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $initialCountUser = $doUser->count();
 
         //  build user object
@@ -132,7 +134,7 @@ class TestUserMgr extends UnitTestCase {
 
         // get final count of user records
         unset($oInput, $oOutput, $oUser, $doUser, $userMgr);
-        $doUser = DB_DataObject::factory('Usr');
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $finalCountUser = $doUser->count();
 
         //  test user record inserted correctly
@@ -153,7 +155,7 @@ class TestUserMgr extends UnitTestCase {
         $oOutput = new stdClass();
 
         // get initial count of usr records
-        $doUser = DB_DataObject::factory('Usr');
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $initialCountUser = $doUser->count();
 
         //  build user object
@@ -174,7 +176,7 @@ class TestUserMgr extends UnitTestCase {
 
         // get final count of user records
         unset($doUser);
-        $doUser = DB_DataObject::factory('Usr');
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $finalCountUser = $doUser->count();
 
         //  test user record updated correctly, ie, same num records
@@ -183,7 +185,7 @@ class TestUserMgr extends UnitTestCase {
         unset($oInput, $oOutput, $oUser, $userMgr);
 
         //  compare actual results with expected results
-        $doUser = DB_DataObject::factory('Usr');
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $doUser->get($lastId);
 
         $this->assertTrue($doUser->username == 'barTestUser');
@@ -199,7 +201,9 @@ class TestUserMgr extends UnitTestCase {
         $oOutput = new stdClass();
 
         //  get initial count of usr records
-        $doUser = DB_DataObject::factory('Usr');
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $initialCountUser = $doUser->count();
 
         //  grab 5 records, stop when 2 adequate records collected
@@ -221,7 +225,7 @@ class TestUserMgr extends UnitTestCase {
 
         // get final count of user records
         unset($doUser);
-        $doUser = DB_DataObject::factory('Usr');
+        $doUser = DB_DataObject::factory($conf['table']['user']);
         $finalCountUser = $doUser->count();
         $this->assertTrue(($initialCountUser - $finalCountUser) == 2);
     }

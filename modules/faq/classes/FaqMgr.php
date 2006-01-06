@@ -116,7 +116,7 @@ class FaqMgr extends SGL_Manager
 
         SGL_DB::setConnection($this->dbh);
         //  get new order number
-        $faq = DB_DataObject::factory('Faq');
+        $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->selectAdd();
         $faq->selectAdd('MAX(item_order) AS new_order');
         $faq->groupBy('item_order');
@@ -124,7 +124,7 @@ class FaqMgr extends SGL_Manager
         unset($faq);
 
         //  insert record
-        $faq = DB_DataObject::factory('Faq');
+        $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->setFrom($input->faq);
         $faq->faq_id = $this->dbh->nextId('faq');
         $faq->last_updated = $faq->date_created = SGL_Date::getTime(true);
@@ -143,7 +143,7 @@ class FaqMgr extends SGL_Manager
         $output->template = 'faqEdit.html';
         $output->action   = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $faq = DB_DataObject::factory('Faq');
+        $faq = DB_DataObject::factory($this->conf['table']['faq']);
 
         //  get faq data
         $faq->get($input->faqId);
@@ -153,7 +153,7 @@ class FaqMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $faq = DB_DataObject::factory('Faq');
+        $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->get($input->faq->faq_id);
         $faq->setFrom($input->faq);
         $faq->last_updated = SGL_Date::getTime(true);
@@ -170,7 +170,7 @@ class FaqMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $faqId) {
-                $faq = DB_DataObject::factory('Faq');
+                $faq = DB_DataObject::factory($this->conf['table']['faq']);
                 $faq->get($faqId);
                 $faq->delete();
                 unset($faq);
@@ -187,7 +187,7 @@ class FaqMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Reorder';
         $output->template = 'faqReorder.html';
-        $faqList = DB_DataObject::factory('Faq');
+        $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();
         if ($result > 0) {
@@ -207,7 +207,7 @@ class FaqMgr extends SGL_Manager
         //  reorder elements
         $pos = 1;
         foreach ($aNewOrder as $faqId) {
-            $faq = DB_DataObject::factory('Faq');
+            $faq = DB_DataObject::factory($this->conf['table']['faq']);
             $faq->get($faqId);
             $faq->item_order = $pos;
             $success = $faq->update();
@@ -226,7 +226,7 @@ class FaqMgr extends SGL_Manager
         } else {
             $output->pageTitle = 'FAQs';
         }
-        $faqList = DB_DataObject::factory('Faq');
+        $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();
         $aFaqs = array();

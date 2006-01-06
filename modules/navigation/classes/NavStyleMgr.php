@@ -163,7 +163,7 @@ class NavStyleMgr extends SGL_Manager
     function generateStaticId()
     {
         require_once 'DB/DataObject.php';
-        $section = DB_DataObject::factory('Section');
+        $section = DB_DataObject::factory($this->conf['table']['section']);
 
         //  get only top-level sections
         $section->level_id = 1;

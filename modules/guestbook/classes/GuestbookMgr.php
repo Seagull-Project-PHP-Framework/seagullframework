@@ -108,7 +108,7 @@ class GuestbookMgr extends SGL_Manager
         $output->template = 'guestbookAdd.html';
 
         //  build ordering select object
-        $output->guestbook = DB_DataObject::factory('Guestbook');
+        $output->guestbook = DB_DataObject::factory($this->conf['table']['guestbook']);
     }
 
     function _insert(&$input, &$output)
@@ -117,7 +117,7 @@ class GuestbookMgr extends SGL_Manager
 
         SGL_DB::setConnection($this->dbh);
         //  insert record
-        $newEntry = DB_DataObject::factory('Guestbook');
+        $newEntry = DB_DataObject::factory($this->conf['table']['guestbook']);
         $newEntry->setFrom($input->guestbook);
         $newEntry->guestbook_id = $this->dbh->nextId($this->conf['table']['guestbook']);
         $newEntry->date_created = SGL_Date::getTime(true);

@@ -81,7 +81,7 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $document = DB_DataObject::factory('Document');
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $mimeType = $document->mime_type;
@@ -102,7 +102,7 @@ class FileMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_LIB_DIR . '/other/Zip.php';
-        $document = DB_DataObject::factory('Document');
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $buffer = file_get_contents($fileName);
@@ -124,7 +124,7 @@ class FileMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'docBlank.html';
-        $document = DB_DataObject::factory('Document');
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         if (!@file_exists($fileName)) {
