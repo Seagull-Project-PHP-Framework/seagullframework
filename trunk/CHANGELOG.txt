@@ -13,7 +13,10 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
-05-01-06    All data object calls are now config driven (freeslacker)
+06-01-06    Implemented post-connect query which is used to set the default
+            character set for the current connection (MySQL 4.1 or higher). For
+            example: SET NAMES utf8
+06-01-06    All data object calls are now config driven (freeslacker)
 05-01-06    Added a new admin GUI, admin tasks will be clearly defined and
             identified by this addition (Julien Casanova)
 04-01-06    Blocks can now be enabled/disabled for sub-sections (mstahv)
