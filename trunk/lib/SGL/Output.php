@@ -188,6 +188,66 @@ class SGL_Output
     }
 
     /**
+     * Generates sequence of radio button from array.
+     *
+     * @access  public
+     * @param   array   $elements   array of  values or radio button
+     * @param   array   $selected   array selected key ... single array with only zero index , i am need in array
+ 	 * @param   string  $groupname  usually an array name that will contain all elements
+	 * @param   integer $newline    how many columns to display for this radio group
+     * @param 	boolean $inTable  	true for adding table formatting
+     * @return  string  $html       a list of radio buttons
+     */
+    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true)
+    {
+		SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!is_array($elements) ) {
+            SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
+                SGL_ERROR_INVALIDARGS);
+            return false;
+        }
+		$elementcount = count($elements);
+        $html = '';
+		$i = 0;
+		if ($inTable == false){
+			foreach ($elements as $k => $v) {
+				$i = $i + 1;
+				$html .= "<input name='".$groupname."' type='radio' value='".$k."' ";
+				if ($selected[0] == $k ){
+					$html .= " checked";
+				}
+				$html .= " />$v ";
+				$modvalue = $i % $newline;
+				if ($modvalue == 0 ) {
+    				$html .= "<br/>\n";
+				}
+            }
+		} else {
+			$html ="<table>";
+			$html .="<tr>";
+		    foreach ($elements as $k => $v) {
+    			$i = $i + 1;
+                $html .= "<td nowrap='nowrap'><input name='".$groupname."' type='radio' value='".$k."' ";
+    			if ($selected[0] == $k ) {
+                    $html .= " checked ";
+                }
+    			$html .= " />$v </td>\n";
+    			$modvalue = $i % $newline;
+    			if ( $modvalue == 0 ) {
+    				if ($i < $elementcount){
+    				    $html .="</tr>\n<tr>";
+    				} else {
+    				    $html .="</tr>\n";
+    				}
+    			}
+			}
+			$html .="</table>";
+		}
+        return $html;
+	}
+
+    /**
      * Wrapper for SGL_String::formatBytes(),
      * Converts bytes to Kb or MB as appropriate.
      *
