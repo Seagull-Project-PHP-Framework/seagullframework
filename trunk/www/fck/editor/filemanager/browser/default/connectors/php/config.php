@@ -28,7 +28,7 @@ global $Config ;
 $Config['Enabled'] = true;
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = '/images/' ;
+$Config['UserFilesPath'] = SGL_BASE_URL . '/images/' ;
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Usefull if you are using a virtual directory, symbolic
@@ -47,5 +47,4 @@ $Config['DeniedExtensions']['Flash']    = array() ;
 
 $Config['AllowedExtensions']['Media']   = array('swf','fla','jpg','gif','jpeg','png','avi','mpg','mpeg') ;
 $Config['DeniedExtensions']['Media']    = array() ;
-
 ?>
