@@ -382,69 +382,22 @@ class NewsletterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $theme = $_SESSION['aPrefs']['theme'];
-        $template = 'email_confim_action.html';
-        $output->webRoot = SGL_BASE_URL;
+        $output->theme          = $_SESSION['aPrefs']['theme'];
+        $output->masterTemplate = 'email_confim_action.html';
 
-        //  initialise template engine
-        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
-        $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $input->moduleName . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $input->moduleName . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/' . $theme . '/default'. PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/default',
-            'templateDirOrder'  => 'reverse',
-            'multiSource'       => true,
-            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $theme,
-            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
-            'debug'             => SGL_FLEXY_DEBUG,
-            'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
-            'filters'           => SGL_FLEXY_FILTERS,
-            'locale'            => SGL_FLEXY_LOCALE,
-            'compiler'          => SGL_FLEXY_COMPILER,
-            'valid_functions'   => SGL_FLEXY_VALID_FNS,
-            'flexyIgnore'       => SGL_FLEXY_IGNORE,
-            'globals'           => true,
-            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
-        );
+        // render template
+        $view     = new SGL_HtmlSimpleView($output);
+        $bodyHtml = $view->render();
 
-        // Configure Flexy to use SGL ModuleOutput Plugin
-        // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $input->moduleName . '/classes/Output.php';
-        if (is_readable($customOutput)) {
-            $className = ucfirst($input->moduleName) . 'Output';
-            if (isset($options['plugins'])) {
-                $options['plugins'] = $options['plugins'] + array($className => $customOutput);
-            } else {
-                $options['plugins'] = array($className => $customOutput);
-            }
-        }
-
-        //  suppress notices in templates
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
-        require_once 'HTML/Template/Flexy.php';
-        $templ = & new HTML_Template_Flexy();
-        $templ->compile($template);
-
-        //  if some Flexy 'elements' exist in the output object, send them as
-        //  2nd arg to Flexy::bufferedOutputObject()
-        $elements = (   isset($output->flexyElements) &&
-                        is_array($output->flexyElements))
-                ? $output->flexyElements
-                : array();
-
-        $bodyHtml = $templ->bufferedOutputObject($output, $elements);
-
-
-        $headers['From'] = $this->conf['email']['admin'];
+        $headers['From']    = $this->conf['email']['admin'];
         $headers['Subject'] = $output->emailSubject;
-        $crlf = SGL_String::getCrlf();
-        $mime = & new Mail_mime($crlf);
-        $mime->setHTMLBody($bodyHtml);
-        $body = $mime->get();
-        $hdrs = $mime->headers($headers);
-        $mail = & SGL_Emailer::factory();
-        $success = $mail->send($output->emailAddress, $hdrs, $body);
+        $crlf               = SGL_String::getCrlf();
+        $mime               = & new Mail_mime($crlf);
+        $mime->               setHTMLBody($bodyHtml);
+        $body               = $mime->get();
+        $hdrs               = $mime->headers($headers);
+        $mail               = & SGL_Emailer::factory();
+        $success            = $mail->send($output->emailAddress, $hdrs, $body);
 
         if ($success) {
             //  redirect on success
