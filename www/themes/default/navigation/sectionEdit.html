@@ -9,22 +9,24 @@ function addFormValue(myElement, form)
     newInput.setAttribute('type', 'hidden');
     myForm.appendChild(newInput);
 }
-</script>
 
-<!--    <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <table class="wide">
-        <tr>
-            <td>
-                <form method="post" name="frmAddTrans" id="frmAddTrans" flexy:ignore>
-                    <input type="hidden" name="action" value="edit" />
-                    <input type="hidden" name="frmSectionId" value="{section[section_id]}" />
-                    <select name="frmNavLang">
-                        {generateSelect(availableAddLangs):h}</select>
-                    <input type="submit" name="submit" value="{translate(#Add Translation#)}"/>
-                </form>
-            </td>
-        </tr>
-    </table>-->
+function toggleAliasElements(myCheckbox)
+{
+        var myCheckbox = document.getElementById('page[uri_alias_enable]').checked;
+        var aliasList = document.getElementById('urialiases');
+        var aliasValue = document.getElementById('page[uri_alias]');
+
+        if (myCheckbox) {
+            //aliasList.disabled = false;
+            aliasValue.disabled = false;
+        } else {
+            //aliasList.disabled = true;
+            aliasValue.disabled = true;
+        }
+
+
+}
+</script>
 
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit">
         <input type="hidden" name="action" value="{action}" />
@@ -89,7 +91,7 @@ function addFormValue(myElement, form)
         </tr>
 
         <tr>
-            <th align="left">{translate(#Page#)}:</th>
+            <th align="left">{translate(#Target#)}:</th>
 
             <td>
                 <select name="page[articleType]" multiple
@@ -108,9 +110,6 @@ function addFormValue(myElement, form)
                     wiki
                 </option>
                 {end:}
-                <option value="uriAlias" flexy:raw="{uriAliasSelected}">
-                    {translate(#alias#)}
-                </option>
                 <option value="uriExternal" flexy:raw="{uriExternalSelected}">
                     {translate(#external URI#)}
                 </option>
@@ -119,7 +118,7 @@ function addFormValue(myElement, form)
                 {if:staticSelected}
                     <select size="1" name="page[staticArticleId]">
                         {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
-                    </select>
+                    </select> static article title
                 {end:}
                 {if:dynamicSelected}
                     <select size="1" name="page[module]"
@@ -138,16 +137,20 @@ function addFormValue(myElement, form)
                 {if:wikiSelected}
                     <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> wiki page URL
                 {end:}
-                {if:uriAliasSelected}
-                    <select name="urialiases" onChange="document.sectionEdit.elements['page[resource_uri]'].value=document.sectionEdit.urialiases.value">
-                        <option value="">- {translate(#Choose URI from Aliases#)} -</option>
-                        {generateSelect(aUriAliases,page[resource_uri]):h}
-                    </select><br />
-                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#alias URI#)}
-                {end:}
                 {if:uriExternalSelected}
                     <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#external page URI#)}
                 {end:}
+            </td>
+        </tr>
+
+        <tr>
+            <th align="left">{translate(#Alias#)}:</th>
+            <td><input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" onClick="toggleAliasElements();">Add an alias?
+<!--                <select name="urialiases" id="urialiases" onChange="document.sectionEdit.elements['page[uri_alias]'].value=document.sectionEdit.urialiases.value">
+                    <option value="">- {translate(#Choose URI from Aliases#)} -</option>
+                    {generateSelect(aUriAliases,page[resource_uri]):h}
+                </select><br />-->
+                <input type="text" size="50" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}"> {translate(#alias URI#)}
             </td>
         </tr>
 
@@ -162,7 +165,7 @@ function addFormValue(myElement, form)
         </tr>
 
 		 <tr>
-            <th align="left">{translate(#AccessKey#)}:</th>
+            <th align="left">{translate(#Access Key#)}:</th>
             <td><input type="text" name="page[access_key]" value="{section[access_key]}" /> {translate(#Any number, which can be pressed with the ALT-key to load the page.#)}</td>
         </tr>
 
