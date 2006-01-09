@@ -103,9 +103,11 @@ function addFormValue(myElement, form)
                     {translate(#dynamic pages#)}
                 </option>
 
+                {if:conf[PageMgr][wikiScreenTypeEnabled]}
                 <option value="wiki" flexy:raw="{wikiSelected}">
                     wiki
                 </option>
+                {end:}
                 <option value="uriAlias" flexy:raw="{uriAliasSelected}">
                     {translate(#alias#)}
                 </option>

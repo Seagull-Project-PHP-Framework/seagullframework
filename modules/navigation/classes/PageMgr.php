@@ -226,11 +226,13 @@ class PageMgr extends SGL_Manager
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
 
-            $output->staticSelected = '';
-            $output->dynamicSelected = '';
+        $output->staticSelected = '';
+        $output->dynamicSelected = '';
+        if ($this->conf['PageMgr']['wikiScreenTypeEnabled']) {
             $output->wikiSelected = '';
-            $output->uriAliasSelected = '';
-            $output->uriExternalSelected = '';
+        }
+        $output->uriAliasSelected = '';
+        $output->uriExternalSelected = '';
 
         $output->availableLangs = $this->trans->getLangs();
 
@@ -240,7 +242,7 @@ class PageMgr extends SGL_Manager
 
         $output->navLang = $navLang;
         $output->fullNavLang = $output->availableLangs[$navLang];
-        
+
         switch ($output->articleType) {
         case 'static':
             $output->staticSelected = 'selected';
@@ -549,9 +551,9 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  update translations
-        if ($input->section['title'] != $input->section['title_original']) {           
+        if ($input->section['title'] != $input->section['title_original']) {
             if ($input->section['trans_id']) {
-                $strings[$input->navLang] = $input->section['title'];                
+                $strings[$input->navLang] = $input->section['title'];
                 $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
             }
         }
