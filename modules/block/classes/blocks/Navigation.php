@@ -45,11 +45,11 @@
  * @version $Revision: 1.6 $
  * @since   PHP 4.1
  */
-class Navigation
+class SubNavigation
 {
     function init($output, $block_id)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         return $this->getBlockContent($output, $block_id);
     }
 
@@ -57,7 +57,7 @@ class Navigation
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
-        
+
         $nav = & new SimpleNav($output);
         $aSections = $nav->getSectionsByRoleId();
 
