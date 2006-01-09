@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 
 /**
- * Category Navigation block.
+ * Section Navigation block.
  *
  * @package block
  * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
