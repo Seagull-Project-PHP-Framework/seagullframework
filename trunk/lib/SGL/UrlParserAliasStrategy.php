@@ -25,7 +25,7 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
     {
         static $aUriAliases;
         if (!isset($aUriAliases)) {
-            require_once SGL_DAT_DIR . '/ary.uriAliases.php';
+            $aUriAliases = $this->getAllAliases($conf);
         }
 
  		$aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
@@ -45,6 +45,17 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
             }
 		}
         return $ret;
+    }
+
+    function getAllAliases($conf)
+    {
+        $dbh = & SGL_DB::singleton();
+        $query = "
+        SELECT uri_alias, resource_uri
+        FROM {$conf['table']['uri_alias']} u, {$conf['table']['section']} s
+        WHERE u.section_id = s.section_id
+        ";
+        return $dbh->getAssoc($query);
     }
 }
 
