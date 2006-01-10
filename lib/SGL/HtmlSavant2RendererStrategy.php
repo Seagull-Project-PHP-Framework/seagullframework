@@ -34,7 +34,7 @@
 // +---------------------------------------------------------------------------+
 // | HtmlSavant2RendererStrategy.php                                           |
 // +---------------------------------------------------------------------------+
-// | Authors: Malaney J. Hill  <malaney@gmail.com>                             |
+// | Authors: Andrey Podshivalov <planetaz@gmail.com>                          |
 // +---------------------------------------------------------------------------+
 
 require_once SGL_LIB_DIR . '/other/Savant2/Savant2.php';
@@ -50,7 +50,7 @@ class SGL_Savant2 extends Savant2
      */
     function SGL_Savant2($theme = 'default', $moduleName = 'default')
     {
-        $options = array( 
+        $options = array(
 	    'template_path' => SGL_THEME_DIR . '/savant/default/default' . PATH_SEPARATOR .
                                SGL_THEME_DIR . '/savant/' . $theme . '/default' . PATH_SEPARATOR .
                                SGL_THEME_DIR . '/savant/default/' . $moduleName. PATH_SEPARATOR .
@@ -101,7 +101,9 @@ class SGL_HtmlSavant2RendererStrategy extends SGL_OutputRendererStrategy
         $view->postProcess($view);
 
         //  prepare Savant2 object
-	$moduleName = isset($view->data->moduleName) ? $view->data->moduleName : 'default';
+	   $moduleName = isset($view->data->moduleName)
+	       ? $view->data->moduleName
+	       : 'default';
         $savant2 = &SGL_Savant2::singleton($view->data->theme, $moduleName);
 
         $savant2->assign('result', $view->data);
