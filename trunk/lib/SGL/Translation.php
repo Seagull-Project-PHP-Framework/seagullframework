@@ -122,11 +122,17 @@ class SGL_Translation
         default:
             $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }
-
         return $oTranslation;
     }
 
 
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $module
+     * @param unknown_type $lang
+     * @return unknown
+     */
     function getGuiTranslationsFromFile($module, $lang)
     {
         //  fetch translations from database and cache
@@ -165,6 +171,14 @@ class SGL_Translation
     }
 
 
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $module
+     * @param unknown_type $lang
+     * @param unknown_type $fallbackLang
+     * @return unknown
+     */
     function getTranslations($module, $lang, $fallbackLang = false)
     {
         if (!empty($module) && !empty($lang)) {
@@ -178,7 +192,6 @@ class SGL_Translation
             if (!in_array($lang, explode(',', $conf['translation']['installedLanguages']))) {
                 $lang = $fallbackLang;
             }
-
             //  instantiate translation2 object
             $translation = &SGL_Translation::singleton();
 
@@ -213,6 +226,11 @@ class SGL_Translation
         }
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     */
     function getLangID()
     {
         if ($langID = str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET'])) {
@@ -222,6 +240,11 @@ class SGL_Translation
         }
     }
 
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     */
     function getAllInstallableLanguages()
     {
         //  fetch available languages
