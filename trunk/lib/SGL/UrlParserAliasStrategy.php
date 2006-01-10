@@ -7,6 +7,7 @@
  * @version $Revision: 1.5 $
  */
 
+require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 
 /**
  * Concrete alias url parser strategy
@@ -14,6 +15,10 @@
  */
 class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
 {
+    function SGL_UrlParserAliasStrategy()
+    {
+        $this->da = & DA_Default::singleton();
+    }
     /**
      * Analyzes querystring content and parses it into module/manager/action and params.
      *
@@ -25,7 +30,7 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
     {
         static $aUriAliases;
         if (!isset($aUriAliases)) {
-            $aUriAliases = $this->getAllAliases($conf);
+            $aUriAliases = $this->da->getAllAliases();
         }
 
  		$aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
@@ -38,24 +43,19 @@ class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
 
             //  If alias exists, update the alias in the uri with the specified resource
             if (array_key_exists($alias, $aUriAliases)) {
-            	$aliasUri = $aUriAliases[$alias];
+            	$key = $aUriAliases[$alias];
+
+            	// records stored in section table in following format:
+            	// uriAlias:10:default/bug
+            	// parse out SEF url from 2nd semi-colon onwards
+                $ok = preg_match('/(uriAlias:)([0-9]+:)(.*)/', $key, $aMatches);
+                $aliasUri = $aMatches[3];
             	$tmp = new stdClass();
             	$tmp->url = $aliasUri;
             	$ret = parent::parseQueryString($tmp, $conf);
             }
 		}
         return $ret;
-    }
-
-    function getAllAliases($conf)
-    {
-        $dbh = & SGL_DB::singleton();
-        $query = "
-        SELECT uri_alias, resource_uri
-        FROM {$conf['table']['uri_alias']} u, {$conf['table']['section']} s
-        WHERE u.section_id = s.section_id
-        ";
-        return $dbh->getAssoc($query);
     }
 }
 

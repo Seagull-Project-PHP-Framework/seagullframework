@@ -39,6 +39,7 @@
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
 require_once SGL_CORE_DIR . '/Translation.php';
+require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
@@ -52,14 +53,6 @@ require_once SGL_CORE_DIR . '/Translation.php';
 
 class SimpleNav
 {
-    /**
-     * www root
-     *
-     * @access  private
-     * @var     string
-     */
-    var $_webRoot = SGL_BASE_URL;
-
     /**
      * Id of the section (seagull.section.id) to which the static link links
      *
@@ -96,6 +89,28 @@ class SimpleNav
      */
     var $_disableLinks = false;
 
+
+    /**
+     * A reference to the Data Access layer from the default module.
+     *
+     * @var DA_Default
+     */
+    var $da = null;
+
+    /**
+     * A copy of the Config map.
+     *
+     * @var array
+     */
+    var $conf = array();
+
+    /**
+     * A reference to the SGL_Translation object.
+     *
+     * @var SGL_Translation
+     */
+    var $trans = null;
+
     /**
      * Holds section id(s) of section(s) nested below which is the current page.
      *
@@ -123,9 +138,9 @@ class SimpleNav
         $this->input    = $input;
         $c              = &SGL_Config::singleton();
         $this->conf     = $c->getAll();
-        $this->dbh      = & SGL_DB::singleton();
+        $this->da       = & DA_Default::singleton();
         $this->trans    = &SGL_Translation::singleton();
-        
+
         if (is_null($input->get('navLang'))) {
             $input->set('navLang', SGL_Translation::getLangID());
         }
@@ -191,21 +206,7 @@ class SimpleNav
      */
     function getSectionsByRoleId($sectionId = 0)
     {
-        $query = "
-            SELECT * FROM {$this->conf['table']['section']}
-            WHERE parent_id = " . $sectionId . '
-            ORDER BY order_id';
-
-        $result = $this->dbh->query($query);
-        if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
-            SGL::raiseError('The database exists, but does not appear to have any tables,
-                please delete the config file from the var directory and try the install again',
-                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
-        }
-        if (DB::isError($result)) {
-            SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
-        }
+        $result = $this->da->getSectionsByRoleId($sectionId);
 
         $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
@@ -241,12 +242,13 @@ class SimpleNav
             $section->isCurrent = false;
             $section->childIsCurrent = false;
 
-            //  if we're scraping a wikipage, set the title in the request
+            //  deal with different uri types
             if (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
                 $req = & SGL_Request::singleton();
                 $req->set('articleTitle', $section->title);
             } elseif (preg_match('/^uriAlias:(.*)/', $section->resource_uri, $aUri)) {
-	        $section->resource_uri = $aUri[1];
+                $ok = preg_match('/^[0-9]+/', $aUri[1], $aRet);
+                $section->resource_uri = $this->da->getAliasById($aRet[0]);
             } elseif (preg_match('/^uriExternal:(.*)/', $section->resource_uri, $aUri)) {
                 $section->resource_uri = $aUri[1];
                 $section->uriExternal = true;
@@ -317,7 +319,7 @@ class SimpleNav
                 if (
                     //  a. the strings are identical and it's not a static article
                     ($section->resource_uri == $querystring && $this->_staticId == 0 )
-                    // b. 
+                    // b.
                     || (
                         $section->resource_uri !== '' &&
                         isset($url->aQueryData['moduleName']) &&
@@ -336,7 +338,7 @@ class SimpleNav
                     || (strpos($querystring, 'articleview') !== false)
                     && strpos($section->resource_uri, 'articleview') !== false
                     && strpos($querystring, 'frmCatID') !== false
-                    && $section->is_static == 0) 
+                    && $section->is_static == 0)
                 {
                     $section->isCurrent = true;
                     $this->_currentSectionId = $section->section_id;
@@ -481,13 +483,8 @@ class SimpleNav
         if (!$this->_currentSectionId) {
             $sectionName = $this->input->get('pageTitle');
         } else {
-            $query = "
-                SELECT  title
-                FROM    {$this->conf['table']['section']}
-                WHERE   section_id = " . $this->_currentSectionId;
+            $sectionName = $this->da->getSectionNameById($this->_currentSectionId);
 
-            $sectionName = $this->dbh->getOne($query);
-            
             if (is_numeric($sectionName)) {
                 $sectionName = $this->trans->get($sectionName, 'nav', SGL_Translation::getLangID());
             }
