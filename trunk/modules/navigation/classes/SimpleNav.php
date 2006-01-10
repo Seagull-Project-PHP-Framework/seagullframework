@@ -168,7 +168,6 @@ class SimpleNav
             //  retreive nav translation
             $this->_aTranslations = SGL_Translation::getTranslations('nav', $lang);
 
-            $aSectionNodes = $this->getSectionsByRoleId();
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($aSectionNodes);
             $aNav = array('sectionId' => $sectionId, 'html' => $html);
