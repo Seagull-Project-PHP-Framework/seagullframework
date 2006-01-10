@@ -83,4 +83,4 @@ class SGL_Delegator
         $this->aDelegates[] = $delegate;
     }
 }
-?>    
+?>

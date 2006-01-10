@@ -100,8 +100,9 @@ class ConfigMgr extends SGL_Manager
             'SGL_UrlParserSefStrategy' => 'Seagull SEF',
             'SGL_UrlParserClassicStrategy' => 'Classic');
         $this->aTemplateEngines = array(
-            'flexy' => 'Flexy',
-            'smarty' => 'Smarty');
+            'flexy'   => 'Flexy',
+            'savant2' => 'Savant2',
+            'smarty'  => 'Smarty');
         $this->_aActionsMapping =  array(
             'edit'   => array('edit'),
             'update' => array('update', 'redirectToDefault'),
