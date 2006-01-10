@@ -40,9 +40,3 @@ INSERT INTO section VALUES (16, 'Manage', 'default/module/action/list', '1', '',
 #INSERT INTO section VALUES (22, 'Shop', 'shop/priceadmin', '1,2,0', '', 0, 22, 1, 4, 15, 1, 0, 0, '', '');
 #INSERT INTO section VALUES (24, 'ShopAdmin', 'shop/shopadmin', '1', '', 22, 22, 2, 3, 1, 2, 0, 0, '', '');
 #INSERT INTO section VALUES (25, 'Price', 'shop/price', '1,2,0', '', 0, 25, 1, 4, 16, 1, 0, 0, '', '');
-
-INSERT INTO uri_alias VALUES (1, 'seagull-php-framework', 1, NULL, NULL, NULL);
-INSERT INTO uri_alias VALUES (2, 'contact-seagull-php-framework', 8, NULL, NULL, NULL);
-INSERT INTO uri_alias VALUES (3, 'content-reshuffle-alias', 4, NULL, NULL, NULL);
-INSERT INTO uri_alias VALUES (4, 'any_alias_you_want', 1, NULL, NULL, NULL);
-

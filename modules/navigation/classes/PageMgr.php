@@ -42,6 +42,7 @@
 require_once SGL_CORE_DIR . '/NestedSet.php';
 require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
 
 /**
@@ -64,8 +65,13 @@ class PageMgr extends SGL_Manager
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
-        $this->da               = & DA_User::singleton();
+        #$this->da               = & DA_User::singleton();
         $this->trans            = & SGL_Translation::singleton('admin');
+
+        $dataAccess = & DA_User::singleton();
+        $dataAccessDefault = & DA_Default::singleton();
+        $dataAccess->add($dataAccessDefault);
+        $this->da = $dataAccess;
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -298,10 +304,10 @@ class PageMgr extends SGL_Manager
             @$output->section['parent_id']);
 
         // build uriAliases select options
-        $aUriAliases = $this->getAllAliases();
-        foreach ($aUriAliases as $key => $value) {
-            $output->aUriAliases[$key] = $key . ' -> ' . $value;
-        }
+//        $aUriAliases = $this->da->getAllAliases();
+//        foreach ($aUriAliases as $key => $value) {
+//            $output->aUriAliases[$key] = $key . ' -> ' . $value;
+//        }
     }
 
     function _add(&$input, &$output)
@@ -313,49 +319,6 @@ class PageMgr extends SGL_Manager
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->actionIsAdd = true;
         $output->addOnLoadEvent("toggleAliasElements(false)");
-    }
-
-    function getAllAliases()
-    {
-        $query = "
-        SELECT uri_alias, resource_uri
-        FROM {$this->conf['table']['uri_alias']} u, {$this->conf['table']['section']} s
-        WHERE u.section_id = s.section_id
-        ";
-        return $this->dbh->getAssoc($query);
-    }
-
-    function addUriAlias($aliasName, $target)
-    {
-        $nextId = $this->dbh->nextId($this->conf['table']['uri_alias']);
-        $aliasName = $this->dbh->quoteSmart($aliasName);
-
-        $query = "
-            INSERT INTO {$this->conf['table']['uri_alias']}
-            (uri_alias_id, uri_alias, section_id)
-            VALUES($nextId, $aliasName, $target)";
-        return $this->dbh->query($query);
-    }
-
-    function updateUriAlias($aliasName, $target)
-    {
-        $aliasName = $this->dbh->quoteSmart($aliasName);
-
-        $query = "
-            UPDATE {$this->conf['table']['uri_alias']}
-            SET uri_alias = $aliasName
-            WHERE section_id = $target";
-        return $this->dbh->query($query);
-    }
-
-    function getAliasBySectionId($id)
-    {
-        $query = "
-            SELECT uri_alias
-            FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $id
-            LIMIT 1";
-        return $this->dbh->getOne($query);
     }
 
     function _insert(&$input, &$output)
@@ -396,7 +359,6 @@ class PageMgr extends SGL_Manager
                 $actionPair;
             break;
         }
-
         //  deal with additional params
         if (!(empty($input->section['add_params']))) {
 
@@ -408,6 +370,11 @@ class PageMgr extends SGL_Manager
         //  add anchor if necessary
         if (!(empty($input->section['anchor']))) {
             $input->section['resource_uri'] .= '#' . $input->section['anchor'];
+        }
+        //  prepare resource_uri string for alias format
+        if (!empty($input->section['uri_alias'])) {
+            $nextAliasId = $this->dbh->nextId($this->conf['table']['uri_alias']);
+            $input->section['resource_uri'] = 'uriAlias:' . $nextAliasId.':'.$input->section['resource_uri'];
         }
         //  remove trailing slash/ampersand if one is present
         if (substr($input->section['resource_uri'], -1) == $separator) {
@@ -434,15 +401,14 @@ class PageMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  deal with potential alias
-        if (!(empty($input->section['uri_alias']))) {
+        if ($input->section['uri_alias_enable']) {
             $aliasName = SGL_String::dirify($input->section['uri_alias']);
             $target = $nodeId;
-            $ok = $this->addUriAlias($aliasName, $target);
+            $ok = $this->da->addUriAlias($nextAliasId, $aliasName, $target);
             if (PEAR::isError($ok)) {
                 $errorMsg = ' but alias creation failed as there can be no duplicates';
             }
         }
-
         //  clear cache so a new cache file is built reflecting changes
         SGL::clearCache('nav');
 
@@ -466,6 +432,7 @@ class PageMgr extends SGL_Manager
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
+
         //  if title is numeric retreive translation else populate with current title
         if ($section['trans_id']) {
             $section['title'] = $this->trans->get($section['trans_id'], 'nav', $input->navLang);
@@ -483,10 +450,11 @@ class PageMgr extends SGL_Manager
                 $wikiUrl = array_pop($aElems);
                 $section['resource_uri'] = urldecode($wikiUrl);
                 $output->articleType = 'wiki';
-//            } elseif (preg_match('/^uriAlias:(.*)/', $section['resource_uri'], $aUri)) {
-//                $section['resource_uri'] = $aUri[1];
-//                $output->articleType = 'uriAlias';
+            } elseif (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
+                $section['resource_uri'] = $aMatches[3];;
             } elseif (preg_match('/^uriExternal:(.*)/', $section['resource_uri'], $aUri)) {
+
+
                 $section['resource_uri'] = $aUri[1];
                 $output->articleType = 'uriExternal';
             } else {
@@ -526,12 +494,15 @@ class PageMgr extends SGL_Manager
                     $section['anchor'] = $anchor;
                 }
             }
-            $section['uri_alias'] = $this->getAliasBySectionId($section['section_id']);
+            $section['uri_alias'] = $this->da->getAliasBySectionId($section['section_id']);
 
 
         }
         $output->section = $section;
-        $output->addOnLoadEvent("document.getElementById('page[uri_alias_enable]').checked=true");
+        if (!empty($section['uri_alias'])) {
+            $output->addOnLoadEvent("document.getElementById('page[uri_alias_enable]').checked=true");
+        }
+        $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
     }
 
     function _update(&$input, &$output)
@@ -542,7 +513,7 @@ class PageMgr extends SGL_Manager
 
         //  if pageType = static, append articleId, else build page url
         $input->section['is_static'] = 0;
-        switch ( $input->section['articleType'] ) {
+        switch ($input->section['articleType']) {
         case 'static':
             $input->section['is_static'] = 1;
             $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
@@ -550,11 +521,6 @@ class PageMgr extends SGL_Manager
 
         case 'wiki':
             $string = 'publisher/wikiscrape/url/' . urlencode($input->section['resource_uri']);
-            $input->section['resource_uri'] = $string;
-            break;
-
-        case 'uriAlias':
-            $string = 'uriAlias:' . $input->section['resource_uri'];
             $input->section['resource_uri'] = $string;
             break;
 
@@ -593,6 +559,19 @@ class PageMgr extends SGL_Manager
         if (!(empty($input->section['anchor']))) {
             $input->section['resource_uri'] .= '#' . $input->section['anchor'];
         }
+
+        //  prepare resource_uri string for alias format
+        if (!empty($input->section['uri_alias'])) {
+            $aliasId = $this->da->getAliasIdBySectionId($input->section['section_id']);
+
+            if (is_null($aliasId)) {
+                $aliasId = $this->dbh->nextId($this->conf['table']['uri_alias']);
+                $aliasName = SGL_String::dirify($input->section['uri_alias']);
+                $this->da->addUriAlias($aliasId, $aliasName, $input->section['section_id']);
+            }
+            $input->section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$input->section['resource_uri'];
+        }
+
         //  remove trailing slash/ampersand if one is present
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
@@ -652,10 +631,9 @@ class PageMgr extends SGL_Manager
             break;
         }
         //  deal with potential alias
-        if (!(empty($input->section['uri_alias']))) {
+        if ($input->section['uri_alias_enable']) {
             $aliasName = SGL_String::dirify($input->section['uri_alias']);
-            $ok = $this->updateUriAlias($aliasName, $input->section['section_id']);
-print '<pre>';print_r($ok);
+            $ok = $this->da->updateUriAlias($aliasName, $input->section['section_id']);
             if (PEAR::isError($ok)) {
                 $errorMsg = ' but alias creation failed as there can be no duplicates';
             }
@@ -668,6 +646,7 @@ print '<pre>';print_r($ok);
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (is_array($input->aDelete)) {
             $nestedSet = new SGL_NestedSet($this->_params);
             //  deleting parent nodes automatically deletes chilren nodes, but user
@@ -681,6 +660,9 @@ print '<pre>';print_r($ok);
 
                     //  remove page
                     $nestedSet->deleteNode($sectionId);
+
+                    //  remove alias
+                    $this->da->deleteAliasBySectionId($sectionId);
                 }
             }
         } else {

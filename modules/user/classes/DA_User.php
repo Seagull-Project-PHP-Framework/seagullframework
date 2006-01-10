@@ -39,6 +39,7 @@
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 require_once 'DB/DataObject.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
 
 //  role sync constants
 define('SGL_ROLESYNC_ADD',              1);
@@ -55,7 +56,7 @@ define('SGL_ROLESYNC_VIEWONLY',         4);
  * @version $Revision: 1.14 $
  * @since   PHP 4.1
  */
-class DA_User
+class DA_User extends SGL_Delegator
 {
     /**
      * Constructor - set default resources.
@@ -126,7 +127,7 @@ class DA_User
         if ((PEAR::isError($aRolePerms))) {
             return $aRolePerms;
         }
-        
+
         //  then assign them to the user_permission table
         $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
         if ((PEAR::isError($ok))) {
@@ -143,8 +144,8 @@ class DA_User
         }
         if ((PEAR::isError($aPrefs))) {
             return $aPrefs;
-        }        
-        
+        }
+
         //  then assign them to the user_preference table
         $ok = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
         if ((PEAR::isError($ok))) {
@@ -193,7 +194,7 @@ class DA_User
 
         if (count($aPerms)) {
 	        $this->dbh->autocommit();
-	
+
 	        foreach ($aPerms as $k => $v) {
 	            //  undelimit form value into perm name, moduleId
 	            $p = explode('^', $v);
@@ -202,7 +203,7 @@ class DA_User
 	                WHERE name='{$p[0]}'
 	                AND module_id = {$p[1]}";
 	            $ok = $this->dbh->query($query);
-	            
+
 	            if (PEAR::isError($ok)) {
 	            	$this->dbh->rollBack();
 	                return $ok;
@@ -227,7 +228,7 @@ class DA_User
                     FROM    {$this->conf['table']['role_permission']}
                     WHERE   role_id = " . $roleId;
 
-        $aRolePerms = $this->dbh->getCol($query); 
+        $aRolePerms = $this->dbh->getCol($query);
         return $aRolePerms;
     }
 
@@ -246,13 +247,13 @@ class DA_User
 
         $query = "
             SELECT  rp.permission_id, p.name
-            FROM    {$this->conf['table']['role_permission']} rp, 
+            FROM    {$this->conf['table']['role_permission']} rp,
             		{$this->conf['table']['permission']} p
             WHERE   rp.permission_id = p.permission_id
             AND     role_id = $roleId
             ";
 
-        $aRolePerms = $this->dbh->getAssoc($query);       
+        $aRolePerms = $this->dbh->getAssoc($query);
         return $aRolePerms;
     }
 
@@ -290,12 +291,12 @@ class DA_User
         switch ($type) {
 
         case SGL_RET_ARRAY:
-            $filter = (!empty($moduleId)) 
-            	? "  AND p.module_id = $moduleId" 
+            $filter = (!empty($moduleId))
+            	? "  AND p.module_id = $moduleId"
             	: '';
             $query = "
                 SELECT permission_id, p.name, m.name AS module_name, p.module_id
-                FROM 	{$this->conf['table']['permission']} p, 
+                FROM 	{$this->conf['table']['permission']} p,
                 		{$this->conf['table']['module']} m
                 WHERE p.module_id = m.module_id
                 $filter
@@ -305,8 +306,8 @@ class DA_User
 
         case SGL_RET_ID_VALUE:
         default:
-            $filter = (!empty($moduleId)) 
-            	? "WHERE  module_id = $moduleId" 
+            $filter = (!empty($moduleId))
+            	? "WHERE  module_id = $moduleId"
             	: '';
 
             $query = "
@@ -457,7 +458,7 @@ class DA_User
             foreach ($aRolePerms as $key => $value) {
                 $whereClause .= " $key NOT IN (p.permission_id) AND ";
             }
-            $whereClause = substr($whereClause, 0, -4);        	
+            $whereClause = substr($whereClause, 0, -4);
             $query .= " WHERE $whereClause";
         }
         $aOtherPerms = $this->dbh->getAssoc($query);
@@ -490,7 +491,7 @@ class DA_User
 
         $query = "
             SELECT  $term, value
-            FROM    {$this->conf['table']['preference']} p, 
+            FROM    {$this->conf['table']['preference']} p,
             		{$this->conf['table']['org_preference']} op
             WHERE   p.preference_id = op.preference_id
             AND     op.organisation_id = " . $orgId;
@@ -522,7 +523,7 @@ class DA_User
 
         $query = "
             SELECT  name, value
-            FROM    {$this->conf['table']['preference']} p, 
+            FROM    {$this->conf['table']['preference']} p,
             		{$this->conf['table']['user_preference']} up
             WHERE   p.preference_id = up.preference_id
             AND     up.usr_id = " . $uid;
@@ -602,7 +603,7 @@ class DA_User
     function syncDefaultPrefs()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $this->dbh->autocommit();
         $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . SGL_GUEST;
@@ -618,7 +619,7 @@ class DA_User
         	$this->dbh->rollBack();
             return $aPrefs;
         }
-                    
+
         foreach ($aPrefs as $prefId => $prefValue) {
             $query2 ="
             INSERT INTO {$this->conf['table']['user_preference']}
@@ -817,7 +818,7 @@ class DA_User
     function getUsersByRoleId($roleId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "  
+        $query = "
         	SELECT  usr_id
             FROM    {$this->conf['table']['user']}
             WHERE   role_id = " . $roleId;
@@ -835,7 +836,7 @@ class DA_User
     function getUsersByOrgId($orgId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $query = "  
+        $query = "
         	SELECT  usr_id
             FROM    {$this->conf['table']['user']}
             WHERE   organisation_id = " . $orgId;
@@ -859,7 +860,7 @@ class DA_User
 
         if ($action == SGL_ROLE_REMOVE) {
             foreach ($aPerms as $permId => $permName) {
-                $this->dbh->query('   
+                $this->dbh->query('
                 	DELETE FROM ' . $this->conf['table']['role_permission'] . "
                     WHERE   permission_id = $permId
                     AND     role_id = $roleId");
@@ -867,7 +868,7 @@ class DA_User
         } else {
             //  add perms
             foreach ($aPerms as $permId => $permName) {
-                $this->dbh->query('   
+                $this->dbh->query('
                 	INSERT INTO ' . $this->conf['table']['role_permission'] . "
                     	(role_permission_id, role_id, permission_id)
                     VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) . ", $roleId, $permId)");
