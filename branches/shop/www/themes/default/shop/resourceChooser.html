@@ -1,0 +1,30 @@
+<form name="frmResourceChooser" id="frmResourceChooser" flexy:ignore>
+    <div id="resource-chooser">
+        {translate(#Manage#)}:
+        <input class="wideButton"
+	           type="button"
+               name="users"
+               value="{translate(#Discounts#)}"
+               onClick="javascript:document.location.href='{makeUrl(##,#priceadmin#)}'" />
+        <input class="wideButton"
+	           type="button"
+               name="users"
+               value="{translate(#Products#)}"
+               onClick="javascript:document.location.href='{makeUrl(##,#shopadmin#)}'" />
+        <input class="wideButton"
+	           type="button"
+               name="users"
+               value="{translate(#Batch processing#)}"
+               onClick="javascript:document.location.href='{makeUrl(##,#upload#)}'" />
+        <input class="wideButton"
+	           type="button"
+               name="users"
+               value="{translate(#Shop configuration#)}"
+               onClick="javascript:document.location.href='{makeUrl(#list#,#shopConfig#,#shop#)}'" />
+        <input class="wideButton"
+	           type="button"
+               name="users"
+               value="{translate(#Product categories description#)}"
+               onClick="javascript:document.location.href='{makeUrl(#pCatDecr#,#shopadmin#)}'" />
+    </div>
+</form>

@@ -1,0 +1,41 @@
+.tableHeader {
+	font-size: 15px;
+	font-weight: bold;
+	color: #D71B1D;
+}
+.tableHeader td{
+	border-bottom: 1px solid #e7e7e7;
+	background-color: #FBF5B4;
+}
+
+.pText {
+	font-family: Verdana, serif;
+	font-size: 10px;
+	font-weight: 600;
+	color: #757779;
+	text-decoration: none;
+	text-align: left;
+}
+.productName {
+	font-size: 15px;
+	font-weight: bold;
+	color: #D71B1D;
+}
+.productDescKey {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.productText {
+	font-size: 12px;
+}
+.productText td{
+	border-bottom: 1px solid #971111;
+}
+
+.productFastList {
+	font-size: 11px;
+}
+.productFastList td{
+	border-bottom: 1px solid #e7e7e7;
+}

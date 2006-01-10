@@ -1,0 +1,177 @@
+<link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/shop/shop.css" />
+{if:product}
+<script language="JavaScript" type="text/javascript">
+<!--
+	function getElementNo(formName,elementName) {
+		var ret = -1;
+
+		for(var i=0;i < formName.elements.length;i++) {
+			if (formName.elements[i].name == elementName)
+				ret = i;
+		}
+
+		return ret;
+	}
+
+	function validateForm(formName) {
+		var regex=/[0-9]/;
+
+		no = getElementNo(formName, 'qty');
+		if (formName.elements[no].value==null || formName.elements[no].value=="" || formName.elements[no].value==" ") {
+		   alert('Enter product quantity');
+		   return false;
+		};
+		if (formName.elements[no].value<=0) {
+		   alert('Product quantity must be > 0');
+		   return false;
+		};
+		
+		if (!regex.test(formName.elements[no].value)) {
+		   alert('Enter NUMERIC value');
+		   return false;
+		};
+
+		return true;
+	}
+-->
+</script>
+<!-- WE ARE HERE header-->
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
+<br/><br/>
+<!-- WE ARE HERE header-->
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td width="50%" valign="top"><img src="{product.img}" alt="{product.manufacturer} : {product.name}" /></td>
+    <td width="50%" align="right" valign="top">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="productText">
+        <tr> 
+          <td class="tableHeader" colspan="2">{product.name}</td>
+        </tr>
+{if:product.oldPrice}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Old Price without VAT#)}:</td>
+          <td>
+	    <span style="text-decoration: line-through;">{this.plugin(#formatPrice#,product.oldPrice)}</span>{translate(product.currency)}
+          </td>
+        </tr>
+{end:}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Price without VAT#)}:</td>
+          <td>{this.plugin(#formatPrice#,product.price[price])} {translate(product.price[currency])}</td>
+        </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Price with VAT#)}:</td>
+          <td>{this.plugin(#formatPrice#,product.price[priceVAT])} {translate(product.price[currency])}</td>
+        </tr>
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Status#)}:</td>
+          <td>{product.statusString}</td>
+        </tr>
+{if:product.warranty}
+	<tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Warranty#)}:</td>
+          <td>{product.warranty}</td>
+        </tr>
+{end:}
+{if:product.BALANCE}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Ammount in warehouses#)}:</td>
+          <td>{product.BALANCE}</td>
+        </tr>
+{end:}
+{if:product.manufacturer}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Manufacturer#)}:</td>
+          <td>{product.manufacturer}</td>
+        </tr>
+{end:}  
+{if:product.link_manufacturer}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Manufacturer link#)}:</td>
+          <td><a href="{product.link_manufacturer}">{product.link_manufacturer}</a></td>
+        </tr>
+ {end:}
+ {if:product.link_datasheet}
+        <tr valign="top" onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+          <td width="50%" nowrap class="productDescKey">{translate(#Datasheet link#)}:</td>
+          <td><a href="{product.link_datasheet}">{product.link_datasheet}</a></td>
+        </tr>
+ {end:}
+      </table>
+
+      <br>
+{if:!variants}
+        <form name="order" method="post" flexy:ignore="yes" flexy:if="showCart" onSubmit="return validateForm(this)" enctype="multipart/form-data" >
+        <input type="hidden" name="buyProdID" value="value[product_id]" />
+        <table width="100%" height="29" border="0" cellpadding="0" cellspacing="0">
+           <tr>
+               <td align="right">
+                  {translate(#Quantity#)}:
+               </td>
+               <td align="left" valign="middle">
+                  <input class="text" name="qty" size="8" type="text" />
+                  <input class="narrowButton" type="submit" name="order" value="{translate(#Order#)}" />
+               </td>
+	       <td align="right">
+                  <input type="hidden" name="action" value="order" />
+                  <input type="hidden" name="prevAction" value="details" />
+                  <input class="narrowButton" type="submit" name="order" value="{translate(#Back#)}" onclick="javascript:history.go(-1)" />
+               </td>
+           <tr>
+        </table>
+        </form>
+{end:}
+	  </td>
+  </tr>
+</table>
+<br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td class="tableHeader">{translate(#Description#)}:</td>
+  </tr>
+  <tr> 
+    <td>{product.description:h}</td>
+  </tr>
+</table>
+
+<hr />
+
+{if:variants}
+{foreach:variants,key,value}
+  <form name="order" method="post" flexy:ignore="yes" flexy:if="showCart" onSubmit="return validateForm(this)" enctype="multipart/form-data" >
+        <input type="hidden" name="action" value="order" />
+        <input type="hidden" name="prevAction" value="details" />
+        <input type="hidden" name="buyProdID" value="{value[product_id]}" />
+
+  <table width="100%" height="29" border="1" cellpadding="0" cellspacing="0">
+     <tr>
+        <td width="77px">
+           <img src="{value[thumb]}" alt="{value[cod1] : value[name]" />
+        </td>
+        <td width="150px">
+           {value[cod1]}:
+        </td>
+        <td width="250px">
+           {value[name]}
+        </td>
+        <td align="left" valign="middle">
+            <input class="text" name="qty" size="8" type="text" />
+            <input class="narrowButton" type="submit" name="order" value="{translate(#Order#)}" />
+        </td>
+     <tr>
+  </table>
+  </form>
+{end:}
+{end:}
+
+
+{else:}
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="top"> 
+    <td><strong><div align="center">{translate(#This product does not exist#)}</div></strong></td>
+  </tr>
+</table>
+{end:}
+

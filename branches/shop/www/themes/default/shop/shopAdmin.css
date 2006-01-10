@@ -1,0 +1,99 @@
+.tableHeader {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333399;
+}
+.tableHeader td{
+	border-bottom: 1px solid #e7e7e7;
+}
+
+.pText {
+	font-family: Verdana, serif;
+	font-size: 10px;
+	font-weight: 600;
+	color: #757779;
+	text-decoration: none;
+	text-align: left;
+}
+.productName {
+	font-size: 15px;
+	font-weight: bold;
+	color: #333399;
+}
+.productDescKey {
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.productText {
+	font-size: 12px;
+}
+.productText td{
+	border-bottom: 1px solid #971111;
+}
+
+.productFastList {
+	font-size: 11px;
+}
+.productFastList td{
+    border-bottom: 1px solid #e7e7e7;
+}
+
+/**** datatable ***/
+
+.dataTable {
+    border: 1px solid #666666;
+}
+
+.dataTable th {
+    background: #FDE802;
+/*    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid #666666;
+    border-bottom: 1px solid #666666;*/
+    font-family: Verdana, serif;
+    font-size: 10px;
+}
+
+.dataTable thead a {
+    font-family: Verdana, serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+}
+
+.dataTable thead a:visited{
+    font-family: Verdana, serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+}
+
+.dataTable thead a:hover{
+    font-family: Verdana, serif;
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+}
+
+.dataTable a{
+    color: #808080;
+    font-weight: bold;
+}
+.dataTable a:visited {
+    color: #808080;
+}
+.dataTable a:hover {
+    color: #808080;
+    text-decoration: underline;
+}
+
+.dataTable-tr-footer {
+    color: black;
+    padding: 1px 5px;
+    background: #FDE802;
+    vertical-align: middle;
+}
+
+/**** datatable ***/

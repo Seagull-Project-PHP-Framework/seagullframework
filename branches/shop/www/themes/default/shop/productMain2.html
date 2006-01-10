@@ -1,0 +1,60 @@
+<!-- WE ARE HERE header-->
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
+<!-- WE ARE HERE header-->
+
+{if:out}
+<table border="0" cellpadding="0" cellspacing="5" width="99%">
+   <tr>
+{foreach:out,key,value}
+       <td align="center">
+<!--	 <div style="width: 20em; border: 1px solod blue;" > -->
+
+
+<!-- content -->
+<div style="width: 99%; padding: -4px; text-align: left;">
+       <span style="font-face: verdana; color: black; font-weight: 600; font-size: x-small; ">
+           {value[name]}  <br />
+       </span>
+       <div style="float: right; margin: 0 0 10px 10px; padding: 2px; width: 97%">
+          <img src="{value[img]}" alt="{value[name]}" border="0" align="left" width="75px" height="75px" style="padding: 4px" />
+          <span style="font-face: verdana; color: black; font-weight: 300; font-size: x-small; vertical-align: bottom;">
+              {value[short_description]}
+          </span>
+       </div>
+          {if:value[oldPriceVAT]}
+             {translate(#Old price#)}: <strong style="text-decoration: line-through">{this.plugin(#formatPrice#,value[oldPriceVAT])} </strong>{translate(value[currency])}<br />
+          {end:}
+          {translate(#Price#)}: <strong>{this.plugin(#formatPrice#,value[priceVAT])} </strong>{translate(value[currency])}
+       <br />
+       <div style="font-family: Verdana; font-size: xx-small; text-align: right;">
+              <a href="{value[cat_id]}" style="text-decoration: none;">{translate(#More#)}: >></a>
+       </div>
+</div>
+<!-- content -->
+
+
+<!--       </div> -->
+      </td>
+    {if:value[breakRow]}
+      </tr>
+      <tr>
+    {end:}
+{end:}
+ </tr>
+</table>
+  {else:}
+<table border="0" cellspacing="1" cellpadding="5" width="100%" align="center" class="productText">
+  <tr valign="top">
+    <td align="center" style="border: none">
+        {translate(#No products#)}
+    </td>
+  </tr>
+</table>
+{end:}
+  
+
+
+
+
+
+

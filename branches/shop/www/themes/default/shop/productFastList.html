@@ -1,0 +1,95 @@
+<link rel="stylesheet" type="text/css" href="{webRoot}/themes/{theme}/shop/shop.css" />
+
+<!-- <h1 class="pageTitle">{pageTitle}</h1> -->
+
+<!-- WE ARE HERE header-->
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
+{if:!noPath}
+<h1>{currentCat}</h1>
+<p>
+&nbsp;&nbsp;&nbsp;&nbsp;{path:h}
+</p>
+{else:}
+<h1>{translate(#Search results are:#)}</h1>
+{end:}
+<!-- WE ARE HERE header-->
+
+<!-- header change view -->
+<table width="100%" border="0" cellspacing="1" cellpadding="5" height="25" bgcolor="#FFF8B8">
+   <tr>
+     <td align="left">
+        <strong>{translate(#Switch to#)}:</strong>
+        <a href="{makeUrl(#lister#,#shop#,#shop#,##,#frmCatID|catID#)}"> {translate(#Detailed view#)}</a>
+     </td>
+     <td align="right"><strong>{translate(#Total products#)}: </strong> {totalItems}</td>
+   </tr>
+</table>
+
+{if:keywords}<strong>{translate(#Search results for#)}:</strong> {keywords} <br /> {end:}
+{if:img}<strong>{translate(#Image present#)}:</strong>  <br />{end:}
+{if:new_id}<strong>{translate(#New image#)}:</strong> <br />{end:}
+{if:bargain}<strong>{translate(#Bargain product#)}</strong> <br />{end:}
+{if:bargain}<strong>{translate(#Bargain product#)}</strong> <br />{end:}
+{if:img}<strong>{translate(#Image present#)}</strong> <br />{end:}
+{if:manufacturer}<strong>{translate(#Manufacturer is #)}</strong> {manufacturer} <br />{end:}
+{if:frmCatID}<strong>{translate(#In subbranch#)}:</strong> {frmCatID} <br />{end:}
+{if:cod1}<strong>{translate(#Product code like#)}:</strong> {cod1} <br />{end:}
+
+<br />
+<!-- END header -->
+
+<table border="0" cellspacing="1" cellpadding="5" width="100%" align="center" class="productText">
+{if:aPagedData[data]}
+    <tr bgcolor="#FFF8B8">
+      <td width="200px">
+         <strong><a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Product#)}</a></strong>
+      </td>
+      <td>
+         <strong>{translate(#Short description#)}</strong>
+      </td>
+      <td width="40px">
+         <strong>{translate(#Ammount in warehouses#)}</strong>
+      </td>
+      <td width="60px">
+         <strong><a class="header" href="{makeUrl(#fastList#,##,##,##,#frmCatID|catID||frmSortBy|price||frmSortOrder|sortOrder#)}">{translate(#Price#)}</a></strong>
+      </td>
+      <td align="right" width="60px">
+         <strong>{translate(#Buy#)}</strong>
+      </td>
+    </tr>
+    {foreach:aPagedData[data],key,product}
+    <tr onmouseover="this.style.backgroundColor='#FDFBDF'" onmouseout="this.style.backgroundColor='#FFFFFF'">
+      <td valign="top"><a href="{makeUrl(#details#)}pid/{product.product_id}/" style="color: #636363">{product.name}</a></td>
+      <td style="font-size: 10px">&nbsp;{product.short_description}</td>
+      <td>&nbsp;{product.BALANCE}</td>
+      <td align="right">{this.plugin(#formatPrice#,product.priceVAT):h} {translate(product.currency)}</td>
+      <td align="right">
+            <form action="" method="post" flexy:ignore="yes" flexy:if="showCart">
+            <input type="hidden" name="action" value="order" />
+            <input type="hidden" name="pid" value="{product.product_id}" />
+            <input class="text" name="qty" style="width: 38px; height: 12px; font-size:10px;" type="text" />
+            <input type="submit" value="Submit" />
+            </form>
+      </td>
+    </tr> 
+    {end:}
+  {if:pager}
+  <tr valign="top"> 
+    <td colspan="5" style="border: none">
+       <b>{translate(#Products#)}: {aPagedData[from]}-{aPagedData[to]} {translate(#from#)} {aPagedData[totalItems]} &nbsp; &nbsp; ::</b> &nbsp; &nbsp;
+        {aPagedData[links]:h} 
+    </td>
+  </tr>
+  {end:}
+
+  {else:}
+  <tr valign="top">
+    <td align="center" style="border: none">
+        {translate(#No products#)}
+    </td>
+  </tr>
+  {end:}
+</table>
+
+
+

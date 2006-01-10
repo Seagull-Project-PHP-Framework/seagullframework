@@ -1,0 +1,38 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}<p>&nbsp;</p></span>
+
+{if:items}
+<table border="0" cellspacing="1" cellpadding="4" width="98%" align="center">
+   <tr>
+     <th>{translate(#Name#)}</th>
+     <th width="40">{translate(#Quantity#)}</th>
+     <th width="100"><div align="right">{translate(#Unit price w/o VAT#)}</div></th>
+     <th width="100">{translate(#Sum price w/o VAT#)}</th>
+   </tr>
+
+   <tr class="{switchRowClass()}" flexy:foreach="items,key,aValue">
+     <td>{key}. <a href="{makeUrl(#details#,#shop#,#shop#)}pid/{aValue.id}/">{aValue.name}</a></td>
+     <td width="40">{aValue.quantity}</td>
+     <td width="100" align="right">{this.plugin(#formatPrice#,aValue.price)} {translate(currency)}</td>
+     <td width="100" align="right">{this.plugin(#formatPrice#,aValue.sum)} {translate(currency)}</td>
+   </tr>
+
+   <tr>
+     <td align="right">{translate(#Total#)}:</td>
+     <td align="left"><strong>{itemCount}</strong></td>
+     <td align="right"><strong>{this.plugin(#formatPrice#,total_price)} {translate(currency)}</strong></td>
+     <td align="right"><strong>{this.plugin(#formatPrice#,total_sum)} {translate(currency)}</strong></td>
+   </tr>
+   <tr>
+     <td colspan="2"></td>
+     <td align="center"><strong>{translate(#VAT#)} {vat}%:</strong></td>
+     <td align="right"><strong>{this.plugin(#formatPrice#,VATsum)}  {translate(currency)}</strong></td>
+   </tr>
+   <tr>
+     <td colspan="2"><a href="{makeUrl(##,#shop#,#shop#)}">{translate(#Back to shopping#)}</a></td>
+     <td align="center"><strong>{translate(#Total with VAT#)}:</strong></td>
+     <td align="right"><strong>{this.plugin(#formatPrice#,total_sumVAT)} {translate(currency)}</strong></td>
+   </tr>
+</table>
+
+{end:}

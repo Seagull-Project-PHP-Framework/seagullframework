@@ -1,0 +1,32 @@
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+
+<table border="0" cellspacing="1" cellpadding="5" width="90%" align="center">
+	<tr> 
+      <td colspan="7">
+      <strong>{translate(#Total products#)}:</strong> {totalItems}</td>
+    <tr> 
+    <tr> 
+      <th width="90"><div align="center"><a class="header" href="{makeUrl()}frmSortBy/no/frmSortOrder/{sortOrder}/">{translate(#No by orders#)}</a></div></th>
+	  <th width="100"><div align="center"><a class="header" href="{makeUrl()}frmSortBy/noq/frmSortOrder/{sortOrder}/">{translate(#No by quantity#)}</a></div></th>
+      <th><a class="header" href="{makeUrl()}frmSortBy/product_name/frmSortOrder/{sortOrder}/">{translate(#Product name#)}</a></th>
+      <th width="50">{translate(#Code#)}</th>
+      <th>{translate(#Price#)}</th>
+      <th width="50"><a class="header" href="{makeUrl()}frmSortBy/orders/frmSortOrder/{sortOrder}/">{translate(#Orders#)}</a></th>
+      <th width="50"><a class="header" href="{makeUrl()}frmSortBy/quantity/frmSortOrder/{sortOrder}/">{translate(#Quantity#)}</a></div></th>
+	  <th width="50"><div align="right"><a class="header" href="{makeUrl()}frmSortBy/balance/frmSortOrder/{sortOrder}/">{translate(#Balance#)}</a></div></th>
+    </tr>
+    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue"> 
+      <td width="90" align="center">{aValue[no]}</td>
+	  <td width="100" align="center">{aValue[noq]}</td>
+      <td><a href="{makeUrl(#edit#,#shopadmin#,#shop#)}frmProdId/{aValue[product_id]}/">{aValue[product_name]}</a></a></td>
+      <td>{aValue[product_code]}</a></td>
+      <td>{this.plugin(#formatPrice#,aValue[price]):h}</td>
+      <td>{aValue[orders]}</td>
+      <td>{aValue[quantity]}</td>
+	  <td align="right">{aValue[balance]}</td>
+    </tr>
+</table>
