@@ -37,7 +37,7 @@
 // | Authors: Andrey Podshivalov <planetaz@gmail.com>                          |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_LIB_DIR . '/other/Savant2/Savant2.php';
+require_once 'Savant2.php';
 
 class SGL_Savant2 extends Savant2
 {
@@ -101,9 +101,9 @@ class SGL_HtmlSavant2RendererStrategy extends SGL_OutputRendererStrategy
         $view->postProcess($view);
 
         //  prepare Savant2 object
-	   $moduleName = isset($view->data->moduleName)
-	       ? $view->data->moduleName
-	       : 'default';
+        $moduleName = isset($view->data->moduleName)
+	    ? $view->data->moduleName
+	    : 'default';
         $savant2 = &SGL_Savant2::singleton($view->data->theme, $moduleName);
 
         $savant2->assign('result', $view->data);
