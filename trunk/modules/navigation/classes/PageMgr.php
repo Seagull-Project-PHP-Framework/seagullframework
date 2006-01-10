@@ -498,11 +498,12 @@ class PageMgr extends SGL_Manager
 
 
         }
-        $output->section = $section;
         if (!empty($section['uri_alias'])) {
             $output->addOnLoadEvent("document.getElementById('page[uri_alias_enable]').checked=true");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
         }
-        $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
+        $output->section = $section;
     }
 
     function _update(&$input, &$output)
