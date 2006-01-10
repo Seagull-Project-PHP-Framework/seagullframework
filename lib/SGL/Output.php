@@ -477,6 +477,14 @@ class SGL_Output
 	        $templateName = $moduleName . '/' . $this->template;
 	        $smarty = & SGL_Smarty::singleton();
     	    $ok = $smarty->display($templateName);
+
+	    } elseif ($conf['site']['templateEngine'] == 'savant2') {
+
+	        $savant2 = & SGL_Savant2::singleton();
+	        if (empty($this->template)) {
+	            $this->template = 'docBlank.html';
+	        }
+    	        $savant2->display($this->template);
 	    }
     }
 
