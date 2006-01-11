@@ -522,11 +522,13 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
         $getDefaultMgr = false;
+        $homePageRequest = false;
 
         if (empty($moduleName) || empty($managerName)) {
 
             SGL::logMessage('Module and manager names could not be determined from request');
             $getDefaultMgr = true;
+            $homePageRequest = true;
 
         } else {
             if (!ModuleMgr::moduleIsRegistered($moduleName)) {
@@ -571,7 +573,9 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         }
         if ($getDefaultMgr) {
             $this->getDefaultManager($input);
-            PEAR::raiseError('specified manager could not be found, default loaded');
+            if (!$homePageRequest) {
+                PEAR::raiseError('specified manager could not be found, default loaded');
+            }
         }
         $this->processRequest->process($input);
     }
