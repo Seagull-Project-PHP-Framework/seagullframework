@@ -270,12 +270,15 @@ class PearMgr extends SGL_Manager
                     }
 
                     foreach ($data['data'] as $aPackages) {
-//                        foreach ($array as $catName => $v) {
-                            #print $array[0]."\n<br />";
-//                        }
-print '<pre>';print_r($aPackages);
+                        foreach ($aPackages as $aPackage) {
+                            // [0] name
+                            // [1] version
+                            // [3] desc
+                            // [4] (array) deps
+                            #print $aPackage[0]."\n<br />";
+                        }
                     }
-                    #print_r($data);
+#print '<pre>';print_r($aPackage);
 
                     exit;
                 case 'show-last-error':
