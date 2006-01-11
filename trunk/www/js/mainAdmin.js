@@ -13,7 +13,11 @@ function formSubmit(formName, fieldName, fieldValue, doCreate)
 {
     var form = document.forms[formName];
     if (typeof doCreate != "undefined" && doCreate == 1) {
-        // not available currently
+        newInput = document.createElement("input");
+        newInput.setAttribute('name', fieldName);
+        newInput.setAttribute('value', fieldValue);
+        newInput.setAttribute('type', 'hidden');
+        form.appendChild(newInput);
     } else {
         if (fieldName) {
             var elm = form.elements[fieldName];
@@ -22,7 +26,6 @@ function formSubmit(formName, fieldName, fieldValue, doCreate)
     }
     form.submit();
 }
-
 //  Allows to show/hide a block of options (defined within a fieldset) in configEdit form
 function showConfigOptions (option)
 {

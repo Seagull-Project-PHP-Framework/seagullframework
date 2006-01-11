@@ -7,11 +7,12 @@
  * @author  Julien Casanova <julien_casanova@yahoo.fr>
  */
 
- // ATTENTION l'intégralité du fichier étant inclus quelque soit le manager dans lequel on se trouve, certaines variables peuvent être inexistantes. Ex : $input->category_id si on n'est pas dans CategoryMgr.
- // IL FAUT DONC déclarer ses variables au préalables en attendant de faire mieux.
+ // WARNING This whole file is included without knowing which manager was actually requested. Thus some variables would not be defined. Ex : $input->category_id if CategoryMgr was not requested.
+ // Give some default values to variables you introduce in this file.
 if(!isset($input->category_id)) $input->category_id = 1;
 if(!isset($input->moduleId)) $input->moduleId = '';
- // FIN de la déclaration des variables.
+if(!isset($input->category['category_id'])) $input->category['category_id'] = '';
+ // End of variables declatation.
 $aMgrOptions = array
 (
 'admin' => array
@@ -320,9 +321,8 @@ $aMgrOptions = array
                 ),
             'actions'       => array
                 (
-                'Add Category' => SGL_Url::makeLink('insert','category','navigation',array(),"frmCatID|{$input->category_id}"),
-                'Reorder Categories' => SGL_Url::makeLink('reorder','category','navigation'),
                 'Add Root Category' => SGL_Url::makeLink('insert','category','navigation',array(),'frmCatID|0'),
+                'Reorder Categories' => SGL_Url::makeLink('reorder','category','navigation'),
                 ),
             ),
         'list' => array
@@ -330,7 +330,12 @@ $aMgrOptions = array
             'pageTitle'     => 'Category Manager',
             'instructions'  => 'Sélectionnez une catégorie dans la liste de gauche pour la modifier.<br />Vous pouvez ajouter des catégories dans l\'arborescence en cliquant sur "Ajouter une catégorie".',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Add Category' => SGL_Url::makeLink('insert','category','navigation',array(),"frmCatID|{$input->category_id}"),
+                'Save'   => 'javascript:formSubmit("frmCategoryMgr","submitted","1","1")',
+                'Delete' => 'javascript:formSubmit("frmCategoryMgr","action","delete")',
+                ),
             ),
         'reorder' => array
             (
@@ -367,26 +372,37 @@ $aMgrOptions = array
                 'change style' => SGL_Url::makeLink('list','navstyle','navigation'),
                 ),
             ),
-        'add' => array
+        'insert' => array
             (
             'pageTitle'     => 'Page Manager :: Add',
             'instructions'  => '',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save'   => 'javascript:formSubmit("sectionEdit","submitted","1","1")',
+                'Cancel' => SGL_Url::makeLink('list','page','navigation'),
+                ),
             ),
         'edit' => array
             (
             'pageTitle'     => 'Page Manager :: Edit',
             'instructions'  => 'instructions_page_edit',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Back' => SGL_Url::makeLink('list','page','navigation'),
+                ),
             ),
         'update' => array
             (
             'pageTitle'     => 'Page Manager :: Edit',
             'instructions'  => 'instructions_page_edit',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save'   => 'javascript:formSubmit("sectionEdit","submitted","1","1")',
+                'Cancel' => SGL_Url::makeLink('list','page','navigation'),
+                ),
             ),
         'reorder' => array
             (

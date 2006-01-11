@@ -142,6 +142,12 @@ th a:hover {
     text-decoration: underline;
     color: <?php echo $primaryTextLight ?>;
 }
+tfoot tr{
+    
+}
+tfoot tr input{
+    vertical-align: middle;
+}
 #imRead {
     background-color: <?php echo $tertiaryMedium ?>;
 }
@@ -175,16 +181,15 @@ form {
 }
 fieldset {
     margin: 0 0 2em;
-    padding: 5px;
+    padding: 10px;
     border: 1px solid <?php echo $tertiaryDark ?>;
 }
 fieldset legend {
     color: <?php echo $secondary ?>;
     font-weight: normal;
 }
-fieldset h3 {
+form h3 {
     background: <?php echo $secondary ?> url('<?php echo $baseUrl ?>/images/th_bg.gif') repeat-x;
-    margin-bottom: 1em;
     padding: 0.5em 0;
     text-align: center;
     color: <?php echo $primaryTextLight ?>;
@@ -198,11 +203,38 @@ fieldset p {
 }
 fieldset p label {
     float: left;
+    color: <?php echo $primary ?>;
 }
 input {
     font-weight: normal;
 }
-
+/*********** Column layout within forms **************/
+/* Put some fieldset(s) inside a div class="formOptions"
+/* Main part of the form in a div class="formContent" */
+div.formOptions {
+    float: left;
+    width: 33%;
+    margin: 0 15px 0 5px;
+}
+.formOptions h4 {
+    padding: 5px;
+    background: <?php echo $tertiary ?>;
+    text-align: right;
+    color: <?php echo $secondary ?>;
+}
+.formOptions fieldset {
+    border: 1px solid <?php echo $tertiary ?>;
+}
+div.formContent {
+    width: auto;
+}
+.formContent fieldset {
+    padding: 0;
+    border: none;
+}
+.formContent legend {
+    padding: 0 0.5em;
+}
 /*********************** LAYOUT : MODULES QUICK ACCESS ************************/
 div#modules-quickaccess {
     position: absolute;
@@ -364,7 +396,9 @@ div.show#modules-quickaccess {
 }
 .blockContainer .blockContent {
     background: #fcfcfc;
-    padding: 5px;
+
+    width: 100%;
+    overflow: auto;
 }
 
 /*************************** LAYOUT : MIDDLE BLOCKS ***************************/
@@ -785,7 +819,17 @@ span.tipOwner:hover span.tipText, label:hover span.tipText, input.tipOwner:hover
 }
 <?php if ($browserFamily == 'MSIE') {?>
 /* IE javascript workaround */
-span.tipOwner, label.tipOwner, , input.tipOwner {
+span.tipOwner, label.tipOwner, input.tipOwner {
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
 }
 <?php } ?>
+/************* Special TipText boxes ********************/
+span#becareful {
+    top: -2em;
+    left: -6.5em;
+    width: 6em;
+    padding: 5px;
+    background: #fff;
+    border: 1px solid #ff3300;
+    color: #ff3300;
+}

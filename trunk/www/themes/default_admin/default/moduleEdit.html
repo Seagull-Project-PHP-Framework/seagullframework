@@ -1,4 +1,10 @@
 <form method="post" name="module" id="module" flexy:ignore>
+<h3>{if:module.module_id}
+    {translate(#module#,#ucfirst#)} : {module.title}
+    {else:}
+    {translate(#new module#,#ucfirst#)}
+    {end:}
+</h3>
 <p><input type="hidden" name="action" value="{action}" />
 {if:module.module_id}
 <input type="hidden" name="module[module_id]" value="{module.module_id}" />
@@ -9,8 +15,6 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 
 <fieldset>
-    <h3>{translate(#New module#)}</h3>
-    
     <p>
         <label class="tipOwner" for="module[name]">{translate(#Name#)}
             <span class="tipText">{translate(#The name of the module must be the exact name of the folder containing files, beware of case sensiveness#)}</span>

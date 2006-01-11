@@ -154,12 +154,16 @@ class SGL_Output
      * @param   boolean  $checked    is checked
      * @return  string  html         checkbox tag w/label
      */
-    function generateCheckbox($name, $value, $checked)
+    function generateCheckbox($name, $value, $checked, $label=true)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $isChecked = $checked ? ' checked' : '';
         $html = "<input class='noBorder' type='checkbox' name='$name' " .
-            "id='$name' value='$value' $isChecked><label for='$name'>$value</label><br />\n";
+            "id='$name' value='$value' $isChecked>";
+        if ($label) {
+            $html .= "<label for='$name'>$value</label><br />";
+        }
+        $html .= "\n";
         return $html;
     }
 
