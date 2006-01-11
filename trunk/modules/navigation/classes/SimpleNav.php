@@ -418,11 +418,6 @@ class SimpleNav
             if ($section->isCurrent || $section->childIsCurrent) {
                 $liAtts = ' class="current"';
             }
-            //  add static flag if necessary
-            $isStatic = ($section->is_static && empty($section->uriAlias))
-                ? 'staticId/' . $section->section_id . '/'
-                : '';
-
             $aTmp = explode('/', $section->resource_uri);
 
             //  extract module name
@@ -448,7 +443,7 @@ class SimpleNav
 
             $url = ($this->_disableLinks)
                 ? $_SERVER['PHP_SELF'] . '/staticId/' . $section->section_id . '/rid/' . $this->_rid . '/'
-                : SGL_Url::makeLink('', $managerName, $moduleName) . $qs . $isStatic;
+                : SGL_Url::makeLink('', $managerName, $moduleName) . $qs;
 
             //  extract anchor and place at end if exists
             if (stristr($url, '#')) {

@@ -78,22 +78,17 @@ class ArticleViewMgr extends SGL_Manager
         $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
-        $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';
-        $input->articleID       = ($req->get('frmArticleID')) 
+        $input->action          = ($req->get('action')) ? $req->get('action') : 'view';
+        $input->articleID       = ($req->get('frmArticleID'))
                                     ? (int)$req->get('frmArticleID') 
                                     : (int)SGL_HTTP_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
-        $input->staticArticle   = ($req->get('staticId')) ? (int)$req->get('staticId') : 0;
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
         $input->dataTypeID      = ($req->get('frmDataTypeID'))
                                       ? $req->get('frmDataTypeID')
                                       : $this->conf['site']['defaultArticleViewType'];
         $input->articleLang     = str_replace('-', '_', $req->get('frmArticleLang'));
 
-        //  catch static article flag, route to view
-        if ($input->staticArticle) {
-            $input->action = 'view';
-        }
         //  if article id passed from 'Articles in this Category' list
         //  make it available for lead story
         if ($input->articleID) {
