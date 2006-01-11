@@ -37,6 +37,8 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
+require_once dirname(__FILE__)  . '/Misc.php';
+
 if (!isset($GLOBALS['_SGL'])) {
     $GLOBALS['_SGL'] = array();
     $_SESSION['ERRORS'] = array();
@@ -73,28 +75,13 @@ class SGL_Install
     function errorPrint()
     {
         foreach ($_SESSION['ERRORS'] as $oError) {
-            $msg = SGL_Install::errorObjToString($oError);
+            $msg = SGL_Error::toString($oError);
             $html ='<div class="errorContainer">
                         <div class="errorHeader">Error</div>
                         <div class="errorContent">' . $msg . '</div>
                     </div>';
             print $html;
         }
-    }
-
-    function errorObjToString($oError)
-    {
-        $message = $oError->getMessage();
-        $debugInfo = $oError->getDebugInfo();
-        $level = $oError->getCode();
-        $errorType = SGL::errorConstantToString($level);
-        $output = <<<EOF
-  <strong>MESSAGE</strong>: $message<br />
-  <strong>TYPE:</strong> $errorType<br />
-  <strong>DEBUG INFO:</strong> $debugInfo<br />
-  <strong>CODE:</strong> $level<br />
-EOF;
-        return $output;
     }
 
     /**

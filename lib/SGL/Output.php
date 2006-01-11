@@ -398,10 +398,10 @@ class SGL_Output
 
             //  required to remove message that persists when register_globals = on
             unset($GLOBALS['message']);
-        } elseif (count($GLOBALS['_SGL']['ERRORS'])) {
+        } elseif (SGL_Error::count()) {
 
             //  for now get last message added to stack
-            $msg = SGL::errorObjToString($GLOBALS['_SGL']['ERRORS'][0]);
+            $msg = SGL_Error::toString($GLOBALS['_SGL']['ERRORS'][0]);
             echo '  <div class="errorContainer">
                         <div class="errorHeader">Error</div>
                         <div class="errorContent">' . $msg . '</div>

@@ -231,7 +231,7 @@ class RegisterMgr extends SGL_Manager
         $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
 
         //  check global error stack for any error that might have occurred
-        if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
+        if ($success && !SGL_Error::count()) {
             //  send email confirmation according to config
             if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
                 $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
@@ -297,7 +297,7 @@ class RegisterMgr extends SGL_Manager
             $notification->send();
         }
         //  check error stack
-        return (count($GLOBALS['_SGL']['ERRORS'])) ? false : true;
+        return (SGL_Error::count()) ? false : true;
     }
 }
 ?>

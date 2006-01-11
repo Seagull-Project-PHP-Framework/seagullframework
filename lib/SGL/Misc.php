@@ -1,5 +1,86 @@
 <?php
 
+class SGL_Error
+{
+    /**
+     * Returns true if one or more PEAR errors exist on the global stack.
+     *
+     * @return boolean
+     */
+    function count()
+    {
+        return count($GLOBALS['_SGL']['ERRORS']);
+    }
+
+    function push($oError)
+    {
+        $GLOBALS['_SGL']['ERRORS'][] = $oError;
+        return true;
+    }
+
+    function shift()
+    {
+        return array_shift($GLOBALS['_SGL']['ERRORS']);
+    }
+
+    function toString($oError)
+    {
+        $message = $oError->getMessage();
+        $debugInfo = $oError->getDebugInfo();
+        $level = $oError->getCode();
+        $errorType = SGL_Error::constantToString($level);
+        $output = <<<EOF
+  <strong>MESSAGE</strong>: $message<br />
+  <strong>TYPE:</strong> $errorType<br />
+  <strong>DEBUG INFO:</strong> $debugInfo<br />
+  <strong>CODE:</strong> $level<br />
+EOF;
+        return $output;
+    }
+
+    /**
+     * Converts error constants into equivalent strings.
+     *
+     * @access  public
+     * @param   int     $errorCode  error code
+     * @return  string              text representing error type
+     */
+    function constantToString($errorCode)
+    {
+        $aErrorCodes = array(
+            SGL_ERROR_INVALIDARGS       => 'invalid arguments',
+            SGL_ERROR_INVALIDCONFIG     => 'invalid config',
+            SGL_ERROR_NODATA            => 'no data',
+            SGL_ERROR_NOCLASS           => 'no class',
+            SGL_ERROR_NOMETHOD          => 'no method',
+            SGL_ERROR_NOAFFECTEDROWS    => 'no affected rows',
+            SGL_ERROR_NOTSUPPORTED      => 'not supported',
+            SGL_ERROR_INVALIDCALL       => 'invalid call',
+            SGL_ERROR_INVALIDAUTH       => 'invalid auth',
+            SGL_ERROR_EMAILFAILURE      => 'email failure',
+            SGL_ERROR_DBFAILURE         => 'db failure',
+            SGL_ERROR_DBTRANSACTIONFAILURE => 'db transaction failure',
+            SGL_ERROR_BANNEDUSER        => 'banned user',
+            SGL_ERROR_NOFILE            => 'no file',
+            SGL_ERROR_INVALIDFILEPERMS  => 'invalid file perms',
+            SGL_ERROR_INVALIDSESSION    => 'invalid session',
+            SGL_ERROR_INVALIDPOST       => 'invalid post',
+            SGL_ERROR_INVALIDTRANSLATION => 'invalid translation',
+            SGL_ERROR_FILEUNWRITABLE    => 'file unwritable',
+            SGL_ERROR_INVALIDREQUEST    => 'invalid request',
+            SGL_ERROR_INVALIDTYPE       => 'invalid type',
+            SGL_ERROR_RECURSION         => 'recursion',
+        );
+        if (in_array($errorCode, array_keys($aErrorCodes))) {
+            return strtoupper($aErrorCodes[$errorCode]);
+
+        //  if not within this range, most likely a PEAR::DB error
+        } else {
+            return 'PEAR';
+        }
+    }
+}
+
 /**
  * Provides array manipulation methods.
  *

@@ -695,7 +695,7 @@ EOF;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  if no errors have occured, redirect
-        if (!(count($GLOBALS['_SGL']['ERRORS']))) {
+        if (!SGL_Error::count()) {
             if (!($this->redirect)) {
                 return;
             } else {
