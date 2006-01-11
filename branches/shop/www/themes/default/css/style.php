@@ -79,7 +79,24 @@
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
     /////////////////////////   MODIFY FROM HERE DOWN   ////////////////////////
+  
+    $modtimes = array();
 
+    if (file_exists($tmp = './vars.php')) {
+        $modTimes['vars'] = filemtime($tmp);
+    }
+    if (file_exists($tmp = './core.php')) {
+        $modTimes['core'] = filemtime($tmp);
+    }
+    $frmNavStyleSheet = @$_REQUEST['navStylesheet'];
+    if (file_exists($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
+        $modTimes['navigation'] = filemtime($navStyleSheet);
+    }
+    $frmModuleName = @$_REQUEST['moduleName'];
+    if (file_exists($moduleName = realpath("./$frmModuleName.php"))) {
+        $modTimes['module'] = filemtime($moduleName);
+    }
+  
     // CSS Substitution Variables
 
     $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';  
@@ -139,6 +156,15 @@
     if (file_exists($localStyle)) {
         include_once $localStyle;
     }    
+    
+    require_once './vars.php';
+    require_once './core.php';
+    if (isset($modTimes['navigation'])) {
+        require_once realpath("./$frmNavStyleSheet.nav.php");
+    }
+    if (isset($modTimes['module'])) {
+        require_once  realpath("./$frmModuleName.php");
+    }
 ?>
 
 /******************************************************************************/
