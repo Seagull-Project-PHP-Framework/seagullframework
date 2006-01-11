@@ -214,13 +214,14 @@ class PearMgr extends SGL_Manager
                     }
                     Header("Location: ".$URL);
                     exit;
+
                 case 'remote-info':
                     $command = $_GET["command"];
                     $params = array($_GET["pkg"]);
                     $cmd = PEAR_Command::factory($command, $config);
                     $ok = $cmd->run($command, $opts, $params);
-
                     exit;
+
                 case 'search':
                     list($name, $description) = $ui->userDialog('search',
                         array('Package Name', 'Package Info'), // Prompts
@@ -232,8 +233,8 @@ class PearMgr extends SGL_Manager
                     $params = array($name, $description);
                     $cmd = PEAR_Command::factory($command, $config);
                     $ok = $cmd->run($command, $opts, $params);
-
                     exit;
+
                 case 'config-show':
                     $command = $_GET["command"];
                     $cmd = PEAR_Command::factory($command, $config);
@@ -248,6 +249,7 @@ class PearMgr extends SGL_Manager
                     $URL .= '?command=config-show';
                     header("Location: ".$URL);
                     exit;
+
                 case 'list-all':
                     $command = $_GET["command"];
 
@@ -275,16 +277,19 @@ class PearMgr extends SGL_Manager
                             // [1] version
                             // [3] desc
                             // [4] (array) deps
-                            #print $aPackage[0]."\n<br />";
+                            print $aPackage[0]."\n<br />";
+print '<pre>';print_r($aPackage);
                         }
                     }
 #print '<pre>';print_r($aPackage);
 
                     exit;
+
                 case 'show-last-error':
                     $GLOBALS['_PEAR_Frontend_Web_log'] = $_SESSION['_PEAR_Frontend_Web_LastError_log'];
                     $ui->displayError($_SESSION['_PEAR_Frontend_Web_LastError'], 'Error', 'error', true);
                     exit;
+
                 default:
                     $command = $_GET["command"];
                     $cmd = PEAR_Command::factory($command, $config);
