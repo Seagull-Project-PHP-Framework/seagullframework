@@ -123,8 +123,7 @@ class PageMgr extends SGL_Manager
         $input->targetId    = $req->get('targetId');
         $input->move        = $req->get('move');
         $input->section     = $req->get('page');
-        $input->section['is_enabled'] = (isset($input->section['is_enabled']) && $input->section['is_enabled'] == 1) ? 1 : 0;
-        $input->section['has_link'] = (isset($input->section['has_link']) && $input->section['has_link'] == 1) ? 1 : 0;
+        $input->section['is_enabled'] = (isset($input->section['is_enabled'])) ? 1 : 0;
 
         $input->navLang     = $req->get('frmNavLang');
         $input->availableLangs = $req->get('frmAvailableLangs');
@@ -149,12 +148,12 @@ class PageMgr extends SGL_Manager
         $refreshScreen = false;
         if ($input->action == 'update' && is_null($this->submit)) {
             $this->submit = $refreshScreen = true;
-            $aErrors[] = SGL_String::translate('Please supply full nav info');
+            $aErrors[] = 'Please supply full nav info';
         }
         //  validate form data
         if ($this->submit) {
             if (empty($input->section['title'])) {
-                $aErrors[] = SGL_String::translate('Please fill in a title');
+                $aErrors[] = 'Please fill in a title';
             }
             //  ensure correct translation is being sent to output
             if ($input->action == 'update' && $refreshScreen == true) {
@@ -163,7 +162,7 @@ class PageMgr extends SGL_Manager
 
             //  zero is a valid property, refers to public group
             if (is_null($input->section['perms'])) {
-                $aErrors[] = SGL_String::translate('Please assign viewing rights to least one role');
+                $aErrors[] = 'Please assign viewing rights to least one role';
             }
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
@@ -232,7 +231,7 @@ class PageMgr extends SGL_Manager
         //  pre-check enabled box
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
-        $output->pageHasLink = (isset($output->section['has_link'])) ? 'checked="checked"' : '';
+
         $output->staticSelected = '';
         $output->dynamicSelected = '';
         if ($this->conf['PageMgr']['wikiScreenTypeEnabled']) {
@@ -297,13 +296,7 @@ class PageMgr extends SGL_Manager
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
         $output->aRoles = $aRoles;
-        // give default rights to guest and root
-        if (empty($output->section['perms'])) {
-            $output->aSelectedRoles = array(SGL_GUEST,SGL_ADMIN);
-        } else {
-            $output->aSelectedRoles = explode(',', @$output->section['perms']);
-        }
-        
+        $output->aSelectedRoles = explode(',', @$output->section['perms']);
 
         //  get array of section node objects and add images for folder-tree display
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -325,12 +318,6 @@ class PageMgr extends SGL_Manager
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->actionIsAdd = true;
-        // Default value
-        $section['has_link'] = 1;
-        $output->section = $section;
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("collapseElement({$section['has_link']},'linkInformation')");
-        }
         $output->addOnLoadEvent("toggleAliasElements(false)");
     }
 
@@ -454,8 +441,6 @@ class PageMgr extends SGL_Manager
         } else {
             $section['language'] = $output->availableLangs[$input->navLang];
         }
-        // This will be a value of section table
-        $section['has_link'] = 1;
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
@@ -517,9 +502,6 @@ class PageMgr extends SGL_Manager
             $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
         }
         $output->section = $section;
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("collapseElement({$section['has_link']},'linkInformation')");
-        }
     }
 
     function _update(&$input, &$output)
