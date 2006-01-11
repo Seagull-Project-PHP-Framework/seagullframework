@@ -249,6 +249,7 @@ class SimpleNav
             } elseif (preg_match('/^uriAlias:(.*)/', $section->resource_uri, $aUri)) {
                 $ok = preg_match('/^[0-9]+/', $aUri[1], $aRet);
                 $section->resource_uri = $this->da->getAliasById($aRet[0]);
+                $section->uriAlias = true;
             } elseif (preg_match('/^uriExternal:(.*)/', $section->resource_uri, $aUri)) {
                 $section->resource_uri = $aUri[1];
                 $section->uriExternal = true;
@@ -418,7 +419,9 @@ class SimpleNav
                 $liAtts = ' class="current"';
             }
             //  add static flag if necessary
-            $isStatic = ($section->is_static) ? 'staticId/' . $section->section_id . '/': '';
+            $isStatic = ($section->is_static && empty($section->uriAlias))
+                ? 'staticId/' . $section->section_id . '/'
+                : '';
 
             $aTmp = explode('/', $section->resource_uri);
 
