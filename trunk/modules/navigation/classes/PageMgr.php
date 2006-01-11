@@ -451,14 +451,15 @@ class PageMgr extends SGL_Manager
                 $wikiUrl = array_pop($aElems);
                 $section['resource_uri'] = urldecode($wikiUrl);
                 $output->articleType = 'wiki';
-            } elseif (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
-                $section['resource_uri'] = $aMatches[3];
-                $uriAlias = true;
             } elseif (preg_match('/^uriExternal:(.*)/', $section['resource_uri'], $aUri)) {
                 $section['resource_uri'] = $aUri[1];
                 $output->articleType = 'uriExternal';
             } else {
                 $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
+                if (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
+                    $section['resource_uri'] = $aMatches[3];
+                    $uriAlias = true;
+                }
 
                 //  parse url details
                 #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
