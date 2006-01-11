@@ -264,15 +264,16 @@ class PearMgr extends SGL_Manager
                         #$ok = $cmd->run($command, $opts, $params);
                         $data = $cmd->run($command, $opts, $params);
 
-                        $serialized = serialize($aRemoteList);
+                        $serialized = serialize($data);
                         $cache->save($serialized, $cacheId, 'pear');
                         SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
                     }
 
-                    foreach ($data['data'] as $array) {
-                        foreach ($array as $catName => $v) {
-                            print $catName."\n<br />";
-                        }
+                    foreach ($data['data'] as $aPackages) {
+//                        foreach ($array as $catName => $v) {
+                            #print $array[0]."\n<br />";
+//                        }
+print '<pre>';print_r($aPackages);
                     }
                     #print_r($data);
 
