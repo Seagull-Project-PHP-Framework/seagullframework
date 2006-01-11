@@ -274,7 +274,8 @@ class PearMgr extends SGL_Manager
                     foreach ($data['data'] as $aPackages) {
                         foreach ($aPackages as $aPackage) {
                             // [0] name
-                            // [1] version
+                            // [1] remote version
+                            // [2] local version
                             // [3] desc
                             // [4] (array) deps
                             print $aPackage[0]."\n<br />";
