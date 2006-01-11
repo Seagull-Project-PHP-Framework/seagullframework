@@ -79,35 +79,6 @@ class SGL_Task_CreateConfig extends SGL_Task
     }
 }
 
-class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
-{
-    function run($data)
-    {
-        $c = &SGL_Config::singleton();
-
-        $aModuleList = (isset($data['installAllModules']))
-            ? SGL_Install::getModuleList()
-            : $this->getMinimumModuleList();
-
-        foreach ($aModuleList as $module) {
-            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
-            if (file_exists($tableAliasIniPath)) {
-                $aData = parse_ini_file($tableAliasIniPath);
-                foreach ($aData as $k => $v) {
-                    $c->set('table', array($k => $v));
-                }
-            }
-        }
-
-        //  save
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-        $ok = $c->save($configFile);
-        if (PEAR::isError($ok)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok));
-        }
-    }
-}
-
 class SGL_Task_DisableForeignKeyChecks extends SGL_Task
 {
     function run($data)
@@ -206,6 +177,35 @@ class SGL_UpdateHtmlTask extends SGL_Task
         $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
         $this->failure = '<span class=\\"error\\">ERROR</span>';
         $this->noFile  = '<strong>N/A</strong>';
+    }
+}
+
+class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+
+        $aModuleList = (isset($data['installAllModules']))
+            ? SGL_Install::getModuleList()
+            : $this->getMinimumModuleList();
+
+        foreach ($aModuleList as $module) {
+            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
+            if (file_exists($tableAliasIniPath)) {
+                $aData = parse_ini_file($tableAliasIniPath);
+                foreach ($aData as $k => $v) {
+                    $c->set('table', array($k => $v));
+                }
+            }
+        }
+
+        //  save
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $ok = $c->save($configFile);
+        if (PEAR::isError($ok)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok));
+        }
     }
 }
 
