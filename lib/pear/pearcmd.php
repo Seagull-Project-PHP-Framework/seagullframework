@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.29 2005/11/12 02:26:53 cellog Exp $
+// $Id: pearcmd.php,v 1.33 2006/01/02 18:05:53 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -58,7 +58,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.5";
+$pear_package_version = "1.4.6";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -70,7 +70,16 @@ require_once 'Console/Getopt.php';
 PEAR_Command::setFrontendType('CLI');
 $all_commands = PEAR_Command::getCommands();
 
+// remove this next part when we stop supporting that crap-ass PHP 4.2
+if (!isset($_SERVER['argv']) && !isset($argv) && !isset($HTTP_SERVER_VARS['argv'])) {
+    die('ERROR: either use the CLI php executable, or set register_argc_argv=On in php.ini');
+}
 $argv = Console_Getopt::readPHPArgv();
+// fix CGI sapi oddity - the -- in pear.bat/pear is not removed
+if (php_sapi_name() != 'cli' && isset($argv[1]) && $argv[1] == '--') {
+    unset($argv[1]);
+    $argv = array_values($argv);
+}
 $progname = PEAR_RUNTYPE;
 if (in_array('getopt2', get_class_methods('Console_Getopt'))) {
     array_shift($argv);
@@ -94,6 +103,11 @@ if ($progname == 'gpear' || $progname == 'pear-gtk') {
         }
     }
 }
+//Check if Gtk and PHP >= 5.1.0
+if ($fetype == 'Gtk' && version_compare(phpversion(), '5.1.0', '>=')) {
+    $fetype = 'Gtk2';
+}
+
 $pear_user_config = '';
 $pear_system_config = '';
 $store_user_config = false;
@@ -232,7 +246,7 @@ if (empty($command) && ($store_user_config || $store_system_config)) {
     exit;
 }
 
-if ($fetype == 'Gtk') {
+if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     if (!$config->validConfiguration()) {
         PEAR::raiseError('CRITICAL ERROR: no existing valid configuration files found in files ' .
             "'$pear_user_config' or '$pear_system_config', please copy an existing configuration" .
