@@ -1,5 +1,5 @@
 form {
-    width: 50%;
+    width: 60%;
 }
 fieldset legend {
     color: <?php echo $secondary ?>;
@@ -57,7 +57,7 @@ fieldset p.center {
     height: 5em;
 }
 #module span.tipText {
-    width: 165%;
+    width: 167%;
 }
 /******** Maintenance form ****************/
 #moduleCreator div {
@@ -80,14 +80,14 @@ form#configuration table {
     margin-top: 2em;
 }
 #configuration input.longText, #configuration textarea.longText{
-    width: 60%;
+    width: 58%;
 }
 #configuration textarea {
     height: 7em;
     overflow: auto;
 }
 #configuration span.tipText {
-    width: 169%;
+    width: 142%;
 }
 #configuration img {
     vertical-align: middle;
@@ -96,7 +96,7 @@ form#configuration table {
 
 }
 #configuration p label {
-    width: 35%;
+    width: 40%;
     position: relative;
 }
 #optionsLinks {

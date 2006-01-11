@@ -56,10 +56,10 @@ class SGL_NestedSet
     * @access private
     */
     var $_images = array(
-        'upArrow'       => 'images/sort_desc.gif',
-        'upArrowDead'   => 'images/sort_desc_dead.gif',
-        'downArrow'     => 'images/sort_asc.gif',
-        'downArrowDead' => 'images/sort_asc_dead.gif',
+        'upArrow'       => 'images/16/sort_desc.gif',
+        'upArrowDead'   => 'images/16/sort_desc_dead.gif',
+        'downArrow'     => 'images/16/sort_asc.gif',
+        'downArrowDead' => 'images/16/sort_asc_dead.gif',
         'folder'        => 'images/imagesAlt2/foldericon.png',
         'file'          => 'images/imagesAlt2/file.png',
         'blank'         => 'images/imagesAlt2/blank.png',
