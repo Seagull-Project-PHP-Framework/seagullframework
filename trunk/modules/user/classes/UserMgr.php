@@ -245,7 +245,7 @@ class UserMgr extends RegisterMgr
             $ret = $this->da->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
         }
 
-        if ($success && !(count($GLOBALS['_SGL']['ERRORS']))) {
+        if ($success && !SGL_Error::count()) {
             $this->dbh->commit();
             SGL::raiseMsg('details successfully updated');
         } else {

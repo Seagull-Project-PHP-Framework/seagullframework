@@ -193,7 +193,7 @@ class NavStyleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  if no errors have occured, redirect
-        if (!(count($GLOBALS['_SGL']['ERRORS']))) {
+        if (!SGL_Error::count()) {
             SGL_HTTP::redirect(array('rid' => $input->rid));
 
         //  else display error with blank template

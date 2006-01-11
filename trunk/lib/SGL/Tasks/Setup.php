@@ -340,7 +340,7 @@ function pearErrorHandler($oError)
 
     //  if sesssion debug, send error info to screen
     if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
-        $GLOBALS['_SGL']['ERRORS'][] = $oError;
+        SGL_Error::push($oError);
         if ($conf['debug']['showBacktrace']) {
             echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }

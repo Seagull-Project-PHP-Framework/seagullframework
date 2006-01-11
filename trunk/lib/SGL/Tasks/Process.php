@@ -571,7 +571,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         }
         if ($getDefaultMgr) {
             $this->getDefaultManager($input);
-            #SGL::raiseError('specified manager could not be found, default loaded');
+            PEAR::raiseError('specified manager could not be found, default loaded');
         }
         $this->processRequest->process($input);
     }
@@ -590,7 +590,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                     $this->c->merge($aModuleConfig);
 
                     //  remove first failed conf loading error
-                    unset($GLOBALS['_SGL']['ERRORS'][0]);
+                    SGL_Error::shift();
 
                     //  reset conf keys
                     unset($this->conf);

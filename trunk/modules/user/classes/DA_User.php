@@ -152,7 +152,7 @@ class DA_User extends SGL_Delegator
             return $ok;
         }
 
-        if ($ok && !(count($GLOBALS['_SGL']['ERRORS']))) {
+        if ($ok && !SGL_Error::count()) {
             $this->dbh->commit();
             return true;
         } else {

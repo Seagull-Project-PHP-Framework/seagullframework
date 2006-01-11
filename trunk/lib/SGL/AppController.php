@@ -41,7 +41,7 @@
 
 require_once dirname(__FILE__)  . '/Registry.php';
 require_once dirname(__FILE__)  . '/Request.php';
-require_once dirname(__FILE__)  . '/Other.php';
+require_once dirname(__FILE__)  . '/Misc.php';
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Config.php';
 require_once dirname(__FILE__)  . '/Tasks/Process.php';
@@ -306,14 +306,14 @@ class SGL_HtmlSimpleView extends SGL_View
         $templateEngine = ucfirst($conf['site']['templateEngine']);
         $rendererClass  = 'SGL_Html'.$templateEngine.'RendererStrategy';
         $rendererFile   = 'Html'.$templateEngine.'RendererStrategy.php';
-        
+
         if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
         	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
         } else {
         	PEAR::raiseError('Could not find renderer',
         		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
         }
-        
+
     	parent::SGL_View($data, new $rendererClass);
     }
 }

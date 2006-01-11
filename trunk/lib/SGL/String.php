@@ -43,6 +43,8 @@ define('SGL_CENSOR_EXACT_MATCH',    1);
 define('SGL_CENSOR_WORD_BEGINNING', 2);
 define('SGL_CENSOR_WORD_FRAGMENT',  3);
 
+#require_once dirname(__FILE__)  . '/Translation.php';
+
 /**
  * Various string helper methods.
  *

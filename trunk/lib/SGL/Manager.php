@@ -258,7 +258,7 @@ class SGL_Manager
         //  must not logmessage here
 
         //  if no errors have occured, redirect
-        if (!(count($GLOBALS['_SGL']['ERRORS']))) {
+        if (!SGL_Error::count()) {
             SGL_HTTP::redirect(array());
 
         //  else display error with blank template
