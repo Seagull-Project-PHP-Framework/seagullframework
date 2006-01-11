@@ -14,6 +14,7 @@ BUGFIXES
 
 IMPROVEMENTS
 10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
+09-01-06    Url alias solution fully integrated and database-driven
 06-01-06    Added generateRadioList method to SGL_Output (mawan)
 06-01-06    Added a wrapper to create html views easily:
                 $view = new SGL_HtmlSimpleView($output);

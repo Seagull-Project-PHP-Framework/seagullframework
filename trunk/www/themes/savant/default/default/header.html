@@ -33,7 +33,7 @@
     <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/mainPublic.js"></script>
 
     <?php foreach ($result->javascriptSrc as $item) { ?> 
-    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/<?php $this->_($item['file']) ?>"></script>
+        <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/<?php $this->_($item) ?>"></script>
     <?php } //foreach ?> 
 
     <?php if (isset($result->wysiwyg)) { ?> 

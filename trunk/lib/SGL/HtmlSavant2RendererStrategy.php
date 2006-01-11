@@ -106,8 +106,13 @@ class SGL_HtmlSavant2RendererStrategy extends SGL_OutputRendererStrategy
 	    : 'default';
         $savant2 = &SGL_Savant2::singleton($view->data->theme, $moduleName);
 
+        //  suppress error notices in templates
+        SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
+
         $savant2->assign('result', $view->data);
         $data = $savant2->fetch($view->data->masterTemplate);
+
+        SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
 
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
