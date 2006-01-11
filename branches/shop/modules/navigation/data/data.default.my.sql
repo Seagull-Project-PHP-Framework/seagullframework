@@ -37,6 +37,6 @@ INSERT INTO section VALUES (16, 'Manage', 'default/module/action/list', '1', 12,
 #INSERT INTO section VALUES (17, 'PubCategories', 'navigation/category', '1', 0, 17, 1, 2, 12, 1, 0, 0, 0, 0);
 #INSERT INTO section VALUES (18, 'PubDocuments', 'publisher/document', '1', 0, 18, 1, 2, 13, 1, 0, 0, 0, 0);
 #INSERT INTO section VALUES (19, 'PubArticles', 'publisher/article', '1', 0, 19, 1, 2, 14, 1, 0, 0, 0, 0);
-#INSERT INTO section VALUES (22, 'Shop', 'shop/priceadmin', '1,2,0', 0, 22, 1, 4, 15, 1, 0, 0, 0, 0);
-#INSERT INTO section VALUES (24, 'ShopAdmin', 'shop/shopadmin', '1', 22, 22, 2, 3, 1, 2, 0, 0, 0, 0);
-#INSERT INTO section VALUES (25, 'Price', 'shop/price', '1,2,0', 0, 25, 1, 4, 16, 1, 0, 0, 0, 0);
+INSERT INTO section VALUES (22, 'Shop', 'shop/shop', '1,2,0', 0, 22, 1, 4, 15, 1, 1, 0, 0, 0);
+INSERT INTO section VALUES (24, 'ShopAdmin', 'shop/shopadmin', '1', 22, 22, 2, 3, 1, 2, 1, 0, 0, 0);
+#INSERT INTO section VALUES (25, 'Price', 'shop/price', '1,2,0', 0, 25, 1, 4, 16, 1, 1, 0, 0, 0);
