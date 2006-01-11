@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ChannelFile.php,v 1.73 2005/08/21 05:01:37 cellog Exp $
+ * @version    CVS: $Id: ChannelFile.php,v 1.74 2006/01/06 04:47:36 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -150,9 +150,9 @@ $GLOBALS['_PEAR_CHANNELS_MIRROR_TYPES'] =  array('server');
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */

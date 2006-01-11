@@ -11,7 +11,7 @@
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
  * @license    BSD, revised
- * @version    CVS: $Id: Download.php,v 1.75 2005/11/13 19:18:53 mike Exp $
+ * @version    CVS: $Id: Download.php,v 1.76 2005/11/28 15:28:00 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -86,7 +86,7 @@ define('HTTP_DOWNLOAD_E_INVALID_ARCHIVE_TYPE',  -9);
  * if you want to send already gzipped data!
  * 
  * @access   public
- * @version  $Revision: 1.75 $
+ * @version  $Revision: 1.76 $
  */
 class HTTP_Download
 {
@@ -784,7 +784,7 @@ class HTTP_Download
     function sendChunks($chunks)
     {
         if (count($chunks) == 1) {
-            return $this->sendChunk(array_shift($chunks));
+            return $this->sendChunk(current($chunks));
         }
 
         $bound = uniqid('HTTP_DOWNLOAD-', true);
@@ -944,13 +944,13 @@ class HTTP_Download
             return false;
         }
         if (isset($_SERVER['HTTP_IF_UNMODIFIED_SINCE'])) {
-            $lm = array_shift(explode(';', $_SERVER['HTTP_IF_UNMODIFIED_SINCE']));
+            $lm = current($a = explode(';', $_SERVER['HTTP_IF_UNMODIFIED_SINCE']));
             if (strtotime($lm) !== $this->lastModified) {
                 return false;
             }
         }
         if (isset($_SERVER['HTTP_UNLESS_MODIFIED_SINCE'])) {
-            $lm = array_shift(explode(';', $_SERVER['HTTP_UNLESS_MODIFIED_SINCE']));
+            $lm = current($a = explode(';', $_SERVER['HTTP_UNLESS_MODIFIED_SINCE']));
             if (strtotime($lm) !== $this->lastModified) {
                 return false;
             }
