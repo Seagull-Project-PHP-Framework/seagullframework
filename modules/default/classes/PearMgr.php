@@ -41,8 +41,6 @@
 
 require_once dirname(__FILE__) . '/../../../lib/SGL/Manager.php';
 
-define('SGL_ICONS_PER_ROW', 3);
-
 /**
  * Manages packages from the PEAR channel.
  *
@@ -52,7 +50,7 @@ define('SGL_ICONS_PER_ROW', 3);
  */
 class PearMgr extends SGL_Manager
 {
-    function ModuleMgr()
+    function PearMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
@@ -84,15 +82,8 @@ class PearMgr extends SGL_Manager
         //  in which case default is 'list'
         $input->from            = $req->get('pageID');
         $input->totalItems      = $req->get('totalItems');
-
         $input->action = ($req->get('action')) ? $req->get('action') : 'overview';
-        if (!is_null($input->from) && $input->action == 'overview') {
-            $input->action = 'list';
-        }
         $input->aDelete         = $req->get('frmDelete');
-        $input->moduleId        = $req->get('frmModuleId');
-        $input->module          = (object)$req->get('module');
-        $input->module->is_configurable = (isset($input->module->is_configurable)) ? 1 : 0;
         $input->submit          = $req->get('submitted');
 
         //  validate fields
@@ -116,7 +107,6 @@ class PearMgr extends SGL_Manager
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $input->template = 'moduleEdit.html';
-            $input->isConfigurable = ($input->module->is_configurable) ? 'checked' : '';
             $this->validated = false;
         }
     }
@@ -260,12 +250,25 @@ class PearMgr extends SGL_Manager
                     exit;
                 case 'list-all':
                     $command = $_GET["command"];
-                    $params = array();
-                    if (isset($_GET["mode"]))
-                        $opts['mode'] = $_GET["mode"];
-                    $cmd = PEAR_Command::factory($command, $config);
-                    #$ok = $cmd->run($command, $opts, $params);
-                    $data = $cmd->run($command, $opts, $params);
+
+                    $cache = & SGL::cacheSingleton();
+                    $cacheId = 'pear list-all';
+                    if ($serialized = $cache->get($cacheId, 'pear')) {
+                        $data = unserialize($serialized);
+                        SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
+                    } else {
+                        $params = array();
+                        if (isset($_GET["mode"]))
+                            $opts['mode'] = $_GET["mode"];
+                        $cmd = PEAR_Command::factory($command, $config);
+                        #$ok = $cmd->run($command, $opts, $params);
+                        $data = $cmd->run($command, $opts, $params);
+
+                        $serialized = serialize($aRemoteList);
+                        $cache->save($serialized, $cacheId, 'pear');
+                        SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
+                    }
+
                     foreach ($data['data'] as $array) {
                         foreach ($array as $catName => $v) {
                             print $catName."\n<br />";
