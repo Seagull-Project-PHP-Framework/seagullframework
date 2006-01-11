@@ -326,6 +326,7 @@ class PageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $separator = '/'; // can be configurable later
+        $errorMsg  = '';
 
         //  if pageType = static, append articleId, else build page url
         $input->section['is_static'] = 0;
@@ -401,7 +402,7 @@ class PageMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  deal with potential alias
-        if ($input->section['uri_alias_enable']) {
+        if (!empty($input->section['uri_alias'])) {
             $aliasName = SGL_String::dirify($input->section['uri_alias']);
             $target = $nodeId;
             $ok = $this->da->addUriAlias($nextAliasId, $aliasName, $target);
@@ -451,10 +452,9 @@ class PageMgr extends SGL_Manager
                 $section['resource_uri'] = urldecode($wikiUrl);
                 $output->articleType = 'wiki';
             } elseif (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
-                $section['resource_uri'] = $aMatches[3];;
+                $section['resource_uri'] = $aMatches[3];
+                $uriAlias = true;
             } elseif (preg_match('/^uriExternal:(.*)/', $section['resource_uri'], $aUri)) {
-
-
                 $section['resource_uri'] = $aUri[1];
                 $output->articleType = 'uriExternal';
             } else {
@@ -487,7 +487,6 @@ class PageMgr extends SGL_Manager
                     }
                     $section['add_params'] = '';
                 }
-
                 //  split off anchor if exists
                 if (stristr($section['resource_uri'], '#')) {
                     list(,$anchor) = split("#", $section['resource_uri']);
@@ -495,10 +494,8 @@ class PageMgr extends SGL_Manager
                 }
             }
             $section['uri_alias'] = $this->da->getAliasBySectionId($section['section_id']);
-
-
         }
-        if (!empty($section['uri_alias'])) {
+        if (!empty($uriAlias)) {
             $output->addOnLoadEvent("document.getElementById('page[uri_alias_enable]').checked=true");
         } else {
             $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
@@ -511,6 +508,7 @@ class PageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $separator = '/';
+        $errorMsg  = '';
 
         //  if pageType = static, append articleId, else build page url
         $input->section['is_static'] = 0;
@@ -632,7 +630,7 @@ class PageMgr extends SGL_Manager
             break;
         }
         //  deal with potential alias
-        if ($input->section['uri_alias_enable']) {
+        if (!empty($input->section['uri_alias_enable'])) {
             $aliasName = SGL_String::dirify($input->section['uri_alias']);
             $ok = $this->da->updateUriAlias($aliasName, $input->section['section_id']);
             if (PEAR::isError($ok)) {
