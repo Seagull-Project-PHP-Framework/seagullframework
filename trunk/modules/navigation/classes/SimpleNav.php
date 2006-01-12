@@ -126,6 +126,14 @@ class SimpleNav
      */
     var $_aTranslations = array();
 
+    /**
+     * Boolean flag to determine is exact match existed
+     *
+     * @access  private
+     * @var     boolean
+     */
+    var $_exactMatch = false;
+
     function SimpleNav($input)
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
@@ -320,13 +328,7 @@ class SimpleNav
                 if (
                     //  a. the strings are identical and it's not a static article
                     ($section->resource_uri == $querystring && $this->_staticId == 0 )
-                    // b.
-                    || (
-                        $section->resource_uri !== '' &&
-                        isset($url->aQueryData['moduleName']) &&
-                        0 === strpos($url->aQueryData['moduleName'] .'/'. $realQueryS.'/', $section->resource_uri.'/')
-                    )
-                    // b.2 shortened form uri
+                    // b shortened form uri
                     || (
                         $section->resource_uri !== '' &&
                         isset($url->aQueryData['moduleName']) &&
@@ -343,7 +345,7 @@ class SimpleNav
                 {
                     $section->isCurrent = true;
                     $this->_currentSectionId = $section->section_id;
-                    $exactMatch = true;
+                    $this->_exactMatch = true;
 
                     //  add parent to parentsOfCurrentPage array
                     $this->_aParentsOfCurrentPage[] = $section->parent_id;
@@ -354,14 +356,14 @@ class SimpleNav
                                             $this->conf['site']['defaultManager'])) {
                         $section->isCurrent = true;
                         $this->_currentSectionId = $section->section_id;
-                        $exactMatch = true;
+                        $this->_exactMatch = true;
 
                         //  add parent to parentsOfCurrentPage array
                         $this->_aParentsOfCurrentPage[] = $section->parent_id;
                     }
 
                 //  this case is for subtabs, ie Contact Us/Hosting Info
-                } elseif (!isset($exactMatch)) {
+                } elseif (!$this->_exactMatch) {
 
                     // explode and rebuild baseUri. Compare current segment against $section->resource_uri
                     $aPieces = explode('/', $querystring);
@@ -480,11 +482,10 @@ class SimpleNav
     {
         if (!$this->_currentSectionId) {
             $sectionName = $this->input->get('pageTitle');
-        } else {
-            $sectionName = $this->da->getSectionNameById($this->_currentSectionId);
-
-            if (is_numeric($sectionName)) {
-                $sectionName = $this->trans->get($sectionName, 'nav', SGL_Translation::getLangID());
+        } elseif (is_numeric($this->_currentSectionId)) {
+            $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getLangID());
+            if (!$sectionName) {
+                $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
             }
         }
         return $sectionName;
