@@ -65,7 +65,7 @@ class PearMgr extends SGL_Manager
             'update'    => array('update', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
-            'listPearPackages'  => array('listPearPackages'),
+            'listAll'   => array('listAll'),
         );
     }
 
@@ -116,7 +116,7 @@ class PearMgr extends SGL_Manager
 
     }
 
-    function _listPearPackages(&$input, &$output)
+    function _listAll(&$input, &$output)
     {
 
         putenv('PHP_PEAR_INSTALL_DIR='.SGL_LIB_PEAR_DIR);
@@ -176,138 +176,136 @@ class PearMgr extends SGL_Manager
         $_ENV['TMPDIR'] = $_ENV['TEMP'] = SGL_TMP_DIR;
 
         if (!isset($_GET["command"])) {
-            $_GET["command"] = 'list-all';
+            $_GET["command"] = $command  = 'list-all';
         }
 
-        // Handle some diffrent Commands
-        if (isset($_GET["command"])) {
-            switch ($_GET["command"]) {
-                case 'install':
-                case 'uninstall':
-                case 'upgrade':
-                    if (USE_DHTML_PROGRESS && isset($_GET['dhtml'])) {
-                        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayErrorImg"));
-                    }
+        $cache = & SGL::cacheSingleton();
+        $cacheId = 'pear list-all';
+        if ($serialized = $cache->get($cacheId, 'pear')) {
+            $data = unserialize($serialized);
+            SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
+        } else {
+            $params = array();
+            if (isset($_GET["mode"]))
+                $opts['mode'] = $_GET["mode"];
+            $cmd = PEAR_Command::factory($command, $config);
+            #$ok = $cmd->run($command, $opts, $params);
+            $data = $cmd->run($command, $opts, $params);
 
-                    $command = $_GET["command"];
-                    $params = array($_GET["pkg"]);
-                    $cmd = PEAR_Command::factory($command, $config);
-                    $ok = $cmd->run($command, $opts, $params);
+            $serialized = serialize($data);
+            $cache->save($serialized, $cacheId, 'pear');
+            SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
+        }
 
-                    // success
-                    if (USE_DHTML_PROGRESS && isset($_GET['dhtml'])) {
-                        echo '<script language="javascript">';
-                        if ($_GET["command"] == "uninstall") {
-                            printf(' parent.deleteVersion(\'%s\'); ',  $_GET["pkg"]);
-                            printf(' parent.displayInstall(\'%s\'); ', $_GET["pkg"]);
-                            printf(' parent.hideDelete(\'%s\'); ',     $_GET["pkg"]);
-                        } else {
-                            printf(' parent.newestVersion(\'%s\'); ',  $_GET["pkg"]);
-                            printf(' parent.hideInstall(\'%s\'); ',    $_GET["pkg"]);
-                            printf(' parent.displayDelete(\'%s\'); ',  $_GET["pkg"]);
-                        }
-                        echo '</script>';
-                        $html = sprintf('<img src="%s?img=install_ok" border="0">', $_SERVER['PHP_SELF']);
-                        echo $js.$html;
-                        exit;
-                    }
-
-                    if (isset($_GET['redirect']) && $_GET['redirect'] == 'info') {
-                        $URL .= '?command=remote-info&pkg='.$_GET["pkg"];
-                    } elseif (isset($_GET['redirect']) && $_GET['redirect'] == 'search') {
-                        $URL .= '?command=search&userDialogResult=get&0='.$_GET["0"].'&1='.$_GET["1"];
-                    } else {
-                        $URL .= '?command=list-all&pageID='.$_GET['pageID'].'#'.$_GET["pkg"];
-                    }
-                    Header("Location: ".$URL);
-                    exit;
-
-                case 'remote-info':
-                    $command = $_GET["command"];
-                    $params = array($_GET["pkg"]);
-                    $cmd = PEAR_Command::factory($command, $config);
-                    $ok = $cmd->run($command, $opts, $params);
-                    exit;
-
-                case 'search':
-                    list($name, $description) = $ui->userDialog('search',
-                        array('Package Name', 'Package Info'), // Prompts
-                        array(), array(), // Types, Defaults
-                        'Package Search', 'pkgsearch' // Title, Icon
-                        );
-
-                    $command = $_GET["command"];
-                    $params = array($name, $description);
-                    $cmd = PEAR_Command::factory($command, $config);
-                    $ok = $cmd->run($command, $opts, $params);
-                    exit;
-
-                case 'config-show':
-                    $command = $_GET["command"];
-                    $cmd = PEAR_Command::factory($command, $config);
-                    $res = $cmd->run($command, $opts, $params);
-                    foreach($GLOBALS['_PEAR_Frontend_Web_Config'] as $var => $value) {
-                        $command = 'config-set';
-                        $params = array($var, $value);
-                        $cmd = PEAR_Command::factory($command, $config);
-                        $res = $cmd->run($command, $opts, $params);
-                    }
-
-                    $URL .= '?command=config-show';
-                    header("Location: ".$URL);
-                    exit;
-
-                case 'list-all':
-                    $command = $_GET["command"];
-
-                    $cache = & SGL::cacheSingleton();
-                    $cacheId = 'pear list-all';
-                    if ($serialized = $cache->get($cacheId, 'pear')) {
-                        $data = unserialize($serialized);
-                        SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
-                    } else {
-                        $params = array();
-                        if (isset($_GET["mode"]))
-                            $opts['mode'] = $_GET["mode"];
-                        $cmd = PEAR_Command::factory($command, $config);
-                        #$ok = $cmd->run($command, $opts, $params);
-                        $data = $cmd->run($command, $opts, $params);
-
-                        $serialized = serialize($data);
-                        $cache->save($serialized, $cacheId, 'pear');
-                        SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
-                    }
-
-                    foreach ($data['data'] as $aPackages) {
-                        foreach ($aPackages as $aPackage) {
-                            // [0] name
-                            // [1] remote version
-                            // [2] local version
-                            // [3] desc
-                            // [4] (array) deps
-                            print $aPackage[0]."\n<br />";
-print '<pre>';print_r($aPackage);
-                        }
-                    }
+       # foreach ($data['data'] as $aPackages) {
+       #     foreach ($aPackages as $aPackage) {
+                // [0] name
+                // [1] remote version
+                // [2] local version
+                // [3] desc
+                // [4] (array) deps
+        #        $result .= $aPackage[0]."\n<br />";
+#print '<pre>';print_r($aPackage);
+         #   }
+        #}
+        $output->result = $data['data'];
 #print '<pre>';print_r($aPackage);
 
-                    exit;
-
-                case 'show-last-error':
-                    $GLOBALS['_PEAR_Frontend_Web_log'] = $_SESSION['_PEAR_Frontend_Web_LastError_log'];
-                    $ui->displayError($_SESSION['_PEAR_Frontend_Web_LastError'], 'Error', 'error', true);
-                    exit;
-
-                default:
-                    $command = $_GET["command"];
-                    $cmd = PEAR_Command::factory($command, $config);
-                    $res = $cmd->run($command, $opts, $params);
-
-                    $URL .= '?command='.$_GET["command"];
-                    header("Location: ".$URL);
-                    exit;
-            }
-        }
     }
 }
+
+        // Handle some diffrent Commands
+//        if (isset($_GET["command"])) {
+//            switch ($_GET["command"]) {
+//                case 'install':
+//                case 'uninstall':
+//                case 'upgrade':
+//                    if (USE_DHTML_PROGRESS && isset($_GET['dhtml'])) {
+//                        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayErrorImg"));
+//                    }
+//
+//                    $command = $_GET["command"];
+//                    $params = array($_GET["pkg"]);
+//                    $cmd = PEAR_Command::factory($command, $config);
+//                    $ok = $cmd->run($command, $opts, $params);
+//
+//                    // success
+//                    if (USE_DHTML_PROGRESS && isset($_GET['dhtml'])) {
+//                        echo '<script language="javascript">';
+//                        if ($_GET["command"] == "uninstall") {
+//                            printf(' parent.deleteVersion(\'%s\'); ',  $_GET["pkg"]);
+//                            printf(' parent.displayInstall(\'%s\'); ', $_GET["pkg"]);
+//                            printf(' parent.hideDelete(\'%s\'); ',     $_GET["pkg"]);
+//                        } else {
+//                            printf(' parent.newestVersion(\'%s\'); ',  $_GET["pkg"]);
+//                            printf(' parent.hideInstall(\'%s\'); ',    $_GET["pkg"]);
+//                            printf(' parent.displayDelete(\'%s\'); ',  $_GET["pkg"]);
+//                        }
+//                        echo '</script>';
+//                        $html = sprintf('<img src="%s?img=install_ok" border="0">', $_SERVER['PHP_SELF']);
+//                        echo $js.$html;
+//                        exit;
+//                    }
+//
+//                    if (isset($_GET['redirect']) && $_GET['redirect'] == 'info') {
+//                        $URL .= '?command=remote-info&pkg='.$_GET["pkg"];
+//                    } elseif (isset($_GET['redirect']) && $_GET['redirect'] == 'search') {
+//                        $URL .= '?command=search&userDialogResult=get&0='.$_GET["0"].'&1='.$_GET["1"];
+//                    } else {
+//                        $URL .= '?command=list-all&pageID='.$_GET['pageID'].'#'.$_GET["pkg"];
+//                    }
+//                    Header("Location: ".$URL);
+//                    exit;
+//
+//                case 'remote-info':
+//                    $command = $_GET["command"];
+//                    $params = array($_GET["pkg"]);
+//                    $cmd = PEAR_Command::factory($command, $config);
+//                    $ok = $cmd->run($command, $opts, $params);
+//                    exit;
+//
+//                case 'search':
+//                    list($name, $description) = $ui->userDialog('search',
+//                        array('Package Name', 'Package Info'), // Prompts
+//                        array(), array(), // Types, Defaults
+//                        'Package Search', 'pkgsearch' // Title, Icon
+//                        );
+//
+//                    $command = $_GET["command"];
+//                    $params = array($name, $description);
+//                    $cmd = PEAR_Command::factory($command, $config);
+//                    $ok = $cmd->run($command, $opts, $params);
+//                    exit;
+//
+//                case 'config-show':
+//                    $command = $_GET["command"];
+//                    $cmd = PEAR_Command::factory($command, $config);
+//                    $res = $cmd->run($command, $opts, $params);
+//                    foreach($GLOBALS['_PEAR_Frontend_Web_Config'] as $var => $value) {
+//                        $command = 'config-set';
+//                        $params = array($var, $value);
+//                        $cmd = PEAR_Command::factory($command, $config);
+//                        $res = $cmd->run($command, $opts, $params);
+//                    }
+//
+//                    $URL .= '?command=config-show';
+//                    header("Location: ".$URL);
+//                    exit;
+//
+//
+//                case 'show-last-error':
+//                    $GLOBALS['_PEAR_Frontend_Web_log'] = $_SESSION['_PEAR_Frontend_Web_LastError_log'];
+//                    $ui->displayError($_SESSION['_PEAR_Frontend_Web_LastError'], 'Error', 'error', true);
+//                    exit;
+//
+//                default:
+//                    $command = $_GET["command"];
+//                    $cmd = PEAR_Command::factory($command, $config);
+//                    $res = $cmd->run($command, $opts, $params);
+//
+//                    $URL .= '?command='.$_GET["command"];
+//                    header("Location: ".$URL);
+//                    exit;
+//            }
+//        }
 ?>
