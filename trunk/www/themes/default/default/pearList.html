@@ -18,31 +18,29 @@
     </table>
 
     {if:result}
-    <table class="wide">
-        <tr>
-            <th>{translate(#Select#)}</th>
-            <th>{translate(#id#)}</th>
-            <th>{translate(#FAQ#)}</th>
-            <th>{translate(#Date created#)}</th>
-            <th>{translate(#Order#)}</th>
-            <th>{translate(#Edit#)}</th>
-        </tr>
 
-        {foreach:result,k1,packages}
-            <tr class="{switchRowClass()}" flexy:foreach="packages,k2,package">
-                <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj.faq_id}" /></td>
-                <td>{package[0]}</td>
-                <td>{valueObj.question}</td>
-                <td align="center">{formatDate(valueObj.date_created)}</td>
-                <td align="center">{valueObj.item_order}</td>
-                <td align="center">
-                    <a href="{makeUrl(#edit#,#faq#,##,results,#frmFaqId|faq_id#,key)}">
-                        <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
-                    </a>
-                </td>
-            </tr>
+        {foreach:result,category,packages}
+        <p></p>
+         <fieldset>
+            <legend>{category}</legend>
+            <table class="wide">
+                <tr>
+                    <th>{translate(#Select#)}</th>
+                    <th>Package Name</th>
+                    <th>Local</th>
+                    <th>Latest</th>
+                    <th>Description</th>
+                </tr>
+                <tr class="{switchRowClass()}" flexy:foreach="packages,k2,package">
+                    <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj.faq_id}" /></td>
+                    <td>{package[0]}</td><!--name-->
+                    <td>{package[1]}</td><!--local-->
+                    <td>{package[2]}</td><!--remote-->
+                    <td>{package[3]}</td><!--desc-->
+                </tr>
+            </table>
+        </fieldset>
         {end:}
-    </table>
     {else:}
     <p>Calling the full list of PEAR packages the first time can take a while as some 300+ packages
     get transferred via REST/XML-RPC - so please be patient, allow 30 seconds for a 512 kbps line.</p>
