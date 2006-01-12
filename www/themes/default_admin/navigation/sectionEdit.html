@@ -10,16 +10,6 @@ function addFormValue(myElement, form)
     myForm.appendChild(newInput);
 }
 
-function collapseElement(display,elementId)
-{
-    var blockToCollapse = document.getElementById(elementId);
-    if (display){
-        blockToCollapse.style.display = 'block';
-    } else {
-        blockToCollapse.style.display = 'none';
-    }
-}
-
 function toggleAliasElements(myCheckbox)
 {
     var myCheckbox = document.getElementById('page[uri_alias_enable]').checked;
@@ -43,8 +33,8 @@ function toggleAliasElements(myCheckbox)
         <fieldset>
             <legend>Emplacement</legend>
             <p>
-                <label>{translate(#Parent Page#)}</label>
-                <select name="page[parent_id]">
+                <label for="page[parent_id]">{translate(#Parent Page#)}</label>
+                <select name="page[parent_id]" id="page[parent_id]">
                     {sectionNodesOptions:h}
                 </select>
             </p>
@@ -69,12 +59,6 @@ function toggleAliasElements(myCheckbox)
                 </label>
                 <input type="text" name="page[rel]" id="page[rel]" value="{section[rel]}" />
             </p>
-            <p>
-                <label class="tipOwner" for="page[add_params]">{translate(#Additional params#)}
-                <span class="tipText">{translate(#separate with slashes (/)#)}</span>
-                </label>
-                <input type="text" class="longText" name="page[add_params]" id="page[add_params]" value="{section[add_params]}" />
-            </p>
         </fieldset>
         <fieldset>
             <legend>Options de publication</legend>
@@ -82,7 +66,7 @@ function toggleAliasElements(myCheckbox)
                 <label class="tipOwner" for="page[is_enabled]">{translate(#publish#,#ucfirst#)}
                 <span class="tipText">{translate(#check to activate#)}</span>
                 </label>
-                {generateRadioPair(#page[is_enabled]#,pageIsEnabled):h}
+                <input type="checkbox" name="page[is_enabled]" id="page[is_enabled]" flexy:raw="{pageIsEnabled}" />
             </p>
             <p>
                 <label class="tipOwner" for="page[perms][]">{translate(#Can view#)}
@@ -137,32 +121,26 @@ function toggleAliasElements(myCheckbox)
                 <input type="hidden" name="page[title_original]" value="{section[title]:h}" />
             </p>
             <p>
-                <label class="tipOwner" for="page[has_link]">{translate(#has a link#,#ucfirst#)}
-                <span class="tipText">{translate(#Currently not available !<br />If you leave this box unchecked, you will create a menu item without a link.#):h}</span>
-                </label>
-                <input type="checkbox" name="page[has_link]" id="page[has_link]" flexy:raw="{pageHasLink:h}" onClick="collapseElement(this.checked,'linkInformation');"/>
+                <label for="page[articleType]">{translate(#target#,#ucfirst#)}</label>
+                <select name="page[articleType]" id="page[articleType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="articleType">
+                    <option value="static" flexy:raw="{staticSelected}">
+                        {translate(#static articles#)}
+                    </option>
+                    <option value="dynamic" flexy:raw="{dynamicSelected}">
+                        {translate(#dynamic pages#)}
+                    </option>
+                    {if:conf[PageMgr][wikiScreenTypeEnabled]}
+                    <option value="wiki" flexy:raw="{wikiSelected}">
+                        wiki
+                    </option>
+                    {end:}
+                    <option value="uriExternal" flexy:raw="{uriExternalSelected}">
+                        {translate(#external URI#)}
+                    </option>
+                </select>
             </p>
             <fieldset id="linkInformation">
                 <legend>link information</legend>
-                <p>
-                    <label for="page[articleType]">{translate(#target#,#ucfirst#)}</label>
-                    <select name="page[articleType]" id="page[articleType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="articleType">
-                        <option value="static" flexy:raw="{staticSelected}">
-                            {translate(#static articles#)}
-                        </option>
-                        <option value="dynamic" flexy:raw="{dynamicSelected}">
-                            {translate(#dynamic pages#)}
-                        </option>
-                        {if:conf[PageMgr][wikiScreenTypeEnabled]}
-                        <option value="wiki" flexy:raw="{wikiSelected}">
-                            wiki
-                        </option>
-                        {end:}
-                        <option value="uriExternal" flexy:raw="{uriExternalSelected}">
-                            {translate(#external URI#)}
-                        </option>
-                    </select>
-                </p>
                 {if:staticSelected}
                 <p>
                     <label for="page[staticArticleId]">{translate(#static article title#,#ucfirst#)}</label>
@@ -192,6 +170,12 @@ function toggleAliasElements(myCheckbox)
                         <option value="">none
                         {generateSelect(aActions,section[actionMapping]):h}
                     </select>
+                </p>
+                <p>
+                    <label class="tipOwner" for="page[add_params]">{translate(#Additional params#)}
+                    <span class="tipText">{translate(#separate with slashes (/)#)}</span>
+                    </label>
+                    <input type="text" class="longText" name="page[add_params]" id="page[add_params]" value="{section[add_params]}" />
                 </p>
                 {end:}
                 {if:wikiSelected}
