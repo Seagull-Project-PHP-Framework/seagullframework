@@ -8,9 +8,9 @@
         <tr>
             <td colspan="6">
                 <input type="button" value="{translate(#list installed packages#)}"
-                    onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#,#default#)}mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+                    onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/list-all/mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
                 <input type="button" value="{translate(#list remote packages#)}"
-                    onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#,#default#)}channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+                    onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/list-all/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
                 <input type="button" value="{translate(#package search#)}" />
                 <input type="button" value="{translate(#configuration#)}" />
             </td>
@@ -44,6 +44,7 @@
                     <td>{package[0]}</td><!--name-->
                     <td>{package[1]}</td><!--local-->
                     <td>{package[2]}</td><!--remote-->
+                    <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/uninstall/pkg/{this.plugin(#replaceSlashes#,package[0])}/mode/installed">action</a></td><!--remote-->
                     <td>{package[3]}</td><!--desc-->
                 </tr>
             </table>
