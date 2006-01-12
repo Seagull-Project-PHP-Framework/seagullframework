@@ -39,7 +39,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once dirname(__FILE__) . '/../../../lib/SGL/Manager.php';
+require_once SGL_CORE_DIR . '/Manager.php';
 
 /**
  * Manages packages from the PEAR channel.
@@ -55,8 +55,8 @@ class PearMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'Module Manager';
-        $this->template     = 'moduleOverview.html';
+        $this->pageTitle    = 'PEAR Manager';
+        $this->template     = 'pearList.html';
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -82,7 +82,7 @@ class PearMgr extends SGL_Manager
         //  in which case default is 'list'
         $input->from            = $req->get('pageID');
         $input->totalItems      = $req->get('totalItems');
-        $input->action = ($req->get('action')) ? $req->get('action') : 'overview';
+        $input->action = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete         = $req->get('frmDelete');
         $input->submit          = $req->get('submitted');
 
@@ -109,6 +109,11 @@ class PearMgr extends SGL_Manager
             $input->template = 'moduleEdit.html';
             $this->validated = false;
         }
+    }
+
+    function _list(&$input, &$output)
+    {
+
     }
 
     function _listPearPackages(&$input, &$output)
