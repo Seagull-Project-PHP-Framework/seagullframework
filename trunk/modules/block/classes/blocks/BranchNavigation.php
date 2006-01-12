@@ -48,17 +48,8 @@
 class BranchNavigation
 {
 
-    // set start menu level. Root's menu level is 0.
-    var $startLevel = 1;
-
-    // set how many levels to render. Not yet implemented.
-    var $showLevels  = 0;
-
     // set start parent node
-    var $startNode  = 26;
-
-    // callapsed by default. Not yet implemented
-    var $collapsed  = 0;
+    var $startNode  = 1;
 
     // always show navigation from start node
     var $alwaysShow =  1;
@@ -66,41 +57,23 @@ class BranchNavigation
     function init($output, $block_id)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        return $this->getBlockContent($output, $block_id);
+        return $this->getBlockContent($output);
     }
 
-    function getBlockContent(&$output, $block_id)
+    function getBlockContent(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
 
         $nav       = &new SimpleNav($output);
-        $aSections = $nav->getSectionsByRoleId();
+        $aSections = $nav->getSectionsByRoleId($this->startNode);
 
-        // if startLevel is 0 return all sections
-        if ($this->startLevel == 0) return  $nav->_toHtml($aSections);
+        if (!$this->alwaysShow && empty($nav->_currentSectionId)) {
+            return false;
+        }
 
-        $parentSection = 0;
-
-        if (isset($nav->_aParentsOfCurrentPage)) {
-
-            $currentLevel = sizeof($nav->_aParentsOfCurrentPage);
-
-            if ($nav->_currentSectionId == $this->startNode || $this->alwaysShow) {
-                $parentSection = $this->startNode;
-            } elseif ($currentLevel >= $this->startLevel
-                && (in_array($this->startNode, $nav->_aParentsOfCurrentPage)
-                || !$this->startNode)) {
-                $parentSection = $nav->_aParentsOfCurrentPage[$currentLevel-$this->startLevel]
-                    ? $nav->_aParentsOfCurrentPage[$currentLevel-$this->startLevel]
-                    : $nav->_currentSectionId;
-            }
-            if ($parentSection) {
-                $subSections = $nav->getSectionsByRoleId($parentSection);
-                if ($subSections) {
-                    return $nav->_toHtml($subSections);
-                }
-            }
+        if ($aSections) {
+            return $nav->_toHtml($aSections);
         }
         return false;
     }
