@@ -1,3 +1,16 @@
+//  Allows to show/collapse any block element given its #id
+//  Usage: setup a checkbox and call this function with onclick event
+//  ex: <input type="checkbox" name="foo" id="foo" onclick="collapseElement(this.checked,'id_of_block_to_collapse')" />
+function collapseElement(display,elementId)
+{
+    var blockToCollapse = document.getElementById(elementId);
+    if (display){
+        blockToCollapse.style.display = 'block';
+    } else {
+        blockToCollapse.style.display = 'none';
+    }
+}
+
 //  Allows to highlight a row when hovering it with mouse
 //  Needs every row to have a "back..." class name
 function switchRowColorOnHover() {

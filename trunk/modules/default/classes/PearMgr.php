@@ -86,6 +86,9 @@ class PearMgr extends SGL_Manager
         $input->aDelete         = $req->get('frmDelete');
         $input->submit          = $req->get('submitted');
 
+        //  PEAR params
+        $input->mode            = $req->get('mode');
+
         //  validate fields
         $aErrors = array();
         if ($input->submit) {
@@ -180,14 +183,14 @@ class PearMgr extends SGL_Manager
         }
 
         $cache = & SGL::cacheSingleton();
-        $cacheId = 'pear list-all';
+        $cacheId = 'pear'.$command.$input->mode;
         if ($serialized = $cache->get($cacheId, 'pear')) {
             $data = unserialize($serialized);
             SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
         } else {
             $params = array();
             if (isset($_GET["mode"]))
-                $opts['mode'] = $_GET["mode"];
+                $opts['mode'] = $input->mode;
             $cmd = PEAR_Command::factory($command, $config);
             #$ok = $cmd->run($command, $opts, $params);
             $data = $cmd->run($command, $opts, $params);

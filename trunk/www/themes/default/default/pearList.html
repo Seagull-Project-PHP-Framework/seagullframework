@@ -7,7 +7,9 @@
     <table class="wide">
         <tr>
             <td colspan="6">
-                <input type="button" value="{translate(#manage packages#)}"
+                <input type="button" value="{translate(#list installed packages#)}"
+                    onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#)}mode/installed'" />
+                <input type="button" value="{translate(#list all PEAR packages#)}"
                     onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#)}'" />
                 <input type="button" value="{translate(#package search#)}"
                     onclick="javascript:document.location.href='{makeUrl(#reorder#,#faq#)}'" />
