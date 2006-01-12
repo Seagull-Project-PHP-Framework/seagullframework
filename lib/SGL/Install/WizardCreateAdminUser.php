@@ -39,14 +39,14 @@
 
 function appRootExists()
 {
-	$aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
-	return file_exists($aFormValues['installRoot']);
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    return file_exists($aFormValues['installRoot']);
 }
 
 function webRootExists()
 {
-	$aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
-	return file_exists($aFormValues['webRoot']);
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    return file_exists($aFormValues['webRoot']);
 }
 
 class WizardCreateAdminUser extends HTML_QuickForm_Page
@@ -110,12 +110,15 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
 
         //  set lang
+        $installedLanguages =  $_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
         require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangData[$id] =  $langName . ' (' . $id . ')';
+            if (in_array($id,$installedLanguages)){
+                $aLangData[$id] =  $langName . ' (' . $id . ')';
+            }
         }
         $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
 
