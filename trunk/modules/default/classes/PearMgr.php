@@ -140,6 +140,8 @@ class PearMgr extends SGL_Manager
 
         // Init PEAR Installer Code and WebFrontend
         $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton($pear_user_config, '');
+
+        $config->set('php_dir', SGL_LIB_PEAR_DIR);
         PEAR_Command::setFrontendType("WebSGL");
 
         $ui = &PEAR_Command::getFrontendObject();
