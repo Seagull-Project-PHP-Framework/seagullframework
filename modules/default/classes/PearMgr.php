@@ -60,7 +60,7 @@ class PearMgr extends SGL_Manager
 
         $this->_aActionsMapping =  array(
             'list'      => array('list'),
-            'listAll'   => array('listAll'),
+            'doRequest'   => array('doRequest'),
         );
     }
 
@@ -84,6 +84,8 @@ class PearMgr extends SGL_Manager
         //  PEAR params
         $input->mode            = $req->get('mode');
         $input->channel         = $req->get('channel');
+        $input->command         = $req->get('command');
+        $input->pkg             = $this->restoreSlashes($req->get('pkg'));
 
         //  validate fields
         $aErrors = array();
@@ -110,12 +112,17 @@ class PearMgr extends SGL_Manager
         }
     }
 
+    function restoreSlashes($str)
+    {
+        return str_replace('^', '/',$str);
+    }
+
     function _list(&$input, &$output)
     {
 
     }
 
-    function _listAll(&$input, &$output)
+    function _doRequest(&$input, &$output)
     {
 
         putenv('PHP_PEAR_INSTALL_DIR='.SGL_LIB_PEAR_DIR);
@@ -176,25 +183,51 @@ class PearMgr extends SGL_Manager
         #$_ENV['TMPDIR'] = $_ENV['TEMP'] = $dir.'tmp';
         $_ENV['TMPDIR'] = $_ENV['TEMP'] = SGL_TMP_DIR;
 
-        if (!isset($_GET["command"])) {
-            $_GET["command"] = $command  = 'list-all';
+        if (is_null($input->command)) {
+            $input->command  = 'list-all';
+        }
+        $params = array();
+        if ($input->mode) {
+            #$opts['mode'] = $input->mode;
+            $opts['mode'] = 'installed';
         }
 
         $cache = & SGL::cacheSingleton();
-        $cacheId = 'pear'.$command.$input->mode;
-        if ($serialized = $cache->get($cacheId, 'pear')) {
-            $data = unserialize($serialized);
-            SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
-        } else {
-            $params = array();
-            if ($input->mode)
-                $opts['mode'] = $input->mode;
-            $cmd = PEAR_Command::factory($command, $config);
-            $data = $cmd->run($command, $opts, $params);
+        $cacheId = 'pear'.$input->command.$input->mode;
 
-            $serialized = serialize($data);
-            $cache->save($serialized, $cacheId, 'pear');
-            SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
+//        if ($serialized = $cache->get($cacheId, 'pear')) {
+//            $data = unserialize($serialized);
+//            SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
+//        } else {
+//            $params = array();
+//            if ($input->mode) {
+//                $opts['mode'] = $input->mode;
+//            }
+
+        switch ($input->command) {
+
+        case 'list-all':
+            if ($serialized = $cache->get($cacheId, 'pear')) {
+                $data = unserialize($serialized);
+                SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
+            } else {
+                $cmd = PEAR_Command::factory($input->command, $config);
+                $data = $cmd->run($input->command, $opts, $params);
+                $serialized = serialize($data);
+                $cache->save($serialized, $cacheId, 'pear');
+                SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
+            }
+
+
+            break;
+
+        case 'install':
+        case 'uninstall':
+        case 'upgrade':
+            $params = array($input->pkg);
+            $cmd = PEAR_Command::factory($input->command, $config);
+            $ok = $cmd->run($input->command, $opts, $params);
+            break;
         }
 
        # foreach ($data['data'] as $aPackages) {

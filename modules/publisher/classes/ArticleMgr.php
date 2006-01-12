@@ -77,6 +77,7 @@ class ArticleMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (SGL_HTTP_Session::getUserType() == SGL_ADMIN) {
             $this->isAdmin = true;
             $this->template = 'articleManager.html';
