@@ -631,8 +631,10 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         }
 
         //  copy over links file
-        @copy(SGL_ETC_DIR . '/links.ini.dist',
-            SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini');
+        $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
+        if (!file_exists($target)) {
+            @copy(SGL_PATH . '/etc/links.ini.dist', $target);
+        }
     }
 }
 
