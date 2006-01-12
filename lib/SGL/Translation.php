@@ -236,8 +236,22 @@ class SGL_Translation
         if ($langID = str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET'])) {
             return $langID;
         } else {
-            return $GLOBALS['_SGL']['CONF']['translation']['fallbackLang'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            return $conf['translation']['fallbackLang'];
         }
+    }
+
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     */
+    function getFallbackLangID()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        return $conf['translation']['fallbackLang'];
     }
 
     /**
