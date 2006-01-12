@@ -8,7 +8,7 @@
         <tr>
             <td colspan="6">
                 <input type="button" value="{translate(#list installed packages#)}"
-                    onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#,#default#)}mode/installed/channel/+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+                    onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#,#default#)}mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
                 <input type="button" value="{translate(#list remote packages#)}"
                     onclick="javascript:document.location.href='{makeUrl(#listAll#,#pear#,#default#)}channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
                 <input type="button" value="{translate(#package search#)}" />

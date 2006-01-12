@@ -208,7 +208,7 @@ class PearMgr extends SGL_Manager
 #print '<pre>';print_r($aPackage);
          #   }
         #}
-        $output->result = $data['data'];
+        $output->result = @$data['data'];
 #print '<pre>';print_r($aPackage);
 
     }
