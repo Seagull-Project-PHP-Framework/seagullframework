@@ -725,7 +725,7 @@ class PageMgr extends SGL_Manager
 
         //  FIXME currently only set translation if numeric
         foreach ($sectionNodes as $k => $aValues) {
-            if ($aValues['trans_id']) {
+            if ($aValues['trans_id'] && array_key_exists($aValues['trans_id'], $aTranslations)) {
                 $sectionNodes[$k]['title'] = $aTranslations[$aValues['trans_id']];
             }
         }
