@@ -59,11 +59,6 @@ class PearMgr extends SGL_Manager
         $this->template     = 'pearList.html';
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
             'listAll'   => array('listAll'),
         );
@@ -88,6 +83,7 @@ class PearMgr extends SGL_Manager
 
         //  PEAR params
         $input->mode            = $req->get('mode');
+        $input->channel         = $req->get('channel');
 
         //  validate fields
         $aErrors = array();
@@ -150,6 +146,8 @@ class PearMgr extends SGL_Manager
         $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton($pear_user_config, '');
 
         $config->set('php_dir', SGL_LIB_PEAR_DIR);
+        $config->set('default_channel', $input->channel);
+
         PEAR_Command::setFrontendType("WebSGL");
 
         $ui = &PEAR_Command::getFrontendObject();
@@ -189,10 +187,9 @@ class PearMgr extends SGL_Manager
             SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
         } else {
             $params = array();
-            if (isset($_GET["mode"]))
+            if ($input->mode)
                 $opts['mode'] = $input->mode;
             $cmd = PEAR_Command::factory($command, $config);
-            #$ok = $cmd->run($command, $opts, $params);
             $data = $cmd->run($command, $opts, $params);
 
             $serialized = serialize($data);
