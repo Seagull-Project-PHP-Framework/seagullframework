@@ -323,7 +323,7 @@ img {
 .archived {
     font-weight: bold;
     color:  <?php echo $archived ?>;
-}  
+}
 
 /******************************************************************************/
 /*                                  LEGACY CSS                                */
