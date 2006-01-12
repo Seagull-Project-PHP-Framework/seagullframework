@@ -504,11 +504,11 @@ class SGL_Item
             while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     // set fieldID to tranlsation ID
-                    $fieldID = $fieldValue;
+                    $fieldID = $transID;
                     $fieldValue = $this->trans->get($transID, 'content', $language);
                     $aFields[ucfirst($fieldName)] =
                         $this->generateFormFields(
-                        $fieldID, $fieldName, $fieldValue, $fieldType);
+                        $fieldID, $fieldName, $fieldValue, $fieldType, $language);
             }
             $res = $aFields;
             break;
@@ -584,7 +584,7 @@ class SGL_Item
                     = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                         $aFields[ucfirst($fieldName)] =
                             $this->generateFormFields(
-                            $itemMappingID, $fieldName, null, $fieldType);
+                            $itemMappingID, $fieldName, null, $fieldType, $language);
                 }
                 $res = $aFields;
                 break;
@@ -623,17 +623,17 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' name='frmFieldName[]' value='$fieldValue' size='75' />";
+            $formHTML = "<input type='text' id='frmFieldName[$fieldName]' name='frmFieldName[]' value='$fieldValue' />";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 1:     // field type = textarea paragraph
-            $formHTML = "<textarea name='frmFieldName[]' rows='10' cols='60'>$fieldValue</textarea>";
+            $formHTML = "<textarea id='frmFieldName[$fieldName]' name='frmFieldName[]'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 2:     // field type = html paragraph
-            $formHTML = "<textarea id='frmBodyName' name='frmBodyName' class='wysiwyg' cols='75' rows='20'>$fieldValue</textarea>";
+            $formHTML = "<textarea id='frmBodyName' name='frmBodyName' class='wysiwyg'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID' />";
             break;
         }
