@@ -245,6 +245,23 @@ class SGL_Request
         return $this->aProps['managerName'];
     }
 
+    function getUri()
+    {
+        $uri = '';
+        foreach ($this->aProps as $key => $value) {
+            if (!empty($value) && $key != 'lang') {
+                $uri .= ($key == 'moduleName' || $key == 'managerName')
+                    ? $value . '/'
+                    : $key . '/' . $value;
+            }
+        }
+
+        // remove trailing slash
+        $uri = preg_replace('/\/$/','',$uri);
+
+        return $uri;
+    }
+
     function debug()
     {
         $GLOBALS['_SGL']['site']['blocksEnabled'] = 0;
