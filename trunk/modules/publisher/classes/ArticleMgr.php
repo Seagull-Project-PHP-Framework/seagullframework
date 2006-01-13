@@ -278,9 +278,9 @@ class ArticleMgr extends SGL_Manager
 
         //  get dynamic content
         $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
-        $output->dynaContent = (isset($input->articleLang)) ?
-                                    $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang) :
-                                    $item->getDynamicContent($input->articleID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
+        $output->dynaContent = (isset($input->articleLang))
+            ? $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang)
+            : $item->getDynamicContent($input->articleID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
@@ -523,6 +523,7 @@ class ArticleMgr extends SGL_Manager
             );
         }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+
         //  fetch title translation
         $fallbackLang = $this->conf['translation']['fallbackLang'];
         foreach ($aPagedData['data'] as $aKey => $aValues) {
