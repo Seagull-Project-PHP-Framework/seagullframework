@@ -15,6 +15,8 @@ $words['Bargain'] = 'Bargain';
 $words['Yes'] = 'Yes';
 $words['No'] = 'No';
 $words['without VAT'] = 'without VAT';
+$words['Add product variants for this product'] = 'Add product variants for this product';
+
 
 
 $words['Shop'] = 'Shop';
@@ -112,7 +114,7 @@ $words['Shop Module Options'] = 'Shop Module Options';
 $words['Shop module autentification'] = 'Shop module autentification';
 $words['Shop Module Configuration'] = 'Shop Module Configuration';
 $words['The shop root category ID '] = 'The shop root category ID ';
-$words['Show \'order\' button: 0-no, 1-yes'] = 'Show \'order\' button: 0-no, 1-yes';
+$words['Show \\\'order\\\' button: 0-no, 1-yes'] = 'Show "order" button: 0-no, 1-yes';
 $words['VAT if not already defined 19%'] = 'VAT if not already defined 19%';
 $words['Discount value if not already defined'] = 'Discount value if not already defined';
 $words['Set this to true if you install the rate module too'] = 'Set this to true if you install the rate module too';
@@ -142,10 +144,16 @@ $words['Default VAT'] = 'Default VAT';
 $words['CSV configuration'] = 'CSV configuration';
 $words['Number of records to upload when CSV Upload'] = 'Number of records to upload when CSV Upload';
 $words['Value'] = 'Value';
-$words['EUR'] = 'Euro';
-$words['USD'] = 'USD';
-$words['ROL'] = 'Lei';
-$words['RON'] = 'New Lei';
+$words['Image driver'] = 'Image driver';
+$words['magnify image'] = 'magnify image';
+$words['magnify image if it is smaller then requested width and height'] = 'magnify image if it is smaller then requested width and height';
+$words['available GD, IM, Imagick or NetPBM'] = 'available GD, IM, Imagick or NetPBM';
+
+
+
+
+
+
 
 
 $words['Price without VAT'] = 'Price without VAT';
@@ -176,7 +184,7 @@ $words['Search results are:'] = 'Search results are:';
 //upload mgr
 $words['Upload'] = 'Upload';
 $words['Upload Manager::CSV Upload'] = 'Upload Manager :: CSV Upload';
-$words['Upload Manager::CSV List'] = 'Produktø katalogas :: CSV List';
+$words['Upload Manager::CSV List'] = 'Produktï¿½ katalogas :: CSV List';
 $words['CSV file upload'] = 'CSV file upload';
 $words['Process CSV file'] = 'Process CSV file';
 $words['CSV file processed'] = 'CSV file processed';
@@ -184,5 +192,17 @@ $words['CSV file uploaded succefuly'] = 'CSV file uploaded succefuly';
 $words['Inconsistent CSV table header'] = 'Inconsistent CSV table header';
 $words['Export all products to CSV'] = 'Export all products to CSV';
 
+
+//Product status
+$words['In Stock'] = 'In Stock';
+$words['Short Suply'] = 'Short Suply';
+$words['Phone Order'] = 'Phone Order';
+
+//currency
+$words['EUR'] = 'Euro';
+$words['USD'] = 'USD';
+$words['ROL'] = 'Lei';
+$words['RON'] = 'New Lei';
+$words['LIT'] = 'Lt';
 
 ?>
