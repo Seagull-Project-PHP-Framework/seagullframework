@@ -12,7 +12,6 @@
                 <input type="button" value="{translate(#list remote packages#)}"
                     onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/list-all/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
                 <input type="button" value="{translate(#package search#)}" />
-                <input type="button" value="{translate(#configuration#)}" />
             </td>
         </tr>
         <tr>
@@ -37,6 +36,8 @@
                     <th>Package Name</th>
                     <th>Local</th>
                     <th>Latest</th>
+                    <th>Install</th>
+                    <th>Uninstall</th>
                     <th>Description</th>
                 </tr>
                 <tr class="{switchRowClass()}" flexy:foreach="packages,k2,package">
@@ -44,7 +45,8 @@
                     <td>{package[0]}</td><!--name-->
                     <td>{package[1]}</td><!--local-->
                     <td>{package[2]}</td><!--remote-->
-                    <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/uninstall/pkg/{this.plugin(#replaceSlashes#,package[0])}/mode/installed">action</a></td><!--remote-->
+                    <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/install/pkg/{this.plugin(#replaceSlashes#,package[0])}/">install</a></td><!--remote-->
+                    <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/uninstall/pkg/{this.plugin(#replaceSlashes#,package[0])}/mode/installed">uninstall</a></td><!--remote-->
                     <td>{package[3]}</td><!--desc-->
                 </tr>
             </table>

@@ -136,13 +136,19 @@ class PearMgr extends SGL_Manager
 
         // Init PEAR Installer Code and WebFrontend
         $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton();
+#        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton('', SGL_MOD_DIR . '/default/pear.conf');
 
         $config->set('php_dir', SGL_LIB_PEAR_DIR);
         #$config->set('php_dir', SGL_LIB_PEAR_DIR, $layer='system'); <- this is ignored ??
         //  hence crude hack ; -)
         $GLOBALS['_PEAR_Config_instance']->_registry['system']->statedir = SGL_LIB_PEAR_DIR . '/.registry';
+        $GLOBALS['_PEAR_Config_instance']->configuration['system']['php_dir'] = SGL_LIB_PEAR_DIR;
+        $GLOBALS['_PEAR_Config_instance']->configuration['system']['doc_dir'] = SGL_TMP_DIR;
+        $GLOBALS['_PEAR_Config_instance']->configuration['system']['data_dir'] = SGL_TMP_DIR;
+        $GLOBALS['_PEAR_Config_instance']->configuration['system']['test_dir'] = SGL_TMP_DIR;
 
         $config->set('default_channel', $input->channel);
+        $config->set('preferred_state', 'devel');
 
         PEAR_Command::setFrontendType("WebSGL");
         $ui = &PEAR_Command::getFrontendObject();
@@ -194,7 +200,12 @@ class PearMgr extends SGL_Manager
             $params = array($input->pkg);
             $cmd = PEAR_Command::factory($input->command, $config);
             $ok = $cmd->run($input->command, $opts, $params);
-print '<pre>';print_r($ok);
+
+            if ($ok) {
+                $this->_redirectToDefault($input, $output);
+            } else {
+                print '<pre>';print_r($ok);
+            }
             break;
         }
 
