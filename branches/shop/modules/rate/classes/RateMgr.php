@@ -52,6 +52,7 @@ class RateMgr extends SGL_Manager
     function RateMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
                 
         $this->module       = 'rate';
         $this->pageTitle    = 'Rates';
@@ -75,21 +76,21 @@ class RateMgr extends SGL_Manager
     function _init() {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
         
         //  Check if rate already set
-        if (isset($conf['exchangeRate']) and count($conf['exchangeRate']) > 0) {
+        if (isset($this->conf['exchangeRate']) and count($this->conf['exchangeRate']) > 0) {
             SGL::logMessage("Rate already set");
             return;
         }
         
-        $dbh = & SGL_DB::singleton();
+//        $dbh = & SGL_DB::singleton();
         
-        $query = "SELECT MAX(date) AS date FROM {$conf['table']['rate']}";
-        $result = $dbh->query($query);
+        $query = "SELECT MAX(date) AS date FROM {$this->conf['table']['rate']}";
+        $result = $this->dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
-            $this->_setDefault();
+//            $this->_setDefault();
             return false;
         }
         $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
@@ -98,8 +99,8 @@ class RateMgr extends SGL_Manager
             return false;
         } 
        
-        $query = "SELECT * FROM {$conf['table']['rate']} WHERE date='".$row['date']."'";
-        $result = $dbh->query($query);
+        $query = "SELECT * FROM {$this->conf['table']['rate']} WHERE date='".$row['date']."'";
+        $result = $this->dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
             $this->setDefault();

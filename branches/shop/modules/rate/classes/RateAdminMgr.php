@@ -53,6 +53,7 @@ class RateAdminMgr extends RateMgr
     function RateAdminMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
                 
         $this->module		= 'rate';
         $this->pageTitle    = 'Rates';
@@ -69,7 +70,7 @@ class RateAdminMgr extends RateMgr
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
             
         $this->validated    = true;
         $input->error       = array();
@@ -133,10 +134,10 @@ class RateAdminMgr extends RateMgr
         $output->template = 'rateEdit.html';
         $output->pageTitle = 'Exchange :: Edit';
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
         $exchangeRates = array();
-        foreach($conf['currency'] as $currency=>$description) {
-            $exchangeRates[$currency] = @$conf['exchangeRate'][$currency];
+        foreach($this->conf['currency'] as $currency=>$description) {
+            $exchangeRates[$currency] = @$this->conf['exchangeRate'][$currency];
         }
         
         $output->exchangeRates = $exchangeRates;
@@ -154,22 +155,22 @@ class RateAdminMgr extends RateMgr
     function _set($currency, $rate, $date = null) {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
         
         if (empty($date)) {
             $date = SGL::getTime();
         }
 
-        $dbh = & SGL_DB::singleton();
+//        $dbh = & SGL_DB::singleton();
         
-        $query = "DELETE FROM {$conf['table']['rate']} WHERE currency='$currency' AND date='$date'";   
-        $result = $dbh->query($query);
+        $query = "DELETE FROM {$this->conf['table']['rate']} WHERE currency='$currency' AND date='$date'";
+        $result = $this->dbh->query($query);
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
         }  
       
-        $nextId = $dbh->nextId($conf['table']['rate']);
+        $nextId = $this->dbh->nextId($this->conf['table']['rate']);
         $fields = array(
             'rate_id' => $nextId,
             'currency' => $currency,
@@ -177,7 +178,7 @@ class RateAdminMgr extends RateMgr
             'date' => $date,
             'last_updated' => SGL::getTime(),
             );        
-        $result = $dbh->autoExecute('rate', $fields, DB_AUTOQUERY_INSERT);
+        $result = $this->dbh->autoExecute('rate', $fields, DB_AUTOQUERY_INSERT);
         
         if (DB::isError($result)) {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -200,7 +201,7 @@ class RateAdminMgr extends RateMgr
         $output->template = 'rateEdit.html';
         $output->pageTitle = 'Exchange :: Edit';
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
         $confFilePath = SGL_MOD_DIR. '/conf.ini';
         
         $result = true;
@@ -229,7 +230,7 @@ class RateAdminMgr extends RateMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
-        $conf = & $GLOBALS['_SGL']['CONF'];
+//        $conf = & $GLOBALS['_SGL']['CONF'];
         $EUR = null;
         $USD = null;     
       
@@ -244,13 +245,13 @@ class RateAdminMgr extends RateMgr
         } 
         fclose($fd);
     
-        $trashHold = $conf['retrieve']['rateTrashHold'];
+        $trashHold = $this->conf['retrieve']['rateTrashHold'];
         // USD update
         if (preg_match('/1 USD =  (\d+) Lei<br />/',$buffer,$match)) {
                  $USD = $match[1];
         }
-        if (isset($conf['exchangeRate']['USD'])){
-            $oldUSD = $conf['exchangeRate']['USD'];
+        if (isset($this->conf['exchangeRate']['USD'])){
+            $oldUSD = $this->conf['exchangeRate']['USD'];
             if ($oldUSD/$trashHold < $USD and $oldUSD*$trashHold > $USD) { 
                 if ($oldUSD != $USD) {
                     $this->_set('USD',$USD);                
@@ -272,8 +273,8 @@ class RateAdminMgr extends RateMgr
         if (preg_match('/1 EUR =  (\d+) Lei<br />/',$buffer,$match)) {
                 $EUR = $match[1];
         }
-        if (isset($conf['exchangeRate']['EUR'])) {
-             $oldEUR = $conf['exchangeRate']['EUR'];
+        if (isset($this->conf['exchangeRate']['EUR'])) {
+             $oldEUR = $this->conf['exchangeRate']['EUR'];
             if ($oldEUR/$trashHold < $EUR and $oldEUR*$trashHold > $EUR) { 
                 if ($oldEUR != $EUR) {
                     $this->_set('EUR',$EUR);                

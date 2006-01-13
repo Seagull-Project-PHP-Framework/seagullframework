@@ -45,8 +45,8 @@ require_once SGL_ENT_DIR . '/Product.php';
 require_once SGL_ENT_DIR . '/Price.php';
 require_once SGL_ENT_DIR . '/User_preference.php';
 
-if (isset($GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency']) &&
-    $GLOBALS['_SGL']['CONF']['ShopMgr']['multiCurrency'] == true) {
+if (isset($this->conf['ShopMgr']['multiCurrency']) &&
+    $this->conf['ShopMgr']['multiCurrency'] == true) {
     require_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
 }
 
@@ -65,6 +65,8 @@ class PriceMgr extends SGL_Manager
     function PriceMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module		= 'shop';
         $this->pageTitle    = 'Price';
         $this->template     = 'userList.html';
@@ -74,9 +76,9 @@ class PriceMgr extends SGL_Manager
         );
         
         $this->catMgr = & new SGL_Category();
-        $this->dbh = & SGL_DB::singleton();
+      //  $this->dbh = & SGL_DB::singleton();
         //TO DO: activate rate manager
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+//        $this->conf = & $GLOBALS['_SGL']['CONF'];
         
         if (isset($this->conf['ShopMgr']['multiCurrency'])) {
             if($this->conf['ShopMgr']['multiCurrency']) {
@@ -122,7 +124,7 @@ class PriceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+//        $this->conf = & $GLOBALS['_SGL']['CONF'];
         $usrId = $_SESSION['uid'];  
         
         // If not set in aPrefs take the defaults from conf.ini
@@ -304,7 +306,7 @@ class PriceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
             
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+//        $this->conf = & $GLOBALS['_SGL']['CONF'];
                 
         $aOptions = array();
         $menu2 = & new MenuBuilder('SelectBox', $aOptions);
@@ -362,7 +364,7 @@ class PriceMgr extends SGL_Manager
     */
     function currencyConverter ($amount, $from, $to, $format = true) 
     {
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
+//        $this->conf = & $GLOBALS['_SGL']['CONF'];
         if (!(array_key_exists($from,$this->conf['exchangeRate']) and array_key_exists($to,$this->conf['exchangeRate']))) {
             return '';    
         } 
