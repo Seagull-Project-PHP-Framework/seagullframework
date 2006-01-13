@@ -124,25 +124,10 @@ class PearMgr extends SGL_Manager
 
     function _doRequest(&$input, &$output)
     {
-
         putenv('PHP_PEAR_INSTALL_DIR='.SGL_LIB_PEAR_DIR);
-        putenv('PHP_PEAR_BIN_DIR=/usr/local/bin');
-        putenv('PHP_PEAR_PHP_BIN=/usr/local/bin/php');
 
         $useDHTML = true;
-
         define('PEAR_Frontend_Web',1);
-
-        if (!isset($_SESSION['_PEAR_Frontend_Web_js'])) {
-            $_SESSION['_PEAR_Frontend_Web_js'] = false;
-        }
-        if (isset($_GET['enableJS']) && $_GET['enableJS'] == 1) {
-            $_SESSION['_PEAR_Frontend_Web_js'] = true;
-        }
-        define('USE_DHTML_PROGRESS', (@$useDHTML && $_SESSION['_PEAR_Frontend_Web_js']));
-        if (!isset($pear_user_config)) {
-             $pear_user_config = dirname(dirname(__FILE__))."/pear.conf";
-        }
 
         // Include needed files
         require_once 'PEAR/Registry.php';
@@ -150,27 +135,19 @@ class PearMgr extends SGL_Manager
         require_once 'PEAR/Command.php';
 
         // Init PEAR Installer Code and WebFrontend
-        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton($pear_user_config, '');
+        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton();
 
         $config->set('php_dir', SGL_LIB_PEAR_DIR);
+        #$config->set('php_dir', SGL_LIB_PEAR_DIR, $layer='system'); <- this is ignored ??
+        //  hence crude hack ; -)
+        $GLOBALS['_PEAR_Config_instance']->_registry['system']->statedir = SGL_LIB_PEAR_DIR . '/.registry';
+
         $config->set('default_channel', $input->channel);
 
         PEAR_Command::setFrontendType("WebSGL");
-
         $ui = &PEAR_Command::getFrontendObject();
 
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
-
-        // Cient requests an Image/Stylesheet/Javascript
-//        if (isset($_GET["css"])) {
-//            $ui->outputFrontendFile($_GET["css"], 'css');
-//        }
-//        if (isset($_GET["js"])) {
-//            $ui->outputFrontendFile($_GET["js"], 'js');
-//        }
-//        if (isset($_GET["img"])) {
-//            $ui->outputFrontendFile($_GET["img"], 'image');
-//        }
 
         $verbose = $config->get("verbose");
         $cmdopts = array();
@@ -188,21 +165,11 @@ class PearMgr extends SGL_Manager
         }
         $params = array();
         if ($input->mode) {
-            #$opts['mode'] = $input->mode;
             $opts['mode'] = 'installed';
         }
 
         $cache = & SGL::cacheSingleton();
         $cacheId = 'pear'.$input->command.$input->mode;
-
-//        if ($serialized = $cache->get($cacheId, 'pear')) {
-//            $data = unserialize($serialized);
-//            SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
-//        } else {
-//            $params = array();
-//            if ($input->mode) {
-//                $opts['mode'] = $input->mode;
-//            }
 
         switch ($input->command) {
 
@@ -227,6 +194,7 @@ class PearMgr extends SGL_Manager
             $params = array($input->pkg);
             $cmd = PEAR_Command::factory($input->command, $config);
             $ok = $cmd->run($input->command, $opts, $params);
+print '<pre>';print_r($ok);
             break;
         }
 
