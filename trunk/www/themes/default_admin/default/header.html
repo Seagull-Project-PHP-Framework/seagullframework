@@ -19,6 +19,10 @@
         var SGL_JS_SESSID="{sessID}";
         var SGL_JS_CURRURL="{currUrl}";
         var SGL_JS_THEME="{theme}";
+        {if:conf[site][adminGuiEnabled]}
+        var SGL_JS_ADMINGUI="1";
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+        {end:}
     {scriptClose:h}
 
     <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
@@ -32,19 +36,35 @@
     {if:wysiwyg}
     {if:wysiwyg_fck}
     <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
+    <script type="text/javascript">
+        var oFCKEditors = new Array;
 
-    {scriptOpen:h}
+        /* initalises an instance of FCK and returns the object. */
+        function fck_add(id)
+        {
+            i = oFCKEditors.length;
+            oFCKEditors[i] = new FCKeditor(id, '100%', 500);
+            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/fck/";
+            oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
+            oFCKEditors[i].ReplaceTextarea();
+        }
         function fck_init()
         {
-            {if:wysiwygElementName}
-        	var oFCKeditor = new FCKeditor('{wysiwygElementName}');
-        	{else:}
-        	var oFCKeditor = new FCKeditor('frmBodyName');
-        	{end:}
-    		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
-    		oFCKeditor.ReplaceTextarea() ;
+            if( document.getElementsByTagName ) {
+                areas = document.getElementsByTagName('textarea');
+
+                for( var i=0; i<areas.length; i++ ){
+                    if( areas[i].className.match("wysiwyg") ) {
+                        fck_add(areas[i].id);
+                    }
+                    else if( areas[i].id.match('frmBodyName') ) {
+                        /* fallback for old templates */
+                        fck_add('frmBodyName');
+                    }
+               }
+            }
         }
-    {scriptClose:h}
+   </script>
     {end:}
     {end:}
 </head>

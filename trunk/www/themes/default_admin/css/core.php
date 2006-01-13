@@ -190,6 +190,7 @@ fieldset legend {
 }
 form h3 {
     background: <?php echo $secondary ?> url('<?php echo $baseUrl ?>/images/th_bg.gif') repeat-x;
+    margin-bottom: 1em; 
     padding: 0.5em 0;
     text-align: center;
     color: <?php echo $primaryTextLight ?>;
@@ -667,7 +668,6 @@ ul.bullets li {
     list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
 }
 .pager {
-    float: right;
     white-space: nowrap;
     text-align: center;
     margin: 0 auto 10px;
@@ -792,7 +792,7 @@ span.tipOwner, label.tipOwner, input.tipOwner {
     cursor: help;
 }
 label.tipOwner {
-    background: url('<?php echo $baseUrl ?>/images/help-browser.gif') no-repeat 98% 50%;
+    background: url('<?php echo $baseUrl ?>/images/help-browser.gif') no-repeat 96% 50%;
 }
 span.tipOwner span.tipText, label span.tipText, input.tipOwner span.tipText {
     display: none;
