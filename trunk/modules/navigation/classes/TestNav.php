@@ -245,7 +245,10 @@ class TestNav
             if ($section->trans_id && array_key_exists($section->trans_id, $this->_aTranslations) ) {
                 $section->title = $this->_aTranslations[$section->trans_id];
             } else {
-                $section->title = $this->trans->get($section->section_id, 'nav', SGL_Translation::getFallbackLangID());
+                $title = $this->trans->get($section->section_id, 'nav', SGL_Translation::getFallbackLangID());
+                if ($title) {
+                    $section->title = $title;
+                }
             }
 
             //  recurse if there are (potential) children--even if R - L > 1, the children might
