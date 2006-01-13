@@ -252,6 +252,29 @@ class SGL_Date
     }
 
     /**
+     * Gets appropriate date format
+     *
+     * @access  public
+     * @return  string  $date template (e.g. "%d %B %Y, %H:%M" for FR date format)
+     */
+    function getDateFormat()
+    {
+        if ($_SESSION['aPrefs']['dateFormat'] == 'UK') {
+            $dateFormat = '%d %B %Y, %H:%M';
+        } elseif ($_SESSION['aPrefs']['dateFormat'] == 'BR'
+                 || $_SESSION['aPrefs']['dateFormat'] == 'FR') {
+            // Brazilian/French date format
+            $dateFormat = '%d %B %Y, %H:%M';
+        } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
+            $dateFormat = '%B %d, %Y %H:%M';
+        } else {
+            //  else display ISO (international, unambiguous) format, YYYY-MM-DD
+            $dateFormat = '%Y-%B-%d';
+        }
+        return $dateFormat;
+    }
+
+    /**
      * Generates a select of month values.
      *
      * @access  public

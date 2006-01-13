@@ -292,6 +292,16 @@ class SGL_Output
         return SGL_Date::formatPretty($date);
     }
 
+    /**
+     * Gets appropriate date format
+     *
+     * @access  public
+     * @return  string  $date template (e.g. "%d %B %Y, %H:%M" for FR date format)
+     */
+    function getDateFormat()
+    {
+        return SGL_Date::getDateFormat();
+    }
 
     /**
      * Wrapper for SGL_Date::showDateSelector(),
@@ -321,7 +331,7 @@ class SGL_Output
     function getNoExpiryCheckbox($aDate,$sFormName)
     {
         $checked = ($aDate == null) ? 'checked' : '';
-        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.'> '.SGL_Output::translate('No expire');
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.' /> '.SGL_Output::translate('No expire');
     }
 
     /**

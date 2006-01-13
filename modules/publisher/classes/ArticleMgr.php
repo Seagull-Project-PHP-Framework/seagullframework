@@ -40,8 +40,8 @@
 
 require_once SGL_CORE_DIR . '/Item.php';
 require_once SGL_CORE_DIR . '/Translation.php';
-require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
-require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
+require_once SGL_MOD_DIR  . '/publisher/classes/PublisherBase.php';
+require_once SGL_MOD_DIR  . '/navigation/classes/MenuBuilder.php';
 
 /**
  * For performing operations on Article objects.
@@ -85,12 +85,21 @@ class ArticleMgr extends SGL_Manager
             $this->template = 'publisher.html';
         }
         $this->validated        = true;
-        $input->masterTemplate  = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
-            'masterLeftCol.html' : $this->masterTemplate;
+        $input->masterTemplate  = ((SGL_HTTP_Session::getUserType() == SGL_ADMIN) && !$this->conf['site']['adminGuiEnabled'])
+            ? 'masterLeftCol.html'
+            : $this->masterTemplate;
         $input->error           = array();
         $input->pageTitle       = $this->pageTitle;
         $input->template        = $this->template;
-        $input->javascriptSrc   = array('TreeMenu.js');
+
+        //  select appropriate jscalendar lang file depending on prefs defined language
+        $lang = SGL::getCurrentLang();
+        $jscalendarLangFile = (file_exists(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
+            ? 'jscalendar/lang/calendar-'. $lang . '.js'
+            : 'jscalendar/lang/calendar-en.js';
+        $input->javascriptSrc   = ($this->conf['site']['adminGuiEnabled'])
+            ? array('TreeMenu.js','jscalendar/calendar.js',$jscalendarLangFile,'jscalendar/calendar-setup.js')
+            : array('TreeMenu.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
@@ -162,6 +171,8 @@ class ArticleMgr extends SGL_Manager
         //  increment year for expiry and set time to midnight
         $aDate = SGL_Date::stringToArray(mktime(0,0,0,date('m'),date('d'),date('Y')+5));
 
+        $expiryDate = mktime(0,0,0,date('m'),date('d'),date('Y')+5);
+        $output->expiryDate = strftime("%Y-%m-%d %H:%M:%S", $expiryDate);
         $output->dateSelectorExpiry =
             SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
         if ($this->conf['ArticleMgr']['noExpiry']) $aDate = '';
@@ -170,7 +181,8 @@ class ArticleMgr extends SGL_Manager
 
         //  use fallback language to create all articles
         $item = & new SGL_Item();
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
+        $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
         $output->articleLang = $this->conf['translation']['fallbackLang'];
 
         //  generate breadcrumbs and change category select
@@ -204,8 +216,13 @@ class ArticleMgr extends SGL_Manager
         $item->set('lastUpdatedById', $input->createdByID);
         $item->set('dateCreated', SGL_Date::getTime());
         $item->set('lastUpdated', SGL_Date::getTime());
-        $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
-        $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $item->set('startDate', $input->aStartDate);
+            $item->set('expiryDate', $input->noExpiry ? NULL : $input->aExpiryDate);
+        } else {
+            $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
+            $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
+        }
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
 
@@ -240,9 +257,14 @@ class ArticleMgr extends SGL_Manager
         $output->dateSelectorStart =
             SGL_Output::showDateSelector(SGL_Date::stringToArray($item->startDate),
                 'frmStartDate');
+        $output->itemStartDate = $item->startDate;
         $aExpiryDate = $item->expiryDate
             ? SGL_Date::stringToArray($item->expiryDate)
             : SGL_Date::stringToArray(mktime(0,0,0,date('m'),date('d'),date('Y')+5));
+        $output->itemExpiryDate = $item->expiryDate
+            ? $item->expiryDate
+            : strftime("%Y-%m-%d %H:%M:%S", mktime(0,0,0,date('m'),date('d'),date('Y')+5));
+        ;
         $output->dateSelectorExpiry =
             SGL_Output::showDateSelector($aExpiryDate,'frmExpiryDate');
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
@@ -255,9 +277,10 @@ class ArticleMgr extends SGL_Manager
             : $this->conf['translation']['fallbackLang'];
 
         //  get dynamic content
+        $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
         $output->dynaContent = (isset($input->articleLang)) ?
-                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $input->articleLang) :
-                                    $item->getDynamicContent($input->articleID, SGL_RET_STRING, $this->conf['translation']['fallbackLang']);
+                                    $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang) :
+                                    $item->getDynamicContent($input->articleID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
@@ -273,7 +296,9 @@ class ArticleMgr extends SGL_Manager
                              "'([\r\n])[\s]+'",                 // Strip white space
                              "'\*'si");
             $replace = array (' ', ' ', '\1', '');
-            $lines = explode("\n", preg_replace($search, $replace, $output->dynaContent));
+            $lines = ($this->conf['site']['adminGuiEnabled'])
+                        ? preg_replace($search, $replace, $output->dynaContent)
+                        : explode("\n", preg_replace($search, $replace, $output->dynaContent));
 
             //  body text occurs in 4th element
             if (!isset($lines[4])) {
@@ -328,8 +353,13 @@ class ArticleMgr extends SGL_Manager
             $item->set('catID', $input->articleCatID);
         }
         $item->set('lastUpdated', SGL_Date::getTime());
-        $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
-        $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $item->set('startDate', $input->aStartDate);
+            $item->set('expiryDate', $input->noExpiry ? NULL : $input->aExpiryDate);
+        } else {
+            $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
+            $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
+        }
         $item->set('statusID', SGL_STATUS_FOR_APPROVAL);
 
         //  updateMetaItems
@@ -376,6 +406,9 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->masterTemplate = 'masterLeftCol.html';
+        }
         //  fetch current language
         $langID = SGL_Translation::getLangID();
 
@@ -406,7 +439,9 @@ class ArticleMgr extends SGL_Manager
         if ($this->isAdmin) {
             $theme = $_SESSION['aPrefs']['theme'];
             $output->addOnLoadEvent('checkNewButton()');
-            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
+            if (!$this->conf['site']['adminGuiEnabled']) {
+                $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
+            }
             $menu = & new MenuBuilder('SelectBox');
             $output->breadCrumbs = $menu->getBreadCrumbs($input->catID);
         }
@@ -470,11 +505,23 @@ class ArticleMgr extends SGL_Manager
             ORDER BY i.last_updated DESC
             ";
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         //  fetch title translation
         $fallbackLang = $this->conf['translation']['fallbackLang'];

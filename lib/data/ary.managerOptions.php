@@ -155,7 +155,7 @@ $aMgrOptions = array
             'actions'       => array
                 (
                 'Cancel' => SGL_Url::makeLink('edit','config','default'),
-                'Save' => 'javascript:document.conf.submit()',
+                'Save' => 'javascript:formSubmit("conf")',
                 ),
             ),
         ),
@@ -473,9 +473,8 @@ $aMgrOptions = array
             'manage'        => '',
             'actions'       => array
                 (
-                'Save' => 'javascript:articleSave()',
-                'Approve' => 'javascript:articleApprove()',
-                'Publish' => 'javascript:articlePublish()'
+                'Save' => 'javascript:formSubmit("article")',
+                'Cancel' => SGL_Url::makeLink('','article','publisher'),
                 ),
             ),
         'edit' => array
@@ -485,10 +484,8 @@ $aMgrOptions = array
             'manage'        => '',
             'actions'       => array
                 (
-                'Update' => 'javascript:articleUpdate()',
-                'Save' => 'javascript:articleSave()',
-                'Approve' => 'javascript:articleApprove()',
-                'Publish' => 'javascript:articlePublish()'
+                'Save' => 'javascript:formSubmit("article")',
+                'Cancel' => SGL_Url::makeLink('','article','publisher'),
                 ),
             ),
         'save' => array
