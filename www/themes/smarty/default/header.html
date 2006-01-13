@@ -18,7 +18,7 @@
         @import url("{$result->webRoot}/themes/{$result->theme}/css/style.php?navStylesheet={$result->conf.navigation.stylesheet}&moduleName={$result->moduleName}");
     </style>
 
-    <script language="javascript">
+    <script type="text/javascript">
         var SGL_JS_WEBROOT="{$result->webRoot}";
         var SGL_JS_WINHEIGHT={$result->conf.popup.winHeight};
         var SGL_JS_WINWIDTH={$result->conf.popup.winWidth};
@@ -79,7 +79,7 @@
     {if $result->wysiwyg_fck}
     <script type="text/javascript" src="{$result->webRoot}/fck/fckeditor.js"></script>
 
-    <script language="javascript">
+    <script type="text/javascript">
         function fck_init() 
         {
             {if:wysiwygElementName}

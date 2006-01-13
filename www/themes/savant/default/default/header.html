@@ -19,7 +19,7 @@
         @import url("<?php $this->_($result->webRoot) ?>/themes/default/css/style.php?navStylesheet=<?php $this->_($result->conf['navigation']['stylesheet']) ?>");
     </style>
 
-    <script language="javascript">
+    <script type="text/javascript">
         var SGL_JS_WEBROOT="<?php $this->_($result->webRoot) ?>";
         var SGL_JS_WINHEIGHT=<?php $this->_($result->conf['popup']['winHeight']) ?>;
         var SGL_JS_WINWIDTH=<?php $this->_($result->conf['popup']['winWidth']) ?>;
@@ -80,7 +80,7 @@
     <?php if ($result->wysiwyg_fck) { ?> 
     <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/fck/fckeditor.js"></script>
 
-    <script language="javascript">
+    <script type="text/javascript">
         function fck_init() 
         { 
             <?php if ($result->wysiwygElementName) { ?> 
