@@ -245,6 +245,8 @@ class ShopMgr extends SGL_Manager
         if (isset($input->catId) && $input->catId != 0 && is_numeric($input->catId)
            && $input->catId != $this->conf['ShopMgr']['rootCatID']) {
                $branches = $this->GetBranch($input->catId);
+               //$branches = $this->catMgr->getChildren($input->catId);
+               
                while ($row = $branches->fetchRow(DB_FETCHMODE_ASSOC)) {
                    $s_query .= "cat_id = {$row['category_id']} OR ";
                }
@@ -279,21 +281,6 @@ class ShopMgr extends SGL_Manager
         return $result2;
     }
 
-    function IsLeaf($catID){
-        $qry = "SELECT *
-                FROM  {$this->conf['table']['category']}
-                WHERE category_id = $catID
-                    AND category_id NOT IN (
-                      SELECT DISTINCT parent_id
-                      FROM category)";
-        $result = $this->dbh->query($qry);
-        $row = $result->fetchRow(DB_FETCHMODE_ASSOC);
-
-        if (empty($row))
-           return false;
-        else
-           return true;
-    }
     
     /**
      * Generate a compressed list of products. Just set the new template and
@@ -446,7 +433,7 @@ class ShopMgr extends SGL_Manager
             case "lister":
             case "list":
             case "order":
-              if (($input->catId == 0 || !$this->IsLeaf($input->catId)) && empty($sq)){
+              if (($input->catId == 0 || $this->catMgr->isBranch($input->catId)) && empty($sq)){
                      $this -> _mainList($input, $output);
               } else {
                   if (SGL_HTTP_SESSION::get('listMode') == 'lister') {
