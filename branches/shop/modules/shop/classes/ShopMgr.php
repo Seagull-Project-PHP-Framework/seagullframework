@@ -832,7 +832,7 @@ class ShopMgr extends SGL_Manager
     /**
     * accessed when the buy button clicked. It takes the product data (name,
     * price, etc..) and creates an array. The array is serialized, encoded
-    * base64 and sent to the Cart module ( a fast ‘SOAP’ :) )
+    * base64 and sent to the Cart module ( a fast ï¿½SOAPï¿½ :) )
     * 
     * @access public
     * 
@@ -855,7 +855,7 @@ class ShopMgr extends SGL_Manager
                     ? $_SESSION['aPrefs']['VAT']
                     : $this->conf['ShopMgr']['defaultVAT'];
 
-                $prices = $this->GetPrice($usrId, $input->buyProdID);
+                $prices = $this->GetPrice($usrId, $input->productId);
                 SGL_HTTP_Session::set('vat', $vat);
 
                 require_once SGL_MOD_DIR.'/cart/classes/Item.php';
