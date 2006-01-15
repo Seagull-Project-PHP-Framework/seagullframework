@@ -1,2 +1,3 @@
-INSERT INTO rate VALUES ('1','2005-04-29','EUR','1','2005-04-29 01:08:35');
-INSERT INTO rate VALUES ('2','2005-04-29','USD','1','2005-04-29 01:08:35');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'rate', 'Currency', 'Here you can edit and update the currency rates.', 'rate/rateadmin', 'default.png');
+
+SELECT @moduleId := MAX(module_id) FROM module;
