@@ -122,7 +122,7 @@ class SGL_BlockLoader
     {
         //  put data generated so far into class scope
         $this->output = $output;
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
         $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'blocks')) {
             $this->aBlocks = unserialize($data);

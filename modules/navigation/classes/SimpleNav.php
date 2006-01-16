@@ -167,7 +167,7 @@ class SimpleNav
      */
     function render()
     {
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
 
         //  get a unique token by considering url, group ID and if page
         //  is static or not

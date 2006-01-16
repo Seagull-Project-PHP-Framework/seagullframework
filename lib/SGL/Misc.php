@@ -1,4 +1,38 @@
 <?php
+class SGL_Cache
+{
+    /**
+     * Returns a singleton Cache_Lite instance.
+     *
+     * example usage:
+     * $cache = & SGL_Cache::singleton();
+     * warning: in order to work correctly, the cache
+     * singleton must be instantiated statically and
+     * by reference
+     *
+     * @access  public
+     * @static
+     * @return  mixed reference to Cache_Lite object
+     */
+    function &singleton($cacheEnabled = false)
+    {
+        static $instance;
+
+        // If the instance doesn't exist, create one
+        if (!isset($instance)) {
+            require_once 'Cache/Lite.php';
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $options = array(
+                'cacheDir'  => SGL_TMP_DIR . '/',
+                'lifeTime'  => $conf['cache']['lifetime'],
+                'caching'   => $conf['cache']['enabled']);
+            $instance = new Cache_Lite($options);
+        }
+        return $instance;
+    }
+}
+
 
 class SGL_Error
 {

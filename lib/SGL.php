@@ -184,40 +184,9 @@ class SGL
      */
      function clearCache($group = false)
      {
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
         return $cache->clean($group);
      }
-
-    /**
-     * Returns a singleton Cache_Lite instance.
-     *
-     * example usage:
-     * $cache = & SGL::cacheSingleton();
-     * warning: in order to work correctly, the cache
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @return  mixed reference to Cache_Lite object
-     */
-    function &cacheSingleton($cacheEnabled = false)
-    {
-        static $instance;
-
-        // If the instance doesn't exist, create one
-        if (!isset($instance)) {
-            require_once 'Cache/Lite.php';
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $options = array(
-                'cacheDir'  => SGL_TMP_DIR . '/',
-                'lifeTime'  => $conf['cache']['lifetime'],
-                'caching'   => $conf['cache']['enabled']);
-            $instance = new Cache_Lite($options);
-        }
-        return $instance;
-    }
 
     /**
      * A static method to invoke errors.

@@ -178,7 +178,7 @@ class PearMgr extends SGL_Manager
             $opts['mode'] = 'installed';
         }
 
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
         $cacheId = 'pear'.$input->command.$input->mode;
 
         switch ($input->command) {

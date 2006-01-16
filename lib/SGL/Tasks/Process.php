@@ -305,7 +305,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
         if ($serialized = $cache->get('all_users', 'perms')) {
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);

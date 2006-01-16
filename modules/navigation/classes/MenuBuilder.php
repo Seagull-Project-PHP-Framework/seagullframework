@@ -62,7 +62,7 @@ class MenuBuilder
             $conf['table']['category'];
     }
 
-	function setStartId($startId = 0) 
+	function setStartId($startId = 0)
 	{
 		SGL::logMessage(null, PEAR_LOG_DEBUG);
     	$this->_startId = $startId;
@@ -104,7 +104,7 @@ class MenuBuilder
             break;
 
         case 'menu_selectbox':
-            $cache = & SGL::cacheSingleton();
+            $cache = & SGL_Cache::singleton();
             $cacheId = 'categorySelect';
             if ($data = $cache->get($cacheId, 'categorySelect')) {
                 $ret = unserialize($data);
