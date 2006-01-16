@@ -252,7 +252,7 @@ class TestNav
     /**
      * Reads appropriate cache file if exists, else builds and returns nav bar HTML.
      *
-     * Cache file name an md5 of this file name + user's group id, since nav access
+     * Cache file name an md5 of this file name + user's role id, since nav access
      * is restricted by rid.
      *
      * @return  string
@@ -260,8 +260,7 @@ class TestNav
      */
     function render()
     {
-
-        //  get a unique token by considering url, group ID and if page
+        //  get a unique token by considering url, role ID and if page
         //  is static or not
         $reg     = &SGL_Registry::singleton();
         $url     = $reg->getCurrentUrl();
