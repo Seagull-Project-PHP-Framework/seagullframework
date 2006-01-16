@@ -113,7 +113,7 @@ class TestNav
     var $trans = null;
 
     /**
-     * Holds all section id(s) from current
+     * Holds all section id(s) from current.
      *
      * @access  private
      * @var     array
@@ -121,7 +121,7 @@ class TestNav
     var $_aAllCurrentPages = array();
 
     /**
-     * Holds section title translations
+     * Holds section title translations.
      *
      * @access  private
      * @var     array
@@ -129,7 +129,7 @@ class TestNav
     var $_aTranslations = array();
 
     /**
-     * Holds home page node
+     * Holds home page node.
      *
      * @access  private
      * @var     array
@@ -161,7 +161,7 @@ class TestNav
     var $_levelsToRender  = 0;
 
     /**
-     * Set navigation menu collapsed by default
+     * Set navigation menu  as not collapsed by default.
      *
      * @access  private
      * @var     boolean
@@ -169,7 +169,10 @@ class TestNav
     var $_collapsed = false;
 
     /**
-     * Navigation menu can be shown always
+     * Navigation menu can be force to display always.
+     *
+     * E.g.: regardless if it is user or admin branches, ie for t&c, privacy
+     * policy links at bottom on page.
      *
      * @access  private
      * @var     boolean
@@ -185,12 +188,12 @@ class TestNav
     var $_currentRenderedLevel = 0;
 
     /**
-     * generate site pathway objects
+     * generate site breadcrumb objects
      *
      * @access  private
      * @var     integer
      */
-    var $_pathway = true;
+    var $_breadcrumbs = true;
 
     function TestNav(&$input)
     {
@@ -241,9 +244,9 @@ class TestNav
 //            : $this->conf['navigation']['showAlways'];
             : $this->_showAlways;
 
-        $this->_pathway = array_key_exists('pathway', $aParams)
-            ? $aParams['pathway']
-            : $this->_pathway;
+        $this->_breadcrumbs = array_key_exists('breadcrumbs', $aParams)
+            ? $aParams['breadcrumbs']
+            : $this->_breadcrumbs;
     }
 
     /**
@@ -266,15 +269,16 @@ class TestNav
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
             . $this->_collapsed . $this->_showAlways;
+
         if ($data = $cache->get($cacheId, 'nav')) {
             $aUnserialized = unserialize($data);
             $sectionId     = $aUnserialized['sectionId'];
             $html          = $aUnserialized['html'];
-            $pathway       = $aUnserialized['pathway'];
+            $breadcrumbs   = $aUnserialized['breadcrumbs'];
 
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
 
-        //  cache not exists
+        //  cache doesn't exist
         } else {
             $html = false;
 
@@ -284,11 +288,11 @@ class TestNav
                 return $aSectionNodes;
             }
             $sectionId = $this->_currentSectionId;
-            
-            //  get pathway
-            $pathway = false;
-            if ($sectionId && $this->_pathway) {
-                $pathway = $this->getPathway();
+
+            //  get breadcrumbs
+            $breadcrumbs = false;
+            if ($sectionId && $this->_breadcrumbs) {
+                $breadcrumbs = $this->getBreadcrumbs();
             }
 
             //  if showAlways is true or current section is defined should be rendered to HTML
@@ -299,9 +303,9 @@ class TestNav
                     $position = count($this->_aAllCurrentPages) - $this->_startLevel;
 
                     //  look up current section id in array
-                    $aPositions         = array_keys($this->_aAllCurrentPages);
-                    $sectionIdPosition  = array_search($sectionId, $aPositions);
-                    
+                    $aPositions        = array_keys($this->_aAllCurrentPages);
+                    $sectionIdPosition = array_search($sectionId, $aPositions);
+
                     if ($position >= $sectionIdPosition) {
                         $newParentNode = $this->_aAllCurrentPages[$aPositions[$position]];
                         $aSectionNodes = $this->getSectionsByRoleId($newParentNode->section_id);
@@ -314,14 +318,13 @@ class TestNav
                 }
             }
 
-            
             //  cache stuff
-            $aNav = array('sectionId' => $sectionId, 'html' => $html, 'pathway' => $pathway);
+            $aNav = array('sectionId' => $sectionId, 'html' => $html, 'breadcrumbs' => $breadcrumbs);
             $cache->save(serialize($aNav), $cacheId, 'nav');
 
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
-        return array($sectionId, $html, $pathway);
+        return array($sectionId, $html, $breadcrumbs);
     }
 
     /**
@@ -344,7 +347,7 @@ class TestNav
 
         // if no exact matches search for not exact matches
         if (!$this->_currentSectionId && !$this->_staticId && $aSectionNodes) {
-            $aSectionNodes = $this->_searchNotExactMatches($aSectionNodes);
+            $aSectionNodes = $this->_searchInExactMatches($aSectionNodes);
         }
 
         return $aSectionNodes;
@@ -370,7 +373,7 @@ class TestNav
             if (!(in_array($this->_rid, explode(',', $section->perms)))) {
                 continue;
             }
-            
+
             //  set all defaults to false, then test
             $section->children       = false;
             $section->isCurrent      = false;
@@ -447,7 +450,6 @@ class TestNav
                     //  if disabled links staticId must be non-zero
                     || ($section->section_id && $section->section_id == $this->_staticId))
                 {
-
                     //  exact match has been found
                     $section->isCurrent        = true;
                     $this->_currentSectionId   = $section->section_id;
@@ -460,17 +462,17 @@ class TestNav
     }
 
     /**
-     * Recursively searching not exact matches
+     * Recursively searching inexact matches.
      *
      * @access  private
      * @param   array $sectionNodes   array of DataObjects_Section objects
      * @return  array of DataObjects_Section objects
      */
-    function _searchNotExactMatches($aSectionNodes)
+    function _searchInExactMatches($aSectionNodes)
     {
         foreach ($aSectionNodes as $section) {
             if ($section->children) {
-                $section->children = $this->_searchNotExactMatches($section->children);
+                $section->children = $this->_searchInExactMatches($section->children);
 
                 // if children node is current mark parent node
                 foreach ($section->children as $section2) {
@@ -482,11 +484,11 @@ class TestNav
                 }
             }
 
-            // still not matches
+            // still doesn't matche
             if (!$section->childIsCurrent) {
                 if (strpos($this->querystring, $section->resource_uri . '/') === 0) {
 
-                    //  not exact match has been found
+                    //  inexact match has been found
                     $section->isCurrent        = true;
                     $this->_currentSectionId   = $section->section_id;
                     $this->_aAllCurrentPages[$section->section_id] = $section;
@@ -505,7 +507,7 @@ class TestNav
     /**
      * Returns HTML unordered list with subsections nested; can be used with CSS for navigation
      * tabs. Adds attribute class="current" to <li> tags.
-     * Return false if passed an empty array (if getTabsByRid() found no sections.)
+     * Returns false if passed an empty array (if getTabsByRid() found no sections.)
      *
      * @access  private
      * @param   array $sectionNodes   array of DataObjects_Section objects
@@ -552,7 +554,7 @@ class TestNav
     }
 
     /**
-     * Returns url link based on node uri.
+     * Returns uri link based on node uri.
      *
      * @access  private
      * @param   array $aSections
@@ -601,7 +603,7 @@ class TestNav
             //  place anchor at end
             $url .= $namedAnchor;
         }
-        
+
         return $url;
     }
 
@@ -684,26 +686,26 @@ class TestNav
     }
 
     /**
-     * Returns site pathway objects.
+     * Returns site breadcrumb objects.
      *
      * @access  public
-     * @return  array aPathway
+     * @return  array aBreadcrumbs
      */
-    function getPathway()
+    function getBreadcrumbs()
     {
-        $aPositions = array_keys($this->_aAllCurrentPages);
-        $count      = count($aPositions);
-        $aPathway   = array();
-        
+        $aPositions   = array_keys($this->_aAllCurrentPages);
+        $count        = count($aPositions);
+        $aBreadcrumbs = array();
+
         if ($count) {
             $sectionId  = $this->_currentSectionId;
-        
+
             // is current section a homepage
             if ($this->_homePage->section_id == $this->_currentSectionId) {
                 $pathNode        = new stdClass();
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = false;
-                $aPathway[]      = $pathNode;
+                $aBreadcrumbs[]      = $pathNode;
             } else {
                 $position   = array_search($sectionId, $aPositions);
 
@@ -711,7 +713,7 @@ class TestNav
                 $pathNode        = new stdClass();
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = $this->_makeLinkFromNode($this->_homePage);
-                $aPathway[]      = $pathNode;
+                $aBreadcrumbs[]  = $pathNode;
 
                 for ($i = $count-1; ($i >= $position); $i--) {
                     $node = $this->_aAllCurrentPages[$aPositions[$i]];
@@ -720,12 +722,12 @@ class TestNav
                         $pathNode        = new stdClass();
                         $pathNode->title = $node->title;
                         $pathNode->link  = $link;
-                        $aPathway[]      = $pathNode;
+                        $aBreadcrumbs[]  = $pathNode;
                     }
                 }
             }
         }
-        return $aPathway;
+        return $aBreadcrumbs;
     }
 }
 ?>
