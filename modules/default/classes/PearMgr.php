@@ -190,9 +190,9 @@ class PearMgr extends SGL_Manager
                 SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
             } else {
                 $cmd = PEAR_Command::factory($input->command, $config);
-print '<pre>';print_r($cmd);
+#print '<pre>';print_r($cmd);
                 $data = $cmd->run($input->command, $opts, $params);
-                SGL::logMessage('data is' . print_r($data), PEAR_LOG_DEBUG);
+#SGL::logMessage('data is' . print_r($data), PEAR_LOG_DEBUG);
                 $serialized = serialize($data);
                 $cache->save($serialized, $cacheId, 'pear');
                 SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
