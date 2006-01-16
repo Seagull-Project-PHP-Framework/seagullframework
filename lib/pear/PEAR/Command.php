@@ -118,6 +118,7 @@ class PEAR_Command
         if (empty($GLOBALS['_PEAR_Command_commandlist'])) {
             PEAR_Command::registerCommands();
         }
+print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
         if (isset($GLOBALS['_PEAR_Command_shortcuts'][$command])) {
             $command = $GLOBALS['_PEAR_Command_shortcuts'][$command];
         }
@@ -125,7 +126,6 @@ class PEAR_Command
             $a = PEAR::raiseError("unknown command `$command'");
             return $a;
         }
-print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
         $class = $GLOBALS['_PEAR_Command_commandlist'][$command];
         if (!class_exists($class)) {
             require_once $GLOBALS['_PEAR_Command_objects'][$class];
