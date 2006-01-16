@@ -13,6 +13,9 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+16-01-06    Instantiating a cache object has changed from
+            $cache = & SGL::cacheSingleton(); to $cache = & SGL_Cache::singleton();
+            Likewise, SGL::clearCache() has changed to SGL_Cache::clear()
 10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
 09-01-06    Url alias solution fully integrated and database-driven
 06-01-06    Added generateRadioList method to SGL_Output (mawan)
