@@ -171,7 +171,7 @@ class PearMgr extends SGL_Manager
         $_ENV['TMPDIR'] = $_ENV['TEMP'] = SGL_TMP_DIR;
 
         if (is_null($input->command)) {
-            $input->command  = 'list-all';
+            $input->command  = 'sgl-list-all';
         }
         $params = array();
         if ($input->mode) {
@@ -183,16 +183,14 @@ class PearMgr extends SGL_Manager
 
         switch ($input->command) {
 
-        case 'list-all':
+        case 'sgl-list-all':
             SGL::logMessage('made it to list-all', PEAR_LOG_DEBUG);
             if ($serialized = $cache->get($cacheId, 'pear')) {
                 $data = unserialize($serialized);
                 SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
             } else {
                 $cmd = PEAR_Command::factory($input->command, $config);
-#print '<pre>';print_r($cmd);
                 $data = $cmd->run($input->command, $opts, $params);
-#SGL::logMessage('data is' . print_r($data), PEAR_LOG_DEBUG);
                 $serialized = serialize($data);
                 $cache->save($serialized, $cacheId, 'pear');
                 SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
@@ -201,9 +199,9 @@ class PearMgr extends SGL_Manager
 
             break;
 
-        case 'install':
-        case 'uninstall':
-        case 'upgrade':
+        case 'sgl-install':
+        case 'sgl-uninstall':
+        case 'sgl-upgrade':
             $params = array($input->pkg);
             $cmd = PEAR_Command::factory($input->command, $config);
             $ok = $cmd->run($input->command, $opts, $params);
