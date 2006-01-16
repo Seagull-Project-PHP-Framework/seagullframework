@@ -41,10 +41,11 @@
 /**
  * Manager for embedding Gallery2 application.
  *
- * @package gallery2em
+ * For detailed integration instructions please see
+ * http://trac.seagullproject.org/wiki/Integration/Gallery
+ *
+ * @package seagull
  * @author  Matti Tahvonen <mstahv@utu.fi>
- * @version $Revision: 1.2 $
- * @since   PHP 4.1
  */
 class Gallery2Mgr extends SGL_Manager
 {
