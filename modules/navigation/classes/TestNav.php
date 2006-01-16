@@ -392,9 +392,6 @@ class TestNav
                     ?  '/' . $this->conf['site']['defaultManager'] : '';
                 $section->resource_uri .= $this->conf['site']['defaultParams']
                     ?  '/' . $this->conf['site']['defaultParams'] : '';
-                if (!$section->resource_uri) {
-                    $section->resource_uri = 'default';
-                }
 
             //  wiki:
             } elseif (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
@@ -704,7 +701,7 @@ class TestNav
                 $pathNode        = new stdClass();
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = false;
-                $aBreadcrumbs[]      = $pathNode;
+                $aBreadcrumbs[]  = $pathNode;
             } else {
                 $position   = array_search($sectionId, $aPositions);
 

@@ -32,20 +32,23 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5.5                                                             |
 // +---------------------------------------------------------------------------+
-// | Navigation.php                                                            |
+// | Breadcrumbs.php                                                           |
 // +---------------------------------------------------------------------------+
 // | Author: Andrey Podshivalov <planetaz@gmail.com>                           |
 // +---------------------------------------------------------------------------+
 
 /**
- * Section Navigation block.
+ * Breadcrumbs block.
  *
  * @package block
  * @version $Revision: 0.1 $
  * @since   PHP 4.4.1
  */
-class Navigation
+class BreadCrumbs
 {
+    var $template     = 'Breadcrumbs.html';
+    var $templatePath = 'block/blocks';
+
     function init(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -57,6 +60,9 @@ class Navigation
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $blockOutput        = new SGL_Output();
+        $blockOutput->theme = $output->theme;
+
         // prepare navigation driver
         $navClass  = $output->conf['navigation']['driver'];
         $navDriver = $navClass . '.php';
@@ -65,10 +71,10 @@ class Navigation
         $aParams = array(
                 'startParentNode' => 0,
                 'startLevel'      => 0,
-                'levelsToRender'  => 0,
-                'collapsed'       => 0,
+                'levelsToRender'  => 1,
+                'collapsed'       => 1,
                 'showAlways'      => 0,
-                'pathway'         => 0,
+                'pathway'         => 1,
         );
 
         //  set new navigation driver params
@@ -77,9 +83,19 @@ class Navigation
         //  call navigation renderer
         $aNav = $nav->render();
 
-        //  return $aNav[1] - return rendered navigation menu
-        //  return $aNav[2] - return breadcrumbs
-        return $aNav[1];
+        $blockOutput->breadcrumbs = $aNav[2];
+
+        return $this->process($blockOutput);
+    }
+
+    function process(&$output)
+    {        
+        // use moduleName for template path setting
+        $output->moduleName     = $this->templatePath;
+        $output->masterTemplate = $this->template;
+
+        $view = new SGL_HtmlSimpleView($output);
+        return $view->render();    
     }
 }
 ?>
