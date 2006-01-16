@@ -174,21 +174,6 @@ class SGL
     }
 
     /**
-     * Clear cache directory of a specific module's cache files. A simple wrapper to
-     * PEAR::Cache_Lite's clean() method.
-     *
-     * @access public
-     * @param  string $group name of the cache group (e.g. nav, blocks, etc.)
-     * @return boolean true on success
-     * @author  Andy Crain <apcrain@fuse.net>
-     */
-     function clearCache($group = false)
-     {
-        $cache = & SGL_Cache::singleton();
-        return $cache->clean($group);
-     }
-
-    /**
      * A static method to invoke errors.
      *
      * @static

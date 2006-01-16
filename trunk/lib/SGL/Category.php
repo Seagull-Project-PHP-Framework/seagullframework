@@ -57,7 +57,7 @@ class SGL_Category
 	var $_params = array();
 	var $_nestedSetNode = array();
 	var $_da = null;
-	
+
 	/**
      * Constructor.
      *
@@ -66,13 +66,13 @@ class SGL_Category
     function SGL_Category()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
         $this->_da = & DA_User::singleton();
         $this->dbh = & SGL_DB::singleton();
-        
+
         //  Nested Set Params
         $this->_params = array(
             'tableStructure' => array(
@@ -91,7 +91,7 @@ class SGL_Category
             'lockTableName' => 'table_lock',
             'sequenceName'  => $this->conf['table']['category']);
     }
-    
+
     /**
      * Create a Category with given values.
      *
@@ -102,14 +102,14 @@ class SGL_Category
     function create(&$values)
     {
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  set default category label if none provided
         if (!isset($values['label']))
         	$values['label'] = 'New Category';
-        
+
         //  use a NestedSet
         $nestedSet = new SGL_NestedSet($this->_params);
-        
+
         //  create new set with first rootnode
         if ($values['parent_id'] == 0) {
         	//  we want a root node
@@ -122,14 +122,14 @@ class SGL_Category
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        
+
         //  clear block & category caches
-        SGL::clearCache('blocks');
-        SGL::clearCache('categorySelect');
-        
+        SGL_Cache::clear('blocks');
+        SGL_Cache::clear('categorySelect');
+
         return $this->_nestedSetNode;
     }
-    
+
     /**
      * Update a Category with given values.
      *
@@ -142,48 +142,48 @@ class SGL_Category
     function update($category_id, &$values)
     {
     	$message = '';
-    	
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);       
+
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
         $nestedSet = new SGL_NestedSet($this->_params);
-        
+
         //  attempt to update section values
         if (!$nestedSet->updateNode($category_id, $values)) {
             SGL::raiseError('There was a problem updating the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
-        
+
         //  move node if needed
         switch ($values['parent_id']) {
         case $values['original_parent_id']:
             //  usual case, no change => do nothing
             $message = 'Category details successfully updated';
             break;
-            
+
         case $values['category_id']:
             //  cannot be parent to self => display user error
             $message = 'Category details updated, no data changed';
             break;
-            
+
         case 0:
             //  move the category, make it into a root node, just above it's own root
             $thisNode = $nestedSet->getNode($values['category_id']);
             $moveNode = $nestedSet->moveTree($values['category_id'], $thisNode['root_id'], 'BE');
-            
+
             if (!is_a($thisNode, 'PEAR_Error') && !is_a($moveNode, 'PEAR_Error')) {
                 $message = 'Category details successfully updated';
             }
             break;
-            
+
         default:
             //  move the category under the new parent
             $moveNode = $nestedSet->moveTree($values['category_id'], $values['parent_id'], 'SUB');
-            
+
             if (!is_a($moveNode, 'PEAR_Error') && !is_a($moveNode, 'PEAR_Error')) {
                 $message = 'Category details successfully updated';
             }
             break;
         }
-        
+
         // Update perms
         require_once SGL_CORE_DIR . '/CategoryPerms.php';
 		$perms = & new SGL_CategoryPerms($category_id);
@@ -191,13 +191,13 @@ class SGL_Category
     	$perms->update();
 
 		//  clear block & category caches
-        SGL::clearCache('categorySelect');
-		SGL::clearCache('blocks');
-        
+        SGL_Cache::clear('categorySelect');
+		SGL_Cache::clear('blocks');
+
         /** @todo Return a constant instead of a message ! */
         return $message;
     }
-    
+
     /**
      * Delete several Categories.
      *
@@ -207,8 +207,8 @@ class SGL_Category
      */
     function delete(&$aDelete)
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);  
-    	
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+
     	if (is_array($aDelete)) {
             $nestedSet = new SGL_NestedSet($this->_params);
             //  deleting parent nodes automatically deletes children nodes, but user
@@ -224,12 +224,12 @@ class SGL_Category
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        
+
         //  clear block & category caches
-        SGL::clearCache('categorySelect');
-        SGL::clearCache('blocks');
+        SGL_Cache::clear('categorySelect');
+        SGL_Cache::clear('blocks');
     }
-    
+
     /**
      * Move a Category.
      *
@@ -240,17 +240,17 @@ class SGL_Category
      */
     function move($category_id, $target_id, $pos)
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);        
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
         $nestedSet = new SGL_NestedSet($this->_params);
-        
+
         //  move tree
         $nestedSet->moveTree($category_id, $target_id, $pos);
 
         //  clear block & category caches
-        SGL::clearCache('categorySelect');
-        SGL::clearCache('blocks');
+        SGL_Cache::clear('categorySelect');
+        SGL_Cache::clear('blocks');
     }
-    
+
     /**
      * Load a Category, given its ID.
      *
@@ -261,25 +261,25 @@ class SGL_Category
     function load($category_id)
     {
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
-             
+
         //  check if category_id not set or 0
         if (!isset($category_id) || ($category_id == '0')) {
             return FALSE;
         }
-        
+
         //  get NestedSet node
         $nestedSet = new SGL_NestedSet($this->_params);
         $this->_nestedSetNode = $nestedSet->getNode($category_id);
-        
+
         //  check if category_id does not exist
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
             SGL::raiseError('Invalid category ID passed', SGL_ERROR_INVALIDARGS);
             return FALSE;
         }
-        
+
         return TRUE;
     }
-    
+
     /**
      * Get current Category values.
      *
@@ -290,17 +290,17 @@ class SGL_Category
      */
     function getValues()
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);  
-    	
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+
     	//  check if Category is not loaded
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
         	SGL::raiseError('Category not loaded', SGL_ERROR_INVALIDCALL);
             return null;
         }
-        
+
         return $this->_nestedSetNode;
     }
-    
+
     /**
      * Get current Category permissions.
      *
@@ -311,33 +311,33 @@ class SGL_Category
      */
     function getPerms()
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);  
-    	
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+
     	//  check if Category is not loaded
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
         	SGL::raiseError('Category not loaded', SGL_ERROR_INVALIDCALL);
             return null;
         }
-        
+
         //  get assoc array of all roles
         $aRoles = $this->_da->getRoles();
         $aRoles[0] = 'guest';
 
         //  if no perms in category table for current category_id, set to empty array
         $aPerms = (isset($this->_nestedSetNode['perms']) && count($this->_nestedSetNode['perms']))
-            		? explode(',', $this->_nestedSetNode['perms']) 
+            		? explode(',', $this->_nestedSetNode['perms'])
              		: array();
-        
+
         foreach ($aRoles as $roleId => $roleName) {
             $tmp['category_id'] = $roleId;
             $tmp['name'] = $roleName;
             $tmp['isAllowed'] = (!in_array($roleId, $aPerms)) ? 1 : 0;
             $perms[] = (object)$tmp;
         }
-        
+
         return $perms;
     }
-    
+
     /**
      * Get a tree representing all Categories.
      *
@@ -346,19 +346,19 @@ class SGL_Category
      */
     function getTree()
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);  
-    	
+    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+
     	$nestedSet = new SGL_NestedSet($this->_params);
-    	$nestedSet->setImage('folder', 'images/imagesAlt2/file.png');       
+    	$nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $categoryTree = $nestedSet->getTree();
         $nestedSet->addImages($categoryTree);
-        
+
         return $categoryTree;
     }
-    
+
     /**
      * Retrieve children
-     * 
+     *
      * @access	public
      * @param	int		$id
      * @return	array	categories children
@@ -366,19 +366,19 @@ class SGL_Category
     function getChildren($id)
     {
         if (!is_numeric($id)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
-        $query = "  SELECT category_id, label 
+        $query = "  SELECT category_id, label
                     FROM " . $this->conf['table']['category'] . "
                     WHERE parent_id = $id
                     ORDER BY parent_id, order_id";
-                    
+
         $result = $this->dbh->query($query);
         $count = 0;
         $aChildren = array();
         while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-            $aChildren[$count]['category_id'] = $row['category_id'];   
+            $aChildren[$count]['category_id'] = $row['category_id'];
             $aChildren[$count]['label'] = $row['label'];
             $count++;
         }
@@ -388,7 +388,7 @@ class SGL_Category
 
     /**
      * Checks if an category is a branch
-     * 
+     *
      * @access 	public
      * @param 	int		$id
      * @return	boolean
@@ -405,12 +405,12 @@ class SGL_Category
         }
         return false;
     }
-    
+
     /**
      *  Generates breadcrumbs for category
-     * 
+     *
      * @access 	public
-     * @param 	integer	$category_id	
+     * @param 	integer	$category_id
      * @param 	boolean $links			build links
      * @param	string	$style			CSS Class
      * @param 	boolean $links			add link to the current CatID
@@ -420,7 +420,7 @@ class SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (!is_numeric($category_id)) {
-            SGL::raiseError("Invalid category ID, '$category_id', passed to " . 
+            SGL::raiseError("Invalid category ID, '$category_id', passed to " .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
         }
@@ -430,26 +430,26 @@ class SGL_Category
         if (empty($node) || is_a($node, 'PEAR_Error')) {
             return false;
         }
-        $crumbs = $nestedSet->getBreadcrumbs($category_id);        
+        $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
 
         //  build url for current page
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink(   $req->get('action'), 
+        $url = SGL_Url::makeLink(   $req->get('action'),
                                     $req->get('managerName'),
-                                    $req->get('moduleName')                             
+                                    $req->get('moduleName')
                                     );
         $url .= 'frmCatID/';
-        
+
         foreach ($crumbs as $crumb) {
             if ($links) {
-                $htmlString .= "<a class='$style' href='$url".$crumb['category_id']."/'>" . 
+                $htmlString .= "<a class='$style' href='$url".$crumb['category_id']."/'>" .
                     stripslashes($crumb['label']) . "</a> > ";
             } else {
                 $htmlString .= stripslashes($crumb['label']) . " > ";
             }
         }
-        $finalHtmlString = ($lastLink) 
+        $finalHtmlString = ($lastLink)
             ? $htmlString . "<a class='$style' href='$url".$category_id."/'>" . $node['label'] ."</a>"
             : $htmlString . $node['label'];
         return $finalHtmlString;
@@ -457,7 +457,7 @@ class SGL_Category
 
     /**
      * Retrieves category label
-     * 
+     *
      * @access 	public
      * @param	int		$id
      * @return	string

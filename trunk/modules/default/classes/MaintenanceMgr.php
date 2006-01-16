@@ -516,7 +516,7 @@ class MaintenanceMgr extends SGL_Manager
         if (count($input->cache) > 0) {
             $success = true;
             foreach ($input->cache as $group => $v) {
-                $result = SGL::clearCache($group);
+                $result = SGL_Cache::clear($group);
                 $success = $success && $result;
             }
             if ($success === false) { //  let's see what happens with Cache_Lite's return type

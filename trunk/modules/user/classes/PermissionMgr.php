@@ -183,7 +183,7 @@ class PermissionMgr extends SGL_Manager
             $success = $oPerm->insert();
 
             //  update perms superset cache
-            SGL::clearCache('perms');
+            SGL_Cache::clear('perms');
 
             if ($success) {
                 SGL::raiseMsg('perm successfully added');
@@ -228,7 +228,7 @@ class PermissionMgr extends SGL_Manager
             $this->dbh->commit();
 
             //  update perms superset cache
-            SGL::clearCache('perms');
+            SGL_Cache::clear('perms');
             SGL::raiseMsg('perm(s) successfully added');
         }
     }
@@ -252,7 +252,7 @@ class PermissionMgr extends SGL_Manager
         } else {
 
             //  update perms superset cache
-            SGL::clearCache('perms');
+            SGL_Cache::clear('perms');
             SGL::raiseMsg('perm successfully deleted');
         }
     }
@@ -282,7 +282,7 @@ class PermissionMgr extends SGL_Manager
         $success = $oPerm->update($original);
 
         //  update perms superset cache
-        SGL::clearCache('perms');
+        SGL_Cache::clear('perms');
 
         if ($success) {
             SGL::raiseMsg('perm successfully updated');
@@ -304,7 +304,7 @@ class PermissionMgr extends SGL_Manager
         //  deleting associated perms - taken care of by cascading deletes
 
         //  update perms superset cache
-        SGL::clearCache('perms');
+        SGL_Cache::clear('perms');
 
         //  redirect on success
         SGL::raiseMsg('perm successfully deleted');

@@ -411,7 +411,7 @@ class PageMgr extends SGL_Manager
             }
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('nav');
+        SGL_Cache::clear('nav');
 
         //  possible DO bug here as correct insert always returns int 0
         if ($nodeId) {
@@ -639,7 +639,7 @@ class PageMgr extends SGL_Manager
             }
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('nav');
+        SGL_Cache::clear('nav');
         SGL::raiseMsg($message . $errorMsg);
     }
 
@@ -670,7 +670,7 @@ class PageMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('nav');
+        SGL_Cache::clear('nav');
         SGL::raiseMsg('The selected section(s) have successfully been deleted');
     }
 
@@ -687,7 +687,7 @@ class PageMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('nav');
+        SGL_Cache::clear('nav');
         SGL::raiseMsg('Sections reordered successfully');
     }
 
