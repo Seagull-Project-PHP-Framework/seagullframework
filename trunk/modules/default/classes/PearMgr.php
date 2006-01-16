@@ -124,9 +124,11 @@ class PearMgr extends SGL_Manager
 
     function _doRequest(&$input, &$output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         putenv('PHP_PEAR_INSTALL_DIR='.SGL_LIB_PEAR_DIR);
 
-        $useDHTML = true;
+        #$useDHTML = true;
         define('PEAR_Frontend_Web',1);
 
         // Include needed files
@@ -148,13 +150,6 @@ class PearMgr extends SGL_Manager
 //$GLOBALS['_PEAR_Config_instance']->configuration['system']['doc_dir'] = SGL_TMP_DIR;
 //$GLOBALS['_PEAR_Config_instance']->configuration['system']['data_dir'] = SGL_TMP_DIR;
 //$GLOBALS['_PEAR_Config_instance']->configuration['system']['test_dir'] = SGL_TMP_DIR;
-
-/*
-- remove global hacks
-- setup conf correctly
-- try setting conf to user and system
-
-*/
 
         $config->set('default_channel', $input->channel);
         $config->set('preferred_state', 'devel');
@@ -189,6 +184,7 @@ class PearMgr extends SGL_Manager
         switch ($input->command) {
 
         case 'list-all':
+            SGL::logMessage('made it to list-all', PEAR_LOG_DEBUG);
             if ($serialized = $cache->get($cacheId, 'pear')) {
                 $data = unserialize($serialized);
                 SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
