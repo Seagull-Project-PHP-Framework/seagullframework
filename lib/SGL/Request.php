@@ -248,8 +248,12 @@ class SGL_Request
     function getUri()
     {
         $uri = '';
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $sglSessionName = $conf['cookie']['name'];
+        
         foreach ($this->aProps as $key => $value) {
-            if (!empty($value) && $key != 'lang') {
+            if (!empty($value) && $key != 'lang' && strpos($key, $sglSessionName) === false) {
                 $uri .= ($key == 'moduleName' || $key == 'managerName')
                     ? $value . '/'
                     : $key . '/' . $value;

@@ -237,13 +237,13 @@ class PearMgr extends SGL_Manager
         if (!file_exists(SGL_TMP_DIR . '/pear.conf')) {
             $conf = &PEAR_Config::singleton();
 
-            $conf->set('auto_discover ', SGL_LIB_PEAR_DIR);
-            $conf->set('default_channel', SGL_LIB_PEAR_DIR);
+            $conf->set('auto_discover ', '');
+            $conf->set('default_channel', 'pear.php.net');
             $conf->set('http_proxy', SGL_LIB_PEAR_DIR);
-            $conf->set('preferred_mirror', SGL_LIB_PEAR_DIR);
-            $conf->set('remote_config', SGL_LIB_PEAR_DIR);
-            $conf->set('bin_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('doc_dir', SGL_LIB_PEAR_DIR);
+            $conf->set('preferred_mirror', '');
+            $conf->set('remote_config', '');
+            $conf->set('bin_dir', '');
+            $conf->set('doc_dir', SGL_TMP_DIR);
             $conf->set('ext_dir', SGL_LIB_PEAR_DIR);
             $conf->set('php_dir', SGL_LIB_PEAR_DIR);
             $conf->set('web_dir', SGL_LIB_PEAR_DIR);
