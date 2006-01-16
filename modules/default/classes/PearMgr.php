@@ -136,17 +136,19 @@ class PearMgr extends SGL_Manager
 
         // Init PEAR Installer Code and WebFrontend
         #$config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton();
-        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton($this->getPearConfigPath());
+        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] =
+            &PEAR_Config::singleton($this->getPearConfigPath(), $this->getPearConfigPath());
 #        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton('', SGL_MOD_DIR . '/default/pear.conf');
 
-        $config->set('php_dir', SGL_LIB_PEAR_DIR);
+#        $config->set('php_dir', SGL_LIB_PEAR_DIR);
         #$config->set('php_dir', SGL_LIB_PEAR_DIR, $layer='system'); <- this is ignored ??
         //  hence crude hack ; -)
-        $GLOBALS['_PEAR_Config_instance']->_registry['system']->statedir = SGL_LIB_PEAR_DIR . '/.registry';
-        $GLOBALS['_PEAR_Config_instance']->configuration['system']['php_dir'] = SGL_LIB_PEAR_DIR;
-        $GLOBALS['_PEAR_Config_instance']->configuration['system']['doc_dir'] = SGL_TMP_DIR;
-        $GLOBALS['_PEAR_Config_instance']->configuration['system']['data_dir'] = SGL_TMP_DIR;
-        $GLOBALS['_PEAR_Config_instance']->configuration['system']['test_dir'] = SGL_TMP_DIR;
+//$GLOBALS['_PEAR_Config_instance']->_registry['system']->statedir = SGL_LIB_PEAR_DIR . '/.registry';
+//$GLOBALS['_PEAR_Config_instance']->configuration['system']['php_dir'] = SGL_LIB_PEAR_DIR;
+//$GLOBALS['_PEAR_Config_instance']->configuration['system']['doc_dir'] = SGL_TMP_DIR;
+//$GLOBALS['_PEAR_Config_instance']->configuration['system']['data_dir'] = SGL_TMP_DIR;
+//$GLOBALS['_PEAR_Config_instance']->configuration['system']['test_dir'] = SGL_TMP_DIR;
+
 /*
 - remove global hacks
 - setup conf correctly
@@ -232,37 +234,41 @@ class PearMgr extends SGL_Manager
 
     }
 
+    /**
+     * Returns path to PEAR config file, and creates file if it doesn't exist.
+     *
+     * @return string
+     */
     function getPearConfigPath()
     {
         if (!file_exists(SGL_TMP_DIR . '/pear.conf')) {
             $conf = &PEAR_Config::singleton();
 
-            $conf->set('auto_discover ', '');
             $conf->set('default_channel', 'pear.php.net');
             $conf->set('http_proxy', SGL_LIB_PEAR_DIR);
-            $conf->set('preferred_mirror', '');
-            $conf->set('remote_config', '');
-            $conf->set('bin_dir', '');
             $conf->set('doc_dir', SGL_TMP_DIR);
-            $conf->set('ext_dir', SGL_LIB_PEAR_DIR);
             $conf->set('php_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('web_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('cache_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('data_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('php_bin', SGL_LIB_PEAR_DIR);
-            $conf->set('test_dir', SGL_LIB_PEAR_DIR);
-            $conf->set('cache_ttl', SGL_LIB_PEAR_DIR);
-            $conf->set('preferred_state', SGL_LIB_PEAR_DIR);
-            $conf->set('umask', SGL_LIB_PEAR_DIR);
-            $conf->set('verbose', SGL_LIB_PEAR_DIR);
-            $conf->set('password', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_bin', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_keydir', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_keyid', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_type', SGL_LIB_PEAR_DIR);
-            $conf->set('username', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_type', SGL_LIB_PEAR_DIR);
-            $conf->set('sig_type', SGL_LIB_PEAR_DIR);
+            $conf->set('web_dir', SGL_WEB_ROOT);
+            $conf->set('cache_dir', SGL_TMP_DIR);
+            $conf->set('data_dir', SGL_TMP_DIR);
+            $conf->set('test_dir', SGL_TMP_DIR);
+            $conf->set('preferred_state', 'devel');
+
+//            $conf->set('auto_discover ', '');
+//            $conf->set('preferred_mirror', '');
+//            $conf->set('remote_config', '');
+//            $conf->set('bin_dir', '');
+//            $conf->set('ext_dir', '');
+//            $conf->set('php_bin', '');
+//            $conf->set('cache_ttl', '');
+//            $conf->set('umask', '');
+//            $conf->set('verbose', '');
+//            $conf->set('password', '');
+//            $conf->set('sig_bin', '');
+//            $conf->set('sig_keydir', '');
+//            $conf->set('sig_keyid', '');
+//            $conf->set('sig_type', '');
+//            $conf->set('username', '');
 
             $ok = $conf->writeConfigFile(SGL_TMP_DIR . '/pear.conf', $layer = 'user'/*, $data = null*/);
         }
