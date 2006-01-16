@@ -126,7 +126,6 @@ class PEAR_Command
             $a = PEAR::raiseError("unknown command `$command'");
             return $a;
         }
-print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
         $class = $GLOBALS['_PEAR_Command_commandlist'][$command];
         if (!class_exists($class)) {
             require_once $GLOBALS['_PEAR_Command_objects'][$class];
@@ -245,6 +244,7 @@ print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
                 continue;
             }
             $class = "PEAR_Command_".substr($entry, 0, -4);
+print '<pre>';print_r($class);
             $file = "$dir/$entry";
             $parser->parse(file_get_contents($file));
             $implements = $parser->getData();
