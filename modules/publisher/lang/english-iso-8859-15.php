@@ -76,6 +76,7 @@
         'Kb' => 'kB',
         'Owner' => 'Owner',
         'Type' => 'Type',
+        'Document type' => 'Document type',
         'no results found' => 'no results found',
         'Download' => 'D\'load',
         'View' => 'View',

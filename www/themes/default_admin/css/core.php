@@ -142,6 +142,12 @@ th a:hover {
     text-decoration: underline;
     color: <?php echo $primaryTextLight ?>;
 }
+td a {
+    color: <?php echo $primaryDark ?>;
+}
+td a:hover {
+    text-decoration: underline;
+}
 tfoot tr{
     
 }
