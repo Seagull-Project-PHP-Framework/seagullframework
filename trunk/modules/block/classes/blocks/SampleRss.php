@@ -11,9 +11,9 @@ require_once "XML/RSS.php";
 class SampleRss
 {
     var $rssSource = 'http://rss.gmane.org/messages/excerpts/gmane.comp.php.seagull.general';
-    
+
     function init()
-    {   
+    {
         return $this->getBlockContent();
     }
 
@@ -21,22 +21,22 @@ class SampleRss
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
-        $cache = & SGL::cacheSingleton();
+
+        $cache = & SGL_Cache::singleton();
         if ($data = $cache->get('mailingListRss', 'blocks')) {
             $html = unserialize($data);
             SGL::logMessage('rss from cache', PEAR_LOG_DEBUG);
         } else {
             $rss =& new XML_RSS($this->rssSource);
             $rss->parse();
-            
+
             $html = "<ul class='noindent'>\n";
             $x = 0;
             foreach ($rss->getItems() as $item) {
                 $html .= "<li><a href=\"" . $item['link'] . "\">" . $item['title'] . "</a></li>\n";
                 $x ++;
                 if ($x > 9) {
-                    break;   
+                    break;
                 }
             }
             $html .= "</ul>\n";

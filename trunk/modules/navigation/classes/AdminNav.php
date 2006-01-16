@@ -46,7 +46,7 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
  * @package navigation
  * @author  Julien Casanova <julien_casanova@yahoo.fr>
  * @author  Demian Turner <demian@phpkitchen.com>
- * @author  AJ Tarachanowicz <ajt@localhype.net> 
+ * @author  AJ Tarachanowicz <ajt@localhype.net>
  * @version $Revision: 1.0 $
  * @since   PHP 4.1
  */
@@ -96,17 +96,17 @@ class AdminNav
      * @var     array
      */
     var $_aParentsOfCurrentPage = array();
-    
+
     function AdminNav()
     {
         $this->_rid = (int)SGL_HTTP_Session::get('rid');
-        
+
         //  get a reference to the request object
         $req = SGL_Request::singleton();
-        
+
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-        
+
         $this->_params = array(
             'tableStructure' => array(
                 'section_id'    => 'id',
@@ -139,7 +139,7 @@ class AdminNav
      */
     function render()
     {
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
 
         //  get a unique token by considering url, group ID and if page
         //  is static or not
@@ -193,24 +193,24 @@ class AdminNav
 
         if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
-                please delete the config file from the var directory and try the install again', 
+                please delete the config file from the var directory and try the install again',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
         if (DB::isError($result)) {
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-        
+
         $reg = &SGL_Registry::singleton();
         $url = $reg->getCurrentUrl();
-        
+
         //  query data never includes frontScriptName, ie, index.php
         $aQueryData = $url->getQueryData();
 
         if (PEAR::isError($aQueryData)) {
             return $aQueryData;
         }
-        
+
         // replace +'s in array elements with spaces
         $aQueryData = array_map(create_function('$a', 'return str_replace("+", " ", $a);'),
             $aQueryData);
@@ -220,14 +220,14 @@ class AdminNav
 
         //  return to string
         $querystring = implode('/', $aQueryData);
-        
+
         //  shift off frontScriptName element
         //if ($this->conf['site']['frontScriptName'] != false) {
         //    array_shift($aBaseUri);
         //}
 
-        
-        //  find current section  
+
+        //  find current section
         $aSectionNodes = array();
         $tmpQuerystring = $querystring;
         while ($result->fetchInto($section)) {
@@ -256,7 +256,7 @@ class AdminNav
                 $this->addLangSelect($section);
             }
             /* <<<====================End of Specific adminNav tests for rendering  */
-            
+
             //  first check if querystring is a simplified version of section name,
             //  ie, if we have example.com/index.php/faq instead of example.com/index.php/faq/faq
             if (SGL_Inflector::isUrlSimplified($querystring, $section->resource_uri)) {
@@ -268,29 +268,29 @@ class AdminNav
                 array_unshift($aParts, $moduleName);
 
                 //  return to string
-                $querystring = implode('/', $aParts);    
+                $querystring = implode('/', $aParts);
             }
             //  compare querystring and section name from db, is it:
 /*
             $conda1 = $section->resource_uri == $baseUri;
             $conda2 = $this->_staticId == 0;
             $evala = $conda1 && $conda2;
-            
+
             $condb1 = $section->section_id != 0;
             $condb2 = $section->section_id == $this->_staticId;
             $evalb = $condb1 && $condb2;
-                        
+
             $condc1 = strpos($baseUri, 'articleview') !== false;
             $condc2 = strpos($baseUri, 'frmCatID') !== false;
             $condc3 = $section->is_static == 0;
-            $evalc = $condc1 && $condc2 && $condc3; 
-*/            
+            $evalc = $condc1 && $condc2 && $condc3;
+*/
             //  a. the strings are identical and it's not a static article
-            if (($section->resource_uri == $querystring) 
+            if (($section->resource_uri == $querystring)
 
                     //  c. we're browsing articles by category ID
                     || (strpos($querystring, 'articleview') !== false)
-                        && strpos($section->resource_uri, 'articleview') !== false                    
+                        && strpos($section->resource_uri, 'articleview') !== false
                         && strpos($querystring, 'frmCatID') !== false
                         && $section->is_static == 0) {
                 $section->isCurrent = true;
@@ -311,7 +311,7 @@ class AdminNav
                     //  add parent to parentsOfCurrentPage array
                     $this->_aParentsOfCurrentPage[] = $section->parent_id;
                 }
-                
+
             //  this case is for subtabs, ie Contact Us/Hosting Info
             } elseif (!isset($exactMatch)) {
 
@@ -335,13 +335,13 @@ class AdminNav
                         //  add parent to parentsOfCurrentPage array
                         $this->_aParentsOfCurrentPage[] = $section->parent_id;
                         break;
-                    }  
+                    }
                 }
             }
             //  add section node to nodes array, only if it is enabled, ie:
             //  $this->_currentSectionId may have been set, even if tab is not to be shown
             if ($section->is_enabled) {
-                $aSectionNodes[$section->section_id] = $section;            
+                $aSectionNodes[$section->section_id] = $section;
             }
             //if ($section->section_id == 5) {echo'<pre>';die(print_r($section));};
         }
@@ -413,7 +413,7 @@ class AdminNav
             if (!empty($aAtts)) $aAtts = " class=\"$aAtts\"";
             if(!strstr($section->resource_uri, '//')) {
                 $aTmp = explode('/', $section->resource_uri);
-                
+
                 //  extract module name
                 if (isset($aTmp[0]) && !empty($aTmp[0])) {
                     $moduleName = $aTmp[0];
@@ -421,7 +421,7 @@ class AdminNav
                     $moduleName = 'default';
                 }
                 unset($aTmp[0]);
-    
+
                 //  extract manager name
                 if (isset($aTmp[1])) {
                     $managerName = $aTmp[1];
@@ -434,7 +434,7 @@ class AdminNav
                 foreach ($aTmp as $val) {
                     $qs .= urlencode($val) . '/';
                 }
-    
+
                 $url = SGL_Url::makeLink('', $managerName, $moduleName) . $qs;
             } else {
                 $url = $section->resource_uri;
@@ -444,7 +444,7 @@ class AdminNav
                 $anchorStart = strpos($url, '#');
                 list(,$anchorFragment) = split('#', $url);
                 $anchorOffset = (strpos($anchorFragment, '&')) + 1;
-                $anchorEnd = $anchorStart + $anchorOffset; 
+                $anchorEnd = $anchorStart + $anchorOffset;
                 $namedAnchor = substr($url, $anchorStart, $anchorOffset);
 
                 //  remove anchor
@@ -458,7 +458,7 @@ class AdminNav
             SGL_Url::removeSessionInfo($aUrl);
             $url = implode('/',$aUrl);
             //$url = SGL_Url::getAliasFromDestination($url); REDO THIS WHEN URL ALIASING IS SET
-            
+
             if (isset($section->has_link) && $section->has_link && isset($section->can_view) && $section->can_view) {
                 $anchor      = '<a' . $aAtts . ' href="' . $url . '">' . $section->title . '</a>';
             } else {
@@ -472,7 +472,7 @@ class AdminNav
         }
         $output = (isset($listItems)) ? "\n<ul>" . $listItems . "</ul>\n":false;
         return $output;
-        
+
     }
 
     /**
@@ -484,7 +484,7 @@ class AdminNav
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
         $dbh = & SGL_DB::singleton();
-        $query = " 
+        $query = "
             SELECT  title
             FROM    {$this->conf['table']['admin_menu']}
             WHERE   section_id = " . $this->_currentSectionId;

@@ -114,7 +114,7 @@ class SGL_Request
 
         //  get current url object
         #$urlHandler = $conf['site']['urlHandler'];
-        $cache = & SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
         $cacheId = md5($_SERVER['PHP_SELF']);
 
         if ($data = $cache->get($cacheId, 'urls')) {
@@ -251,7 +251,7 @@ class SGL_Request
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $sglSessionName = $conf['cookie']['name'];
-        
+
         foreach ($this->aProps as $key => $value) {
             if (!empty($value) && $key != 'lang' && strpos($key, $sglSessionName) === false) {
                 $uri .= ($key == 'moduleName' || $key == 'managerName')

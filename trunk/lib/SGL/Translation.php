@@ -136,7 +136,7 @@ class SGL_Translation
     function getGuiTranslationsFromFile($module, $lang)
     {
         //  fetch translations from database and cache
-        $cache = &SGL::cacheSingleton();
+        $cache = & SGL_Cache::singleton();
 
         //  returned cached translations else fetch from db and cache
         if ($serialized = $cache->get($module, 'translation_'. $lang)) {

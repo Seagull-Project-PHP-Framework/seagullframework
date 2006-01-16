@@ -264,7 +264,7 @@ class TestNav
         //  is static or not
         $reg     = &SGL_Registry::singleton();
         $url     = $reg->getCurrentUrl();
-        $cache   = &SGL::cacheSingleton();
+        $cache   = & SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
             . $this->_collapsed . $this->_showAlways;
