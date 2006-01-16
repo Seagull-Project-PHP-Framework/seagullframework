@@ -81,6 +81,7 @@ $words['Mime Type'] = 'Type Mime';
 $words['Kb'] = 'kB';
 $words['Owner'] = 'Propriétaire';
 $words['Type'] = 'Type';
+$words['Doucment type'] = 'Format de document';
 $words['no results found'] = 'aucun résultat trouvé';
 $words['Download'] = 'Télécharger';
 $words['View'] = 'Voir';

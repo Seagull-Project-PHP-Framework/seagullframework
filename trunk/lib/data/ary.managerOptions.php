@@ -536,7 +536,7 @@ $aMgrOptions = array
         'add' => array
             (
             'pageTitle'     => 'Document Manager :: Add',
-            'instructions'  => 'Pour ajouter un nouveau document il vous suffit de sélectionner la catégorie dans laquelle vous désirez le rendre disponible, puis de cliquez sur "Parcourir" pour sélectionner le document sur votre disque dur.<br />Une fois le fichier importé dans votre site, vous pourrez fournir des informations telles le nom et la description de ce fichier.<br />Les formats courants de documents sont supportés (.doc, .xls, .ppt, .pdf, ...). Si vous souhaitez disposer de formats supplémentaires, contactez votre administrateur préféré.',
+            'instructions'  => 'Pour ajouter un nouveau document il vous suffit de sélectionner la catégorie dans laquelle vous désirez le rendre disponible, puis de cliquez sur "Parcourir" pour sélectionner le document sur votre disque dur.<br />Une fois le fichier importé dans votre site, vous pourrez fournir des informations telles le nom et la description de ce fichier.<br />Les formats courants de documents sont supportés (.doc, .xls, .ppt, .pdf, ...).',
             'manage'        => '',
             'actions'       => '',
             ),
