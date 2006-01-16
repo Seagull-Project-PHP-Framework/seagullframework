@@ -139,7 +139,7 @@ class BlockMgr extends SGL_Manager
                 $this->dbh->commit();
 
                 //  clear cache so a new cache file is built reflecting changes
-                SGL::clearCache('blocks');
+                SGL_Cache::clear('blocks');
                 SGL::raiseMsg('Block successfully added');
                 SGL_HTTP::redirect(array());
             }
@@ -175,7 +175,7 @@ class BlockMgr extends SGL_Manager
                 $this->dbh->commit();
 
                 //  clear cache so a new cache file is built reflecting changes
-                SGL::clearCache('blocks');
+                SGL_Cache::clear('blocks');
 
                 //  Redirect on success
                 SGL::raiseMsg('Block successfully added');
@@ -279,7 +279,7 @@ class BlockMgr extends SGL_Manager
             }
 
             // clear cache so a new cache file is built reflecting changes
-            SGL::clearCache('blocks');
+            SGL_Cache::clear('blocks');
             SGL::raiseMsg('Block details successfully updated');
             SGL_HTTP::redirect(array());
 
@@ -305,7 +305,7 @@ class BlockMgr extends SGL_Manager
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('blocks');
+        SGL_Cache::clear('blocks');
 
         SGL::raiseMsg('The selected block(s) have successfully been deleted');
     }
@@ -317,8 +317,9 @@ class BlockMgr extends SGL_Manager
         $output->template = 'blockReorder.html';
         if ($this->submitted) {
             $this->_reorderUpdate($input->items);
-            //clear cache so a new cache file is built reflecting changes
-            SGL::clearCache('blocks');
+
+            //  clear cache so a new cache file is built reflecting changes
+            SGL_Cache::clear('blocks');
 
             //  Redirect on success
             SGL::raiseMsg('Block details successfully updated');

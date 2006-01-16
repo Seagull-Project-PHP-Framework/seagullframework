@@ -54,8 +54,8 @@ class LoginMgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->_aActionsMapping =  array(
-            'login' => array('login'), 
-            'list'  => array('list'), 
+            'login' => array('login'),
+            'list'  => array('list'),
             'logout' => array('logout'),
         );
     }
@@ -145,10 +145,10 @@ class LoginMgr extends SGL_Manager
     function _logout(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL::clearCache('blocks');
+        SGL_Cache::clear('blocks');
         SGL_HTTP_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out');
-        
+
         //  get default params for logout page
         $aParams = $this->getDefaultPageParams();
         SGL_HTTP::redirect($aParams);
@@ -169,7 +169,7 @@ class LoginMgr extends SGL_Manager
             WHERE   username = " . $this->dbh->quote($username) . "
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
-        
+
         $aResult = $this->dbh->getRow($query, DB_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];

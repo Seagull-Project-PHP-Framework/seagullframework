@@ -65,12 +65,12 @@ class AdminMenuMgr extends SGL_Manager
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'reorder'   => array('reorder', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'reorder'   => array('reorder', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
         );
 
@@ -116,7 +116,7 @@ class AdminMenuMgr extends SGL_Manager
         $input->section['has_link'] = (isset($input->section['has_link'])) ? 1 : 0;
 
         //  flatten group IDs for easy DB storage
-        $input->section['perms'] = (isset($input->section['perms']) 
+        $input->section['perms'] = (isset($input->section['perms'])
                 && count($input->section['perms']))
             ? join(',', $input->section['perms'])
             : null;
@@ -125,15 +125,15 @@ class AdminMenuMgr extends SGL_Manager
         $this->validated    = true;
         $this->submit       = $req->get('submitted');
         $input->isEditMode = ($req->get('action') == 'edit') ? true : false;
-        
+
         //  fc hacks needed as a result of JS submit
         if ($input->action == 'insert' && is_null($this->submit)) {
             $input->action = 'add';
         }
         if ($input->action == 'update' && is_null($this->submit)) {
             $this->submit = true;
-            $aErrors[] = 'Please supply full nav info';         
-        }    
+            $aErrors[] = 'Please supply full nav info';
+        }
         //  validate form data
         if ($this->submit) {
             if (empty($input->section['title'])) {
@@ -149,8 +149,8 @@ class AdminMenuMgr extends SGL_Manager
                 $nestedSet = new SGL_NestedSet($this->_params);
                 $parent = $nestedSet->getNode($input->section['parent_id']);
                 if ($parent['is_enabled'] == 0 && $input->section['is_enabled'] == 1) {
-                    $aErrors[] = 'You cannot activate ' 
-                        . $input->section['title'] . ' unless you first activate ' 
+                    $aErrors[] = 'You cannot activate '
+                        . $input->section['title'] . ' unless you first activate '
                         . $parent['title'] . '.';
                 }
                 //  check child has same or subset of parents permissions
@@ -180,7 +180,7 @@ class AdminMenuMgr extends SGL_Manager
     {
         $conf = & $GLOBALS['_SGL']['CONF'];
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         //  pre-check enabled box
         $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
@@ -189,17 +189,17 @@ class AdminMenuMgr extends SGL_Manager
 
         //  build dynamic section choosers
         $output->aModules = SGL_Util::getAllModuleDirs();
-        $currentModule = isset($output->section['module']) 
-            ? $output->section['module'] 
+        $currentModule = isset($output->section['module'])
+            ? $output->section['module']
             : key($output->aModules);
         $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
-        $currentMgr = isset($output->section['manager']) 
-            ? $output->section['manager'] 
+        $currentMgr = isset($output->section['manager'])
+            ? $output->section['manager']
             : key($output->aManagers);
-        $output->aActions = ($currentMgr != 'none') 
+        $output->aActions = ($currentMgr != 'none')
             ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
             : array();
-            
+
         //  build role widget
         $aRoles = $this->da->getRoles();
         //$aRoles[0]= 'guest';  // modified guest will never access the admin interface
@@ -229,21 +229,21 @@ class AdminMenuMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
-                
+
         $separator = '/'; // can be configurable later
 
         //  if page[has_link] = 0 set resource_uri NULL else build page url
         if ($input->section['has_link'] == 0) {
             $input->section['resource_uri'] =  null;
         } else {
-        
+
             //  strip extension and 'Mgr'
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -254,7 +254,7 @@ class AdminMenuMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -267,7 +267,7 @@ class AdminMenuMgr extends SGL_Manager
         }
         //  create new set with first rootnode
         $nestedSet = new SGL_NestedSet($this->_params);
-                    
+
         if ($input->section['parent_id'] == 0) {    //  they want a root node
             $node = $nestedSet->createRootNode($input->section);
         } elseif ((int)$input->section['parent_id'] > 0) { //    they want a sub node
@@ -275,10 +275,10 @@ class AdminMenuMgr extends SGL_Manager
         } else { //  error
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        } 
+        }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('adminNav');
-            
+        SGL_Cache::clear('adminNav');
+
         //  possible DO bug here as correct insert always returns int 0
         if ($node) {
             SGL::raiseMsg('Section successfully added');
@@ -300,21 +300,21 @@ class AdminMenuMgr extends SGL_Manager
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
         $section = $nestedSet->getNode($input->sectionId);
-        
+
         //  passing a non-existent section id results in null or false $section
         if ($section) {
             $conf = & $GLOBALS['_SGL']['CONF'];
-            
+
             //  parse url details
             $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
             $section = array_merge($section, $parsed);
-            
+
             //  adjust friendly mgr name to class filename
             $mgr = $input->get('manager');
             $className = SGL_Inflector::caseFix(get_class($mgr));
             //$className = SGL_Url::getManagerNameFromSimplifiedName($section['manager']);
             $section['manager'] = $className . '.php';
-            
+
             //  represent additional params as string
             if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
                 foreach ($parsed['parsed_params'] as $k => $v) {
@@ -324,7 +324,7 @@ class AdminMenuMgr extends SGL_Manager
             } else {
                 $section['add_params'] = null;
             }
-    
+
             //  split off anchor if exists
             if (stristr($section['resource_uri'], '#')) {
                 list(,$anchor) = split("#", $section['resource_uri']);
@@ -345,15 +345,15 @@ class AdminMenuMgr extends SGL_Manager
         if ($input->section['has_link'] == 0) {
             $input->section['resource_uri'] =  null;
         } else {
-        
+
             //  strip extension and 'Mgr'
             //die($input->section['manager']);
             $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($input->section['manager']);
-            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none')) 
+            $actionPair = (!(empty($input->section['actionMapping'])) && ($input->section['actionMapping'] != 'none'))
                 ? 'action' . $separator . $input->section['actionMapping'] . $separator
                 : '';
-            
-            $input->section['resource_uri'] =  
+
+            $input->section['resource_uri'] =
                 $input->section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
@@ -366,7 +366,7 @@ class AdminMenuMgr extends SGL_Manager
             //  handle params abstractly to later accomodate traditional urls
             //  also strip blank array elements caused by input like '/foo/bar/'
             $params = array_filter(explode('/', $input->section['add_params']), 'strlen');
-            
+
             $input->section['resource_uri'] .= implode($separator, $params);
         }
         //  add anchor if necessary
@@ -405,19 +405,19 @@ class AdminMenuMgr extends SGL_Manager
             //  usual case, no change => do nothing
             $message = 'Section details successfully updated';
             break;
-            
+
         case $input->section['section_id']:
             //  cannot be parent to self => display user error
             $message = 'Section details updated, no data changed';
             break;
-            
+
         case 0:
             //  move the section, make it into a root node, just above it's own root
             $thisNode = $nestedSet->getNode($input->section['section_id']);
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $thisNode['root_id'], 'BE');
             $message = 'Section details successfully updated';
             break;
-            
+
         default:
             //  move the section under the new parent
             $moveNode = $nestedSet->moveTree($input->section['section_id'], $input->section['parent_id'], 'SUB');
@@ -425,7 +425,7 @@ class AdminMenuMgr extends SGL_Manager
             break;
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('adminNav');
+        SGL_Cache::clear('adminNav');
         SGL::raiseMsg($message);
     }
 
@@ -450,7 +450,7 @@ class AdminMenuMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('adminNav');
+        SGL_Cache::clear('adminNav');
         if ($deleteCounter == 1) {
             SGL::raiseMsg('The selected section has successfully been deleted');
         } else {
@@ -471,7 +471,7 @@ class AdminMenuMgr extends SGL_Manager
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  clear cache so a new cache file is built reflecting changes
-        SGL::clearCache('adminNav');
+        SGL_Cache::clear('adminNav');
         SGL::raiseMsg('Sections reordered successfully');
     }
 
