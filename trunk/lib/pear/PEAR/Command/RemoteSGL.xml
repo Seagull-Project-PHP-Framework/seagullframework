@@ -1,26 +1,26 @@
 <commands version="1.0">
- <remote-info>
+ <sgl-remote-info>
   <summary>Information About Remote Packages</summary>
-  <function>doRemoteInfo</function>
-  <shortcut>ri</shortcut>
+  <function>doRemoteInfoSGL</function>
+  <shortcut>x1</shortcut>
   <options />
   <doc>&lt;package&gt;
 Get details on a package from the server.</doc>
- </remote-info>
- <list-upgrades>
+ </sgl-remote-info>
+ <sgl-list-upgrades>
   <summary>List Available Upgrades</summary>
-  <function>doListUpgrades</function>
-  <shortcut>lu</shortcut>
+  <function>doListUpgradesSGL</function>
+  <shortcut>x2</shortcut>
   <options />
   <doc>[preferred_state]
 List releases on the server of packages you have installed where
 a newer version is available with the same release state (stable etc.)
 or the state passed as the second parameter.</doc>
- </list-upgrades>
- <remote-list>
+ </sgl-list-upgrades>
+ <sgl-remote-list>
   <summary>List Remote Packages</summary>
-  <function>doRemoteList</function>
-  <shortcut>rl</shortcut>
+  <function>doRemoteListSGL</function>
+  <shortcut>x3</shortcut>
   <options>
    <channel>
     <shortopt>c</shortopt>
@@ -31,11 +31,11 @@ or the state passed as the second parameter.</doc>
   <doc>
 Lists the packages available on the configured server along with the
 latest stable release of each package.</doc>
- </remote-list>
- <search>
+ </sgl-remote-list>
+ <sgl-search>
   <summary>Search remote package database</summary>
-  <function>doSearch</function>
-  <shortcut>sp</shortcut>
+  <function>doSearchSGL</function>
+  <shortcut>x4</shortcut>
   <options>
    <channel>
     <shortopt>c</shortopt>
@@ -48,11 +48,11 @@ Lists all packages which match the search parameters.  The first
 parameter is a fragment of a packagename.  The default channel
 will be used unless explicitly overridden.  The second parameter
 will be used to match any portion of the summary/description</doc>
- </search>
- <list-all>
+ </sgl-search>
+ <sgl-list-all>
   <summary>List All Packages</summary>
-  <function>doListAll</function>
-  <shortcut>la</shortcut>
+  <function>doListAllSGL</function>
+  <shortcut>x5</shortcut>
   <options>
    <channel>
     <shortopt>c</shortopt>
@@ -63,11 +63,11 @@ will be used to match any portion of the summary/description</doc>
   <doc>
 Lists the packages available on the configured server along with the
 latest stable release of each package.</doc>
- </list-all>
- <download>
+ </sgl-list-all>
+ <sgl-download>
   <summary>Download Package</summary>
-  <function>doDownload</function>
-  <shortcut>d</shortcut>
+  <function>doDownloadSGL</function>
+  <shortcut>x6</shortcut>
   <options>
    <nocompress>
     <shortopt>Z</shortopt>
@@ -78,15 +78,15 @@ latest stable release of each package.</doc>
 Download package tarballs.  The files will be named as suggested by the
 server, for example if you download the DB package and the latest stable
 version of DB is 1.6.5, the downloaded file will be DB-1.6.5.tgz.</doc>
- </download>
- <clear-cache>
+ </sgl-download>
+ <sgl-clear-cache>
   <summary>Clear Web Services Cache</summary>
-  <function>doClearCache</function>
-  <shortcut>cc</shortcut>
+  <function>doClearCacheSGL</function>
+  <shortcut>x7</shortcut>
   <options />
   <doc>
 Clear the XML-RPC/REST cache.  See also the cache_ttl configuration
 parameter.
 </doc>
- </clear-cache>
+ </sgl-clear-cache>
 </commands>

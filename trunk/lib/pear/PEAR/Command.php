@@ -244,7 +244,6 @@ class PEAR_Command
                 continue;
             }
             $class = "PEAR_Command_".substr($entry, 0, -4);
-print '<pre>';print_r($class);
             $file = "$dir/$entry";
             $parser->parse(file_get_contents($file));
             $implements = $parser->getData();
@@ -283,10 +282,12 @@ print '<pre>';print_r($class);
                     }
                 }
             }
+            #print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
         }
         ksort($GLOBALS['_PEAR_Command_shortcuts']);
         ksort($GLOBALS['_PEAR_Command_commandlist']);
         @closedir($dp);
+
         return true;
     }
 
