@@ -39,17 +39,16 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once dirname(__FILE__) . '/../../../lib/SGL/Manager.php';
+require_once SGL_CORE_DIR . '/Manager.php';
+require_once 'DB/DataObject.php';
 
 define('SGL_ICONS_PER_ROW', 3);
 
 /**
- * Will manage loading of modules.
+ * Manages loading of modules.
  *
  * @package default
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.37 $
- * @since   PHP 4.1
  */
 class ModuleMgr extends SGL_Manager
 {
@@ -151,7 +150,6 @@ class ModuleMgr extends SGL_Manager
                     $oModule->module = '';
                     $oModule->manager = '';
                 }
-
                 $oModule->bgnd = ($oModule->is_configurable) ? 'bgnd' : 'outline';
                 $oModule->breakRow = !((count($ret)+1) % SGL_ICONS_PER_ROW);
                 $ret[] = $oModule;
@@ -165,6 +163,7 @@ class ModuleMgr extends SGL_Manager
     function _add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = 'Module Manager :: Add';
         $output->action = 'insert';
         $output->template  = 'moduleEdit.html';
@@ -176,8 +175,6 @@ class ModuleMgr extends SGL_Manager
 
         SGL_DB::setConnection($this->dbh);
         $output->template = 'moduleList.html';
-
-        require_once 'DB/DataObject.php';
         $newEntry = DB_DataObject::factory($this->conf['table']['module']);
         $newEntry->setFrom($input->module);
         $newEntry->module_id = $this->dbh->nextId($this->conf['table']['module']);
@@ -192,10 +189,10 @@ class ModuleMgr extends SGL_Manager
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $output->action = 'update';
         $output->template  = 'moduleEdit.html';
-        require_once 'DB/DataObject.php';
         $oModule = DB_DataObject::factory($this->conf['table']['module']);
         $oModule->get($input->moduleId);
         $output->module = $oModule;
@@ -206,7 +203,6 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
-        require_once 'DB/DataObject.php';
         $newEntry = DB_DataObject::factory($this->conf['table']['module']);
         $newEntry->get($input->module->module_id);
         $newEntry->setFrom($input->module);
@@ -224,7 +220,6 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once 'DB/DataObject.php';
         $rm = DB_DataObject::factory($this->conf['table']['module']);
         $rm->get($input->module->module_id);
         $rm->delete();
@@ -259,72 +254,6 @@ class ModuleMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-    }
-
-    /**
-     * Returns an array of all modules.
-     *
-     * @param integer $type
-     * @return array
-     *
-     * @todo move to DA_Default
-     */
-    function retrieveAllModules($type = '')
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $dbh = & SGL_DB::singleton();
-
-        switch ($type) {
-        case SGL_RET_ID_VALUE:
-            $query = "  SELECT module_id, title
-                        FROM {$conf['table']['module']}
-                        ORDER BY module_id";
-            $aMods = $dbh->getAssoc($query);
-            break;
-
-        case SGL_RET_NAME_VALUE:
-        default:
-            $query = "  SELECT name, title
-                        FROM {$conf['table']['module']}
-                        ORDER BY name";
-            $aModules = $dbh->getAll($query);
-            foreach ($aModules as $k => $oVal) {
-                if ($oVal->name == 'documentor') {
-                    continue;
-                }
-                $aMods[$oVal->name] = $oVal->title;
-            }
-            break;
-        }
-        return $aMods;
-    }
-
-    /**
-     * Returns module id by perm id
-     *
-     * @param integer $permId
-     * @return integer
-     *
-     * @todo move to DA_Default
-     */
-    function getModuleIdByPermId($permId = null)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $dbh = & SGL_DB::singleton();
-
-        $permId = ($permId === null) ? 0 : $permId;
-        $query = "  SELECT  module_id
-                    FROM    {$conf['table']['permission']}
-                    WHERE   permission_id = $permId
-                ";
-        $moduleId = $dbh->getOne($query);
-        return $moduleId;
     }
 }
 ?>

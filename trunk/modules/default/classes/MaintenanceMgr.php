@@ -59,6 +59,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'maintenance.html';
         $this->redirect     = true;
+        $this->da           = & DA_Default::singleton();
 
         $this->_aActionsMapping =  array(
             'verify'    => array('verify', 'redirectToDefault'),
@@ -200,21 +201,12 @@ class MaintenanceMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        //  get hash of all modules
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-        $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_NAME_VALUE);
+
+        //  get hash of all modules;
+        $output->aModules = $this->da->retrieveAllModules(SGL_RET_NAME_VALUE);
 
         //  load available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-            if ($id == $output->currentLang) {
-                $output->currentLangLong = $lang_name;
-            }
-        }
-        $output->aLangs = $aLangOptions;
+        $output->aLangs = SGL_Util::getLangsDescriptionMap();
 
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
@@ -267,8 +259,7 @@ class MaintenanceMgr extends SGL_Manager
         $output->template = 'langCheckAll.html';
 
         //  get hash of all modules
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-        $modules = ModuleMgr::retrieveAllModules(SGL_RET_NAME_VALUE);
+        $modules = $this->da->retrieveAllModules(SGL_RET_NAME_VALUE);
 
         //  load available languages
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
