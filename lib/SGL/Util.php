@@ -181,6 +181,7 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
+        $da = & DA_Default::singleton();
 
         //  match all folders except CVS
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
@@ -189,7 +190,7 @@ class SGL_Util
         //  until i get rid of this folder
         unset($ret['wizardExample']);
         foreach ($ret as $module) {
-            if ($onlyRegistered && !ModuleMgr::moduleIsRegistered($module)) {
+            if ($onlyRegistered && !$da->moduleIsRegistered($module)) {
                 unset($ret[$module]);
             }
         }
