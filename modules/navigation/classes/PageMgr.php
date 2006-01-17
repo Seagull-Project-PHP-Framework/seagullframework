@@ -68,6 +68,12 @@ class PageMgr extends SGL_Manager
         $dataAccess->add($dataAccessDefault);
         $this->da = $dataAccess;
 
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            require_once SGL_CORE_DIR . '/Translation.php';
+            $this->transAdmin = & SGL_Translation::singleton('admin');
+        }
+
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
@@ -383,7 +389,7 @@ class PageMgr extends SGL_Manager
         $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
 
         //  add translations
-        $ok = $this->trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
+        $ok = $this->transAdmin->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
 
         //  set translation id for nav title
         $input->section['trans_id'] = $sectionNextId;
@@ -578,7 +584,7 @@ class PageMgr extends SGL_Manager
         if ($input->section['title'] != $input->section['title_original']) {
             if ($input->section['trans_id']) {
                 $strings[$input->navLang] = $input->section['title'];
-                $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
+                $ok = $this->transAdmin->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
             }
         }
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -656,7 +662,7 @@ class PageMgr extends SGL_Manager
 
                     //  remove translations
                     if ($this->conf['translation']['container'] == 'db') {
-                        $this->trans->remove($section['trans_id'], 'nav');
+                        $this->transAdmin->remove($section['trans_id'], 'nav');
                     }
 
                     //  remove page
