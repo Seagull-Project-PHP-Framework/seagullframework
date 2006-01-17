@@ -39,6 +39,7 @@
 // $Id: UserMgr.php,v 1.80 2005/06/05 22:59:48 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'Validate.php';
@@ -60,8 +61,12 @@ class UserMgr extends RegisterMgr
 
         $this->pageTitle = 'User Manager';
         $this->template = 'userManager.html';
-        $this->da = & DA_User::singleton();
         $this->sortBy = 'usr_id';
+
+        $dataAccess = & DA_User::singleton();
+        $dataAccessDefault = & DA_Default::singleton();
+        $dataAccess->add($dataAccessDefault);
+        $this->da = $dataAccess;
 
         $this->_aActionsMapping = array(
             'add'                   => array('add'),
@@ -494,8 +499,7 @@ class UserMgr extends RegisterMgr
         $output->template = 'userPermsEdit.html';
 
         //  build module filter
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-        $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
         $output->currentModule = $input->moduleId;
 
         $aUserPerms = $this->da->getPermsByUserId($input->userID);

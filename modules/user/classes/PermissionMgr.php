@@ -39,6 +39,7 @@
 // $Id: PermissionMgr.php,v 1.58 2005/05/28 13:46:30 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once 'DB/DataObject.php';
 
@@ -60,7 +61,11 @@ class PermissionMgr extends SGL_Manager
 
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
-        $this->da           = & DA_User::singleton();
+
+        $dataAccess = & DA_User::singleton();
+        $dataAccessDefault = & DA_Default::singleton();
+        $dataAccess->add($dataAccessDefault);
+        $this->da = $dataAccess;
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -112,8 +117,7 @@ class PermissionMgr extends SGL_Manager
             $input->pageTitle = ($input->action == 'update')
                 ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
-            include_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-            $input->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
+            $input->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
             $input->currentModule = $input->perm->module_id;
         }
     }
@@ -126,9 +130,7 @@ class PermissionMgr extends SGL_Manager
         $output->perm = DB_DataObject::factory($this->conf['table']['permission']);
 
         // setup module combobox
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-
-        $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
         $output->currentModule = $input->permId;
     }
 
@@ -267,9 +269,8 @@ class PermissionMgr extends SGL_Manager
         $output->perm = $oPerm;
 
         //  setup module combobox
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-        $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
-        $output->currentModule = ModuleMgr::getModuleIdByPermId($input->permId);
+        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->currentModule = $this->da->getModuleIdByPermId($input->permId);
     }
 
     function _update(&$input, &$output)
@@ -359,8 +360,7 @@ class PermissionMgr extends SGL_Manager
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').perms.disabled = true");
 
         //  setup module combobox
-        require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
-        $output->aModules = ModuleMgr::retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
         $output->currentModule = $output->moduleId;
    }
 

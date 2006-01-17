@@ -1014,8 +1014,6 @@ class DA_User extends SGL_Delegator
         return $login;
     }
 
-    //ModuleMgr::retrieveAllModules
-
     //OrgPreferenceMgr::_updateAll
 }
 ?>

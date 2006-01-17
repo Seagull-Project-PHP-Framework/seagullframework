@@ -211,4 +211,58 @@ class DA_Default
 
         return ! is_null($exists);
     }
+
+    /**
+     * Returns an array of all modules.
+     *
+     * @param integer $type
+     * @return array
+     */
+    function retrieveAllModules($type = '')
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        switch ($type) {
+        case SGL_RET_ID_VALUE:
+            $query = "  SELECT module_id, title
+                        FROM {$this->conf['table']['module']}
+                        ORDER BY module_id";
+            $aMods = $this->dbh->getAssoc($query);
+            break;
+
+        case SGL_RET_NAME_VALUE:
+        default:
+            $query = "  SELECT name, title
+                        FROM {$this->conf['table']['module']}
+                        ORDER BY name";
+            $aModules = $this->dbh->getAll($query);
+            foreach ($aModules as $k => $oVal) {
+                if ($oVal->name == 'documentor') {
+                    continue;
+                }
+                $aMods[$oVal->name] = $oVal->title;
+            }
+            break;
+        }
+        return $aMods;
+    }
+
+    /**
+     * Returns module id by perm id.
+     *
+     * @param integer $permId
+     * @return integer
+     */
+    function getModuleIdByPermId($permId = null)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $permId = ($permId === null) ? 0 : $permId;
+        $query = "  SELECT  module_id
+                    FROM    {$this->conf['table']['permission']}
+                    WHERE   permission_id = $permId
+                ";
+        $moduleId = $this->dbh->getOne($query);
+        return $moduleId;
+    }
 }
