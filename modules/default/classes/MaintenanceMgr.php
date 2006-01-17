@@ -533,22 +533,27 @@ class MaintenanceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $modName = strtolower($input->createModule->moduleName);
-        $mgrName = $input->createModule->managerName;
+        $mgrName = ucfirst($input->createModule->managerName);
         $aActions = '';
 
         //  strip final 'mgr' if necessary
-        if (substr(strtolower($mgrName), -3) == 'mgr') {
+        if (preg_match('/mgr$/i', $mgrName)) {
             $origMgrName = $mgrName;
             $mgrName = preg_replace("/mgr/i", '', $mgrName);
         }
-
         //  set mod/mgr details
         $output->moduleName = $modName;
-        $output->templatePrefix = $mgrName;
+
         $output->managerName = $mgrName;
         $mgrLongName = (isset($origMgrName))
             ? $origMgrName
-            : $input->createModule->managerName . 'Mgr';
+            : ucfirst($input->createModule->managerName) . 'Mgr';
+
+        //  build template name
+        $firstLetter = $mgrLongName{0};
+        $restOfWord = substr($mgrLongName, 1);
+        $templatePrefix = strtolower($firstLetter).$restOfWord;
+        $output->templatePrefix = $templatePrefix;
 
         //  set author details
         require_once 'DB/DataObject.php';
@@ -650,22 +655,20 @@ EOF;
             $success = file_put_contents($confIniName, $confTemplate);
             @chmod($confIniName, 0666);
         }
-
         //  create language files
         if (isset($input->createModule->createLangFiles)){
             $fileTemplate = "<?php\n\$words=array();\n?>";
-            foreach($GLOBALS['_SGL']['LANGUAGE'] as $language){
+            foreach ($GLOBALS['_SGL']['LANGUAGE'] as $language) {
                 $fileName = $aDirectories['module'] . '/lang/'.$language[1].'.php';
                 $success = file_put_contents($fileName, $fileTemplate);
                 @chmod($fileName, 0666);
             }
         }
-
         //  create templates
         if (isset($input->createModule->createTemplates)){
-            foreach($aTemplates as $template){
-                $fileName = $aDirectories['templates'].'/'.$mgrLongName.$template;
-                $fileTemplate = 'Demo Template: '.$mgrLongName.$template;
+            foreach($aTemplates as $template) {
+                $fileName = $aDirectories['templates'].'/'.$templatePrefix.$template;
+                $fileTemplate = 'Demo Template: '.$templatePrefix.$template;
                 $success = file_put_contents($fileName, $fileTemplate);
                 @chmod($fileName, 0666);
             }
