@@ -50,79 +50,79 @@ class SGL_Item
 {
     /**
      * Item ID
-     * 
+     *
      * @access  public
      * @var     int
      */
     var $id;
-    
+
     /**
      * User ID of user to last update item
-     * 
+     *
      * @access  public
      * @var     int
      */
     var $lastUpdatedById;
-    
+
     /**
      * Timestamp an Item was created
-     * 
+     *
      * @access  public
      * @var     mixed
      */
     var $dateCreated;
-    
+
     /**
      * Timestamp of last update for an Item
-     * 
+     *
      * @access  public
      * @var     mixed
      */
     var $lastUpdated;
-    
+
     /**
      * Timestamp when an Item becomes available
-     * 
+     *
      * @access  public
      * @var     mixed
      */
     var $startDate;
-    
+
     /**
      * Timestamp when an Item expires
-     * 
+     *
      * @access  public
      * @var     mixed
      */
     var $expiryDate;
-    
+
     /**
      * Item Type Name
-     * 
+     *
      * @access  public
      * @var     string
      */
     var $type;
-    
+
     /**
      * Item Type ID
-     * 
+     *
      * @access  public
      * @var     int
      */
     var $typeID;
-    
+
     /**
      * Category ID
-     * 
+     *
      * @access  public
      * @var     int
      */
     var $catID;
-    
+
     /**
      * Status ID
-     * 
+     *
      * @access  pubic
      * @var     int
      */
@@ -130,7 +130,7 @@ class SGL_Item
 
     /**
      * Constructor
-     * 
+     *
      * @access  public
      * @param   int     $itemID     ItemID
      * @param   string  $language   Language
@@ -143,7 +143,12 @@ class SGL_Item
         $c = &SGL_Config::singleton();
         $this->conf     = $c->getAll();
         $this->dbh      = & SGL_DB::singleton();
-        $this->trans    = & SGL_Translation::singleton('admin');
+
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            require_once SGL_CORE_DIR . '/Translation.php';
+            $this->trans = & SGL_Translation::singleton('admin');
+        }
 
         if ($itemID >= 0) {
             $this->_init($itemID, $language);
@@ -152,7 +157,7 @@ class SGL_Item
 
     /**
      * Retrieves an Item's Meta Data. Sets the corrisponding class variables.
-     * 
+     *
      * @access  private
      * @param   int     $itemID     ItemID
      * @param   string  $language   Language
@@ -203,29 +208,29 @@ class SGL_Item
             $this->set('type', $itemObj->item_type_name);
             $this->set('catID', $itemObj->category_id);
             $this->set('statusID', $itemObj->status);
-            
+
             //  language clause
             (!is_null($languageID)) ? $this->set('languageID', $languageID) : '';
-                        
+
         } else {
-            SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__, 
+            SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__,
                 SGL_ERROR_NODATA);
         }
     }
 
     /**
      * Inserts Meta Items into item table.
-     * 
-     * @access  public 
+     *
+     * @access  public
      * @return  int     $id Item ID
      */
     function addMetaItems()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $catID = $this->catID ? $this->catID : 1;        
+
+        $catID = $this->catID ? $this->catID : 1;
         $id = $this->dbh->nextId($this->conf['table']['item']);
-        $query = "  
+        $query = "
             INSERT INTO {$this->conf['table']['item']}(
                 item_id,
                 created_by_id,
@@ -255,8 +260,8 @@ class SGL_Item
 
     /**
      * Inserts Data Items into item_addtion table.
-     * 
-     * @access  public 
+     *
+     * @access  public
      * @param   int     $parentID   Parent ID
      * @param   int     $itemID     Item ID
      * @param   mixed   $itemValue  Item Value
@@ -266,11 +271,11 @@ class SGL_Item
     function addDataItems($parentID, $itemID, $itemValue, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-                        
+
         for ($x=0; $x < count($itemID); $x++) {
             $id = $this->dbh->nextId($this->conf['table']['item_addition']);
             $transID = $this->dbh->nextID($this->conf['table']['translation']);
-            
+
             if ($itemValue[$x] == '')
                 $itemValue[$x] = SGL_String::translate('No other text entered');
 
@@ -279,27 +284,29 @@ class SGL_Item
 
             //  build strings array
             $strings[$language] = $editedTxt;
-    
+
             //  insert into item_addition
             $query = "
                     INSERT INTO {$this->conf['table']['item_addition']} VALUES (
                         $id,
                         $parentID,
                         $itemID[$x], ".
-                        $this->dbh->quote($itemValue[$x]) .", 
+                        $this->dbh->quote($itemValue[$x]) .",
                         $transID
                     )";
             $result = $this->dbh->query($query);
             unset($query);
 
-            $this->trans->add($transID, 'content', $strings);
+            if ($this->conf['translation']['container'] == 'db') {
+                $this->trans->add($transID, 'content', $strings);
+            }
             unset($strings);
         }
     }
 
     /**
      * Inserts Item Body into item_addition table.
-     * 
+     *
      * @access  public
      * @param   int     $parentID   Parent ID
      * @param   int     $itemID     Item ID
@@ -311,8 +318,6 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $trans = &SGL_Translation::singleton('admin');
-
         $id = $this->dbh->nextId($this->conf['table']['item_addition']);
         $transID = $this->dbh->nextID($this->conf['table']['translation']);
 
@@ -321,7 +326,7 @@ class SGL_Item
 
         //  profanity check
         $editedTxt = SGL_String::censor($itemValue);
-        
+
         $strings[$language] = $editedTxt;
 
         $query = "
@@ -334,20 +339,22 @@ class SGL_Item
             )";
         $result = $this->dbh->query($query);
 
-        $this->trans->add($transID, 'content', $strings);
+        if ($this->conf['translation']['container'] == 'db') {
+            $this->trans->add($transID, 'content', $strings);
+        }
     }
 
     /**
      * Update Meta Items in item table.
-     * 
+     *
      * @access  public
      * @return  voide
      */
     function updateMetaItems()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $query = "  
+
+        $query = "
             UPDATE {$this->conf['table']['item']} SET
                 updated_by_id = $this->lastUpdatedById,
                 last_updated = " . $this->dbh->quote($this->lastUpdated) . ",
@@ -361,8 +368,8 @@ class SGL_Item
     }
 
     /**
-     * Update Data Items in item_addtiion table.
-     * 
+     * Update Data Items in item_addition table.
+     *
      * @access  public
      * @param   int     $itemID     Item ID
      * @param   mixed   $itemValue  Item Value
@@ -380,23 +387,32 @@ class SGL_Item
             //  profanity check
             $editedTxt = SGL_String::censor($itemValue[$x]);
 
-            //  fetch current translations
-            $strings[$language] = $this->trans->get($itemID[$x], 'content', $language);
-            
-            //  merge translations
-            if ($editedTxt != $strings[$language]) {
-                $strings[$language] = $editedTxt;   
-            }        
-            unset($editedTxt);
-
             //  update translations
-            $this->trans->add($itemID[$x], 'content', $strings);            
+            if ($this->conf['translation']['container'] == 'db') {
+                //  fetch current translations
+                $strings[$language] = $this->trans->get($itemID[$x], 'content', $language);
+
+                //  merge translations
+                if ($editedTxt != $strings[$language]) {
+                    $strings[$language] = $editedTxt;
+                }
+                $this->trans->add($itemID[$x], 'content', $strings);
+            } else {
+                $query = "
+                    UPDATE  {$this->conf['table']['item_addition']}
+                    SET     addition = $editedTxt
+                    WHERE   item_addition_id = $itemID[$x]
+                         ";
+                $result = $dbh->query($query);
+                unset($query);
+            }
+            unset($editedTxt);
         }
     }
 
     /**
      * Update a Data Item's Body in item_addition
-     * 
+     *
      * @access  public
      * @param   int     $itemID     Item ID
      * @param   mixed   $itemValue  Item Value
@@ -409,27 +425,27 @@ class SGL_Item
 
         if ($itemValue == '') {
             $itemValue = SGL_String::translate('No text entered');
-        }   
-        
+        }
+
         //  profanity check
         $editedTxt = SGL_String::censor(SGL_String::tidy($itemValue));
-        
+
         //  fetch current translation
         $strings[$language] = $this->trans->get($itemID, 'content', $language);
-        
+
         //  merge translations
         if ($editedTxt !== $strings[$language]) {
             $strings[$language] = $editedTxt;
         }
 
         //  add translations
-        $this->trans->add($itemID, 'content', $strings);            
+        $this->trans->add($itemID, 'content', $strings);
     }
 
     /**
      * Deletes an Item from the item and item_addition table. If safe delete
      * is enabled only updates the items status to 0.
-     * 
+     *
      * @access  public
      * @param   array     $aItems   Hash of IDs to delete.
      * @return  void
@@ -457,9 +473,9 @@ class SGL_Item
                 //  fetch item translation ids
                 $query = "SELECT * FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
                 $additionTrans = $this->dbh->getAssoc($query);
-                
+
                 foreach ($additionTrans as $key => $values) {
-                    $this->trans->remove($values->trans_id, 'content');   
+                    $this->trans->remove($values->trans_id, 'content');
                 }
 
                 $sql = "DELETE FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
@@ -472,7 +488,7 @@ class SGL_Item
      * Builds a HTML form containing the data from the item_addition table. The
      * input types are built using the data in the item_type and
      * item_type_mapping tables.
-     * 
+     *
      * @access  public
      * @param   int     $itemID         Item ID
      * @param   int     $type           data type to return, can be SGL_RET_STRING
@@ -490,7 +506,7 @@ class SGL_Item
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $itemID
             ORDER BY itm.item_type_mapping_id
@@ -521,7 +537,7 @@ class SGL_Item
             $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
             $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
             $languageName =  '('. $lang_name . ' - ' . $langID . ')';
-    
+
             //  display dynamic form fields (changed default object output to standard array
             $fieldsString = '';
             while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
@@ -532,7 +548,7 @@ class SGL_Item
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) ." ". $languageName ."</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $fieldID, $fieldName, $fieldValue, $fieldType, $language) 
+                                          $fieldID, $fieldName, $fieldValue, $fieldType, $language)
                                     . "</td>\n";
                 $fieldsString .= "</tr>\n";
             }
@@ -544,7 +560,7 @@ class SGL_Item
     /**
      * Builds a HTML form with the input types built using the data in the
      * item_type and item_type_mapping tables.
-     * 
+     *
      * @access  public
      * @param   int     $typeID         Item Type ID
      * @param   int     $type           data type to return, can be SGL_RET_STRING
@@ -557,7 +573,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!is_numeric($typeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
         //  get template specific form fields
@@ -588,16 +604,16 @@ class SGL_Item
                 }
                 $res = $aFields;
                 break;
-    
+
             case SGL_RET_STRING:
             //  display dynamic form fields (changed default object output to standard array)
             $fieldsString = '';
-            while (list($itemMappingID, $fieldName, $fieldType) 
+            while (list($itemMappingID, $fieldName, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) .' '. $languageName ."</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
-                                          $itemMappingID, $fieldName, null, $fieldType, $language) 
+                                          $itemMappingID, $fieldName, null, $fieldType, $language)
                                     . "</td>\n";
                 $fieldsString .= "</tr>\n";
             }
@@ -609,7 +625,7 @@ class SGL_Item
     /**
      * Generates the form fields from the item_type_mapping table for the
      * methods getDynamicContent() and getDynamicFields.
-     * 
+     *
      * @access  public
      * @param   int     $fieldID    Field ID
      * @param   string  $fieldName  Field Name
@@ -640,10 +656,10 @@ class SGL_Item
         return $formHTML;
     }
 
-    /** 
+    /**
      * Updates an Items Status (delete, approve, publish, archive) in the item
      * table.
-     * 
+     *
      * @access  public
      * @param   string  Item Status
      * @return  void
@@ -651,7 +667,7 @@ class SGL_Item
     function changeStatus($status)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         switch($status) {
         case 'delete':
                //   mark item as deleted
@@ -695,7 +711,7 @@ class SGL_Item
     /**
      * Retierves an Item's Meta and Data items and generates the output using
      * the method generateItemOutput().
-     * 
+     *
      * @access  public
      * @param   boolean $bPublished Item published
      * @param   string  $language   Language
@@ -704,7 +720,7 @@ class SGL_Item
     function preview($bPublished = false, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (!is_null($language)) {       
+        if (!is_null($language)) {
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
@@ -712,7 +728,7 @@ class SGL_Item
                     {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm
-                WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+                WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id    /*  match item type */
                 AND     i.item_id = ia.item_id
                 AND     ia.item_id = $this->id
@@ -731,7 +747,7 @@ class SGL_Item
                 }
                 return $html;
             } else {
-                return SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__, 
+                return SGL::raiseError('Problem with query in ' . __FILE__ . ', ' . __LINE__,
                     SGL_ERROR_NODATA);
            }
         } else {
@@ -742,20 +758,20 @@ class SGL_Item
     /**
      * Retierves and returns an array containing an an Item's Meta and Data
      * items.
-     * 
+     *
      * @access  public
-     * @return  array   $html          
+     * @return  array   $html
      */
     function manualPreview()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $query = "
             SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     it.item_type_id  = itm.item_type_id    /*  match item type */
             AND     ia.item_id = $this->id
             ORDER BY itm.item_type_mapping_id
@@ -771,15 +787,15 @@ class SGL_Item
 
     /**
      * Generates the output for an Item using the template defined below.
-     * 
+     *
      * @access  public
      * @param   int     $fieldID        Field ID
      * @param   string  $fieldName      Field Name
      * @param   mixed   $fieldValue     Field Value
      * @param   int     $itemTypeID     Item Type ID
-     * @return  array   $outputHTML     
+     * @return  array   $outputHTML
      */
-    function generateItemOutput($fieldID, $fieldName, $fieldValue, $itemTypeID) 
+    function generateItemOutput($fieldID, $fieldName, $fieldValue, $itemTypeID)
     {
         switch ($itemTypeID) {
         case 2:                //   template type = HTML article
@@ -826,7 +842,7 @@ class SGL_Item
 
     /**
      * Sets an Item's Meta Data value
-     * 
+     *
      * @access  public
      * @param   string  $attributeName
      * @param   mixed   $attributeValue
@@ -839,7 +855,7 @@ class SGL_Item
 
     /**
      * Retrieves an Item's Meta Data value
-     * 
+     *
      * @access  public
      * @param   string  $attribute
      * @return  mixed   $this->attribute
@@ -851,12 +867,12 @@ class SGL_Item
 
     /**
      * Retrieve a list of Items by CatID
-     * 
+     *
      * @access  public
      * @param   int     $catID
      * @param   int     $dataTypeID
      * @param   int     $mostRecentArticleID
-     * @return  array   $aArticleList           
+     * @return  array   $aArticleList
      * @see     retrievePaginated()
      */
     function getItemListByCatID($catID, $dataTypeID, $mostRecentArticleID)
@@ -866,7 +882,7 @@ class SGL_Item
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
         $aArticleList = $aResult['data'];
-        
+
         //  get most recent article, if array is non-empty,
         //  only if none has been passed from 'more articles' list
         if (count($aArticleList)) {
@@ -879,7 +895,7 @@ class SGL_Item
 
     /**
      * Retrieve an Items Meta and Data details.
-     * 
+     *
      * @access  public
      * @param   int     $itemID     Item ID
      * @param   boolean $bPublished Item Published
@@ -896,16 +912,16 @@ class SGL_Item
             $item = & new SGL_Item($itemID);
             if (!isset($language) || empty($language) ) {
                 $language = SGL_Translation::getLangID();
-            }            
-            $ret = $item->preview($bPublished, $language);            
+            }
+            $ret = $item->preview($bPublished, $language);
             if (!is_a($ret, 'PEAR_Error')) {
                 $ret['creatorName'] = $item->creatorName;
                 $ret['createdByID'] = $item->createdByID;
                 $ret['startDate'] = $item->startDate;
                 $ret['type'] = $item->type;
                 return $ret;
-            } else {               
-                SGL::raiseError('No preview available at ' . __FILE__ . ', ' . __LINE__, 
+            } else {
+                SGL::raiseError('No preview available at ' . __FILE__ . ', ' . __LINE__,
                     SGL_ERROR_NODATA);
             }
         } else {
@@ -926,27 +942,27 @@ class SGL_Item
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
      * @see     retrieveAll()
      */
-    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1, 
+    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1,
         $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         SGL_Item::SGL_Item();
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' . 
+            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
         //  if published flag set, only return published articles
-        $isPublishedClause = ($bPublished)? 
+        $isPublishedClause = ($bPublished)?
             ' AND i.status  = ' . SGL_STATUS_PUBLISHED :
             ' AND i.status  > ' . SGL_STATUS_DELETED ;
 
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all')?'' : " AND i.category_id = $catID";
         $roleId = SGL_HTTP_Session::get('rid');
-        
+
         //  dataTypeID 1 = all template types, otherwise only a specific one
-        $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';     
+        $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
         $query = "
             SELECT  i.item_id,
                     ia.addition,
@@ -955,8 +971,8 @@ class SGL_Item
                     i.date_created,
                     i.start_date,
                     i.expiry_date
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia, 
-                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, 
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
+                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm,
                     {$this->conf['table']['user']} u, {$this->conf['table']['category']} c
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
@@ -965,7 +981,7 @@ class SGL_Item
             AND     i.item_type_id = it.item_type_id
             AND     itm.field_name = 'title'" .         /*  match item addition type, 'title'    */
             $typeWhereClause .                          //  match datatype
-            $rangeWhereClause . 
+            $rangeWhereClause .
             $isPublishedClause . "
             AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
@@ -981,7 +997,8 @@ class SGL_Item
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         foreach ($aPagedData['data'] as $aKey => $aValues) {
-            $aPagedData['data'][$aKey]['trans_id'] = $this->trans->get($aValues['trans_id'], 'content', SGL_Translation::getLangID());   
+            $aPagedData['data'][$aKey]['trans_id'] = $this->trans->get($aValues['trans_id'],
+                'content', SGL_Translation::getLangID());
         }
         return $aPagedData;
     }

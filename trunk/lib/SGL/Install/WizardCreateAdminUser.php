@@ -53,8 +53,6 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
     {
-        require_once SGL_CORE_DIR .'/Translation.php';
-
         $this->_formBuilt = true;
         $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
 
@@ -88,7 +86,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
 
         //  paths
-        $this->addElement('header',     null, 'Paths:');
+        $this->addElement('header', null, 'Paths:');
         $this->addElement('text',  'installRoot', 'Full path: ', 'size="50"');
         $this->addElement('text',  'webRoot', 'Web root: ', 'size="50"');
 

@@ -6,7 +6,6 @@
 <form name="conf" id="configuration" method="post" flexy:ignore>
     <p>
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="conf[db][bootstrap]" value="0" />
     </p>
 
     <fieldset id="generalSiteOptions">
@@ -167,7 +166,7 @@
             {generateRadioPair(#conf[site][adminGuiEnabled]#,conf[site][adminGuiEnabled]):h}
         </p>
     </fieldset>
-        
+
     <fieldset id="paths">
         <h3>{translate(#Paths#)}</h3>
         <p>
@@ -181,7 +180,7 @@
             <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="navigationOptions">
         <h3>{translate(#Navigation Options#)}</h3>
         <p>
@@ -207,7 +206,7 @@
             </select>
         </p>
     </fieldset>
-    
+
     <fieldset id="debuggingOptions">
         <h3>{translate(#Debugging Options#)}</h3>
         <p>
@@ -265,7 +264,7 @@
             {generateRadioPair(#conf[debug][showUntranslated]#,conf[debug][showUntranslated]):h}
         </p>
     </fieldset>
-    
+
     <fieldset id="cachingOptions">
         <h3>{translate(#Caching Options#)}</h3>
         <p>
@@ -281,7 +280,7 @@
             <input type="text" name="conf[cache][lifetime]" id="conf[cache][lifetime]" value="{conf[cache][lifetime]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="databaseOptions">
         <h3>{translate(#Database Options#)}</h3>
         <p>
@@ -323,7 +322,7 @@
             <input type="text" class="longText" name="conf[db][post-connect]" id="conf[db][post-connect]" value="{conf[db][post-connect]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="databaseTableMappings">
         <h3>{translate(#Database Table Mappings#)}</h3>
         <p flexy:foreach="conf[table],key,var">
@@ -331,7 +330,7 @@
             <input type="text" name="conf[table][{key}]" id="conf[table][{key}]" value="{var}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="loggingOptions">
         <h3>{translate(#Logging options#)}</h3>
         <p>
@@ -373,7 +372,7 @@
             <input type="text" name="conf[log][paramsPassword]" id="conf[log][paramsPassword]" value="{conf[log][paramsPassword]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="mtaOptions">
         <h3>{translate(#MTA options#)}</h3>
         <p>
@@ -430,7 +429,7 @@
             <input type="password" name="conf[mta][smtpPassword]" id="conf[mta][smtpPassword]" value="{conf[mta][smtpPassword]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="emailOptions">
         <h3>{translate(#Email options#)}</h3>
         <p>
@@ -450,7 +449,7 @@
             <input type="text" class="longText" name="conf[email][info]" id="conf[email][info]" value="{conf[email][info]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="popupWindowOptions">
         <h3>{translate(#Popup window options#)}</h3>
         <p>
@@ -462,7 +461,7 @@
             <input type="text" name="conf[popup][winWidth]" id="conf[popup][winWidth]" value="{conf[popup][winWidth]}" />
         </p>
     </fieldset>
-    
+
     <fieldset id="translationOptions">
         <h3>{translate(#Translation options#)}</h3>
         <p>
@@ -482,7 +481,7 @@
             {end:}
         </p>
     </fieldset>
-    
+
     <fieldset id="cookieOptions">
         <h3>{translate(#Cookie options#)}</h3>
         <p>
@@ -504,7 +503,7 @@
             {generateRadioPair(#conf[cookie][secure]#,conf[cookie][secure]):h}
         </p>
     </fieldset>
-    
+
     <fieldset id="censorship">
         <h3>{translate(#Censorship#)}</h3>
         <p>
@@ -522,7 +521,7 @@
             <textarea class="longText" name="conf[censor][badWords]" id="conf[censor][badWords]">{conf[censor][badWords]}</textarea>
         </p>
     </fieldset>
-    
+
     <fieldset id="p3pPrivacyPolicy">
         <h3>{translate(#P3P privacy policy#)}</h3>
         <p>

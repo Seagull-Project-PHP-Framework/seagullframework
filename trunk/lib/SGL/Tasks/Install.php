@@ -447,13 +447,13 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 $langID = str_replace('-', '_', $aLang);
                 $encoding       = substr($aLang, strpos('-', $aLang));
                 $langData       = array(
-                                    'lang_id' => $langID,
-                                    'table_name' => $this->conf['table']['translation'] .'_'. $langID,
-                                    'meta' => '',
-                                    'name' => $aLangOptions[$aLang],
-                                    'error_text' => 'not available',
-                                    'encoding' => $encoding
-                                    );
+                    'lang_id' => $langID,
+                    'table_name' => $this->conf['table']['translation'] .'_'. $langID,
+                    'meta' => '',
+                    'name' => $aLangOptions[$aLang],
+                    'error_text' => 'not available',
+                    'encoding' => $encoding
+                     );
                 $result = $translation->addLang($langData);
 
                 //  interate through modules

@@ -43,8 +43,6 @@ define('SGL_CENSOR_EXACT_MATCH',    1);
 define('SGL_CENSOR_WORD_BEGINNING', 2);
 define('SGL_CENSOR_WORD_FRAGMENT',  3);
 
-#require_once dirname(__FILE__)  . '/Translation.php';
-
 /**
  * Various string helper methods.
  *
@@ -241,7 +239,7 @@ class SGL_String
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
-     * @param boolen $array     is string an array
+     * @param boolen $array     is string or array
      * @return string
      *
      * @todo get rid of 3rd arg

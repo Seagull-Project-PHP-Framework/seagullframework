@@ -511,5 +511,14 @@ class SGL_Output
     {
         return SGL_CLIENT_OS == 'Win';
     }
+
+    /**
+     * Returns true if a and b are equal.
+     *
+     */
+    function isEqual($a, $b)
+    {
+        return $a == $b;
+    }
 }
 ?>

@@ -40,18 +40,15 @@
 // $Id: PageMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
-require_once SGL_CORE_DIR . '/Translation.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
-require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
+require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/ModuleMgr.php';
 
 /**
  * To administer sections.
  *
  * @package navigation
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.60 $
- * @since   PHP 4.1
  */
 class PageMgr extends SGL_Manager
 {
@@ -65,8 +62,6 @@ class PageMgr extends SGL_Manager
         $this->pageTitle        = 'Page Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
-        #$this->da               = & DA_User::singleton();
-        $this->trans            = & SGL_Translation::singleton('admin');
 
         $dataAccess = & DA_User::singleton();
         $dataAccessDefault = & DA_Default::singleton();
@@ -157,10 +152,11 @@ class PageMgr extends SGL_Manager
             }
             //  ensure correct translation is being sent to output
             if ($input->action == 'update' && $refreshScreen == true) {
-                $input->section['title'] = $this->trans->get($input->section['section_id'], 'nav', $input->navLang);
+                $input->section['title'] = $this->trans->get($input->section['section_id'],
+                    'nav', $input->navLang);
             }
 
-            //  zero is a valid property, refers to public group
+            //  zero is a valid property, refers to public role
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
             }
@@ -239,14 +235,16 @@ class PageMgr extends SGL_Manager
         }
         $output->uriExternalSelected = '';
 
-        $output->availableLangs = $this->trans->getLangs();
+        if ($this->conf['translation']['container'] == 'db') {
+            $output->availableLangs = $this->trans->getLangs();
 
-        $navLang = (isset($output->navLang) && !empty($output->navLang))
-            ? $output->navLang
-            : SGL_Translation::getLangID();
+            $navLang = (isset($output->navLang) && !empty($output->navLang))
+                ? $output->navLang
+                : SGL_Translation::getLangID();
 
-        $output->navLang = $navLang;
-        $output->fullNavLang = $output->availableLangs[$navLang];
+            $output->navLang = $navLang;
+            $output->fullNavLang = $output->availableLangs[$navLang];
+        }
 
         switch ($output->articleType) {
         case 'static':
@@ -655,8 +653,11 @@ class PageMgr extends SGL_Manager
             //  and therefore error, so test first to make sure they're still around
             foreach ($input->aDelete as $index => $sectionId) {
                 if ($section = $nestedSet->getNode($sectionId)){
+
                     //  remove translations
-                    $this->trans->remove($section['trans_id'], 'nav');
+                    if ($this->conf['translation']['container'] == 'db') {
+                        $this->trans->remove($section['trans_id'], 'nav');
+                    }
 
                     //  remove page
                     $nestedSet->deleteNode($sectionId);

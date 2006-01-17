@@ -456,7 +456,6 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
             $language = 'english-iso-8859-15';
             $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
         }
-
         //  fetch default translation
         $langID = str_replace('-', '_', $lang);
         $defaultWords = SGL_Translation::getTranslations('default', $langID);
@@ -469,7 +468,6 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         if ($moduleName != 'default') {
             $words = SGL_Translation::getTranslations($moduleName, $langID);
         }
-
         //  if current module is not the default module
         if (isset($words)) {
             $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
@@ -478,7 +476,6 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         } else {
             $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
         }
-
         //  extract charset from current language string
         $aTmp = split('-', $language);
         array_shift($aTmp);
