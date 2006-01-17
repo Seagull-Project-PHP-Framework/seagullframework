@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
-require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 
 /**
@@ -204,7 +203,12 @@ class TestNav
         $this->querystring = $this->req->getUri();
         $this->_staticId   = $this->req->get('staticId');
         $this->da          = &DA_Default::singleton();
-        $this->trans       = &SGL_Translation::singleton();
+
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            require_once SGL_CORE_DIR . '/Translation.php';
+            $this->trans = & SGL_Translation::singleton();
+        }
 
         // set default driver params
         $this->setParams();
@@ -229,11 +233,11 @@ class TestNav
         foreach ($this->conf['navigation'] as $key => $value) {
             $this->{'_' . $key} = $value;
         }
-        
+
         //  set driver params from aParams
         foreach ($aParams as $key => $value) {
             $this->{'_' . $key} = $value;
-        }    
+        }
     }
 
     /**

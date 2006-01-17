@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
-require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR . '/block/classes/BlockForm.php';
 require_once SGL_MOD_DIR . '/block/classes/BlockFormDynamic.php';
 require_once SGL_MOD_DIR . '/block/classes/Block.php';
@@ -58,7 +57,6 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        $this->trans = & SGL_Translation::singleton();
 
         include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;

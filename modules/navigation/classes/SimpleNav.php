@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
-require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 
 /**
@@ -147,7 +146,12 @@ class SimpleNav
         $c              = &SGL_Config::singleton();
         $this->conf     = $c->getAll();
         $this->da       = & DA_Default::singleton();
-        $this->trans    = &SGL_Translation::singleton();
+
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            require_once SGL_CORE_DIR . '/Translation.php';
+            $this->trans = & SGL_Translation::singleton();
+        }
 
         if (is_null($input->get('navLang'))) {
             $input->set('navLang', SGL_Translation::getLangID());

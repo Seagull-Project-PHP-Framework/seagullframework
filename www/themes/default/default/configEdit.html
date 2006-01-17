@@ -7,7 +7,6 @@
 
 <form name="conf" method="post" flexy:ignore>
 <input type="hidden" name="action" value="update" />
-<input type="hidden" name="conf[db][bootstrap]" value="0" />
 <table class="narrow">
     <tr>
         <th colspan="3">{translate(#General Site Options#)}</th>
@@ -859,6 +858,7 @@
             </select>
         </td>
     </tr>
+    {if:isEqual(conf[translation][container],#db#)}
     <tr>
         <td class="fieldName">{translate(#Fallback Language#)}</td>
         <td class="fieldValue">
@@ -871,6 +871,7 @@
         {end:}
         </td>
     </tr>
+    {end:}
     <tr>
         <td colspan="3" align="center">&nbsp;</td>
     </tr>

@@ -39,7 +39,6 @@
 // $Id: ArticleMgr.php,v 1.52 2005/05/23 23:29:12 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
-require_once SGL_CORE_DIR . '/Translation.php';
 require_once SGL_MOD_DIR  . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR  . '/navigation/classes/MenuBuilder.php';
 
@@ -60,7 +59,6 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->trans = &SGL_Translation::singleton();
         $this->pageTitle = 'Article Manager';
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -269,15 +267,21 @@ class ArticleMgr extends SGL_Manager
             SGL_Output::showDateSelector($aExpiryDate,'frmExpiryDate');
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
-        $installedLanguages = $this->trans->getLangs();
 
-        $output->availableLangs = $installedLanguages;
-        $output->articleLang = (!empty($input->articleLang))
-            ? $input->articleLang
-            : $this->conf['translation']['fallbackLang'];
+        //  translation support if enabled
+        if ($this->conf['translation']['container'] == 'db') {
+            $installedLanguages = $this->trans->getLangs();
+
+            $output->availableLangs = $installedLanguages;
+            $output->articleLang = (!empty($input->articleLang))
+                ? $input->articleLang
+                : $this->conf['translation']['fallbackLang'];
+        }
 
         //  get dynamic content
-        $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
+        $fieldReturnType = ($this->conf['site']['adminGuiEnabled'])
+            ? SGL_RET_ARRAY
+            : SGL_RET_STRING;
         $output->dynaContent = (isset($input->articleLang))
             ? $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang)
             : $item->getDynamicContent($input->articleID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
@@ -526,13 +530,16 @@ class ArticleMgr extends SGL_Manager
 
         //  fetch title translation
         $fallbackLang = $this->conf['translation']['fallbackLang'];
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
+        foreach ($aPagedData['data'] as $k => $aValues) {
             if ($aValues['trans_id']) {
-                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) { //  get translation by language set in users' preference
-                    $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
-                } else {    //  get first available translation any installed language
+
+                //  get translation by language set in users preference
+                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) {
+                    $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
+                } else {
+                    //  get first available translation any installed language
                     if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {
-                        $aPagedData['data'][$aKey]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
+                        $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
                     }
                 }
             }
