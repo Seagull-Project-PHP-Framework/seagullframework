@@ -216,37 +216,24 @@ class TestNav
             SGL_Translation::getTranslations('nav', $input->get('navLang'));
     }
 
+    /**
+     * Set navigation driver parameters.
+     *
+     * @access  public
+     * @param   array $aParams
+     */
     function setParams($aParams = array())
     {
-        //set driver params
-        $this->_startParentNode = array_key_exists('startParentNode', $aParams)
-            ? $aParams['startParentNode']
-//            : $this->conf['navigation']['startParentNode'];
-            : $this->_startParentNode;
 
-        $this->_startLevel = array_key_exists('startLevel', $aParams)
-            ? $aParams['startLevel']
-//            : $this->conf['navigation']['startLevel'];
-            : $this->_startLevel;
-
-        $this->_levelsToRender = array_key_exists('levelsToRender', $aParams)
-            ? $aParams['levelsToRender']
-//            : $this->conf['navigation']['levelsToRender'];
-            : $this->_levelsToRender;
-
-        $this->_collapsed = array_key_exists('collapsed', $aParams)
-            ? $aParams['collapsed']
-//            : $this->conf['navigation']['collapsed'];
-            : $this->_collapsed;
-
-        $this->_showAlways = array_key_exists('showAlways', $aParams)
-            ? $aParams['showAlways']
-//            : $this->conf['navigation']['showAlways'];
-            : $this->_showAlways;
-
-        $this->_breadcrumbs = array_key_exists('breadcrumbs', $aParams)
-            ? $aParams['breadcrumbs']
-            : $this->_breadcrumbs;
+        //  set driver params from configuration
+        foreach ($this->conf['navigation'] as $key => $value) {
+            $this->{'_' . $key} = $value;
+        }
+        
+        //  set driver params from aParams
+        foreach ($aParams as $key => $value) {
+            $this->{'_' . $key} = $value;
+        }    
     }
 
     /**
@@ -307,7 +294,7 @@ class TestNav
 
                     if ($position >= $sectionIdPosition) {
                         $newParentNode = $this->_aAllCurrentPages[$aPositions[$position]];
-                        $aSectionNodes = $this->getSectionsByRoleId($newParentNode->section_id);
+                        $aSectionNodes = $newParentNode->children;
                     } else {
                         $aSectionNodes = false;
                     }
@@ -430,7 +417,7 @@ class TestNav
             if ($section->children) {
                 foreach ($section->children as $node) {
                     if ($node->isCurrent || $node->childIsCurrent) {
-                        $section->childIsCurrent   = true;
+                        $section->childIsCurrent = true;
                         $this->_aAllCurrentPages[$section->section_id] = $section;
                         break;
                     }
@@ -473,7 +460,7 @@ class TestNav
                 // if children node is current mark parent node
                 foreach ($section->children as $section2) {
                     if ($section2->isCurrent || $section2->childIsCurrent) {
-                        $section->childIsCurrent   = true;
+                        $section->childIsCurrent = true;
                         $this->_aAllCurrentPages[$section->section_id] = $section;
                         break;
                     }
@@ -697,8 +684,8 @@ class TestNav
             $sectionId  = $this->_currentSectionId;
 
             // is current section a homepage
+            $pathNode        = new stdClass();
             if ($this->_homePage->section_id == $this->_currentSectionId) {
-                $pathNode        = new stdClass();
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = false;
                 $aBreadcrumbs[]  = $pathNode;
@@ -706,7 +693,6 @@ class TestNav
                 $position   = array_search($sectionId, $aPositions);
 
                 //  first node in pathway is home page
-                $pathNode        = new stdClass();
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = $this->_makeLinkFromNode($this->_homePage);
                 $aBreadcrumbs[]  = $pathNode;
@@ -714,14 +700,15 @@ class TestNav
                 for ($i = $count-1; ($i >= $position); $i--) {
                     $node = $this->_aAllCurrentPages[$aPositions[$i]];
                     if ($this->_homePage->section_id != $node->section_id) {
-                        $link = ($i == $position) ? false : $this->_makeLinkFromNode($node);
                         $pathNode        = new stdClass();
                         $pathNode->title = $node->title;
-                        $pathNode->link  = $link;
+                        $pathNode->link  = ($i == $position || !$node->is_enabled)
+                            ? false : $this->_makeLinkFromNode($node);
                         $aBreadcrumbs[]  = $pathNode;
                     }
                 }
             }
+            $aBreadcrumbs[(count($aBreadcrumbs)-1)]->end = true;
         }
         return $aBreadcrumbs;
     }
