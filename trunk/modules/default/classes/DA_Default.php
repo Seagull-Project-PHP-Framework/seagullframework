@@ -193,4 +193,22 @@ class DA_Default
            ";
         return $this->dbh->getOne($query);
     }
+
+    //  modules
+    /**
+     * Returns true if module record exists in db.
+     *
+     * @return boolean
+     */
+    function moduleIsRegistered($moduleName)
+    {
+        $query = "
+            SELECT  module_id
+            FROM    {$this->conf['table']['module']}
+            WHERE   name = '$moduleName'";
+
+        $exists = $this->dbh->getOne($query);
+
+        return ! is_null($exists);
+    }
 }

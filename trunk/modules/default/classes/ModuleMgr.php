@@ -326,24 +326,5 @@ class ModuleMgr extends SGL_Manager
         $moduleId = $dbh->getOne($query);
         return $moduleId;
     }
-
-    /**
-     * Returns true if module record exists in db.
-     *
-     * @return boolean
-     */
-    function moduleIsRegistered($moduleName)
-    {
-
-        $dbh = & SGL_DB::singleton();
-        $query = "
-            SELECT  module_id
-            FROM    {$this->conf['table']['module']}
-            WHERE   name = '$moduleName'";
-
-        $exists = $dbh->getOne($query);
-
-        return ! is_null($exists);
-    }
 }
 ?>

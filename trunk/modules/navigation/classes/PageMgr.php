@@ -251,7 +251,7 @@ class PageMgr extends SGL_Manager
             $output->staticSelected = 'selected';
 
             //  build static article list
-            if (ModuleMgr::moduleIsRegistered('publisher')) {
+            if ($this->da->moduleIsRegistered('publisher')) {
                 $articles = $this->_getStaticArticles();
                 foreach ($articles as $key => $value) {
                 	if (is_numeric($value)){
@@ -480,7 +480,7 @@ class PageMgr extends SGL_Manager
                     $section['add_params'] = null;
                 }
                 //  deal with static articles
-                if ($section['is_static'] && ModuleMgr::moduleIsRegistered('publisher')) {
+                if ($section['is_static'] && $this->da->moduleIsRegistered('publisher')) {
                     if (isset($parsed['parsed_params'])) {
                         $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
                     }

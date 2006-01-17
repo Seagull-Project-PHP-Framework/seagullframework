@@ -97,7 +97,8 @@ class ProfileMgr extends SGL_Manager
             return SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
         }
         //  total articles
-        if (ModuleMgr::moduleIsRegistered('publisher')) {
+        $da = & DA_Default::singleton();
+        if ($da->moduleIsRegistered('publisher')) {
             $items = DB_DataObject::factory($this->conf['table']['item']);
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();
