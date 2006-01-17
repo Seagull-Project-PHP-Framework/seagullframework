@@ -68,7 +68,7 @@ class Navigation
                 'levelsToRender'  => 0,
                 'collapsed'       => 0,
                 'showAlways'      => 0,
-                'pathway'         => 0,
+                'breadcrumbs'     => 0,
         );
 
         //  set new navigation driver params

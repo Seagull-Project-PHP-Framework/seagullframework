@@ -282,7 +282,7 @@ class TestNav
             }
 
             //  if showAlways is true or current section is defined should be rendered to HTML
-            if (!empty($aSectionNodes) && ($this->_showAlways || ($sectionId))) {
+            if (!empty($aSectionNodes) && ($this->_showAlways || $sectionId)) {
 
                 //  if start level > 0 lookup new start parent node
                 if ($this->_startLevel > 0) {
@@ -292,7 +292,7 @@ class TestNav
                     $aPositions        = array_keys($this->_aAllCurrentPages);
                     $sectionIdPosition = array_search($sectionId, $aPositions);
 
-                    if ($position >= $sectionIdPosition) {
+                    if ($position >= $sectionIdPosition && $sectionId) {
                         $newParentNode = $this->_aAllCurrentPages[$aPositions[$position]];
                         $aSectionNodes = $newParentNode->children;
                     } else {
@@ -684,7 +684,7 @@ class TestNav
             $sectionId  = $this->_currentSectionId;
 
             // is current section a homepage
-            $pathNode        = new stdClass();
+            $pathNode = new stdClass();
             if ($this->_homePage->section_id == $this->_currentSectionId) {
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = false;
