@@ -44,7 +44,7 @@
  * @version $Revision: 0.1 $
  * @since   PHP 4.4.1
  */
-class BreadCrumbs
+class Breadcrumbs
 {
     var $template     = 'Breadcrumbs.html';
     var $templatePath = 'block/blocks';
@@ -74,7 +74,7 @@ class BreadCrumbs
                 'levelsToRender'  => 1,
                 'collapsed'       => 1,
                 'showAlways'      => 0,
-                'pathway'         => 1,
+                'breadcrumbs'     => 1,
         );
 
         //  set new navigation driver params

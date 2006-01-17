@@ -2,9 +2,11 @@
 {foreach:breadcrumbs,valueObj}
     {if:valueObj.link}
         <a href="{valueObj.link:h}" class="breadcrumbs">{valueObj.title}</a>
-        <img src="{webRoot}/themes/{theme}/images/bullet.gif" alt="">
     {else:}
         {valueObj.title}
+    {end:}
+    {if:!valueObj.end}
+        <img src="{webRoot}/themes/{theme}/images/bullet.gif" alt="">
     {end:}
 {end:}
 </span>
