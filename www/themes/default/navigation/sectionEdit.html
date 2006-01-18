@@ -61,6 +61,8 @@ function toggleAliasElements(myCheckbox)
                 <td>{section[section_id]}</td>
             </tr>
         {end:}
+
+        {if:isEqual(conf[translation][container],#db#)}
         <tr>
             <th align="left">{translate(#Language#)}</th>
 
@@ -74,6 +76,7 @@ function toggleAliasElements(myCheckbox)
             </td>
             {end:}
         </tr>
+        {end:}
 
         <tr>
             <th align="left">{translate(#Page Title#)} - {fullNavLang}:</th>
