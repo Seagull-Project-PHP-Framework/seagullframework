@@ -38,8 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: Translation.php,v 1.0 2005/05/11 00:00:00 demian Exp $
 
-require_once 'Translation2.php';
-
 /**
  * A wrapper to PEAR Translation2.
  *
@@ -118,6 +116,7 @@ class SGL_Translation
 
         case 'translation':
         default:
+            require_once 'Translation2.php';
             $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }
         return $oTranslation;

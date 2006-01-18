@@ -396,12 +396,14 @@ class TestNav
             }
 
             //  retreive translation
-            if ($section->trans_id && array_key_exists($section->trans_id, $this->_aTranslations)) {
-                $section->title = $this->_aTranslations[$section->trans_id];
-            } else {
-                $title = $this->trans->get($section->section_id, 'nav', SGL_Translation::getFallbackLangID());
-                if ($title) {
-                    $section->title = $title;
+            if ($this->conf['translation']['container'] == 'db') {
+                if ($section->trans_id && array_key_exists($section->trans_id, $this->_aTranslations)) {
+                    $section->title = $this->_aTranslations[$section->trans_id];
+                } else {
+                    $title = $this->trans->get($section->section_id, 'nav', SGL_Translation::getFallbackLangID());
+                    if ($title) {
+                        $section->title = $title;
+                    }
                 }
             }
 

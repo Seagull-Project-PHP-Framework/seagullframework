@@ -418,7 +418,7 @@ class BlockMgr extends SGL_Manager
             foreach ($aPagedData['data'] as $k => $aValue) {
                 if (isset($pKey) && isset($pBlock)) {
                     if ($pBlock == $aValue['block_id']) {
-                        if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                        if ($aValue['trans_id'] != 0) {
                             $data[$pKey]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                         } else {
                             $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
@@ -427,7 +427,7 @@ class BlockMgr extends SGL_Manager
                         $data[$k] = $aValue;
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
-                            if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                            if ($aValue['trans_id'] != 0) {
                                 $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                             } else {
                                 $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
@@ -444,7 +444,7 @@ class BlockMgr extends SGL_Manager
                     $data[$k] = $aValue;
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
-                        if (is_numeric($aValue['section_title']) && $aValue['section_title'] != 0) {
+                        if ($aValue['trans_id'] != 0) {
                             $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                         } else {
                             $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
