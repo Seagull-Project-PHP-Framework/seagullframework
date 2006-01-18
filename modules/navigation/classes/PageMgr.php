@@ -718,23 +718,27 @@ class PageMgr extends SGL_Manager
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $sectionNodes = $nestedSet->getTree();
-        //  fetch available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
-        //  fetch current languag
-        $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
+        if ($this->conf['translation']['container'] == 'db') {
+            //  fetch available languages
+            $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
-        //  fetch fallback language
-        $fallbackLang = $this->conf['translation']['fallbackLang'];
+            //  fetch current languag
+            $lang = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET'];
 
-        //  fetch translations title
-        $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+            //  fetch fallback language
+            $fallbackLang = $this->conf['translation']['fallbackLang'];
 
-        //  FIXME currently only set translation if numeric
-        foreach ($sectionNodes as $k => $aValues) {
-            if ($aValues['trans_id'] && array_key_exists($aValues['trans_id'], $aTranslations)) {
-                $sectionNodes[$k]['title'] = $aTranslations[$aValues['trans_id']];
+            //  fetch translations title
+            $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+
+            //  FIXME currently only set translation if numeric
+            foreach ($sectionNodes as $k => $aValues) {
+                if ($aValues['trans_id'] && array_key_exists($aValues['trans_id'], $aTranslations)) {
+                    $sectionNodes[$k]['title'] = $aTranslations[$aValues['trans_id']];
+                }
             }
+            $output->fallbackLang = $fallbackLang;
         }
 
         //  remove first element of array which serves as a 'no section' fk
@@ -743,7 +747,6 @@ class PageMgr extends SGL_Manager
         $nestedSet->addImages($sectionNodes);
         $output->results = $sectionNodes;
         $output->sectionArrayJS = $this->_createNodesArrayJS($sectionNodes);
-        $output->fallbackLang = $fallbackLang;
     }
 
     function _generateSectionNodesOptions($sectionNodesArray, $selected = null)

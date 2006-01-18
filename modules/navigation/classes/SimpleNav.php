@@ -147,17 +147,16 @@ class SimpleNav
         $this->conf     = $c->getAll();
         $this->da       = & DA_Default::singleton();
 
+        if (is_null($input->get('navLang'))) {
+            $input->set('navLang', SGL_Translation::getLangID());
+        }
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton();
+            $this->_aTranslations =
+                SGL_Translation::getTranslations('nav', $input->get('navLang'));
         }
-
-        if (is_null($input->get('navLang'))) {
-            $input->set('navLang', SGL_Translation::getLangID());
-        }
-        $this->_aTranslations =
-            SGL_Translation::getTranslations('nav', $input->get('navLang'));
     }
 
     /**
@@ -189,11 +188,6 @@ class SimpleNav
             if (PEAR::isError($aSectionNodes)) {
                 return $aSectionNodes;
             }
-            //  fetch current lang
-            $lang = SGL_Translation::getLangID();
-
-            //  retreive nav translation
-            $this->_aTranslations = SGL_Translation::getTranslations('nav', $lang);
 
             $sectionId = $this->_currentSectionId;
             $html = $this->_toHtml($aSectionNodes);
@@ -486,11 +480,17 @@ class SimpleNav
     {
         if (!$this->_currentSectionId) {
             $sectionName = $this->input->get('pageTitle');
-        } elseif (is_numeric($this->_currentSectionId)) {
+        } elseif ($this->conf['translation']['container'] == 'db') {
             $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getLangID());
             if (!$sectionName) {
                 $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
             }
+        } else {
+            $query = "
+                SELECT  title
+                FROM    {$this->conf['table']['section']}
+                WHERE   section_id = " . $this->_currentSectionId;
+            $sectionName = $this->da->dbh->getOne($query);
         }
         return $sectionName;
     }

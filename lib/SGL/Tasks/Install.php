@@ -65,10 +65,12 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  translation fallback language
         if (array_key_exists('storeTranslationsInDB', $data)
             && $data['storeTranslationsInDB'] == 1) {
-            $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
-            $c->set('translation', array('fallbackLang' => $fallbackLang));
             $c->set('translation', array('container' => 'db'));
+        } else {
+            $c->set('translation', array('container' => 'file'));
         }
+        $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
+        $c->set('translation', array('fallbackLang' => $fallbackLang));
 
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';

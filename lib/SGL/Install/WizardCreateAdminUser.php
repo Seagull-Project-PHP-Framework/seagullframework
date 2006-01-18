@@ -108,15 +108,14 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
 
         //  set lang
-        $installedLanguages =  $_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
+        $aInstalledLanguages =  @$_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
         require_once SGL_DAT_DIR . '/ary.languages.php';
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            if (in_array($id,$installedLanguages)){
-                $aLangData[$id] =  $langName . ' (' . $id . ')';
-            }
+        if (count($aInstalledLanguages)) {
+            $aLangData = SGL_Util::getLangsDescriptionMap($aInstalledLanguages);
+        } else {
+
+            //  provide all file-based translations if no trans db storage options chosen
+            $aLangData = SGL_Util::getLangsDescriptionMap();
         }
         $this->addElement('select', 'siteLanguage', 'Site language:', $aLangData);
 

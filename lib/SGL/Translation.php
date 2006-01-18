@@ -92,16 +92,13 @@ class SGL_Translation
         $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
 
         //  create translation storage tables
-        if ($conf['table']['translation']) {
+        if ($this->conf['translation']['container'] == 'db' && $conf['table']['translation']) {
 
-            //  fetch translation table prefix
             $prefix = $conf['table']['translation'] .'_';
-
-            //  fetch languages
-            $langs = explode(',', $conf['translation']['installedLanguages']);
+            $aLangs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params
-            foreach ($langs as $lang) {
+            foreach ($aLangs as $lang) {
                 $params['strings_tables'][$lang] = $prefix . $lang;
             }
 
@@ -127,11 +124,11 @@ class SGL_Translation
 
 
     /**
-     * Enter description here...
+     * Returns an dictionary of translated strings.
      *
-     * @param unknown_type $module
-     * @param unknown_type $lang
-     * @return unknown
+     * @param string $module
+     * @param string $lang
+     * @return array
      */
     function getGuiTranslationsFromFile($module, $lang)
     {
@@ -172,12 +169,12 @@ class SGL_Translation
 
 
     /**
-     * Enter description here...
+     * Returns a dictionary of translated strings from the db.
      *
-     * @param unknown_type $module
-     * @param unknown_type $lang
-     * @param unknown_type $fallbackLang
-     * @return unknown
+     * @param string $module
+     * @param string $lang
+     * @param string $fallbackLang
+     * @return array
      */
     function getTranslations($module, $lang, $fallbackLang = false)
     {
@@ -206,7 +203,6 @@ class SGL_Translation
                 $translation = & $translation->getDecorator('Lang');
                 $translation->setOption('fallbackLang', $fallbackLang);
             }
-
             //  instantiate cachelite decorator and set options
             if ($conf['cache']['enabled']) {
                 $translation = &$translation->getDecorator('CacheLiteFunction');
@@ -227,9 +223,9 @@ class SGL_Translation
     }
 
     /**
-     * Enter description here...
+     * Returns language ID for currently active lang.
      *
-     * @return unknown
+     * @return string
      */
     function getLangID()
     {
