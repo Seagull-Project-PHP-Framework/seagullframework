@@ -529,17 +529,19 @@ class ArticleMgr extends SGL_Manager
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         //  fetch title translation
-        $fallbackLang = $this->conf['translation']['fallbackLang'];
-        foreach ($aPagedData['data'] as $k => $aValues) {
-            if ($aValues['trans_id']) {
+        if ($this->conf['translation']['container'] == 'db') {
+            $fallbackLang = $this->conf['translation']['fallbackLang'];
+            foreach ($aPagedData['data'] as $k => $aValues) {
+                if ($aValues['trans_id']) {
 
-                //  get translation by language set in users preference
-                if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) {
-                    $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
-                } else {
-                    //  get first available translation any installed language
-                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {
-                        $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
+                    //  get translation by language set in users preference
+                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) {
+                        $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
+                    } else {
+                        //  get first available translation any installed language
+                        if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {
+                            $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
+                        }
                     }
                 }
             }

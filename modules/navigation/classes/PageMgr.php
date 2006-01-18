@@ -71,7 +71,7 @@ class PageMgr extends SGL_Manager
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             require_once SGL_CORE_DIR . '/Translation.php';
-            $this->transAdmin = & SGL_Translation::singleton('admin');
+            $this->trans = & SGL_Translation::singleton('admin');
         }
 
         $this->_aActionsMapping =  array(
@@ -157,7 +157,8 @@ class PageMgr extends SGL_Manager
                 $aErrors[] = 'Please fill in a title';
             }
             //  ensure correct translation is being sent to output
-            if ($input->action == 'update' && $refreshScreen == true) {
+            if ($this->conf['translation']['container'] == 'db'
+                    && $input->action == 'update' && $refreshScreen == true) {
                 $input->section['title'] = $this->trans->get($input->section['section_id'],
                     'nav', $input->navLang);
             }
@@ -259,10 +260,12 @@ class PageMgr extends SGL_Manager
             //  build static article list
             if ($this->da->moduleIsRegistered('publisher')) {
                 $articles = $this->_getStaticArticles();
-                foreach ($articles as $key => $value) {
-                	if (is_numeric($value)){
-                        $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
-                	}
+                if ($this->conf['translation']['container'] == 'db') {
+                    foreach ($articles as $key => $value) {
+                    	if (is_numeric($value)){
+                            $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
+                    	}
+                    }
                 }
                 $output->aStaticArticles = $articles;
             } else {
@@ -389,7 +392,9 @@ class PageMgr extends SGL_Manager
         $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
 
         //  add translations
-        $ok = $this->transAdmin->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
+        if ($this->conf['translation']['container'] == 'db') {
+            $ok = $this->trans->add($sectionNextId, 'nav', array($input->navLang => $input->section['title']));
+        }
 
         //  set translation id for nav title
         $input->section['trans_id'] = $sectionNextId;
@@ -439,7 +444,7 @@ class PageMgr extends SGL_Manager
         $section = $nestedSet->getNode($input->sectionId);
 
         //  if title is numeric retreive translation else populate with current title
-        if ($section['trans_id']) {
+        if ($this->conf['translation']['container'] == 'db') {
             $section['title'] = $this->trans->get($section['trans_id'], 'nav', $input->navLang);
             $section['language'] = $output->availableLangs[$input->navLang];
         } else {
@@ -581,10 +586,12 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  update translations
-        if ($input->section['title'] != $input->section['title_original']) {
-            if ($input->section['trans_id']) {
-                $strings[$input->navLang] = $input->section['title'];
-                $ok = $this->transAdmin->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
+        if ($this->conf['translation']['container'] == 'db') {
+            if ($input->section['title'] != $input->section['title_original']) {
+                if ($input->section['trans_id']) {
+                    $strings[$input->navLang] = $input->section['title'];
+                    $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
+                }
             }
         }
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -662,7 +669,7 @@ class PageMgr extends SGL_Manager
 
                     //  remove translations
                     if ($this->conf['translation']['container'] == 'db') {
-                        $this->transAdmin->remove($section['trans_id'], 'nav');
+                        $this->trans->remove($section['trans_id'], 'nav');
                     }
 
                     //  remove page
@@ -759,7 +766,7 @@ class PageMgr extends SGL_Manager
             foreach ($sectionNodesArray as $k => $sectionNode) {
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
-                if (is_numeric($sectionNode['title'])) {
+                if ($this->conf['translation']['container'] == 'db') {
                     $this->trans->setLang(SGL_Translation::getLangID());
                     $sectionNode['title'] = $this->trans->get($sectionNode['title'], 'nav');
                 }

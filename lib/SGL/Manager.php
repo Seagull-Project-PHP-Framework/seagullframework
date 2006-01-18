@@ -124,10 +124,8 @@ class SGL_Manager
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton();
         }
-        require_once SGL_CORE_DIR . '/Translation.php';
     }
 
     function &_getDb()

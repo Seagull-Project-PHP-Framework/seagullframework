@@ -146,7 +146,6 @@ class SGL_Item
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton('admin');
         }
 
@@ -398,12 +397,13 @@ class SGL_Item
                 }
                 $this->trans->add($itemID[$x], 'content', $strings);
             } else {
+                $editedTxt = $this->dbh->quote($editedTxt);
                 $query = "
                     UPDATE  {$this->conf['table']['item_addition']}
                     SET     addition = $editedTxt
                     WHERE   item_addition_id = $itemID[$x]
                          ";
-                $result = $dbh->query($query);
+                $result = $this->dbh->query($query);
                 unset($query);
             }
             unset($editedTxt);
@@ -431,15 +431,25 @@ class SGL_Item
         $editedTxt = SGL_String::censor(SGL_String::tidy($itemValue));
 
         //  fetch current translation
-        $strings[$language] = $this->trans->get($itemID, 'content', $language);
+        if ($this->conf['translation']['container'] == 'db') {
+            $strings[$language] = $this->trans->get($itemID, 'content', $language);
 
-        //  merge translations
-        if ($editedTxt !== $strings[$language]) {
-            $strings[$language] = $editedTxt;
+            //  merge translations
+            if ($editedTxt !== $strings[$language]) {
+                $strings[$language] = $editedTxt;
+            }
+
+            //  add translations
+            $this->trans->add($itemID, 'content', $strings);
+        } else {
+            $editedTxt = $this->dbh->quote($editedTxt);
+	        $query = "
+ 	                UPDATE  {$this->conf['table']['item_addition']}
+ 	                SET     addition = $editedTxt
+ 	                WHERE   item_addition_id = $itemID
+ 	                ";
+ 	        $result = $this->dbh->query($query);
         }
-
-        //  add translations
-        $this->trans->add($itemID, 'content', $strings);
     }
 
     /**
@@ -474,8 +484,10 @@ class SGL_Item
                 $query = "SELECT * FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
                 $additionTrans = $this->dbh->getAssoc($query);
 
-                foreach ($additionTrans as $key => $values) {
-                    $this->trans->remove($values->trans_id, 'content');
+                if ($this->conf['translation']['container'] == 'db') {
+                    foreach ($additionTrans as $key => $values) {
+                        $this->trans->remove($values->trans_id, 'content');
+                    }
                 }
 
                 $sql = "DELETE FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
@@ -521,9 +533,10 @@ class SGL_Item
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     // set fieldID to tranlsation ID
                     $fieldID = $transID;
-                    $fieldValue = $this->trans->get($transID, 'content', $language);
-                    $aFields[ucfirst($fieldName)] =
-                        $this->generateFormFields(
+                    if ($this->conf['translation']['container'] == 'db') {
+                        $fieldValue = $this->trans->get($transID, 'content', $language);
+                    }
+                    $aFields[ucfirst($fieldName)] = $this->generateFormFields(
                         $fieldID, $fieldName, $fieldValue, $fieldType, $language);
             }
             $res = $aFields;
@@ -540,11 +553,14 @@ class SGL_Item
 
             //  display dynamic form fields (changed default object output to standard array
             $fieldsString = '';
-            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
-                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType) =
+                    $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+
                 // set fieldID to tranlsation ID
                 $fieldID = $transID;
-                $fieldValue = $this->trans->get($transID, 'content', $language);
+                if ($this->conf['translation']['container'] == 'db') {
+                    $fieldValue = $this->trans->get($transID, 'content', $language);
+                }
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) ." ". $languageName ."</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
@@ -724,10 +740,10 @@ class SGL_Item
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['item_type_mapping']} itm
+                FROM    {$this->conf['table']['item']} i,
+                        {$this->conf['table']['item_addition']} ia,
+                        {$this->conf['table']['item_type']} it,
+                        {$this->conf['table']['item_type_mapping']} itm
                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id    /*  match item type */
                 AND     i.item_id = ia.item_id
@@ -740,8 +756,10 @@ class SGL_Item
             if (!DB::isError($result)) {
                 $html = array();
                 while (list($fieldID, $fieldName, $fieldValue, $trans_id)
-                    = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-                    $fieldValue = $this->trans->get($trans_id, 'content', $language);
+                        = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                    if ($this->conf['translation']['container'] == 'db') {
+                        $fieldValue = $this->trans->get($trans_id, 'content', $language);
+                    }
                     $html[$fieldName] = $this->generateItemOutput(
                         $fieldID, $fieldName, $fieldValue, $this->typeID);
                 }
@@ -779,7 +797,9 @@ class SGL_Item
         $result = $this->dbh->query($query);
 
         while (list($fieldID, $fieldName, $fieldValue, $trans_id) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            $fieldValue = $this->trans->get($trans_id, 'content', $this->languageID);
+            if ($this->conf['translation']['container'] == 'db') {
+                $fieldValue = $this->trans->get($trans_id, 'content', $this->languageID);
+            }
             $html[$fieldName] = $fieldValue;
         }
         return $html;
@@ -996,9 +1016,11 @@ class SGL_Item
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
-            $aPagedData['data'][$aKey]['trans_id'] = $this->trans->get($aValues['trans_id'],
-                'content', SGL_Translation::getLangID());
+        if ($this->conf['translation']['container'] == 'db') {
+            foreach ($aPagedData['data'] as $k => $aValues) {
+                $aPagedData['data'][$k]['trans_id'] = $this->trans->get($aValues['trans_id'],
+                    'content', SGL_Translation::getLangID());
+            }
         }
         return $aPagedData;
     }
