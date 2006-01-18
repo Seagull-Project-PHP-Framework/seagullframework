@@ -15,7 +15,7 @@ BUGFIXES
 
 IMPROVEMENTS
 18-01-06    Test runner now uses pearified SimpleTest and notices are suppressed
-            for now, see
+            for now, see http://trac.seagullproject.org/wiki/Standards/UnitTesting
 17-01-06    Integrated Serendipity blog, see
             http://trac.seagullproject.org/wiki/Integration/Serendipity
 17-01-06    Added new 'getAllModules' xml-rpc service
