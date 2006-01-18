@@ -339,6 +339,7 @@ class SGL_Util
      */
     function getLangsDescriptionMap($aSelected = array())
     {
+        require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         $aLangs = array();
