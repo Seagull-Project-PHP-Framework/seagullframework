@@ -23,7 +23,7 @@ function selchkAll(chk, i) {
 -->
 </script>
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <span flexy:if="msgGet()">{msgGet()}</span> 
+    <span flexy:if="msgGet()">{msgGet()}</span>
     {if:pager}<flexy:include src="pager.html" />{end:}
 
 <form action="" method="post" name="truncateLoginTbl" flexy:ignore id="truncateLoginTbl">
@@ -41,7 +41,7 @@ function selchkAll(chk, i) {
         </tr>
         <tr>
             <td valign="top" align="left" colspan="3">
-                {translate(#With selected permission(s)#)}:
+                {translate(#With selected record(s)#)}:
                 <input class="wideButton" type="submit" name="truncateLoginTbl" value="{translate(#delete#)}" onclick="return confirm('{translate(#Are you sure?#)}')" />
        		<input class="wideButton" type="button" value="{translate(#Cancel#)}" onclick="javascript:document.location.href='{makeUrl(##,##,#user#)}'" />
             </td>
