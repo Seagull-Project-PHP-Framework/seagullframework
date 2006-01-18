@@ -401,9 +401,6 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
             require_once SGL_CORE_DIR .'/Translation.php';
 
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-
             $this->setup();
 
             $statusText .= 'loading languages';
@@ -413,13 +410,15 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             require_once 'Translation2/Admin.php';
 
             //  fetch available languages
-            $aLangOptions = SGL_Translation::getAllInstallableLanguages();
+            $aLangOptions = SGL_Util::getLangsDescriptionMap();
             $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
 
             //  add languaged to inifile container
             $this->installedLanguages = $data['installLangs'];
 
-            $c->set('translation', array('installedLanguages' => implode(',', str_replace('-', '_', $data['installLangs']))));
+            $c = &SGL_Config::singleton();
+            $c->set('translation', array('installedLanguages' => implode(',',
+                str_replace('-', '_', $data['installLangs']))));
 
             $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
             $ok = $c->save($configFile);
@@ -458,7 +457,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                      );
                 $result = $translation->addLang($langData);
 
-                //  interate through modules
+                //  iterate through modules
                 $aModuleList = (isset($data['installAllModules']))
                     ? SGL_Install::getModuleList()
                     : $this->getMinimumModuleList();
@@ -478,18 +477,19 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
                         //  add current translation to db
                         if (count($words)) {
-                            foreach ($words as $tKey => $tValue) {
-                                if (is_array($tValue) && $tKey) { // if an array
+                            foreach ($words as $tk => $tValue) {
+                                if (is_array($tValue) && $tk) { // if an array
+
                                     //  create key|value|| string
                                     $value = '';
-                                    foreach ($tValue as $aKey => $aValue) {
-                                        $value .= $aKey . '|' . $aValue .'||';
+                                    foreach ($tValue as $k => $aValue) {
+                                        $value .= $k . '|' . $aValue .'||';
                                     }
                                     $string = array($langID => $value);
                                     $result = $translation->add($tKey, $module, $string);
-                                } elseif ($tKey && $tValue) {
+                                } elseif ($tk && $tValue) {
                                     $string = array($langID => $tValue);
-                                    $result =  $translation->add($tKey, $module, $string);
+                                    $result =  $translation->add($tk, $module, $string);
                                 }
                             }
                             unset($words);

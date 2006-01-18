@@ -60,6 +60,7 @@ class SGL_Translation
      *  o single - all translations in a single table (translations)
      *  o multiple (default) - all translations in a seperate table (translation_en, translation_pl, translation_de)
      *
+     * @static
      * @access  public
      * @param	string	$lang			language to return translations
      * @param	string	$type			type of object: translation or admin
@@ -126,6 +127,7 @@ class SGL_Translation
     /**
      * Returns an dictionary of translated strings.
      *
+     * @static
      * @param string $module
      * @param string $lang
      * @return array
@@ -171,6 +173,7 @@ class SGL_Translation
     /**
      * Returns a dictionary of translated strings from the db.
      *
+     * @static
      * @param string $module
      * @param string $lang
      * @param string $fallbackLang
@@ -225,6 +228,7 @@ class SGL_Translation
     /**
      * Returns language ID for currently active lang.
      *
+     * @static
      * @return string
      */
     function getLangID()
@@ -239,35 +243,16 @@ class SGL_Translation
     }
 
     /**
-     * Enter description here...
+     * Returns default lang as set in installer.
      *
-     * @return unknown
+     * @static
+     * @return string
      */
     function getFallbackLangID()
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         return $conf['translation']['fallbackLang'];
-    }
-
-    /**
-     * Enter description here...
-     *
-     * @return unknown
-     */
-    function getAllInstallableLanguages()
-    {
-        //  fetch available languages
-        require_once SGL_DAT_DIR . '/ary.languages.php';
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-
-        //  sort and return
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $langName .' ('. $id .')';
-        }
-        return $aLangOptions;
     }
 }
 ?>
