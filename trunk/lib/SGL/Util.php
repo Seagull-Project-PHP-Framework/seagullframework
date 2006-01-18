@@ -337,14 +337,18 @@ class SGL_Util
      *
      * @return array
      */
-    function getLangsDescriptionMap()
+    function getLangsDescriptionMap($aSelected = array())
     {
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         $aLangs = array();
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangs[$id] =  $langName . ' (' . $id . ')';
+            if (count($aSelected) && in_array($id, $aSelected)) {
+                $aLangs[$id] =  $langName . ' (' . $id . ')';
+            } else {
+                $aLangs[$id] =  $langName . ' (' . $id . ')';
+            }
         }
         return $aLangs;
     }

@@ -246,15 +246,20 @@ class SGL_String
      */
     function translate($key, $filter = false, $isArray = false)
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
-            if ($isArray) {
-                $queryString = $trans[$key];
-                $pieces = explode('||', $queryString);
-                foreach ($pieces as $values) {
+
+            if ($isArray && $this->conf['translation']['container'] == 'db') {
+                $delimitedTrans = $trans[$key];
+                $aPieces = explode('||', $delimitedTrans);
+                foreach ($aPieces as $values) {
                     if (!empty($values)) {
-                        list($aKey, $aValue) = explode('|', $values);
-                        $ret[$aKey] = $aValue;
+                        list($k, $value) = explode('|', $values);
+                        $ret[$k] = $value;
                     }
                 }
             } else {
@@ -266,22 +271,19 @@ class SGL_String
             }
             return $ret;
         } else {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-
             //  add translation
-            if (!$isArray) {
-
-                //  get a reference to the request object
-                $req = & SGL_Request::singleton();
-                $moduleName = $req->get('moduleName');
-
-                //  fetch fallback lang
-                $fallbackLang = $conf['translation']['fallbackLang'];
-
-                $trans = &SGL_Translation::singleton('admin');
-                $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
-            }
+//            if (!$isArray) {
+//
+//                //  get a reference to the request object
+//                $req = & SGL_Request::singleton();
+//                $moduleName = $req->get('moduleName');
+//
+//                //  fetch fallback lang
+//                $fallbackLang = $conf['translation']['fallbackLang'];
+//
+//                $trans = &SGL_Translation::singleton('admin');
+//                $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+//            }
 
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
 

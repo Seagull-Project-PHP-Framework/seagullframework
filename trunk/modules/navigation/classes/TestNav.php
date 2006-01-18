@@ -204,20 +204,18 @@ class TestNav
         $this->_staticId   = $this->req->get('staticId');
         $this->da          = &DA_Default::singleton();
 
+        if (is_null($input->get('navLang'))) {
+            $input->set('navLang', SGL_Translation::getLangID());
+        }
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton();
+            $this->_aTranslations =
+                SGL_Translation::getTranslations('nav', $input->get('navLang'));
         }
-
         // set default driver params
         $this->setParams();
-
-        if (is_null($input->get('navLang'))) {
-            $input->set('navLang', SGL_Translation::getLangID());
-        }
-        $this->_aTranslations =
-            SGL_Translation::getTranslations('nav', $input->get('navLang'));
     }
 
     /**
@@ -309,7 +307,9 @@ class TestNav
             }
 
             //  cache stuff
-            $aNav = array('sectionId' => $sectionId, 'html' => $html, 'breadcrumbs' => $breadcrumbs);
+            $aNav = array(  'sectionId' => $sectionId,
+                            'html' => $html,
+                            'breadcrumbs' => $breadcrumbs);
             $cache->save(serialize($aNav), $cacheId, 'nav');
 
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
@@ -604,14 +604,17 @@ class TestNav
     {
         if (!$this->_currentSectionId) {
             $sectionName = $this->input->get('pageTitle');
-        } elseif (is_numeric($this->_currentSectionId)) {
+        } elseif ($this->conf['translation']['container'] == 'db') {
             $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getLangID());
             if (!$sectionName) {
                 $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
-                if (!$sectionName) {
-                    $sectionName = $this->da->getSectionNameById($this->_currentSectionId);
-                }
             }
+        } else {
+            $query = "
+                SELECT  title
+                FROM    {$this->conf['table']['section']}
+                WHERE   section_id = " . $this->_currentSectionId;
+            $sectionName = $this->da->dbh->getOne($query);
         }
         return $sectionName;
     }
