@@ -157,7 +157,7 @@ class TestNav
      * @access  private
      * @var     integer
      */
-    var $_levelsToRender  = 0;
+    var $_levelsToRender = 0;
 
     /**
      * Set navigation menu  as not collapsed by default.
@@ -609,12 +609,13 @@ class TestNav
             if (!$sectionName) {
                 $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
             }
-        } else {
-            $query = "
-                SELECT  title
-                FROM    {$this->conf['table']['section']}
-                WHERE   section_id = " . $this->_currentSectionId;
-            $sectionName = $this->da->dbh->getOne($query);
+            if (!$sectionName) {
+                $query = "
+                    SELECT  title
+                    FROM    {$this->conf['table']['section']}
+                    WHERE   section_id = " . $this->_currentSectionId;
+                $sectionName = $this->da->dbh->getOne($query);
+            }
         }
         return $sectionName;
     }
@@ -688,7 +689,7 @@ class TestNav
         $aBreadcrumbs = array();
 
         if ($count) {
-            $sectionId  = $this->_currentSectionId;
+            $sectionId = $this->_currentSectionId;
 
             // is current section a homepage
             $pathNode = new stdClass();
@@ -697,7 +698,7 @@ class TestNav
                 $pathNode->link  = false;
                 $aBreadcrumbs[]  = $pathNode;
             } else {
-                $position   = array_search($sectionId, $aPositions);
+                $position = array_search($sectionId, $aPositions);
 
                 //  first node in pathway is home page
                 $pathNode->title = $this->_homePage->title;
