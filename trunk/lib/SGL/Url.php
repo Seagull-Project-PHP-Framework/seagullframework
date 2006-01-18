@@ -458,15 +458,16 @@ class SGL_URL
      */
     function resolveServerVars($conf = null)
     {
+        return;
         //  it's apache
         if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
 
             //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
             if (strpos(php_sapi_name(), 'cgi') !== false) {
 
-                if (!file_exists(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+                #if (!file_exists(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
                     $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
-                }
+                #}
 
             //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
             } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF'])
