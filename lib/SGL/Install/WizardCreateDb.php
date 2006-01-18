@@ -128,10 +128,11 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         $this->addElement('header', null, 'Translation Setup');
         //  store translation in db
-        $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?', 'Yes');
+        $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
+            'Yes (Select this for multi-lingual content)');
 
         //  load available languages
-        $this->addElement('select', 'installLangs', 'Install Language(s): ',
+        $this->addElement('select', 'installLangs', 'If yes, which language(s): ',
             SGL_Util::getLangsDescriptionMap(), 'multiple="multitple"');
 
         //  test db creation

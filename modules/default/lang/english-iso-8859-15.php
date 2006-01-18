@@ -390,4 +390,5 @@ $defaultWords['Locale category'] = 'Locale category';
 $defaultWords['Paths'] = 'Paths';
 $defaultWords['Install Root'] = 'Install Root';
 $defaultWords['Web Root'] = 'Web Root';
+$defaultWords['With selected record(s)']='With selected record(s)';
 ?>
