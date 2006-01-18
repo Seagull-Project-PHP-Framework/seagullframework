@@ -463,7 +463,10 @@ class SGL_URL
 
             //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
             if (strpos(php_sapi_name(), 'cgi') !== false) {
-                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+
+                if (!file_exists(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+                    $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+                }
 
             //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
             } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF'])
