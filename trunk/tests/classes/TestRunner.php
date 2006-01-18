@@ -41,10 +41,12 @@
 
 require_once STR_PATH . '/tests/classes/FileScanner.php';
 require_once STR_PATH . '/tests/classes/TestEnv.php';
-require_once 'simpletest/unit_tester.php';
-require_once 'simpletest/mock_objects.php';
-require_once 'simpletest/reporter.php';
-require_once 'simpletest/web_tester.php';
+require_once 'Pearified/Testing/SimpleTest/unit_tester.php';
+require_once 'Pearified/Testing/SimpleTest/mock_objects.php';
+require_once 'Pearified/Testing/SimpleTest/reporter.php';
+require_once 'Pearified/Testing/SimpleTest/web_tester.php';
+
+error_reporting(E_ALL ^ E_NOTICE);
 
 /**
  * A class for running tests.
@@ -61,12 +63,12 @@ class STR_TestRunner
     {
         $type = $GLOBALS['_STR']['test_type'];
         foreach ($GLOBALS['_STR'][$type . '_layers'] as $layer => $data) {
-            
+
             // Run each layer test in turn
             STR_TestRunner::runLayer($layer);
         }
     }
-    
+
     /**
      * A method to run all tests in a layer.
      *
@@ -75,13 +77,13 @@ class STR_TestRunner
     function runLayer($layer)
     {
         $type = $GLOBALS['_STR']['test_type'];
-        
+
         // Set up the environment for the test
         STR_TestEnv::setup($layer);
-        
+
         // Find all the tests in the layer
         $tests = STR_FileScanner::getLayerTestFiles($type, $layer);
-        
+
         // Add the test files to a SimpleTest group
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] .' Tests';
@@ -95,11 +97,11 @@ class STR_TestRunner
             }
         }
         $test->run(new HtmlReporter());
-        
+
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
     }
-    
+
     /**
      * A method to all tests in a layer/folder.
      *
@@ -109,17 +111,17 @@ class STR_TestRunner
     function runFolder($layer, $folder)
     {
         $type = $GLOBALS['_STR']['test_type'];
-        
+
         // Set up the environment for the test
         STR_TestEnv::setup($layer);
-        
+
         // Find all the tests in the layer/folder
         $tests = STR_FileScanner::getTestFiles($type, $layer, STR_PATH . '/' . $folder);
-        
+
         // Add the test files to a SimpleTest group
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] . ': Tests in ' . $folder;
-            
+
         $test = &new GroupTest($testName);
         foreach ($tests as $folder => $data) {
             foreach ($data as $index => $file) {
@@ -128,11 +130,11 @@ class STR_TestRunner
             }
         }
         $test->run(new HtmlReporter());
-        
+
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
     }
-    
+
     /** A method to run a single test file.
      *
      * @param string $layer  The layer group to run.
@@ -142,10 +144,10 @@ class STR_TestRunner
     function runFile($layer, $folder, $file)
     {
         $type = $GLOBALS['_STR']['test_type'];
-        
+
         // Set up the environment for the test
         STR_TestEnv::setup($layer);
-        
+
         // Add the test file to a SimpleTest group
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] . ': ' . $folder . '/' . $file;
@@ -153,7 +155,7 @@ class STR_TestRunner
         $test->addTestFile(STR_PATH . '/' . $folder . '/' .
                            constant($type . '_TEST_STORE') . '/' . $file);
         $test->run(new HtmlReporter());
-        
+
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
     }
