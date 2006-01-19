@@ -332,6 +332,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
     );
 
 $defaultWords['Maintenance'] = 'Maintenance';
+$defaultWords['Maintenance Manager'] = 'Maintenance Manager';
 $defaultWords['Back to Maintenance'] = 'Back to Maintenance';
 $defaultWords['Congratulations, the target translation appears to be up to date'] = 'Congratulations, the target translation appears to be up to date';
 $defaultWords['translation successfully updated'] = 'translation successfully updated';
@@ -391,4 +392,18 @@ $defaultWords['Paths'] = 'Paths';
 $defaultWords['Install Root'] = 'Install Root';
 $defaultWords['Web Root'] = 'Web Root';
 $defaultWords['With selected record(s)']='With selected record(s)';
+$defaultWords['config options']='Config Options';
+$defaultWords['action']='Action';
+$defaultWords['preferences']='preferences';
+$defaultWords['Section ID']='Section ID';
+$defaultWords['Manager']='Manager';
+$defaultWords['None']='None';
+$defaultWords['Please supply full nav info']='Please supply full nav info';
+$defaultWords['Admin Menu Manager :: Edit']='Admin Menu Manager :: Edit';
+$defaultWords['Admin Menu Manager :: Browse']='Admin Menu Manager :: Browse';
+$defaultWords['Add module']='Add module';
+$defaultWords['New section']='New section';
+$defaultWords['manage']='Manage';
+$defaultWords['BodyHtml']='Body';
+$defaultWords['Article Manager :: Edit']='Article Manager :: Edit';
 ?>

@@ -180,8 +180,8 @@ class ArticleMgr extends SGL_Manager
         //  use fallback language to create all articles
         $item = & new SGL_Item();
         $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
-        $output->articleLang = $this->conf['translation']['fallbackLang'];
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $fieldReturnType, @$this->conf['translation']['fallbackLang']);
+        $output->articleLang = @$this->conf['translation']['fallbackLang'];
 
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
