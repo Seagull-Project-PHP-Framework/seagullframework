@@ -149,7 +149,7 @@ class SGL_Translation
 
             //  build global lang file
             $langID = str_replace('_', '-', $lang);
-            $language = $aLanguages[$langID][1];
+            $language = @$aLanguages[$langID][1];
             $globalLangFile = $language .'.php';
             $path = SGL_MOD_DIR . '/' . $module . '/lang/';
             if (is_readable($path . $globalLangFile)) {
