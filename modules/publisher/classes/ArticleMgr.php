@@ -284,7 +284,7 @@ class ArticleMgr extends SGL_Manager
             : SGL_RET_STRING;
         $output->dynaContent = (isset($input->articleLang))
             ? $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang)
-            : $item->getDynamicContent($input->articleID, $fieldReturnType, $this->conf['translation']['fallbackLang']);
+            : $item->getDynamicContent($input->articleID, $fieldReturnType, @$this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
