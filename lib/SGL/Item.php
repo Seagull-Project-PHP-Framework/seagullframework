@@ -605,7 +605,7 @@ class SGL_Item
         //  FIXME: getLangID() and add to $this->conf()
         $langID = str_replace('_', '-', $language);
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
+        $lang_name = ucfirst(substr(@strstr($availableLanguages[$langID][0], '|'), 1));
         $languageName =  '('. $lang_name . ' - ' . $langID . ')';
 
         switch ($type) {

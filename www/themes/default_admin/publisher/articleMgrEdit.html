@@ -59,6 +59,7 @@
     <div class="formContent" id="articleAddContent">
         <fieldset>
             <h3>{translate(#Editing Article#)} (id#{article.id})</h3>
+            {if:isEqual(conf[translation][container],#db#)}
             <p>
                 <label class="tipOwner">{translate(#Language#)}
                 <span class="tipText">{translate(#switching language will cause changes to be lost#)}</span>
@@ -68,6 +69,7 @@
                     {generateSelect(availableLangs,articleLang):h}
                 </select>
             </p>
+            {end:}
             {foreach:dynaContent,fieldName,fieldContent}
             <p>
                 <label>{translate(fieldName)}</label>
