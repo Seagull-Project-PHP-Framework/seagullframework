@@ -613,14 +613,14 @@ class SGL_Inflector
         if (strtolower(substr($name, -3)) != 'mgr') {
             $name .= 'Mgr';
         }
-        return ucfirst($name);
+        return SGL_Inflector::caseFix(ucfirst($name));
     }
 
     /**
      * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
      *
-     * @param unknown_type $name
-     * @return unknown
+     * @param string $name
+     * @return string
      */
     function getSimplifiedNameFromManagerName($name)
     {
