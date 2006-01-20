@@ -388,14 +388,12 @@ class SGL_Item
 
             //  update translations
             if ($this->conf['translation']['container'] == 'db') {
-                //  fetch current translations
                 $strings[$language] = $this->trans->get($itemID[$x], 'content', $language);
 
-                //  merge translations
-                if ($editedTxt != $strings[$language]) {
-                    $strings[$language] = $editedTxt;
+                if (strcmp($editedTxt, $strings[$language]) !== 0) {   
+                    $strings[$language] = $editedTxt;                       
+                    $this->trans->add($itemID[$x], 'content', $strings);
                 }
-                $this->trans->add($itemID[$x], 'content', $strings);
             } else {
                 $editedTxt = $this->dbh->quote($editedTxt);
                 $query = "
@@ -434,13 +432,10 @@ class SGL_Item
         if ($this->conf['translation']['container'] == 'db') {
             $strings[$language] = $this->trans->get($itemID, 'content', $language);
 
-            //  merge translations
-            if ($editedTxt !== $strings[$language]) {
+            if (strcmp($editedTxt, $strings[$language]) !== 0) {
                 $strings[$language] = $editedTxt;
+                $this->trans->add($itemID, 'content', $strings);
             }
-
-            //  add translations
-            $this->trans->add($itemID, 'content', $strings);
         } else {
             $editedTxt = $this->dbh->quote($editedTxt);
 	        $query = "

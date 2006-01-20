@@ -587,7 +587,7 @@ class PageMgr extends SGL_Manager
         }
         //  update translations
         if ($this->conf['translation']['container'] == 'db') {
-            if ($input->section['title'] != $input->section['title_original']) {
+            if (strcmp($input->section['title'], $input->section['title_original']) !== 0) {
                 if ($input->section['trans_id']) {
                     $strings[$input->navLang] = $input->section['title'];
                     $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
