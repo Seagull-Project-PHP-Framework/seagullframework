@@ -514,6 +514,17 @@ class DA_User extends SGL_Delegator
      * If no arg is passed, zero is assumed which returns a default set of name/value pref pairs.
      * The more aptly named getMasterPrefs() above returns a master set of id/value pref pairs
      *
+        [aPrefs] => Array
+            (
+                [sessionTimeout] => 1800
+                [timezone] => UTC
+                [theme] => default
+                [dateFormat] => UK
+                [language] => fr-iso-8859-1
+                [resPerPage] => 10
+                [showExecutionTimes] => 1
+                [locale] => en_GB
+            )
      * @access  public
      * @return  mixed   An array of prefs on success, else PEAR::raiseError
      */

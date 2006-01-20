@@ -159,9 +159,9 @@ class ArticleMgr extends SGL_Manager
 
         if ($this->conf['ArticleMgr']['backDateNumYears'] > 0) {
             $aDate['year'] = $aDate['year'] - $this->conf['ArticleMgr']['backDateNumYears'];
-            $years         = $this->conf['ArticleMgr']['backDateNumYears'] + 5;
+            $years = $this->conf['ArticleMgr']['backDateNumYears'] + 5;
         } else {
-            $years         = 5;
+            $years = 5;
         }
         $output->dateSelectorStart =
             SGL_Output::showDateSelector($aDate, 'frmStartDate', true, true, $years);
@@ -177,11 +177,14 @@ class ArticleMgr extends SGL_Manager
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox($aDate, 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
 
-        //  use fallback language to create all articles
+        //  use site language to create all articles
         $item = & new SGL_Item();
-        $fieldReturnType = ($this->conf['site']['adminGuiEnabled']) ? SGL_RET_ARRAY : SGL_RET_STRING;
-        $output->dynaFields = $item->getDynamicFields($input->dataTypeID, $fieldReturnType, @$this->conf['translation']['fallbackLang']);
-        $output->articleLang = @$this->conf['translation']['fallbackLang'];
+        $fieldReturnType = ($this->conf['site']['adminGuiEnabled'])
+            ? SGL_RET_ARRAY
+            : SGL_RET_STRING;
+        $output->articleLang = str('-', '_', $_SERVER['aPrefs']['language']);
+        $output->dynaFields = $item->getDynamicFields($input->dataTypeID,
+            $fieldReturnType, $output->articleLang);
 
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
