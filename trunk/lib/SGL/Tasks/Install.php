@@ -406,14 +406,12 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
     {
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
             require_once SGL_CORE_DIR .'/Translation.php';
+            $trans = & SGL_Translation::singleton('admin');
 
             $this->setup();
 
             $statusText .= 'loading languages';
             $this->updateHtml('status', $statusText);
-
-            //  Go back and load selected languages
-            require_once 'Translation2/Admin.php';
 
             //  fetch available languages
             $aLangOptions = SGL_Util::getLangsDescriptionMap();
@@ -432,22 +430,6 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 SGL_Install::errorPush(PEAR::raiseError($ok));
             }
 
-            //  get dsn
-            $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
-
-            //  set translation2 params
-            $params = array(
-                'langs_avail_table' => 'langs',
-                'lang_id_col'       => 'lang_id',
-                'string_id_col'      => 'translation_id',
-            );
-
-            //  set tranlsation2 driver
-            $driver = 'DB';
-
-            //  instantiate translation2_admin object
-            $translation = & Translation2_Admin::factory($driver, $dsn, $params);
-
             //  interate through languages adding to langs table
             foreach ($data['installLangs'] as $aKey => $aLang) {
                 $globalLangFile = $availableLanguages[$aLang][1] .'.php';
@@ -461,7 +443,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                     'error_text' => 'not available',
                     'encoding' => $encoding
                      );
-                $result = $translation->addLang($langData);
+                $result = $trans->addLang($langData);
 
                 //  iterate through modules
                 $aModuleList = (isset($data['installAllModules']))
@@ -492,10 +474,10 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                                         $value .= $k . '|' . $aValue .'||';
                                     }
                                     $string = array($langID => $value);
-                                    $result = $translation->add($tKey, $module, $string);
+                                    $result = $trans->add($tk, $module, $string);
                                 } elseif ($tk && $tValue) {
                                     $string = array($langID => $tValue);
-                                    $result =  $translation->add($tk, $module, $string);
+                                    $result =  $trans->add($tk, $module, $string);
                                 }
                             }
                             unset($words);
