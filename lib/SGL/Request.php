@@ -256,7 +256,7 @@ class SGL_Request
             if (!empty($value) && $key != 'lang' && strpos($key, $sglSessionName) === false) {
                 $uri .= ($key == 'moduleName' || $key == 'managerName')
                     ? $value . '/'
-                    : $key . '/' . $value;
+                    : $key . '/' . $value . '/';
             }
         }
 

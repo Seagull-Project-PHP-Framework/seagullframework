@@ -455,6 +455,10 @@ class PageMgr extends SGL_Manager
         if ($section) {
 
             //  setup article type, dropdowns built in display()
+            if (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
+                $section['resource_uri'] = $aMatches[3];
+                $uriAlias = true;
+            }
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
                 $aElems = explode('/', $section['resource_uri']);
                 $wikiUrl = array_pop($aElems);
@@ -465,10 +469,6 @@ class PageMgr extends SGL_Manager
                 $output->articleType = 'uriExternal';
             } else {
                 $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
-                if (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
-                    $section['resource_uri'] = $aMatches[3];
-                    $uriAlias = true;
-                }
 
                 //  parse url details
                 #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
@@ -767,8 +767,13 @@ class PageMgr extends SGL_Manager
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
                 if ($this->conf['translation']['container'] == 'db') {
-                    $this->trans->setLang(SGL_Translation::getLangID());
-                    $sectionNode['title'] = $this->trans->get($sectionNode['title'], 'nav');
+                    if ($title =  $this->trans->get($sectionNode['trans_id'], 'nav', 
+                        SGL_Translation::getLangID())) {
+                        $sectionNode['title'] = $title;
+                    } elseif ($title = $this->trans->get($sectionNode['trans_id'], 'nav',
+                        SGL_Translation::getFallbackLangID())) {
+                        $sectionNode['title'] = $title;
+                    }
                 }
                 $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer . $sectionNode['title'] . "</option>\n";
             }
