@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}">
 <head>
+    <title flexy:if="pageTitle">{conf[site][name]} :: {pageTitle}</title>
     <title flexy:if="!leadArticle[title]">{conf[site][name]} :: {currentSectionName}</title>
     <title flexy:if="leadArticle[title]">{conf[site][name]} :: {leadArticle[title]}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
