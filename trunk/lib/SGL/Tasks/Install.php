@@ -857,6 +857,7 @@ PHP;
         $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
 
         //  update lang in default prefs
+        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
         $da = & DA_User::singleton();
         $lang = isset($_SESSION['install_language'])
             ? $_SESSION['install_language']
