@@ -374,9 +374,10 @@ class TestNav
             if (preg_match('/^uriAlias:([0-9]+):(.*)/', $section->resource_uri, $aUri)) {
                 $section->uriAlias     = $this->da->getAliasById($aUri[1]);
                 $section->resource_uri = $aUri[2];
+            }
 
             //  home page:
-            } elseif (!$section->resource_uri) {
+            if (!$section->resource_uri) {
                 $section->resource_uri  = $this->conf['site']['defaultModule']
                     ?  $this->conf['site']['defaultModule'] : 'default';
                 $section->resource_uri .= $this->conf['site']['defaultManager']
@@ -513,7 +514,10 @@ class TestNav
                 if ($section->isCurrent || $section->childIsCurrent) {
                     $liAtts = ' class="current"';
                 }
-                if (isset($section->uriExternal)) {
+                if (isset($section->uriAlias)) {
+                    $section->resource_uri = $section->uriAlias;
+                }
+                if (isset($section->uriExternal) && empty($section->uriAlias)) {
                     $url = $section->resource_uri;
                 } else {
                     $url = $this->_makeLinkFromNode($section);
@@ -551,9 +555,6 @@ class TestNav
      */
     function _makeLinkFromNode(&$aSections)
     {
-        if (isset($aSections->uriAlias)) {
-            $aSections->resource_uri = $aSections->uriAlias;
-        }
         $aTmp = explode('/', $aSections->resource_uri);
 
         // extract module name
@@ -611,13 +612,13 @@ class TestNav
             if (!$sectionName) {
                 $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
             }
-            if (!$sectionName) {
-                $query = "
-                    SELECT  title
-                    FROM    {$this->conf['table']['section']}
-                    WHERE   section_id = " . $this->_currentSectionId;
-                $sectionName = $this->da->dbh->getOne($query);
-            }
+        }
+        if (empty($sectionName)) {
+            $query = "
+                SELECT  title
+                FROM    {$this->conf['table']['section']}
+                WHERE   section_id = " . $this->_currentSectionId;
+            $sectionName = $this->da->dbh->getOne($query);
         }
         return $sectionName;
     }
@@ -705,6 +706,7 @@ class TestNav
                 //  first node in pathway is home page
                 $pathNode->title = $this->_homePage->title;
                 $pathNode->link  = $this->_makeLinkFromNode($this->_homePage);
+                $pathNode->home  = true;
                 $aBreadcrumbs[]  = $pathNode;
 
                 for ($i = $count-1; ($i >= $position); $i--) {
