@@ -95,6 +95,15 @@ class SGL_Install
         return $version;
     }
 
+
+    /**
+     * Returns html head section of page, only used for 'enter passwd for
+     * access setup' screen
+     *
+     * @param string $title
+     *
+     * @see DetectEnv.php for header html used in QuickForm install wizard
+     */
     function printHeader($title = '')
     {
         $baseUrl = SGL_BASE_URL;
@@ -114,7 +123,7 @@ class SGL_Install
     <style type="text/css" media="screen">
         @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
     </style>
-    </head>
+</head>
 <body>
 
 <div id="sgl">

@@ -319,8 +319,31 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     <style type="text/css" media="screen">
         @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
     </style>
-    </head>
-<body>
+    <script type="text/javascript">
+        function disableLangList()
+        {
+            var foo = document.getElementById('installLangs');
+            if (foo != null) {
+                foo.disabled = true;
+            }
+        }
+
+        function toggleLangList(myCheckbox)
+        {
+                var myCheckbox = document.getElementById('storeTranslationsInDB').checked;
+                var langsList = document.getElementById('installLangs');
+
+                if (myCheckbox != null) {
+                    if (myCheckbox) {
+                        langsList.disabled = false;
+                    } else {
+                        langsList.disabled = true;
+                    }
+                }
+        }
+    </script>
+</head>
+<body >
 
 <div id="sgl">
 <!-- Logo and header -->

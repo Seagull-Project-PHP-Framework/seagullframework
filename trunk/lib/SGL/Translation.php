@@ -91,7 +91,7 @@ class SGL_Translation
         $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
 
         //  create translation storage tables
-        if ($this->conf['translation']['container'] == 'db' && $conf['table']['translation']) {
+        if ($conf['translation']['container'] == 'db' && $conf['table']['translation']) {
 
             $prefix = $conf['table']['translation'] .'_';
             $aLangs = explode(',', $conf['translation']['installedLanguages']);
