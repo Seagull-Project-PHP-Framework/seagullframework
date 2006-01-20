@@ -188,19 +188,6 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 # add 'nobody' user
 INSERT INTO usr VALUES (0, 1, 0, 'nobody', '21232f297a57a5a743894a0e4a801fc3', 'Nobody', 'Nobody', '', '', 'none@none.com', 'none', '', '', 'None', '', 'GB', '55555', 0, 0, 1, 'rover', '2003-12-09 18:02:44', 1, '2004-06-10 11:07:27', 1);
 
-#
-# Dumping data for table `user_preference`
-#
-
-# sets default prefs
-INSERT INTO user_preference VALUES (1,0,1,'1800');
-INSERT INTO user_preference VALUES (2,0,2,'UTC');
-INSERT INTO user_preference VALUES (3,0,3,'default');
-INSERT INTO user_preference VALUES (4,0,4,'UK');
-INSERT INTO user_preference VALUES (5,0,5,'en-iso-8859-15');
-INSERT INTO user_preference VALUES (6,0,6,'10');
-INSERT INTO user_preference VALUES (7,0,7,'1');
-INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 
 #
 # Dumping data for table `organisation`
