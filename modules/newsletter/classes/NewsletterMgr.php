@@ -76,6 +76,7 @@ class NewsletterMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -150,9 +151,8 @@ class NewsletterMgr extends SGL_Manager
         }
     }
 
-
     /**
-    * List the subscribe/unsubscribe form
+    * Listd the subscribe/unsubscribe form.
     *
     * @access public
     *
@@ -164,7 +164,7 @@ class NewsletterMgr extends SGL_Manager
 
 
     /**
-    * Send subscribe e-mail  and/or add user data in DB
+    * Sends subscribe e-mail and/or adds user data to DB.
     *
     * @access public
     *
@@ -185,63 +185,65 @@ class NewsletterMgr extends SGL_Manager
 
             // Do not subscribe if already subscribed
             if ($noRows != 0) {
+
+                //  log message instead of raising error to preserve privacy
                 SGL::logMessage('User: '.$input->email.' tried to resubscribe to list '.
                     $input->validNewsList[$list]['name']);
                 $errorLists = true;
                 continue;
-            }
-
-            $oList->newsletter_id = $this->dbh->nextId($this->conf['table']['newsletter']);
-            if (!empty($input->name)) {
-                $oList->name = $input->name;
-            }
-            // If emailConfirmation not required - registration active by default
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-                $oList->status = 1;
-                $oList->action_request = 'subscribe';
-                $oList->action_key = $this->_generateKey($input->email);
             } else {
-               $oList->status = 0;
-            }
 
-            $oList->date_created = $oList->last_updated = SGL_Date::getTime();
-            $success = $oList->insert();
-            if ($success) {
-                if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-
-                    // Send email confirmation
-                    $output->emailSiteName = $this->conf['site']['name'];
-                    $output->emailSubject = SGL_String::translate('Action confirmation for newsletter').' '.$input->validNewsList[$list]['name'];
-                    $output->emailAction = SGL_String::translate('subscribe');
-                    $output->emailName = $input->name ? $input->name : 'User';
-                    $output->emailAddress = $input->email;
-                    $output->emailList = $input->validNewsList[$list]['name'];
-                    $output->emailKey = $oList->action_key;
-                    $ret = $this->_send($input, $output);
-                    if (!$ret) {
-                       SGL::logMessage('Unable to send subscribe message to: '.$input->email);
-                    }
+                $oList->newsletter_id = $this->dbh->nextId($this->conf['table']['newsletter']);
+                if (!empty($input->name)) {
+                    $oList->name = $input->name;
                 }
-            } else {
-                $errorLists = true;
-            }
-            unset($oList);
-        }
+                // If emailConfirmation not required - registration active by default
+                if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+                    $oList->status = 1;
+                    $oList->action_request = 'subscribe';
+                    $oList->action_key = $this->_generateKey($input->email);
+                } else {
+                   $oList->status = 0;
+                }
 
-        if ($errorLists) {
-            SGL::raiseMsg('Unable to subscribe you to some lists');
-        } else {
-            if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-                SGL::raiseMsg('Thank you subscribe email confirmation');
+                $oList->date_created = $oList->last_updated = SGL_Date::getTime();
+                $success = $oList->insert();
+                if ($success) {
+                    if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+
+                        // Send email confirmation
+                        $output->emailSiteName = $this->conf['site']['name'];
+                        $output->emailSubject = SGL_String::translate('Action confirmation for newsletter').' '.$input->validNewsList[$list]['name'];
+                        $output->emailAction = SGL_String::translate('subscribe');
+                        $output->emailName = $input->name ? $input->name : 'User';
+                        $output->emailAddress = $input->email;
+                        $output->emailList = $input->validNewsList[$list]['name'];
+                        $output->emailKey = $oList->action_key;
+                        $ret = $this->_send($input, $output);
+                        if (!$ret) {
+                           SGL::logMessage('Unable to send subscribe message to: '.$input->email);
+                        }
+                    }
+                } else {
+                    $errorLists = true;
+                }
+                unset($oList);
+            }
+
+            if ($errorLists) {
+                SGL::raiseMsg('Unable to subscribe you to some lists');
             } else {
-                SGL::raiseMsg('Thank you subscribe');
+                if ($this->conf['NewsletterMgr']['emailConfirmation']) {
+                    SGL::raiseMsg('Thank you subscribe email confirmation');
+                } else {
+                    SGL::raiseMsg('Thank you subscribe');
+                }
             }
         }
     }
 
-
     /**
-    * Send unsubscribe e-mail or remove data from DB
+    * Send unsubscribe e-mail or remove data from DB.
     *
     * @access public
     *
@@ -309,8 +311,8 @@ class NewsletterMgr extends SGL_Manager
 
 
     /**
-    * e-mail/key pair validation and perform the requested
-    * action (subscribe, unsubscribe, update)
+    * E-mail/key pair validation and perform the requested
+    * action (subscribe, unsubscribe, update).
     *
     * @access public
     *
@@ -373,7 +375,7 @@ class NewsletterMgr extends SGL_Manager
 
 
     /**
-    * Send e-mail function
+    * Send e-mail function.
     *
     * @access public
     *
@@ -411,7 +413,7 @@ class NewsletterMgr extends SGL_Manager
 
 
     /**
-    * Checks if a valid newsletter list exists
+    * Checks if a valid newsletter list exists.
     *
     * @access   private
     * @author   Benea Rares <rbenea@bluestardesign.ro>
@@ -467,7 +469,7 @@ class NewsletterMgr extends SGL_Manager
 
 
     /**
-    * Generates a authorization key
+    * Generates an authorization key.
     *
     * @access   private
     * @author   Benea Rares <rbenea@bluestardesign.ro>
@@ -484,7 +486,7 @@ class NewsletterMgr extends SGL_Manager
     }
 
     /**
-     * Retrieves list of news list a user is subscribed to.
+     * Retrieves list of news lists a user is subscribed to.
      *
      * @access  public
      * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
