@@ -216,6 +216,7 @@ class ConfigMgr extends SGL_Manager
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
             $output->aInstalledLangs = $this->trans->getLangs();
+            $output->addMissingTrans = ($this->conf['translation']['addMissingTrans']) ? true : false;
         }
 
         $output->addOnLoadEvent("showConfigOptions('generalSiteOptions')");
