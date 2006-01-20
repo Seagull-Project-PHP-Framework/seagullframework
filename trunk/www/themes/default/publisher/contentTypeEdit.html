@@ -1,7 +1,7 @@
 <span flexy:if="msgGet()">{msgGet()}</span>
 
 <h1 class="pageTitle">{translate(pageTitle)} :: {translate(action)}</h1>
-<form name="editType" action="{makeUrl(#update#,#contentType#,#publisher#)}" id="editType" flexy:ignore>
+<form name="editType" action="{makeUrl(#update#,#contentType#,#publisher#)}" method="post" id="editType" flexy:ignore>
 <input type="hidden" name="frmContentTypeID" value="{contentTypeID}" />
 <table class="wide">
     <tr>
