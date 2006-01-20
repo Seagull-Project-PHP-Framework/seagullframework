@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.5.5        |
 +-----------------------+
 BUGFIXES
+20-01-06    Problems with adding subscribers fixed in NewsletterMgr
+            (AJ Tarachanowicz)
 20-01-06    Problems with ContentTypeMgr fixed (AJ Tarachanowicz)
 17-01-06    Fixed problems with naming conventions in module generator
 30-12-05    Fixed bug where contact us template could not be found (Andrey Podshivalov)
