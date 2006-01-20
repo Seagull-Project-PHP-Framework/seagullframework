@@ -529,21 +529,29 @@ class DA_User extends SGL_Delegator
             AND     up.usr_id = " . $uid;
         $aRes = $this->dbh->getAssoc($query);
 
-        if (!DB::isError($aRes) && count($aRes)) {
+        if (!PEAR::isError($aRes) && count($aRes)) {
             return $aRes;
         } elseif (!DB::isError($aRes)) {
 
             //  return default prefs if none exist for given user id
-            if ($uid != 0) {
+            if ($uid != 0) { // uid of 0 is the anonymous/public user
                 return $this->getPrefsByUserId();
             } else {
-                SGL::raiseError('No default prefs have been set!', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+                $aRes = $this->getMasterPrefs();
+                if (DB::isError($aRes) || !count($aRes)) {
+                    SGL::raiseError('No default prefs have been set!',
+                        SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+                } else {
+                    return $aRes;
+                }
             }
         } elseif (PEAR::isError($aRes, DB_ERROR_NOSUCHTABLE)) {
-            SGL::raiseError('You have a Seagull database with no tables ...', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+            SGL::raiseError('You have a Seagull database with no tables ...',
+                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
 
         } else {
-            SGL::raiseError('Unknown DB error occurred, pls file bug', SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+            SGL::raiseError('Unknown DB error occurred, pls file bug',
+                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
     }
 
@@ -671,6 +679,34 @@ class DA_User extends SGL_Delegator
     }
 
     /**
+     * Updates user preferences.
+     *
+     * @param array $aPrefs A hash of prefId => values
+     * @return boolean
+     * @TODO check for errors, wrap in transaction
+     */
+    function updatePrefsByUserId($aPrefs, $userId)
+    {
+        if (count($aPrefs)) {
+        	$this->dbh->autocommit();
+            foreach ($aPrefs as $prefId => $prefValue) {
+                $ok = $this->dbh->query("
+                    UPDATE {$this->conf['table']['user_preference']}
+                    SET value = '$prefValue'
+                    WHERE preference_id = '$prefId'
+                    AND usr_id = $userId
+                    ");
+                if (PEAR::isError($ok)) {
+                	$this->dbh->rollBack();
+                    return $ok;
+                }
+            }
+            $this->dbh->commit();
+        }
+        return true;
+    }
+
+    /**
      * Adds new master preferences.
      *
      * Use when adding new modules
@@ -683,12 +719,38 @@ class DA_User extends SGL_Delegator
     {
         if (count($aPrefs)) {
         	$this->dbh->autocommit();
-            foreach ($aPrefs as $prefId => $prefValue) {
+            foreach ($aPrefs as $prefName => $prefValue) {
                 $ok = $this->dbh->query("
                     INSERT INTO {$this->conf['table']['preference']}
                     (preference_id, name, default_value)
                     VALUES (" . $this->dbh->nextId($this->conf['table']['preference']) . ",
-                    '$prefId', '$prefValue')");
+                    '$prefName', '$prefValue')");
+                if (PEAR::isError($ok)) {
+                	$this->dbh->rollBack();
+                    return $ok;
+                }
+            }
+            $this->dbh->commit();
+        }
+        return true;
+    }
+
+    /**
+     * Updates master preferences.
+     *
+     * @param array $aPrefs A hash of prefId => values
+     * @return boolean
+     * @TODO check for errors, wrap in transaction
+     */
+    function updateMasterPrefs($aPrefs)
+    {
+        if (count($aPrefs)) {
+        	$this->dbh->autocommit();
+            foreach ($aPrefs as $prefName => $prefValue) {
+                $ok = $this->dbh->query("
+                    UPDATE {$this->conf['table']['preference']}
+                    SET default_value = '$prefValue'
+                    WHERE name = '$prefName'");
                 if (PEAR::isError($ok)) {
                 	$this->dbh->rollBack();
                     return $ok;

@@ -58,22 +58,21 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
-        $c->set('site', array('language' => $data['siteLanguage']));
         $c->set('site', array('blocksEnabled' => false));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
         $storeTransInDbClause = (array_key_exists('storeTranslationsInDB', $data)
-                                && $data['storeTranslationsInDB'] == 1) 
+                                && $data['storeTranslationsInDB'] == 1)
                                 ? $c->set('translation', array('container' => 'db'))
                                 : $c->set('translation', array('container' => 'file'));
 
-        //  add missing translations to db                                
+        //  add missing translations to db
         $missingTransClause =  (array_key_exists('addMissingTranslationsToDB', $data)
-                                && $data['addMissingTranslationsToDB'] == 1) 
-                                ? $c->set('translation', array('addMissingTrans' => true)) 
+                                && $data['addMissingTranslationsToDB'] == 1)
+                                ? $c->set('translation', array('addMissingTrans' => true))
                                 : $c->set('translation', array('addMissingTrans' => false));
-                                
+
         //  translation fallback language
         $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
         $c->set('translation', array('fallbackLang' => $fallbackLang));
@@ -81,6 +80,9 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
+
+        //  store site language for post-install task
+        $_SESSION['install_language'] = $data['siteLanguage'];
         if (PEAR::isError($ok)) {
             SGL_Install::errorPush(PEAR::raiseError($ok));
         }
@@ -853,6 +855,25 @@ class SGL_Task_InstallerCleanup extends SGL_Task
 ?>
 PHP;
         $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
+
+        //  update lang in default prefs
+        $da = & DA_User::singleton();
+        $lang = isset($_SESSION['install_language'])
+            ? $_SESSION['install_language']
+            : 'en-iso-8859-15';
+        $ok1 = $da->updateMasterPrefs(array('language' => $lang));
+        if (PEAR::isError($ok1)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok1));
+        }
+
+        //  update lang in admin prefs
+        $aMapping = $da->getPrefsMapping();
+        $langPrefId = $aMapping['language'];
+        $ok2 = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
+        if (PEAR::isError($ok2)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok2));
+        }
+
     }
 }
 ?>
