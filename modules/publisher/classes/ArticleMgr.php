@@ -182,7 +182,7 @@ class ArticleMgr extends SGL_Manager
         $fieldReturnType = ($this->conf['site']['adminGuiEnabled'])
             ? SGL_RET_ARRAY
             : SGL_RET_STRING;
-        $output->articleLang = str('-', '_', $_SERVER['aPrefs']['language']);
+        $output->articleLang = SGL_Translation::getFallbackLangID();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID,
             $fieldReturnType, $output->articleLang);
 
