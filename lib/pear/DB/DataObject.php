@@ -15,7 +15,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DataObject.php,v 1.396 2005/12/28 02:55:24 alan_k Exp $
+ * @version    CVS: $Id: DataObject.php,v 1.400 2006/01/18 03:33:12 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
   
@@ -235,7 +235,7 @@ class DB_DataObject extends DB_DataObject_Overload
     * @access   private
     * @var      string
     */
-    var $_DB_DataObject_version = "1.8.0";
+    var $_DB_DataObject_version = "1.8.2";
 
     /**
      * The Database table (used by table extends)
@@ -2485,7 +2485,9 @@ class DB_DataObject extends DB_DataObject_Overload
         $p = isset($_DB_DATAOBJECT['CONFIG']['class_prefix']) ?
             $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
         $class = $p . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
-        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
+        
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        $class = $ce ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
     
@@ -2530,7 +2532,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
         $class = $p . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
         
-        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        $class = $ce ? $class  : DB_DataObject::_autoloadClass($class);
         
         // proxy = full|light
         if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
@@ -2602,9 +2605,9 @@ class DB_DataObject extends DB_DataObject_Overload
         include_once $file;
         
         
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
         
-        
-        if (!class_exists($class)) {
+        if (!$ce) {
             DB_DataObject::raiseError(
                 "autoload:Could not autoload {$class}", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -3254,11 +3257,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (empty($from[$k]) && $skipEmpty) {
+            if (is_object($from)) {
                 continue;
             }
             
-            if (is_object($from)) {
+            if (empty($from[$k]) && $skipEmpty) {
                 continue;
             }
             
@@ -3419,7 +3422,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // dont try and validate cast objects - assume they are problably ok..
-            if (is_object($this->$key) && is_a($value,'DB_DataObject_Cast')) {
+            if (is_object($this->$key) && is_a($this->$key,'DB_DataObject_Cast')) {
                 continue;
             }
             // at this point if you have set something to an object, and it's not expected
@@ -3927,6 +3930,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) {     
             unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
         }
+        // clear the staticGet cache as well.
+        $this->_clear_cache();
         // this is a huge bug in DB!
         if (isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();

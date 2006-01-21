@@ -15,7 +15,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Generator.php,v 1.105 2005/11/28 05:11:30 alan_k Exp $
+ * @version    CVS: $Id: Generator.php,v 1.107 2006/01/10 22:46:24 bate Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
  
@@ -94,6 +94,8 @@ class DB_DataObject_Generator extends DB_DataObject
     function start()
     {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
+
         $databases = array();
         foreach($options as $k=>$v) {
             if (substr($k,0,9) == 'database_') {
@@ -101,9 +103,15 @@ class DB_DataObject_Generator extends DB_DataObject
             }
         }
 
-        if (@$options['database']) {
-            require_once 'DB.php';
-            $dsn = DB::parseDSN($options['database']);
+        if (isset($options['database'])) {
+            if ($db_driver == 'DB') {
+                require_once 'DB.php';
+                $dsn = DB::parseDSN($options['database']);
+            } else {
+                require_once 'MDB2.php';
+                $dsn = MDB2::parseDSN($options['database']);
+            }
+
             if (!isset($database[$dsn['database']])) {
                 $databases[$dsn['database']] = $options['database'];
             }
@@ -117,11 +125,17 @@ class DB_DataObject_Generator extends DB_DataObject
             $class = get_class($this);
             $t = new $class;
             $t->_database_dsn = $database;
-            
-            
+
+
             $t->_database = $databasename;
-            require_once 'DB.php';
-            $dsn = DB::parseDSN($database);
+            if ($db_driver == 'DB') {
+                require_once 'DB.php';
+                $dsn = DB::parseDSN($database);
+            } else {
+                require_once 'MDB2.php';
+                $dsn = MDB2::parseDSN($database);
+            }
+
             if (($dsn['phptype'] == 'sqlite') && is_file($databasename)) {
                 $t->_database = basename($t->_database);
             }
@@ -160,83 +174,118 @@ class DB_DataObject_Generator extends DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
 
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-        
-        // try getting a list of schema tables first. (postgres)
-        $__DB->expectError(DB_ERROR_UNSUPPORTED);
-        $this->tables = $__DB->getListOf('schema.tables');
-        $__DB->popExpect();
-        
-        if (empty($this->tables) || is_a($this->tables , 'PEAR_Error')) {
-            //if that fails fall back to clasic tables list.
-            $this->tables = $__DB->getListOf('tables');
+
+        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
+        $is_MDB2 = ($db_driver != 'DB') ? true : false;
+
+        if (!$is_MDB2) {
+            // try getting a list of schema tables first. (postgres)
+            $__DB->expectError(DB_ERROR_UNSUPPORTED);
+            $this->tables = $__DB->getListOf('schema.tables');
+            $__DB->popExpect();
+        } else {
+            /**
+             * set portability and some modules to fetch the informations
+             */
+            $__DB->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
+            $__DB->loadModule('Manager');
+            $__DB->loadModule('Reverse');
         }
+
+        if ((empty($this->tables) || is_a($this->tables , 'PEAR_Error'))) {
+            //if that fails fall back to clasic tables list.
+            if (!$is_MDB2) {
+                // try getting a list of schema tables first. (postgres)
+                $__DB->expectError(DB_ERROR_UNSUPPORTED);
+                $this->tables = $__DB->getListOf('tables');
+                $__DB->popExpect();
+            } else  {
+                $this->tables = $__DB->manager->listTables();
+                $sequences = $__DB->manager->listSequences();
+                foreach ($sequences as $k => $v) {
+                    $this->tables[] = $__DB->getSequenceName($v);
+                }
+            }
+        }
+
         if (is_a($this->tables , 'PEAR_Error')) {
             return PEAR::raiseError($this->tables->toString(), null, PEAR_ERROR_DIE);
         }
+
         // build views as well if asked to.
         if (!empty($options['build_views'])) {
-            $views = $__DB->getListOf('views');
+            if (!$is_MDB2) {
+                $views = $__DB->getListOf('views');
+            } else {
+                $views = $__DB->manager->listViews();
+            }
             if (is_a($views,'PEAR_Error')) {
                 return PEAR::raiseError(
-                    'Error getting Views (check the PEAR bug database for the fix to DB), ' .
-                    $views->toString(), 
-                    null, 
-                    PEAR_ERROR_DIE
+                'Error getting Views (check the PEAR bug database for the fix to DB), ' .
+                $views->toString(),
+                null,
+                PEAR_ERROR_DIE
                 );
             }
             $this->tables = array_merge ($this->tables, $views);
         }
-        
+
         // declare a temporary table to be filled with matching tables names
         $tmp_table = array();
 
 
         foreach($this->tables as $table) {
             if (isset($options['generator_include_regex']) &&
-                !preg_match($options['generator_include_regex'],$table)) {
-                    continue;
+            !preg_match($options['generator_include_regex'],$table)) {
+                continue;
             } else if (isset($options['generator_exclude_regex']) &&
-                preg_match($options['generator_exclude_regex'],$table)) {
-                    continue;
+            preg_match($options['generator_exclude_regex'],$table)) {
+                continue;
             }
-                // postgres strip the schema bit from the 
-            if (!empty($options['generator_strip_schema'])) {    
+            // postgres strip the schema bit from the
+            if (!empty($options['generator_strip_schema'])) {
                 $bits = explode('.', $table,2);
                 $table = $bits[0];
                 if (count($bits) > 1) {
                     $table = $bits[1];
                 }
             }
-            
+
             $defs =  $__DB->tableInfo($table);
+            if ($is_MDB2) {
+                foreach ($defs as $k => $v) {
+                    $defs[$k]['len'] = &$defs[$k]['length'];
+                }
+            }
+
             if (is_a($defs,'PEAR_Error')) {
                 // running in debug mode should pick this up as a big warning..
                 $this->raiseError('Error reading tableInfo, '. $defs->toString());
                 continue;
             }
             // cast all definitions to objects - as we deal with that better.
-            
-            
-            
+
+
+
             foreach($defs as $def) {
                 if (!is_array($def)) {
                     continue;
                 }
-                
+
                 $this->_definitions[$table][] = (object) $def;
-                
+
             }
             // we find a matching table, just  store it into a temporary array
-            $tmp_table[] = $table;            
- 
-            
+            $tmp_table[] = $table;
+
+
         }
-        // the temporary table array is now the right one (tables names matching 
+        // the temporary table array is now the right one (tables names matching
         // with regex expressions have been removed)
         $this->tables = $tmp_table;
         //print_r($this->_definitions);
     }
-
+    
     /**
      * Auto generation of table data.
      *
