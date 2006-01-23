@@ -138,7 +138,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         //  store translation in db
         $this->addElement('checkbox', 'addMissingTranslationsToDB', 'Add missing Translations to Database?',
-            'Yes');
+            'Yes', "id = addMissingTranslationsToDB");
 
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb');

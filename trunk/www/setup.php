@@ -141,12 +141,13 @@ require_once 'DB.php';
 require_once SGL_PATH . '/lib/SGL/DB.php';
 require_once SGL_PATH . '/lib/SGL/Config.php';
 
-//  load wizard screens
+//  load wizard screens and qf overrides
 require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardDetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
+require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 
 //  load tasks
 require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';

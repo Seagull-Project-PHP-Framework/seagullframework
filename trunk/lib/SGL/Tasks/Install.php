@@ -77,6 +77,10 @@ class SGL_Task_CreateConfig extends SGL_Task
         $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
         $c->set('translation', array('fallbackLang' => $fallbackLang));
 
+        //  auto-correct frontScriptName for CGI users
+        if (preg_match("/cgi/i", php_sapi_name())) {
+            $c->set('site', array('frontScriptName' => 'index.php?'));
+        }
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
