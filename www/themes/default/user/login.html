@@ -28,7 +28,7 @@
             </div>
 
             <p><input type="submit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
-            <p><a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
+            <p>{if:conf[RegisterMgr][enabled]}<a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>&nbsp;&nbsp;&nbsp;&nbsp;{end:} <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
         </div>
 
         <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
