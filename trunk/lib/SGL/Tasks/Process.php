@@ -75,13 +75,40 @@ class SGL_Process_SetupErrorHandling extends SGL_DecorateProcess
 	        $eh->startHandler();
         }
         //  set PEAR error handler
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, 'pearErrorHandler');
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
 
         //  clean start for logs
         error_log(' ');
         error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
 
         $this->processRequest->process($input);
+    }
+
+    /**
+     * A callback fn that sets the default PEAR error behaviour.
+     *
+     * @access   public
+     * @static
+     * @param    object $oError the PEAR error object
+     * @return   void
+     */
+    function pearErrorHandler($oError)
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        //  log message
+        $message = $oError->getMessage();
+        $debugInfo = $oError->getDebugInfo();
+        SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
+
+        //  if sesssion debug, send error info to screen
+        if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
+            SGL_Error::push($oError);
+            if ($conf['debug']['showBacktrace']) {
+                echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
+            }
+        }
     }
 }
 
