@@ -57,17 +57,18 @@ class BlockFormDynamic
         $sectionList->orderBy('left_id');
         $result = $sectionList->find();
         if ($result > 0) {
-            $trans = & SGL_Translation::singleton();
-
             while ($sectionList->fetch()) {
                 if (is_numeric($sectionList->title)) {
-                    $sections[$sectionList->section_id] = $trans->get($sectionList->title,
-                        'nav', SGL_Translation::getLangID());
-                } else {
-                    $sections[$sectionList->section_id] = $sectionList->title;
+                    $trans = & SGL_Translation::singleton();
+                    if (is_numeric($sectionList->title)) {
+                        $sections[$sectionList->section_id] = $trans->get($sectionList->title,
+                            'nav', SGL_Translation::getLangID());
+                    } else {
+                        $sections[$sectionList->section_id] = $sectionList->title;
+                    }
+                    $sections[ $sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
+                        $sections[$sectionList->section_id];
                 }
-                $sections[ $sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
-                    $sections[$sectionList->section_id];
             }
         }
         $sections[0] = 'All sections';
