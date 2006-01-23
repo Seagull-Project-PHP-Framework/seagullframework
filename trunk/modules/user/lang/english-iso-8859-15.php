@@ -342,4 +342,7 @@ $words['Disable Now']='Disable Now';
 $words['Enable Now']='Enable Now';
 $words['Status changed successfully']='Status changed successfully';
 
+/*  various */
+$words['Registration has been disabled']='Registration has been disabled';
+
 ?>

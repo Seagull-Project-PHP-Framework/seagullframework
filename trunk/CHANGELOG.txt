@@ -17,6 +17,7 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+23-01-06    Added new conf key: [RegisterMgr][enabled] set to true by default
 23-01-06    Added auto-correct frontScriptName for CGI users in SGL_Task_CreateConfig()
 18-01-06    Test runner now uses pearified SimpleTest and notices are suppressed
             for now, see http://trac.seagullproject.org/wiki/Standards/UnitTesting
