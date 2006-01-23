@@ -257,9 +257,9 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
     function run()
     {
         //  determine if it's a PEAR install
-        $isPearInstall = @include_once 'PEAR.php';
+        #$isPearInstall = @include_once 'PEAR.php';
 
-        if ($isPearInstall) {
+        if (defined('SGL_PEAR_INSTALLED')) {
             $this->aData['pearFolderExists'] = true;
             $this->aData['pearLibIsLoadable'] = true;
             $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
