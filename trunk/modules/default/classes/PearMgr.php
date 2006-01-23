@@ -157,8 +157,6 @@ class PearMgr extends SGL_Manager
         PEAR_Command::setFrontendType("WebSGL");
         $ui = &PEAR_Command::getFrontendObject();
 
-        #PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
-
         $verbose = $config->get("verbose");
         $cmdopts = array();
         $opts    = array();
@@ -186,6 +184,8 @@ class PearMgr extends SGL_Manager
             $opts['mode'] = 'installed';
         }
 
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+
         $cache = & SGL_Cache::singleton();
         $cacheId = 'pear'.$input->command.$input->mode;
 
@@ -203,8 +203,6 @@ class PearMgr extends SGL_Manager
                 $cache->save($serialized, $cacheId, 'pear');
                 SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
             }
-
-
             break;
 
         case 'sgl-install':
