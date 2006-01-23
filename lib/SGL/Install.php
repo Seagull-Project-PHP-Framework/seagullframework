@@ -102,7 +102,7 @@ class SGL_Install
      *
      * @param string $title
      *
-     * @see DetectEnv.php for header html used in QuickForm install wizard
+     * @see QuickFormOverride.php for header html used in QuickForm install wizard
      */
     function printHeader($title = '')
     {
