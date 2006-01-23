@@ -85,7 +85,7 @@ class SGL_Process_SetupErrorHandling extends SGL_DecorateProcess
     }
 
     /**
-     * A callback fn that sets the default PEAR error behaviour.
+     * A callback method that sets the default PEAR error behaviour.
      *
      * @access   public
      * @static

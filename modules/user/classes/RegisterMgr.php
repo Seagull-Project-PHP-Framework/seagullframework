@@ -157,6 +157,13 @@ class RegisterMgr extends SGL_Manager
             $input->template = 'userAdd.html';
             $this->validated = false;
         }
+
+        //  check if reg disabled
+        if (!$this->conf['RegisterMgr']['enabled']) {
+            SGL::raiseMsg('Registration has been disabled');
+            $input->template = 'docBlank.html';
+            $this->validated = false;
+        }
     }
 
     function display(&$output)
