@@ -224,6 +224,12 @@ class SGL_URL
         if (!is_null($url)) {
             $urlinfo = parse_url($url);
 
+            //  if a ? is present in frontScriptName, it gets stripped by calling $_SERVER['PHP_SELF']
+            //  and needs to be re-added
+            if (preg_match("/\?/", $this->frontScriptName)) {
+                $urlinfo['path'] = preg_replace("/index.php/", "index.php?", $urlinfo['path']);
+            }
+
             // Default query data
             $this->aQueryData = array();
 
@@ -243,6 +249,9 @@ class SGL_URL
                     break;
 
                 case 'path':
+                    //  the 'path' is deemed to be everything after the hostname,
+                    //  but before the frontScriptName, including initial and final
+                    //  slashes, ie: /seagull/trunk/www/
                     if (isset($value{0}) && $value{0} == '/') {
                         if ($this->frontScriptName != false) {
                             $frontScriptStartIndex = strpos($value, $this->frontScriptName);
@@ -255,10 +264,12 @@ class SGL_URL
                                 $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
-                                $this->querystring = substr($urlinfo['path'], $frontScriptEndIndex);
+                                $this->querystring = substr($this->url, $frontScriptEndIndex);
                             }
                         } else {
-                            $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR ? '' : dirname($_SERVER['SCRIPT_NAME']);
+                            $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR
+                                ? ''
+                                : dirname($_SERVER['SCRIPT_NAME']);
                             $this->querystring = str_replace($this->path, '', $urlinfo['path']);
                         }
                         if (!array_key_exists('query', $urlinfo)) {
