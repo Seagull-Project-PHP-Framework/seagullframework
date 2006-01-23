@@ -53,7 +53,7 @@ class SGL_Task_SetupPaths extends SGL_Task
     {
         //  start with a default
         $hostName = 'localhost';
-        if (SGL::runningFromCLI()) {
+        if (!SGL::runningFromCLI()) {
 
             // Determine the host name
             if (!empty($_SERVER['SERVER_NAME'])) {

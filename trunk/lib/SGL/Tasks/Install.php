@@ -69,7 +69,7 @@ class SGL_Task_CreateConfig extends SGL_Task
 
         //  add missing translations to db
         $missingTransClause =  (array_key_exists('addMissingTranslationsToDB', $data)
-                                && $data['addMissingTranslationsToDB'] == 1)
+                                    && $data['addMissingTranslationsToDB'] == 1)
                                 ? $c->set('translation', array('addMissingTrans' => true))
                                 : $c->set('translation', array('addMissingTrans' => false));
 

@@ -858,13 +858,10 @@
             </select>
         </td>
     </tr>
-    {if:isEqual(conf[translation][container],#db#)}
     <tr>
         <td class="fieldName">{translate(#Fallback Language#)}</td>
         <td class="fieldValue">
-            <select name="conf[translation][fallbackLang]">
-                {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}
-            </select>
+            <input type="text" name="conf[translation][fallbackLang]" value="{conf[translation][fallbackLang]}" size="50" />
         <!-- Send along installed languages -->
         {foreach:aInstalledLangs,aKey,aValue}
             <input type="hidden" name="conf[translation][installedLanguages][]" value="{aKey}" />
@@ -877,7 +874,7 @@
 			{generateRadioPair(#conf[translation][addMissingTrans]#,addMissingTrans):h}
         </td>
     </tr>
-    {end:}
+
     <tr>
         <td colspan="3" align="center">&nbsp;</td>
     </tr>
