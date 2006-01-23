@@ -53,7 +53,7 @@
 class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
 {
     /**
-    * Returns full url
+    * Returns full url.
     *
     * @return string Full url
     * @access public
