@@ -320,31 +320,4 @@ class SGL_Task_EnsureBC extends SGL_Task
     }
 }
 
-/**
- * A callback fn that sets the default PEAR error behaviour.
- *
- * @access   public
- * @static
- * @param    object $oError the PEAR error object
- * @return   void
- */
-function pearErrorHandler($oError)
-{
-    $c = &SGL_Config::singleton();
-    $conf = $c->getAll();
-
-    //  log message
-    $message = $oError->getMessage();
-    $debugInfo = $oError->getDebugInfo();
-    SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
-
-    //  if sesssion debug, send error info to screen
-    if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
-        SGL_Error::push($oError);
-        if ($conf['debug']['showBacktrace']) {
-            echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
-        }
-    }
-}
-
 ?>

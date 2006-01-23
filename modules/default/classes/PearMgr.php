@@ -157,7 +157,7 @@ class PearMgr extends SGL_Manager
         PEAR_Command::setFrontendType("WebSGL");
         $ui = &PEAR_Command::getFrontendObject();
 
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+        #PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
 
         $verbose = $config->get("verbose");
         $cmdopts = array();
@@ -170,6 +170,14 @@ class PearMgr extends SGL_Manager
         #$_ENV['TMPDIR'] = $_ENV['TEMP'] = $dir.'tmp';
         $_ENV['TMPDIR'] = $_ENV['TEMP'] = SGL_TMP_DIR;
 
+        if ($input->command == 'sgl-install' || $input->command == 'sgl-install') {
+            if (!is_writable(SGL_MOD_DIR)) {
+                SGL::raiseError('your module directory must be writable '.
+                    'by the webserver before you attempt this command',
+                        SGL_ERROR_FILEUNWRITABLE);
+                return;
+            }
+        }
         if (is_null($input->command)) {
             $input->command  = 'sgl-list-all';
         }
