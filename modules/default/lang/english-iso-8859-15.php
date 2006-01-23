@@ -406,4 +406,8 @@ $defaultWords['New section']='New section';
 $defaultWords['manage']='Manage';
 $defaultWords['BodyHtml']='Body';
 $defaultWords['Article Manager :: Edit']='Article Manager :: Edit';
+$defaultWords['Translation options']='Translation options';
+$defaultWords['Container']='Container';
+$defaultWords['Fallback Language']='Fallback Language';
+$defaultWords['Add Missing Translations']='Add Missing Translations';
 ?>
