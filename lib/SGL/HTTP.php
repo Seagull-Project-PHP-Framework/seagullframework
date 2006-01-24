@@ -99,13 +99,19 @@ class SGL_HTTP
             //  check for absolute uri as specified in RFC 2616
             SGL_Url::toAbsolute($url);
 
-            //  add a trailing slash if one is not present
+            //  add a slash if one is not present
             if (substr($url, -1) != '/') {
                 $url .= '/';
             }
             //  determine is session propagated in cookies or URL
             SGL_Url::addSessionInfo($url);
         }
+
+        //  add a trailing slash if one is not present
+        if (substr($url, -1) != '/') {
+            $url .= '/';
+        }
+
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
         exit;
