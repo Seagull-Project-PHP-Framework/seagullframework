@@ -75,7 +75,8 @@ module setup
 //  initialise
 
 //  set initial paths according to install type
-if (file_exists('PEAR_INSTALLED.txt')) {
+$pearTest = '@PHP-DIR@';
+if ($pearTest != '@' . 'PHP-DIR'. '@') {
     define('SGL_PEAR_INSTALLED', true);
     $rootDir = '@PHP-DIR@/Seagull';
     $varDir = '@DATA-DIR@/Seagull/var';
