@@ -19,6 +19,8 @@ BUGFIXES
 16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
+23-01-06    Implemented web-based PEAR package and channel management.  Basic ideas
+            used from PEAR webinstaller and extended.
 23-01-06    Seagull is now PHP 5.1.x compliant
 23-01-06    Added new conf key: [RegisterMgr][enabled] set to true by default
 23-01-06    Added auto-correct frontScriptName for CGI users in SGL_Task_CreateConfig()

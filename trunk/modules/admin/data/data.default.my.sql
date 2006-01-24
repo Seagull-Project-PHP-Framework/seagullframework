@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'admin', 'Admin', 'The ''Admin'' module is what you use to setup your admin interface. Currently, only manages admin navigation', 'admin/adminmenu', '48/module_admin.png');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'admin', 'Admin', 'The ''Admin'' module is what you use to setup your admin interface. Currently, only manages admin navigation', 'admin/adminmenu', '48/module_admin.png');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 

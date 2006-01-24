@@ -34,7 +34,7 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$packagedir  = '/tmp/seagull-0.5.4';
+	$packagedir  = '/tmp/seagull-0.5.5';
 
     // Name of the channel, this package will be distributed through
     $channel     = 'pear.phpkitchen.com';
@@ -43,7 +43,7 @@
 	$category    = 'Frameworks';
     $package     = 'Seagull';
 
-	$version     = '0.5.4';
+	$version     = '0.5.5';
 
     // Summary description
 	$summary     = <<<EOT
@@ -63,43 +63,58 @@ EOT;
     // generate_package_xml_functions.php
 	$notes = <<<EOT
 BUGFIXES
-24-11-05    Fixed long-standing image preview header probs
-24-11-05    Fixed config prob with FCK, images now upload correctly
+23-01-06    Fixed small bug where registry of PEAR modules listed in installer
+            was referring to the system instead of local PEAR install
+20-01-06    Problems with adding subscribers fixed in NewsletterMgr
+            (AJ Tarachanowicz)
+20-01-06    Problems with ContentTypeMgr fixed (AJ Tarachanowicz)
+17-01-06    Fixed problems with naming conventions in module generator
+30-12-05    Fixed bug where contact us template could not be found (Andrey Podshivalov)
+21-12-05    Ancestors correctly highlighted in navigation trees (Gerald Fishcer)
+20-12-05    Added missing path vars in config template (Tomasz Osmialowski)
+20-12-05    Fixed corruption of german language file in default module
+19-12-05    Fixed incorrect constant which prevented instant messages from working
+            correctly
+16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
 
 IMPROVEMENTS
-14-12-05    Module skeleton generator improved, it now: creates template files,
-            lang files and aActionsMapping array (Werner Krauss)
-14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
-            (Philippe Lhoste)
-14-12-05    'localeCategory' configurable, set to LC_ALL by default although European
-            users will want to change this where supplying a , for the decimal separator
-            causes calculation probs (use LC_TIME)
-14-12-05    Integrated advanced locale features available via SGL_Locale, disabled
-            by default
-14-12-05    SGL_USR_OS renamed more correctly to SGL_CLIENT_OS
-12-12-05    Block management enhanced - you can now create any number of arbitrarily
-            positioned blocks and assign content to them (Andrey Podshivalov)
-12-12-05    Uri aliases integrated into navigation module, external Uris handled
+23-01-06    Implemented web-based PEAR package and channel management.  Basic ideas
+            used from PEAR webinstaller and extended.
+23-01-06    Seagull is now PHP 5.1.x compliant
+23-01-06    Added new conf key: [RegisterMgr][enabled] set to true by default
+23-01-06    Added auto-correct frontScriptName for CGI users in SGL_Task_CreateConfig()
+18-01-06    Test runner now uses pearified SimpleTest and notices are suppressed
+            for now, see http://trac.seagullproject.org/wiki/Standards/UnitTesting
+17-01-06    Integrated Serendipity blog, see
+            http://trac.seagullproject.org/wiki/Integration/Serendipity
+17-01-06    Added new 'getAllModules' xml-rpc service
+16-01-06    Instantiating a cache object has changed from
+            \$cache = & SGL::cacheSingleton(); to \$cache = & SGL_Cache::singleton();
+            Likewise, SGL::clearCache() has changed to SGL_Cache::clear()
+10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
+09-01-06    Url alias solution fully integrated and database-driven
+06-01-06    Added generateRadioList method to SGL_Output (mawan)
+06-01-06    Added a wrapper to create html views easily:
+                \$view = new SGL_HtmlSimpleView(\$output);
+                \$html = \$view->render();
             (Andrey Podshivalov)
-06-12-05	Basic CLI request implemented (Eric Persson)
-01-12-05    Three url parsers loaded by default: classic querystring, standard
-            Seagull SEF, and now UrlAlias, see the 0.5.4 updates notes for details:
-            http://trac.seagullproject.org/wiki/Howto/Misc/Upgrading/05
-01-12-05    Improved performance for DB-based sessions (Eric Persson)
-30-11-05    Polish translation updated (Tomasz Osmialowski)
-29-11-05	RSS query more configurable (bluetoad)
-29-11-05	Web root path now configurable from installer
-24-11-05    DB2 support added (Tobias Kuckuck)
-23-11-05    Implemented ability to load default data in installer
-23-11-05	Implemented Smarty renderer (Malaney J. Hill)
-22-11-05    Added ServiceLocator class and fixed db independence for testing
-21-11-05    Factored out setup of table name aliases, these are not set on a per-module
-            basis in the file 'tableAliases.ini' parsed at setup time.
-16-11-05    Chinese translation updated (Finjon Kiang)
-14-11-05    Added version-checker routine to Maintenance manager
-14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
-14-11-05    Improved integration of page offset id in seagull SEF urls
-            (Andreas Singer)
+06-01-06    Implemented post-connect query which is used to set the default
+            character set for the current connection (MySQL 4.1 or higher). For
+            example: SET NAMES utf8
+06-01-06    All data object calls are now config driven (freeslacker)
+05-01-06    Added a new admin GUI, admin tasks will be clearly defined and
+            identified by this addition (Julien Casanova)
+04-01-06    Blocks can now be enabled/disabled for sub-sections (mstahv)
+04-01-06    Cleanup of Translation2 implementation, navigation section and items
+            get their own translation id, no more sharing with titles.  section
+            and item_addition both get a new trans_id field (AJ Tarachanowicz)
+23-12-05    Added new navigation block (AJ Tarachanowicz)
+22-12-05    PEAR's Translation2 lib integrated which means application interface,
+            navigation and content can now be translated into multiple languages,
+            many thanks to AJ's gargantuan effort here and the patronage of
+            Multithink.com (AJ Tarachanowicz)
+22-12-05    Improvement to the who's online block (Andrey Podshivalov)
+
 EOT;
 
     // Instanciate package file manager
@@ -234,8 +249,8 @@ EOT;
     #$pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
     $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
-    require_once '../modules/publisher/generatePearPackageXml.php';
-    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
+    #require_once '../modules/publisher/generatePearPackageXml.php';
+    #$pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
 
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');
