@@ -286,6 +286,11 @@ class SGL_URL
 						$this->querystring = $urlinfo['query'];
                 	}
                     $this->aQueryData = $this->parseQueryString($conf);
+
+                    //  populate querystring property
+                    $this->querystring =    $this->getModuleName() .'/'.
+                                            $this->getManagerName() .'/'.
+                                            SGL_Array::implodeWithKeys('/', $this->getQueryData(true));
                     break;
 
                 case 'fragment':

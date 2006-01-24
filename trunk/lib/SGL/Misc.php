@@ -151,6 +151,22 @@ class SGL_Array
         }
         return $clean;
     }
+
+    /**
+     * Returns an array with imploded keys.
+     *
+     * @param string $glue
+     * @param array $hash
+     * @param string $valwrap
+     * @return string
+     */
+    function implodeWithKeys($glue, $hash, $valwrap='')
+    {
+        foreach ($hash as $key => $value) {
+            $ret[] = $key.$glue.$valwrap.$value.$valwrap;
+        }
+        return implode($glue, $ret);
+    }
 }
 
 /**
