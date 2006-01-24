@@ -551,6 +551,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
         $da = & DA_Default::singleton();
         $req = $input->getRequest();
         $moduleName = $req->get('moduleName');

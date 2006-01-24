@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.3                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockForm.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -57,18 +57,16 @@ class BlockFormDynamic
         $sectionList->orderBy('left_id');
         $result = $sectionList->find();
         if ($result > 0) {
-            while ($sectionList->fetch()) {
+            while ( $sectionList->fetch() ) {
                 if (is_numeric($sectionList->title)) {
                     $trans = & SGL_Translation::singleton();
-                    if (is_numeric($sectionList->title)) {
-                        $sections[$sectionList->section_id] = $trans->get($sectionList->title,
-                            'nav', SGL_Translation::getLangID());
-                    } else {
-                        $sections[$sectionList->section_id] = $sectionList->title;
-                    }
-                    $sections[ $sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
-                        $sections[$sectionList->section_id];
+                    $sections[$sectionList->section_id] = $trans->get($sectionList->title,
+                        'nav', SGL_Translation::getLangID());
+                } else {
+                    $sections[$sectionList->section_id] = $sectionList->title;
                 }
+                $sections[$sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
+                    $sections[ $sectionList->section_id ];
             }
         }
         $sections[0] = 'All sections';
@@ -108,35 +106,35 @@ class BlockFormDynamic
             $this->form->addElement('hidden', 'action', $this->action);
         }
         //  Form Header
-        $this->form->addElement('header', null, SGL_Output::translate('Block Details') );
+        $this->form->addElement('header', null, SGL_String::translate('Block Details') );
         // Field ID
         if( $this->action == 'edit' ) {
             // Create a label for ID
             $this->form->addElement('hidden', 'block[block_id]', $this->data['block[block_id]']);
             $this->form->addElement('static', 'block[id_label]',
-                SGL_Output::translate('ID'), $this->data['block[block_id]']);
+                SGL_String::translate('ID'), $this->data['block[block_id]']);
         }
 
         // Field name
-        $this->form->addElement('text', 'block[name]', SGL_Output::translate('Name') );
+        $this->form->addElement('text', 'block[name]', SGL_String::translate('Name') );
         // Field title
-        $this->form->addElement('text', 'block[title]', SGL_Output::translate('Title') );
+        $this->form->addElement('text', 'block[title]', SGL_String::translate('Title') );
         // Field title_class
-        $this->form->addElement('text', 'block[title_class]', SGL_Output::translate('Title class') );
+        $this->form->addElement('text', 'block[title_class]', SGL_String::translate('Title class') );
         // Field bgnd_colour
-        $this->form->addElement('text', 'block[body_class]', SGL_Output::translate('Body class')) ;
+        $this->form->addElement('text', 'block[body_class]', SGL_String::translate('Body class')) ;
         // Field position
         $this->form->addElement('select', 'block[position]', SGL_String::translate('Position'), $aBlocksNames);
 
         if( $this->action == 'edit' ) {
             // Field blk_order
-            $this->form->addElement('static', 'block[blk_order]', SGL_Output::translate('Order'), $this->data['block[blk_order]']) ;
+            $this->form->addElement('static', 'block[blk_order]', SGL_String::translate('Order'), $this->data['block[blk_order]']) ;
         }
         // Field is_enabled
-        $this->form->addElement('checkbox', 'block[is_enabled]', SGL_Output::translate('Status'), SGL_Output::translate('check to activate'));
+        $this->form->addElement('checkbox', 'block[is_enabled]', SGL_String::translate('Status'), SGL_String::translate('check to activate'));
 
         // Field sections
-        $this->form->addElement('select', 'block[sections]', SGL_Output::translate('Sections'), $this->sections );
+        $this->form->addElement('select', 'block[sections]', SGL_String::translate('Sections'), $this->sections );
         $select = &$this->form->getElement('block[sections]');
         $select->setMultiple(true);
         $select->setSize(15);
@@ -156,11 +154,11 @@ class BlockFormDynamic
         // Rules
         if( $this->action == 'edit' ) {
             $this->form->registerRule( 'can_be_activated', 'function', 'classAvailable', $this );
-            $this->form->addRule( 'block[is_enabled]', SGL_Output::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
+            $this->form->addRule( 'block[is_enabled]', SGL_String::translate('You need to define a class for this block before activating it'), 'can_be_activated', 'function');
         }
 
-        $this->form->addRule('block[name]', SGL_Output::translate('You must enter a name for your block'), 'required');
-        $this->form->addRule('block[title]', SGL_Output::translate('You must enter a title for your block'), 'required');
+        $this->form->addRule('block[name]', SGL_String::translate('You must enter a name for your block'), 'required');
+        $this->form->addRule('block[title]', SGL_String::translate('You must enter a title for your block'), 'required');
 
         // Buttons
         $buttons[] = &HTML_QuickForm::createElement('submit', 'submitted', SGL_String::translate('Submit') );

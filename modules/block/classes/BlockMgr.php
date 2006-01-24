@@ -427,7 +427,7 @@ class BlockMgr extends SGL_Manager
                         $data[$k] = $aValue;
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
-                            if ($aValue['trans_id'] != 0) {
+                            if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
                                 $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                             } else {
                                 $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
@@ -444,7 +444,7 @@ class BlockMgr extends SGL_Manager
                     $data[$k] = $aValue;
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
-                        if ($aValue['trans_id'] != 0) {
+                        if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
                             $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
                         } else {
                             $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
