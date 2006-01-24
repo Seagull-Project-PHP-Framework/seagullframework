@@ -316,12 +316,12 @@ class SGL_URL
 
     function getManagerName()
     {
-        return $this->aQueryData['managerName'];
+        return @$this->aQueryData['managerName'];
     }
 
     function getModuleName()
     {
-        return $this->aQueryData['moduleName'];
+        return @$this->aQueryData['moduleName'];
     }
 
     /**

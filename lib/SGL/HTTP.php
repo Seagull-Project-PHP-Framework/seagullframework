@@ -107,7 +107,7 @@ class SGL_HTTP
             SGL_Url::addSessionInfo($url);
         }
 
-        //  add a trailing slash if one is not present
+        //  add a trailing slash if one is not present for uris passed as strings
         if (substr($url, -1) != '/') {
             $url .= '/';
         }

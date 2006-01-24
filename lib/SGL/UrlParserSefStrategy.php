@@ -65,10 +65,14 @@ class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
                    . $url->pass . (!empty($url->user) ? '@' : '')
                    . $url->getHostName() . ($url->port == $url->getStandardPort($url->protocol) ? '' : ':' . $url->port)
                    . $url->getPath()
-                   . $url->getFrontScriptName()
-                   . $url->getQueryString()
-                   . (!empty($url->anchor) ? '#' . $url->anchor : '');
+                   . $url->getFrontScriptName();
 
+        //  add a trailing slash if one is not present
+        $qs = $url->getQueryString();
+        if ($qs{0} != '/' && substr($retUrl, -1) != '/') {
+            $qs = '/'.$qs;
+        }
+        $retUrl .= $qs . (!empty($url->anchor) ? '#' . $url->anchor : '');
         return $retUrl;
     }
 
