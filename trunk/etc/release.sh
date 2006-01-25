@@ -118,6 +118,7 @@ function exportSvnAndPackage()
     rm -f $PROJECT_NAME/etc/release.sh
     rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/wizardexample
     rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/wizardexample
+    rm -f $PROJECT_NAME/CHANGELOG-1.txt.gz
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
 
@@ -209,7 +210,6 @@ function scpChangelogToSglSite()
 function buildMinimalPearPackage()
 {
     # remove unwanted files
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/CHANGELOG-1.txt.gz
     rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
@@ -217,42 +217,43 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull.$RELEASE_NAME.tgz
 
     # remove all but core modules
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/block
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/contactus
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/documentor
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/export
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/faq
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/guestbook
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/messaging
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/newsletter
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/randommsg
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/block
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/contactus
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/documentor
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/export
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/faq
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/guestbook
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/messaging
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/newsletter
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/randommsg
 
 
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/blog
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/wizardexample
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/blog
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/wizardexample
 
 
     #and their templates
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/block
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/contactus
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/documentor
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/export
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/faq
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/guestbook
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/messaging
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/newsletter
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/randommsg
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/block
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/contactus
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/documentor
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/export
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/faq
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/guestbook
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/messaging
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/newsletter
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/randommsg
 
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/gallery2
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/wizardexample
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/gallery2
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/wizardexample
 
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/savant
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/smarty
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/savant
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/smarty
 
     # copy PEAR overrides into root
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME-$RELEASE_NAME/
