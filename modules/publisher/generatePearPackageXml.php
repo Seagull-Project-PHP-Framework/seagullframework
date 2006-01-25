@@ -165,13 +165,17 @@ EOT;
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $publisher_pkg->generateContents();
 
-    // If called without "make" parameter, we just want to debug the generated
-    // package.xml file and want to receive additional information on error.
 //    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
 //            $_SERVER['argv'][1] == 'make')) {
-//    	$e = $pkg->writePackageFile();
+//    	#$e = $pkg->writePackageFile();
+//    	$e = $publisher_pkg->writePackageFile();
+//print '<pre> in publisher:';print_r($e);die();
+//
+//        #$e = $packagexml->writePackageFile();
 //	} else {
-//    	$e = $pkg->debugPackageFile();
+//    	#$e = $pkg->debugPackageFile();
+//    	$e = $publisher_pkg->debugPackageFile();
+//    	#$e = $packagexml->debugPackageFile();
 //	}
 //
 //	if (PEAR::isError($e)) {

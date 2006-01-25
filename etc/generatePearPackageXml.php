@@ -317,10 +317,10 @@ EOT;
     if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
             $_SERVER['argv'][1] == 'make')) {
     	$e = $pkg->writePackageFile();
+
         #$e = $packagexml->writePackageFile();
 	} else {
     	$e = $pkg->debugPackageFile();
-    	#$e = $packagexml->debugPackageFile();
 	}
 
 	if (PEAR::isError($e)) {

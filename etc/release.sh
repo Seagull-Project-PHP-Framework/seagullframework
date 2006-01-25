@@ -213,7 +213,7 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
 
     # remove all but core modules
