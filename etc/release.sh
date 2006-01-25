@@ -212,7 +212,7 @@ function buildMinimalPearPackage()
     # remove unwanted files
     rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
     #rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
 
@@ -274,8 +274,9 @@ function buildMinimalPearPackage()
     # create package.xml
     $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
 
-    # genereate package
-    $PEAR package /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
+    # generate package
+    #cp /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml /tmp/$PROJECT_NAME-$RELEASE_NAME/package.xml
+    $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
 
@@ -289,14 +290,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvnAndPackage
 
 #uploadToSfWholePackage
 
@@ -310,6 +311,6 @@ exportSvnAndPackage
 
 #scpChangelogToSglSite
 
-#buildMinimalPearPackage
+buildMinimalPearPackage
 
 exit 0
