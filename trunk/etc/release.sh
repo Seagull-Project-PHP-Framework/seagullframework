@@ -292,16 +292,16 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvnAndPackage
+exportSvnAndPackage
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
 #generateApiDocs
 
@@ -313,6 +313,6 @@ cd /tmp
 
 #scpChangelogToSglSite
 
-buildMinimalPearPackage
+#buildMinimalPearPackage
 
 exit 0
