@@ -369,7 +369,8 @@ class BlockMgr extends SGL_Manager
         $query = "  SELECT
                         b.block_id, b.name, b.title, b.title_class,
                         b.body_class, b.blk_order, b.position, b.is_enabled,
-                        ba.section_id as sections, s.title as section_title
+                        ba.section_id as sections, s.title as section_title,
+                        trans_id
                     FROM {$this->conf['table']['block']} b
                     LEFT JOIN {$this->conf['table']['block_assignment']} ba
                     ON ba.block_id=b.block_id
@@ -377,7 +378,8 @@ class BlockMgr extends SGL_Manager
                     ON s.section_id=ba.section_id
                     GROUP BY
                         b.block_id, b.name, b.title, b.title_class, b.body_class,
-                        b.blk_order, b.position, b.is_enabled, sections, section_title
+                        b.blk_order, b.position, b.is_enabled, sections, section_title,
+                        trans_id
                     ORDER BY " .
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
@@ -416,10 +418,16 @@ class BlockMgr extends SGL_Manager
 
             //  rebuild $aPagedData['data']
             foreach ($aPagedData['data'] as $k => $aValue) {
+                $title = '';
                 if (isset($pKey) && isset($pBlock)) {
                     if ($pBlock == $aValue['block_id']) {
                         if ($aValue['trans_id'] != 0) {
-                            $data[$pKey]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
+                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                            }
+                        }
+                        if ($title) {
+                            $data[$pKey]['sections'][$aValue['sections']] = $title;
                         } else {
                             $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
                         }
@@ -428,7 +436,12 @@ class BlockMgr extends SGL_Manager
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
                             if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                                $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
+                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                  $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                                }
+                            }
+                           if ($title) {
+                                $data[$k]['sections'][$aValue['sections']] = $title;
                             } else {
                                 $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
                             }
@@ -445,7 +458,12 @@ class BlockMgr extends SGL_Manager
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
                         if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                            $data[$k]['sections'][$aValue['sections']] = $this->trans->get($aValue['section_title'], 'nav', SGL_Translation::getLangID());
+                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                            }
+                        }
+                        if ($title) {
+                            $data[$k]['sections'][$aValue['sections']] = $title;
                         } else {
                             $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
                         }
