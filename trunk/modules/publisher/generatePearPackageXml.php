@@ -40,7 +40,7 @@
     $publisher_channel     = 'pear.phpkitchen.com';
 
     // Category and name of the package
-	$publisher_category    = 'Frameworks';
+	$publisher_category    = 'Seagull Modules';
     $publisher_package     = 'Seagull_publisher';
 
 	$publisher_version     = '1.0';
@@ -90,7 +90,6 @@ EOT;
             array(
                 'package.xml',
                 'package2.xml',
-                'generate_package_xml.php',
                 '*tests*',
                 '*.svn',
 		    ),
@@ -145,7 +144,7 @@ EOT;
 
     // Must be available in new package.xml format
     $publisher_pkg->setPhpDep('4.3.0');
-    $publisher_pkg->setPearinstallerDep('1.4.5');
+    $publisher_pkg->setPearinstallerDep('1.4.6');
 
     // Require PEAR_DB package for initializing the database in the post install script
     $publisher_pkg->addPackageDepWithChannel('required', 'HTTP', 'pear.php.net', '1.4.0');
