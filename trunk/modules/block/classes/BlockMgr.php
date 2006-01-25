@@ -436,8 +436,10 @@ class BlockMgr extends SGL_Manager
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
                             if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                  $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                                if ($this->conf['translation']['container'] == 'db') {
+                                    if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                        $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                                    }
                                 }
                             }
                            if ($title) {
@@ -458,8 +460,10 @@ class BlockMgr extends SGL_Manager
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
                         if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                            if ($this->conf['translation']['container'] == 'db') {
+                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                    $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                                }
                             }
                         }
                         if ($title) {
