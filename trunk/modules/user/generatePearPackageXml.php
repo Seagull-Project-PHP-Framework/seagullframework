@@ -16,7 +16,7 @@
  *
  * @category   Frameworks
  * @package    Seagull
- * @subpackage Seagull_navigation
+ * @subpackage Seagull_user
  * @author     Demian Turner <demian@phpkitchen.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
@@ -35,51 +35,51 @@
 
 	// Directory where the package files are located.
 	$path = (defined('SGL_PKG_TMP_BUILD_DIR'))
-	   ? SGL_PKG_TMP_BUILD_DIR.'/modules/navigation'
+	   ? SGL_PKG_TMP_BUILD_DIR.'/modules/user'
 	   : dirname(__FILE__);
-	$navigation_packagedir  = $path;
+	$user_packagedir  = $path;
 
     // Name of the channel, this package will be distributed through
-    $navigation_channel     = 'pear.phpkitchen.com';
+    $user_channel     = 'pear.phpkitchen.com';
 
     // Category and name of the package
-	$navigation_category    = 'Seagull Modules';
-    $navigation_package     = 'Seagull_navigation';
+	$user_category    = 'Seagull Modules';
+    $user_package     = 'Seagull_user';
 
-	$navigation_version     = '1.0';
+	$user_version     = '1.0';
 
     // Summary description
-	$navigation_summary     = <<<EOT
-The navigation module provides functionality to create and administer a nagivation hierarchy.
+	$user_summary     = <<<EOT
+The navigation module provides functionality to create and administer users, roles, perms and preferences.
 EOT;
 
     // Longer description
-	$navigation_description = <<<EOT
+	$user_description = <<<EOT
 There are a wide range of features.
 EOT;
 
     // License information
-    $navigation_license = 'BSD';
+    $user_license = 'BSD';
 
     // Notes, function to grab them directly from S9Y in
     // generate_package_xml_functions.php
-	$navigation_notes = <<<EOT
-Publisher notes.
+	$user_notes = <<<EOT
+User notes.
 EOT;
 
     // Instantiate package file manager
-	$navigation_pkg = new PEAR_PackageFileManager2();
+	$user_pkg = new PEAR_PackageFileManager2();
 
     // Setting options
-	$e = $navigation_pkg->setOptions(
+	$e = $user_pkg->setOptions(
 		array(
             // Where are our package files.
-            'packagedirectory'  => $navigation_packagedir,
+            'packagedirectory'  => $user_packagedir,
             // Where will package files be installed in
             // the local PEAR repository?
-            'baseinstalldir'    => 'Seagull/modules/navigation',
+            'baseinstalldir'    => 'Seagull/modules/user',
             // Where should the package file be generated
-            'pathtopackagefile' => $navigation_packagedir,
+            'pathtopackagefile' => $user_packagedir,
             // Just simple output, no MD5 sums and <provides> tags
             #'simpleoutput'      => true,
 
@@ -126,49 +126,47 @@ EOT;
     }
 
     // Set misc package information
-    $navigation_pkg->setPackage($navigation_package);
-    $navigation_pkg->setSummary($navigation_summary);
-    $navigation_pkg->setDescription($navigation_description);
-    $navigation_pkg->setChannel($navigation_channel);
+    $user_pkg->setPackage($user_package);
+    $user_pkg->setSummary($user_summary);
+    $user_pkg->setDescription($user_description);
+    $user_pkg->setChannel($user_channel);
 
-    $navigation_pkg->setReleaseStability('beta');
-    $navigation_pkg->setAPIStability('stable');
-    $navigation_pkg->setReleaseVersion($navigation_version);
-    $navigation_pkg->setAPIVersion($navigation_version);
+    $user_pkg->setReleaseStability('beta');
+    $user_pkg->setAPIStability('stable');
+    $user_pkg->setReleaseVersion($user_version);
+    $user_pkg->setAPIVersion($user_version);
 
-    $navigation_pkg->setLicense($navigation_license);
-    $navigation_pkg->setNotes($navigation_notes);
+    $user_pkg->setLicense($user_license);
+    $user_pkg->setNotes($user_notes);
 
     // Our package contains PHP files (not C extension files)
-    $navigation_pkg->setPackageType('php');
+    $user_pkg->setPackageType('php');
 
     // Must be available in new package.xml format
-    $navigation_pkg->setPhpDep('4.3.0');
-    $navigation_pkg->setPearinstallerDep('1.4.6');
+    $user_pkg->setPhpDep('4.3.0');
+    $user_pkg->setPearinstallerDep('1.4.6');
 
     // Require PEAR_DB package for initializing the database in the post install script
-    #$navigation_pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
+    #$user_pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
     // Create the current release and add it to the package definition
-    $navigation_pkg->addRelease();
+    $user_pkg->addRelease();
 
     // Package release needs a maintainer
-	$navigation_pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
+	$user_pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
 
     // Internally generate the XML for our package.xml (does not perform output!)
-    $test = $navigation_pkg->generateContents();
+    $test = $user_pkg->generateContents();
 
 if (!defined('SGL_PKG_TMP_BUILD_DIR'))    {
     if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
             $_SERVER['argv'][1] == 'make')) {
     	#$e = $pkg->writePackageFile();
-    	$e = $navigation_pkg->writePackageFile();
+    	$e = $user_pkg->writePackageFile();
 
-        #$e = $packagexml->writePackageFile();
 	} else {
     	#$e = $pkg->debugPackageFile();
-    	$e = $navigation_pkg->debugPackageFile();
-    	#$e = $packagexml->debugPackageFile();
+    	$e = $user_pkg->debugPackageFile();
 	}
 
 	if (PEAR::isError($e)) {
