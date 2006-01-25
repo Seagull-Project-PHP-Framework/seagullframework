@@ -2,7 +2,7 @@
 
 #print '<pre>';print_r($argv);die();
 
-define('SGL_PKG_RELEASE_NAME', $argv[2]); //    passed from release.sh
+define('SGL_PKG_RELEASE_NAME', $_SERVER['argv'][2]); //    passed from etc/release.sh
 define('SGL_PKG_TMP_BUID_DIR', '/tmp/seagull-'.SGL_PKG_RELEASE_NAME);
 /**
  * Generation script for PEAR package.xml file.
