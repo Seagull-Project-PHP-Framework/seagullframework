@@ -270,6 +270,9 @@ function buildMinimalPearPackage()
 
     # remove previous install
     $PEAR uninstall phpkitchen/Seagull
+    $PEAR uninstall phpkitchen/Seagull_default
+    $PEAR uninstall phpkitchen/Seagull_navigation
+    $PEAR uninstall phpkitchen/Seagull_user
 
     # create package.xml
     $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
