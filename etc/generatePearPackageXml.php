@@ -228,7 +228,7 @@ EOT;
 
     // Must be available in new package.xml format
     $pkg->setPhpDep('4.3.0');
-    $pkg->setPearinstallerDep('1.4.5');
+    $pkg->setPearinstallerDep('1.4.6');
 
     // Require custom file role for our web installation
     $pkg->addPackageDepWithChannel('required', 'Role_Web', 'pearified.com', '1.1.0');
