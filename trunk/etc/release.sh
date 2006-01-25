@@ -275,7 +275,6 @@ function buildMinimalPearPackage()
     $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
 
     # generate package
-    #cp /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml /tmp/$PROJECT_NAME-$RELEASE_NAME/package.xml
     $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
