@@ -34,7 +34,7 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$publisher_packagedir  = SGL_PKG_TMP_BUID_DIR.'/modules/publisher';
+	$publisher_packagedir  = SGL_PKG_TMP_BUILD_DIR.'/modules/publisher';
 
     // Name of the channel, this package will be distributed through
     $publisher_channel     = 'pear.phpkitchen.com';
