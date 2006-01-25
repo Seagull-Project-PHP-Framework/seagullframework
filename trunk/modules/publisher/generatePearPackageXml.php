@@ -151,8 +151,6 @@ EOT;
     $publisher_pkg->addPackageDepWithChannel('required', 'HTTP_Header', 'pear.php.net', '1.2.0');
     $publisher_pkg->addPackageDepWithChannel('required', 'HTTP_Download', 'pear.php.net', '1.1.0');
     $publisher_pkg->addPackageDepWithChannel('required', 'HTML_TreeMenu', 'pear.php.net', '1.2.0');
-    #$pkg->addPackageDepWithChannel('required', 'Net_Useragent_Detect', 'pear.php.net', '1.2.0');
-
     $publisher_pkg->addPackageDepWithChannel('required', 'Text_Statistics', 'pear.php.net', '1.0');
     $publisher_pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 

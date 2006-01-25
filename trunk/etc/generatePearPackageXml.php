@@ -149,9 +149,9 @@ EOT;
                 'generate_package_xml.php',
                 'lib/pear/',
                 'modules/',
-                'www/themes/default_admin',
-                'www/themes/savant',
-                'www/themes/smarty',
+                'www/themes/default_admin/',
+                'www/themes/savant/',
+                'www/themes/smarty/',
                 '*tests*',
                 '*.svn',
 		    ),
@@ -248,6 +248,7 @@ EOT;
     $pkg->addPackageDepWithChannel('required', 'Log', 'pear.php.net', '1.9.2');
     $pkg->addPackageDepWithChannel('required', 'Mail_Mime', 'pear.php.net', '1.3.1');
     $pkg->addPackageDepWithChannel('required', 'Net_Socket', 'pear.php.net', '1.0.6');
+    $pkg->addPackageDepWithChannel('required', 'Net_Useragent_Detect', 'pear.php.net', '1.2.0');
     $pkg->addPackageDepWithChannel('required', 'Pager', 'pear.php.net', '2.3.4');
     $pkg->addPackageDepWithChannel('required', 'Text_Password', 'pear.php.net', '1.1.0');
     $pkg->addPackageDepWithChannel('required', 'Translation2', 'pear.php.net', '2.0.0beta8');
