@@ -1,0 +1,124 @@
+<script type='text/javascript'>
+<!--
+    function checkNewButton()
+    {
+        var buttValue = document.getElementById('frmAddArticle').frmArticleTypeID.value;
+        if (buttValue == 1)
+            document.getElementById('newArticleButton').disabled = true;
+    }
+
+    function exp(strTag, strAttribute)
+    { 
+        var elem = document.getElementsByTagName(strTag); 
+        var elem1 = window.event.srcElement; 
+        for (var i=0;i<elem1.children.length;i++){ 
+          elem1.children[i].innerText=="4"?elem1.children[i].innerText="5":elem1.children[i].innerText="4"; 
+        } 
+        for (var i =0;i<elem.length;i++) { 
+            if (elem[i].getAttribute(strAttribute)=="yes") { 
+                elem[i].style.display=='none'? elem[i].style.display='block':elem[i].style.display='none'; 
+            } 
+        } 
+    }
+//-->
+</script> 
+
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="frmAddArticle" id="frmAddArticle" action="{makeUrl(#add#,#article#,#publisher#)}" method="post" flexy:ignore>
+    <fieldset>
+    <div id="articleHelp" class="hide">
+        <p>{translate(#Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:#)}
+        </p>
+        <ul>
+            <li>{translate(#What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.#)}</li>
+            <li>{translate(#However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the#)} <a target="_top" href="{makeUrl(##,#page#,#navigation#)}">{translate(#Navigation module#)}</a>.</li>
+            <li>{translate(#Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.#)}</li>
+        </ul>
+        <p>{translate(#You can also set permissions on who can view the content using the Permissions button above.#)}</p>
+    </div>
+        <p>
+            <label>{translate(#You are here#)}</label>
+            <span>{breadCrumbs:h}</span>
+        </p>
+        <p>
+            <label>{translate(#showing results for#,#ucfirst#)}</label>
+            <span>{queryRange:h}</span>
+        </p>
+        <p>
+            <label class="tipOwner">{translate(#Article type#)}
+            <span class="tipText">{translate(#select a type to create a new article#)}</span>
+            </label>
+            <select name="frmArticleTypeID" 
+                    onchange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeID) + '/';" />
+                {generateSelect(aArticleTypes,dataTypeID):h}
+            </select>
+            <input type="submit" id="newArticleButton" name="newArticleButton" value="{translate(#New Article#)}" />
+        </p>
+    </fieldset>
+</form>
+
+<form name="frmDeleteArticle" id="frmDeleteArticle" flexy:ignore>
+    <fieldset>
+        <input type="hidden" name="action" value="delete" />
+        {if:pager}<flexy:include src="pager.html" />{end:}
+        <table class="full">
+            <tr>
+                <th>
+                    <span class="tipOwner">
+                        <span class="tipText" id="becareful">Be Careful !</span>
+                        <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('frmDeleteArticle', 'frmDelete[]', this.checked)" />
+                    </span>
+                 </th>
+                <th>ID</th>
+                <th><a class="header" href="#">{translate(#Article Name#)}</a></th>
+                <th><a class="header" href="#">{translate(#Start Date#)}</a></th>
+                <th><a class="header" href="#">{translate(#Expiry Date#)}</a></th>
+                <th><a class="header" href="#">{translate(#Modif. By#)}</a></th>
+                <th><a class="header" href="#">{translate(#Edit#)}</a></th>
+                <th><a class="header" href="#">{translate(#View#)}</a></th>
+                <th><a class="header" href="#">{translate(#Status#)}</a></th>
+                <th>{translate(#Action#)}</th>
+            </tr>
+        
+            {if:aPagedData[data]}
+        
+            <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                <td align="center"><input class="noBorder" type="checkbox" 
+                                       name="frmDelete[]" value="{aValue[item_id]}" />
+                </td>
+                <td>{aValue[item_id]}</td>
+                <td>{aValue[addition]}</td>
+                <td align="center">{formatDate(aValue[start_date])}</td>
+                <td align="center">{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
+                <td>{aValue[username]}</td>
+                <td align="center">
+                    <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}" />
+                        <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
+                    </a>
+                </td>
+                <td align="center">
+                    <a  onClick="javascript:openWindow('{makeUrl(#view#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}',500,350)"
+                        href="#" />
+                    <img src="{webRoot}/themes/{theme}/images/view.gif" alt="view" /></a>
+                </td>
+                <td nowrap>{this.plugin(#applyStatusColour#,aValue[status]):h}</td>
+                {aValue[actionLinks]:h}
+            </tr>
+            <tr>
+                <td style="text-align:right;">
+                    <img src="{webRoot}/themes/{theme}/images/16/arrow_right.png" alt="" />
+                </td>
+                <td colspan="9">
+                {translate(#With selected article(s)#)}: 
+                    <input type="submit" name="deleteButton" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#article#)}', 'frmDeleteArticle')" />
+                </td>
+            </tr>
+            {else:}
+            <tr>
+                <td colspan="10" align="center">{translate(#no results found#)}</td>
+            </tr>
+            {end:}
+        </table>
+    </fieldset>
+</form>

@@ -1,0 +1,56 @@
+<form method="post" name="module" id="module" flexy:ignore>
+<h3>{if:module.module_id}
+    {translate(#module#,#ucfirst#)} : {module.title}
+    {else:}
+    {translate(#new module#,#ucfirst#)}
+    {end:}
+</h3>
+<p><input type="hidden" name="action" value="{action}" />
+{if:module.module_id}
+<input type="hidden" name="module[module_id]" value="{module.module_id}" />
+{end:}
+<input type="hidden" name="submitted" id="submitted" value="1" />
+</p>
+
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<fieldset>
+    <p>
+        <label class="tipOwner" for="module[name]">{translate(#Name#)}
+            <span class="tipText">{translate(#The name of the module must be the exact name of the folder containing files, beware of case sensiveness#)}</span>
+        </label>
+        <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+        <input type="text" class="text" name="module[name]" id="module[name]" value="{module.name}" />
+    </p>
+    <p>
+        <label class="tipOwner" for="module[title]">{translate(#Title#)}
+            <span class="tipText">{translate(#Here you can write what you want#)}</span>
+        </label>
+        <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+        <input type="text" class="text" name="module[title]" id="module[title]" value="{module.title}" />
+    </p>
+    <p>
+        <label for="module[is_configurable]">{translate(#Configurable#)}</label>
+        <input type="checkbox" name="module[is_configurable]" id="module[is_configurable]"  flexy:raw="{isConfigurable}" />
+    </p>
+    <p>
+        <label for="module[description]">{translate(#Description#)}</label>
+        <div class="error" flexy:if="error[description]">{translate(error[description])}</div>
+        <textarea name="module[description]" id="module[description]">{module.description}</textarea>
+    </p>
+    <p>
+        <label for="module[admin_uri]">{translate(#Admin URI#)}</label>
+        <div class="error" flexy:if="error[admin_uri]">{translate(error[admin_uri])}</div>
+        <select name="module[admin_uri]" id="module[admin_uri]">
+            <option value=""> N/A</option>
+                {generateSelect(aAdminUris,module.admin_uri):h}
+        </select>
+    </p>
+    <p>
+        <label for="module[icon]">{translate(#Icon#)}</label>
+        <div class="error" flexy:if="error[icon]">{translate(error[icon])}</div>
+        <input type="text" class="text" name="module[icon]" id="module[icon]" value="{module.icon}" />
+    </p>
+    
+</fieldset>
+</form>

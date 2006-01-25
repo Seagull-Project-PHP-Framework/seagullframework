@@ -1,0 +1,71 @@
+<form name="frmBlockMgr" method="post" flexy:ignore id="frmBlockMgr">
+    <input type="hidden" name="action" value="delete" />
+
+    <span flexy:if="msgGet()">{msgGet()}</span> 
+    
+
+    <fieldset>
+        {if:pager}<flexy:include src="pager.html" />{end:}
+        <p>
+            <select name="position" onchange="javascript:document.location.href='{makeUrl(#reorder#,#block#,#block#,##,#position#)}'+document.frmBlockMgr.position.value">
+                <option>- {translate(#Reorder blocks#)} -</option>
+                {generateSelect(aBlocksNames,##):h}
+            </select>
+        </p>
+    <table class="full">
+        <tbody>
+            <tr>
+                <th>
+                    <span class="tipOwner">
+                        <input type="checkbox" name="checkAll" id="checkAll" onClick="javascript:applyToAllcheckboxes('frmBlockMgr', 'frmDelete[]', this.checked)" />
+                        <span class="tipText becareful">Be Careful !</span>
+                    </span>
+                </th>
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|block_id||frmSortOrder|sortOrder#)}">{translate(#ID#)}</a> 
+                    {if:sort_id}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+    
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a> 
+                    {if:sort_name}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+    
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|title||frmSortOrder|sortOrder#)}">{translate(#Title#)}</a> 
+                    {if:sort_title}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                    
+                <th>{translate(#Sections#)}</th>
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|position||frmSortOrder|sortOrder#)}">{translate(#Position#)}</a> 
+                    {if:sort_position}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                    
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|blk_order||frmSortOrder|sortOrder#)}">{translate(#Order#)}</a> 
+                    {if:sort_blk_order}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                    
+                <th><a class="header" href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|is_enabled||frmSortOrder|sortOrder#)}">{translate(#Status#)}</a> 
+                    {if:sort_is_enabled}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                <th>{translate(#Edit#)}</th>
+            </tr>
+    
+            <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[block_id]}" /></td>
+                <td align="center">{aValue[block_id]}</td>
+                <td>{aValue[name]}</td>
+                <td>{aValue[title]}</td>
+                <td align="center">{if:aValue[sections]} {foreach:aValue[sections],key,section} {section}. {end:} {else:} {translate(#No section#)} {end:}</td>
+                <td align="center">{aValue[position]}</td>
+                <td align="center">{aValue[blk_order]}</td>
+                <td align="center">{if:aValue[is_enabled]} {translate(#Enabled#)} {else:} {translate(#Disabled#)} {end:}</td>
+                <td align="center">
+                    <a href="{makeUrl(#edit#,#block#,#block#,aPagedData[data],#frmBlockId|block_id#,aValue[block_id])}">
+                        <img src="{webRoot}/themes/{theme}/images/16/cog_edit.png" title="{translate(#edit#)} {translate(aValue[title])}" />
+                    </a>
+                </td>
+            </tr>
+    </tbody>
+    <tr>
+            <td style="text-align:right;">
+                <img src="{webRoot}/themes/{theme}/images/16/arrow_right.png" alt="" />
+            </td>
+            <td colspan="8">{translate(#With selected block(s)#)} : 
+                <input type="submit" name="Delete" value="{translate(#delete#)}" onclick="return confirmSubmit('block', 'frmBlockMgr')" />
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+</form>
