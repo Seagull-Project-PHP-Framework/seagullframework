@@ -256,6 +256,12 @@ EOT;
     #$pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
     $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
+    //  package deps
+    //  - default
+    require_once SGL_PKG_TMP_BUID_DIR . '/modules/default/generatePearPackageXml.php';
+    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = true);
+
+    //  - publisher
     require_once SGL_PKG_TMP_BUID_DIR . '/modules/publisher/generatePearPackageXml.php';
     $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
 
