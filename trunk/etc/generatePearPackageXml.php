@@ -1,7 +1,5 @@
 <?php
 
-#print '<pre>';print_r($argv);die();
-
 define('SGL_PKG_RELEASE_NAME', $_SERVER['argv'][2]); //    passed from etc/release.sh
 define('SGL_PKG_TMP_BUILD_DIR', '/tmp/seagull-'.SGL_PKG_RELEASE_NAME);
 /**
@@ -259,11 +257,11 @@ EOT;
     //  package deps
     //  - default
     require_once SGL_PKG_TMP_BUILD_DIR . '/modules/default/generatePearPackageXml.php';
-    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = true);
+    $pkg->specifySubpackage($default_pkg, $dependency = false/* indicates subpackage */, $required = true);
 
     //  - publisher
-    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/publisher/generatePearPackageXml.php';
-    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
+#    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/publisher/generatePearPackageXml.php';
+#    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
 
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');
@@ -316,17 +314,23 @@ EOT;
 
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $pkg->generateContents();
+
+    //  get ver 1.0 compatible version
     #$packagexml = &$pkg->exportCompatiblePackageFile1();
+    #$packagexml->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
+    #$test1 = $packagexml->generateContents();
+
 
     // If called without "make" parameter, we just want to debug the generated
     // package.xml file and want to receive additional information on error.
     if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
             $_SERVER['argv'][1] == 'make')) {
     	$e = $pkg->writePackageFile();
-
         #$e = $packagexml->writePackageFile();
+
 	} else {
     	$e = $pkg->debugPackageFile();
+        #$e = $packagexml->writePackageFile();
 	}
 
 	if (PEAR::isError($e)) {
