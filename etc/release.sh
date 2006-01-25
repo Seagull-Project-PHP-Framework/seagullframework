@@ -261,6 +261,9 @@ function buildMinimalPearPackage()
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/maxdb_SGL.php $PROJECT_NAME-$RELEASE_NAME/
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/mysql_SGL.php $PROJECT_NAME-$RELEASE_NAME/
     cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/oci8_SGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Frontend/WebSGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Command/RemoteSGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Command/RemoteSGL.xml $PROJECT_NAME-$RELEASE_NAME/
 
     # setup PEAR env
     $PEAR config-set php_dir /usr/local/lib/php
