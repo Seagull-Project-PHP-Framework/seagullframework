@@ -1,4 +1,9 @@
 <?php
+
+#print '<pre>';print_r($argv);die();
+
+define('SGL_PKG_RELEASE_NAME', $argv[2]); //    passed from release.sh
+define('SGL_PKG_TMP_BUID_DIR', '/tmp/seagull-'.SGL_PKG_RELEASE_NAME);
 /**
  * Generation script for PEAR package.xml file.
  * Generates a version 2 package.xml file using the package
@@ -34,7 +39,7 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$packagedir  = '/tmp/seagull-0.5.5';
+	$packagedir  = SGL_PKG_TMP_BUID_DIR;
 
     // Name of the channel, this package will be distributed through
     $channel     = 'pear.phpkitchen.com';
@@ -43,7 +48,7 @@
 	$category    = 'Frameworks';
     $package     = 'Seagull';
 
-	$version     = '0.5.5';
+	$version     = SGL_PKG_RELEASE_NAME;
 
     // Summary description
 	$summary     = <<<EOT
@@ -251,8 +256,8 @@ EOT;
     #$pkg->addPackageDepWithChannel('required', 'XML_Tree', 'pear.php.net', '2.0.0RC2');
     $pkg->addPackageDepWithChannel('required', 'XML_Util', 'pear.php.net', '1.1.1');
 
-    #require_once '../modules/publisher/generatePearPackageXml.php';
-    #$pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
+    require_once SGL_PKG_TMP_BUID_DIR . '/modules/publisher/generatePearPackageXml.php';
+    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
 
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');

@@ -272,7 +272,7 @@ function buildMinimalPearPackage()
     $PEAR uninstall phpkitchen/Seagull
 
     # create package.xml
-    $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make
+    $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
 
     # genereate package
     $PEAR package /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
