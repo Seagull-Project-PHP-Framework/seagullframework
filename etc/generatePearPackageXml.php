@@ -259,6 +259,10 @@ EOT;
     require_once SGL_PKG_TMP_BUILD_DIR . '/modules/default/generatePearPackageXml.php';
     $pkg->specifySubpackage($default_pkg, $dependency = false/* indicates subpackage */, $required = true);
 
+    //  - navigation
+    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/navigation/generatePearPackageXml.php';
+    $pkg->specifySubpackage($navigation_pkg, $dependency = false/* indicates subpackage */, $required = true);
+
     //  - publisher
 #    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/publisher/generatePearPackageXml.php';
 #    $pkg->specifySubpackage($publisher_pkg, $dependency = false/* indicates subpackage */, $required = false);
