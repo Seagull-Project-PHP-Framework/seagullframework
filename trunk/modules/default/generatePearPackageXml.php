@@ -16,7 +16,7 @@
  *
  * @category   Frameworks
  * @package    Seagull
- * @subpackage publisher
+ * @subpackage Seagull_default
  * @author     Demian Turner <demian@phpkitchen.com>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
@@ -34,7 +34,10 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$default_packagedir  = SGL_PKG_TMP_BUID_DIR.'/modules/default';
+	$path = (defined('SGL_PKG_TMP_BUILD_DIR'))
+	   ? SGL_PKG_TMP_BUILD_DIR.'/modules/default'
+	   : dirname(__FILE__);
+	$default_packagedir  = $path;
 
     // Name of the channel, this package will be distributed through
     $default_channel     = 'pear.phpkitchen.com';
@@ -155,21 +158,22 @@ EOT;
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $default_pkg->generateContents();
 
-//    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
-//            $_SERVER['argv'][1] == 'make')) {
-//    	#$e = $pkg->writePackageFile();
-//    	$e = $default_pkg->writePackageFile();
-//print '<pre> in publisher:';print_r($e);die();
-//
-//        #$e = $packagexml->writePackageFile();
-//	} else {
-//    	#$e = $pkg->debugPackageFile();
-//    	$e = $default_pkg->debugPackageFile();
-//    	#$e = $packagexml->debugPackageFile();
-//	}
-//
-//	if (PEAR::isError($e)) {
-//    	echo $e->getMessage();
-//	}
+if (!defined('SGL_PKG_TMP_BUILD_DIR'))    {
+    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
+            $_SERVER['argv'][1] == 'make')) {
+    	#$e = $pkg->writePackageFile();
+    	$e = $default_pkg->writePackageFile();
+
+        #$e = $packagexml->writePackageFile();
+	} else {
+    	#$e = $pkg->debugPackageFile();
+    	$e = $default_pkg->debugPackageFile();
+    	#$e = $packagexml->debugPackageFile();
+	}
+
+	if (PEAR::isError($e)) {
+    	echo $e->getMessage();
+	}
+}
 
 ?>
