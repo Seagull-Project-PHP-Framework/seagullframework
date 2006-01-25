@@ -214,7 +214,7 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull.$RELEASE_NAME.tgz
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
 
     # remove all but core modules
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/block
@@ -289,14 +289,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvnAndPackage
+exportSvnAndPackage
 
 #uploadToSfWholePackage
 
@@ -310,6 +310,6 @@ cd /tmp
 
 #scpChangelogToSglSite
 
-buildMinimalPearPackage
+#buildMinimalPearPackage
 
 exit 0

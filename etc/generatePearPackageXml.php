@@ -143,11 +143,10 @@ EOT;
             array(
                 'package.xml',
                 'package2.xml',
-                'CHANGELOG-1.txt.gz',
                 'generate_package_xml.php',
                 'lib/pear/',
-                'modules/wizardexample/',
-                'www/themes/default/wizardexample/',
+                'modules/',
+                'www/themes/',
                 '*tests*',
                 '*.svn',
 		    ),
@@ -158,7 +157,7 @@ EOT;
             array(
                 'docs' => 'doc',
                 'lib' => 'php',
-                'modules' => 'php',
+//                'modules' => 'php',
                 'etc' => 'data',
                 'var' => 'data',
                 'www' => 'web',
@@ -193,6 +192,9 @@ EOT;
                 'maxdb_SGL.php' => 'DB',
                 'db2_SGL.php' => 'DB',
                 'Tree.php' => 'HTML',
+                'WebSGL.php' => 'PEAR/Frontend',
+                'RemoteSGL.php' => 'PEAR/Command',
+                'RemoteSGL.xml' => 'PEAR/Command',
             ),
 	    )
     );
