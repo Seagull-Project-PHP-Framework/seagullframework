@@ -1,8 +1,4 @@
 /************* SectionList template *******************/
-#frmSectionMgr fieldset {
-    width: 90%;
-    margin: 0 auto;
-}
 #frmSectionMgr table {
     margin-top: 1em;
 }
