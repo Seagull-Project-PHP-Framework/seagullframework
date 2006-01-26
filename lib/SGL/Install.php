@@ -76,6 +76,9 @@ class SGL_Install
     {
         foreach ($_SESSION['ERRORS'] as $oError) {
             $msg = SGL_Error::toString($oError);
+            if (stristr($msg, "%e")) {
+                $msg = str_replace("%e", SGL_VAR_DIR, $msg);
+            }
             $html ='<div class="errorContainer">
                         <div class="errorHeader">Error</div>
                         <div class="errorContent">' . $msg . '</div>
