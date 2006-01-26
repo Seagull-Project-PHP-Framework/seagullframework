@@ -126,6 +126,7 @@ class PearMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $ok = ini_set('max_execution_time', 180);
         putenv('PHP_PEAR_INSTALL_DIR='.SGL_LIB_PEAR_DIR);
 
         #$useDHTML = true;
