@@ -219,7 +219,7 @@ class ConfigMgr extends SGL_Manager
             $output->addMissingTrans = ($this->conf['translation']['addMissingTrans']) ? true : false;
         }
 
-        $output->addOnLoadEvent("showConfigOptions('generalSiteOptions')");
+        $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
     }
 
     function _edit(&$input, &$output)

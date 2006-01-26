@@ -50,9 +50,18 @@ a.button {
 .center {
     text-align: center;
 }
+.left {
+    text-align: left;
+}
+.right {
+    text-align: left;
+}
 .spacer {
     clear: both;
     visibility: hidden;
+}
+.required {
+    color: <?php echo $alert ?>;
 }
 /******************************* LAYOUT : HEADER ******************************/
 
@@ -104,21 +113,67 @@ a.button {
 #header-right #headerAction a {
     color: <?php echo $tertiaryDarkest ?>;
 }
+/*************************** LAYOUT : BREADCRUMB ******************************/
+
+#breadCrumb {
+    padding: 2px 20px 3px 60px;
+    border-bottom: 1px solid #cfcfcf;
+}
+#breadCrumb a {
+    padding: 2px 10px 2px 5px;
+    background: url('<?php echo $baseUrl ?>/images/arrow_black.gif') no-repeat 100% 50%;
+    color: <?php echo $secondary ?>;
+    text-decoration: underline;
+}
+#breadCrumb a:hover {
+    text-decoration: none;
+}
+/************************** LAYOUT : OPTIONS LINKS ****************************/
+
+#optionsLinks {
+    width: 22%;
+    margin: 10px 5px 0;
+    padding: 5px;
+    line-height: 1.5;
+}
+#optionsLinks h2 {
+    margin-bottom: 10px;
+    background: <?php echo $tertiary ?>;
+    border-top: 2px solid <?php echo $tertiaryDark ?>;
+    border-bottom: 2px solid <?php echo $tertiaryDark ?>;
+    font-size: 1.1em;
+    color: <?php echo $tertiaryDarker ?>;
+    text-align: center;
+}
 /***************************** LAYOUT : TABLES ********************************/
 
 #container table {
     /* Actually concerns all table but #container specialization is required not to interfere with FCKeditor css */
     background: #fff;
-    border: none;
+    border: 1px solid <?php echo $secondary ?>;
     border-collapse: collapse;
     /* This is not a typo, we want first set a fallback for IE, then set the
      * real margin for real browsers ;) */
     margin: 0 5%;
     margin: 0 auto;
 }
+tbody tr {
+    border: 1px solid <?php echo $secondary ?>;
+    border-bottom: 1px solid #dfdfdf;
+    border-top: none;
+}
+tbody td {
+    text-align: center;
+    padding: 3px 0;
+}
+thead th {
+    vertical-align: middle;
+}
 td, th {
     padding: 2px;
-    border: 1px solid #fff;
+}
+thead th.left, tbody td.left {
+    text-align: left;
 }
 th img, td img {
     vertical-align: middle;
@@ -129,8 +184,15 @@ th {
     text-align: center;
     color: <?php echo $primaryTextLight ?>;
     font-size: 1em;
-    letter-spacing: 0.1px;
-    line-height: 1.75em;
+}
+thead th.id {
+    width: 30px;
+}
+thead th.select {
+    width: 30px;
+}
+td.right {
+    text-align: right
 }
 th.noBg {
     background: none;
@@ -143,7 +205,7 @@ th a:hover {
     color: <?php echo $primaryTextLight ?>;
 }
 td a {
-    color: <?php echo $primaryDark ?>;
+    color: <?php echo $secondary ?>;
 }
 td a:hover {
     text-decoration: underline;
@@ -167,16 +229,16 @@ tfoot tr input{
     width: 60%;
 }
 .backLight {
-    background-color: #ffdaa9;
+    background-color: #f7f7f7;
 }
 .backDark {
-    background-color: #ffeed7;
+    background-color: #fff;
 }
 .bold {
     font-weight: bold;
 }
 .backHighlight {
-    background-color: <?php echo $secondaryLight ?>;
+    background-color: #f1f1f1;
 }
 
 /****************************** LAYOUT : FORMS ********************************/
@@ -189,6 +251,11 @@ fieldset {
     margin: 0 0 2em;
     padding: 10px;
     border: 1px solid <?php echo $tertiaryDark ?>;
+}
+fieldset.main {
+    padding: 0;
+    border: 0;
+    margin: 0 1em;
 }
 fieldset legend {
     color: <?php echo $secondary ?>;
@@ -311,37 +378,30 @@ div.show#modules-quickaccess {
     font-weight: bold;
     color: <?php echo $secondary ?>;
 }
-.module-desc p{
-
-}
-#sgl-module-header-right {
-    
-}
 .actions-desc {
     float: right;
-    margin: 0 10px 0 5px;
-    padding-left: 10px;
-    border-left: 1px solid <?php echo $tertiaryMedium ?>;
-    line-height: 120%;
-
-}
-.actions-desc h2{
-    margin-bottom: 0.3em;
-    font-size: 1.1em;
-    letter-spacing: 0.2em;
-    color: #ea0c0c;
+    margin-right: 1em;
+    margin-bottom: 2px;
 }
 .actions-desc a {
     display: block;
-    line-height: 16px;
-    margin-bottom: 0.3em;
-    font-size: 1em;
-    font-weight: normal;
-    color: <?php echo $primary ?>;
+    float: left;
+    margin: 0 3px;
+    padding: 4px;
+    background: <?php echo $tertiaryLight ?>;
+    border: 1px solid;
+    border-color: <?php echo $tertiaryDark ?> <?php echo $tertiaryDark ?> <?php echo $tertiaryDark ?> <?php echo $tertiaryDark ?>;
+    color: <?php echo $tertiaryDarkest ?>;
 }
 .actions-desc a:hover{
-    color: <?php echo $primary ?>;
-    text-decoration: underline;
+    padding: 5px 3px 3px 5px;
+    background: <?php echo $secondaryPastel ?>;
+    border: 1px solid;
+    border-color: <?php echo $secondary ?> <?php echo $secondary ?> <?php echo $secondary ?> <?php echo $secondary ?>;
+    color: <?php echo $tertiaryDarkest ?>;
+}
+#managerHelp {
+    display:none;
 }
 
 /************************** LAYOUT : MODULE IMAGES ****************************/
@@ -352,7 +412,7 @@ div.show#modules-quickaccess {
     background: url('<?php echo $baseUrl ?>/images/sm_navigation.png') no-repeat 5px 0;
 }
 #module-user {
-    background: url('<?php echo $baseUrl ?>/images/sm_users.png') no-repeat 5px 0;
+    background: url('<?php echo $baseUrl ?>/images/48/module_user.png') no-repeat 5px 0;
 }
 #module-guestbook {
     background: url('<?php echo $baseUrl ?>/images/sm_core.png') no-repeat 5px 0;
@@ -368,6 +428,15 @@ div.show#modules-quickaccess {
 }
 #module-admin {
     background: url('<?php echo $baseUrl ?>/images/sm_navigation.png') no-repeat 5px 0;
+}
+
+/****************************** MANAGER COMMANDS ******************************/
+.managerCommands {
+    margin: 0 1.5em 1em 0;
+    float: right;
+}
+.managerCommands a {
+    display: block;
 }
 
 /************************ LAYOUT : LEFT & RIGHT BLOCKS ************************/
@@ -529,7 +598,7 @@ img {
     display: none;
 }
 .small {
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 .title {
     color: <?php echo $tertiaryDark ?>;
@@ -676,13 +745,12 @@ ul.bullets li {
 .pager {
     white-space: nowrap;
     text-align: center;
-    margin: 0 auto 10px;
-    padding: 1px 2em;
-    border: 1px solid <?php echo $primary ?>;
+    margin: 0 auto 0px;
 }
 .pager .currentPage {
     font-weight: bold;
     padding: 0 0.5em;
+    color: <?php echo $secondary ?>;
 }
 .pager a {
     padding: 0 0.5em;
@@ -831,8 +899,8 @@ span.tipOwner, label.tipOwner, input.tipOwner {
 <?php } ?>
 /************* Special TipText boxes ********************/
 span#becareful {
-    top: -2em;
-    left: -6.5em;
+    top: -35px;
+    left: -3.5em;
     width: 6em;
     padding: 5px;
     background: #fff;
