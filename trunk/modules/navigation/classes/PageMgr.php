@@ -754,6 +754,10 @@ class PageMgr extends SGL_Manager
         $nestedSet->addImages($sectionNodes);
         $output->results = $sectionNodes;
         $output->sectionArrayJS = $this->_createNodesArrayJS($sectionNodes);
+
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        }
     }
 
     function _generateSectionNodesOptions($sectionNodesArray, $selected = null)
