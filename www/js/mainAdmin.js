@@ -26,29 +26,41 @@ function formSubmit(formName, fieldName, fieldValue, doCreate)
     }
     form.submit();
 }
-//  Allows to show/hide a block of options (defined within a fieldset) in configEdit form
-function showConfigOptions (option)
+//  Allows to show/hide a block of options (defined within a fieldset) in any form
+function showSelectedOptions(formId, option)
 {
-    if (!document.conf) return true;
-    var elms = document.conf.getElementsByTagName("fieldset");
+
+    var selectedForm = document.getElementById(formId);
+    if (!selectedForm) return true;
+    var elms = selectedForm.getElementsByTagName("fieldset");
     for (i=0; i<elms.length; i++) {
-        if (elms[i].id == option) {
-            elms[i].style.display = "block";
-        } else {
-            elms[i].style.display = "none";
+        if (elms[i].className.match(new RegExp("options\\b"))) {
+            if (elms[i].id == option) {
+                elms[i].style.display = "block";
+            } else {
+                elms[i].style.display = "none";
+            }
         }
     }
 }
 
 //  Mandatory function when using showConfigOptions() above
 //  Dynamically creates links to display selected block of options
-function createConfigOptionsLinks()
+function createAvailOptionsLinks(formId, titleTag)
 {
-    if (!document.getElementById("optionsLinks")) return true;
-    var elms = document.conf.getElementsByTagName("fieldset");
+    var selectedForm = document.getElementById(formId);
+    if (typeof titleTag == "undefined") var titleTag = 'h3';
+    if (!selectedForm) return true;
+    if (!document.getElementById("optionsLinks")) {
+        alert('The Div container with id set to "optionsLinks" wasn\'t found' );
+        return true;
+    }
+    var elms = selectedForm.getElementsByTagName("fieldset");
     var optionsLinks = '<ul>';
     for (i=0; i<elms.length; i++) {
-        optionsLinks += "<li><a href='javascript:showConfigOptions(\""+elms[i].id +"\")'>"+elms[i].getElementsByTagName("h3")[0].innerHTML +"</a></li>";
+        if (elms[i].className.match(new RegExp("options\\b"))) {
+            optionsLinks += "<li><a href='javascript:showSelectedOptions(\""+formId +"\",\""+elms[i].id +"\")'>"+elms[i].getElementsByTagName(titleTag)[0].innerHTML +"</a></li>";
+        }
     }
     optionsLinks += "</ul>";
     document.getElementById("optionsLinks").innerHTML += optionsLinks;

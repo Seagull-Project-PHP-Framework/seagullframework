@@ -12,6 +12,7 @@
 if(!isset($input->category_id)) $input->category_id = 1;
 if(!isset($input->moduleId)) $input->moduleId = '';
 if(!isset($input->category['category_id'])) $input->category['category_id'] = '';
+if(!isset($input->isNewForm)) $input->isNewForm = '';
  // End of variables declatation.
 $aMgrOptions = array
 (
@@ -594,14 +595,36 @@ $aMgrOptions = array
             'pageTitle'     => 'User Manager :: Add',
             'instructions'  => 'Utilisez ce formulaire pour ajouter un nouvel utilisateur. N\'oubliez pas de cocher la case "actif". Vous pouvez également modifier le statut "Actif/Inactif" d\'un utilisateur depuis la <a href="'.SGL_Url::makeLink('','user').'">liste des utilisateurs du système</a>.',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmUserAdd","submitted",1,1)',
+                'Reset' => array('javascript:document.getElementById("frmUserAdd").reset()',SGL_ADMIN),
+                'Cancel' => array(SGL_Url::makeLink('','user','user'),SGL_ADMIN),
+                ),
+            ),
+        'insert' => array
+            (
+            'pageTitle'     => 'User Manager :: Add',
+            'instructions'  => 'Utilisez ce formulaire pour ajouter un nouvel utilisateur. N\'oubliez pas de cocher la case "actif". Vous pouvez également modifier le statut "Actif/Inactif" d\'un utilisateur depuis la <a href="'.SGL_Url::makeLink('','user').'">liste des utilisateurs du système</a>.',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmUserAdd","submitted",1,1)',
+                'Reset' => array('javascript:document.getElementById("frmUserAdd").reset()',SGL_ADMIN),
+                'Cancel' => array(SGL_Url::makeLink('','user','user'),SGL_ADMIN),
+                ),
             ),
         'edit' => array
             (
             'pageTitle'     => 'User Manager :: Edit',
             'instructions'  => 'Utilisez ce formulaire pour modifier les informations concernant un utilisateur. N\'oubliez pas de cocher la case "actif". Vous pouvez également modifier le statut "Actif/Inactif" d\'un utilisateur depuis la <a href="'.SGL_Url::makeLink('','user').'">liste des utilisateurs du système</a>.',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmUserAdd","submitted",1,1)',
+                'Reset' => array('javascript:document.getElementById("frmUserAdd").reset()',SGL_ADMIN),
+                'Cancel' => array(SGL_Url::makeLink('','user','user'),SGL_ADMIN),
+                ),
             ),
         'viewLogin' => array
             (
@@ -622,7 +645,11 @@ $aMgrOptions = array
             'pageTitle'     => 'User Manager :: Change status',
             'instructions'  => 'Cette fonction vous permet d\'activer/désactiver un utilisateur.',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Validate' => 'javascript:formSubmit("frmUserStatusChange")',
+                'Cancel' => SGL_Url::makeLink('list','user','user'),
+                ),
             ),
         'editPerms' => array
             (
@@ -657,22 +684,27 @@ $aMgrOptions = array
         ),
     'usersearch' => array
         (
-        'all' => array
+        'search' => array
             (
             'pageTitle'     => 'User Manager :: Search',
             'instructions'  => 'Cette vue vous permet de rechercher des utilisateurs en remplissant les critères dans le formulaire suivant.',
-            'manage'        => array
-                (
-                'users' => SGL_Url::makeLink('list','user','user'),
-                'roles' => SGL_Url::makeLink('list','role','user'),
-                'perms' => SGL_Url::makeLink('list','permission','user'),
-                'prefs' => SGL_Url::makeLink('list','preference','user'),
-                ),
+            'manage'        => '',
             'actions'       => array
                 (
                 'add user' => SGL_Url::makeLink('add','user',''),
                 'search' => SGL_Url::makeLink('add','usersearch','user'),
                 'import users' => SGL_Url::makeLink('','userimport',''),
+                ),
+            ),
+        'add' => array
+            (
+            'pageTitle'     => 'User Manager :: Search',
+            'instructions'  => 'Cette vue vous permet de rechercher des utilisateurs en remplissant les critères dans le formulaire suivant.',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Cancel' => SGL_Url::makeLink('','','user'),
+                'Search' => 'javascript:formSubmit("frmSearch","submitted",1,1)',
                 ),
             ),
         ),
@@ -706,21 +738,55 @@ $aMgrOptions = array
             'pageTitle'     => 'Role Manager :: Add',
             'instructions'  => 'instructions_role_add',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save'      => 'javascript:formSubmit("frmRoleAddEdit","submitted",1,1)',
+                'Cancel'    => SGL_Url::makeLink('','role','user'),
+                ),
+            ),
+        'insert' => array
+            (
+            'pageTitle'     => 'Role Manager :: Add',
+            'instructions'  => 'instructions_role_add',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save'      => 'javascript:formSubmit("frmRoleAddEdit","submitted",1,1)',
+                'Cancel'    => SGL_Url::makeLink('','role','user'),
+                ),
             ),
         'edit' => array
             (
             'pageTitle'     => 'Role Manager :: Edit',
             'instructions'  => 'instructions_role_edit',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save'      => 'javascript:formSubmit("frmRoleAddEdit","submitted",1,1)',
+                'Cancel'    => SGL_Url::makeLink('','role','user'),
+                ),
+            ),
+        'update' => array
+            (
+            'pageTitle'     => 'Role Manager :: Edit',
+            'instructions'  => 'instructions_role_edit',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save'      => 'javascript:formSubmit("frmRoleAddEdit","submitted",1,1)',
+                'Cancel'    => SGL_Url::makeLink('','role','user'),
+                ),
             ),
         'editPerms' => array
             (
             'pageTitle'     => 'Role Manager :: Edit permissions',
             'instructions'  => 'instructions_role_editPerms',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save'      => 'javascript:formSubmit("main_form","submitted",1,1)',
+                'Cancel'    => SGL_Url::makeLink('','role','user'),
+                ),
             ),
         ),
     'permission' => array
@@ -755,28 +821,66 @@ $aMgrOptions = array
             'pageTitle'     => 'Permission Manager :: Add',
             'instructions'  => 'instructions_permission_add',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermAdd", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
+            ),
+        'insert' => array
+            (
+            'pageTitle'     => 'Permission Manager :: Add',
+            'instructions'  => 'instructions_permission_add',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermAdd", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
             ),
         'edit' => array
             (
             'pageTitle'     => 'Permission Manager :: Edit',
             'instructions'  => 'instructions_permission_edit',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
+            ),
+        'update' => array
+            (
+            'pageTitle'     => 'Permission Manager :: Edit',
+            'instructions'  => 'instructions_permission_edit',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
             ),
         'scanNew' => array
             (
             'pageTitle'     => 'Permission Manager :: Detect & Add',
             'instructions'  => 'instructions_permission_scanNew',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermScan", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
             ),
         'scanOrphaned' => array
             (
             'pageTitle'     => 'Permission Manager :: Detect Orphaned',
             'instructions'  => 'instructions_permission_scanOrphaned',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPermScan", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','permission','user'),
+                ),
             ),
         ),
     'preference' => array
@@ -809,14 +913,44 @@ $aMgrOptions = array
             'pageTitle'     => 'Preference Manager :: Add',
             'instructions'  => 'instructions_preference_add',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPrefAddEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','preference','user'),
+                ),
+            ),
+        'insert' => array
+            (
+            'pageTitle'     => 'Preference Manager :: Add',
+            'instructions'  => 'instructions_preference_add',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPrefAddEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','preference','user'),
+                ),
             ),
         'edit' => array
             (
             'pageTitle'     => 'Preference Manager :: Edit',
             'instructions'  => 'instructions_preference_edit',
             'manage'        => '',
-            'actions'       => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPrefAddEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','preference','user'),
+                ),
+            ),
+        'update' => array
+            (
+            'pageTitle'     => 'Preference Manager :: Edit',
+            'instructions'  => 'instructions_preference_edit',
+            'manage'        => '',
+            'actions'       => array
+                (
+                'Save' => 'javascript:formSubmit("frmPrefAddEdit", "submitted",1,1)',
+                'Cancel' => SGL_Url::makeLink('','preference','user'),
+                ),
             ),
         ),
     ),

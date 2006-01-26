@@ -1,14 +1,14 @@
 <div id="optionsLinks" class="floatLeft">
-<h2>{translate(#config options#,#ucfirst#)}</h2>
+<h2>{translate(#Browse#)}</h2>
 </div>
 <span flexy:if="msgGet()">{msgGet()}</span>
 
-<form name="conf" id="configuration" method="post" flexy:ignore>
+<form name="configuration" id="configuration" method="post" flexy:ignore>
     <p>
         <input type="hidden" name="action" value="update" />
     </p>
 
-    <fieldset id="generalSiteOptions">
+    <fieldset class="main options" id="generalSiteOptions">
         <h3>{translate(#General Site Options#)}</h3>
         <p>
             <label for="conf[site][baseUrl]">{translate(#Base URL#)}</label>
@@ -167,7 +167,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="paths">
+    <fieldset class="main options" id="paths">
         <h3>{translate(#Paths#)}</h3>
         <p>
             <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
@@ -181,7 +181,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="navigationOptions">
+    <fieldset class="main options" id="navigationOptions">
         <h3>{translate(#Navigation Options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[navigation][enabled]">{translate(#Enable Navigation#)}
@@ -207,7 +207,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="debuggingOptions">
+    <fieldset class="main options" id="debuggingOptions">
         <h3>{translate(#Debugging Options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[debug][authenticationEnabled]">{translate(#Enable authentication#)}
@@ -265,7 +265,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="cachingOptions">
+    <fieldset class="main options" id="cachingOptions">
         <h3>{translate(#Caching Options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[cache][enabled]">{translate(#Enable caching#)}
@@ -281,7 +281,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="databaseOptions">
+    <fieldset class="main options" id="databaseOptions">
         <h3>{translate(#Database Options#)}</h3>
         <p>
             <label class="tipOwner" for="conf">{translate(#Type#)}
@@ -323,7 +323,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="databaseTableMappings">
+    <fieldset class="main options" id="databaseTableMappings">
         <h3>{translate(#Database Table Mappings#)}</h3>
         <p flexy:foreach="conf[table],key,var">
             <label for="conf[table][{key}]">{key}</label>
@@ -331,7 +331,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="loggingOptions">
+    <fieldset class="main options" id="loggingOptions">
         <h3>{translate(#Logging options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[log][enabled]">{translate(#Enable logs#)}
@@ -373,7 +373,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="mtaOptions">
+    <fieldset class="main options" id="mtaOptions">
         <h3>{translate(#MTA options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[mta][backend]">{translate(#Backend#)}
@@ -430,7 +430,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="emailOptions">
+    <fieldset class="main options" id="emailOptions">
         <h3>{translate(#Email options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[email][admin]">{translate(#Admin contact#)}
@@ -450,7 +450,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="popupWindowOptions">
+    <fieldset class="main options" id="popupWindowOptions">
         <h3>{translate(#Popup window options#)}</h3>
         <p>
             <label for="conf[popup][winHeight]">{translate(#Default popup window height#)}</label>
@@ -462,7 +462,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="translationOptions">
+    <fieldset class="main options" id="translationOptions">
         <h3>{translate(#Translation options#)}</h3>
         <p>
             <label for="conf[translation][container]">{translate(#Container#)}</label>
@@ -472,17 +472,19 @@
         </p>
         <p>
             <label for="conf[translation][fallbackLang]">{translate(#Fallback Language#)}</label>
-            <select name="conf[translation][fallbackLang]" id="conf[translation][fallbackLang]">
-                {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}
-            </select>
+            <input type="text" name="conf[translation][fallbackLang]" id="conf[translation][fallbackLang]" value="{conf[translation][fallbackLang]}" />
             <!-- Send along installed languages -->
             {foreach:aInstalledLangs,aKey,aValue}
                 <input type="hidden" name="conf[translation][installedLanguages][]" value="{aKey}" />
             {end:}
         </p>
+        <p>
+            <label for="conf[translation][addMissingTrans]">{translate(#Add Missing Translations#)}</label>
+            {generateRadioPair(#conf[translation][addMissingTrans]#,addMissingTrans):h}
+        </p>
     </fieldset>
 
-    <fieldset id="cookieOptions">
+    <fieldset class="main options" id="cookieOptions">
         <h3>{translate(#Cookie options#)}</h3>
         <p>
             <label class="tipOwner" for="conf[cookie][name]">{translate(#Name#)}
@@ -504,7 +506,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="censorship">
+    <fieldset class="main options" id="censorship">
         <h3>{translate(#Censorship#)}</h3>
         <p>
             <label for="conf[censor][mode]">{translate(#Mode#)}</label>
@@ -522,7 +524,7 @@
         </p>
     </fieldset>
 
-    <fieldset id="p3pPrivacyPolicy">
+    <fieldset class="main options" id="p3pPrivacyPolicy">
         <h3>{translate(#P3P privacy policy#)}</h3>
         <p>
             <label for="conf[p3p][policies]">{translate(#Policies#)}</label>
@@ -540,5 +542,5 @@
 </form>
 <div class="spacer"></div>
 <script type="text/javascript">
-    createConfigOptionsLinks();
+    createAvailOptionsLinks('configuration','h3');
 </script>

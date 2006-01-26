@@ -99,18 +99,3 @@ form#configuration table {
     width: 40%;
     position: relative;
 }
-#optionsLinks {
-    width: 22%;
-    margin: 10px 5px 0;
-    padding: 5px;
-    line-height: 1.5;
-}
-#optionsLinks h2 {
-    margin-bottom: 10px;
-    background: <?php echo $tertiary ?>;
-    border-top: 2px solid <?php echo $tertiaryDark ?>;
-    border-bottom: 2px solid <?php echo $tertiaryDark ?>;
-    font-size: 1.1em;
-    color: <?php echo $tertiaryDarker ?>;
-    text-align: center;
-}

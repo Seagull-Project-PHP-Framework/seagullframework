@@ -7,14 +7,16 @@
     $primaryLight           = '#80C8FF'; // light green
     $primaryText            = '#BFE3FF'; // pale white for text on lime green
     $primaryTextLight       = '#ffffff'; // white
-    $secondaryLight         = '#FFCB80'; // baby blue
-    $secondary              = '#FF9700'; // blue
+    $secondaryPastel        = '#FFE5BF'; // pastel orange
+    $secondaryLight         = '#FFCB80'; // lighter orange
+    $secondary              = '#FF9700'; // orange
     $secondaryMedium        = '#FF9700'; // medium blue
     $secondaryDark          = '#805F40'; // dark blue
     $secondaryDarker        = '#184a84'; // darker blue
-    $tertiary               = '#d9d9d9'; // normal gray
+    $tertiaryPastel         = '#efefef'; // light gray
     $tertiaryLight          = '#eeeeee'; // light gray
     $tertiaryMedium         = '#bcbcbc'; // medium gray
+    $tertiary               = '#d9d9d9'; // normal gray
     $tertiaryDark           = '#999999'; // dark gray
     $tertiaryDarker         = '#666666'; // darker gray
     $tertiaryDarkest        = '#000001'; // black
@@ -71,6 +73,7 @@
     $published              = '#00cc00';
     $archived               = '#909090';
     
+    $alert                  = '#ff3300';
     $error                  = '#ffcc00';
     $errorLight             = '#ffff99';
     $errorDark              = '#ff9600';
