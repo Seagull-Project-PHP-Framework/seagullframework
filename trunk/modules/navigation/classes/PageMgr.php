@@ -286,7 +286,8 @@ class PageMgr extends SGL_Manager
                 ? $output->section['module']
                 : key($output->aModules);
             $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
-            $currentMgr = isset($output->section['manager'])
+            $currentMgr = (isset($output->section['manager'])
+                        && isset($output->aManagers[$output->section['manager']]))
                 ? $output->section['manager']
                 : key($output->aManagers);
             $output->aActions = ($currentMgr != 'none')
@@ -771,7 +772,7 @@ class PageMgr extends SGL_Manager
                 $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']);
                 $toSelect = ($selected == $sectionNode['section_id'])?'selected':'';
                 if ($this->conf['translation']['container'] == 'db') {
-                    if ($title =  $this->trans->get($sectionNode['trans_id'], 'nav', 
+                    if ($title =  $this->trans->get($sectionNode['trans_id'], 'nav',
                         SGL_Translation::getLangID())) {
                         $sectionNode['title'] = $title;
                     } elseif ($title = $this->trans->get($sectionNode['trans_id'], 'nav',
