@@ -115,6 +115,15 @@ class DA_Default
         return $result;
     }
 
+    function getSectionById($sectionId)
+    {
+        $query = "
+            SELECT  *
+            FROM    {$this->conf['table']['section']}
+            WHERE   section_id = " . $sectionId;
+        return $this->dbh->getRow($query);
+    }
+
     function getSectionNameById($sectionId)
     {
         $query = "
