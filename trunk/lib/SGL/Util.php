@@ -187,8 +187,6 @@ class SGL_Util
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
                 create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
-        //  until i get rid of this folder
-        unset($ret['wizardExample']);
         foreach ($ret as $module) {
             if ($onlyRegistered && !$da->moduleIsRegistered($module)) {
                 unset($ret[$module]);
@@ -384,7 +382,7 @@ class SGL_Util
         $aReturn = array();
         $details = '';
         $aPreparedParams = array();
-        
+
         if (file_exists($ini_file)) {
 
             //  get details section
