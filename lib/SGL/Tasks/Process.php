@@ -956,10 +956,6 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
         if ($this->conf['navigation']['enabled']) {
             $navClass = $this->conf['navigation']['driver'];
 
-            // change driver if adminGuiAllowed
-            if ($input->data->adminGuiAllowed) {
-                $navClass = 'AdminNav';
-            }
             $navDriver = $navClass . '.php';
             if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
                 require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
