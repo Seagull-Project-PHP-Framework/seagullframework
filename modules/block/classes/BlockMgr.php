@@ -173,7 +173,7 @@ class BlockMgr extends SGL_Manager
         // clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('blocks');
         SGL::raiseMsg('Block details successfully updated');
-        SGL_HTTP::redirect(array());
+        SGL_HTTP::redirect();
     }
 
     function _insert(&$output)
@@ -194,7 +194,7 @@ class BlockMgr extends SGL_Manager
 
         //  Redirect on success
         SGL::raiseMsg('Block successfully added');
-        SGL_HTTP::redirect(array());
+        SGL_HTTP::redirect();
     }
 
     function _delete(&$input, &$output)
@@ -235,7 +235,7 @@ class BlockMgr extends SGL_Manager
 
             //  Redirect on success
             SGL::raiseMsg('Block details successfully updated');
-            SGL_HTTP::redirect(array());
+            SGL_HTTP::redirect();
         } else {
             $output->mode       = 'Reorder blocks';
             $output->template   = 'blockReorder.html';

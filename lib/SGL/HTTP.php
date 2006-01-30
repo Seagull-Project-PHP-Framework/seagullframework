@@ -63,18 +63,29 @@ class SGL_HTTP
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = null)
+    function redirect($url = '')
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        //  get a reference to the request object
-        $req = & SGL_Request::singleton();
-
         //  if arg is not an array of params, pass straight to header function
-        if (is_array($url)) {
-            $moduleName  =  (array_key_exists('moduleName', $url)) ? $url['moduleName'] : $req->get('moduleName');
-            $managerName =  (array_key_exists('managerName', $url)) ? $url['managerName'] : $req->get('managerName');
+        if (is_scalar($url) && strlen($url)) {
+
+            //  add a trailing slash if one is not present for uris passed as strings
+            if (substr($url, -1) != '/') {
+                $url .= '/';
+            }
+        } else {
+
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+
+            //  get a reference to the request object
+            $req = & SGL_Request::singleton();
+
+            $moduleName  =  (array_key_exists('moduleName', $url))
+                ? $url['moduleName']
+                : $req->get('moduleName');
+            $managerName =  (array_key_exists('managerName', $url))
+                ? $url['managerName']
+                : $req->get('managerName');
 
             //  parse out rest of querystring
             $aParams = array();
@@ -105,11 +116,6 @@ class SGL_HTTP
             }
             //  determine is session propagated in cookies or URL
             SGL_Url::addSessionInfo($url);
-        }
-
-        //  add a trailing slash if one is not present for uris passed as strings
-        if (substr($url, -1) != '/') {
-            $url .= '/';
         }
 
         //  must be absolute URL, ie, string
