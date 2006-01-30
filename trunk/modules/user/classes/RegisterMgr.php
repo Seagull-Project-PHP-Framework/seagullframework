@@ -98,7 +98,7 @@ class RegisterMgr extends SGL_Manager
                     $aErrors['username'] = 'username min length';
                 }
             }
-            //  only verify password and uniqueness of username on inserts
+            //  only verify password and uniqueness of username/email on inserts
             if ($input->action != 'update') {
                 if (empty($input->user->passwd)) {
                     $aErrors['passwd'] = 'You must enter a password';
@@ -118,7 +118,7 @@ class RegisterMgr extends SGL_Manager
                 if (!$this->da->isUniqueUsername($input->user->username)) {
                     $aErrors['username'] = 'This username already exist in the DB, please choose another';
                 }
-                //  username must be unique
+                //  email must be unique
                 if (!$this->da->isUniqueEmail($input->user->email)) {
                     $aErrors['email'] = 'This email already exist in the DB, please choose another';
                 }
