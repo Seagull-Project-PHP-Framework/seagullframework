@@ -76,14 +76,14 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (SGL_HTTP_Session::getUserType() == SGL_ADMIN) {
+        if (SGL_Session::getUserType() == SGL_ADMIN) {
             $this->isAdmin = true;
             $this->template = 'articleManager.html';
         } else {
             $this->template = 'publisher.html';
         }
         $this->validated        = true;
-        $input->masterTemplate  = ((SGL_HTTP_Session::getUserType() == SGL_ADMIN) && !$this->conf['site']['adminGuiEnabled'])
+        $input->masterTemplate  = ((SGL_Session::getUserType() == SGL_ADMIN) && !$this->conf['site']['adminGuiEnabled'])
             ? 'masterLeftCol.html'
             : $this->masterTemplate;
         $input->error           = array();
@@ -486,8 +486,9 @@ class ArticleMgr extends SGL_Manager
 
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause    = ($dataTypeID == 1)?'' : " AND it.item_type_id  = '$dataTypeID'";
-        $limitByAuthorClause = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
-                                '' : ' AND i.updated_by_id = ' . SGL_HTTP_Session::getUid();
+        $limitByAuthorClause = (SGL_Session::getUserType() == SGL_ADMIN)
+            ? ''
+            : ' AND i.updated_by_id = ' . SGL_Session::getUid();
         $query = "
             SELECT  i.item_id,
                     ia.addition,

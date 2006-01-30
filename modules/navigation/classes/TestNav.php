@@ -196,7 +196,7 @@ class TestNav
 
     function TestNav(&$input)
     {
-        $this->_rid        = (int)SGL_HTTP_Session::get('rid');
+        $this->_rid        = (int)SGL_Session::get('rid');
         $this->input       = &$input;
         $this->req         = $input->get('request');
         $this->conf        = $input->conf;

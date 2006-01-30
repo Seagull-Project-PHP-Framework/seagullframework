@@ -149,7 +149,7 @@ class SGL_ErrorHandler
 
             //  if a debug sesssion has been started, or the site in in
             //  development mode, send error info to screen
-            if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
+            if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
                 $source = $this->_getSourceContext($file, $line);
                 //  generate screen debug html
                 //  type is 1st dimension element from $errorType array, ie,
@@ -184,7 +184,7 @@ EOF;
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
                 $aExtraInfo['lastSQL'] = isset($dbh['last_query']) ?
                     $dbh['last_query'] : null;
-                $aExtraInfo['userID'] = SGL_HTTP_Session::get('uid');
+                $aExtraInfo['userID'] = SGL_Session::get('uid');
                 $aExtraInfo['clientData']['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
                 $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
                 $aExtraInfo['clientData']['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];

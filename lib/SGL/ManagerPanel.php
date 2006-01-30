@@ -217,7 +217,7 @@ class SGL_ManagerPanel
             $this->_aData['manageLinks'] = array();
         }
         $count = count($this->_aData['manageLinks']);
-        if($rightLevel === null || SGL_HTTP_Session::getUserType() == $rightLevel) {
+        if($rightLevel === null || SGL_Session::getUserType() == $rightLevel) {
             if($before) {
                 // Insert links at the beginning of array
                 array_unshift($this->_aData['manageLinks'], array(
@@ -246,7 +246,7 @@ class SGL_ManagerPanel
             $this->_aData['actionLinks'] = array();
         }
         $count = count($this->_aData['actionLinks']);
-        if($rightLevel === null || SGL_HTTP_Session::getUserType() == $rightLevel) {
+        if($rightLevel === null || SGL_Session::getUserType() == $rightLevel) {
             if($before) {
                 // Insert links at the beginning of array
                 array_unshift($this->_aData['actionLinks'], array(

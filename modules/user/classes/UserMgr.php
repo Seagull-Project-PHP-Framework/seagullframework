@@ -41,7 +41,6 @@
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
 require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_CORE_DIR . '/HTTP.php';
 require_once 'Validate.php';
 
 /**
@@ -187,7 +186,7 @@ class UserMgr extends RegisterMgr
             $oUser->is_acct_active = 1;
         }
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
-        $oUser->created_by = $oUser->updated_by = SGL_HTTP_Session::getUid();
+        $oUser->created_by = $oUser->updated_by = SGL_Session::getUid();
         $success = $this->da->addUser($oUser);
 
         //  check for errors
@@ -218,7 +217,7 @@ class UserMgr extends RegisterMgr
         $this->dbh->autocommit();
         $oUser->setFrom($input->user);
         $oUser->last_updated = SGL_Date::getTime();
-        $oUser->updated_by = SGL_HTTP_Session::getUid();
+        $oUser->updated_by = SGL_Session::getUid();
         $success = $oUser->update();
 
         //  change perms if role is modified

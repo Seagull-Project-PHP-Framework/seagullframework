@@ -57,15 +57,15 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::RegisterMgr();
-        
+
         $this->pageTitle = 'My Account';
         $this->da = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'edit'          => array('edit'), 
+            'edit'          => array('edit'),
             'update'        => array('update', 'redirectToDefault'),
-            'viewProfile'   => array('viewProfile'), 
-            'summary'       => array('summary'), 
+            'viewProfile'   => array('viewProfile'),
+            'summary'       => array('summary'),
         );
     }
 
@@ -101,7 +101,7 @@ class AccountMgr extends RegisterMgr
         $output->pageTitle = 'My Profile :: Edit';
         $output->template = 'userAdd.html';
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
-        $oUser->get(SGL_HTTP_Session::getUid());
+        $oUser->get(SGL_Session::getUid());
         $output->user = $oUser;
     }
 
@@ -109,7 +109,7 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
-        $oUser->get(SGL_HTTP_Session::getUid());
+        $oUser->get(SGL_Session::getUid());
         $original = clone($oUser);
         $oUser->setFrom($input->user);
         $oUser->last_updated = SGL_Date::getTime();
@@ -118,7 +118,7 @@ class AccountMgr extends RegisterMgr
         if ($success) {
             SGL::raiseMsg('profile successfully updated');
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -129,7 +129,7 @@ class AccountMgr extends RegisterMgr
         $output->template = 'account.html';
         $output->pageTitle = 'My Profile';
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
-        $oUser->get(SGL_HTTP_Session::getUid());
+        $oUser->get(SGL_Session::getUid());
         $output->user = $oUser;
     }
 
@@ -137,7 +137,7 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'accountSummary.html';
-        $currentUid = SGL_HTTP_Session::getUid();
+        $currentUid = SGL_Session::getUid();
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($currentUid);
 
@@ -145,7 +145,7 @@ class AccountMgr extends RegisterMgr
         $output->remote_ip = $_SERVER['REMOTE_ADDR'];
         $output->login = $this->da->getLastLogin();
         $output->user = $oUser;
-        $output->user->role_name = $this->da->getRoleNameById(SGL_HTTP_Session::getRoleId());
+        $output->user->role_name = $this->da->getRoleNameById(SGL_Session::getRoleId());
     }
 }
 ?>

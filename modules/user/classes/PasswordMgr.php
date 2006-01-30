@@ -160,7 +160,7 @@ class PasswordMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
-        $oUser->get(SGL_HTTP_Session::getUid());
+        $oUser->get(SGL_Session::getUid());
         $oUser->passwd = md5($input->password);
         $success = $oUser->update();
         if ($input->passwdResetNotify) {
@@ -230,7 +230,7 @@ class PasswordMgr extends SGL_Manager
     {
         if (isset($passwd)) {
             $oUser = DB_DataObject::factory($this->conf['table']['user']);
-            $oUser->get(SGL_HTTP_Session::getUid());
+            $oUser->get(SGL_Session::getUid());
             return md5($passwd) == $oUser->passwd;
         }
     }

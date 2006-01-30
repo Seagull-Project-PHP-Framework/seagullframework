@@ -101,7 +101,7 @@ class SGL_BlockLoader
      */
     function SGL_BlockLoader($sectionId)
     {
-        $this->_rid = (int)SGL_HTTP_Session::get('rid');
+        $this->_rid = (int)SGL_Session::get('rid');
         $this->_staticId = (isset($_GET['staticId'])) ? $_GET['staticId'] : 0;
         if (isset($sectionId)) {
             $this->_currentSectionId = $sectionId;
@@ -153,7 +153,7 @@ class SGL_BlockLoader
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
             AND     (br.block_id = b.block_id AND
-                      (br.role_id = '" . SGL_HTTP_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
+                      (br.role_id = '" . SGL_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
                     )
             AND     b.block_id = ba.block_id
             AND     ( ba.section_id = ".SGL_ANY_SECTION." OR ba.section_id = " . $this->_currentSectionId . ' )

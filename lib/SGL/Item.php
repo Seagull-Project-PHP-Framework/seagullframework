@@ -390,8 +390,8 @@ class SGL_Item
             if ($this->conf['translation']['container'] == 'db') {
                 $strings[$language] = $this->trans->get($itemID[$x], 'content', $language);
 
-                if (strcmp($editedTxt, $strings[$language]) !== 0) {   
-                    $strings[$language] = $editedTxt;                       
+                if (strcmp($editedTxt, $strings[$language]) !== 0) {
+                    $strings[$language] = $editedTxt;
                     $this->trans->add($itemID[$x], 'content', $strings);
                 }
             } else {
@@ -902,7 +902,7 @@ class SGL_Item
         //  only if none has been passed from 'more articles' list
         if (count($aArticleList)) {
             if (!$mostRecentArticleID) {
-                SGL_HTTP_Session::set('articleID', $aArticleList[0]['item_id']);
+                SGL_Session::set('articleID', $aArticleList[0]['item_id']);
             }
         }
         return (count($aArticleList) >= 1) ? $aArticleList : array();
@@ -920,8 +920,8 @@ class SGL_Item
     function getItemDetail($itemID = null, $bPublished = null, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if ((!$itemID) && (SGL_HTTP_Session::get('articleID'))) {
-            $itemID = SGL_HTTP_Session::get('articleID');
+        if ((!$itemID) && (SGL_Session::get('articleID'))) {
+            $itemID = SGL_Session::get('articleID');
         }
         if ($itemID) {
             $item = & new SGL_Item($itemID);
@@ -974,7 +974,7 @@ class SGL_Item
 
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all')?'' : " AND i.category_id = $catID";
-        $roleId = SGL_HTTP_Session::get('rid');
+        $roleId = SGL_Session::get('rid');
 
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';

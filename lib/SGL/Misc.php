@@ -703,4 +703,84 @@ class SGL_Inflector
         return ($isFound !== false) ? $aConfValues[$isFound] : false;
     }
 }
+
+/**
+ * Provides HTTP redirects.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
+class SGL_HTTP
+{
+    /**
+     * Wrapper for PHP header() redirects.
+     *
+     * Simplified version of Wolfram's HTTP_Header class
+     *
+     * @access  public
+     * @static
+     * @param   mixed   $url    target URL
+     * @return  void
+     * @author  Wolfram Kriesing <wk@visionp.de>
+     */
+    function redirect($url = '')
+    {
+        //  if arg is not an array of params, pass straight to header function
+        if (is_scalar($url) && strlen($url)) {
+
+            //  add a trailing slash if one is not present for uris passed as strings
+            if (substr($url, -1) != '/') {
+                $url .= '/';
+            }
+        } else {
+
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+
+            //  get a reference to the request object
+            $req = & SGL_Request::singleton();
+
+            $moduleName  =  (array_key_exists('moduleName', $url))
+                ? $url['moduleName']
+                : $req->get('moduleName');
+            $managerName =  (array_key_exists('managerName', $url))
+                ? $url['managerName']
+                : $req->get('managerName');
+
+            //  parse out rest of querystring
+            $aParams = array();
+            foreach ($url as $k => $v) {
+                if ($k == 'moduleName' || $k == 'managerName') {
+                    continue;
+                }
+                if (is_string($k)) {
+                    $aParams[] = urlencode($k).'/'.urlencode($v);
+                }
+            }
+            $qs = (count($aParams)) ? implode('/', $aParams): '';
+            $url = ($conf['site']['frontScriptName'])
+                ? $conf['site']['frontScriptName'] . '/' . $moduleName
+                : $moduleName;
+
+            if (!empty($managerName)) {
+                $url .=  '/' . $managerName;
+            }
+            $url .= '/' . $qs;
+
+            //  check for absolute uri as specified in RFC 2616
+            SGL_Url::toAbsolute($url);
+
+            //  add a slash if one is not present
+            if (substr($url, -1) != '/') {
+                $url .= '/';
+            }
+            //  determine is session propagated in cookies or URL
+            SGL_Url::addSessionInfo($url);
+        }
+
+        //  must be absolute URL, ie, string
+        header('Location: ' . $url);
+        exit;
+    }
+}
 ?>

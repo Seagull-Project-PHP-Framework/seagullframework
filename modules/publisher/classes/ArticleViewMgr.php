@@ -58,12 +58,12 @@ class ArticleViewMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle    = 'Article Browser';
         $this->template     = 'articleBrowser.html';
         $this->_aActionsMapping =  array(
-            'view'   => array('view'), 
-            'summary'   => array('summary'), 
+            'view'   => array('view'),
+            'summary'   => array('summary'),
         );
     }
 
@@ -80,8 +80,8 @@ class ArticleViewMgr extends SGL_Manager
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'view';
         $input->articleID       = ($req->get('frmArticleID'))
-                                    ? (int)$req->get('frmArticleID') 
-                                    : (int)SGL_HTTP_Session::get('articleID');
+                                    ? (int)$req->get('frmArticleID')
+                                    : (int)SGL_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
         $input->dataTypeID      = ($req->get('frmDataTypeID'))
@@ -117,7 +117,7 @@ class ArticleViewMgr extends SGL_Manager
             return false;
         }
         $output->leadArticle = $ret;
-        
+
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);
@@ -151,18 +151,18 @@ class ArticleViewMgr extends SGL_Manager
             // summarises article content
             foreach ($output->articleList[$key] as $cKey => $cValues) {
                 switch ($cKey) {
-                    
+
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
-                    $output->articleList[$key]['bodyHtml'] = 
+                    $output->articleList[$key]['bodyHtml'] =
                         SGL_String::summariseHtml($content);
                     break;
 
                 case 'newsHtml':
                     $content = $output->articleList[$key]['newsHtml'];
-                    $output->articleList[$key]['newsHtml'] = 
+                    $output->articleList[$key]['newsHtml'] =
                         SGL_String::summariseHtml($content);
-                    break; 
+                    break;
                 }
             }
         }

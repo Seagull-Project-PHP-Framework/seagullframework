@@ -109,8 +109,8 @@ class ProfileMgr extends SGL_Manager
 
         //  if current user is viewing his/her own profile,
         //  disable 'add to contacts' & 'send message'
-        $output->allowContact = ($input->userId == SGL_HTTP_Session::getUid()
-                              || SGL_HTTP_Session::getUserType() == SGL_GUEST)
+        $output->allowContact = ($input->userId == SGL_Session::getUid()
+                              || SGL_Session::getUserType() == SGL_GUEST)
             ? false
             : true;
     }

@@ -112,8 +112,9 @@ class DocumentMgr extends FileMgr
         $input->assetFileSize         = $input->assetFileArray['size'];
 
         //  determine user type
-        $input->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ?
-            true : false;
+        $input->isAdmin = (SGL_Session::getUserType() == SGL_ADMIN)
+            ? true
+            : false;
 
         //  request values for save upload
         $input->document = (object)$req->get('document');

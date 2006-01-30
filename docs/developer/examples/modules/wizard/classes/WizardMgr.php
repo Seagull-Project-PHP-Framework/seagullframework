@@ -54,17 +54,17 @@ class WizardMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
-    
+
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->validated    = true;
 
-        // initialize wizard pages        
-        SGL_HTTP_Session::set('wiz_sequence', array());
+        // initialize wizard pages
+        SGL_Session::set('wiz_sequence', array());
         SGL_Controller::addPage(array('managerName' => 'Page1Wiz'));
         SGL_Controller::addPage(array('managerName' => 'Page2Wiz'));
-    }    
+    }
 
     function process(&$input, &$output)
     {

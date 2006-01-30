@@ -65,14 +65,14 @@ class SGL_Util
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ($sortOrder == '') {
-            $order = SGL_HTTP_Session::get('sortOrder');
+            $order = SGL_Session::get('sortOrder');
         } elseif ($sortOrder == 'ASC') {
             $order = 'DESC';
         } else {
             $order = 'ASC';
         }
         //  update session
-        SGL_HTTP_Session::set('sortOrder', $order);
+        SGL_Session::set('sortOrder', $order);
         return $order;
     }
 
@@ -95,12 +95,12 @@ class SGL_Util
 
         case SGL_SORTBY_GRP:
             $sortByType = 'Grp';
-            $sessSortBy = SGL_HTTP_Session::get('sortByGrp');
+            $sessSortBy = SGL_Session::get('sortByGrp');
             break;
 
         case SGL_SORTBY_USER:
             $sortByType = 'User';
-            $sessSortBy = SGL_HTTP_Session::get('sortByUser');
+            $sessSortBy = SGL_Session::get('sortByUser');
             break;
         }
         if ($frmSortBy == '' && $sessSortBy == '') {
@@ -113,7 +113,7 @@ class SGL_Util
         }
         //  update session
         $sessVar = 'sortBy' . $sortByType;
-        SGL_HTTP_Session::set($sessVar, $sortBy);
+        SGL_Session::set($sessVar, $sortBy);
         return $sortBy;
     }
 

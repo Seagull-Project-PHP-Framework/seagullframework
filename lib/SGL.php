@@ -224,9 +224,9 @@ class SGL
             if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                         && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
                         || (!$getTranslation)) {
-                SGL_HTTP_Session::set('message', $msg);
+                SGL_Session::set('message', $msg);
             } else {
-                SGL_HTTP_Session::set('message', $message);
+                SGL_Session::set('message', $message);
             }
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);

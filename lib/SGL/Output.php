@@ -405,9 +405,9 @@ class SGL_Output
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $message = SGL_HTTP_Session::get('message');
+        $message = SGL_Session::get('message');
         if (isset($message) && $message != '') {
-            SGL_HTTP_Session::remove('message');
+            SGL_Session::remove('message');
             echo '<div class="errorMessage">' . $message . '</div><br />';
 
             //  required to remove message that persists when register_globals = on
