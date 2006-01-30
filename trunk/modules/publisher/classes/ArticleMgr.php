@@ -222,7 +222,9 @@ class ArticleMgr extends SGL_Manager
             $item->set('expiryDate', $input->noExpiry ? NULL : $input->aExpiryDate);
         } else {
             $item->set('startDate', SGL_Date::arrayToString($input->aStartDate));
-            $item->set('expiryDate', $input->noExpiry ? NULL : SGL_Date::arrayToString($input->aExpiryDate));
+            $item->set('expiryDate', $input->noExpiry
+                ? NULL
+                : SGL_Date::arrayToString($input->aExpiryDate));
         }
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
@@ -231,7 +233,8 @@ class ArticleMgr extends SGL_Manager
         $insertID = $item->addMetaItems();
 
         //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, $input->articleLang);
+        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
+            $input->articleLang);
 
         //  addBody
         $body = SGL_String::tidy($input->bodyValue);
@@ -268,7 +271,8 @@ class ArticleMgr extends SGL_Manager
         ;
         $output->dateSelectorExpiry =
             SGL_Output::showDateSelector($aExpiryDate,'frmExpiryDate');
-        $output->noExpiry = SGL_Output::getNoExpiryCheckbox(SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
+        $output->noExpiry = SGL_Output::getNoExpiryCheckbox(
+            SGL_Date::stringToArray($item->expiryDate), 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
 
         //  translation support if enabled
@@ -287,7 +291,8 @@ class ArticleMgr extends SGL_Manager
             : SGL_RET_STRING;
         $output->dynaContent = (isset($input->articleLang))
             ? $item->getDynamicContent($input->articleID, $fieldReturnType, $input->articleLang)
-            : $item->getDynamicContent($input->articleID, $fieldReturnType, @$this->conf['translation']['fallbackLang']);
+            : $item->getDynamicContent($input->articleID, $fieldReturnType,
+                @$this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']

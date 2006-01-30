@@ -140,6 +140,9 @@ class CategoryMgr extends SGL_Manager
         $menu = & new MenuBuilder('SelectBox', $options);
         $aCategories = $menu->toHtml();
         $output->aCategories = $aCategories;
+
+        //  prepare data for publisher subnav
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
     }
 
     function _update(&$input, &$output)
