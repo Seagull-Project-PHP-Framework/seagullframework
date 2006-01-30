@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: Block.php,v 1.11 2005/05/29 00:29:08 demian Exp $
 
-require_once SGL_ENT_DIR . '/Block.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -50,19 +49,33 @@ require_once 'DB/DataObject.php';
  * @version $Revision: 1.11 $
  * @since   PHP 4.1
  */
-class Block extends DataObjects_Block
+class Block
 {
     var $sections; // This array holds the block assignments
     var $sort_id;
+    var $block;
 
     function Block()
     {
         $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
+        $this->conf  = $c->getAll();
+        $this->dbh   = $this->_getDb();
+        $this->block = DB_DataObject::factory($this->conf['table']['block']);
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
     }
 
     /**
-     * Loads the sections where a block should appear
+     * Loads the sections where a block should appear.
      *
      * @access public
      * @return  void
@@ -72,23 +85,63 @@ class Block extends DataObjects_Block
         $this->sections = array();
 
         $blockAssignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
-        $blockAssignment->block_id = $this->block_id;
+        $blockAssignment->block_id = $this->block->block_id;
         $result = $blockAssignment->find();
 
         if ($result > 0) {
             while ($blockAssignment->fetch()) {
                 $blockAssignment->getLinks();
                 if (empty($blockAssignment->section_id)) {
-                    $section = & new StdClass();
-                    $section->section_id = 0;
-                    $section->title = SGL_String::translate('All sections');
-                    $this->sections[] = $section;
+                    $this->sections[] = 0;
                 } else {
                     $this->sections[] = $blockAssignment->section_id;
                 }
 
             }
         }
+    }
+
+    /**
+     * Loads the assigned roles.
+     *
+     * @access public
+     * @return  void
+     */
+    function loadRoles()
+    {
+        $this->roles = array();
+
+        $blockRoles = DB_DataObject::factory($this->conf['table']['block_role']);
+        $blockRoles->block_id = $this->block->block_id;
+        $result = $blockRoles->find();
+
+        if ($result > 0) {
+            while ($blockRoles->fetch()) {
+                $this->roles[] = $blockRoles->role_id;
+            }
+        } else {
+            $this->roles[] = SGL_ANY_ROLE;
+        }
+    }
+
+    /**
+     * Loads the blocks by position.
+     *
+     * @access public
+     * @return  void
+     */
+    function loadBlocks($position)
+    {
+        $this->block->whereAdd("position = '".$position."'");
+        $this->block->orderBy('blk_order ASC');
+        $result = $this->block->find();
+        $aBlocks = array();
+        if ($result > 0) {
+            while ($this->block->fetch()) {
+                $aBlocks[$this->block->block_id] = $this->block->title;
+            }
+        }
+        return $aBlocks;
     }
 
     /**
@@ -105,7 +158,7 @@ class Block extends DataObjects_Block
      */
     function setFrom(&$from, $format = '%s')
     {
-        parent::setFrom($from, $format);
+        $this->block->setFrom($from, $format);
 
         $property = sprintf($format, 'sections');
         if (isset($from->$property)) {
@@ -120,24 +173,32 @@ class Block extends DataObjects_Block
                 }
             }
         }
+
+        $property = sprintf($format, 'roles');
+        if (isset($from->$property)) {
+            $this->roles = $from->$property;
+        }
+
         return true;
     }
 
     /**
-     * fetches next row into this object's vars.
-     *
-     * returns 1 on success 0 on failure
+     * Updates blocks order.
      *
      * @access  public
-     * @return  boolean on success
+     * @return  void
      */
-    function fetch()
+    function updateBlocksOrder($orderArray)
     {
-        $ret = parent::fetch();
-        if ($ret) {
-            $this->loadSections();
+        $pos = 1;
+        foreach ($orderArray as $blockId) {
+            $this->block->get($blockId);
+            $this->block->blk_order = $pos;
+            $success = $this->block->update();
+            unset($this->block);
+            $this->block = DB_DataObject::factory($this->conf['table']['block']);
+            $pos++;
         }
-        return $ret;
     }
 
     /**
@@ -154,9 +215,10 @@ class Block extends DataObjects_Block
      */
     function get($k = null, $v = null)
     {
-        $ret = parent::get($k, $v);
+        $ret = $this->block->get($k, $v);
         if ($ret > 0) {
             $this->loadSections();
+            $this->loadRoles();
         }
         return $ret;
     }
@@ -173,25 +235,46 @@ class Block extends DataObjects_Block
         // DataObject assumes that, if you use mysql, you are going
         // to use auto_increment which is not our case, so we have
         // to manually find the next available block id
-        $dbh = $this->getDatabaseConnection();
-        $block_id = $dbh->nextId('block');
-        $this->block_id = $block_id;
-        parent::insert();
+        $this->dbh->autocommit();
+        $block_id = $this->dbh->nextId($this->conf['table']['block']);
+        $this->block->block_id = $block_id;
 
-        // parent::insert resets Data_Object primary key
-        // using 'mysql_insert_id' which is zero in our case
-        // since we do not use the auto_increment feature of MySQL
-        // so we have to manually set it back to the correct value
-        $this->block_id = $block_id;
+        // Find next available blk_order for targetted column
+        $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE position = '" . $this->block->position . "'";
+        $next_order = (int)$this->dbh->getOne($query) + 1;
+        $this->block->blk_order = $next_order;
+
+        //  insert block record
+        $this->block->insert();
 
         // Insert a block_assignment record for each assigned sections
         $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
-        $block_assignment->block_id = $this->block_id;
+        $block_assignment->block_id = $block_id;
         foreach ($this->sections as $section) {
             $block_assignment->section_id = $section->section_id;
             $block_assignment->insert();
         }
-        return $this->block_id;
+
+        // delete 'all roles' option
+        if (count($this->roles) > 2) {
+            foreach ($this->roles as $key => $value) {
+                if ($value == SGL_ANY_ROLE) {
+                    unset($this->roles[$key]);
+                }
+            }
+        }
+        foreach ($this->roles as $role ) {
+
+            // Insert a block_role record for each assigned roles
+            $block_roles = DB_DataObject::factory($this->conf['table']['block_role']);
+            $block_roles->block_id = $this->block->block_id;
+            $block_roles->role_id = $role;
+            $block_roles->insert();
+            unset($block_roles);
+        }
+        $this->dbh->commit();
+
+        return $block_id;
     }
 
     /**
@@ -212,10 +295,15 @@ class Block extends DataObjects_Block
 
         // Delete all block assignment records for this block
         $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
-        $block_assignment->block_id = $this->block_id;
+        $block_assignment->block_id = $this->block->block_id;
         $block_assignment->delete();
 
-        return parent::delete($useWhere);
+        // Delete all role assignment records for this block
+        $block_role = DB_DataObject::factory($this->conf['table']['block_role']);
+        $block_role->block_id = $this->block->block_id;
+        $block_role->delete();
+
+        return $this->block->delete($useWhere);
     }
 
     /**
@@ -229,23 +317,51 @@ class Block extends DataObjects_Block
      */
     function update($dataObject = false, $assigments = false)
     {
-        parent::update($dataObject);
+        $this->block->update($dataObject);
 
         if ($assigments) {
+
             // Delete all block assignment records for this block
-            $block_assignment = DB_DataObject::factory('Block_assignment');
-            $block_assignment->block_id = $this->block_id;
+            $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
+            $block_assignment->block_id = $this->block->block_id;
             $block_assignment->delete();
             unset($block_assignment);
+
             foreach ($this->sections as $section) {
+
                 // Insert a block_assignment record for each assigned sections
-                $block_assignment = DB_DataObject::factory('Block_assignment');
-                $block_assignment->block_id = $this->block_id;
+                $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
+                $block_assignment->block_id = $this->block->block_id;
                 $block_assignment->section_id = $section->section_id;
                 $block_assignment->insert();
                 unset($block_assignment);
             }
+
+            // Delete all block roles records for this block
+            $block_role = DB_DataObject::factory($this->conf['table']['block_role']);
+            $block_role->block_id = $this->block->block_id;
+            $block_role->delete();
+            unset($block_role);
+
+            // delete 'all roles' option
+            if (count($this->roles) > 2) {
+                foreach ($this->roles as $key => $value) {
+                    if ($value == SGL_ANY_ROLE) {
+                        unset($this->roles[$key]);
+                    }
+                }
+            }
+            foreach ($this->roles as $role ) {
+
+                // Insert a block_role record for each assigned roles
+                $block_roles = DB_DataObject::factory($this->conf['table']['block_role']);
+                $block_roles->block_id = $this->block->block_id;
+                $block_roles->role_id = $role;
+                $block_roles->insert();
+                unset($block_roles);
+            }
         }
+
         return true;
     }
 
@@ -258,7 +374,7 @@ class Block extends DataObjects_Block
      */
     function toArray($format = '%s')
     {
-        $block_array = parent::toArray($format);
+        $block_array = $this->block->toArray($format);
         $sections_array = array();
         foreach ($this->sections as $dataobject_section) {
             if (is_array($dataobject_section)) {
@@ -267,9 +383,49 @@ class Block extends DataObjects_Block
               array_push($sections_array, $dataobject_section);
             }
         }
-
         $block_array[ sprintf($format, 'sections') ] = $sections_array;
+        $block_array[ sprintf($format, 'roles') ] = $this->roles;
         return $block_array;
+    }
+
+    /**
+     * Sets block parameters.
+     *
+     * @param   string output
+     * @param   string block class name
+     * @param   integer block id
+     * @access  public
+     * @return  void
+     */
+    function loadBlockParams(&$output, $blockClass, $blockId = false)
+    {
+        $ini_file = SGL_BLK_DIR . '/' . $blockClass . '.ini';
+
+        //  load params from db
+        if ($blockId) {
+            $this->block->get($blockId);
+            $aSavedParams = $this->block->content ? @unserialize($this->block->content) : array();
+            if (!is_array($aSavedParams)) {
+                $aSavedParams = array();
+            }
+        } else {
+            $aSavedParams = array();
+        }
+        
+        //  get current params
+        if (empty($output->aParams)) {
+            $aCurrentParams = array();
+        } else {
+            $aCurrentParams = $output->aParams;
+            unset($output->aParams);
+        }
+        
+        //  get params from ini
+        $aParams = SGL_Util::loadParams($ini_file, $aSavedParams, $aCurrentParams);
+
+        foreach ($aParams as $key => $value) {
+            $output->$key = $value;
+        }
     }
 }
 ?>

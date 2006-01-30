@@ -41,28 +41,29 @@
  * Section Navigation block.
  *
  * @package block
- * @version $Revision: 0.1 $
+ * @version $Revision: 1.0 $
  * @since   PHP 4.4.1
  */
 class Navigation
 {
-    function init(&$output)
+    function init(&$output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        return $this->getBlockContent($output);
+        return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output)
+    function getBlockContent(&$output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        // prepare navigation driver
+        //  prepare navigation driver
         $navClass  = $output->conf['navigation']['driver'];
         $navDriver = $navClass . '.php';
         $nav       = & new $navClass($output);
 
-        $aParams = array(
+        //  set default params
+        $aDefaultParams = array(
                 'startParentNode' => 0,
                 'startLevel'      => 0,
                 'levelsToRender'  => 0,
@@ -71,8 +72,15 @@ class Navigation
                 'breadcrumbs'     => 0,
         );
 
+        //  set custom params
+        foreach ($aDefaultParams as $key => $value) {
+            if (array_key_exists($key, $aParams)) {
+                $aDefaultParams[$key] = (int)$aParams[$key];
+            }
+        }
+
         //  set new navigation driver params
-        $nav->setParams($aParams);
+        $nav->setParams($aDefaultParams);
 
         //  call navigation renderer
         $aNav = $nav->render();

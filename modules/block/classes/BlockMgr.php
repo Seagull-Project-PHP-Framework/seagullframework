@@ -38,10 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
-require_once SGL_MOD_DIR . '/block/classes/BlockForm.php';
-require_once SGL_MOD_DIR . '/block/classes/BlockFormDynamic.php';
 require_once SGL_MOD_DIR . '/block/classes/Block.php';
-require_once SGL_ENT_DIR . '/Block_assignment.php';
 
 /**
  * To administer blocks.
@@ -64,9 +61,10 @@ class BlockMgr extends SGL_Manager
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
         $this->_aActionsMapping =  array(
-            'addDynamic' => array('addDynamic'),
             'add'       => array('add'),
+            'insert'    => array('insert', 'redirectToDefault'),
             'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
             'reorder'   => array('reorder'),
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
@@ -78,16 +76,26 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         // Forward default values
+        $this->validated    = true;
+        $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
+        $input->masterTemplate = $this->masterTemplate;
 
         //  Retrieve form values
         $input->position    = $req->get('position');
-        $input->block_id    = $req->get('frmBlockId');
+        $input->blockId     = ($req->get('frmBlockId'));
         $input->items       = $req->get('_items');
-        $input->block       = $req->get('block');
-        $input->form        = '';
+        $input->form        = (object)$req->get('form');
+        $input->aParams     = $req->get('aParams', $allowTags = true);
+
+        // Misc.
+        $this->submitted    = $req->get('submitted');
+        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->aDelete     = $req->get('frmDelete');
+        $input->totalItems  = $req->get('totalItems');
+        $input->isAdd       = $req->get('isadd');
+        $input->mode        = $req->get('mode');
 
         // Retrieve sorting keys
         $input->sortBy      = $this->getSortBy($req->get('frmSortBy') );
@@ -95,52 +103,30 @@ class BlockMgr extends SGL_Manager
         // This will tell HTML_Flexy which key is used to sort data
         $input->{ 'sort_' . $input->sortBy } = true;
 
-        // Misc.
-        $this->validated    = true;
-        $this->submitted    = $req->get('submitted');
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->aDelete     = $req->get('frmDelete');
-        $input->from        = ($req->get('frmFrom')) ? $req->get('frmFrom'):0;
-        $input->totalItems  = $req->get('totalItems');
-    }
+        // validate on submit
+        if ($this->submitted && $input->action != 'reorder' ) {
 
-
-    function _addDynamic(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        SGL_DB::setConnection($this->dbh);
-        $output->template = 'blockFormdynamic.html';
-        $output->mode = 'New block';
-        $output->wysiwyg = true;
-
-        //  override autonaming for textarea element so 'block' hash can be preserved
-        $output->wysiwygElementName = 'block[content]';
-
-        // Build form
-        $myForm = & new BlockFormDynamic('addDynamic');
-        $output->form = $myForm->init();
-
-        // If form has been submitted, validate it
-        if ($this->submitted) {
-            if ($output->form->validate()) {
-                $oBlock = (object)$output->form->getSubmitValue('block');
-                $block = & new Block();
-                $block->setFrom($oBlock);
-
-                // Find next available blk_order for targetted column
-                $this->dbh->autocommit();
-                $query = "SELECT MAX(blk_order) FROM {$this->conf['table']['block']} WHERE position = '" . $oBlock->position . "'";
-                $next_order = (int)$this->dbh->getOne($query) + 1;
-                $block->blk_order = $next_order;
-                $block->insert(); // This takes into account block assignments as well
-                $this->dbh->commit();
-
-                //  clear cache so a new cache file is built reflecting changes
-                SGL_Cache::clear('blocks');
-                SGL::raiseMsg('Block successfully added');
-                SGL_HTTP::redirect(array());
+            // validate input data
+            if (empty($input->form->name)) {
+                $aErrors['name'] = 'Please fill in a name';
             }
+            if (empty($input->form->title)) {
+                $aErrors['title'] = 'Please fill in a title';
+            }
+            if (isset($aErrors) && count($aErrors)) {
+                SGL::raiseMsg('Please fill in the indicated fields');
+                $input->error    = $aErrors;
+                $this->validated = false;
+            }
+        } elseif (!empty($input->form->edit) && !$this->submitted) {
+            $this->validated = false;
+            unset($input->aParams);
+        }
+
+        //  if not validated go to edit
+        if (!$this->validated) {
+            $input->template = 'blockEdit.html';
+            $this->_editDisplay($input);
         }
     }
 
@@ -148,152 +134,78 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
-        $output->template = 'blockForm.html';
-        $output->mode = 'New block';
-
-        // Build form
-        $myForm = & new BlockForm('add');
-        $output->form = $myForm->init();
-
-        // If form has been submitted, validate it
-        if ($this->submitted) {
-            if ($output->form->validate()) {
-                $oBlock = (object)$output->form->getSubmitValue('block');
-                $block = & new Block();
-                $block->setFrom($oBlock);
-
-                // Find next available blk_order for targetted column
-                $this->dbh->autocommit();
-                $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE position = '" . $oBlock->position . "'";
-                $next_order = (int)$this->dbh->getOne($query) + 1;
-                $block->blk_order = $next_order;
-                // Insert record
-                $block->insert(); // This takes into account block assignments as well
-                $this->dbh->commit();
-
-                //  clear cache so a new cache file is built reflecting changes
-                SGL_Cache::clear('blocks');
-
-                //  Redirect on success
-                SGL::raiseMsg('Block successfully added');
-                SGL_HTTP::redirect(array());
-            }
-        }
-    }
-
-    /**
-     * Returns true if 'content' field has a string length greater than
-     * zero or it is not NULL.
-     *
-     * @param integer $blockId
-     * @return boolean
-     */
-    function isHtmlBlock($blockId)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $query = "
-            SELECT content FROM {$this->conf['table']['block']}
-            WHERE block_id = " . $blockId;
-        $res = $this->dbh->getOne($query);
-        if (!strlen($res) || $res == 'NULL') {
-            return false;
-        } else {
-            return true;
-        }
+        $output->mode      = 'New block';
+        $output->template  = 'blockEdit.html';
+        $output->isAdd     = true;
+        $this->_editDisplay($output);
     }
 
     function _edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  determine block type
-        if ($this->isHtmlBlock($input->block_id)) {
-            $output->template = 'blockFormdynamic.html';
-            $output->wysiwyg = true;
-
-            //  override autonaming for textarea element so 'block' hash can be preserved
-            $output->wysiwygElementName = 'block[content]';
-            $blockForm = & new BlockFormDynamic('edit');
-        } else {
-            $output->template = 'blockForm.html';
-            $blockForm = & new BlockForm('edit');
-        }
-
-        $output->mode = 'Edit block';
+        $output->mode      = 'Edit block';
+        $output->template  = 'blockEdit.html';
 
         //  get block data
-        $block = & new Block();
+        $block        = & new Block();
+        $block->get($input->blockId);
+        $data         = $block->toArray('%s');
+        $output->form = (object)$data;
 
-        if ($this->submitted) {
-            $block->get($input->block['block_id']);
-        } else {
-            $block->get($input->block_id);
-        }
+        $this->_editDisplay($output);
+    }
 
-        $data = $block->toArray('block[%s]');
-        $query = "
-            SELECT role_id FROM {$this->conf['table']['block_role']}
-            WHERE block_id = '" .$data['block[block_id]'] . "'";
-        $res = & $this->dbh->getAll($query);
-        $data['block[roles]'] = array();
-        foreach ($res as $key => $value) {
-            $data['block[roles]'][] = $value->role_id;
-        }
-        // set default value (all roles)
-        if (count($data['block[roles]']) == 0) {
-            $data['block[roles]'][] = SGL_ANY_ROLE;
-        }
-        $output->form = $blockForm->init( $data );
+    function _update(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($output->form->validate()) {
-            $oBlock = (object)$output->form->getSubmitValue('block');
-            $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
-            $block->setFrom($oBlock);
+        $oBlock             = $output->form;
+        $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
+        $oBlock->content    = serialize($output->aParams);
+        $block              = & new Block();
 
-            // Update record in DB
-            $block->update(false, true); // This takes into account block assignments as well
+        // Update record in DB
+        $block->get($oBlock->block_id);
+        $block->setFrom($oBlock);
+        $block->update(false, true);
 
-            $query = "DELETE FROM {$this->conf['table']['block_role']} WHERE block_id ='" .$oBlock->block_id . "'";
-            $this->dbh->query($query);
-            $query = '';
+        // clear cache so a new cache file is built reflecting changes
+        SGL_Cache::clear('blocks');
+        SGL::raiseMsg('Block details successfully updated');
+        SGL_HTTP::redirect(array());
+    }
 
-            // delete 'all roles' option
-            if (count($oBlock->roles) > 2) {
-                foreach ($oBlock->roles as $key => $value) {
-                    if ($value == SGL_ANY_ROLE) {
-                        unset($oBlock->roles[$key]);
-                    }
-                }
-            }
-            foreach ($oBlock->roles as $key => $value) {
-                $query .= "
-                    INSERT into {$this->conf['table']['block_role']}
-                    VALUES(" . $oBlock->block_id . ", $value);";
-            }
-            if ($query <> '') {
-                $this->dbh->query($query);
-            }
+    function _insert(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-            // clear cache so a new cache file is built reflecting changes
-            SGL_Cache::clear('blocks');
-            SGL::raiseMsg('Block details successfully updated');
-            SGL_HTTP::redirect(array());
+        $oBlock             = $output->form;
+        $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
+        $oBlock->content    = serialize($output->aParams);
+        $block              = & new Block();
 
-        } elseif ($this->submitted) {
-            SGL::raiseMsg('There was a problem, block did not validate');
-            SGL_HTTP::redirect(array());
-        }
+        //  insert block record
+        $block->setFrom($oBlock);
+        $block->insert();
+
+        //  clear cache so a new cache file is built reflecting changes
+        SGL_Cache::clear('blocks');
+
+        //  Redirect on success
+        SGL::raiseMsg('Block successfully added');
+        SGL_HTTP::redirect(array());
     }
 
     function _delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $blockId) {
                 $block = & new Block();
                 $block->get($blockId);
+
                 // This takes into account block assignments as well
                 $block->delete();
                 unset($block);
@@ -302,19 +214,21 @@ class BlockMgr extends SGL_Manager
             SGL::raiseError( 'Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
+
         //clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('blocks');
-
         SGL::raiseMsg('The selected block(s) have successfully been deleted');
     }
 
     function _reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->mode = 'Reorder blocks';
-        $output->template = 'blockReorder.html';
+
+        $blocks = & new Block();
         if ($this->submitted) {
-            $this->_reorderUpdate($input->items);
+
+            $orderArray = explode(',', $input->items);
+            $blocks->updateBlocksOrder($orderArray);
 
             //  clear cache so a new cache file is built reflecting changes
             SGL_Cache::clear('blocks');
@@ -323,47 +237,19 @@ class BlockMgr extends SGL_Manager
             SGL::raiseMsg('Block details successfully updated');
             SGL_HTTP::redirect(array());
         } else {
-            $blocks = & new Block();
-            $blocks->whereAdd("position = '".$input->position."'");
-            $blocks->orderBy('blk_order ASC');
-            $result = $blocks->find();
-            if ($result > 0) {
-                $aBlocks = array();
-                while ($blocks->fetch()) {
-                    $aBlocks[$blocks->block_id] = $blocks->title;
-                }
-            }
-            $output->aBlocks = isset($aBlocks) ? $aBlocks : array();
+            $output->mode       = 'Reorder blocks';
+            $output->template   = 'blockReorder.html';
+            $output->aBlocks    = $blocks->loadBlocks($input->position);
             $output->blocksName = $input->position;
         }
-    }
-
-    function _reorderUpdate($orderList)
-    {
-        SGL_DB::setConnection($this->dbh);
-        $orderArray = explode(',', $orderList);
-
-        //  Reorder blocks
-        $pos = 1;
-        $block = & new Block();
-        $this->dbh->autocommit();
-        foreach ($orderArray as $blockId) {
-            $block->get($blockId);
-            $block->blk_order =  $pos;
-            $success = $block->update();
-            unset($block);
-            $block = & new Block();
-            $pos++;
-        }
-        $this->dbh->commit();
     }
 
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->mode = 'Browse';
-        $output->template = 'blockList.html';
+        $output->template    = 'blockList.html';
+        $output->mode        = 'Browse';
         $secondarySortClause = $this->conf['BlockMgr']['secondarySortClause'];
 
         $query = "  SELECT
@@ -405,11 +291,69 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->aBlocksNames = $this->aBlocksNames;
+    }
 
-        //  format form output if any
-        if ($output->form) {
-            $output->form = $output->form->toHtml();
+    function _editDisplay(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->aAllBlocks     = SGL_Util::getAllBlocks();
+        $output->blockIsEnabled = empty($output->form->is_enabled) ? '' : 'checked';
+
+        //  check class existing
+        if (!empty($output->form->name)) {
+            $blockClass = $output->form->name;
+            require_once SGL_BLK_DIR . '/' . $blockClass . '.php';
+            if (class_exists($blockClass)) {
+
+                //  load block params
+                $output->checked = true;
+                $block           = & new Block();
+                $block->loadBlockParams($output, $blockClass, $output->blockId);
+            }
         }
+
+        //  get section list
+        $sectionList = DB_DataObject::factory($this->conf['table']['section']);
+        $sectionList->orderBy('left_id');
+        $result = $sectionList->find();
+        if ($result > 0) {
+            while ( $sectionList->fetch() ) {
+                $title = '';
+                if (!empty($sectionList->trans_id) && $this->conf['translation']['container']=='db') {
+                    if (!$title = $this->trans->get($sectionList->trans_id,'nav', SGL_Translation::getLangID())) {
+                        $title = $this->trans->get($sectionList->trans_id,'nav', SGL_Translation::getFallbackLangID());
+                    }
+                }
+                if ($title) {
+                    $sections[$sectionList->section_id] = $title;
+                } else {
+                    $sections[$sectionList->section_id] = $sectionList->title;
+                }
+                $sections[$sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
+                    $sections[ $sectionList->section_id ];
+            }
+        }
+        $sections[0]       = SGL_String::translate('All sections');
+        $output->aSections = $sections;
+
+        //  get roles list
+        $query = "SELECT role_id, name FROM {$this->conf['table']['role']}";
+        $res = & $this->dbh->getAll($query);
+        $roles = array();
+        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
+        foreach ($res as $key => $value) {
+            $roles[$value->role_id] = $value->name;
+        }
+        $output->aRoles = $roles;
+    }
+
+    function _addSpaces($order) {
+        $s = '';
+        for ($i = 1; $i < $order; $i++) {
+            $s .= '&nbsp;&nbsp;';
+        }
+        return $s;
     }
 
     function _rebuildPagedData(&$aPagedData)
@@ -435,11 +379,10 @@ class BlockMgr extends SGL_Manager
                         $data[$k] = $aValue;
                         if ($aValue['sections']) {
                             unset ($data[$k]['sections']);
-                            if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                                if ($this->conf['translation']['container'] == 'db') {
-                                    if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                        $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
-                                    }
+                            if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)
+                                && $this->conf['translation']['container'] == 'db') {
+                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                    $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
                                 }
                             }
                            if ($title) {
@@ -459,11 +402,10 @@ class BlockMgr extends SGL_Manager
                     $data[$k] = $aValue;
                     if ($aValue['sections']) {
                         unset ($data[$k]['sections']);
-                        if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)) {
-                            if ($this->conf['translation']['container'] == 'db') {
-                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                    $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
-                                }
+                        if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)
+                            && $this->conf['translation']['container'] == 'db') {
+                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
                             }
                         }
                         if ($title) {

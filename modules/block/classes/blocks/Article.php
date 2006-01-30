@@ -32,50 +32,64 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | BranchNavigation.php                                                      |
+// | Article.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Author: Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
+// | Author: Andrey Podshivalov <planetaz@gmail.com>                           |
 // +---------------------------------------------------------------------------+
+
+require_once SGL_CORE_DIR . '/Item.php';
 
 /**
- * Branch Navigation block.
+ * Show static Html article in a block.
  *
  * @package block
- * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
- * @version $Revision: 1.6 $
- * @since   PHP 4.1
+ * @version $Revision: 0.1 $
+ * @since   PHP 4.4.2
  */
-class BranchNavigation
+class Article
 {
+    var $template     = 'articleViewStaticHtmlArticle.html';
+    var $templatePath = 'publisher';
 
-    // set start parent node
-    var $startNode  = 1;
-
-    // always show navigation from start node
-    var $alwaysShow =  1;
-
-    function init($output, $block_id)
+    function init(&$output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        return $this->getBlockContent($output);
+
+        return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output)
+    function getBlockContent(&$output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
 
-        $nav       = &new SimpleNav($output);
-        $aSections = $nav->getSectionsByRoleId($this->startNode);
-
-        if (!$this->alwaysShow && empty($nav->_currentSectionId)) {
+        $blockOutput          = new SGL_Output();
+        $blockOutput->theme   = $output->theme;
+        $blockOutput->isAdmin = $output->isAdmin;
+        
+        //  set block params
+        if (array_key_exists('articleId', $aParams)) {
+            $articleId = (int)$aParams['articleId'];
+        } else {
             return false;
         }
-
-        if ($aSections) {
-            return $nav->_toHtml($aSections);
+        if (array_key_exists('template', $aParams)) {
+            $this->template = $aParams['template'];
         }
-        return false;
+
+        //  get article
+        $blockOutput->leadArticle = SGL_Item::getItemDetail($articleId);
+
+        return $this->process($blockOutput);
+    }
+
+    function process(&$output)
+    {        
+        // use moduleName for template path setting
+        $output->moduleName     = $this->templatePath;
+        $output->masterTemplate = $this->template;
+
+        $view = new SGL_HtmlSimpleView($output);
+        return $view->render();    
     }
 }
 ?>

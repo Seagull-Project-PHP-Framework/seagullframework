@@ -276,6 +276,25 @@ class SGL_Util
         return $aDrivers;
     }
 
+    function getAllBlocks()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once 'File/Util.php';
+
+        //  match files with php extension
+        $ret = SGL_Util::listDir(SGL_BLK_DIR, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
+                create_function('$a', 'return preg_match("/^.*\.php$/", $a);'));
+
+        //  parse out filename w/o extension and .
+	$aBlocks = array();
+	foreach ($ret as $k => $v) {
+	    preg_match("/^(.*)\.php$/", $v, $matches);
+    	    $aBlocks[$matches[1]] = $matches[1];
+        }
+        return $aBlocks;
+    }
+
     /**
      * Wrapper for the File_Util::listDir method.
      *
@@ -352,6 +371,50 @@ class SGL_Util
             }
         }
         return $aLangs;
+    }
+
+    /**
+     * Returns params from ini file.
+     *
+     * @return array
+     */
+    function loadParams($ini_file = '', $aSavedParams = array(), $aCurrentParams = array())
+    {
+        //  set default params
+        $aReturn = array();
+        $details = '';
+        $aPreparedParams = array();
+        
+        if (file_exists($ini_file)) {
+
+            //  get details section
+            $aParams = @parse_ini_file($ini_file, true);
+            if (array_key_exists('details', $aParams)) {
+                $details = (object)$aParams['details'];
+                unset($aParams['details']);
+            }
+
+            foreach ($aParams as $key => $value) {
+                if (is_array($value) && array_key_exists('value',$value)
+                    && array_key_exists('type',$value) && array_key_exists('label',$value)) {
+                    $value =  array_key_exists($key, $aCurrentParams) ? $aCurrentParams[$key] : '';
+                    if ($value) {
+                        $aParams[$key]['value'] = $value;
+                    } elseif (array_key_exists($key ,$aSavedParams)) {
+                        $aParams[$key]['value'] = $aSavedParams[$key];
+                    }
+                    $aParams[$key]['name'] = 'aParams['.$key.']';
+                    if ($aParams[$key]['type'] == 'wysiwyg') {
+                        $aReturn['wysiwyg'] = true;
+                    }
+                    $aPreparedParams[$key] = (object)$aParams[$key];
+                }
+            }
+        }
+
+        $aReturn['details'] = $details;
+        $aReturn['aParams'] = $aPreparedParams;
+        return $aReturn;
     }
 }
 ?>
