@@ -136,7 +136,7 @@ class TestNav
     var $_homePage = array();
 
     /**
-     * Start parent node
+     * The root node from which the branch starts.
      *
      * @access  private
      * @var     integer
@@ -160,7 +160,7 @@ class TestNav
     var $_levelsToRender = 0;
 
     /**
-     * Set navigation menu  as not collapsed by default.
+     * Set navigation menu as not collapsed by default.
      *
      * @access  private
      * @var     boolean
@@ -168,7 +168,7 @@ class TestNav
     var $_collapsed = false;
 
     /**
-     * Navigation menu can be force to display always.
+     * Navigation menu can be forced to display always.
      *
      * E.g.: regardless if it is user or admin branches, ie for t&c, privacy
      * policy links at bottom on page.
