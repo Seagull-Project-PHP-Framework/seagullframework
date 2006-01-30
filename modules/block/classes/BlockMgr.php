@@ -113,6 +113,12 @@ class BlockMgr extends SGL_Manager
             if (empty($input->form->title)) {
                 $aErrors['title'] = 'Please fill in a title';
             }
+            if (empty($input->form->sections)) {
+                $aErrors['sections'] = 'Please fill in a sections';
+            }
+            if (empty($input->form->roles)) {
+                $aErrors['roles'] = 'Please fill in a can view';
+            }
             if (isset($aErrors) && count($aErrors)) {
                 SGL::raiseMsg('Please fill in the indicated fields');
                 $input->error    = $aErrors;
