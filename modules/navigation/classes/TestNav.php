@@ -79,6 +79,14 @@ class TestNav
     var $_currentSectionId = 0;
 
     /**
+     * Title of current section.
+     *
+     * @access  private
+     * @var     string
+     */
+    var $_currentTitle = '';
+
+    /**
      * Boolean flag typically set to true by NavStyleMgr. Used by _toHtml() to determine how
      * to write anchor tags in the list it outputs. If _disableLinks=false, links reflect values
      * in sections table, with current section highlighted, etc.; if =true, then links are all
@@ -330,14 +338,20 @@ class TestNav
     function getSectionsByRoleId($sectionId = 0)
     {
         $this->_currentSectionId = 0;
+        $this->_currentTitle     = '';
         $this->_aAllCurrentPages = array();
 
-        // get all navigation tree with exact matching checking
-        $aSectionNodes = $this->_searchExactMatches($sectionId);
+        // get navigation tree
+        $aSectionNodes = $this->_getSections($sectionId);
 
-        // if no exact matches search for not exact matches
-        if (!$this->_currentSectionId && !$this->_staticId && $aSectionNodes) {
-            $aSectionNodes = $this->_searchInExactMatches($aSectionNodes);
+        // search exact matching checking
+        if ($aSectionNodes) {
+            $this->_searchExactMatches($aSectionNodes);
+
+            // if no exact matches search inexact matches
+            if (!$this->_currentSectionId && !$this->_staticId) {
+                $this->_searchInExactMatches($aSectionNodes);
+            }
         }
 
         return $aSectionNodes;
@@ -347,29 +361,84 @@ class TestNav
      * Returns an array of section objects that are enabled with perms based
      * on the user's role id.  Section objects are nested with children inside parents.
      *
-     * Also determines _currentSectionId. NB Recursive.
-     *
      * @access  private
      * @param   int $sectionId
      * @return  array of DataObjects_Section objects
      */
-    function _searchExactMatches($sectionId = 0)
+    function _getSections($sectionId = 0)
     {
+        $aSectionNodes = array();
+
+        //  get nodes from parent node
         $result = $this->da->getSectionsByRoleId($sectionId);
 
-        //  find current section
-        $aSectionNodes = array();
-        while ($result->fetchInto($section)) {
-            if (!(in_array($this->_rid, explode(',', $section->perms)))) {
+        //  process with each node
+        while ($result->fetchInto($sectionNode)) {
+
+            //  check permissions
+            if (!(in_array($this->_rid, explode(',', $sectionNode->perms)))) {
                 continue;
             }
 
-            //  set all defaults to false, then test
-            $section->children       = false;
+            //  recurse if there are (potential) children--even if R - L > 1, the children might
+            $sectionNode->children = false;
+            if ($sectionNode->right_id - $sectionNode->left_id > 1) {
+                $sectionNode->children = $this->_getSections($sectionNode->section_id);
+            }
+
+            //  check add-on
+            $aSections   = array();
+            if (preg_match('/^uriAddon:([^:]*):(.*)/', $sectionNode->resource_uri, $aUri)) {
+                $className = $aUri[1];
+                if (!is_array($aClassParams = @unserialize($aUri[2]))) {
+                    $aClassParams = array();
+                }
+                $classFile = dirname(__FILE__) . '/addons/' . $className . '.php';
+                if (file_exists($classFile)) {
+                    require_once $classFile;
+                    if (class_exists($className)) {
+                        $addonDriver = new $className;
+                        $aSections   = $addonDriver->init($sectionNode, $aClassParams);
+                        if ($aSections && is_array($aSections)) {
+                            foreach ($aSections as $section) {
+                                $aSectionNodes[] = $section;
+                            }
+                        }
+                    }
+                }
+            } else {
+                $aSectionNodes[] = $sectionNode;
+            }
+        }
+        return $aSectionNodes;
+    }
+
+    /**
+     * Recursively searching exact matches.
+     *
+     * @access  private
+     * @param   array $aSectionNodes
+     * @return  void
+     */
+    function _searchExactMatches(&$aSectionNodes)
+    {
+        foreach ($aSectionNodes as $key => $section) {
             $section->isCurrent      = false;
             $section->childIsCurrent = false;
 
             //  deal with different uri types
+            //  internal link:
+            if (preg_match('/^uriNode:([0-9]+)/', $section->resource_uri, $aUri)) {
+                $linkedSection = $this->da->getSectionById($aUri[1]);
+                if ($linkedSection &&
+                    (in_array($this->_rid, explode(',', $linkedSection->perms)))) {
+                    $section->dontMatch    = true;
+                    $section->resource_uri = $linkedSection->resource_uri;
+                } else {
+                    continue;
+                }
+            }
+
             //  uri alias:
             if (preg_match('/^uriAlias:([0-9]+):(.*)/', $section->resource_uri, $aUri)) {
                 $section->uriAlias     = $this->da->getAliasById($aUri[1]);
@@ -385,6 +454,11 @@ class TestNav
                 $section->resource_uri .= $this->conf['site']['defaultParams']
                     ?  '/' . $this->conf['site']['defaultParams'] : '';
 
+            //  empty link:
+            } elseif ('uriEmpty:' == $section->resource_uri) {
+                $section->dontMatch = true;
+                $section->uriEmpty  = true;
+
             //  wiki:
             } elseif (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
                 $req = & SGL_Request::singleton();
@@ -393,18 +467,17 @@ class TestNav
             //  external uri:
             } elseif (preg_match('/^uriExternal:(.*)/', $section->resource_uri, $aUri)) {
                 $section->resource_uri = $aUri[1];
+                $section->dontMatch    = true;
                 $section->uriExternal  = true;
             }
 
             //  retreive translation
-            if ($this->conf['translation']['container'] == 'db') {
-                if ($section->trans_id && array_key_exists($section->trans_id, $this->_aTranslations)) {
+            if ($section->trans_id && $this->conf['translation']['container'] == 'db') {
+                if (array_key_exists($section->trans_id, $this->_aTranslations)) {
                     $section->title = $this->_aTranslations[$section->trans_id];
-                } else {
-                    $title = $this->trans->get($section->section_id, 'nav', SGL_Translation::getFallbackLangID());
-                    if ($title) {
-                        $section->title = $title;
-                    }
+                } elseif ($title = $this->trans->get($section->section_id, 'nav',
+                    SGL_Translation::getFallbackLangID())) {
+                    $section->title = $title;
                 }
             }
 
@@ -413,58 +486,10 @@ class TestNav
                 $this->_homePage = $section;
             }
 
-            //  recurse if there are (potential) children--even if R - L > 1, the children might
-            //  not be children for output if is_enabled != 1 or if user's _rid not in perms.
-            if ($section->right_id - $section->left_id > 1) {
-                $section->children = $this->_searchExactMatches($section->section_id);
-            }
-
-            // loop through all children of section and see if there's an active one.
-            // if so set childIsCurrent
             if ($section->children) {
-                foreach ($section->children as $node) {
-                    if ($node->isCurrent || $node->childIsCurrent) {
-                        $section->childIsCurrent = true;
-                        $this->_aAllCurrentPages[$section->section_id] = $section;
-                        break;
-                    }
-                }
-            }
+                $this->_searchExactMatches($section->children);
 
-            // if we haven't  found current yet ...
-            if(!$section->childIsCurrent) {
-                if (
-                    //  the strings are identical and it's not a static article
-                    ($section->resource_uri == $this->querystring)
-
-                    //  if disabled links staticId must be non-zero
-                    || ($section->section_id && $section->section_id == $this->_staticId))
-                {
-                    //  exact match has been found
-                    $section->isCurrent        = true;
-                    $this->_currentSectionId   = $section->section_id;
-                    $this->_aAllCurrentPages[$section->section_id] = $section;
-                }
-            } // end if ! childIsCurrent
-            $aSectionNodes[$section->section_id] = $section;
-        }
-        return $aSectionNodes;
-    }
-
-    /**
-     * Recursively searching inexact matches.
-     *
-     * @access  private
-     * @param   array $sectionNodes   array of DataObjects_Section objects
-     * @return  array of DataObjects_Section objects
-     */
-    function _searchInExactMatches($aSectionNodes)
-    {
-        foreach ($aSectionNodes as $section) {
-            if ($section->children) {
-                $section->children = $this->_searchInExactMatches($section->children);
-
-                // if children node is current mark parent node
+                //  if children node is current mark parent node
                 foreach ($section->children as $section2) {
                     if ($section2->isCurrent || $section2->childIsCurrent) {
                         $section->childIsCurrent = true;
@@ -474,24 +499,67 @@ class TestNav
                 }
             }
 
-            // still doesn't matche
-            if (!$section->childIsCurrent) {
+            //  still no matches
+            if(!$section->childIsCurrent && empty($section->dontMatch)) {
+                if (
+                    //  the strings are identical and it's not a static article
+                    ($section->resource_uri == $this->querystring)
+
+                    //  if disabled links staticId must be non-zero
+                    || ($section->section_id && $section->section_id == $this->_staticId))
+                {
+                    //  exact match has been found
+                    $section->isCurrent      = true;
+                    $this->_currentSectionId = $section->section_id;
+                    $this->_currentTitle     = $section->title;
+                    $this->_aAllCurrentPages[$section->section_id] = $section;
+                }
+            }
+
+            $aSectionNodes[$key] = $section;
+        }
+    }
+
+    /**
+     * Recursively searching inexact matches.
+     *
+     * @access  private
+     * @param   array $aSectionNodes
+     * @return  void
+     */
+    function _searchInExactMatches(&$aSectionNodes)
+    {
+        foreach ($aSectionNodes as $key => $section) {
+            if ($section->children) {
+                $this->_searchInExactMatches($section->children);
+
+                //  if children node is current mark parent node
+                foreach ($section->children as $section2) {
+                    if ($section2->isCurrent || $section2->childIsCurrent) {
+                        $section->childIsCurrent = true;
+                        $this->_aAllCurrentPages[$section->section_id] = $section;
+                        break;
+                    }
+                }
+            }
+
+            //  still no matches
+            if (!$section->childIsCurrent && empty($section->dontMatch)) {
                 if (strpos($this->querystring, $section->resource_uri . '/') === 0) {
 
                     //  inexact match has been found
-                    $section->isCurrent        = true;
-                    $this->_currentSectionId   = $section->section_id;
+                    $section->isCurrent      = true;
+                    $this->_currentSectionId = $section->section_id;
+                    $this->_currentTitle     = $section->title;
                     $this->_aAllCurrentPages[$section->section_id] = $section;
                 }
             }
 
             // update if section has new params
             if ($section->isCurrent || $section->childIsCurrent) {
-                $aSectionNodes[$section->section_id] = $section;
+                $aSectionNodes[$key] = $section;
             }
         }
-
-        return $aSectionNodes;
     }
 
     /**
@@ -514,11 +582,13 @@ class TestNav
                 if ($section->isCurrent || $section->childIsCurrent) {
                     $liAtts = ' class="current"';
                 }
-                if (isset($section->uriAlias)) {
-                    $section->resource_uri = $section->uriAlias;
-                }
                 if (isset($section->uriExternal) && empty($section->uriAlias)) {
+                    if (isset($section->uriAlias)) {
+                        $section->resource_uri = $section->uriAlias;
+                    }
                     $url = $section->resource_uri;
+                } elseif (isset($section->uriEmpty)) {
+                    $url = 'javascript:void(0)';
                 } else {
                     $url = $this->_makeLinkFromNode($section);
                 }
@@ -555,6 +625,9 @@ class TestNav
      */
     function _makeLinkFromNode(&$aSections)
     {
+        if (isset($aSections->uriAlias)) {
+            $aSections->resource_uri = $aSections->uriAlias;
+        }
         $aTmp = explode('/', $aSections->resource_uri);
 
         // extract module name
@@ -605,22 +678,11 @@ class TestNav
      */
     function getCurrentSectionName()
     {
-        if (!$this->_currentSectionId) {
-            $sectionName = $this->input->get('pageTitle');
-        } elseif ($this->conf['translation']['container'] == 'db') {
-            $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getLangID());
-            if (!$sectionName) {
-                $sectionName = $this->trans->get($this->_currentSectionId, 'nav', SGL_Translation::getFallbackLangID());
-            }
+        if ($this->_currentTitle) {
+            return $this->_currentTitle;
+        } else {
+            return $this->input->pageTitle;
         }
-        if (empty($sectionName)) {
-            $query = "
-                SELECT  title
-                FROM    {$this->conf['table']['section']}
-                WHERE   section_id = " . $this->_currentSectionId;
-            $sectionName = $this->da->dbh->getOne($query);
-        }
-        return $sectionName;
     }
 
     /**
