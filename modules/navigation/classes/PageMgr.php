@@ -260,7 +260,7 @@ class PageMgr extends SGL_Manager
             //  build static article list
             if ($this->da->moduleIsRegistered('publisher')) {
                 $articles = $this->_getStaticArticles();
-                if ($this->conf['translation']['container'] == 'db') {
+                if ($articles && $this->conf['translation']['container'] == 'db') {
                     foreach ($articles as $key => $value) {
                     	if (is_numeric($value)){
                             $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
