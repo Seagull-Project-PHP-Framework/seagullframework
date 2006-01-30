@@ -693,7 +693,7 @@ EOF;
             if (!($this->redirect)) {
                 return;
             } else {
-                SGL_HTTP::redirect(array());
+                SGL_HTTP::redirect();
             }
 
         //  else display error with blank template

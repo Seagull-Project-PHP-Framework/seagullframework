@@ -265,7 +265,7 @@ class SGL_Manager
 
         //  if no errors have occured, redirect
         if (!SGL_Error::count()) {
-            SGL_HTTP::redirect(array());
+            SGL_HTTP::redirect();
 
         //  else display error with blank template
         } else {
