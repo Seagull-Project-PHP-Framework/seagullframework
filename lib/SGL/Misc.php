@@ -740,6 +740,10 @@ class SGL_HTTP
             //  get a reference to the request object
             $req = & SGL_Request::singleton();
 
+            if (is_scalar($url)) {
+                $url = array();
+            }
+
             $moduleName  =  (array_key_exists('moduleName', $url))
                 ? $url['moduleName']
                 : $req->get('moduleName');
