@@ -32,47 +32,32 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | SubNavigation.php                                                         |
+// | HtmlBlock.php                                                               |
 // +---------------------------------------------------------------------------+
-// | Author: Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
+// | Author: Andrey Podshivalov <planetaz@gmail.com>                           |
 // +---------------------------------------------------------------------------+
 
 /**
- * Section Navigation block.
+ * Creates static html blocks.
  *
  * @package block
- * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
- * @version $Revision: 1.6 $
- * @since   PHP 4.1
+ * @author  Andrey Podshivalov <planetaz@gmail.com>
+ * @version 0.5
  */
-class SubNavigation
+class HtmlBlock
 {
-    function init($output, $block_id)
+
+    function init(&$output, $blockId, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        return $this->getBlockContent($output, $block_id);
+
+        return $this->getBlockContent($aParams);
     }
-
-    function getBlockContent($output, $block_id)
+    
+    function getBlockContent(&$aParams)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
-
-        $nav = & new SimpleNav($output);
-        $aSections = $nav->getSectionsByRoleId();
-
-        // last element in array is a top current node
-        $parentSection = sizeof($nav->_aParentsOfCurrentPage) > 1
-            ? array_pop($nav->_aParentsOfCurrentPage)
-            : $nav->_currentSectionId;
-
-        $subSections = $nav->getSectionsByRoleId($parentSection);
-
-        if ($subSections && $parentSection) {
-            return $nav->_toHtml($subSections);
-        } else {
-            return false;
-        }
+        $html = array_key_exists('html', $aParams) ? $aParams['html'] : false;
+        return $html;
     }
 }
 ?>

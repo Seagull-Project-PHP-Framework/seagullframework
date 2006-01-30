@@ -49,26 +49,27 @@ class Breadcrumbs
     var $template     = 'Breadcrumbs.html';
     var $templatePath = 'block/blocks';
 
-    function init(&$output)
+    function init(&$output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        return $this->getBlockContent($output);
+        return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output)
+    function getBlockContent(&$output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $blockOutput        = new SGL_Output();
         $blockOutput->theme = $output->theme;
 
-        // prepare navigation driver
+        //  prepare navigation driver
         $navClass  = $output->conf['navigation']['driver'];
         $navDriver = $navClass . '.php';
         $nav       = & new $navClass($output);
 
-        $aParams = array(
+        //  set default params
+        $aDefaultParams = array(
                 'startParentNode' => 0,
                 'startLevel'      => 0,
                 'levelsToRender'  => 1,
@@ -77,8 +78,16 @@ class Breadcrumbs
                 'breadcrumbs'     => 1,
         );
 
+        //  set custom params
+        if (array_key_exists('startParentNode', $aParams)) {
+            $aDefaultParams['startParentNode'] = (int)$aParams['startParentNode'];
+        }
+        if (array_key_exists('template', $aParams)) {
+            $this->template = $aParams['template'];
+        }
+
         //  set new navigation driver params
-        $nav->setParams($aParams);
+        $nav->setParams($aDefaultParams);
 
         //  call navigation renderer
         $aNav = $nav->render();

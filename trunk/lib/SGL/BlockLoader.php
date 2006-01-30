@@ -148,7 +148,7 @@ class SGL_BlockLoader
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class,
-                b.body_class, b.position
+                b.body_class, b.position, b.content
             FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1
@@ -194,8 +194,12 @@ class SGL_BlockLoader
                     SGL::raiseError($blockClass . ' is not a valid block classname',
                         SGL_ERROR_NOCLASS);
                 } else {
+                    $aParams = @unserialize($oBlock->content);
+                    if (!is_array($aParams)) {
+                        $aParams = array();
+                    }
                     @$obj = & new $blockClass();
-                    $this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id);
+                    $this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id, $aParams);
                 }
             }
             $this->_sort();
