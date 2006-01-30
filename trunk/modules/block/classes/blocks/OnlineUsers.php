@@ -11,12 +11,12 @@ class OnlineUsers
     }
 
     function getBlockContent(&$output)
-    { 
+    {
         $blockOutput = new SGL_Output();
 
         // prepare content
-        $blockOutput->guests  = SGL_HTTP_Session::getGuestSessionCount();
-        $blockOutput->members = SGL_HTTP_Session::getMemberSessionCount();
+        $blockOutput->guests  = SGL_Session::getGuestSessionCount();
+        $blockOutput->members = SGL_Session::getMemberSessionCount();
         $blockOutput->total   = $blockOutput->members + $blockOutput->guests;
 
         // set theme name
@@ -26,13 +26,13 @@ class OnlineUsers
     }
 
     function process(&$output)
-    {        
+    {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;
         $output->masterTemplate = $this->template;
 
         $view = new SGL_HtmlSimpleView($output);
-        return $view->render();    
+        return $view->render();
     }
 }
 ?>

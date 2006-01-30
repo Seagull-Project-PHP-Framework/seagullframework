@@ -220,7 +220,7 @@ class FaqMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (SGL_HTTP_Session::getUserType() == SGL_ADMIN) {
+        if (SGL_Session::getUserType() == SGL_ADMIN) {
             $output->template = 'faqListAdmin.html';
             $output->pageTitle = $this->pageTitle . ' :: Browse';
         } else {

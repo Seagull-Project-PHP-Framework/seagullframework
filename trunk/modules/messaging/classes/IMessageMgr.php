@@ -119,7 +119,7 @@ class IMessageMgr extends SGL_Manager
         $output->sectionTitle = 'Inbox';
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         $query =
             " SELECT    *, u.username AS from_username, u.first_name AS first_name, u.last_name AS last_name
@@ -165,7 +165,7 @@ class IMessageMgr extends SGL_Manager
         $output->sectionTitle = 'Sent Messages';
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         $query =
             " SELECT *
@@ -216,7 +216,7 @@ class IMessageMgr extends SGL_Manager
         $aToUserIDs = array();
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         // Setup most of the message here
         $output->messageFrom  = $uid;
@@ -231,7 +231,7 @@ class IMessageMgr extends SGL_Manager
             $tmpUser->get($recipientID);
 
             // All users except admin types have to obey privacy settings
-            if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
+            if (SGL_Session::getUserType() != SGL_ADMIN) {
                 if (SGL_PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
                     // Silently skip those who wish to be left alone.
                     $counter++;
@@ -267,7 +267,7 @@ class IMessageMgr extends SGL_Manager
     function verifyUserAccess($instantMessage)
     {
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         // Do not display messages you did not send or receive
         if ($instantMessage->user_id_to != $uid && $instantMessage->user_id_from != $uid) {
@@ -350,7 +350,7 @@ class IMessageMgr extends SGL_Manager
         } else {
             $output->messageBody = "<br /><pre> > " . $body . '</pre>';
         }
-        $output->messageFrom  = SGL_HTTP_Session::getUid();
+        $output->messageFrom  = SGL_Session::getUid();
     }
 
     function _insert(&$input, &$output) // send
@@ -359,7 +359,7 @@ class IMessageMgr extends SGL_Manager
         $output->template = 'docBlank.html';
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
         $sender_id = $input->instantMessage->user_id_from;
 
         // Make sure sender is the current user (spoof proofing)
@@ -403,7 +403,7 @@ class IMessageMgr extends SGL_Manager
                 continue;
             }
 
-            if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
+            if (SGL_Session::getUserType() != SGL_ADMIN) {
                 if (SGL_PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
                     // Skip users who chose to be anonymous or have inactive
                     // accounts
@@ -452,7 +452,7 @@ class IMessageMgr extends SGL_Manager
         $output->sectionTitle = 'Read';
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         $message_id = $input->messageID;
 
@@ -507,7 +507,7 @@ class IMessageMgr extends SGL_Manager
         $output->template = 'imRead.html';
 
         // Get the user id from the current session
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
 
         $counter = 0;
         foreach ($input->deleteArray as $index => $message_id) {
@@ -572,7 +572,7 @@ class IMessageMgr extends SGL_Manager
                 break;
             }
             //  who sent message -> logged on user
-            $fromID = SGL_HTTP_Session::getUid();
+            $fromID = SGL_Session::getUid();
             $accuser = DataObjects_Usr::staticGet($fromID);
             $accusee = DataObjects_Usr::staticGet($input->accuseeID);
             $messageBody .= "<br /><br /><strong>Complaint filed by:</strong> " . $accuser->username . " (id = $accuser->usr_id)";

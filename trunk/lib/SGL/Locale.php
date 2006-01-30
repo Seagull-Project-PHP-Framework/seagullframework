@@ -74,7 +74,7 @@ class SGL_Locale
                 //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
 
-                $uid = SGL_HTTP_Session::getUid();
+                $uid = SGL_Session::getUid();
                 if ($uid && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
                     $c = &SGL_Config::singleton();

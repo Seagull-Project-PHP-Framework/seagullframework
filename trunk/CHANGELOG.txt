@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+30-01-06    SGL_HTTP_Session renamed to SGL_Session
 30-01-06    SGL_HTTP::redirect(array()); cleaned up to SGL_HTTP::redirect();
 26-01-06    Path to seagull/var explicitly named when not writable in installer
 

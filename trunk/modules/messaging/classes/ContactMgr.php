@@ -93,7 +93,7 @@ class ContactMgr extends SGL_Manager
             foreach ($input->deleteArray as $userID) {
                 $user = DB_DataObject::factory($this->conf['table']['contact']);
                 $user->whereAdd("usr_id = $userID");
-                $user->whereAdd("originator_id  = " . SGL_HTTP_Session::getUid());
+                $user->whereAdd("originator_id  = " . SGL_Session::getUid());
                 $user->delete(true);
                 unset($user);
             }
@@ -106,18 +106,18 @@ class ContactMgr extends SGL_Manager
 
     function _insert(&$input, &$output)
     {
-        if (SGL_HTTP_Session::getUserType() != SGL_ADMIN) {
+        if (SGL_Session::getUserType() != SGL_ADMIN) {
             SGL_DB::setConnection($this->dbh);
             $savedUser = DB_DataObject::factory($this->conf['table']['contact']);
 
             //  skip if user already exists
             $savedUser->usr_id = $input->userID;
-            $savedUser->originator_id  = SGL_HTTP_Session::getUid();
+            $savedUser->originator_id  = SGL_Session::getUid();
             $numRows = $savedUser->find();
             if ($numRows < 1) {
                 $savedUser->contact_id       = $this->dbh->nextId($this->conf['table']['contact']);
                 $savedUser->date_created     = SGL_Date::getTime();
-                $savedUser->originator_id    = SGL_HTTP_Session::getUid();
+                $savedUser->originator_id    = SGL_Session::getUid();
                 $savedUser->usr_id           = $input->userID;
                 $res = $savedUser->insert();
             }
@@ -149,7 +149,7 @@ class ContactMgr extends SGL_Manager
         $query = "
             SELECT  u.usr_id, u.username, u.first_name, u.last_name
             FROM    {$this->conf['table']['user']} u, {$this->conf['table']['contact']} c
-            WHERE   c.originator_id = " . SGL_HTTP_Session::getUid() . "
+            WHERE   c.originator_id = " . SGL_Session::getUid() . "
             AND     u.usr_id = c.usr_id
             ORDER BY u.last_updated DESC
         ";

@@ -135,7 +135,7 @@ class SimpleNav
 
     function SimpleNav($input)
     {
-        $this->_rid = (int)SGL_HTTP_Session::get('rid');
+        $this->_rid = (int)SGL_Session::get('rid');
 
         //  get a reference to the request object
         $req = & SGL_Request::singleton();

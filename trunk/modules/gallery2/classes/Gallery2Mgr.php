@@ -90,7 +90,7 @@ class Gallery2Mgr extends SGL_Manager
         $g2embedPath      = $this->conf['Gallery2Mgr']['embedPath'];
         $g2relativeG2Path = $this->conf['Gallery2Mgr']['relativeG2Path'];
         $g2loginRedirect  = $this->conf['Gallery2Mgr']['loginPage'];
-        $uid = SGL_HTTP_Session::getUid();
+        $uid = SGL_Session::getUid();
         if ($uid < 1) {
             $uid = '';
         }

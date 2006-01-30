@@ -110,13 +110,13 @@ class LoginMgr extends SGL_Manager
         if ($res = $this->_doLogin($input->username, $input->password)) {
 
             // Get the user id from the current session
-            $uid = SGL_HTTP_Session::getUid();
+            $uid = SGL_Session::getUid();
 
             // Check for multiple user sessions: allow one only excluding current one.
-            $multiple = SGL_HTTP_Session::getUserSessionCount($uid, session_id());
+            $multiple = SGL_Session::getUserSessionCount($uid, session_id());
             if ($multiple > 0) {
                 if ($this->conf['site']['single_user']) {
-                    SGL_HTTP_Session::destroyUserSessions($uid, session_id());
+                    SGL_Session::destroyUserSessions($uid, session_id());
                     SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
                 } else {
                     // Issue warning only
@@ -146,7 +146,7 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         SGL_Cache::clear('blocks');
-        SGL_HTTP_Session::destroy();
+        SGL_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out');
 
         //  get default params for logout page
@@ -186,7 +186,7 @@ class LoginMgr extends SGL_Manager
                 $login->insert();
             }
             //  associate new session with authenticated user
-            $sess = & new SGL_HTTP_Session($uid);
+            new SGL_Session($uid);
 
             return $aResult;
 

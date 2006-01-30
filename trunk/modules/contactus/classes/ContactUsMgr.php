@@ -89,7 +89,7 @@ class ContactUsMgr extends SGL_Manager
         if ($input->submit) {
 
             //  check form security token generated in display
-            if ($input->token != SGL_HTTP_Session::get('token')) {
+            if ($input->token != SGL_Session::get('token')) {
                 SGL::logMessage('Invalid POST from ' . gethostbyaddr($_SERVER['REMOTE_ADDR']), PEAR_LOG_ALERT);
                 SGL::raiseMsg('Invalid POST source');
                 $aParams = array(
@@ -133,7 +133,7 @@ class ContactUsMgr extends SGL_Manager
 
         //  generate one-time token for additional form security
         $output->token = md5(time());
-        SGL_HTTP_Session::set('token', $output->token);
+        SGL_Session::set('token', $output->token);
     }
 
     function _send(&$input, &$output)
@@ -180,11 +180,11 @@ class ContactUsMgr extends SGL_Manager
 
         //  check user auth level
         $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
-        if (SGL_HTTP_Session::getUserType() != SGL_GUEST) {
+        if (SGL_Session::getUserType() != SGL_GUEST) {
 
             //  instantiate new User entity
             $user = DB_DataObject::factory($this->conf['table']['user']);
-            $user->get(SGL_HTTP_Session::getUid());
+            $user->get(SGL_Session::getUid());
 
             //  instantiate Contact_us entity which will hold User data
             $contact->first_name = $user->first_name;

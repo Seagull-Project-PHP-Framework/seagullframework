@@ -200,7 +200,7 @@ class SGL_Manager
             $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
 
             // if user has no class perms check for each action
-            if (! SGL_HTTP_Session::hasPerms($classPerm)) {
+            if (! SGL_Session::hasPerms($classPerm)) {
 
                 // ...and if linked methods to be called are allowed
                 foreach ($this->_aActionsMapping[$input->action] as $methodName) {
@@ -215,15 +215,15 @@ class SGL_Manager
                     $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
 
                     //  redirect if user doesn't have method specific or classwide perms
-                    if (! SGL_HTTP_Session::hasPerms($perm)) {
+                    if (! SGL_Session::hasPerms($perm)) {
                         SGL::raiseMsg('you do not have perms');
                         SGL::logMessage('You do not have the required perms for ' .
                             $className . '::' .$methodName, PEAR_LOG_NOTICE);
 
                         //  make sure no infinite redirections
-                        $lastRedirected = SGL_HTTP_Session::get('redirected');
+                        $lastRedirected = SGL_Session::get('redirected');
                         $now = time();
-                        SGL_HTTP_Session::set('redirected', $now);
+                        SGL_Session::set('redirected', $now);
                         if ($now - $lastRedirected < 2) {
                             PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                                 SGL_ERROR_RECURSION, PEAR_ERROR_DIE);

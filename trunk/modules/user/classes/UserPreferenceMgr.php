@@ -58,13 +58,13 @@ class UserPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
-        
+
         $this->template     = 'prefUserEdit.html';
         $this->pageTitle    = 'User Preferences';
 
         $this->_aActionsMapping =  array(
-            'editAll'   => array('editAll'), 
-            'updateAll' => array('updateAll', 'redirectToDefault'), 
+            'editAll'   => array('editAll'),
+            'updateAll' => array('updateAll', 'redirectToDefault'),
         );
     }
 
@@ -94,8 +94,8 @@ class UserPreferenceMgr extends PreferenceMgr
     function _updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $uid = SGL_HTTP_Session::getUid();
+
+        $uid = SGL_Session::getUid();
         $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . $uid;
         $this->dbh->query($query1);
@@ -104,20 +104,20 @@ class UserPreferenceMgr extends PreferenceMgr
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$this->conf['table']['user_preference']} 
-                (   user_preference_id, 
-                    usr_id, 
-                    preference_id, 
+            INSERT INTO {$this->conf['table']['user_preference']}
+                (   user_preference_id,
+                    usr_id,
+                    preference_id,
                     value)
-            VALUES(" . 
-                    $this->dbh->nextId($this->conf['table']['user_preference']) . ", 
+            VALUES(" .
+                    $this->dbh->nextId($this->conf['table']['user_preference']) . ",
                     $uid,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
             $res = $this->dbh->query($query2);
             if (DB::isError($res)) {
-                SGL::raiseError('Error inserting prefs, exiting ...', 
+                SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
         }

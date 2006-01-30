@@ -1074,7 +1074,7 @@ class DA_User extends SGL_Delegator
      */
     function getLastLogin($userId = null)
     {
-        $id = (is_null($userId)) ? SGL_HTTP_Session::getUid() : $userId;
+        $id = (is_null($userId)) ? SGL_Session::getUid() : $userId;
         $query = "
             SELECT date_time AS last_login
             FROM  {$this->conf['table']['login']}

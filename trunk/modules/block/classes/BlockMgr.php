@@ -458,7 +458,7 @@ class BlockMgr extends SGL_Manager
         // 2- using session
         // 3- using default
         if (empty($frmSortBy)) {
-            $sessSortBy = SGL_HTTP_Session::get('sortByBlk');
+            $sessSortBy = SGL_Session::get('sortByBlk');
             if (empty($sessSortBy)) {
                 $sortBy = $this->conf['BlockMgr']['defaultSortBy'];
             } else {
@@ -468,7 +468,7 @@ class BlockMgr extends SGL_Manager
             $sortBy = $frmSortBy;
         }
         //  update session
-        SGL_HTTP_Session::set('sortByBlk', $sortBy);
+        SGL_Session::set('sortByBlk', $sortBy);
         return $sortBy;
     }
 
@@ -490,7 +490,7 @@ class BlockMgr extends SGL_Manager
         // 2- using session
         // 3- using default
         if (empty($frmSortOrder)) {
-            $sessSortOrder = SGL_HTTP_Session::get('sortOrderBlk');
+            $sessSortOrder = SGL_Session::get('sortOrderBlk');
             if (empty($sessSortOrder)) {
                 $sortOrder = $this->conf['BlockMgr']['defaultSortOrder'];
             } else {
@@ -504,7 +504,7 @@ class BlockMgr extends SGL_Manager
             }
         }
         //  update session
-        SGL_HTTP_Session::set('sortOrderBlk', $sortOrder);
+        SGL_Session::set('sortOrderBlk', $sortOrder);
         return $sortOrder;
     }
 }

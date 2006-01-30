@@ -130,7 +130,7 @@ class SGL_AppController
     function addPage($pageName, $param=null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPages = SGL_HTTP_Session::get('wiz_sequence');
+        $aPages = SGL_Session::get('wiz_sequence');
         if (isset($pageName)) {
 
             //  pagename, isCurrent, param
@@ -138,7 +138,7 @@ class SGL_AppController
                                 'current'   => false,
                                 'param'     => $param);
         }
-        SGL_HTTP_Session::set('wiz_sequence', $aPages);
+        SGL_Session::set('wiz_sequence', $aPages);
         return true;
     }
 
@@ -151,11 +151,11 @@ class SGL_AppController
     function startWizard()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPages = SGL_HTTP_Session::get('wiz_sequence');
+        $aPages = SGL_Session::get('wiz_sequence');
 
         //  set first page to enabled
         $aPages[0]['current'] = true;
-        SGL_HTTP_Session::set('wiz_sequence', $aPages);
+        SGL_Session::set('wiz_sequence', $aPages);
         SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
         return true;
     }

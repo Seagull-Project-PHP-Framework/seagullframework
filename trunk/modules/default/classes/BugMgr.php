@@ -115,7 +115,7 @@ class BugMgr extends SGL_Manager
 
     function _list(&$input, &$output)
     {
-        if (SGL_HTTP_Session::getUserType() != SGL_GUEST) {
+        if (SGL_Session::getUserType() != SGL_GUEST) {
             $user = $this->getCurrentUserInfo();
             $bug = new stdClass();
             $bug->reporter_first_name = $user->first_name;
@@ -178,7 +178,7 @@ class BugMgr extends SGL_Manager
         //  instantiate new User entity
 		require_once 'DB/DataObject.php';
         $user = DB_DataObject::factory($this->conf['table']['user']);
-        $user->get(SGL_HTTP_Session::getUid());
+        $user->get(SGL_Session::getUid());
         return $user;
     }
 

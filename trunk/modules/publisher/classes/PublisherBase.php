@@ -88,27 +88,27 @@ class PublisherBase
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  look for catID
-        $sessCatID = SGL_HTTP_Session::get('currentCatId');
+        $sessCatID = SGL_Session::get('currentCatId');
         if (!$input->catID && !$sessCatID) {    //  if not in input or session, default to 1
             $input->catID = 1;
         } elseif (!$input->catID)               //  if not in input, grab from session
-            $input->catID = SGL_HTTP_Session::get('currentCatId');
+            $input->catID = SGL_Session::get('currentCatId');
 
         //  add to session
-        SGL_HTTP_Session::set('currentCatId', $input->catID);
+        SGL_Session::set('currentCatId', $input->catID);
 
         //  look for resource range, ie: 'all' or 'thisCategory'
-        $sessResourceRange = SGL_HTTP_Session::get('currentResRange');
+        $sessResourceRange = SGL_Session::get('currentResRange');
         if (!isset($input->queryRange) && !$sessResourceRange) {    // if not in input or session, default to 'all'
             $input->queryRange = 'all';
         } elseif (!isset($input->queryRange))               // if not in input, grab from session
-            $input->queryRange = SGL_HTTP_Session::get('currentResRange');
+            $input->queryRange = SGL_Session::get('currentResRange');
 
         //  add to session
-        SGL_HTTP_Session::set('currentResRange', $input->queryRange);
+        SGL_Session::set('currentResRange', $input->queryRange);
 
         //  look for dataTypeID for template selection in article manager
-        $sessDatatypeID = SGL_HTTP_Session::get('dataTypeId');
+        $sessDatatypeID = SGL_Session::get('dataTypeId');
 
         //    if not in input or session, set default article type
         if (!isset($input->dataTypeID) && !$sessDatatypeID) {
@@ -121,10 +121,10 @@ class PublisherBase
 
         // if not in input, grab from session
         } elseif (!isset($input->dataTypeID))
-            $input->dataTypeID = SGL_HTTP_Session::get('dataTypeId');
+            $input->dataTypeID = SGL_Session::get('dataTypeId');
 
         //  add to session
-        SGL_HTTP_Session::set('dataTypeId', $input->dataTypeID);
+        SGL_Session::set('dataTypeId', $input->dataTypeID);
     }
 
     function getDocumentListByCatID($catID)

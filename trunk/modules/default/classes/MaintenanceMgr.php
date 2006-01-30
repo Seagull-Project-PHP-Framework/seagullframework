@@ -92,7 +92,7 @@ class MaintenanceMgr extends SGL_Manager
 
         //  get current module, check session
         $input->currentModule = $req->get('frmCurrentModule');
-        $sessLastModuleSelected = SGL_HTTP_Session::get('lastModuleSelected');
+        $sessLastModuleSelected = SGL_Session::get('lastModuleSelected');
         if (!$input->currentModule && !$sessLastModuleSelected) {
             $input->currentModule = 'default';
         } elseif (!$input->currentModule) {
@@ -106,7 +106,7 @@ class MaintenanceMgr extends SGL_Manager
         // get current lang, check session
         $input->currentLang = ($req->get('frmCurrentLang'))
             ? $req->get('frmCurrentLang')
-            : SGL_HTTP_Session::get('lastLanguageSelected');
+            : SGL_Session::get('lastLanguageSelected');
 
         //  if both are empty get language from prefs
         $input->currentLang = ($input->currentLang)
@@ -114,8 +114,8 @@ class MaintenanceMgr extends SGL_Manager
             : $_SESSION['aPrefs']['language'];
 
         //  add to session
-        SGL_HTTP_Session::set('lastModuleSelected', $input->currentModule);
-        SGL_HTTP_Session::set('lastLanguageSelected', $input->currentLang);
+        SGL_Session::set('lastModuleSelected', $input->currentModule);
+        SGL_Session::set('lastLanguageSelected', $input->currentLang);
 
         //  catch any single quotes
         //  note: this is done by PEAR::Config automatically!
@@ -549,7 +549,7 @@ class MaintenanceMgr extends SGL_Manager
         //  set author details
         require_once 'DB/DataObject.php';
         $user = DB_DataObject::factory($this->conf['table']['user']);
-        $user->get(SGL_HTTP_Session::getUid());
+        $user->get(SGL_Session::getUid());
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
 

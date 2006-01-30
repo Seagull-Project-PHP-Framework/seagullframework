@@ -103,7 +103,7 @@ class SGL_Process_SetupErrorHandling extends SGL_DecorateProcess
         SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
 
         //  if sesssion debug, send error info to screen
-        if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
+        if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
             SGL_Error::push($oError);
             if ($conf['debug']['showBacktrace']) {
                 echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
@@ -173,7 +173,7 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
         $debug = $req->get('debug');
         if ($debug && SGL::debugAllowed()) {
             $debug = ($debug == 'on') ? 1 : 0;
-            SGL_HTTP_Session::set('debug', $debug);
+            SGL_Session::set('debug', $debug);
         }
 
         $this->processRequest->process($input);
@@ -534,7 +534,7 @@ class SGL_Process_CreateSession extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $input->set('session', new SGL_HTTP_Session());
+        $input->set('session', new SGL_Session());
         $this->processRequest->process($input);
     }
 }
@@ -836,13 +836,13 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  set isAdmin flag
-        $input->data->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN)
+        $input->data->isAdmin = (SGL_Session::getUserType() == SGL_ADMIN)
             ? true : false;
 
         //  setup login stats
-        if (SGL_HTTP_Session::getUserType() > SGL_GUEST) {
+        if (SGL_Session::getUserType() > SGL_GUEST) {
             $input->data->loggedOnUser = $_SESSION['username'];
-            $input->data->loggedOnUserID = SGL_HTTP_Session::getUid();
+            $input->data->loggedOnUserID = SGL_Session::getUid();
             $input->data->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);
             $input->data->loggedOnDate = strftime("%B %d", $_SESSION['startTime']);
             $input->data->remoteIp = $_SERVER['REMOTE_ADDR'];
@@ -1000,7 +1000,7 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
         $action = $req->get('action');
 
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        $userRid = SGL_HTTP_Session::getUserType();
+        $userRid = SGL_Session::getUserType();
         $input->data->adminGuiAllowed = false;
         $adminGuiAllowed = $adminGuiRequested = false;
 
