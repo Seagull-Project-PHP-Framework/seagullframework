@@ -734,7 +734,7 @@ class SGL_Item
         if (!is_null($language)) {
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
-                SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
+                SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id, i.category_id
                 FROM    {$this->conf['table']['item']} i,
                         {$this->conf['table']['item_addition']} ia,
                         {$this->conf['table']['item_type']} it,
@@ -750,13 +750,14 @@ class SGL_Item
 
             if (!DB::isError($result)) {
                 $html = array();
-                while (list($fieldID, $fieldName, $fieldValue, $trans_id)
+                while (list($fieldID, $fieldName, $fieldValue, $transId, $catId)
                         = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     if ($this->conf['translation']['container'] == 'db') {
-                        $fieldValue = $this->trans->get($trans_id, 'content', $language);
+                        $fieldValue = $this->trans->get($transId, 'content', $language);
                     }
                     $html[$fieldName] = $this->generateItemOutput(
                         $fieldID, $fieldName, $fieldValue, $this->typeID);
+                    $html['category_id'] = $catId;
                 }
                 return $html;
             } else {

@@ -120,6 +120,8 @@ class SGL
             $logName = $conf['log']['name'];
         }
 
+        require_once 'Log.php';
+
         // Instantiate a logger object based on logging options
         $logger = & Log::singleton( $conf['log']['type'],
                                     $logName,

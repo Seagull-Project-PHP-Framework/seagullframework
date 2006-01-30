@@ -106,6 +106,11 @@ class ArticleViewMgr extends SGL_Manager
         $output->currentCat = $cat->getLabel($output->catID);
     }
 
+    /**
+     * The view 'action' method returns details for requested article ID.
+     *
+     * @return void
+     */
     function _view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -116,11 +121,18 @@ class ArticleViewMgr extends SGL_Manager
         if (PEAR::isError($ret)) {
             return false;
         }
+
+        // Set current category id to the category id for this article
+        $input->catID = $ret['category_id'];
         $output->leadArticle = $ret;
 
         if ($output->leadArticle['type'] != 'Static Html Article') {
+
+            // Retrieving a list of related articles for $input->catID
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);
+
+            // and related documents
             $output->documentList = PublisherBase::getDocumentListByCatID($input->catID);
         } else {
             $output->staticArticle = true;
