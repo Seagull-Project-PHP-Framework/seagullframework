@@ -219,8 +219,8 @@ class ContactUsMgr extends SGL_Manager
                     $moduleName . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
-        $message->prepare();
-        return $message->send();
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
 }
 ?>

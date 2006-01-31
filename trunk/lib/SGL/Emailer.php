@@ -81,7 +81,7 @@ class SGL_Emailer
 
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-                
+
         $siteName = $this->conf['site']['name'];
         $this->headerTemplate
             = "<html><head><title>$siteName</title></head></html><body>";
@@ -97,11 +97,20 @@ class SGL_Emailer
     function prepare()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $includePath = $this->options['template'];
-        if (is_readable($includePath)) {
-            include $includePath; // populates $body
-        } else {
+        if (!is_readable($includePath)) {
+
+            // try fallback with default theme...
+            $path = explode('/',dirname($includePath));
+            $file = basename($includePath);
+            $moduleName = end($path);
+            $includePath = SGL_THEME_DIR . '/' . 'default' . '/' . $moduleName . '/'. $file;
+        }
+
+        $ok = include $includePath;
+
+        if (!$ok) {
             SGL::raiseError('Email template does not exist: "'.$includePath.'"', SGL_ERROR_NOFILE);
             return false;
         }
@@ -114,7 +123,7 @@ class SGL_Emailer
     function send()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
         if (!empty($this->options['filepath'])) {
@@ -145,18 +154,18 @@ class SGL_Emailer
 
         // setup Mail::factory backend & params using site config
         switch ($this->conf['mta']['backend']) {
-            
+
         case '':
         case 'mail':
             $backend = 'mail';
             break;
-            
+
         case 'sendmail':
             $backend = 'sendmail';
             $aParams['sendmail_path'] = $this->conf['mta']['sendmailPath'];
             $aParams['sendmail_args'] = $this->conf['mta']['sendmailArgs'];
             break;
-            
+
         case 'smtp':
             $backend = 'smtp';
             if (isset($this->conf['mta']['smtpLocalHost'])) {
@@ -177,7 +186,7 @@ class SGL_Emailer
                 $aParams['auth'] = false;
             }
             break;
-            
+
         default:
             SGL::raiseError('Unrecognised PEAR::Mail backend', SGL_ERROR_EMAILFAILURE);
         }
