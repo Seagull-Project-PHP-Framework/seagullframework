@@ -520,5 +520,27 @@ class SGL_Output
     {
         return $a == $b;
     }
+
+    /**
+     * Check permission at the template level and returns true if permission
+     * exists.
+	 *
+	 * Use as follows in any Flexy template:
+	 * <code>
+     * {if:hasPerms(#faqmgr_delete#)} on {else:} off {end:}
+     * </code>
+     *
+     * To get various perm names, select User module then go to 'perms' section.
+     *
+     * @access  public
+     * @param   string  $permName    Name of permission eg. "faqmgr_delete"
+     * @return 	boolean
+     *
+     */
+	function hasPerms($permName)
+	{
+        $permId = @constant('SGL_PERMS_' . strtoupper($permName));
+        return ( !empty( $permId) && SGL_Session::hasPerms($permId) ? true : false);
+	}
 }
 ?>
