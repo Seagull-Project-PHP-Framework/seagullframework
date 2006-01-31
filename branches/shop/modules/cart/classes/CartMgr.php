@@ -51,6 +51,7 @@ class CartMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
+        
         $this->module		= 'cart';
         $this->pageTitle    = 'Cart';
         $this->template     = 'itemList.html';
@@ -348,7 +349,7 @@ class CartMgr extends SGL_Manager
          $oOrder->total_sumVAT = $order->total_sumVAT;
          $oOrder->total = $order->total_sumVAT;  //at the moment only
          $oOrder->stage = 0;
-         $oOrder->date_created = SGL::getTime();
+         $oOrder->date_created = SGL_Date::getTime();
 
          $success = $oOrder->insert();
 
@@ -429,59 +430,14 @@ class CartMgr extends SGL_Manager
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->conf = & $GLOBALS['_SGL']['CONF'];
-        $theme = $_SESSION['aPrefs']['theme'];
-        $template = 'email_send_order.html';
-        $output->webRoot          = SGL_BASE_URL;
+        
+        //TODO: this will work only after update to SGL0.5.5
+        $output->theme          = $_SESSION['aPrefs']['theme'];
+        $output->masterTemplate = 'email_send_order.html';
  
-        //  initialise template engine
-        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
-        $options = array(
-            'templateDir'       =>  SGL_THEME_DIR . '/' . $theme . '/' . $this->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/' . $this->module . PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/' . $theme . '/default'. PATH_SEPARATOR .
-                                    SGL_THEME_DIR . '/default/default',
-            'templateDirOrder'  => 'reverse',
-            'multiSource'       => true,
-            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $theme,
-            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
-            'debug'             => SGL_FLEXY_DEBUG,
-            'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
-            'filters'           => SGL_FLEXY_FILTERS,
-            'locale'            => SGL_FLEXY_LOCALE,
-            'compiler'          => SGL_FLEXY_COMPILER,
-            'valid_functions'   => SGL_FLEXY_VALID_FNS,
-            'flexyIgnore'       => SGL_FLEXY_IGNORE,
-            'globals'           => true,
-            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
-        );
-
-        // Configure Flexy to use SGL ModuleOutput Plugin 
-        // If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $this->module . '/classes/Output.php';
-        if (is_readable($customOutput)) {
-            $className = ucfirst($this->module) . 'Output';
-            if (isset($options['plugins'])) {
-                $options['plugins'] = $options['plugins'] + array($className => $customOutput);
-            } else {
-                $options['plugins'] = array($className => $customOutput);
-            }
-        }
-
-        //  suppress notices in templates
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = true;
-        $templ = & new HTML_Template_Flexy();
-        $templ->compile($template);
-
-        //  if some Flexy 'elements' exist in the output object, send them as
-        //  2nd arg to Flexy::bufferedOutputObject()
-        $elements = (   isset($output->flexyElements) && 
-                        is_array($output->flexyElements))
-                ? $output->flexyElements 
-                : array();
-
-        $bodyHtml = $templ->bufferedOutputObject($output, $elements);
- 
+        // render template
+        $view     = new SGL_HtmlSimpleView($output);
+        $bodyHtml = $view->render(); 
  
         $headers['From'] = $this->conf['email']['admin'];
         $headers['Subject'] = $output->emailSubject;
