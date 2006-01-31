@@ -165,10 +165,15 @@ class SGL_Array
      */
     function implodeWithKeys($glue, $hash, $valwrap='')
     {
-        foreach ($hash as $key => $value) {
-            $ret[] = $key.$glue.$valwrap.$value.$valwrap;
+        if (is_array($hash) && count($hash)) {
+            foreach ($hash as $key => $value) {
+                $aResult[] = $key.$glue.$valwrap.$value.$valwrap;
+            }
+            $ret = implode($glue, $aResult);
+        } else {
+            $ret = '';
         }
-        return implode($glue, $ret);
+        return $ret;
     }
 }
 
