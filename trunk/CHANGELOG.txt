@@ -8,6 +8,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+30-01-06    Added perm checking method for use in templates, SGL_Output::hasPerms()
+            (Tomasz Osmialowski)
 30-01-06    Implemented abilty for blocks to receive stored params, removed
             Quickform from block code (Andrey Podshivalov)
 30-01-06    SGL_HTTP_Session renamed to SGL_Session
