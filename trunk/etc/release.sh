@@ -116,8 +116,6 @@ function exportSvnAndPackage()
     rm -f $PROJECT_NAME/etc/generatePackage.php
     rm -f $PROJECT_NAME/etc/phpDocWeb.ini
     rm -f $PROJECT_NAME/etc/release.sh
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/wizardexample
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/wizardexample
     rm -f $PROJECT_NAME/CHANGELOG-1.txt.gz
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
@@ -232,7 +230,6 @@ function buildMinimalPearPackage()
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/blog
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/wizardexample
 
 
     #and their templates
@@ -250,7 +247,6 @@ function buildMinimalPearPackage()
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/gallery2
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/wizardexample
 
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/savant
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/smarty
@@ -292,7 +288,7 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
@@ -301,9 +297,9 @@ cd /tmp
 
 exportSvnAndPackage
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
 #packageApiDocs
 
