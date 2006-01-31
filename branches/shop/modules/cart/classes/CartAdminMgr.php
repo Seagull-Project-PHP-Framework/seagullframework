@@ -484,7 +484,7 @@ class CartAdminMgr extends SGL_Manager
 							$oPayment->debt = ($debt + $total);
 							$creditLimit = $oPayment->credit_limit;
 							if($debt == 0) {
-								$oPayment->debt_start_date = SGL::getTime();
+								$oPayment->debt_start_date = SGL_Date::getTime();
 							}
 							$oPayment->payment_updated_by = SGL_HTTP_Session::getUid();
 							$success = $oPayment->update();
