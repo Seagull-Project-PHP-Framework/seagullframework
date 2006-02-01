@@ -828,10 +828,11 @@ class ShopMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->conf['ShopMgr']['OnlyMemebersOrder'] = 1; //move this to config
+        $usrId = SGL_HTTP_Session::getUid();
 
-        if ($this->conf['ShopMgr']['OnlyMemebersOrder']){
-            if(SGL_HTTP_Session::getUid() == "0") {
+        if (isset($this->conf['ShopMgr']['onlyMemebersOrder']) && 
+            $this->conf['ShopMgr']['onlyMemebersOrder'] == 1 &&
+            $usrId == "0") {
                 SGL::raiseMsg('You must be logged in order to buy products ');
                 $this->_list($input, $output);
                 //exit;
@@ -869,8 +870,7 @@ class ShopMgr extends SGL_Manager
                     'managerName' => 'cart',
                     'moduleName' => 'cart',
                     'data' => $oOrderItemSer));
-
-            }
+            
         }
         
 
