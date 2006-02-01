@@ -185,7 +185,7 @@ class PearMgr extends SGL_Manager
             $opts['mode'] = 'installed';
         }
 
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+        #PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
 
         $cache = & SGL_Cache::singleton();
         $cacheId = 'pear'.$input->command.$input->mode;
@@ -211,9 +211,16 @@ class PearMgr extends SGL_Manager
         case 'sgl-upgrade':
             $params = array($input->pkg);
             $cmd = PEAR_Command::factory($input->command, $config);
+            if (PEAR::isError($cmd)) {
+                return SGL::raiseError('prob with PEAR_Command object');
+            }
+            ob_start();
             $ok = $cmd->run($input->command, $opts, $params);
+            $pearOutput = ob_get_contents();
+            ob_end_clean();
 
             if ($ok) {
+                print $pearOutput;#exit;
                 $this->_redirectToDefault($input, $output);
             } else {
                 print '<pre>';print_r($ok);

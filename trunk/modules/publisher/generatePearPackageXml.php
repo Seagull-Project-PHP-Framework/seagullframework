@@ -77,7 +77,7 @@ EOT;
             'packagedirectory'  => $publisher_packagedir,
             // Where will package files be installed in
             // the local PEAR repository?
-            'baseinstalldir'    => 'Seagull/modules',
+            'baseinstalldir'    => 'Seagull/modules/publisher',
             // Where should the package file be generated
             'pathtopackagefile' => $publisher_packagedir,
             // Just simple output, no MD5 sums and <provides> tags
