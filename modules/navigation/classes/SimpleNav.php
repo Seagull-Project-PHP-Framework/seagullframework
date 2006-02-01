@@ -51,7 +51,7 @@ require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
  * @version $Revision: 1.43 $
  */
 
-class TestNav
+class SimpleNav
 {
     /**
      * Id of the section (seagull.section.id) to which the static link links
@@ -202,7 +202,7 @@ class TestNav
      */
     var $_breadcrumbs = true;
 
-    function TestNav(&$output)
+    function SimpleNav(&$output)
     {
         $this->_rid        = (int)SGL_Session::get('rid');
         $this->output      = &$output;
