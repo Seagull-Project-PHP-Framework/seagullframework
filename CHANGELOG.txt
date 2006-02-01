@@ -8,6 +8,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+01-02-06    Improved logic in installer for improved flexibility
 30-01-06    Added path search for email templates when default theme is not being
             used (Werner Krauss)
 30-01-06    Region lists added for Poland (Tomasz Osmialowski)
