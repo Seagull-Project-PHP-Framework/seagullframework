@@ -7,10 +7,11 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
     {
         $conf = array(
             'setup' => true,
-            'site' =>   array(  'frontScriptName' => 'index.php',
-                                'defaultModule' => 'default',
-                                'defaultManager' => 'default',
-                        ),
+            'site' =>   array(
+                'frontScriptName' => 'index.php',
+                'defaultModule' => 'default',
+                'defaultManager' => 'default',
+                ),
             'cookie' => array(  'name' => ''),
             );
 
@@ -64,14 +65,14 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  store translations in db
         $storeTransInDbClause = (array_key_exists('storeTranslationsInDB', $data)
                                 && $data['storeTranslationsInDB'] == 1)
-                                ? $c->set('translation', array('container' => 'db'))
-                                : $c->set('translation', array('container' => 'file'));
+            ? $c->set('translation', array('container' => 'db'))
+            : $c->set('translation', array('container' => 'file'));
 
         //  add missing translations to db
         $missingTransClause =  (array_key_exists('addMissingTranslationsToDB', $data)
                                     && $data['addMissingTranslationsToDB'] == 1)
-                                ? $c->set('translation', array('addMissingTrans' => true))
-                                : $c->set('translation', array('addMissingTrans' => false));
+            ? $c->set('translation', array('addMissingTrans' => true))
+            : $c->set('translation', array('addMissingTrans' => false));
 
         //  translation fallback language
         $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
@@ -87,6 +88,35 @@ class SGL_Task_CreateConfig extends SGL_Task
 
         //  store site language for post-install task
         $_SESSION['install_language'] = $data['siteLanguage'];
+        if (PEAR::isError($ok)) {
+            SGL_Install::errorPush(PEAR::raiseError($ok));
+        }
+    }
+}
+
+class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+
+        $aModuleList = SGL_Install::getModuleList();
+//            ? SGL_Install::getModuleList()
+//            : $this->getMinimumModuleList();
+
+        foreach ($aModuleList as $module) {
+            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
+            if (file_exists($tableAliasIniPath)) {
+                $aData = parse_ini_file($tableAliasIniPath);
+                foreach ($aData as $k => $v) {
+                    $c->set('table', array($k => $v));
+                }
+            }
+        }
+
+        //  save
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $ok = $c->save($configFile);
         if (PEAR::isError($ok)) {
             SGL_Install::errorPush(PEAR::raiseError($ok));
         }
@@ -191,35 +221,6 @@ class SGL_UpdateHtmlTask extends SGL_Task
         $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
         $this->failure = '<span class=\\"error\\">ERROR</span>';
         $this->noFile  = '<strong>N/A</strong>';
-    }
-}
-
-class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
-{
-    function run($data)
-    {
-        $c = &SGL_Config::singleton();
-
-        $aModuleList = (isset($data['installAllModules']))
-            ? SGL_Install::getModuleList()
-            : $this->getMinimumModuleList();
-
-        foreach ($aModuleList as $module) {
-            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
-            if (file_exists($tableAliasIniPath)) {
-                $aData = parse_ini_file($tableAliasIniPath);
-                foreach ($aData as $k => $v) {
-                    $c->set('table', array($k => $v));
-                }
-            }
-        }
-
-        //  save
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-        $ok = $c->save($configFile);
-        if (PEAR::isError($ok)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok));
-        }
     }
 }
 

@@ -41,23 +41,65 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
                 foo.disabled = true;
                 bar.disabled = true;
             }
+
+            //  temp measure
+            var prefix = document.getElementById('prefix');
+            prefix.disabled = true;
+
+            //  disable 'use existing data' by default
+            var useExistingData = document.getElementById('useExistingData');
+            useExistingData.disabled = true;
         }
 
         function toggleLangList(myCheckbox)
         {
-                var myCheckbox = document.getElementById('storeTranslationsInDB').checked;
-                var langsList = document.getElementById('installLangs');
-                var addLangsToDb = document.getElementById('addMissingTranslationsToDB');
+            var myCheckbox = document.getElementById('storeTranslationsInDB').checked;
+            var langsList = document.getElementById('installLangs');
+            var addLangsToDb = document.getElementById('addMissingTranslationsToDB');
 
-                if (myCheckbox != null) {
-                    if (myCheckbox) {
-                        langsList.disabled = false;
-                        addLangsToDb.disabled = false;
-                    } else {
-                        langsList.disabled = true;
-                        addLangsToDb.disabled = true;
-                    }
+            if (myCheckbox != null) {
+                if (myCheckbox) {
+                    langsList.disabled = false;
+                    addLangsToDb.disabled = false;
+                } else {
+                    langsList.disabled = true;
+                    addLangsToDb.disabled = true;
                 }
+            }
+        }
+
+        function toggleOptionsWhenUsingExistingDb(myCheckbox)
+        {
+            var myCheckbox = document.getElementById('useExistingData').checked;
+            var allModules = document.getElementById('installAllModules');
+            var sampleData = document.getElementById('insertSampleData');
+            var storeTransInDb = document.getElementById('storeTranslationsInDB')
+
+            if (myCheckbox != null) {
+                if (myCheckbox) {
+                    allModules.disabled = true;
+                    sampleData.disabled = true;
+                    storeTransInDb.disabled = true;
+                } else {
+                    allModules.disabled = false;
+                    sampleData.disabled = false;
+                    storeTransInDb.disabled = false;
+                }
+            }
+        }
+
+        function toggleExistingData(myCheckbox)
+        {
+            var myCheckbox = document.getElementById('skipDbCreation').checked;
+            var useExistingData = document.getElementById('useExistingData');
+
+            if (myCheckbox != null) {
+                if (myCheckbox) {
+                    useExistingData.disabled = false;
+                } else {
+                    useExistingData.disabled = true;
+                }
+            }
         }
     </script>
 </head>

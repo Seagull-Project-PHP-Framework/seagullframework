@@ -73,10 +73,12 @@ function canCreateDb()
 
     } elseif ($skipDbCreation) {
 
-        // if DB exists, detect if tables exists
+        // if DB exists, detect if tables exist
         $tables = $dbh->getListOf('tables');
         if (!count($tables)) {
             $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+        } else {
+            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 0;
         }
         return true;
 
@@ -113,24 +115,38 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
 
-        //  skip db creation FIXME: improve
-        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?', 'Yes (If box is not ticked, a new Db will be created)');
+        //  skip db creation
+        $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?',
+            'Yes (If box is not ticked, a new Db will be created)',
+                array('onClick' => 'javascript:toggleExistingData()',
+                      'id' => 'skipDbCreation'));
+
+        //  use existing data
+        $this->addElement('checkbox', 'useExistingData', 'Use existing Data?',
+            'Yes (Select this option to preserve your existing data)',
+                array('onClick' => 'javascript:toggleOptionsWhenUsingExistingDb()',
+                      'id' => 'useExistingData'));
 
         //  db name
         $this->addElement('text',  'name',     'Database name: ');
         $this->addRule('name', 'Please specify the name of the database', 'required');
 
         //  db prefix
-        $this->addElement('text',  'prefix',     'Table prefix: ');
+        $this->addElement('text', 'prefix', 'Table prefix: ', 'id=prefix');
+
+        //  install all modules?
+        $this->addElement('checkbox', 'installAllModules', 'Install all modules?',
+            'Yes (If box is not ticked, only 3 core modules will be installed)', 'id=installAllModules');
 
         //  sample data
-        $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes');
+        $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
 
         $this->addElement('header', null, 'Translation Setup');
 
         //  store translation in db
         $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
-            'Yes (Select this for multi-lingual content)', array('id' => 'storeTranslationsInDB', 'onClick' => 'javascript:toggleLangList()'));
+            'Yes (Select this for multi-lingual content)',
+                array('id' => 'storeTranslationsInDB', 'onClick' => 'javascript:toggleLangList()'));
 
         //  load available languages
         $this->addElement('select', 'installLangs', 'If yes, which language(s): ',
