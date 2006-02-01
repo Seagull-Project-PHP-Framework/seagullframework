@@ -78,6 +78,7 @@ class Article
 
         //  get article
         $blockOutput->leadArticle = SGL_Item::getItemDetail($articleId);
+        $blockOutput->articleID   = $articleId;
 
         return $this->process($blockOutput);
     }
