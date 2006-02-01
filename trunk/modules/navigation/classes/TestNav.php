@@ -258,7 +258,7 @@ class TestNav
     function render()
     {
         static $aAllSectionNodes, $aAllCurrentPages, $startParentNode, 
-            $currentSectionId;
+            $currentSectionId, $homePage;
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
@@ -288,9 +288,12 @@ class TestNav
                 $aAllCurrentPages = $this->_aAllCurrentPages;
                 $startParentNode  = $this->_startParentNode;
                 $currentSectionId = $this->_currentSectionId;
+                $homePage         = $this->_homePage;
             } else {
                 $aSectionNodes           = $aAllSectionNodes;
                 $this->_aAllCurrentPages = $aAllCurrentPages;
+                $this->_currentSectionId = $currentSectionId;
+                $this->_homePage         = $homePage;
             }
             if (PEAR::isError($aSectionNodes)) {
                 return $aSectionNodes;
