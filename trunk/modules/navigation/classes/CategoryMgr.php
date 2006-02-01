@@ -126,6 +126,9 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  prepare data for publisher subnav
+        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
+
         //  load category
         if (!$this->_category->load($input->category_id)) {
             $output->noEditForm = 1;
@@ -140,9 +143,6 @@ class CategoryMgr extends SGL_Manager
         $menu = & new MenuBuilder('SelectBox', $options);
         $aCategories = $menu->toHtml();
         $output->aCategories = $aCategories;
-
-        //  prepare data for publisher subnav
-        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
     }
 
     function _update(&$input, &$output)
