@@ -213,7 +213,8 @@ class SimpleNav
         $this->da          = &DA_Default::singleton();
 
         if (is_null($output->get('navLang'))) {
-            $output->set('navLang', SGL_Translation::getLangID());
+            $langId = SGL_Translation::getLangID();
+            $output->set('navLang', $langId);
         }
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
@@ -367,7 +368,6 @@ class SimpleNav
                 $this->_searchInExactMatches($aSectionNodes);
             }
         }
-
         return $aSectionNodes;
     }
 
