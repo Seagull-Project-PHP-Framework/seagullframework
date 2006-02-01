@@ -40,6 +40,7 @@
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
 require_once SGL_CORE_DIR . '/Manager.php';
+require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 require_once 'DB/DataObject.php';
 
 define('SGL_ICONS_PER_ROW', 3);
@@ -59,6 +60,7 @@ class ModuleMgr extends SGL_Manager
 
         $this->pageTitle    = 'Module Manager';
         $this->template     = 'moduleOverview.html';
+        $this->da           = &DA_Default::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -127,15 +129,42 @@ class ModuleMgr extends SGL_Manager
         $output->aAdminUris = SGL_Util::getAllModuleDirs($onlyRegistered = false);
     }
 
+    function _syncModules($aModules)
+    {
+        foreach ($aModules as $module) {
+            $aModulesClean[] = $module->name;
+        }
+
+        $aSglModules = $this->da->getPackagesByChannel();
+        foreach ($aSglModules as $module) {
+            if ($module != 'seagull') {
+                $aSglModulesClean[] = str_replace('seagull_', '', $module);
+            }
+        }
+        //  determine which PEAR-installed modules are missing from db
+        $aRes = array_diff($aSglModulesClean, $aModulesClean);
+
+        if (count($aRes)) {
+            foreach ($aRes as $module) {
+                $oModule = $this->da->getModuleById();
+                $oModule->name = $module;
+                $ok = $this->da->addModule($oModule);
+                unset($oModule);
+            }
+        }
+
+    }
     function _overview(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "  SELECT module_id, is_configurable, title, description, admin_uri, icon
-                    FROM {$this->conf['table']['module']}
-                    ORDER BY module_id";
-        $aModules = $this->dbh->getAll($query);
-        if (!DB::isError($aModules)) {
+        $aModules = $this->da->getAllModules();
+
+        if (!PEAR::isError($aModules)) {
+
+            //  ensure modules installed with pear packager are in db
+            #$this->_syncModules($aModules);
+
             $ret = array();
             foreach ($aModules as $k => $oModule) {
 
@@ -156,7 +185,7 @@ class ModuleMgr extends SGL_Manager
             }
             $output->aModules = $ret;
         } else {
-            SGL::raiseError('module manager failed', SGL_ERROR_NODATA);
+            SGL::raiseError('getting module list failed', SGL_ERROR_NODATA);
         }
     }
 
@@ -173,12 +202,14 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
         $output->template = 'moduleList.html';
-        $newEntry = DB_DataObject::factory($this->conf['table']['module']);
-        $newEntry->setFrom($input->module);
-        $newEntry->module_id = $this->dbh->nextId($this->conf['table']['module']);
-        if ($newEntry->insert()) {
+        #$newEntry = DB_DataObject::factory($this->conf['table']['module']);
+        $oModule = $this->da->getModuleById();
+        $oModule->setFrom($input->module);
+        #$oModule->module_id = $this->dbh->nextId($this->conf['table']['module']);
+
+        $ok = $this->da->addModule($oModule);
+        if ($ok) {
             SGL::raiseMsg('Module successfully added to the manager.');
         } else {
             SGL::raiseError('There was a problem inserting the record',
