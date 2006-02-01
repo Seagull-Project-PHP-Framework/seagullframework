@@ -53,14 +53,14 @@
 class DemoAddon
 {
 
-    function init(&$section, &$aParams)
+    function init(&$output, &$section, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         if (!$section->is_enabled) {
             return false;
         }
-        
+
         $sectionId = $section->section_id;
 
         //  first node
