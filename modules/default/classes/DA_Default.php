@@ -256,6 +256,16 @@ class DA_Default
         return $aMods;
     }
 
+    function getAllModules()
+    {
+        $query = "
+            SELECT module_id, is_configurable, name, title, description, admin_uri, icon
+            FROM {$this->conf['table']['module']}
+            ORDER BY module_id";
+        $aModules = $this->dbh->getAll($query);
+        return $aModules;
+    }
+
     /**
      * Returns module id by perm id.
      *
@@ -273,5 +283,41 @@ class DA_Default
                 ";
         $moduleId = $this->dbh->getOne($query);
         return $moduleId;
+    }
+
+    function getPackagesByChannel($channel='phpkitchen')
+    {
+        require_once 'PEAR/Registry.php';
+        $registry = new PEAR_Registry('/usr/local/lib/php');
+        #$registry = new PEAR_Registry(SGL_LIB_PEAR_DIR);
+        $aSglModules = $registry->_listPackages($channel);
+        return $aSglModules;
+    }
+
+    /**
+     * Returns a DataObjects Module object.
+     *
+     * @param integer   $id optional module id
+     * @return object   A DataObjects module object
+     */
+    function getModuleById($id = null)
+    {
+        $oModule = DB_DataObject::factory($this->conf['table']['module']);
+        if (!is_null($id)) {
+            $oModule->get($id);
+        }
+        return $oModule;
+    }
+
+    function addModule($oModule)
+    {
+        SGL_DB::setConnection($this->dbh);
+        if (!isset($oModule->module_id)) {
+            $oModule->module_id = $this->dbh->nextId($this->conf['table']['module']);
+        }
+        $oModule->is_configurable = 1;
+        $oModule->title = ucfirst($oModule->name);
+        $ok = $oModule->insert();
+        return $ok;
     }
 }
