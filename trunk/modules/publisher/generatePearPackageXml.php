@@ -34,7 +34,10 @@
     #require_once 'generate_package_xml_functions.php';
 
 	// Directory where the package files are located.
-	$publisher_packagedir  = SGL_PKG_TMP_BUILD_DIR.'/modules/publisher';
+	$path = (defined('SGL_PKG_TMP_BUILD_DIR'))
+	   ? SGL_PKG_TMP_BUILD_DIR.'/modules/publisher'
+	   : dirname(__FILE__);
+	$publisher_packagedir  = $path;
 
     // Name of the channel, this package will be distributed through
     $publisher_channel     = 'pear.phpkitchen.com';
@@ -88,7 +91,6 @@ EOT;
             // List of files to ignore and put not explicitly into the package
 		    'ignore'            =>
             array(
-                'package.xml',
                 'package2.xml',
                 '*tests*',
                 '*.svn',
@@ -101,8 +103,6 @@ EOT;
                 'docs' => 'doc',
                 'lib' => 'php',
                 'modules' => 'php',
-                'etc' => 'data',
-                'var' => 'data',
                 'www' => 'web',
             ),
 
@@ -163,21 +163,22 @@ EOT;
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $publisher_pkg->generateContents();
 
-//    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
-//            $_SERVER['argv'][1] == 'make')) {
-//    	#$e = $pkg->writePackageFile();
-//    	$e = $publisher_pkg->writePackageFile();
-//print '<pre> in publisher:';print_r($e);die();
-//
-//        #$e = $packagexml->writePackageFile();
-//	} else {
-//    	#$e = $pkg->debugPackageFile();
-//    	$e = $publisher_pkg->debugPackageFile();
-//    	#$e = $packagexml->debugPackageFile();
-//	}
-//
-//	if (PEAR::isError($e)) {
-//    	echo $e->getMessage();
-//	}
+if (!defined('SGL_PKG_TMP_BUILD_DIR'))    {
+    if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
+            $_SERVER['argv'][1] == 'make')) {
+    	#$e = $pkg->writePackageFile();
+    	$e = $publisher_pkg->writePackageFile();
+
+        #$e = $packagexml->writePackageFile();
+	} else {
+    	#$e = $pkg->debugPackageFile();
+    	$e = $publisher_pkg->debugPackageFile();
+    	#$e = $packagexml->debugPackageFile();
+	}
+
+	if (PEAR::isError($e)) {
+    	echo $e->getMessage();
+	}
+}
 
 ?>
