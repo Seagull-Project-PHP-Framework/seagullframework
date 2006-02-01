@@ -54,7 +54,7 @@ class OutputAddon
 {
     var $sectionId;
     
-    function init(&$section, &$aParams)
+    function init(&$output, &$section, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -62,10 +62,9 @@ class OutputAddon
             return false;
         }
 
-        $output = &SGL_Registry::singleton();
-        if (isset($output->aNavAddon)) {
+        if (isset($output->navAddon)) {
             $this->sectionId = $section->section_id;
-            $aSections       = $output->aNavAddon;
+            $aSections       = $output->navAddon;
             $this->_setSectionId($aSections);
             return $aSections;
         } else {

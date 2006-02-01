@@ -202,25 +202,25 @@ class TestNav
      */
     var $_breadcrumbs = true;
 
-    function TestNav(&$input)
+    function TestNav(&$output)
     {
         $this->_rid        = (int)SGL_Session::get('rid');
-        $this->input       = &$input;
-        $this->req         = $input->get('request');
-        $this->conf        = $input->conf;
+        $this->output      = &$output;
+        $this->req         = $output->get('request');
+        $this->conf        = &$output->conf;
         $this->querystring = $this->req->getUri();
         $this->_staticId   = $this->req->get('staticId');
         $this->da          = &DA_Default::singleton();
 
-        if (is_null($input->get('navLang'))) {
-            $input->set('navLang', SGL_Translation::getLangID());
+        if (is_null($output->get('navLang'))) {
+            $output->set('navLang', SGL_Translation::getLangID());
         }
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton();
             $this->_aTranslations =
-                SGL_Translation::getTranslations('nav', $input->get('navLang'));
+                SGL_Translation::getTranslations('nav', $output->get('navLang'));
         }
         // set default driver params
         $this->setParams();
@@ -257,6 +257,9 @@ class TestNav
      */
     function render()
     {
+        static $aAllSectionNodes, $aAllCurrentPages, $startParentNode, 
+            $currentSectionId;
+
         //  get a unique token by considering url, role ID and if page
         //  is static or not
         $reg     = &SGL_Registry::singleton();
@@ -279,20 +282,28 @@ class TestNav
             $html = false;
 
             //  generate sections nodes
-            $aSectionNodes = $this->getSectionsByRoleId($this->_startParentNode);
+            if ($this->_startParentNode !== $startParentNode) {
+                $aSectionNodes    = $this->getSectionsByRoleId($this->_startParentNode);
+                $aAllSectionNodes = $aSectionNodes;
+                $aAllCurrentPages = $this->_aAllCurrentPages;
+                $startParentNode  = $this->_startParentNode;
+                $currentSectionId = $this->_currentSectionId;
+            } else {
+                $aSectionNodes           = $aAllSectionNodes;
+                $this->_aAllCurrentPages = $aAllCurrentPages;
+            }
             if (PEAR::isError($aSectionNodes)) {
                 return $aSectionNodes;
             }
-            $sectionId = $this->_currentSectionId;
 
             //  get breadcrumbs
             $breadcrumbs = false;
-            if ($sectionId && $this->_breadcrumbs) {
+            if ($currentSectionId && $this->_breadcrumbs) {
                 $breadcrumbs = $this->getBreadcrumbs();
             }
 
             //  if showAlways is true or current section is defined should be rendered to HTML
-            if (!empty($aSectionNodes) && ($this->_showAlways || $sectionId)) {
+            if (!empty($aSectionNodes) && ($this->_showAlways || $currentSectionId)) {
 
                 //  if start level > 0 lookup new start parent node
                 if ($this->_startLevel > 0) {
@@ -300,9 +311,9 @@ class TestNav
 
                     //  look up current section id in array
                     $aPositions        = array_keys($this->_aAllCurrentPages);
-                    $sectionIdPosition = array_search($sectionId, $aPositions);
+                    $sectionIdPosition = array_search($currentSectionId, $aPositions);
 
-                    if ($position >= $sectionIdPosition && $sectionId) {
+                    if ($position >= $sectionIdPosition && $currentSectionId) {
                         $newParentNode = $this->_aAllCurrentPages[$aPositions[$position]];
                         $aSectionNodes = $newParentNode->children;
                     } else {
@@ -315,14 +326,14 @@ class TestNav
             }
 
             //  cache stuff
-            $aNav = array(  'sectionId' => $sectionId,
+            $aNav = array(  'sectionId' => $currentSectionId,
                             'html' => $html,
                             'breadcrumbs' => $breadcrumbs);
             $cache->save(serialize($aNav), $cacheId, 'nav');
 
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
-        return array($sectionId, $html, $breadcrumbs);
+        return array($currentSectionId, $html, $breadcrumbs);
     }
 
     /**
@@ -398,7 +409,8 @@ class TestNav
                     require_once $classFile;
                     if (class_exists($className)) {
                         $addonDriver = new $className;
-                        $aSections   = $addonDriver->init($sectionNode, $aClassParams);
+                        $aSections   = $addonDriver->init($this->output, $sectionNode,
+                            $aClassParams);
                         if ($aSections && is_array($aSections)) {
                             foreach ($aSections as $section) {
                                 $aSectionNodes[] = $section;
@@ -472,7 +484,7 @@ class TestNav
             }
 
             //  retreive translation
-            if ($section->trans_id && $this->conf['translation']['container'] == 'db') {
+            if (!empty($section->trans_id) && $this->conf['translation']['container'] == 'db') {
                 if (array_key_exists($section->trans_id, $this->_aTranslations)) {
                     $section->title = $this->_aTranslations[$section->trans_id];
                 } elseif ($title = $this->trans->get($section->section_id, 'nav',
@@ -681,7 +693,7 @@ class TestNav
         if ($this->_currentTitle) {
             return $this->_currentTitle;
         } else {
-            return $this->input->pageTitle;
+            return $this->output->pageTitle;
         }
     }
 
