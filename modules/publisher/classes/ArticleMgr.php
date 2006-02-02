@@ -236,12 +236,6 @@ class ArticleMgr extends SGL_Manager
         $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
             $input->articleLang);
 
-        //  addBody
-        $body = SGL_String::tidy($input->bodyValue);
-        $item->addBody($insertID, $input->bodyItemID, $body, $input->articleLang);
-        $output->masterTemplate = 'masterBlank.html';
-        $output->template = 'articleMgrAdd.html';
-        $output->article = $item;
         SGL::raiseMsg('Article successfully added');
     }
 
@@ -380,10 +374,6 @@ class ArticleMgr extends SGL_Manager
         //  updateDataItems
         $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->articleLang);
 
-        //  addBody
-        $body = SGL_String::tidy($input->bodyValue);
-        $item->updateBody($input->bodyItemID, $input->bodyValue, $input->articleLang);
-        $output->article = $item;
         SGL::raiseMsg('Article successfully updated');
     }
 

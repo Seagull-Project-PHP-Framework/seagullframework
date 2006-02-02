@@ -142,6 +142,7 @@ class ArticleViewMgr extends SGL_Manager
     function _summary(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $aResult = SGL_Item::retrievePaginated(
             $input->catID,
             $bPublish = true,
@@ -157,12 +158,13 @@ class ArticleViewMgr extends SGL_Manager
         $output->aPagedData = $aResult;
 
         foreach ($aResult['data'] as $key => $aValues) {
-            $output->articleList[$key] = array_merge(SGL_Item::getItemDetail($aValues['item_id'], null, $input->articleLang),
-                                            $aResult['data'][$key]);
+            $output->articleList[$key] = array_merge(
+                SGL_Item::getItemDetail($aValues['item_id'], null, $input->articleLang),
+                    $aResult['data'][$key]);
 
             // summarises article content
-            foreach ($output->articleList[$key] as $cKey => $cValues) {
-                switch ($cKey) {
+            foreach ($output->articleList[$key] as $k => $cValues) {
+                switch ($k) {
 
                 case 'bodyHtml':
                     $content = $output->articleList[$key]['bodyHtml'];
