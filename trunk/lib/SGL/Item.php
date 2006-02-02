@@ -168,23 +168,23 @@ class SGL_Item
 
         //  get default fields
         $query = "
-                    SELECT  u.username,
-                            i.created_by_id,
-                            i.updated_by_id,
-                            i.date_created,
-                            i.last_updated,
-                            i.start_date,
-                            i.expiry_date,
-                            i.item_type_id,
-                            it.item_type_name,
-                            i.category_id,
-                            i.status
-                    FROM    {$this->conf['table']['item']} i,
-                            {$this->conf['table']['item_type']} it,
-                            {$this->conf['table']['user']} u
-                    WHERE   it.item_type_id = i.item_type_id
-                    AND     i.created_by_id = u.usr_id
-                    AND     i.item_id = $itemID
+            SELECT  u.username,
+                    i.created_by_id,
+                    i.updated_by_id,
+                    i.date_created,
+                    i.last_updated,
+                    i.start_date,
+                    i.expiry_date,
+                    i.item_type_id,
+                    it.item_type_name,
+                    i.category_id,
+                    i.status
+            FROM    {$this->conf['table']['item']} i,
+                    {$this->conf['table']['item_type']} it,
+                    {$this->conf['table']['user']} u
+            WHERE   it.item_type_id = i.item_type_id
+            AND     i.created_by_id = u.usr_id
+            AND     i.item_id = $itemID
                 ";
         $result = $this->dbh->query($query);
         if (!DB::isError($result)) {
@@ -275,23 +275,24 @@ class SGL_Item
             $id = $this->dbh->nextId($this->conf['table']['item_addition']);
             $transID = $this->dbh->nextID($this->conf['table']['translation']);
 
-            if ($itemValue[$x] == '')
+            if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No other text entered');
+            }
 
-            //  profanity check
-            $editedTxt = SGL_String::censor($itemValue[$x]);
+            //  tidy & profanity check
+            $editedTxt = SGL_String::tidy(SGL_String::censor($itemValue[$x]));
 
             //  build strings array
             $strings[$language] = $editedTxt;
 
             //  insert into item_addition
             $query = "
-                    INSERT INTO {$this->conf['table']['item_addition']} VALUES (
-                        $id,
-                        $parentID,
-                        $itemID[$x], ".
-                        $this->dbh->quote($itemValue[$x]) .",
-                        $transID
+                INSERT INTO {$this->conf['table']['item_addition']} VALUES (
+                    $id,
+                    $parentID,
+                    $itemID[$x], ".
+                    $this->dbh->quote($editedTxt) .",
+                    $transID
                     )";
             $result = $this->dbh->query($query);
             unset($query);
@@ -300,46 +301,6 @@ class SGL_Item
                 $this->trans->add($transID, 'content', $strings);
             }
             unset($strings);
-        }
-    }
-
-    /**
-     * Inserts Item Body into item_addition table.
-     *
-     * @access  public
-     * @param   int     $parentID   Parent ID
-     * @param   int     $itemID     Item ID
-     * @param   mixed   $itemValue  Item Value
-     * @param   string  $language   Language
-     * @return  void
-     */
-    function addBody($parentID, $itemID, $itemValue, $language)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $id = $this->dbh->nextId($this->conf['table']['item_addition']);
-        $transID = $this->dbh->nextID($this->conf['table']['translation']);
-
-        if ($itemValue == '')
-            $itemValue = SGL_String::translate('No body text entered');
-
-        //  profanity check
-        $editedTxt = SGL_String::censor($itemValue);
-
-        $strings[$language] = $editedTxt;
-
-        $query = "
-            INSERT INTO {$this->conf['table']['item_addition']} VALUES (
-                $id,
-                $parentID,
-                $itemID, ".
-                $this->dbh->quote($itemValue) .",
-                $transID
-            )";
-        $result = $this->dbh->query($query);
-
-        if ($this->conf['translation']['container'] == 'db') {
-            $this->trans->add($transID, 'content', $strings);
         }
     }
 
@@ -361,7 +322,7 @@ class SGL_Item
                 expiry_date = " . $this->dbh->quote($this->expiryDate) . ",
                 status = $this->statusID,
                 category_id = $this->catID
-                WHERE item_id = $this->id
+            WHERE item_id = $this->id
                 ";
         $result = $this->dbh->query($query);
     }
@@ -383,8 +344,8 @@ class SGL_Item
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No text entered');
             }
-            //  profanity check
-            $editedTxt = SGL_String::censor($itemValue[$x]);
+            //  tidy & profanity check
+            $editedTxt = SGL_String::tidy(SGL_String::censor($itemValue[$x]));
 
             //  update translations
             if ($this->conf['translation']['container'] == 'db') {
@@ -409,45 +370,6 @@ class SGL_Item
     }
 
     /**
-     * Update a Data Item's Body in item_addition
-     *
-     * @access  public
-     * @param   int     $itemID     Item ID
-     * @param   mixed   $itemValue  Item Value
-     * @param   string  $language   Language
-     * @return  void
-     */
-    function updateBody($itemID, $itemValue, $language)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if ($itemValue == '') {
-            $itemValue = SGL_String::translate('No text entered');
-        }
-
-        //  profanity check
-        $editedTxt = SGL_String::censor(SGL_String::tidy($itemValue));
-
-        //  fetch current translation
-        if ($this->conf['translation']['container'] == 'db') {
-            $strings[$language] = $this->trans->get($itemID, 'content', $language);
-
-            if (strcmp($editedTxt, $strings[$language]) !== 0) {
-                $strings[$language] = $editedTxt;
-                $this->trans->add($itemID, 'content', $strings);
-            }
-        } else {
-            $editedTxt = $this->dbh->quote($editedTxt);
-	        $query = "
- 	                UPDATE  {$this->conf['table']['item_addition']}
- 	                SET     addition = $editedTxt
- 	                WHERE   item_addition_id = $itemID
- 	                ";
- 	        $result = $this->dbh->query($query);
-        }
-    }
-
-    /**
      * Deletes an Item from the item and item_addition table. If safe delete
      * is enabled only updates the items status to 0.
      *
@@ -463,8 +385,8 @@ class SGL_Item
         if ($this->conf['site']['safeDelete']) {
             $sth = $this->dbh->prepare("
                 UPDATE {$this->conf['table']['item']}
-                                    SET status = " . SGL_STATUS_DELETED . "
-                                    WHERE item_id = ?");
+                SET status = " . SGL_STATUS_DELETED . "
+                WHERE item_id = ?");
             foreach ($aItems as $row) {
                 $this->dbh->execute($sth, $row);
             }
@@ -524,11 +446,11 @@ class SGL_Item
 
         case SGL_RET_ARRAY:
             $aFields = array();
-            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType)
-                = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+            while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType) =
+                $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     // set fieldID to tranlsation ID
-                    $fieldID = $transID;
                     if ($this->conf['translation']['container'] == 'db') {
+                        $fieldID = $transID;
                         $fieldValue = $this->trans->get($transID, 'content', $language);
                     }
                     $aFields[ucfirst($fieldName)] = $this->generateFormFields(
@@ -540,7 +462,6 @@ class SGL_Item
         case SGL_RET_STRING:
         default:
             //  get language name
-            //  FIXME: getLangID and $this->conf()
             $langID = str_replace('_', '-', $language);
             $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
             $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
@@ -549,11 +470,11 @@ class SGL_Item
             //  display dynamic form fields (changed default object output to standard array
             $fieldsString = '';
             while (list($fieldID, $fieldName, $fieldValue, $transID, $fieldType) =
-                    $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                $result->fetchRow(DB_FETCHMODE_ORDERED)) {
 
                 // set fieldID to tranlsation ID
-                $fieldID = $transID;
                 if ($this->conf['translation']['container'] == 'db') {
+                    $fieldID = $transID;
                     $fieldValue = $this->trans->get($transID, 'content', $language);
                 }
                 $fieldsString .= "<tr>\n";
@@ -605,22 +526,22 @@ class SGL_Item
 
         switch ($type) {
 
-            case SGL_RET_ARRAY:
-                $aFields = array();
-                while (list($itemMappingID, $fieldName, $fieldType)
-                    = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-                        $aFields[ucfirst($fieldName)] =
-                            $this->generateFormFields(
-                            $itemMappingID, $fieldName, null, $fieldType, $language);
-                }
-                $res = $aFields;
-                break;
-
-            case SGL_RET_STRING:
-            //  display dynamic form fields (changed default object output to standard array)
-            $fieldsString = '';
+        case SGL_RET_ARRAY:
+            $aFields = array();
             while (list($itemMappingID, $fieldName, $fieldType)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                    $aFields[ucfirst($fieldName)] =
+                        $this->generateFormFields(
+                        $itemMappingID, $fieldName, null, $fieldType, $language);
+            }
+            $res = $aFields;
+            break;
+
+        case SGL_RET_STRING:
+            //  display dynamic form fields (changed default object output to standard array)
+            $fieldsString = '';
+            while (list($itemMappingID, $fieldName, $fieldType) =
+                    $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                 $fieldsString .= "<tr>\n";
                 $fieldsString .= '<th>' . ucfirst($fieldName) .' '. $languageName ."</th>\n";
                 $fieldsString .= '<td>' . $this->generateFormFields(
@@ -628,7 +549,7 @@ class SGL_Item
                                     . "</td>\n";
                 $fieldsString .= "</tr>\n";
             }
-                $res = $fieldsString;
+            $res = $fieldsString;
         }
         return $res;
     }
@@ -648,6 +569,7 @@ class SGL_Item
     function generateFormFields($fieldID, $fieldName, $fieldValue='', $fieldType, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         switch($fieldType) {
         case 0:     // field type = single line
             $formHTML = "<input type='text' id='frmFieldName[$fieldName]' name='frmFieldName[]' value='$fieldValue' />";
@@ -660,8 +582,8 @@ class SGL_Item
             break;
 
         case 2:     // field type = html paragraph
-            $formHTML = "<textarea id='frmBodyName' name='frmBodyName' class='wysiwyg'>$fieldValue</textarea>";
-            $formHTML .= "<input type='hidden' name='frmBodyItemID' value='$fieldID' />";
+            $formHTML = "<textarea id='frmFieldName[$fieldName]' name='frmFieldName[]' class='wysiwyg'>$fieldValue</textarea>";
+            $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
         }
         return $formHTML;
@@ -731,6 +653,7 @@ class SGL_Item
     function preview($bPublished = false, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (!is_null($language)) {
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
@@ -750,8 +673,8 @@ class SGL_Item
 
             if (!DB::isError($result)) {
                 $html = array();
-                while (list($fieldID, $fieldName, $fieldValue, $transId, $catId)
-                        = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
+                while (list($fieldID, $fieldName, $fieldValue, $transId, $catId) =
+                        $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                     if ($this->conf['translation']['container'] == 'db') {
                         $fieldValue = $this->trans->get($transId, 'content', $language);
                     }
@@ -921,6 +844,7 @@ class SGL_Item
     function getItemDetail($itemID = null, $bPublished = null, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if ((!$itemID) && (SGL_Session::get('articleID'))) {
             $itemID = SGL_Session::get('articleID');
         }
@@ -962,7 +886,10 @@ class SGL_Item
         $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_Item::SGL_Item();
+
+        if (!isset($this)) {
+            new SGL_Item();
+        }
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
