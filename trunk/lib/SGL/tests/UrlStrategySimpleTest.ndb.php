@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../UrlParserSimpleStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParser/SimpleStrategy.php';
 
 /**
  * Test suite.
