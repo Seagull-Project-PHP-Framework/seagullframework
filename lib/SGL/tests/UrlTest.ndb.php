@@ -8,9 +8,9 @@ FIXME: note from wiki, verify:
 
 require_once dirname(__FILE__) . '/../Url.php';
 require_once dirname(__FILE__) . '/../Output.php';
-require_once dirname(__FILE__) . '/../UrlParserAliasStrategy.php';
-require_once dirname(__FILE__) . '/../UrlParserClassicStrategy.php';
-require_once dirname(__FILE__) . '/../UrlParserSimpleStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParser/AliasStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParser/ClassicStrategy.php';
+require_once dirname(__FILE__) . '/../UrlParser/SimpleStrategy.php';
 
 /**
  * Test suite.
