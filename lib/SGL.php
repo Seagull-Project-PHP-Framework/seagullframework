@@ -214,7 +214,7 @@ class SGL
         return $error;
     }
 
-    function raiseMsg($msg, $getTranslation = true)
+    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_ERROR_MESSAGE)
     {
         //  must not log message here
         if (is_string($msg) && !empty($msg)) {
@@ -229,6 +229,7 @@ class SGL
             } else {
                 SGL_Session::set('message', $message);
             }
+            SGL_Session::set('messageType', $msgType);
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
         }

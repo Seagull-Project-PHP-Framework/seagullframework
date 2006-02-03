@@ -130,6 +130,11 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_ERROR_INVALIDTYPE',         -122);
         define('SGL_ERROR_RECURSION',           -123);
 
+        //  message types to use with SGL:raiseMsg($msg, $translation, $msgType)
+        define('SGL_MESSAGE_ERROR',             0);  // by default
+        define('SGL_MESSAGE_INFO',              1);
+        define('SGL_MESSAGE_WARNING',           2);
+
         //  automate sorting
         define('SGL_SORTBY_GRP',                1);
         define('SGL_SORTBY_USER',               2);
