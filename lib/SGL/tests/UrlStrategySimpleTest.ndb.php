@@ -20,7 +20,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testSimpleParserNoParams()
     {
         $qs = '';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -35,7 +35,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testParseResourceUriSlash()
     {
         $qs = '/';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         $this->assertTrue(!array_key_exists('module', $ret));
@@ -47,7 +47,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testSimpleParserOneParam()
     {
         $qs = 'faq';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -62,7 +62,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testSimpleParserTwoParams()
     {
         $qs = 'user/account';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -77,7 +77,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testParseResourceUriFullString()
     {
         $qs = 'contactus/contactus/action/list/enquiry_type/Hosting info';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         $this->assertTrue(is_array($ret));
@@ -95,7 +95,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     function testParseResourceUriFullStringWithEncoding()
     {
         $qs = 'contactus/contactus/action/list/enquiry_type/Get+a+quote';
-        $url = new SGL_Url($qs, true, new SGL_UrlParserSimpleStrategy());
+        $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
         $ret = $url->getQueryData();
 
         $this->assertTrue(is_array($ret));

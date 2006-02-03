@@ -94,8 +94,8 @@ class ConfigMgr extends SGL_Manager
         $this->aNavDrivers = SGL_Util::getAllNavDrivers();
         $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
         $this->aUrlHandlers = array(
-            'SGL_UrlParserSefStrategy' => 'Seagull SEF',
-            'SGL_UrlParserClassicStrategy' => 'Classic');
+            'SGL_UrlParser_SefStrategy' => 'Seagull SEF',
+            'SGL_UrlParser_ClassicStrategy' => 'Classic');
         $this->aTemplateEngines = array(
             'flexy'   => 'Flexy',
             'savant2' => 'Savant2',
@@ -148,7 +148,7 @@ class ConfigMgr extends SGL_Manager
             }
 
             //  catch invalid URL handler
-            if ($input->conf['site']['urlHandler'] == 'SGL_UrlParserClassicStrategy') {
+            if ($input->conf['site']['urlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
                 $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
             }
 

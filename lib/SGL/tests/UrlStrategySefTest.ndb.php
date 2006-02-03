@@ -17,7 +17,7 @@ class UrlStrategySefTest extends UnitTestCase
 
     function setup()
     {
-        $this->strategy = new SGL_UrlParserSefStrategy();
+        $this->strategy = new SGL_UrlParser_SefStrategy();
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->obj = new stdClass();
@@ -222,7 +222,7 @@ class UrlStrategySefTest extends UnitTestCase
     {
         $uri = 'http://example.com?moduleName=user&managerName=account';
 
-        $url = new SGL_Url($uri, true, new SGL_UrlParserSefStrategy());
+        $url = new SGL_Url($uri, true, new SGL_UrlParser_SefStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -234,7 +234,7 @@ class UrlStrategySefTest extends UnitTestCase
     function testResolveArrayElems()
     {
         $str = 'frmArticleId/3/foo/bar';
-        $res = SGL_UrlParserSefStrategy::resolveArrayElems(explode('/', $str));
+        $res = SGL_UrlParser_SefStrategy::resolveArrayElems(explode('/', $str));
         $expected = array ( 'frmArticleId' => '3', 'foo' => 'bar', );
         $this->assertEqual($res, $expected);
     }

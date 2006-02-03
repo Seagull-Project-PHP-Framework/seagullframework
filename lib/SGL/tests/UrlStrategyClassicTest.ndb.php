@@ -19,7 +19,7 @@ class UrlStrategyClassicTest extends UnitTestCase
     function testClassicParserSimple()
     {
         $uri = 'http://example.com?moduleName=user&managerName=account';
-        $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
+        $url = new SGL_Url($uri, true, new SGL_UrlParser_ClassicStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -34,7 +34,7 @@ class UrlStrategyClassicTest extends UnitTestCase
     function testClassicParserNoQueryStr()
     {
         $uri = 'http://example.com';
-        $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
+        $url = new SGL_Url($uri, true, new SGL_UrlParser_ClassicStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -46,7 +46,7 @@ class UrlStrategyClassicTest extends UnitTestCase
     function testClassicParserSefQueryStr()
     {
         $uri = 'http://example.com/index.php/foo/bar/frmUserName/123';
-        $url = new SGL_Url($uri, true, new SGL_UrlParserClassicStrategy());
+        $url = new SGL_Url($uri, true, new SGL_UrlParser_ClassicStrategy());
         $ret = $url->getQueryData();
 
         //  assert expected keys present

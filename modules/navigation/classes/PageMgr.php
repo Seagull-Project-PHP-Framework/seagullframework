@@ -472,7 +472,7 @@ class PageMgr extends SGL_Manager
                 $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
 
                 //  parse url details
-                #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParserSimpleStrategy());
+                #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParser_SimpleStrategy());
                 #$parsed = $url->getQueryData($strict = true);
 
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);

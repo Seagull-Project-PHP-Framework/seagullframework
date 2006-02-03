@@ -515,7 +515,7 @@ class SimpleNav
             }
 
             //  still no matches
-            if(!$section->childIsCurrent && empty($section->dontMatch)) {
+            if (!$section->childIsCurrent && empty($section->dontMatch)) {
                 if (
                     //  the strings are identical and it's not a static article
                     ($section->resource_uri == $this->querystring)
