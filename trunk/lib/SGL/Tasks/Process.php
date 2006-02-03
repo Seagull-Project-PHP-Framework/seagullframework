@@ -284,6 +284,10 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        // check for timeout
+        $session = $input->get('session');
+        $timeout = $session->isTimedOut();
+
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
 
@@ -292,10 +296,9 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authenticationEnabled']) {
 
-            $session = $input->get('session');
 
             //  check that session is not invalid or timed out
-            if (!$session->isValid() || $session->isTimedOut()) {
+            if (!$session->isValid() || $timeout) {
 
                 //  prepare referer info for redirect after login
                 $url = $input->getCurrentUrl();
