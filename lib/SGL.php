@@ -214,7 +214,7 @@ class SGL
         return $error;
     }
 
-    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_ERROR_MESSAGE)
+    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_MESSAGE_ERROR)
     {
         //  must not log message here
         if (is_string($msg) && !empty($msg)) {
