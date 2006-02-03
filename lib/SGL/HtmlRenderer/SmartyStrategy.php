@@ -75,7 +75,7 @@ class SGL_Smarty extends Smarty
 
     /**
      *  Default template handler for Smarty
-     *  Provides an alternative mechanism to Smarty 
+     *  Provides an alternative mechanism to Smarty
      *  for finding templates when one is not found at original
      *  file location.  Only called by Smarty
      *
@@ -83,12 +83,13 @@ class SGL_Smarty extends Smarty
      *  @param  string $resource_type       (i.e. file, db, ldap)
      *  @param  string $resource_name       template file name
      *  @param  string $resource_name       template file name
-     *  @param  string $template_source     source of template file 
-     *  @param  string $template_timestamp  mtime of template file 
+     *  @param  string $template_source     source of template file
+     *  @param  string $template_timestamp  mtime of template file
      *  @param  object $smarty_obj          Smarty object
      *  @return true if template found, false if not
      */
-    function locate_template($resource_type, $resource_name, &$template_source, &$template_timestamp, &$smarty_obj)
+    function locate_template($resource_type, $resource_name, &$template_source,
+        &$template_timestamp, &$smarty_obj)
 	{
 		if (!is_readable($resource_name))
 		{
@@ -133,7 +134,7 @@ class SGL_Smarty extends Smarty
     }
 }
 
-class SGL_HtmlSmartyRendererStrategy extends SGL_OutputRendererStrategy
+class SGL_HtmlRenderer_SmartyStrategy extends SGL_OutputRendererStrategy
 {
     /**
      * Director for html Smarty renderer.

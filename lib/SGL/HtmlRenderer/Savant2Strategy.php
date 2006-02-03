@@ -87,7 +87,7 @@ class SGL_Savant2 extends Savant2
     }
 }
 
-class SGL_HtmlSavant2RendererStrategy extends SGL_OutputRendererStrategy
+class SGL_HtmlRenderer_Savant2Strategy extends SGL_OutputRendererStrategy
 {
     /**
      * Director for html Savant2 renderer.

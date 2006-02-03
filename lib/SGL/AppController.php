@@ -304,11 +304,11 @@ class SGL_HtmlSimpleView extends SGL_View
         $c              = &SGL_Config::singleton();
         $conf           = $c->getAll();
         $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass  = 'SGL_Html'.$templateEngine.'RendererStrategy';
-        $rendererFile   = 'Html'.$templateEngine.'RendererStrategy.php';
+        $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
+        $rendererFile = $templateEngine.'Strategy.php';
 
-        if (file_exists(SGL_LIB_DIR .'/SGL/'. $rendererFile)) {
-        	require_once SGL_LIB_DIR .'/SGL/'. $rendererFile;
+        if (file_exists(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
+        	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
         } else {
         	PEAR::raiseError('Could not find renderer',
         		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
