@@ -50,7 +50,7 @@
  * Concrete SEF url parser strategy
  *
  */
-class SGL_UrlParserSefStrategy extends SGL_UrlParserStrategy
+class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
 {
     /**
     * Returns full url.

@@ -121,13 +121,13 @@ class SGL_Request
             $url = unserialize($data);
             SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once dirname(__FILE__) . '/UrlParserSimpleStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParserAliasStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParserClassicStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParser/SimpleStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParser/AliasStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParser/ClassicStrategy.php';
             $aStrats = array(
-                new SGL_UrlParserClassicStrategy(),
-                new SGL_UrlParserAliasStrategy(),
-                new SGL_UrlParserSefStrategy(),
+                new SGL_UrlParser_ClassicStrategy(),
+                new SGL_UrlParser_AliasStrategy(),
+                new SGL_UrlParser_SefStrategy(),
                 );
             $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
 

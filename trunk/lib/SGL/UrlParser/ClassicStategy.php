@@ -46,7 +46,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-class SGL_UrlParserClassicStrategy extends SGL_UrlParserStrategy
+class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
 {
     /**
     * Returns full url

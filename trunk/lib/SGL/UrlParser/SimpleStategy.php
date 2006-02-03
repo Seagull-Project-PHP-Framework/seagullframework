@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/Url.php';
  * Concrete simple url parser strategy.
  *
  */
-class SGL_UrlParserSimpleStrategy extends SGL_UrlParserStrategy
+class SGL_UrlParser_SimpleStrategy extends SGL_UrlParserStrategy
 {
     /**
      * Analyzes querystring content and parses it into module/manager/action

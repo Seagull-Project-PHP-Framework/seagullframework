@@ -174,7 +174,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('DB_DATAOBJECT_NO_OVERLOAD', true);
 
         require_once dirname(__FILE__)  . '/../Url.php';
-        require_once dirname(__FILE__)  . '/../UrlParserSefStrategy.php';
+        require_once dirname(__FILE__)  . '/../UrlParser/SefStrategy.php';
         require_once dirname(__FILE__)  . '/../Manager.php';
         require_once dirname(__FILE__)  . '/../Output.php';
         require_once dirname(__FILE__)  . '/../String.php';
