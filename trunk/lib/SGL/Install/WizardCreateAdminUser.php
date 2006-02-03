@@ -111,7 +111,10 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $aInstalledLanguages =  @$_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
         require_once SGL_DAT_DIR . '/ary.languages.php';
         if (count($aInstalledLanguages)) {
-            $aLangData = SGL_Util::getLangsDescriptionMap($aInstalledLanguages);
+
+            //  return only selected langs
+            $aAllLangs = SGL_Util::getLangsDescriptionMap();
+            $aLangData = array_intersect_key($aAllLangs, array_flip($aInstalledLanguages));
         } else {
 
             //  provide all file-based translations if no trans db storage options chosen
