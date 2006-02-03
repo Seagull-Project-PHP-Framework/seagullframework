@@ -6,7 +6,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-require_once dirname(__FILE__) . '/Url.php';
+require_once dirname(__FILE__) . '/../Url.php';
 
 /**
  * Concrete simple url parser strategy.
