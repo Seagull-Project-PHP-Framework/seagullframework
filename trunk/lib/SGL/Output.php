@@ -405,13 +405,31 @@ class SGL_Output
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $message = SGL_Session::get('message');
+
+        $message     = SGL_Session::get('message');
+        $messageType = SGL_Session::get('messageType');
         if (isset($message) && $message != '') {
             SGL_Session::remove('message');
-            echo '<div class="errorMessage">' . $message . '</div><br />';
+            SGL_Session::remove('messageType');
+
+            switch ($messageType) {
+
+            case SGL_MESSAGE_INFO:
+                $class = 'info';
+                break;
+
+            case SGL_MESSAGE_WARNING:
+                $class = 'warning';
+                break;
+
+            default:
+                $class = 'error';
+            }
+            echo '<div class="' . $class . 'Message">' . $message . '</div><br />';
 
             //  required to remove message that persists when register_globals = on
             unset($GLOBALS['message']);
+            unset($GLOBALS['messageType']);
         } elseif (SGL_Error::count()) {
 
             //  for now get last message added to stack
