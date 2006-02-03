@@ -376,15 +376,15 @@ class UrlTest extends UnitTestCase {
     function testArrayOfStrategiesParam()
     {
         $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            new SGL_UrlParserAliasStrategy()
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
             );
 
         $url = new SGL_Url(null, true, $aStrats);
         $this->assertTrue(count($url->aStrategies), 3);
         foreach ($url->aStrategies as $strat) {
-            $this->assertIsA($strat, 'SGL_UrlParserStrategy');
+            $this->assertIsA($strat, 'SGL_UrlParser_Strategy');
         }
     }
 
@@ -427,9 +427,9 @@ class UrlTest extends UnitTestCase {
         $uri = 'http://example.com?moduleName=user&managerName=account';
 
         $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            new SGL_UrlParserAliasStrategy()
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
             );
 
         $url = new SGL_Url($uri, true, $aStrats);
@@ -449,9 +449,9 @@ class UrlTest extends UnitTestCase {
         $uri = 'http://example.com/index.php/default/bug/';
 
         $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            new SGL_UrlParserAliasStrategy()
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
             );
 
         $url = new SGL_Url($uri, true, $aStrats);
@@ -471,9 +471,9 @@ class UrlTest extends UnitTestCase {
         $uri = 'http://example.com/index.php/seagull-php-framework/';
 
         $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            new SGL_UrlParserAliasStrategy()
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
             );
 
         $url = new SGL_Url($uri, true, $aStrats);
@@ -487,21 +487,21 @@ class UrlTest extends UnitTestCase {
         $this->assertEqual($ret['moduleName'], 'default');
         $this->assertEqual($ret['managerName'], 'default');
     }
-    
-    
+
+
     function testGetStrategiesFingerprint()
     {
         $aStrats = array(
-            new SGL_UrlParserClassicStrategy(),
-            new SGL_UrlParserSefStrategy(),
-            new SGL_UrlParserAliasStrategy()
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
             );
 
 		$url = new SGL_Url('', true, $aStrats);
 		$fingerprint = $url->getStrategiesFingerprint($url->aStrategies);
-		$target = 'sgl_urlparserclassicstrategysgl_urlparsersefstrategysgl_urlparseraliasstrategy';
+		$target = 'sgl_urlparser_classicstrategysgl_urlparser_sefstrategysgl_urlparser_aliasstrategy';
         $this->assertEqual($fingerprint, $target);
-    }    
+    }
 }
 
 

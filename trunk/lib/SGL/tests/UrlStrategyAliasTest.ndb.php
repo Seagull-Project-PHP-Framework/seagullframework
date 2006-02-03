@@ -19,7 +19,7 @@ class UrlStrategyAliasTest extends UnitTestCase
 
     function setup()
     {
-        $this->strategy = new SGL_UrlParserAliasStrategy();
+        $this->strategy = new SGL_UrlParser_AliasStrategy();
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->obj = new stdClass();

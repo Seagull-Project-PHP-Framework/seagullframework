@@ -165,7 +165,7 @@ class SGL_URL
 
         //  setup strategies array
         if (is_null($parserStrategy)) {
-            $this->aStrategies[] = new SGL_UrlParserSefStrategy();
+            $this->aStrategies[] = new SGL_UrlParser_SefStrategy();
         }
         if (!is_array($parserStrategy) && is_a($parserStrategy, 'SGL_UrlParserStrategy')) {
             $this->aStrategies[] = $parserStrategy;
@@ -182,7 +182,7 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
 
-            if (is_a($parserStrategy, 'SGL_UrlParserSimpleStrategy')) {
+            if (is_a($parserStrategy, 'SGL_UrlParser_SimpleStrategy')) {
                 $this->aQueryData = $this->parseQueryString($conf);
                 return;
             }
@@ -413,7 +413,7 @@ class SGL_URL
     function toString()
     {
         foreach ($this->aStrategies as $strategy) {
-            if (is_a($strategy, 'SGL_UrlParserSefStrategy')) {
+            if (is_a($strategy, 'SGL_UrlParser_SefStrategy')) {
                 return $strategy->toString($this);
             }
         }
@@ -425,7 +425,7 @@ class SGL_URL
         //  a hack for 0.4.x style of building SEF URLs
         $url = & SGL_Url::singleton();
         foreach ($url->aStrategies as $strategy) {
-            if (is_a($strategy, 'SGL_UrlParserSefStrategy')) {
+            if (is_a($strategy, 'SGL_UrlParser_SefStrategy')) {
                 return $strategy->makeLink(
                     $action, $mgr, $mod, $aList, $params, $idx, $output);
             }

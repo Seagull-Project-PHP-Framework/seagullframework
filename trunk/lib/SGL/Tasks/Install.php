@@ -18,7 +18,8 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
         //  resolve value for $_SERVER['PHP_SELF'] based in host
         SGL_URL::resolveServerVars($conf);
 
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new SGL_UrlParserSefStrategy(), $conf);
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true,
+            new SGL_UrlParser_SefStrategy(), $conf);
         define('SGL_BASE_URL', $url->getBase());
     }
 }
