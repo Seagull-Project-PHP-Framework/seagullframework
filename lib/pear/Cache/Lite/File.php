@@ -11,7 +11,7 @@
 * Technical choices are described in the 'docs/technical' file
 *
 * @package Cache_Lite
-* @version $Id: File.php,v 1.1 2005/06/18 19:36:13 fab Exp $
+* @version $Id: File.php,v 1.3 2005/12/04 16:03:55 fab Exp $
 * @author Fabien MARTY <fab@php.net>
 */
  
@@ -60,10 +60,10 @@ class Cache_Lite_File extends Cache_Lite
         if (isset($options['masterFile'])) {
             $this->_masterFile = $options['masterFile'];
         } else {
-            $this->raiseError('Cache_Lite_File : masterFile option must be set !');
+            return $this->raiseError('Cache_Lite_File : masterFile option must be set !');
         }
         if (!($this->_masterFile_mtime = @filemtime($this->_masterFile))) {
-            $this->raiseError('Cache_Lite_File : Unable to read masterFile : '.$this->_masterFile, -3);
+            return $this->raiseError('Cache_Lite_File : Unable to read masterFile : '.$this->_masterFile, -3);
         }
     }
     
@@ -75,7 +75,8 @@ class Cache_Lite_File extends Cache_Lite
     * @return string data of the cache (or false if no cache available)
     * @access public
     */
-    function get($id, $group = 'default') {
+    function get($id, $group = 'default') 
+    {
         if ($data = parent::get($id, $group, true)) {
             if ($filemtime = $this->lastModified()) {
                 if ($filemtime > $this->_masterFile_mtime) {

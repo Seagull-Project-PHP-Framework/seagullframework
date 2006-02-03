@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +---------------------------------------------------------------------+
 //
-// $Id: Container.php,v 1.7 2005/02/27 10:00:26 demian Exp $
+// $Id: Container.php,v 1.37 2005/12/24 02:28:42 aashley Exp $
 
 require_once 'Config.php';
 
@@ -122,8 +122,7 @@ class Config_Container {
             return PEAR::raiseError('Config_Container::addItem must be called on a section type object.', null, PEAR_ERROR_RETURN);
         }
         if (is_null($target)) {
-            //$target =& $this; - replaced w/sgl patch:
-            $target = clone($this);
+            $target =& $this;
         }
         if (strtolower(get_class($target)) != 'config_container') {
             return PEAR::raiseError('Target must be a Config_Container object in Config_Container::addItem.', null, PEAR_ERROR_RETURN);
@@ -402,7 +401,7 @@ class Config_Container {
         $count = 0;
         if (isset($name) && isset($type)) {
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name && 
+                if ($this->children[$i]->name === $name && 
                     $this->children[$i]->type == $type) {
                     $count++;
                 }
@@ -420,7 +419,7 @@ class Config_Container {
         if (isset($name)) {
             // Some directives can have the same name
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name) {
+                if ($this->children[$i]->name === $name) {
                     $count++;
                 }
             }

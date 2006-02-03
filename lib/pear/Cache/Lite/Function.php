@@ -11,7 +11,7 @@
 * Technical choices are described in the 'docs/technical' file
 *
 * @package Cache_Lite
-* @version $Id: Function.php,v 1.7 2005/11/17 09:19:18 fab Exp $
+* @version $Id: Function.php,v 1.8 2005/12/04 16:03:55 fab Exp $
 * @author Sebastian BERGMANN <sb@sebastian-bergmann.de>
 * @author Fabien MARTY <fab@php.net>
 */
@@ -125,7 +125,8 @@ class Cache_Lite_Function extends Cache_Lite
     * @return string id
     * @access private
     */
-    function _makeId($arguments) {
+    function _makeId($arguments) 
+    {
         $id = serialize($arguments); // Generate a cache id
         if (!$this->_fileNameProtection) {
             $id = md5($id);

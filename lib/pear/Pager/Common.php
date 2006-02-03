@@ -31,9 +31,9 @@
  * @package    Pager
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @author     Richard Heyes <richard@phpguru.org>
- * @copyright  2003-2005 Lorenzo Alberton, Richard Heyes
+ * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Common.php,v 1.40 2005/09/27 07:49:14 quipo Exp $
+ * @version    CVS: $Id: Common.php,v 1.44 2006/01/20 13:42:00 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -139,6 +139,12 @@ class Pager_Common
      * @access private
      */
     var $_httpMethod  = 'GET';
+    
+    /**
+     * @var string specifies which HTML form to use
+     * @access private
+     */
+    var $_formID  = '';
 
     /**
      * @var boolean whether or not to import submitted data
@@ -666,7 +672,7 @@ class Pager_Common
             );
         }
         if ($this->_httpMethod == 'POST') {
-            return sprintf('<a onclick=\'%s\' href="#"%s title="%s">%s</a>',
+            return sprintf("<a href='javascript:void(0)' onClick='%s'%s title='%s'>%s</a>",
                            $this->_generateFormOnClick($this->_url, $this->_linkData),
                            empty($this->_classString) ? '' : ' '.$this->_classString,
                            $altText,
@@ -711,15 +717,26 @@ class Pager_Common
             );
             return false;
         }
-        $str = 'var form = document.createElement("form"); var input = ""; ';
+        
+        if (!empty($this->_formID)) {
+            $str = 'var form = document.getElementById("'.$this->_formID.'"); var input = ""; ';
+        } else {
+            $str = 'var form = document.createElement("form"); var input = ""; ';
+        }
+        
+        
         // We /shouldn't/ need to escape the URL ...
         $str .= sprintf('form.action = "%s"; ', htmlentities($formAction));
         $str .= sprintf('form.method = "%s"; ', $this->_httpMethod);
         foreach ($data as $key => $val) {
             $str .= $this->_generateFormOnClickHelper($val, $key);
         }
-        $str .= 'document.getElementsByTagName("body")[0].appendChild(form);';
-        $str .= 'form.submit();';
+
+        if (empty($this->_formID)) {
+            $str .= 'document.getElementsByTagName("body")[0].appendChild(form);';
+        }
+        
+        $str .= 'form.submit(); return false;';
         return $str;
     }
 
@@ -753,7 +770,7 @@ class Pager_Common
             $escapedData = str_replace($search, $replace, $data);
             // am I forgetting any dangerous whitespace?
             // would a regex be faster?
-            $escapedData = htmlentities($escapedData);
+            $escapedData = htmlentities($escapedData, ENT_QUOTES);
 
             $str .= 'input = document.createElement("input"); ';
             $str .= 'input.type = "hidden"; ';
@@ -1215,10 +1232,13 @@ class Pager_Common
         $tmp = array ();
         foreach ($array as $key => $value) {
             if (is_array($value)) {
+                //array_push($tmp, $this->__http_build_query($value, sprintf('%s[%s]', $name, $key)));
                 array_push($tmp, $this->__http_build_query($value, $name.'%5B'.$key.'%5D'));
             } elseif (is_scalar($value)) {
+                //array_push($tmp, sprintf('%s[%s]=%s', $name, htmlentities($key), htmlentities($value)));
                 array_push($tmp, $name.'%5B'.htmlentities($key).'%5D='.htmlentities($value));
             } elseif (is_object($value)) {
+                //array_push($tmp, $this->__http_build_query(get_object_vars($value), sprintf('%s[%s]', $name, $key)));
                 array_push($tmp, $this->__http_build_query(get_object_vars($value), $name.'%5B'.$key.'%5D'));
             }
         }
@@ -1266,6 +1286,7 @@ class Pager_Common
             'fileName',
             'append',
             'httpMethod',
+            'formID',
             'importQuery',
             'urlVar',
             'altFirst',

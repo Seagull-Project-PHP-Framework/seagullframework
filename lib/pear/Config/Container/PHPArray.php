@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: PHPArray.php,v 1.7 2005/02/27 10:00:27 demian Exp $
+// $Id: PHPArray.php,v 1.27 2005/12/24 02:30:33 aashley Exp $
 
 /**
 * Config parser for common PHP configuration array
@@ -68,6 +68,7 @@ class Config_Container_PHPArray {
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (empty($datasrc)) {
             return PEAR::raiseError("Datasource file path is empty.", null, PEAR_ERROR_RETURN);
         }
@@ -84,8 +85,7 @@ class Config_Container_PHPArray {
             }
             $this->_parseArray(${$this->options['name']}, $obj->container);
         }
-        $ret =  true;
-        return $ret;
+        return $return;
     } // end func parseDatasrc
 
     /**
@@ -117,11 +117,14 @@ class Config_Container_PHPArray {
                     if (is_array($value)) {
                         if (is_integer(key($value))) {
                             foreach ($value as $nestedValue) {
-                                $section =& $container->createSection($key);
-                                $this->_parseArray($nestedValue, $section);
+                                if (is_array($nestedValue)) {
+                                    $section =& $container->createSection($key);
+                                    $this->_parseArray($nestedValue, $section);
+                                } else {
+                                    $container->createDirective($key, $nestedValue);
+                                }
                             }
                         } else {
-
                             $section =& $container->createSection($key);
                             $this->_parseArray($value, $section);
                         }
