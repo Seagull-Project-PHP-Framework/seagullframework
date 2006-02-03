@@ -13,9 +13,9 @@ require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
  * Concrete alias url parser strategy
  *
  */
-class SGL_UrlParserAliasStrategy extends SGL_UrlParserSimpleStrategy
+class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 {
-    function SGL_UrlParserAliasStrategy()
+    function SGL_UrlParser_AliasStrategy()
     {
         $this->da = & DA_Default::singleton();
     }
