@@ -10,7 +10,7 @@ define('SGL_FLEXY_VALID_FNS',           'include');
 define('SGL_FLEXY_GLOBAL_FNS',          true);
 define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true
 
-class SGL_HtmlFlexyRendererStrategy extends SGL_OutputRendererStrategy
+class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
 {
 
     /**
