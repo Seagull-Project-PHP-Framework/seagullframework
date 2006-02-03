@@ -16,7 +16,7 @@
 // | Author: Sterling Hughes <sterling@php.net>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Find.php,v 1.21 2005/09/20 11:33:15 techtonik Exp $
+// $Id: Find.php,v 1.24 2006/02/02 13:04:59 tuupola Exp $
 //
 
 require_once 'PEAR.php';
@@ -28,7 +28,7 @@ define('FILE_FIND_VERSION', '@package_version@');
 *  Commonly needed functions searching directory trees
 *
 * @access public
-* @version $Id: Find.php,v 1.21 2005/09/20 11:33:15 techtonik Exp $
+* @version $Id: Find.php,v 1.24 2006/02/02 13:04:59 tuupola Exp $
 * @package File
 * @author Sterling Hughes <sterling@php.net>
 */
@@ -93,7 +93,11 @@ class File_Find
 
         @closedir($dh);
 
-        return (count($matches) > 0) ? $matches : null;
+        if (0 == count($matches)) {
+            $matches = null;
+        }
+
+        return $matches ;
     }
 
     /**
@@ -135,7 +139,9 @@ class File_Find
             array_push($this->directories, $dir);
         }
 
-        return array($this->directories, $this->files);
+        $retval = array($this->directories, $this->files);
+        return $retval;
+
     }
 
     /**
@@ -170,14 +176,16 @@ class File_Find
         $count++;
 
         $directory .= DIRECTORY_SEPARATOR;
-        $dh = opendir($directory);
-        while (false !== ($entry = @readdir($dh))) {
-            if ($entry != '.' && $entry != '..') {
-                 array_push($retval, $entry);
+        
+        if (is_readable($directory)) {
+            $dh = opendir($directory);
+            while (false !== ($entry = @readdir($dh))) {
+                if ($entry != '.' && $entry != '..') {
+                     array_push($retval, $entry);
+                }
             }
+            closedir($dh);
         }
-
-        closedir($dh);
      
         while (list($key, $val) = each($retval)) {
             $path = $directory . $val;
@@ -226,8 +234,12 @@ class File_Find
         $matches = array();
         list ($directories,$files)  = File_Find::maptree($directory);
         switch($match) {
-            case 'directories': $data = $directories; break;
-            case 'both': $data = array_merge($directories, $files); break;
+            case 'directories': 
+                $data = $directories; 
+                break;
+            case 'both': 
+                $data = array_merge($directories, $files); 
+                break;
             case 'files':
             default:
                 $data = $files;
@@ -237,14 +249,16 @@ class File_Find
         $match_function = File_Find::_determineRegex($pattern, $type);
 
         reset($data);
-        while (list(,$entry) = each($data)) {
-            if ($match_function($pattern, 
-                                $fullpath ? $entry : basename($entry))) {
-                $matches[] = $entry;
+        if ($pattern) {
+            while (list(,$entry) = each($data)) {
+                if ($match_function($pattern, 
+                                    $fullpath ? $entry : basename($entry))) {
+                    $matches[] = $entry;
+                } 
             }
         }
 
-        return ($matches);
+        return $matches;
     }
 
     /**

@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: IniCommented.php,v 1.7 2005/02/27 10:00:27 demian Exp $
+// $Id: IniCommented.php,v 1.24 2006/01/03 05:19:01 aashley Exp $
 
 /**
 * Config parser for PHP .ini files with comments
@@ -54,6 +54,7 @@ class Config_Container_IniCommented {
     */
     function &parseDatasrc($datasrc, &$obj)
     {
+        $return = true;
         if (!file_exists($datasrc)) {
             return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);
         }
@@ -69,7 +70,7 @@ class Config_Container_IniCommented {
             } elseif (preg_match('/^\s*$/', $line)) {
                 // a blank line
                 $currentSection->createBlank();
-			} elseif (preg_match('/^\s*([a-zA-Z0-9_\-\.\s]*)\s*=\s*(.*)\s*$/', $line, $match)) {
+            } elseif (preg_match('/^\s*([a-zA-Z0-9_\-\.\s:]*)\s*=\s*(.*)\s*$/', $line, $match)) {
                 // a directive
                 
                 $values = $this->_quoteAndCommaParser($match[2]);
@@ -94,7 +95,7 @@ class Config_Container_IniCommented {
                 return PEAR::raiseError("Syntax error in '$datasrc' at line $n.", null, PEAR_ERROR_RETURN);
             }
         }
-        return true;
+        return $return;
     } // end func parseDatasrc
 
     /**
@@ -194,6 +195,7 @@ class Config_Container_IniCommented {
                                     array_pop($stack);
                                     $state = $this->_getQACEvent($stack);
                                 }
+                                $returnpos++;
                             }
                         break;
                         default :
@@ -272,8 +274,10 @@ class Config_Container_IniCommented {
                 } elseif (strlen(trim($content)) < strlen($content) ||
                           strpos($content, ',') !== false ||
                           strpos($content, ';') !== false ||
+                          strpos($content, '=') !== false ||
                           strpos($content, '"') !== false ||
-                          strpos($content, '%') !== false) {
+                          strpos($content, '%') !== false ||
+                          strpos($content, '~') !== false) {
                     $content = '"'.addslashes($content).'"';          
                 }
                 if ($count > 1) {
