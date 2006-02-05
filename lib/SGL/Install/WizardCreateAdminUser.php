@@ -151,7 +151,7 @@ if (!function_exists('array_intersect_key')) {
         for ($i = 1; !empty($isec) && $i < $argc; $i++) {
             $arr = func_get_arg($i);
 
-            foreach ($isec as $k => & $v) {
+            foreach ($isec as $k => $v) {
                 if (!isset($arr[$k])) {
                     unset($isec[$k]);
                 }
