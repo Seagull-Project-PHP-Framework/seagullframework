@@ -271,10 +271,11 @@ class SimpleNav
             . $this->_collapsed . $this->_showAlways;
 
         if ($data = $cache->get($cacheId, 'nav')) {
-            $aUnserialized = unserialize($data);
-            $sectionId     = $aUnserialized['sectionId'];
-            $html          = $aUnserialized['html'];
-            $breadcrumbs   = $aUnserialized['breadcrumbs'];
+            $aUnserialized    = unserialize($data);
+            $currentSectionId = $aUnserialized['sectionId'];
+            $html             = $aUnserialized['html'];
+            $breadcrumbs      = $aUnserialized['breadcrumbs'];
+            $this->_currentTitle = $aUnserialized['title'];
 
             SGL::logMessage('nav tabs from cache', PEAR_LOG_DEBUG);
 
@@ -330,9 +331,10 @@ class SimpleNav
             }
 
             //  cache stuff
-            $aNav = array(  'sectionId' => $currentSectionId,
-                            'html' => $html,
-                            'breadcrumbs' => $breadcrumbs);
+            $aNav = array(  'sectionId'   => $currentSectionId,
+                            'html'        => $html,
+                            'breadcrumbs' => $breadcrumbs,
+                            'title'       => $this->_currentTitle);
             $cache->save(serialize($aNav), $cacheId, 'nav');
 
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
