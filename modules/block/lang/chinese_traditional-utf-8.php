@@ -1,4 +1,13 @@
 <?php
+$words['Block Class Name'] = '區塊類別名稱';
+$words['Display Title'] = '顯示標題';
+$words['There was a problem, block did not validate'] = '驗證區塊時發生問題';
+$words['With selected block(s)'] = '選擇的區塊';
+$words['Left'] = '靠左';
+$words['Right'] = '靠右';
+$words['New Html block'] = '新增 HTML 區塊';
+$words['Can view'] = '可以瀏覽';
+$words['All roles'] = '所有角色';
 $words['Blocks Manager'] = '區塊管理';
 $words['Browse'] = '瀏覽';
 $words['Edit block'] = '編輯區塊';
