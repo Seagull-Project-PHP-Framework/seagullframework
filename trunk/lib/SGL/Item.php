@@ -267,7 +267,7 @@ class SGL_Item
      * @param   string  $language   Language
      * @return  void
      */
-    function addDataItems($parentID, $itemID, $itemValue, $language)
+    function addDataItems($parentID, $itemID, $itemValue, $itemType, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -279,15 +279,19 @@ class SGL_Item
                 $itemValue[$x] = SGL_String::translate('No other text entered');
             }
 
-            //  tidy & profanity check
-            $editedTxt = SGL_String::tidy(SGL_String::censor($itemValue[$x]));
+            //  profanity check
+            $editedTxt = SGL_String::censor($itemValue[$x]);
 
-            //  build strings array
-            $strings[$language] = $editedTxt;
+            if (isset($itemType[$itemID[$x]])) {
+                switch ($itemType[$itemID[$x]]) {
+                    case 'htmltextarea':
+                    $editedTxt = SGL_String::tidy($editedTxt);
+                    break;                   
+                }
+            }
 
             //  insert into item_addition
-            $query = "
-                INSERT INTO {$this->conf['table']['item_addition']} VALUES (
+            $query = "INSERT INTO {$this->conf['table']['item_addition']} VALUES (
                     $id,
                     $parentID,
                     $itemID[$x], ".
@@ -298,6 +302,9 @@ class SGL_Item
             unset($query);
 
             if ($this->conf['translation']['container'] == 'db') {
+                //  build strings array
+                $strings[$language] = $editedTxt;
+
                 $this->trans->add($transID, 'content', $strings);
             }
             unset($strings);
@@ -336,7 +343,7 @@ class SGL_Item
      * @param   string  $language   Language
      * @return  void
      */
-    function updateDataItems($itemID, $itemValue, $language)
+    function updateDataItems($itemID, $itemValue, $itemType, $language)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -344,8 +351,16 @@ class SGL_Item
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No text entered');
             }
-            //  tidy & profanity check
-            $editedTxt = SGL_String::tidy(SGL_String::censor($itemValue[$x]));
+            //  profanity check
+            $editedTxt = SGL_String::censor($itemValue[$x]);
+
+            if (isset($itemType[$itemID[$x]])) {
+                switch ($itemType[$itemID[$x]]) {
+                    case 'htmltextarea':
+                    $editedTxt = SGL_String::tidy($editedTxt);
+                    break;                   
+                }
+            }
 
             //  update translations
             if ($this->conf['translation']['container'] == 'db') {
@@ -584,6 +599,7 @@ class SGL_Item
         case 2:     // field type = html paragraph
             $formHTML = "<textarea id='frmFieldName[$fieldName]' name='frmFieldName[]' class='wysiwyg'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
+            $formHTML .= "<input type='hidden' name='frmDataItemType[$fieldID]' value='htmltextarea' />";
             break;
         }
         return $formHTML;
