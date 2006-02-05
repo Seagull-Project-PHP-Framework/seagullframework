@@ -117,10 +117,9 @@ class ArticleMgr extends SGL_Manager
         $input->aStartDate      = $req->get('frmStartDate');
         $input->aExpiryDate     = $req->get('frmExpiryDate');
         $input->noExpiry        = $req->get('frmExpiryDateNoExpire');
-        $input->aDataItemValue  = $req->get('frmFieldName');
         $input->aDataItemID     = $req->get('frmDataItemID');
-        $input->bodyValue       = $req->get('frmBodyName', $allowTags = true);
-        $input->bodyItemID      = $req->get('frmBodyItemID');
+        $input->aDataItemType   = ($req->get('frmDataItemType')) ? $req->get('frmDataItemType') : array();
+        $input->aDataItemValue  = $req->get('frmFieldName', $allowTags = true);
         $input->queryRange      = $req->get('frmQueryRange');
 
         //  session var persistence
@@ -233,8 +232,8 @@ class ArticleMgr extends SGL_Manager
         $insertID = $item->addMetaItems();
 
         //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
-            $input->articleLang);
+        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, 
+            $input->aDataItemType, $input->articleLang);
 
         SGL::raiseMsg('Article successfully added');
     }
@@ -372,7 +371,7 @@ class ArticleMgr extends SGL_Manager
         $item->updateMetaItems();
 
         //  updateDataItems
-        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->articleLang);
+        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->aDataItemType, $input->articleLang);
 
         SGL::raiseMsg('Article successfully updated');
     }
