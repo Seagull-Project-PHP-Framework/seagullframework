@@ -1,4 +1,7 @@
 <?php
+$words['FAQ Manager :: Reorder'] = '常見問答：重新排序';
+$words['FAQ Manager :: Add'] = '常見問答：新增';
+$words['FAQ Manager :: Edit'] = '常見問答：編輯';
 $words['faq updated successfully'] = 'FAQ更新完成';
 $words['faqs reordered successfully'] = 'FAQ重組完成';
 $words['faq saved successfully'] = 'FAQ存儲完成';

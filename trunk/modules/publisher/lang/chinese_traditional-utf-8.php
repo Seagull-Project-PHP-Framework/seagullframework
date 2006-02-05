@@ -1,4 +1,22 @@
 <?php
+$words['Document type'] = '文件類型';
+$words['Content Type Manager'] = '內容類型管理';
+$words['Add Type'] = '新增類型';
+$words['With selected content type(s)'] = '選擇的內容類型';
+$words['content type has successfully been added'] = '內容類型新增成功';
+$words['content type has successfully been deleted'] = '內容類型刪除成功';
+$words['content type has successfully been updated'] = '內容類型更新成功';
+$words['Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'] = '';
+$words['What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'] = '';
+$words['However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the'] = '';
+$words['Navigation module'] = '';
+$words['Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.'] = '';
+$words['You can also set permissions on who can view the content using the Permissions button above.'] = '';
+$words['more info'] = '更多資訊';
+$words['Contributed by'] = '提供者';
+$words['contributed by'] = '提供者';
+$words['full story'] = '全文';
+$words['WikiScrape Manager'] = 'WikiScrape 管理';
 $words['Start Date'] = '開始日期';
 $words['Editing Asset'] = '編輯文件';
 $words['There was an error attempting to download the file'] = '下載時發生錯誤';
