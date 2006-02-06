@@ -1,15 +1,15 @@
-<form name="contact" method="post" action="{makeUrl(##,#imessage#,#messaging#)}" id="contact" flexy:ignore>
+<form name="contact" method="post" action="{makeUrl(##,#instantmessage#,#messaging#)}" id="contact" flexy:ignore>
     <input type="hidden" name="action" value="compose" />
 
     <h1 class="pageTitle">{translate(sectionTitle)}</h1>
-    <span flexy:if="msgGet()">{msgGet()}</span> 
+    <span flexy:if="msgGet()">{msgGet()}</span>
     {if:pager}<flexy:include src="pager.html" />{end:}
 
     <table class="wide">
         <tr>
             <td colspan="5">
-                <input type="submit" name="send" value="send message to selected user(s)" onclick="return confirmSend('contact')" /> 
-                <input type="button" value="go to inbox" onclick="javascript:document.location.href='{makeUrl(#inbox#,#imessage#,#messaging#)}';" />
+                <input type="submit" name="send" value="send message to selected user(s)" onclick="return confirmSend('contact')" />
+                <input type="button" value="go to inbox" onclick="javascript:document.location.href='{makeUrl(#inbox#,#instantmessage#,#messaging#)}';" />
             </td>
         </tr>
 

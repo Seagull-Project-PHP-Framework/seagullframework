@@ -1,5 +1,5 @@
 <form name="messages" method="post" flexy:ignore id="messages">
-    <input type="hidden" name="action" value="delete" /> 
+    <input type="hidden" name="action" value="delete" />
     <input type="hidden" name="frmDelete[]" value="{instantMessage.instant_message_id}" />
 
     <h1 class="pageTitle">{translate(sectionTitle)}</h1>
@@ -10,11 +10,11 @@
         <tr>
             <td colspan="2">
                 <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirm('Are you sure you want to delete this message?');" />
-                {if:instantMessage.disableReply} 
-                {else:} 
-                <input type="button" value="reply" onclick="javascript:document.location.href='{makeUrl(#reply#,#imessage#,#messaging#)}frmMsgFromID/{instantMessage.user_id_from}/frmMessageID/{instantMessage.instant_message_id}/';" /> 
+                {if:instantMessage.disableReply}
+                {else:}
+                <input type="button" value="reply" onclick="javascript:document.location.href='{makeUrl(#reply#,#instantmessage#,#messaging#)}frmMsgFromID/{instantMessage.user_id_from}/frmMessageID/{instantMessage.instant_message_id}/';" />
                 {end:}
-                <input type="button" value="cancel" onclick="javascript:document.location.href='{makeUrl(cancelRedirect,#imessage#,#messaging#)}';" />
+                <input type="button" value="cancel" onclick="javascript:document.location.href='{makeUrl(cancelRedirect,#instantmessage#,#messaging#)}';" />
             </td>
         </tr>
     </table>
