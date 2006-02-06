@@ -277,9 +277,9 @@ EOT;
     // Insert path to our include files into S9Y global configuration
     #$pkg->addReplacement('serendipity_config.inc.php', 'pear-config', '@php_dir@', 'php_dir');
 
-    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@PHP-DIR@',  'php_dir');
-    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@DATA-DIR@', 'data_dir');
-    $pkg->addReplacement('lib/SGL/Tasks/Setup.php', 'pear-config', '@WEB-DIR@',  'web_dir');
+    $pkg->addReplacement('lib/SGL/Tasks/Init.php', 'pear-config', '@PHP-DIR@',  'php_dir');
+    $pkg->addReplacement('lib/SGL/Tasks/Init.php', 'pear-config', '@DATA-DIR@', 'data_dir');
+    $pkg->addReplacement('lib/SGL/Tasks/Init.php', 'pear-config', '@WEB-DIR@',  'web_dir');
     $pkg->addReplacement('lib/SGL/Install/WizardCreateAdminUser.php', 'pear-config', '@WEB-DIR@',  'web_dir');
     $pkg->addReplacement('www/index.php', 'pear-config', '@DATA-DIR@', 'data_dir');
     $pkg->addReplacement('www/index.php', 'pear-config', '@PHP-DIR@',  'php_dir');
