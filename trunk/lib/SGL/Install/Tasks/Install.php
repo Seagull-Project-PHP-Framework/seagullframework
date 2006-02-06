@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../Task.php';
+require_once dirname(__FILE__) . '/../../Task.php';
 
 class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
