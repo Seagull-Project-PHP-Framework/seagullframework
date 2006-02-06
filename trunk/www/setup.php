@@ -151,7 +151,7 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 
 //  load tasks
-require_once SGL_PATH . '/lib/SGL/Tasks/DetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Install/Tasks/DetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Install/Tasks/Install.php';
 
 class ActionProcess extends HTML_QuickForm_Action
