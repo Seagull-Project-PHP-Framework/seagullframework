@@ -18,7 +18,7 @@ class MessagingScreensLoadWithoutErrorsTest extends WebTestCase
         $this->clickSubmit('Login');
 
         //  messaging
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/imessage/');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/instantmessage/');
         $this->assertTitle('Seagull Framework :: Messages');
         $this->assertNoUnwantedPattern("/errorContent/");
 

@@ -14,9 +14,9 @@
     <table class="wide">
         <tr>
             <td colspan="4">
-                <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('message', 'messages')" /> 
-                <input type="button" value="check for new messages" onclick="javascript:document.location.href='{makeUrl(#inbox#,#imessage#,#messaging#)}';" /> 
-                <input type="button" value="go to outbox" onclick="javascript:document.location.href='{makeUrl(#outbox#,#imessage#,#messaging#)}';" /> 
+                <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('message', 'messages')" />
+                <input type="button" value="check for new messages" onclick="javascript:document.location.href='{makeUrl(#inbox#,#instantmessage#,#messaging#)}';" />
+                <input type="button" value="go to outbox" onclick="javascript:document.location.href='{makeUrl(#outbox#,#instantmessage#,#messaging#)}';" />
                 <input type="button" value="contacts" onclick="javascript:document.location.href='{makeUrl(##,#contact#,#messaging#)}';" />
             </td>
         </tr>
@@ -41,7 +41,7 @@
                 {end:}
             </td>
             <td class="fieldName2">
-                <a href="{makeUrl(#read#,#imessage#,#messaging#,aPagedData[data],#frmMessageID|instant_message_id#,key)}">{valueObj[subject]}</a>
+                <a href="{makeUrl(#read#,#instantmessage#,#messaging#,aPagedData[data],#frmMessageID|instant_message_id#,key)}">{valueObj[subject]}</a>
             </td>
             <td class="fieldName2" align="center" nowrap="nowrap">{formatDatePretty(valueObj[msg_time])}</td>
         </tr>

@@ -1,23 +1,23 @@
-<form name="account" action="{makeUrl('','imessage','messaging')}" method="post" flexy:ignore id="account">
-    <input type="hidden" name="action" value="compose" /> 
+<form name="account" action="{makeUrl('','instantmessage','messaging')}" method="post" flexy:ignore id="account">
+    <input type="hidden" name="action" value="compose" />
     <input type="hidden" name="frmRecipients[]" value="{profile.usr_id}" />
 
     <h1 class="pageTitle">{$result->translate(pageTitle)}</h1>
-    
+
     <!-- /////////////////////    STATUS     ////////////////////// -->
-    {if $result->profile->N} 
+    {if $result->profile->N}
         {if $result->backButton}
 
     <table>
         <tr>
             <td align="center">
-            <input type="button" name="backTo" class="wideButton" value="{$result->translate('back to contacts')}" 
+            <input type="button" name="backTo" class="wideButton" value="{$result->translate('back to contacts')}"
                 onclick="document.location.href='{makeUrl('','contact','messaging')}'" />
             </td>
         </tr>
     </table>
-        {/if} 
-        
+        {/if}
+
     <!-- /////////////////////    TABLE 1:      ////////////////////// -->
 
     <table class="narrow">
@@ -55,7 +55,7 @@
             <td class="fieldvalue">{if:login.last_login} {formatDatePretty(login.last_login)} {else:} {$result->translate('first login in progress')} {end:}</td>
         </tr>
     </table>
-    
+
     <!-- /////////////////////    TABLE 2:      ////////////////////// -->
 
     <table class="narrow">
@@ -77,10 +77,10 @@
             <td class="fieldvalue" width="50%">{$result->translate('coming soon ...')}</td>
         </tr>
     </table>
-    
+
     <!-- /////////////////////    TABLE 3:       ////////////////////// -->
 
-    {if $result->allowContact} 
+    {if $result->allowContact}
 
     <table class="narrow">
         <tr>
@@ -109,7 +109,7 @@
             <td colspan="2">&nbsp;</td>
         </tr>
     </table>
-    {/if} 
+    {/if}
 {/if}
 
     <table class="wide">
@@ -123,6 +123,6 @@
         <tr>
             <td>No results found for that ID.</td>
         </tr>
-    </table>        
+    </table>
 {/if}
 </form>
