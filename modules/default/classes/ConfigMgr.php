@@ -132,7 +132,7 @@ class ConfigMgr extends SGL_Manager
             //  paths
             if (empty($input->conf['path']['webRoot'])) {
                 $aErrors['webRoot'] = 'Please enter a valid path';
-                // unset() because we use isset() in lib/SGL/Tasks/Setup.php to check this variable
+                // unset() because we use isset() in lib/SGL/Tasks/Init.php to check this variable
                 unset($input->conf['path']['webRoot']);
             }
 
