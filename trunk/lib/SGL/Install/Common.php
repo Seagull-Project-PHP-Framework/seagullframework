@@ -48,7 +48,7 @@ if (!isset($GLOBALS['_SGL'])) {
  * Provides various static methods required for install routine.
  *
  */
-class SGL_Install
+class SGL_Install_Common
 {
     function errorPush($error)
     {
@@ -57,7 +57,7 @@ class SGL_Install
 
     function errorCheck(&$page)
     {
-        if (SGL_Install::errorsExist()) {
+        if (SGL_Install_Common::errorsExist()) {
             foreach ($_SESSION['ERRORS'] as $oError) {
                 $out =  $oError->getMessage() . '<br /> ';
                 $out .= $oError->getUserInfo();

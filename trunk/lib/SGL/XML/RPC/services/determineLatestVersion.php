@@ -7,8 +7,8 @@ $determineLatestVersion_alias = 'framework.determineLatestVersion';
 function SGL_XML_RPC_Server_determineLatestVersion($msg)
 {
     //  get framework version
-    require_once SGL_LIB_DIR . '/SGL/Install.php';
-    $ret = SGL_Install::getFrameworkVersion();
+    require_once SGL_LIB_DIR . '/SGL/Install/Common.php';
+    $ret = SGL_Install_Common::getFrameworkVersion();
 
     $result = new XML_RPC_Value($ret, "string");
     $return = new XML_RPC_Response($result);

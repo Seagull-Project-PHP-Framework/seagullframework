@@ -73,7 +73,7 @@ class SGL_EnvSummaryTask extends SGL_Task
                     $status = 'green';
                 } else {
                     $status = 'red';
-                    SGL_Install::errorPush(PEAR::raiseError($error));
+                    SGL_Install_Common::errorPush(PEAR::raiseError($error));
                 }
             //  else evaluate conventional values
             } else {
@@ -81,7 +81,7 @@ class SGL_EnvSummaryTask extends SGL_Task
                     $status = 'green';
                 } else {
                     $status = 'red';
-                    SGL_Install::errorPush(PEAR::raiseError($error));
+                    SGL_Install_Common::errorPush(PEAR::raiseError($error));
                 }
             }
         } elseif ($depType == SGL_RECOMMENDED) {

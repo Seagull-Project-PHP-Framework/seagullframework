@@ -68,7 +68,7 @@ function canCreateDb()
     $dbh = & SGL_DB::singleton($dsn);
 
     if ($skipDbCreation && PEAR::isError($dbh)) {
-        SGL_Install::errorPush($dbh);
+        SGL_Install_Common::errorPush($dbh);
         return false;
 
     } elseif ($skipDbCreation) {
@@ -90,7 +90,7 @@ function canCreateDb()
     $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
 
     if (PEAR::isError($ok)) {
-        SGL_Install::errorPush($ok);
+        SGL_Install_Common::errorPush($ok);
         return false;
 
     } else {

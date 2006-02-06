@@ -449,8 +449,8 @@ class MaintenanceMgr extends SGL_Manager
 
     function _checkLatestVersion(&$input, &$output)
     {
-        require_once SGL_CORE_DIR . '/Install.php';
-        $localVersion = SGL_Install::getFrameworkVersion();
+        require_once SGL_CORE_DIR . '/Install/Common.php';
+        $localVersion = SGL_Install_Common::getFrameworkVersion();
 
         require_once SGL_CORE_DIR . '/XML/RPC/Remote.php';
         $config = SGL_MOD_DIR . '/default/xmlrpc_conf.ini';

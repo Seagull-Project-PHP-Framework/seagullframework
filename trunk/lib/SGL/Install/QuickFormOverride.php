@@ -7,7 +7,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 {
     function perform(&$page, $actionName)
     {
-        SGL_Install::errorCheck($page);
+        SGL_Install_Common::errorCheck($page);
         return parent::perform($page, $actionName);
     }
 
