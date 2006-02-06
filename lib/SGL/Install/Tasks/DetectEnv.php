@@ -281,7 +281,9 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
             $this->aData['pearRegistryLibIsLoadable'] = bool2int(require_once 'PEAR/Registry.php');
             $registry = new PEAR_Registry(SGL_LIB_PEAR_DIR);
             $this->aData['pearRegistryIsObject'] = bool2int(is_object($registry));
-            $this->aData['pearBundledPackages'] = $registry->_listPackages();
+            $aPackages = $registry->_listPackages();
+            sort($aPackages);
+            $this->aData['pearBundledPackages'] = $aPackages;
         }
     	return $this->render($this->aData);
     }

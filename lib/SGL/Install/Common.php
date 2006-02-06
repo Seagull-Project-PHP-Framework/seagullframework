@@ -37,7 +37,7 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
-require_once dirname(__FILE__)  . '/Misc.php';
+require_once dirname(__FILE__)  . '/../Misc.php';
 
 if (!isset($GLOBALS['_SGL'])) {
     $GLOBALS['_SGL'] = array();
