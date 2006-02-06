@@ -40,7 +40,7 @@
 
 function environmentOk()
 {
-    if (SGL_Install::errorsExist()) {
+    if (SGL_Install_Common::errorsExist()) {
         return false;
     } else {
         //  store output for later processing

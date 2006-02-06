@@ -59,7 +59,7 @@ function canConnectToDbServer()
     $dbh = & SGL_DB::singleton($dsn);
 
     if (PEAR::isError($dbh)) {
-        SGL_Install::errorPush($dbh);
+        SGL_Install_Common::errorPush($dbh);
         return false;
     } else {
         return true;

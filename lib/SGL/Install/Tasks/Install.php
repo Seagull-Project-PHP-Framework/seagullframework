@@ -90,7 +90,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  store site language for post-install task
         $_SESSION['install_language'] = $data['siteLanguage'];
         if (PEAR::isError($ok)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
         }
     }
 }
@@ -101,8 +101,8 @@ class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
     {
         $c = &SGL_Config::singleton();
 
-        $aModuleList = SGL_Install::getModuleList();
-//            ? SGL_Install::getModuleList()
+        $aModuleList = SGL_Install_Common::getModuleList();
+//            ? SGL_Install_Common::getModuleList()
 //            : $this->getMinimumModuleList();
 
         foreach ($aModuleList as $module) {
@@ -119,7 +119,7 @@ class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
         if (PEAR::isError($ok)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
         }
     }
 }
@@ -231,7 +231,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
     {
         require_once SGL_CORE_DIR . '/Sql.php';
 
-        SGL_Install::printHeader('Building Database');
+        SGL_Install_Common::printHeader('Building Database');
         echo '<span class="title">Status: </span><span id="status"></span>
         <div id="progress_bar">
             <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
@@ -261,7 +261,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             echo $out;
 
             $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install::getModuleList()
+                ? SGL_Install_Common::getModuleList()
                 : $this->getMinimumModuleList();
 
             foreach ($aModuleList as $module) {
@@ -327,7 +327,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 
             //  Go back and load each module's default data, if there is a sql file in /data
             $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install::getModuleList()
+                ? SGL_Install_Common::getModuleList()
                 : $this->getMinimumModuleList();
 
             foreach ($aModuleList as $module) {
@@ -359,7 +359,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 
             //  Go back and load each module's default data, if there is a sql file in /data
             $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install::getModuleList()
+                ? SGL_Install_Common::getModuleList()
                 : $this->getMinimumModuleList();
 
             foreach ($aModuleList as $module) {
@@ -391,7 +391,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 
             //  Go back and load module foreign keys/constraints, if any
             $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install::getModuleList()
+                ? SGL_Install_Common::getModuleList()
                 : $this->getMinimumModuleList();
 
             foreach ($aModuleList as $module) {
@@ -435,7 +435,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
             $ok = $c->save($configFile);
             if (PEAR::isError($ok)) {
-                SGL_Install::errorPush(PEAR::raiseError($ok));
+                SGL_Install_Common::errorPush(PEAR::raiseError($ok));
             }
 
             //  interate through languages adding to langs table
@@ -455,7 +455,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
                 //  iterate through modules
                 $aModuleList = (isset($data['installAllModules']))
-                    ? SGL_Install::getModuleList()
+                    ? SGL_Install_Common::getModuleList()
                     : $this->getMinimumModuleList();
 
                 foreach ($aModuleList as $module) {
@@ -525,15 +525,15 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
         $res = $dbh->getAll($query);
         if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
-            SGL_Install::errorPush(
+            SGL_Install_Common::errorPush(
                 PEAR::raiseError('No tables exist in DB - was schema created?'));
         } elseif (!(count($res))) {
-            SGL_Install::errorPush(
+            SGL_Install_Common::errorPush(
                 PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
         }
 
         //  create error message if appropriate
-        if (SGL_Install::errorsExist()) {
+        if (SGL_Install_Common::errorsExist()) {
             $statusText = 'Some problems were encountered';
             $this->updateHtml('status', $statusText);
             $body = 'please diagnose and try again';
@@ -559,7 +559,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $this->updateHtml('additionalInfo', $body);
         $this->updateHtml('progress_bar', '');
 
-        SGL_Install::printFooter();
+        SGL_Install_Common::printFooter();
     }
 }
 
@@ -573,13 +573,13 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         //  create cache dir
         $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
         if (!($cacheDir)) {
-            SGL_Install::errorPush(PEAR::raiseError('Problem creating cache dir'));
+            SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating cache dir'));
         }
 
         //  create entities dir
         $entDir = System::mkDir(array(SGL_ENT_DIR));
         if (!($entDir)) {
-            SGL_Install::errorPush(PEAR::raiseError('Problem creating entity dir'));
+            SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating entity dir'));
         }
 
         //  create tmp dir, mostly for sessions
@@ -587,7 +587,7 @@ class SGL_Task_CreateFileSystem extends SGL_Task
 
             $tmpDir = System::mkDir(array(SGL_TMP_DIR));
             if (!$tmpDir) {
-                SGL_Install::errorPush(SGL::raiseError('The tmp directory does not '.
+                SGL_Install_Common::errorPush(SGL::raiseError('The tmp directory does not '.
                 'appear to be writable, please give the webserver permissions to write to it'));
             }
         }
@@ -624,7 +624,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         ob_end_clean();
 
         if (PEAR::isError($out)) {
-            SGL_Install::errorPush(
+            SGL_Install_Common::errorPush(
                 PEAR::raiseError('generating DB_DataObject entities failed'));
         }
 
@@ -804,19 +804,19 @@ class SGL_Task_SyncSequences extends SGL_Task
                     if (!$success) {
                         $dbh->rollback();
                         $dbh->autoCommit(true);
-                        SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+                        SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed '));
                     }
                 }
             }
             $success = $dbh->commit();
             $dbh->autoCommit(true);
             if (!$success) {
-                SGL_Install::errorPush(PEAR::raiseError('Rebuild failed '));
+                SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed '));
             }
             break;
 
         default:
-            SGL_Install::errorPush(
+            SGL_Install_Common::errorPush(
                 PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
         }
     }
@@ -845,7 +845,7 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             $success = $da->addUser($oUser);
 
             if (PEAR::isError($success)) {
-                SGL_Install::errorPush(PEAR::raiseError($success));
+                SGL_Install_Common::errorPush(PEAR::raiseError($success));
             }
         }
     }
@@ -870,7 +870,7 @@ PHP;
             : 'en-iso-8859-15';
         $ok1 = $da->updateMasterPrefs(array('language' => $lang));
         if (PEAR::isError($ok1)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok1));
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok1));
         }
 
         //  update lang in admin prefs
@@ -878,7 +878,7 @@ PHP;
         $langPrefId = $aMapping['language'];
         $ok2 = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
         if (PEAR::isError($ok2)) {
-            SGL_Install::errorPush(PEAR::raiseError($ok2));
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok2));
         }
 
     }

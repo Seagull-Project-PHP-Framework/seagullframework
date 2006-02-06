@@ -58,7 +58,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         //  set defaults
         $this->setDefaults(array(
-            'frameworkVersion' => SGL_Install::getFrameworkVersion(),
+            'frameworkVersion' => SGL_Install_Common::getFrameworkVersion(),
             'adminUserName' => 'admin',
             'adminRealName' => 'Alouicious Bird',
             'siteName'  => 'Seagull Framework',

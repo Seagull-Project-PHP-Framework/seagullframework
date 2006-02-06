@@ -86,7 +86,7 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
 }
 
 session_start();
-require_once $rootDir  . '/lib/SGL/Install.php';
+require_once $rootDir  . '/lib/SGL/Install/Common.php';
 require_once $rootDir . '/lib/SGL/AppController.php';
 SGL_AppController::init();
 
@@ -123,9 +123,9 @@ if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')
             header('Location: setup.php');
         }
     } else {
-        SGL_Install::printHeader();
-        SGL_Install::printLoginForm();
-        SGL_Install::printFooter();
+        SGL_Install_Common::printHeader();
+        SGL_Install_Common::printLoginForm();
+        SGL_Install_Common::printFooter();
         exit;
     }
 }
@@ -202,7 +202,7 @@ $wizard->addAction('process', new ActionProcess());
 
 $wizard->run();
 
-if (SGL_Install::errorsExist()) {
-    SGL_Install::errorPrint();
+if (SGL_Install_Common::errorsExist()) {
+    SGL_Install_Common::errorPrint();
 }
 ?>
