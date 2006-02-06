@@ -9,6 +9,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+06-02-06    Moved all install-related files to lib/SGL/Install
 03-02-06    Html renderers moved to their own folder in lib/SGL
 03-02-06    Url parsers moved to their own folder in lib/SGL
 03-02-06    Messages can be passed type info (Andrey Podshivalov)
