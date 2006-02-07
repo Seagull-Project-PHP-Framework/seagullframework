@@ -227,7 +227,6 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         require_once dirname(__FILE__)  . '/../Session.php';
         require_once dirname(__FILE__)  . '/../ServiceLocator.php';
         require_once dirname(__FILE__)  . '/../Util.php';
-
     }
 }
 
@@ -378,7 +377,9 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
         // set php.ini directives
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
-        @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
+        if (count($conf)) {
+            @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
+        }
     }
 }
 
