@@ -9,6 +9,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+07-02-06    Removed 2 fatal errors for missing parent::Manager and unknown
+            action, now you get an error page
 07-02-06    Removed 2 non-essential process filters, SGL_Process_DetectDebug
             and SGL_Process_DetectBlackListing
 07-02-06    Cleaned up URI parsing, toString() method moved from parsers to SGL_Url.

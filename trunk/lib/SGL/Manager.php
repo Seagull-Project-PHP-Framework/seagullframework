@@ -185,13 +185,13 @@ class SGL_Manager
 
         //  determine if action param from $_GET is valid
         if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
-            SGL::raiseError('The specified method, ' . $input->action .
-                ' does not exist', SGL_ERROR_NOMETHOD, PEAR_ERROR_DIE);
+            return SGL::raiseError('The specified method, ' . $input->action .
+                ' does not exist', SGL_ERROR_NOMETHOD);
         }
         if (!count($this->conf)) {
-            SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
-            'constructor - please add "parent::SGL_Manager();" in your '.
-            'manager\'s constructor.', SGL_ERROR_NOCLASS, PEAR_ERROR_DIE);
+            return SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
+                'constructor - please add "parent::SGL_Manager();" in your '.
+                'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
         //  don't perform checks if authentication is disabled in debug
         if ($this->conf['debug']['authenticationEnabled']) {
