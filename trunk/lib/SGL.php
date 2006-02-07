@@ -305,6 +305,18 @@ class SGL
          $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
          return $a;
      }
+
+     function displayStaticPage($msg)
+     {
+        require_once SGL_CORE_DIR . '/Install/Common.php';
+        SGL_Install_Common::printHeader('An error has occurred');
+        echo '  <div class="errorContainer">
+                    <div class="errorHeader">Error</div>
+                    <div class="errorContent">' . $msg . '</div>
+                </div>';
+        SGL_Install_Common::printFooter();
+        exit();
+     }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {

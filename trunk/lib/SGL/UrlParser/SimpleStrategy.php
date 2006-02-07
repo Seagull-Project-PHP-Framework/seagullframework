@@ -1,12 +1,12 @@
 <?php
 /**
- * Strategy for handling simple URL parsing, ie records from the section table.
+ * Strategy for handling simple URI parsing, ie records from the section table.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-require_once dirname(__FILE__) . '/../Url.php';
+require_once SGL_CORE_DIR . '/Url.php';
 
 /**
  * Concrete simple url parser strategy.

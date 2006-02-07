@@ -1,4 +1,49 @@
 <?php
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | Copyright (c) 2005, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.5                                                               |
+// +---------------------------------------------------------------------------+
+// | Init.php                                                                 |
+// +---------------------------------------------------------------------------+
+// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// +---------------------------------------------------------------------------+
+// $Id: Init.php,v 1.85 2005/06/22 00:40:44 demian Exp $
+
+/**
+ * Basic init tasks: sets up paths, contstants, include_path, etc.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 require_once dirname(__FILE__) . '/../Task.php';
 
 class SGL_Task_SetupPaths extends SGL_Task
@@ -227,6 +272,61 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
             define('SGL_BASE_URL', $conf['site']['baseUrl']);
         }
+    }
+}
+
+class SGL_Task_SetupPearErrorCallback extends SGL_Task
+{
+    function run($conf)
+    {
+        //  set PEAR error handler
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
+    }
+
+    /**
+     * A callback method that sets the default PEAR error behaviour.
+     *
+     * @access   public
+     * @static
+     * @param    object $oError the PEAR error object
+     * @return   void
+     */
+    function pearErrorHandler($oError)
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        //  log message
+        $message = $oError->getMessage();
+        $debugInfo = $oError->getDebugInfo();
+        SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
+
+        //  if sesssion debug, send error info to screen
+        if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
+            SGL_Error::push($oError);
+            if ($conf['debug']['showBacktrace']) {
+                echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
+            }
+        }
+    }
+}
+
+class SGL_Task_SetupCustomErrorHandler extends SGL_Task
+{
+    function process(&$input)
+    {
+        //  start PHP error handler
+        if ($this->conf['debug']['customErrorHandler']) {
+	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
+	        $eh = & new SGL_ErrorHandler();
+	        $eh->startHandler();
+        }
+
+        //  clean start for logs
+        error_log(' ');
+        error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
+
+        $this->processRequest->process($input);
     }
 }
 

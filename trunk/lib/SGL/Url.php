@@ -93,14 +93,28 @@ class SGL_URL
     var $path;
 
     /**
-    * Query string
+    * Query string.
+    *
+    * The querystring is defined as everthing from the frontScriptName
+    * to the end of the URI, not including anchors, examples:
+    *
+    *   - http://example.com/index.php/foo/bar/baz/fluux
+    *   -> qs = foo/bar/baz/fluux
+    *
+    *   - http://example.com/foo/bar/baz/fluux?sess=a&rand=123
+    *   -> qs = foo/bar/baz/fluux?sess=a&rand=123
+    *
+    *   - http://example.com/?sess=a&rand=123
+    *   -> qs = sess=a&rand=123
+    *
+    *   - http://example.com/2006/02/07/my_interesting_blog.html
+    *   -> qs - 2006/02/07/my_interesting_blog.html
     * @var array
     */
     var $querystring;
 
     var $aQueryData;
     var $frontScriptName;
-    var $parserStrategy;
     var $aStrategies = array();
     var $aRes = array();
 
@@ -160,10 +174,11 @@ class SGL_URL
         //  get default config
         if (is_null($conf)) {
             $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
+            $this->conf = $c->getAll();
         }
 
         //  setup strategies array
+        //  if no strats are provided, use native SEF strategy
         if (is_null($parserStrategy)) {
             $this->aStrategies[] = new SGL_UrlParser_SefStrategy();
         }
@@ -176,53 +191,20 @@ class SGL_URL
         } else {
             SGL::raiseError('unrecognised url strategy');
         }
+        $this->frontScriptName = $this->conf['site']['frontScriptName'];
 
-        $this->frontScriptName = $conf['site']['frontScriptName'];
+    }
 
-        // Only set defaults if $url is not an absolute URL
-        if (!preg_match('/^[a-z0-9]+:\/\//i', $url)) {
-
-            if (is_a($parserStrategy, 'SGL_UrlParser_SimpleStrategy')) {
-                $this->aQueryData = $this->parseQueryString($conf);
-                return;
-            }
-
-            $this->protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
-                ? 'https'
-                : 'http';
-
-            /**
-            * Figure out host/port
-            */
-            if (!empty($_SERVER['HTTP_HOST']) && preg_match('/^(.*)(:([0-9]+))?$/U',
-                    $_SERVER['HTTP_HOST'], $matches)) {
-                $host = $matches[1];
-                if (!empty($matches[3])) {
-                    $port = $matches[3];
-                } else {
-                    $port = $this->getStandardPort($this->protocol);
-                }
-            }
-
-            $this->user        = '';
-            $this->pass        = '';
-            $this->host        = !empty($host)
-                                    ? $host
-                                    : (isset($_SERVER['SERVER_NAME'])
-                                        ? $_SERVER['SERVER_NAME']
-                                        : 'localhost');
-            $this->port        = !empty($port)
-                                    ? $port
-                                    : (isset($_SERVER['SERVER_PORT'])
-                                        ? $_SERVER['SERVER_PORT']
-                                        : $this->getStandardPort($this->protocol));
-            $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
-            $this->anchor      = '';
-        }
-
+    /**
+     * Attempts to parse URI elements.
+     *
+     * @return true on success, PEAR_Error on failure
+     */
+    function init()
+    {
         // Parse the url and store the various parts
-        if (!is_null($url)) {
-            $urlinfo = parse_url($url);
+        if (!is_null($this->url)) {
+            $urlinfo = parse_url($this->url);
 
             //  if a ? is present in frontScriptName, it gets stripped by calling $_SERVER['PHP_SELF']
             //  and needs to be re-added
@@ -272,21 +254,25 @@ class SGL_URL
                                 : dirname($_SERVER['SCRIPT_NAME']);
                             $this->querystring = str_replace($this->path, '', $urlinfo['path']);
                         }
-                        if (!array_key_exists('query', $urlinfo)) {
-                            $this->aQueryData = $this->parseQueryString($conf);
-                        }
                     } else {
-                        $path = dirname($this->path) == DIRECTORY_SEPARATOR ? '' : dirname($this->path);
+                        $path = dirname($this->path) == DIRECTORY_SEPARATOR
+                            ? ''
+                            : dirname($this->path);
                         $this->path = sprintf('%s/%s', $path, $value);
                     }
                     break;
 
                 case 'query':
-                	if (isset($urlinfo['query'])) {
+                	if (isset($urlinfo['query']) && empty($this->querystring)) {
 						$this->querystring = $urlinfo['query'];
                 	}
-                    $this->aQueryData = $this->parseQueryString($conf);
+                	$ret = $this->parseQueryString($this->conf);
 
+                	if (PEAR::isError($ret)) {
+                	    return $ret;
+                	} else {
+                        $this->aQueryData = $ret;
+                	}
                     //  populate querystring property
                     $this->querystring =    $this->getModuleName() .'/'.
                                             $this->getManagerName() .'/'.
@@ -298,7 +284,18 @@ class SGL_URL
                     break;
                 }
             }
+            if (!array_key_exists('query', $urlinfo)) {
+                $ret = $this->parseQueryString($this->conf);
+
+            	if (PEAR::isError($ret)) {
+            	    return $ret;
+            	} else {
+                    $this->aQueryData = $ret;
+            	}
+            }
+            return true;
         }
+        return SGL::raiseError('no uri data', SGL_ERROR_NODATA);
     }
 
     function &singleton()
@@ -307,9 +304,9 @@ class SGL_URL
         if (!isset($instance)) {
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
-            $urlHandler = $conf['site']['urlHandler'];
+            $parserStrategy = $conf['site']['urlHandler'];
             $class = __CLASS__;
-            $instance = new $class(null, true, new $urlHandler());
+            $instance = new $class(null, true, new $parserStrategy());
         }
         return $instance;
     }
@@ -333,6 +330,10 @@ class SGL_URL
     function getQueryData($strict = false)
     {
         $aRet = $this->aQueryData;
+
+        if (PEAR::isError($aRet)) {
+            return $aRet;
+        }
         if ($strict) {
             if (isset($aRet['moduleName'])) {
                 unset($aRet['moduleName']);
@@ -342,32 +343,13 @@ class SGL_URL
             }
         }
         //  zend debug cleanup
-        if (isset($aRet['debug_fastfile'])) {
-            unset($aRet['debug_fastfile']);
-        }
-        if (isset($aRet['debug_host'])) {
-            unset($aRet['debug_host']);
-        }
-        if (isset($aRet['debug_new_session'])) {
-            unset($aRet['debug_new_session']);
-        }
-        if (isset($aRet['debug_no_cache'])) {
-            unset($aRet['debug_no_cache']);
-        }
-        if (isset($aRet['debug_port'])) {
-            unset($aRet['debug_port']);
-        }
-        if (isset($aRet['debug_stop'])) {
-            unset($aRet['debug_stop']);
-        }
-        if (isset($aRet['debug_url'])) {
-            unset($aRet['debug_url']);
-        }
-        if (isset($aRet['send_sess_end'])) {
-            unset($aRet['send_sess_end']);
-        }
-        if (isset($aRet['start_debug'])) {
-            unset($aRet['start_debug']);
+        $aZendDebugParams = array('debug_fastfile', 'debug_host', 'debug_new_session',
+            'debug_no_cache', 'debug_port', 'debug_stop', 'debug_url', 'send_sess_end',
+            'start_debug');
+        foreach ($aZendDebugParams as $param) {
+            if (isset($aRet[$param])) {
+                unset($aRet[$param]);
+            }
         }
         return $aRet;
     }
@@ -394,7 +376,12 @@ class SGL_URL
 
             //  all strategies will attempt to parse url, overwriting
             //  previous results as they do
-            $this->aRes[] = $strategy->parseQueryString($this, $conf);
+            $res = $strategy->parseQueryString($this, $conf);
+            if (PEAR::isError($res)) {
+                return $res;
+            } else {
+                $this->aRes[] = $res;
+            }
         }
         $ret = call_user_func_array('array_merge', $this->aRes);
         return $ret;
@@ -410,13 +397,30 @@ class SGL_URL
 		return $fingerprint;
     }
 
+    /**
+    * Returns the full URI as a string.
+    *
+    * @return string Full URI
+    * @access public
+    */
     function toString()
     {
-        foreach ($this->aStrategies as $strategy) {
-            if (is_a($strategy, 'SGL_UrlParser_SefStrategy')) {
-                return $strategy->toString($this);
-            }
+        $retUrl = $this->protocol . '://'
+                   . $this->user . (!empty($this->pass) ? ':' : '')
+                   . $this->pass . (!empty($this->user) ? '@' : '')
+                   . $this->getHostName() . ($this->port == $this->getStandardPort($this->protocol)
+                        ? ''
+                        : ':' . $this->port)
+                   . $this->getPath()
+                   . $this->getFrontScriptName();
+
+        //  add a trailing slash if one is not present
+        $qs = $this->getQueryString();
+        if ($qs{0} != '/' && substr($retUrl, -1) != '/') {
+            $qs = '/'.$qs;
         }
+        $retUrl .= $qs . (!empty($this->anchor) ? '#' . $this->anchor : '');
+        return $retUrl;
     }
 
     function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
@@ -730,7 +734,5 @@ class SGL_UrlParserStrategy
     function parseQueryString() {}
 
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output) {}
-
-    function toString() {}
 }
 ?>

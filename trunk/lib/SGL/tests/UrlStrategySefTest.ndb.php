@@ -231,12 +231,17 @@ class UrlStrategySefTest extends UnitTestCase
         $this->assertEqual($ret, array());
     }
 
-    function testResolveArrayElems()
+    function testResolveArrayElems1()
     {
         $str = 'frmArticleId/3/foo/bar';
         $res = SGL_UrlParser_SefStrategy::resolveArrayElems(explode('/', $str));
         $expected = array ( 'frmArticleId' => '3', 'foo' => 'bar', );
         $this->assertEqual($res, $expected);
+    }
+
+    function testResolveArrayElems2()
+    {
+
     }
 
 }

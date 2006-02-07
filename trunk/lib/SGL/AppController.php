@@ -69,6 +69,8 @@ class SGL_AppController
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
+        $init->addTask(new SGL_Task_SetupPearErrorCallback());
+        $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_SetGlobals());
@@ -97,10 +99,16 @@ class SGL_AppController
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $input->setRequest($req = SGL_Request::singleton());
+        $req = SGL_Request::singleton();
+
+        $err = $req->init();
+        if (PEAR::isError($err)) {
+            //  stop with error page
+            SGL::displayStaticPage($err->getMessage());
+        }
+        $input->setRequest($req);
 
         $process =  new SGL_Process_Init(
-                    new SGL_Process_SetupErrorHandling(
                     new SGL_Process_SetupORM(
         			new SGL_Process_StripMagicQuotes(
                     new SGL_Process_DiscoverClientOs(
@@ -114,50 +122,56 @@ class SGL_AppController
                     new SGL_Process_DetectDebug(
                     new SGL_Process_DetectBlackListing(
                     new SGL_MainProcess()
-                   ))))))))))))));
+                   )))))))))))));
 
         $process->process($input);
     }
+}
 
-    /**
-     * Adds pages to a Wizard queue.
-     *
-     * @access  public
-     * @param   string  $pageName   the name of the calling script
-     * @param   array   $param      params to be appended to URL
-     * @return  void
-     */
-    function addPage($pageName, $param=null)
+/**
+ * Core data processing routine.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
+class SGL_MainProcess extends SGL_ProcessRequest
+{
+    function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPages = SGL_Session::get('wiz_sequence');
-        if (isset($pageName)) {
 
-            //  pagename, isCurrent, param
-            $aPages[] = array(  'pageName'  => $pageName,
-                                'current'   => false,
-                                'param'     => $param);
+        $req = $input->getRequest();
+        $mgr = $input->get('manager');
+        $conf = $mgr->conf;
+        $mgr->validate($req, $input);
+
+        $output = & new SGL_Output();
+        $input->aggregate($output);
+
+        //  process data if valid
+        if ($mgr->isValid()) {
+            $mgr->process($input, $output);
         }
-        SGL_Session::set('wiz_sequence', $aPages);
-        return true;
-    }
 
-    /**
-     * Loads sequence of pages from Wizard queue and starts execution.
-     *
-     * @access  public
-     * @return  void
-     */
-    function startWizard()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPages = SGL_Session::get('wiz_sequence');
+        $mgr->display($output);
 
-        //  set first page to enabled
-        $aPages[0]['current'] = true;
-        SGL_Session::set('wiz_sequence', $aPages);
-        SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
-        return true;
+        //  build view
+        $templateEngine = ucfirst($conf['site']['templateEngine']);
+        $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
+        $rendererFile = $templateEngine.'Strategy.php';
+
+        if (file_exists(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
+        	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
+        } else {
+        	PEAR::raiseError('Could not find renderer',
+        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+        }
+        if (SGL::runningFromCLI()) {
+        	$view = new SGL_CliView($output, new $rendererClass());
+        } else {
+        	$view = new SGL_HtmlView($output, new $rendererClass());
+        }
+        echo $view->render();
     }
 }
 
