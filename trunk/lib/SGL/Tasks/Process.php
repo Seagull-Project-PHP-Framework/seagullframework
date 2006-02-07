@@ -497,7 +497,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                 $aModuleConfig = $this->c->load($modConfigPath);
 
                 if (PEAR::isError($aModuleConfig)) {
-                    return $aModuleConfig;
+                    $ret = $aModuleConfig;
                 } else {
                     $this->c->merge($aModuleConfig);
 
@@ -508,14 +508,15 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                     //  reset conf keys
                     unset($this->conf);
                     $this->conf = $this->c->getAll();
-                    return true;
+                    $ret = true;
                 }
             } else {
-                return false;
+                $ret = false;
             }
         } else {
-            return true;
+            $ret = true;
         }
+        return $ret;
     }
 
     /**
