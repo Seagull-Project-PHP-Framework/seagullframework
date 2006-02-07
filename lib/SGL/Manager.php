@@ -193,9 +193,11 @@ class SGL_Manager
                 'constructor - please add "parent::SGL_Manager();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
-        //  don't perform checks if authentication is disabled in debug
-        if ($this->conf['debug']['authenticationEnabled']) {
-
+        //  allow for unauthorized access as per config settings
+        if ( isset($this->conf[$className]['requiresAuth'])
+                && $this->conf[$className]['requiresAuth'] == true
+                && $this->conf['debug']['authorisationEnabled'])
+        {
             //  setup classwide perm
             $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
 
@@ -284,7 +286,9 @@ class SGL_Manager
         $moduleName     = $this->conf['site']['defaultModule'];
         $managerName    = $this->conf['site']['defaultManager'];
         $defaultParams  = $this->conf['site']['defaultParams'];
-        $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
+        $aDefaultParams = !empty($defaultParams)
+            ? explode('/', $defaultParams)
+            : array();
 
         $aParams = array(
             'moduleName'    => $moduleName,
