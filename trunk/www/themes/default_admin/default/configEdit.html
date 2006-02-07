@@ -210,10 +210,10 @@
     <fieldset class="main options" id="debuggingOptions">
         <h3>{translate(#Debugging Options#)}</h3>
         <p>
-            <label class="tipOwner" for="conf[debug][authenticationEnabled]">{translate(#Enable authentication#)}
+            <label class="tipOwner" for="conf[debug][authorisationEnabled]">{translate(#Enable authentication#)}
             <span class="tipText">{translate(#Debugging easier when this is disabled#)}</span>
             </label>
-            {generateRadioPair(#conf[debug][authenticationEnabled]#,conf[debug][authenticationEnabled]):h}
+            {generateRadioPair(#conf[debug][authorisationEnabled]#,conf[debug][authorisationEnabled]):h}
         </p>
         <p>
             <label class="tipOwner" for="conf[debug][customErrorHandler]">{translate(#Enable custom error handler#)}
