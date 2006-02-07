@@ -32,14 +32,14 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | Tasks.php                                                                 |
+// | Process.php                                                                 |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
 /**
- * Basic init tasks: enables profiling, custom error handler, logging
+ * Basic app process tasks: enables profiling, custom error handler, logging
  * and output buffering.
  *
  * @package SGL
@@ -61,54 +61,6 @@ class SGL_Process_Init extends SGL_DecorateProcess
         }
 
         $this->processRequest->process($input);
-    }
-}
-
-class SGL_Process_SetupErrorHandling extends SGL_DecorateProcess
-{
-    function process(&$input)
-    {
-        //  start PHP error handler
-        if ($this->conf['debug']['customErrorHandler']) {
-	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
-	        $eh = & new SGL_ErrorHandler();
-	        $eh->startHandler();
-        }
-        //  set PEAR error handler
-        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
-
-        //  clean start for logs
-        error_log(' ');
-        error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
-
-        $this->processRequest->process($input);
-    }
-
-    /**
-     * A callback method that sets the default PEAR error behaviour.
-     *
-     * @access   public
-     * @static
-     * @param    object $oError the PEAR error object
-     * @return   void
-     */
-    function pearErrorHandler($oError)
-    {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        //  log message
-        $message = $oError->getMessage();
-        $debugInfo = $oError->getDebugInfo();
-        SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
-
-        //  if sesssion debug, send error info to screen
-        if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
-            SGL_Error::push($oError);
-            if ($conf['debug']['showBacktrace']) {
-                echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
-            }
-        }
     }
 }
 
@@ -296,7 +248,6 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authenticationEnabled']) {
 
-
             //  check that session is not invalid or timed out
             if (!$session->isValid() || $timeout) {
 
@@ -358,99 +309,6 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
         $this->processRequest->process($input);
     }
 }
-
-///**
-// * Detects if language flag exists in $_GET, loads relevant
-// * language translation file.
-// *
-// * @access  private
-// * @author  Demian Turner <demian@phpkitchen.com>
-// * @author  Erlend Stromsvik <ehs@hvorfor.no>
-// * @package SGL
-// */
-//class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
-//{
-//    function process(&$input)
-//    {
-//        SGL::logMessage(null, PEAR_LOG_DEBUG);
-//        require_once SGL_CORE_DIR .'/Translation.php';
-//
-//        $req = $input->getRequest();
-//        $lang = $req->get('lang');
-//        require_once SGL_DAT_DIR . '/ary.languages.php';
-//        $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-//
-//        //  if lang var passed in request
-//        if (isset($lang) && array_key_exists($lang, $aLanguages)) {
-//            include SGL_MOD_DIR . '/default/lang/' . $aLanguages[$lang][1] . '.php';
-//            $_SESSION['aPrefs']['language'] = $lang;
-//        } else {
-//            //  get it from session
-//            $currLang = @$_SESSION['aPrefs']['language'];
-//            $globalLangFile = @$aLanguages[$currLang][1] . '.php';
-//
-//            //  if file exists, load global lang file
-//            if (is_readable(SGL_MOD_DIR . '/default/lang/' . $globalLangFile)) {
-//                include SGL_MOD_DIR . '/default/lang/' . $globalLangFile;
-//            } else {
-//                SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
-//            }
-//        }
-//        //  resolve current language from GET or session, assign to $language
-//        $language = (isset($lang)) ? @$aLanguages[$lang][1] : @$aLanguages[$currLang][1];
-//        if (empty($language)) {
-//            $language = 'english-iso-8859-15';
-//            $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
-//        }
-//
-//        //  fetch default translation
-//        $langID = str_replace('-', '_', $lang);
-//        $defaultWords = SGL_Translation::getTranslations('default', $langID);
-//
-//        //  fetch module translations
-//        $module = is_null($req->get('moduleName')) ? 'default' : $req->get('moduleName');
-//#        $path = SGL_MOD_DIR . '/' . $module . '/lang/';
-//
-//        if ($module != 'default') {
-//            $words = SGL_Translation::getTranslations($module, $langID);
-//        }
-//
-//        //  attempt to merge global language file with module's lang file
-////        if (is_readable($path . $language . '.php')) {
-////            include $path . $language . '.php';
-//
-//            //  if current module is not the default module
-////            if (isset($words)) {
-////                $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
-////
-////                //  else just assign default lang array to globals
-////            } else {
-////                $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
-////            }
-////        } else {
-////            SGL::raiseError('Could not open module\'s language file in ' .
-////                __CLASS__ . '::' . __FUNCTION__ .
-////                ', maybe it does not exist or the query parameter is incorrect',
-////                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-////        }
-//
-//        //  if current module is not the default module
-//        if (isset($words)) {
-//            $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
-//
-//            //  else just assign default lang array to globals
-//        } else {
-//            $GLOBALS['_SGL']['TRANSLATION'] = &$defaultWords;
-//        }
-//
-//        //  extract charset from current language string
-//        $aTmp = split('-', $language);
-//        array_shift($aTmp);
-//        $GLOBALS['_SGL']['CHARSET'] = join('-', $aTmp);
-//
-//        $this->processRequest->process($input);
-//    }
-//}
 
 /**
  * Detects if language flag exists in $_GET, loads relevant
@@ -574,7 +432,12 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                 $getDefaultMgr = true;
             } else {
                 //  load module's config if not present
-                $this->ensureModuleConfigLoaded($moduleName);
+                $ok = $this->ensureModuleConfigLoaded($moduleName);
+
+                if (PEAR::isError($ok)) {
+                    SGL::raiseError('could not locate module\'s config file',
+                        SGL_ERROR_NOFILE);
+                }
 
                 //  get manager name if $managerName not correct attempt to load default
                 //  manager w/$moduleName
@@ -610,14 +473,20 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
             }
         }
         if ($getDefaultMgr) {
-            $this->getDefaultManager($input);
-            if (!$homePageRequest) {
-                PEAR::raiseError('specified manager could not be found, default loaded');
+            $ok = $this->getDefaultManager($input);
+            if (!$homePageRequest || !$ok) {
+                SGL::raiseError("specified manager, '$managerName', could not be found, default loaded");
             }
         }
         $this->processRequest->process($input);
     }
 
+    /**
+     * Ensures the module's config file was loaded.
+     *
+     * @param string $moduleName
+     * @return mixed    true on success, PEAR_Error on failure
+     */
     function ensureModuleConfigLoaded($moduleName)
     {
         if (!defined('SGL_MODULE_CONFIG_LOADED')
@@ -626,27 +495,34 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
             if ($modConfigPath) {
                 $aModuleConfig = $this->c->load($modConfigPath);
-                PEAR::raiseError('Could not read current module\'s conf.ini file',
-                    SGL_ERROR_NOFILE);
-                if ($aModuleConfig) {
+
+                if (PEAR::isError($aModuleConfig)) {
+                    return $aModuleConfig;
+                } else {
                     $this->c->merge($aModuleConfig);
 
-                    //  remove first failed conf loading error
+                    //  remove first failed conf loading error in
+                    //  SGL_UrlParser_SefStrategy::parseQueryString()
                     SGL_Error::shift();
 
                     //  reset conf keys
                     unset($this->conf);
                     $this->conf = $this->c->getAll();
+                    return true;
                 }
+            } else {
+                return false;
             }
+        } else {
+            return true;
         }
     }
 
     /**
-     * Returns default manager per config settings.
+     * Loads the default manager per config settings or returns false on failure.
      *
      * @param SGL_Registry $input
-     * @return void
+     * @return boolean
      */
     function getDefaultManager(&$input)
     {
@@ -654,7 +530,11 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         $defaultMgr = $this->conf['site']['defaultManager'];
 
         //  load module's config if not present
-        $this->ensureModuleConfigLoaded($defaultModule);
+        $ok = $this->ensureModuleConfigLoaded($defaultModule);
+        if (PEAR::isError($ok)) {
+            SGL::raiseError('could not locate module\'s config file', SGL_ERROR_NOFILE);
+            return false;
+        }
 
         $mgrName = SGL_Inflector::caseFix(SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
@@ -679,7 +559,8 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                 explode('/', $this->conf['site']['defaultParams']));
             $req->add($aParams);
         }
-        $input->setRequest($req); // this should take care of itself
+        $input->setRequest($req); // this ought to take care of itself
+        return true;
     }
 
     /**
@@ -777,53 +658,6 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
 			}
         }
         $this->processRequest->process($input);
-    }
-}
-
-/**
- * Core data processing routine.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- */
-class SGL_MainProcess extends SGL_ProcessRequest
-{
-    function process(&$input)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $req = $input->getRequest();
-        $mgr = $input->get('manager');
-        $conf = $mgr->conf;
-        $mgr->validate($req, $input);
-
-        $output = & new SGL_Output();
-        $input->aggregate($output);
-
-        //  process data if valid
-        if ($mgr->isValid()) {
-            $mgr->process($input, $output);
-        }
-
-        $mgr->display($output);
-
-        //  build view
-        $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
-        $rendererFile = $templateEngine.'Strategy.php';
-
-        if (file_exists(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
-        	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
-        } else {
-        	PEAR::raiseError('Could not find renderer',
-        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
-        if (SGL::runningFromCLI()) {
-        	$view = new SGL_CliView($output, new $rendererClass());
-        } else {
-        	$view = new SGL_HtmlView($output, new $rendererClass());
-        }
-        echo $view->render();
     }
 }
 

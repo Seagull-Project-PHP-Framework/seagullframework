@@ -9,6 +9,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+07-02-06    Cleaned up URI parsing, toString() method moved from parsers to SGL_Url.
+07-02-06    Error handling moved from filter chain up to Init tasks
 06-02-06    Renamed all instances of IMessage to 'instant message'
 06-02-06    Moved all install-related files to lib/SGL/Install
 03-02-06    Html renderers moved to their own folder in lib/SGL

@@ -33,36 +33,36 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
             $aUriAliases = $this->da->getAllAliases();
         }
 
-            $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
+        $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
-            //	The alias will always be the second uri part in the array
-            //	FIXME: needs to be more flexible
-            $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
-            $ret = array();
-            if (count($aUriParts) > $countUriParts) {
-                $alias = $aUriParts[$countUriParts];
+        //	The alias will always be the second uri part in the array
+        //	FIXME: needs to be more flexible
+        $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
+        $ret = array();
+        if (count($aUriParts) > $countUriParts) {
+            $alias = $aUriParts[$countUriParts];
 
-                //  If alias exists, update the alias in the uri with the specified resource
-                if (array_key_exists($alias, $aUriAliases)) {
-                    $key = $aUriAliases[$alias];
+            //  If alias exists, update the alias in the uri with the specified resource
+            if (array_key_exists($alias, $aUriAliases)) {
+                $key = $aUriAliases[$alias];
 
-                    // records stored in section table in following format:
-                    // uriAlias:10:default/bug
-                    // parse out SEF url from 2nd semi-colon onwards
-                    $ok = preg_match('/(uriAlias:)([0-9]+:)(.*)/', $key, $aMatches);
-                    $aliasUri = $aMatches[3];
+                // records stored in section table in following format:
+                // uriAlias:10:default/bug
+                // parse out SEF url from 2nd semi-colon onwards
+                $ok = preg_match('/(uriAlias:)([0-9]+:)(.*)/', $key, $aMatches);
+                $aliasUri = $aMatches[3];
 
-                    // check for uriExternal
-                    if (preg_match('/^uriExternal:(.*)/', $aliasUri, $aUri)) {
-                        header('Location: ' . $aUri[1]);
-                        exit;
-                    }
-
-                    $tmp = new stdClass();
-                    $tmp->url = $aliasUri;
-                    $ret = parent::parseQueryString($tmp, $conf);
+                // check for uriExternal
+                if (preg_match('/^uriExternal:(.*)/', $aliasUri, $aUri)) {
+                    header('Location: ' . $aUri[1]);
+                    exit;
                 }
+
+                $tmp = new stdClass();
+                $tmp->url = $aliasUri;
+                $ret = parent::parseQueryString($tmp, $conf);
             }
+        }
         return $ret;
     }
 }

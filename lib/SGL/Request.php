@@ -58,23 +58,69 @@ class SGL_Request
      */
     function SGL_Request()
     {
-        if ($this->isEmpty()) {
-            $this->init();
-        }
+
     }
 
     function init()
     {
-        if (!SGL::runningFromCLI()) {
-            $this->initHttp();
-        } else {
-            $this->initCli();
+        if ($this->isEmpty()) {
+            $res = (!SGL::runningFromCLI()) ? $this->initHttp() : $this->initCli();
         }
+        return $res;
     }
 
     function isEmpty()
     {
         return count($this->aProps) ? false : true;
+    }
+
+    function initHttp()
+    {
+        //  get config singleton
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars($conf);
+
+        //  get current url object
+        #$urlHandler = $conf['site']['urlHandler'];
+        $cache = & SGL_Cache::singleton();
+        $cacheId = md5($_SERVER['PHP_SELF']);
+
+        if ($data = $cache->get($cacheId, 'urls')) {
+            $url = unserialize($data);
+            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
+        } else {
+            require_once dirname(__FILE__) . '/UrlParser/SimpleStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParser/AliasStrategy.php';
+            require_once dirname(__FILE__) . '/UrlParser/ClassicStrategy.php';
+
+            $aStrats = array(
+                new SGL_UrlParser_ClassicStrategy(),
+                new SGL_UrlParser_AliasStrategy(),
+                new SGL_UrlParser_SefStrategy(),
+                );
+            $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
+
+            $err = $url->init();
+            if (PEAR::isError($err)) {
+                return $err;
+            }
+            $data = serialize($url);
+            $cache->save($data, $cacheId, 'urls');
+            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
+        }
+        $aQueryData = $url->getQueryData();
+        if (PEAR::isError($aQueryData)) {
+            return $aQueryData;
+        }
+        //  assign to registry
+        $input = &SGL_Registry::singleton();
+        $input->setCurrentUrl($url);
+
+        //  merge REQUEST AND FILES superglobal arrays
+        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
     }
 
     function initCli()
@@ -101,48 +147,6 @@ class SGL_Request
             $this->aProps[$value[0]] = $value[1];
         }
 
-    }
-
-    function initHttp()
-    {
-        //  get config singleton
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        #$urlHandler = $conf['site']['urlHandler'];
-        $cache = & SGL_Cache::singleton();
-        $cacheId = md5($_SERVER['PHP_SELF']);
-
-        if ($data = $cache->get($cacheId, 'urls')) {
-            $url = unserialize($data);
-            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
-        } else {
-            require_once dirname(__FILE__) . '/UrlParser/SimpleStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/AliasStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/ClassicStrategy.php';
-            $aStrats = array(
-                new SGL_UrlParser_ClassicStrategy(),
-                new SGL_UrlParser_AliasStrategy(),
-                new SGL_UrlParser_SefStrategy(),
-                );
-            $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
-
-            $data = serialize($url);
-            $cache->save($data, $cacheId, 'urls');
-            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
-        }
-        $aQueryData = $url->getQueryData();
-
-        //  assign to registry
-        $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
-
-        //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
     }
 
     function merge($aHash)

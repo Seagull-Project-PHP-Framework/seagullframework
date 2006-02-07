@@ -53,30 +53,6 @@
 class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
 {
     /**
-    * Returns full url.
-    *
-    * @return string Full url
-    * @access public
-    */
-    function toString(/*SGL_Url*/$url)
-    {
-        $retUrl = $url->protocol . '://'
-                   . $url->user . (!empty($url->pass) ? ':' : '')
-                   . $url->pass . (!empty($url->user) ? '@' : '')
-                   . $url->getHostName() . ($url->port == $url->getStandardPort($url->protocol) ? '' : ':' . $url->port)
-                   . $url->getPath()
-                   . $url->getFrontScriptName();
-
-        //  add a trailing slash if one is not present
-        $qs = $url->getQueryString();
-        if ($qs{0} != '/' && substr($retUrl, -1) != '/') {
-            $qs = '/'.$qs;
-        }
-        $retUrl .= $qs . (!empty($url->anchor) ? '#' . $url->anchor : '');
-        return $retUrl;
-    }
-
-    /**
      * Analyzes querystring content and parses it into module/manager/action and params.
      *
      * @param SGL_Url $url
@@ -113,6 +89,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
 
         //  grab mod & mgr name from alias strategy if present
+        //FIXME: use strat name as key, not index
         if (isset($url->aRes[1]) && array_key_exists('moduleName', $url->aRes[1])) {
             $aParsedUri['moduleName'] = $url->aRes[1]['moduleName'];
             $aParsedUri['managerName'] = $url->aRes[1]['managerName'];
@@ -122,18 +99,17 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         //  unless we're running the setup wizard
         if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
             $c = &SGL_Config::singleton();
-            $path = realpath(SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini');
+            $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
+            $path = realpath($testPath);
             if ($path) {
                 $aModuleConfig = $c->load($path);
-                #return PEAR::raiseError('Could not read current module\'s conf.ini file',
-                 #   SGL_ERROR_NOFILE);
-                if ($aModuleConfig) {
+
+                if (PEAR::isError($aModuleConfig)) {
+                    return $aModuleConfig;
+                } else {
                     @define('SGL_MODULE_CONFIG_LOADED', true);
                     $c->merge($aModuleConfig);
                     $c->set('localConfig', array('moduleName' => $aParsedUri['moduleName']));
-                } else {
-                    return PEAR::raiseError("Could not read current module's conf.ini file",
-                        SGL_ERROR_NOFILE);
                 }
                 //  determine is moduleName is simplified, in other words, the mgr
                 //  and mod names should be the same
@@ -143,9 +119,13 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                         $aParsedUri['managerName'] = $aParsedUri['moduleName'];
                     }
                 }
+            } else {
+                //   we end up here when parsing url resources that don't exist,
+                //  ie example.com/index.php/blah, so raise error silently
+                SGL::raiseError("module's ini file could not be found, expecting file $testPath",
+                    SGL_ERROR_NOFILE);
             }
         }
-
         //  catch case where when manger + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
         if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
@@ -155,7 +135,6 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             array_unshift($aUriParts, $cookieValue);
             array_unshift($aUriParts, $conf['cookie']['name']);
         }
-
         //  if 'action' is in manager slot, move it to querystring array, and replace
         //  manager name with default mgr name, ie, that of the module
         if ($aParsedUri['managerName'] == 'action') {
