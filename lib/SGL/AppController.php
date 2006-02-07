@@ -149,7 +149,12 @@ class SGL_MainProcess extends SGL_ProcessRequest
 
         //  process data if valid
         if ($mgr->isValid()) {
-            $mgr->process($input, $output);
+            $ok = $mgr->process($input, $output);
+            if (PEAR::isError($ok)) {
+
+                //  stop with error page
+                SGL::displayStaticPage($ok->getMessage());
+            }
         }
 
         $mgr->display($output);
