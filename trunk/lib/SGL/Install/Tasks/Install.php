@@ -20,6 +20,7 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 
         $url = new SGL_URL($_SERVER['PHP_SELF'], true,
             new SGL_UrlParser_SefStrategy(), $conf);
+        $err = $url->init();
         define('SGL_BASE_URL', $url->getBase());
     }
 }

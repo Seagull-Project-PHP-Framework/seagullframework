@@ -175,6 +175,8 @@ class SGL_URL
         if (is_null($conf)) {
             $c = &SGL_Config::singleton();
             $this->conf = $c->getAll();
+        } else {
+            $this->conf = $conf;
         }
 
         //  setup strategies array
@@ -192,7 +194,6 @@ class SGL_URL
             SGL::raiseError('unrecognised url strategy');
         }
         $this->frontScriptName = $this->conf['site']['frontScriptName'];
-
     }
 
     /**
@@ -202,6 +203,48 @@ class SGL_URL
      */
     function init()
     {
+        // Only set defaults if $url is not an absolute URL
+        if (!preg_match('/^[a-z0-9]+:\/\//i', $this->url)) {
+
+            //FIXME: get rid of this
+            if (is_a($this->aStrategies[0], 'SGL_UrlParser_SimpleStrategy')) {
+                $this->aQueryData = $this->parseQueryString($this->conf);
+                return;
+            }
+
+            $this->protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
+                ? 'https'
+                : 'http';
+
+            /**
+            * Figure out host/port
+            */
+            if (!empty($_SERVER['HTTP_HOST']) && preg_match('/^(.*)(:([0-9]+))?$/U',
+                    $_SERVER['HTTP_HOST'], $matches)) {
+                $host = $matches[1];
+                if (!empty($matches[3])) {
+                    $port = $matches[3];
+                } else {
+                    $port = $this->getStandardPort($this->protocol);
+                }
+            }
+
+            $this->user        = '';
+            $this->pass        = '';
+            $this->host        = !empty($host)
+                                    ? $host
+                                    : (isset($_SERVER['SERVER_NAME'])
+                                        ? $_SERVER['SERVER_NAME']
+                                        : 'localhost');
+            $this->port        = !empty($port)
+                                    ? $port
+                                    : (isset($_SERVER['SERVER_PORT'])
+                                        ? $_SERVER['SERVER_PORT']
+                                        : $this->getStandardPort($this->protocol));
+            $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
+            $this->anchor      = '';
+        }
+
         // Parse the url and store the various parts
         if (!is_null($this->url)) {
             $urlinfo = parse_url($this->url);
