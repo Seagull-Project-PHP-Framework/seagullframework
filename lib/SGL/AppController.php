@@ -89,10 +89,8 @@ class SGL_AppController
             new SGL_Process_AuthenticateRequest(
             new SGL_Process_BuildHeaders(
             new SGL_Process_SetupLocale(
-            new SGL_Process_DetectDebug(
-            new SGL_Process_DetectBlackListing(
             new SGL_MainProcess()
-            )))))))))))));
+            )))))))))));
 
         $process->process($input);
     }

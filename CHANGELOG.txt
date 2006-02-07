@@ -9,6 +9,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+07-02-06    Removed 2 non-essential process filters, SGL_Process_DetectDebug
+            and SGL_Process_DetectBlackListing
 07-02-06    Cleaned up URI parsing, toString() method moved from parsers to SGL_Url.
 07-02-06    Error handling moved from filter chain up to Init tasks
 06-02-06    Renamed all instances of IMessage to 'instant message'
