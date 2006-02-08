@@ -192,7 +192,8 @@ class SGL_Manager
             $classPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
-            if ($ok = $this->_authorise($classPerm, $input) !== true) {
+            $ok = $this->_authorise($classPerm, $input);
+            if ($ok !== true) {
 
                 //  test for possible errors
                 if (is_array($ok) && count($ok)) {

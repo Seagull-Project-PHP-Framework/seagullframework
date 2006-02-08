@@ -70,8 +70,7 @@ class SGL_AppController
         $input = &SGL_Registry::singleton();
         $req = SGL_Request::singleton();
 
-        $err = $req->init();
-        if (PEAR::isError($err)) {
+        if (PEAR::isError($req)) {
             //  stop with error page
             SGL::displayStaticPage($err->getMessage());
         }
