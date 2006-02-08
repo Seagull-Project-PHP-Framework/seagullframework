@@ -229,7 +229,8 @@ class RegisterMgr extends SGL_Manager
         //  first get all prefs associated with user's org or default
         //  prefs if orgs are disabled
         if ($this->conf['OrgMgr']['enabled']) {
-            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id,
+                SGL_RET_ID_VALUE);
         } else {
             $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
         }

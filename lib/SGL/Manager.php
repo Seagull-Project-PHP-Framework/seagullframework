@@ -146,36 +146,26 @@ class SGL_Manager
         return $c;
     }
 
-    // +---------------------------------------+
-    // | Public workflow methods               |
-    // |                                       |
-    // | All manager classes in the framework  |
-    // | workflow must follow the validate,    |
-    // | process, display pattern.             |
-    // +---------------------------------------+
-
     /**
-     * Page validation method, extended by all Manager classes.
-     *
-     * Get tabID required by ALL pages, same goes for msg, action, from
+     * Specific validations are implemented in sub classes.
      *
      * @abstract
      *
      * @access  public
-     * @param   object  $req    SGL_Request object received from user agent
-     * @param   object  $input  SGL_Output object from Controller
+     * @param   SGL_Request     $req    SGL_Request object received from user agent
+     * @param   SGL_Registry    $input  SGL_Registry for storing data
      * @return  void
      */
     function validate($req, &$input) {}
 
     /**
-     * Abstract Page processing method.
+     * Super class for implementing authorisation checks, delegates specific processing
+     * to child classses.
      *
      * @access  public
-     * @abstract
-     * @param   object  $input  Input object received from validate()
-     * @param   object  $output Processed result
-     * @return  void
+     * @param   SGL_Registry    $input  Input object received from validate()
+     * @param   SGL_Output      $output Processed result
+     * @return  mixed           true on success or PEAR_Error on failure
      */
     function process(&$input, &$output)
     {
@@ -193,7 +183,7 @@ class SGL_Manager
                 'constructor - please add "parent::SGL_Manager();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
-        //  allow for unauthorized access as per config settings
+        //  only implement auth check on demand
         if ( isset($this->conf[$className]['requiresAuth'])
                 && $this->conf[$className]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
@@ -201,39 +191,33 @@ class SGL_Manager
             //  setup classwide perm
             $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
 
-            // if user has no class perms check for each action
-            if (! SGL_Session::hasPerms($classPerm)) {
+            //  check authorisation
+            if ($ok = $this->_authorise($classPerm, $input) !== true) {
 
-                // ...and if linked methods to be called are allowed
-                foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+                //  test for possible errors
+                if (is_array($ok) && count($ok)) {
 
-                    //  allow redirects without perms
-                    if ($methodName == 'redirectToDefault') {
-                        continue;
+                    list($className, $methodName) = $ok;
+                    SGL::raiseMsg('you do not have perms');
+                    SGL::logMessage('Unauthorised user '.SGL_Session::getUid() .' attempted to access ' .
+                        $className . '::' .$methodName, PEAR_LOG_WARNING);
+
+                    //  make sure no infinite redirections
+                    $lastRedirected = SGL_Session::get('redirected');
+                    $now = time();
+                    SGL_Session::set('redirected', $now);
+
+                    if ($now - $lastRedirected < 2) {
+                        return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
+                            SGL_ERROR_RECURSION);
                     }
-                    $methodName = '_' . $methodName;
+                    //  get default params for logout page
+                    $aParams = $this->getDefaultPageParams();
+                    SGL_HTTP::redirect($aParams);
 
-                    //  build relevant perms constant
-                    $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
-
-                    //  redirect if user doesn't have method specific or classwide perms
-                    if (! SGL_Session::hasPerms($perm)) {
-                        SGL::raiseMsg('you do not have perms');
-                        SGL::logMessage('You do not have the required perms for ' .
-                            $className . '::' .$methodName, PEAR_LOG_NOTICE);
-
-                        //  make sure no infinite redirections
-                        $lastRedirected = SGL_Session::get('redirected');
-                        $now = time();
-                        SGL_Session::set('redirected', $now);
-                        if ($now - $lastRedirected < 2) {
-                            PEAR::raiseError('infinite loop detected, clear cookies and check perms',
-                                SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
-                        }
-                        //  get default params for logout page
-                        $aParams = $this->getDefaultPageParams();
-                        SGL_HTTP::redirect($aParams);
-                    }
+                } else {
+                    return PEAR::raiseError('unexpected response during authorisation check',
+                        SGL_ERROR_INVALIDAUTH);
                 }
             }
         }
@@ -243,6 +227,44 @@ class SGL_Manager
             $methodName = '_'.$methodName;
             $this->$methodName($input, $output);
         }
+        return true;
+    }
+
+    /**
+     * Perform authorisation on specified action methods.
+     *
+     * @param integer $classPerm
+     * @param SGL_Registry $input
+     * @return mixed true on success, array of class/method names on failure
+     */
+    function _authorise($classPerm, $input)
+    {
+        // if user has no class perms check for each action
+        if (!SGL_Session::hasPerms($classPerm)) {
+
+            // and if chained methods to be called are allowed
+            $ret = true;
+            foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+
+                //  allow redirects without perms
+                if ($methodName == 'redirectToDefault') {
+                    continue;
+                }
+                $methodName = '_' . $methodName;
+
+                //  build relevant perms constant
+                $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
+
+                //  return false if user doesn't have method specific or classwide perms
+                if (SGL_Session::hasPerms($perm) === false) {
+                    $ret = array($className, $methodName);
+                    break;
+                }
+            }
+        } else {
+            $ret = true;
+        }
+        return $ret;
     }
 
     /**
@@ -251,16 +273,27 @@ class SGL_Manager
      * @abstract
      *
      * @access  public
-     * @param   object  $output Input object that has passed through validation
+     * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
     function display(&$output) {}
 
+    /**
+     * Return true if child class has validated.
+     *
+     * @return boolean
+     */
     function isValid()
     {
         return $this->validated;
     }
 
+    /**
+     * Default redirect for all Managers.
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     */
     function _redirectToDefault(&$input, &$output)
     {
         //  must not logmessage here

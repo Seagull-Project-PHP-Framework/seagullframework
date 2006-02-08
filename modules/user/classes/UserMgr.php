@@ -179,6 +179,10 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->user)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         $oUser = $this->da->getUserById();
         $oUser->setFrom($input->user);
         $oUser->passwd = md5($input->user->passwd);

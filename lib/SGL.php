@@ -242,6 +242,33 @@ class SGL
     }
 
     /**
+     * Returns false if no properties are set.
+     *
+     * Simplistic if ($prop) test is intentional, method will return false for
+     * props such as 0, "0", "", null, array(), etc.
+     *
+     * @param object $obj
+     * @return boolean
+     */
+    function objectHasState($obj)
+    {
+        $aProps = get_object_vars($obj);
+        if (count($aProps)) {
+            foreach ($aProps as $prop) {
+                if ($prop) {
+                    $ret = true;
+                    break;
+                } else {
+                    $ret = false;
+                }
+            }
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    /**
      * Determines current server API, ie, are we running from commandline or webserver.
      *
      * @return boolean
