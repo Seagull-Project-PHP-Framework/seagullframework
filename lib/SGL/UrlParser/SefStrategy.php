@@ -249,7 +249,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                 //  or no resulset was passed (qs params are literals)
                 //  - empty array if invoked from manager (default arg)
                 //  - string equal to 0 if ## passed from template
-                if (is_array(end($aList))
+                if ($aList && is_array(end($aList))
                     || (is_array($aList) && !is_object(end($aList)))
                     || !(count($aList))
                     || $aList == 0) {
