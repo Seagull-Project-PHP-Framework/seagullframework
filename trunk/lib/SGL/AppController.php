@@ -72,7 +72,7 @@ class SGL_AppController
 
         if (PEAR::isError($req)) {
             //  stop with error page
-            SGL::displayStaticPage($err->getMessage());
+            SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
 
