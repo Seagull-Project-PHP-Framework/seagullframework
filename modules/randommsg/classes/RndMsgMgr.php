@@ -164,7 +164,7 @@ class RndMsgMgr extends SGL_Manager
             $aLines = split($this->crlf, $input->addMsgsText);
         }
         $success = true;
-        foreach($aLines as $rndmsg) {
+        foreach ($aLines as $rndmsg) {
             if (trim($rndmsg) != '') {
                 $msg = DB_DataObject::factory($this->conf['table']['rndmsg_message']);
                 $msg->msg = trim($rndmsg);

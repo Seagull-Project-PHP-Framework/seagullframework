@@ -115,8 +115,11 @@ class GuestbookMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->guestbook)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         SGL_DB::setConnection($this->dbh);
-        //  insert record
         $newEntry = DB_DataObject::factory($this->conf['table']['guestbook']);
         $newEntry->setFrom($input->guestbook);
         $newEntry->guestbook_id = $this->dbh->nextId($this->conf['table']['guestbook']);

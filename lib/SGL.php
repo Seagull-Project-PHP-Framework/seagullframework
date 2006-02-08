@@ -254,12 +254,11 @@ class SGL
     {
         $aProps = get_object_vars($obj);
         if (count($aProps)) {
+            $ret = false;
             foreach ($aProps as $prop) {
                 if ($prop) {
                     $ret = true;
                     break;
-                } else {
-                    $ret = false;
                 }
             }
         } else {

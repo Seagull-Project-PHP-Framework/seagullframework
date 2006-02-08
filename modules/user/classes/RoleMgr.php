@@ -130,6 +130,11 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->role)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+
         SGL_DB::setConnection($this->dbh);
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->setFrom($input->role);

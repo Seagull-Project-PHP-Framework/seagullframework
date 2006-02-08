@@ -114,7 +114,12 @@ class FaqMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        if (!SGL::objectHasState($input->user)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+        SGL_DB::setConnection($this->faq);
+
         //  get new order number
         $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->selectAdd();

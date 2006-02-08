@@ -118,6 +118,10 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->category)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         $values = (array) $input->category;
         $this->_redirectCatId = $this->_category->create($values);
     }

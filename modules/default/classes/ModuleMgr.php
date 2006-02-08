@@ -202,6 +202,10 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->module)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         $output->template = 'moduleList.html';
         #$newEntry = DB_DataObject::factory($this->conf['table']['module']);
         $oModule = $this->da->getModuleById();

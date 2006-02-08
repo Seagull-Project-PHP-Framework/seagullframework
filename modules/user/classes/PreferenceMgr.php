@@ -160,6 +160,10 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->pref)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         SGL_DB::setConnection($this->dbh);
         $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->setFrom($input->pref);
