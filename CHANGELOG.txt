@@ -9,7 +9,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
-08-02-06    Blocks are now cacheable on an individual basis (Andrey Podshivalov)
+08-02-06    Blocks are now cacheable on an individual basis - schema change
+            (Andrey Podshivalov)
 08-02-06    Implemented a SGL::objectHasState() method to prevent inserting
             invalid objects.
 08-02-06    Improved authorisation in SGL_Manager
