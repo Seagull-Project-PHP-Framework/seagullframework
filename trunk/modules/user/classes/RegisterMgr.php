@@ -199,13 +199,16 @@ class RegisterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        if (!SGL::objectHasState($input->user)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+
         //  get default values for new users
         $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
         $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
-        //  build new user object
-        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser = $this->da->getUserById();
         $oUser->setFrom($input->user);
         $oUser->passwdClear = $input->user->passwd;
         $oUser->passwd = md5($input->user->passwd);
@@ -216,30 +219,9 @@ class RegisterMgr extends SGL_Manager
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
-        $success = $oUser->insert();
+        $success = $this->da->addUser($oUser);
 
-        //  assign permissions associated with role user belongs to
-        //  first get all perms associated with user's role
-        $aRolePerms = $this->da->getPermsByRoleId($defaultRoleId);
-
-        //  then assign them to the user_permission table
-        $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
-
-        //  assign preferences associated with org user belongs to
-        //  first get all prefs associated with user's org or default
-        //  prefs if orgs are disabled
-        if ($this->conf['OrgMgr']['enabled']) {
-            $aPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id,
-                SGL_RET_ID_VALUE);
-        } else {
-            $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
-        }
-
-        //  then assign them to the user_preference table
-        $ret = $this->da->addPrefsByUserId($aPrefs, $oUser->usr_id);
-
-        //  check global error stack for any error that might have occurred
-        if ($success && !SGL_Error::count()) {
+        if ($success) {
             //  send email confirmation according to config
             if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
                 $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
