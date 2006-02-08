@@ -333,7 +333,7 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->section)) {
+        if (!count($input->section)) {
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
