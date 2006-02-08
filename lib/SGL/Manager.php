@@ -225,7 +225,7 @@ class SGL_Manager
         //  all tests passed, execute relevant method
         foreach ($this->_aActionsMapping[$input->action] as $methodName) {
             $methodName = '_'.$methodName;
-            $this->$methodName($input, $output);
+            $this->{$methodName}($input, $output);
         }
         return true;
     }
