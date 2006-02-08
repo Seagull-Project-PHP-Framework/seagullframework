@@ -16,7 +16,8 @@ create table block
    blk_order            INT2                 null,
    position             VARCHAR(16)          null,
    is_enabled           INT2                 null,
-   content		text,
+   is_cached            INT2                 null,
+   params		text,
    constraint PK_BLOCK primary key (block_id)
 );
 

@@ -86,7 +86,7 @@ class BlockMgr extends SGL_Manager
         $input->position    = $req->get('position');
         $input->blockId     = ($req->get('frmBlockId'));
         $input->items       = $req->get('_items');
-        $input->form        = (object)$req->get('form');
+        $input->block       = (object)$req->get('block');
         $input->aParams     = $req->get('aParams', $allowTags = true);
 
         // Misc.
@@ -107,24 +107,24 @@ class BlockMgr extends SGL_Manager
         if ($this->submitted && $input->action != 'reorder' ) {
 
             // validate input data
-            if (empty($input->form->name)) {
-                $aErrors['name'] = 'Please fill in a name';
+            if (empty($input->block->name)) {
+                $aErrors['name'] = 'Please select a class name';
             }
-            if (empty($input->form->title)) {
+            if (empty($input->block->title)) {
                 $aErrors['title'] = 'Please fill in a title';
             }
-            if (empty($input->form->sections)) {
-                $aErrors['sections'] = 'Please fill in a sections';
+            if (empty($input->block->sections)) {
+                $aErrors['sections'] = 'Please select a section(s)';
             }
-            if (empty($input->form->roles)) {
-                $aErrors['roles'] = 'Please fill in a can view';
+            if (empty($input->block->roles)) {
+                $aErrors['roles'] = 'Please select a role(s)';
             }
             if (isset($aErrors) && count($aErrors)) {
                 SGL::raiseMsg('Please fill in the indicated fields');
                 $input->error    = $aErrors;
                 $this->validated = false;
             }
-        } elseif (!empty($input->form->edit) && !$this->submitted) {
+        } elseif (!empty($input->block->edit) && !$this->submitted) {
             $this->validated = false;
             unset($input->aParams);
         }
@@ -154,21 +154,22 @@ class BlockMgr extends SGL_Manager
         $output->template  = 'blockEdit.html';
 
         //  get block data
-        $block        = & new Block();
+        $block         = & new Block();
         $block->get($input->blockId);
-        $data         = $block->toArray('%s');
-        $output->form = (object)$data;
+        $data          = $block->toArray('%s');
+        $output->block = (object)$data;
 
         $this->_editDisplay($output);
     }
 
-    function _update(&$output)
+    function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oBlock             = $output->form;
+        $oBlock             = $input->block;
         $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
-        $oBlock->content    = serialize($output->aParams);
+        $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
+        $oBlock->params     = serialize($output->aParams);
         $block              = & new Block();
 
         // Update record in DB
@@ -182,13 +183,14 @@ class BlockMgr extends SGL_Manager
         SGL_HTTP::redirect();
     }
 
-    function _insert(&$output)
+    function _insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oBlock             = $output->form;
+        $oBlock             = $input->block;
         $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
-        $oBlock->content    = serialize($output->aParams);
+        $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
+        $oBlock->params     = serialize($output->aParams);
         $block              = & new Block();
 
         //  insert block record
@@ -304,17 +306,18 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->aAllBlocks     = SGL_Util::getAllBlocks();
-        $output->blockIsEnabled = empty($output->form->is_enabled) ? '' : 'checked';
+        $output->blockIsEnabled = empty($output->block->is_enabled) ? '' : 'checked';
+        $output->blockIsCached  = empty($output->block->is_cached) ? '' : 'checked';
 
         //  check class existing
-        if (!empty($output->form->name)) {
-            $blockClass = $output->form->name;
+        if (!empty($output->block->name)) {
+            $blockClass = $output->block->name;
             require_once SGL_BLK_DIR . '/' . $blockClass . '.php';
             if (class_exists($blockClass)) {
+                $output->checked = true;
 
                 //  load block params
-                $output->checked = true;
-                $block           = & new Block();
+                $block = & new Block();
                 $block->loadBlockParams($output, $blockClass, $output->blockId);
             }
         }

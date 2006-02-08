@@ -1,13 +1,13 @@
 <form action="" method="post" name="frmBlock" flexy:ignore id="frmBlock">
     <p>
         <input name="mode" type="hidden" value="{mode}" />
-        <input name="form[edit]" type="hidden" value="1" />
+        <input name="block[edit]" type="hidden" value="1" />
     {if:isAdd}
         <input name="action" type="hidden" value="insert" />
         <input name="isadd" type="hidden" value="1" />
     {else:}
         <input name="action" type="hidden" value="update" />
-        <input name="form[block_id]" type="hidden" value="{form.block_id}" />
+        <input name="block[block_id]" type="hidden" value="{block.block_id}" />
     {end:}
     </p>
     <h1 class="pageTitle">{translate(pageTitle)} {if:mode}:: {translate(mode)}{end:}</h1>
@@ -20,18 +20,18 @@
 
         <tr flexy:if="!isAdd">
             <td class="fieldName">{translate(#ID#)}</td>
-            <td align="left">{form.block_id}</td>
+            <td align="left">{block.block_id}</td>
         </tr>
 
         <tr>
-            <td class="fieldName" width="25%"><span class="error">*</span>{translate(#Block Class name#)}</td>
+            <td class="fieldName" width="25%"><span class="error">*</span>{translate(#Block Class Name#)}</td>
             <td align="left" width="75%">
                 <div class="error" flexy:if="error[name]">
                     {translate(error[name])}
                 </div>
-                <select name="form[name]" onchange="document.frmBlock.submit()">
+                <select name="block[name]" onchange="document.frmBlock.submit()">
                     <option value="">- {translate(#Choose class name#)} -</option>
-                    {generateSelect(aAllBlocks,form.name):h}
+                    {generateSelect(aAllBlocks,block.name):h}
                 </select>
             </td>
         </tr>
@@ -52,17 +52,17 @@
                 <div class="error" flexy:if="error[title]">
                     {translate(error[title])}
                 </div>
-            <input name="form[title]" type="text" value="{form.title}" /></td>
+            <input name="block[title]" type="text" value="{block.title}" /></td>
         </tr>
 
         <tr>
             <td class="fieldName">{translate(#Title class#)}</td>
-            <td align="left"><input name="form[title_class]" type="text" value="{form.title_class}" /></td>
+            <td align="left"><input name="block[title_class]" type="text" value="{block.title_class}" /></td>
         </tr>
 
         <tr>
             <td class="fieldName">{translate(#Body class#)}</td>
-            <td align="left"><input name="form[body_class]" type="text" value="{form.body_class}" /></td>
+            <td align="left"><input name="block[body_class]" type="text" value="{block.body_class}" /></td>
         </tr>
 
         <tr>
@@ -71,8 +71,8 @@
                 <div class="error" flexy:if="error[sections]">
                     {translate(error[sections])}
                 </div>
-                <select name="form[sections][]" multiple="multiple" size="15">
-                    {generateSelect(aSections,form.sections,1):h}
+                <select name="block[sections][]" multiple="multiple" size="15">
+                    {generateSelect(aSections,block.sections,1):h}
                 </select>
             </td>
         </tr>
@@ -83,8 +83,8 @@
                 <div class="error" flexy:if="error[roles]">
                     {translate(error[roles])}
                 </div>
-                <select name="form[roles][]" multiple="multiple" size="5">
-                    {generateSelect(aRoles,form.roles,1):h}
+                <select name="block[roles][]" multiple="multiple" size="5">
+                    {generateSelect(aRoles,block.roles,1):h}
                 </select>
             </td>
         </tr>
@@ -92,15 +92,20 @@
         <tr>
             <td class="fieldName">{translate(#Position#)}</td>
             <td align="left">
-                <select name="form[position]">
-                    {generateSelect(aBlocksNames,form.position):h}
+                <select name="block[position]">
+                    {generateSelect(aBlocksNames,block.position):h}
                 </select>
             </td>
         </tr>
 
+        <tr>
+            <td class="fieldName">{translate(#Cache status#)}</td>
+            <td align="left"><input type="checkbox" name="block[is_cached]" flexy:raw="{blockIsCached}" />{translate(#check to cache block content#)}</td>
+        </tr>
+
         <tr flexy:if="checked">
-            <td class="fieldName">{translate(#Status#)}:</td>
-            <td align="left"><input type="checkbox" name="form[is_enabled]" flexy:raw="{blockIsEnabled}" />{translate(#check to activate#)}</td>
+            <td class="fieldName">{translate(#Status#)}</td>
+            <td align="left"><input type="checkbox" name="block[is_enabled]" flexy:raw="{blockIsEnabled}" />{translate(#check to activate#)}</td>
         </tr>
 
         {if:aParams}

@@ -17,10 +17,16 @@
         'Body class' => 'Body class',
         'Sections' => 'Sections',
         'Block Class Name' => 'Block Class Name',
+        'Choose class name' => 'Choose class name',
+        'Block name' => 'Block name',
+        'Block description' => 'Block description',
         'Display Title' => 'Display Title',
         'Order' => 'Order',
         'Position' => 'Position',
         'Block Details' => 'Block Details',
+        'Block Parameters' => 'Block Parameters',
+        'Cache status' => 'Cache status',
+        'check to cache block content' => 'check to cache block content',
 
         // Messages
         'Block successfully added' => 'Block successfully added',
@@ -29,9 +35,10 @@
         'There was a problem, block did not validate' => 'There was a problem, block did not validate',
 
         // Errors
-        'You must enter a name for your block' => 'You must enter a name for your block',
-        'You must enter a title for your block' => 'You must enter a title for your block',
-        'You need to define a class for this block before activating it' => 'You need to define a class for this block before activating it',
+        'Please select a class name' => 'Please select a class name',
+        'Please fill in a title' => 'Please fill in a title',
+        'Please select a section(s)' => 'Please select a section(s)',
+        'Please select a role(s)' => 'Pleease select a role(s)',
 
         // Misc
         'Block' => 'Block',
@@ -41,9 +48,6 @@
         'No section' => 'No section',
         'All sections' => 'All sections',
         'With selected block(s)'=>'With selected block(s)',
-        'Left' => 'Left',
-        'Right' => 'Right',
-        'New Html block' => 'New Html block',
         'Can view' => 'Can view',
         'All roles' => 'All roles',
     );
