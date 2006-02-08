@@ -15,7 +15,8 @@ create table block
 	blk_order            NUMBER(5)                 	null,
 	position             VARCHAR(16)                 	null,
 	is_enabled           NUMBER(5)                 	null,
-	content				 CLOB,
+        is_cached            NUMBER(5)                          null,
+	params               CLOB,
 	constraint PK_BLOCK primary key (block_id)
 );
 

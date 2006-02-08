@@ -126,9 +126,13 @@ class SGL_BlockLoader
         $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
         if ($data = $cache->get($cacheId, 'blocks')) {
             $this->aBlocks = unserialize($data);
+
+            //  load uncached blocks
+            $this->_loadBlocks(false);
+
             SGL::logMessage('blocks from cache', PEAR_LOG_DEBUG);
         } else {
-            $this->_loadBlocks();
+            $this->_loadBlocks(true);
             $data = serialize($this->aBlocks);
             $cache->save($data, $cacheId, 'blocks');
             SGL::logMessage('blocks from db', PEAR_LOG_DEBUG);
@@ -142,17 +146,18 @@ class SGL_BlockLoader
      * @access  private
      * @return  void
      */
-    function _loadBlocks()
+    function _loadBlocks($getAll)
     {
         $dbh = & SGL_DB::singleton();
+        $addWhere = $getAll ? '' : "AND b.is_cached = 0 ";
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class,
-                b.body_class, b.position, b.content
+                b.body_class, b.position, b.params, b.is_cached, b.blk_order
             FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
                     {$this->conf['table']['block_role']} br
-            WHERE   b.is_enabled = 1
-            AND     (br.block_id = b.block_id AND
+            WHERE   b.is_enabled = 1 " . $addWhere .
+            "AND     (br.block_id = b.block_id AND
                       (br.role_id = '" . SGL_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
                     )
             AND     b.block_id = ba.block_id
@@ -194,8 +199,7 @@ class SGL_BlockLoader
                     SGL::raiseError($blockClass . ' is not a valid block classname',
                         SGL_ERROR_NOCLASS);
                 } else {
-                    $aParams = @unserialize($oBlock->content);
-                    if (!is_array($aParams)) {
+                    if (is_scalar($aParams = @unserialize($oBlock->params))) {
                         $aParams = array();
                     }
                     @$obj = & new $blockClass();
@@ -218,7 +222,7 @@ class SGL_BlockLoader
     {
         if (count($this->_aData) > 0) {
             foreach ($this->_aData as $oBlock) {
-                $this->aBlocks[$oBlock->position][] = $oBlock;
+                $this->aBlocks[$oBlock->position][$oBlock->blk_order] = $oBlock;
             }
         }
         unset($this->_aData);

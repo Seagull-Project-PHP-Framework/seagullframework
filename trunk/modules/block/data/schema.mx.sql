@@ -22,7 +22,8 @@ CREATE TABLE block
    body_class           VARCHAR(32)          null,
    blk_order            INTEGER                 null,
    position             VARCHAR(16)             null,
-   is_enabled           INTEGER                 null
+   is_enabled           INTEGER                 null,
+   is_cached            INTEGER                 null
 );
 
 -- ==============================================================

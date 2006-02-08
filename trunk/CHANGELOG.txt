@@ -9,9 +9,10 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
-07-02-06    Implemented a SGL::objectHasState() method to prevent inserting
+08-02-06    Blocks are now cacheable on an individual basis (Andrey Podshivalov)
+08-02-06    Implemented a SGL::objectHasState() method to prevent inserting
             invalid objects.
-07-02-06    Improved authorisation in SGL_Manager
+08-02-06    Improved authorisation in SGL_Manager
 07-02-06    Clarified distinction between authentication and authorisation
 07-02-06    Removed 2 fatal errors for missing parent::Manager and unknown
             action, now you get an error page

@@ -11,7 +11,8 @@ create table if not exists block
    blk_order                      smallint,
    position                       varchar(16),
    is_enabled                     smallint,
-   content longtext,
+   is_cached                      smallint,
+   params                         longtext,
    primary key (block_id)
 );
 

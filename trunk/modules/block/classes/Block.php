@@ -404,7 +404,7 @@ class Block
         //  load params from db
         if ($blockId) {
             $this->block->get($blockId);
-            $aSavedParams = $this->block->content ? @unserialize($this->block->content) : array();
+            $aSavedParams = $this->block->params ? @unserialize($this->block->params) : array();
             if (!is_array($aSavedParams)) {
                 $aSavedParams = array();
             }
