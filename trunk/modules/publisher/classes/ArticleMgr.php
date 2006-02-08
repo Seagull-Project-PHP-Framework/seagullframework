@@ -203,8 +203,8 @@ class ArticleMgr extends SGL_Manager
 
         //  if category has been changed, update input
         $input->catID = ($input->catID == $input->catChangeToID)
-                        ? $input->catID
-                        : $input->catChangeToID;
+            ? $input->catID
+            : $input->catChangeToID;
 
         //  check for missing article id
         if (empty($input->catID)) {
@@ -232,7 +232,7 @@ class ArticleMgr extends SGL_Manager
         $insertID = $item->addMetaItems();
 
         //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue, 
+        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
             $input->aDataItemType, $input->articleLang);
 
         SGL::raiseMsg('Article successfully added');

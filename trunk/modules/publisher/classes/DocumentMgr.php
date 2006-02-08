@@ -233,6 +233,10 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->document)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         SGL_DB::setConnection($this->dbh);
         $asset = DB_DataObject::factory($this->conf['table']['document']);
         $asset->setFrom($input->document);

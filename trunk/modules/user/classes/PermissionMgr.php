@@ -173,6 +173,10 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->perm)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         SGL_DB::setConnection($this->dbh);
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
@@ -205,14 +209,14 @@ class PermissionMgr extends SGL_Manager
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
             SGL::raiseMsg('No perms were selected');
+            return false;
         }
         $input->template = 'permScan.html';
-
-        //  let's go transactional
         $this->dbh->autocommit();
 
         $errors = 0;
         foreach ($input->scannedPerms as $k=>$v) {
+
             //  undelimit form value into perm name, moduleId
             $p = explode('^', $v);
 
