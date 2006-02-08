@@ -304,6 +304,9 @@ class SGL_Session
      */
     function hasPerms($permId)
     {
+        if (!count($_SESSION)) {
+            $ret = false;
+        }
         //  if admin role, give perms by default
         if (@$_SESSION['rid'] == SGL_ADMIN) {
             $ret = true;
@@ -331,6 +334,7 @@ class SGL_Session
     function getUserType()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $currentRoleId = @$_SESSION['rid'];
 
         if ($currentRoleId == SGL_GUEST) {

@@ -9,6 +9,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+07-02-06    Improved authorisation in SGL_Manager
 07-02-06    Clarified distinction between authentication and authorisation
 07-02-06    Removed 2 fatal errors for missing parent::Manager and unknown
             action, now you get an error page
