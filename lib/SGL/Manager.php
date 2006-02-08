@@ -171,7 +171,7 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $className = get_class($this);
+        $mgrName = SGL_Inflector::caseFix(get_class($this));
 
         //  determine if action param from $_GET is valid
         if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
@@ -184,12 +184,12 @@ class SGL_Manager
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
         //  only implement auth check on demand
-        if ( isset($this->conf[$className]['requiresAuth'])
-                && $this->conf[$className]['requiresAuth'] == true
+        if ( isset($this->conf[$mgrName]['requiresAuth'])
+                && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
             //  setup classwide perm
-            $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
+            $classPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
             if ($ok = $this->_authorise($classPerm, $input) !== true) {
