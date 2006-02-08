@@ -339,10 +339,11 @@ class SGL_Output
      * row colors.
      *
      * @access  public
+     * @param   boolean $isBold
      * @return  string  $curRowClass string representing class found in stylesheet
      */
 
-    function switchRowClass($isBold, $id = 'default')
+    function switchRowClass($isBold = false, $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
