@@ -53,8 +53,6 @@ class SGL_Request
      * Sets up a request object.
      *
      * @return SGL_Request
-     *
-     * @todo implement CLI request initialiser
      */
     function SGL_Request()
     {
@@ -67,6 +65,31 @@ class SGL_Request
             $res = (!SGL::runningFromCLI()) ? $this->initHttp() : $this->initCli();
         }
         return $res;
+    }
+    
+    /**
+     * Returns a singleton Request instance.
+     *
+     * example usage:
+     * $req = & SGL_Request::singleton();
+     * warning: in order to work correctly, the request
+     * singleton must be instantiated statically and
+     * by reference
+     *
+     * @access  public
+     * @static
+     * @return  mixed           reference to Request object
+     */
+    function &singleton()
+    {
+        static $instance;
+
+        // If the instance is not there, create one
+        if (!isset($instance)) {
+            $instance = new SGL_Request();
+            $err = $instance->init();            
+        }
+        return $instance;
     }
 
     function isEmpty()
@@ -146,7 +169,6 @@ class SGL_Request
             $value[0] = str_replace('--', '', $value[0]);
             $this->aProps[$value[0]] = $value[1];
         }
-
     }
 
     function merge($aHash)
@@ -155,30 +177,6 @@ class SGL_Request
         if (!array_key_exists($firstKey, $this->aProps)) {
             $this->aProps = array_merge_recursive($this->aProps, $aHash);
         }
-    }
-
-    /**
-     * Returns a singleton Request instance.
-     *
-     * example usage:
-     * $req = & SGL_Request::singleton();
-     * warning: in order to work correctly, the request
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @return  mixed           reference to Request object
-     */
-    function &singleton()
-    {
-        static $instance;
-
-        // If the instance is not there, create one
-        if (!isset($instance)) {
-            $instance = new SGL_Request();
-        }
-        return $instance;
     }
 
     /**
