@@ -6,36 +6,36 @@
 
     <table class="wide">
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Article type#)}</th>
-            <td width="70%">
+            <th width="15%" nowrap="nowrap">{translate(#Article type#)}</th>
+            <td width="85%">
                 <select name="frmArticleTypeID" disabled="true">
                     {generateSelect(aArticleTypes,dataTypeID):h}</select>
             </td>
         </tr>
 
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Author#)}</th>
-            <td width="70%">{loggedOnUser}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Author#)}</th>
+            <td width="85%">{loggedOnUser}</td>
         </tr>
 
         {if:aCategories}
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Category#)}</th>
-            <td width="70%">{breadCrumbs:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Category#)}</th>
+            <td width="85%">{breadCrumbs:h}</td>
         </tr>
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Change Category#)}</th>
-            <td width="70%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
+            <th width="15%" nowrap="nowrap">{translate(#Change Category#)}</th>
+            <td width="85%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
         </tr>
         {end:}
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Start Date#)}</th>
-            <td width="70%">{dateSelectorStart:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Start Date#)}</th>
+            <td width="85%">{dateSelectorStart:h}</td>
         </tr>
 
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
-            <td width="70%">{dateSelectorExpiry:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
+            <td width="85%">{dateSelectorExpiry:h}</td>
         </tr>
         {dynaFields:h}
         <tr>

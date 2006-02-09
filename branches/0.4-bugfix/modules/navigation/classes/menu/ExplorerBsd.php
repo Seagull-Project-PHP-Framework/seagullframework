@@ -64,9 +64,17 @@ class Menu_ExplorerBsd
         
         //  build url for current page
         $req = & SGL_HTTP_Request::singleton();
+        /* Ensure menu's links should work if it's shown on the main page (managernName and moduleName both == 
+'default')*/
+        $managerName = $req->get('managerName');
+        $moduleName = $req->get('moduleName');
+        if ($managerName == 'default' && $moduleName == 'default'){
+                $managerName = 'articleview';
+                $moduleName = 'publisher';
+        }
         $url = SGL_Url::makeLink(   '', 
-                                    $req->get('managerName'),
-                                    $req->get('moduleName')                             
+                                    $managerName,
+                                    $moduleName                             
                                     );
         $url .= 'frmCatID/';
         $nodeOptions = array(

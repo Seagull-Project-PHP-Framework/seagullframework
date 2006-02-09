@@ -629,7 +629,7 @@ class SGL_Item
     }
 
     /**
-     * Retierves an Item's Meta and Data items and generates the output using
+     * Retrieves an Item's Meta and Data items and generates the output using
      * the method generateItemOutput().
      * 
      * @access	public
@@ -644,7 +644,7 @@ class SGL_Item
         
         $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition, i.category_id
             FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
                     {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id 
@@ -657,10 +657,11 @@ class SGL_Item
         $result = $dbh->query($query);
         if (!DB::isError($result)) {
             $html = array();
-            while (list($fieldID, $fieldName, $fieldValue)
+            while (list($fieldID, $fieldName, $fieldValue, $categoryID)
                 = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
                 $html[$fieldName] = $this->generateItemOutput(
                     $fieldID, $fieldName, $fieldValue, $this->typeID);
+		    $html['categoryID'] = $categoryID;
             }
             return $html;
         } else {

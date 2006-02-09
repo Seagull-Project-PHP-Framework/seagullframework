@@ -119,7 +119,19 @@ class BlockForm
         $select->setSize(15);
         // mark selected items
         if ($this->action == 'edit' ) {
-          $select->setSelected($this->data['block[sections]']);
+        // Make sure that if section_id == 0 is in the $data['block[sections]'] array, it is detected
+        $allSections = $this->data['block[sections]'];
+        $qfSelectedItems = array ();
+        for ($i = 0; $i < count($allSections); $i++) {
+            $currSec = $allSections[$i];
+
+            if (is_object($currSec)) {
+                $qfSelectedItems[] = $currSec->section_id;
+            } else {
+                $qfSelectedItems[] = $currSec;
+            }
+        }
+        $select->setSelected($qfSelectedItems);
         }
         // Field position
         $this->form->addElement('select', 'block[is_onleft]', SGL_String::translate('Position'), array( '0' => SGL_String::translate('Right'), '1' => SGL_String::translate('Left')));
