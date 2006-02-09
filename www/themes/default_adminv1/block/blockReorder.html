@@ -1,0 +1,16 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="frmBlockMgr" method="post" flexy:ignore id="frmBlockMgr">
+    <fieldset class="main">
+        <input type="hidden" name="action" value="{action}" /> 
+        <input type="hidden" name="_items" /> 
+    
+        <h3>{translate(#Reorder blocks#)} "{blocksName}"</h3>
+    
+        <a href="#here" onclick="return orderItems(0)">{translate(#move up#)}</a>
+        <a href="#here" onclick="return orderItems(1)">{translate(#move down#)}</a><br />
+        <select name="item" size="15">
+            {generateSelect(aBlocks):h}
+        </select>
+    </fieldset>
+</form>

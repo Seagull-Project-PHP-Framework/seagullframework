@@ -1,0 +1,87 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form action="" method="post" name="frmBlockEdit" flexy:ignore id="frmBlockEdit">
+    <div class="formOptions" id="blockEditOptions">
+        <fieldset>
+            <legend>{translate(#Properties#)}</legend>
+            <p>
+                <label for="form[position]">{translate(#Position#)}</label>
+                <select name="form[position]" id="form[position]">
+                    {generateSelect(aBlocksNames,form.position):h}
+                </select>
+            </p>
+            <p>
+                <label for="form[sections]">{translate(#Sections#)}</label>
+                <select name="form[sections][]" id="form[sections]" multiple="multiple" size="15">
+                    {generateSelect(aSections,form.sections,1):h}
+                </select>
+            </p>
+            <p>
+                <label for="form[roles]">{translate(#Can view#)}</label>
+                <select name="form[roles][]" id="form[roles]" multiple="multiple" size="5">
+                    {generateSelect(aRoles,form.roles,1):h}
+                </select>
+            </p>
+        </fieldset>
+    </div>
+    <div class="formContent" id="blockEditContent">
+        <fieldset class="main">
+            <input type="hidden" name="mode" value="{mode}" />
+            <input type="hidden" name="form[edit]" value="1" />
+        {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="isadd" value="1" />
+            <h3>{translate(#New block#)}</h3>
+        {else:}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="form[block_id]" value="{form.block_id}" />
+            <h3>{translate(#Editing block#)} #{form.block_id}</h3>
+        {end:}
+    
+            <p>
+                <label class="tipOwner" for="form[name]"><span class="required">*</span>{translate(#Block Class name#)}
+                    <span class="tipText">{translate(#class name tooltip#)}</span>
+                </label>
+                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <select name="form[name]" id="form[name]" onchange="document.frmBlockEdit.submit()">
+                    <option value="">- {translate(#Choose class name#)} -</option>
+                    {generateSelect(aAllBlocks,form.name):h}
+                </select>
+            </p>
+            <p>
+                <label flexy:if="details.name">{translate(#Block name#)}</label>
+                <span>{details.name}</span>
+            </p>
+            <p>
+                <label flexy:if="details.description">{translate(#Block description#)}</label>
+                <span>{details.description}</span>
+            </p>
+            <p>
+                <label class="tipOwner" for="form[title]"><span class="required">*</span>{translate(#Display Title#)}
+                    <span class="tipText">{translate(#block title tooltip#)}</span>
+                </label>
+                <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+                <input type="text" name="form[title]" id="form[title]" value="{form.title}" />
+            </p>
+            <p>
+                <label for="form[title_class]">{translate(#Title class#)}</label>
+                <input type="text" name="form[title_class]" id="form[title_class]" value="{form.title_class}" />
+            </p>
+            <p>
+                <label for="form[body_class]">{translate(#Body class#)}</label>
+                <input type="text" name="form[body_class]" id="form[body_class]" value="{form.body_class}" />
+            </p>
+            <p flexy:if="checked">
+                <label for="form[is_enabled]">{translate(#Status#)}</label>
+                <input type="checkbox" name="form[is_enabled]" id="form[is_enabled]" flexy:raw="{blockIsEnabled}" />{translate(#check to activate#)}
+            </p>
+            {if:aParams}
+                <flexy:include src="editParams.html" />
+            {end:}
+            <p>
+                <span class="required">*</span>{translate(#denotes required field#)}
+            </p>
+        </fieldset>
+    </div>
+    <div class="spacer"></div>
+</form>
