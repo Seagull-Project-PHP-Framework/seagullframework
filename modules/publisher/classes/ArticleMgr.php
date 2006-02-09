@@ -191,7 +191,7 @@ class ArticleMgr extends SGL_Manager
         $htmlOptions = $menu->toHtml();
 
         //  only display categories if 'html article' type is chosen
-        if ($input->dataTypeID == 2) {
+        if ($item->get('typeID') == 2) {
             $output->aCategories = $htmlOptions;
             $output->currentCat = $input->catID;
         }
@@ -359,7 +359,7 @@ class ArticleMgr extends SGL_Manager
         $item->set('lastUpdatedById', $input->createdByID);
 
         //  only update catID if it's  a dynamic html article
-        if ($input->dataTypeID == 2) {
+        if ($item->get('typeID') == 2) {
             $item->set('catID', $input->articleCatID);
         }
         $item->set('lastUpdated', SGL_Date::getTime());
