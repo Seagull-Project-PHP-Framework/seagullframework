@@ -1,0 +1,65 @@
+{sectionArrayJS:h}
+<form method="post" flexy:ignore name="frmSectionMgr" id="frmSectionMgr" action="">
+    <span flexy:if="msgGet()">{msgGet()}</span>
+    {if:pager}<flexy:include src="pager.html" />{end:}
+    <fieldset class="main">
+        <input type="hidden" name="action" value="delete" />
+        <table class="full">
+            <thead>
+                <tr>
+                    <th class="id">{translate(#ID#)}</th>
+                    <th>
+                        <span class="tipOwner">
+                            <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('frmSectionMgr', 'frmDelete[]', this.checked)" />
+                            <span class="tipText" id="becareful">Be Careful !</span>
+                        </span>
+                    </th>
+                    <th class="left">{translate(#Title#)}</th>
+                    <th>{translate(#Move/Edit#)}</th>
+                    <th class="left">{translate(#Resource URI#)}</th>
+                    <th>{translate(#Parent ID#)}</th>
+                    <th>{translate(#Order#)}</th>
+                    <th>{translate(#Status#)}</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td class="right">
+                        <img src="{webRoot}/themes/{theme}/images/16/arrow_right.png" alt="" />
+                    </td>
+                    <td colspan="6">{translate(#With selected section(s)#)} : <input type="submit" name="Delete" value="{translate(#delete#)}" onclick="return confirmDelete('section', 'frmSectionMgr')" /></td>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr class="{switchRowClass()}" flexy:foreach="results,key,section">
+                    <td>{section[section_id]}</td>
+                    <td><input type="checkbox" name="frmDelete[{section[section_id]}]" value="{section[section_id]}" /></td>
+                    <td class="left">{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:} <a href="{makeUrl(#edit#,#page#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}">{section[title]:h}</a></td>
+                    <td align="center">&nbsp;
+                        {if:section[images][moveDownTarget]}
+                            <a href="{makeUrl(#reorder#,#page#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveDownTarget]||move|down#,key)}">
+                                <img src="{webRoot}/themes/{theme}/{section[images][moveDownImg]:h}" alt="Move {section[title]} down" /></a>
+                        {else:} <img src="{webRoot}/themes/{theme}/{section[images][moveDownImg]:h}" alt="Move {section[title]} down" />
+                        {end:}
+
+                        {if:section[images][moveUpTarget]}
+                            <a href="{makeUrl(#reorder#,#page#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveUpTarget]||move|up#,key)}">
+                                <img src="{webRoot}/themes/{theme}/{section[images][moveUpImg]:h}" alt="Move {section[title]} up" /></a>
+                        {else:} <img src="{webRoot}/themes/{theme}/{section[images][moveUpImg]:h}" alt="Move {section[title]} up" />
+                        {end:}&nbsp;&nbsp;
+
+                        <a href="{makeUrl(#edit#,#page#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}"><img src="{webRoot}/themes/{theme}/images/16/action_edit.gif" alt="{translate(#Edit#)}" title="{translate(#Edit#)}" /></a>
+                    </td>
+                    <td class="left">{summarise(section[resource_uri])}</td>
+                    <td>{section[parent_id]}</td>
+                    <td>{section[order_id]}</td>
+                    <td>
+                        {if:section[is_enabled]}<img src="{webRoot}/themes/{theme}/images/16/status_enabled.gif" alt="{translate(#Enabled#)}" title="{translate(#Enabled#)}" />
+                        {else:}<img src="{webRoot}/themes/{theme}/images/16/status_disabled.gif" alt="{translate(#Disabled#)}" title="{translate(#Disabled#)}" />
+                        {end:}</td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+</form>

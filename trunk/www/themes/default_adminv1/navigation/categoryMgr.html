@@ -1,0 +1,55 @@
+<script type="text/javascript">
+function collapseElement(display,elementId)
+{
+    var blockToCollapse = document.getElementById(elementId);
+    if (display){
+        blockToCollapse.style.display = 'block';
+    } else {
+        blockToCollapse.style.display = 'none';
+    }
+}
+</script>
+<p><span flexy:if="msgGet()">{msgGet()}</span></p>
+
+{if:noEditForm}
+    <p>{translate(#Please choose a category from the left to edit#)}.<br /></p>
+{else:}
+    <form name="frmCategoryMgr" action="" method="post" flexy:ignore id="frmCategoryMgr">
+        <fieldset>
+            <h3>{translate(#category#,#ucfirst#)} (id#{category[category_id]}) {category[label]}</h3>
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="category[category_id]" value="{category[category_id]}" />
+            <input type="hidden" name="category[order_id]" value="{category[order_id]}" />
+            <input type="hidden" name="category[original_parent_id]" value="{category[parent_id]}" />
+            <input type="hidden" name="frmDelete[{category[category_id]}]" value="{category[category_id]}" />
+            
+            <p>
+                <label>{translate(#You are here#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label for="category[parent_id]">{translate(#Target Parent Category#)}</label>
+                <select name="category[parent_id]" id="category[parent_id]">
+                    <option value="0">Top level (No parent)</option>
+                    {generateSelect(aCategories,category[parent_id]):h}
+                </select>
+            </p>
+            <p>
+                <label for="category[label]">{translate(#Current Category Name#)}</label>
+                <div class="error" flexy:if="error[name]">{error[label]}</div>
+                <input type="text" class="longText" name="category[label]" id="category[label]" value="{category[label]}" />
+            </p>
+            <fieldset id="rightManagement">
+                <legend>{translate(#Rights Management#)}</legend>
+                <p>
+                    <label class="tipOwner" for="category[perms]">{translate(#Has Permissions#)}
+                        <span class="tipText">{translate(#Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.#)}</span>
+                    </label>
+                    <span>&nbsp;</span>
+                </p>
+                {this.plugin(#generatePermsRadioList1#,perms,#category_id#):h}
+            </fieldset>
+        </fieldset>
+    </form>
+
+{end:}
