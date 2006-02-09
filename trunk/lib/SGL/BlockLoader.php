@@ -123,11 +123,12 @@ class SGL_BlockLoader
         //  put data generated so far into class scope
         $this->output = &$output;
         $cache = & SGL_Cache::singleton();
-        $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid . $this->_staticId;
+        $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid
+            . $this->_staticId . $output->currLang;
         if ($data = $cache->get($cacheId, 'blocks')) {
             $this->aBlocks = unserialize($data);
 
-            //  load uncached blocks
+            //  update uncached blocks
             $this->_loadBlocks(false);
 
             SGL::logMessage('blocks from cache', PEAR_LOG_DEBUG);
@@ -146,14 +147,14 @@ class SGL_BlockLoader
      * @access  private
      * @return  void
      */
-    function _loadBlocks($getAll)
+    function _loadBlocks($getAll = true)
     {
         $dbh = & SGL_DB::singleton();
         $addWhere = $getAll ? '' : "AND b.is_cached = 0 ";
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class,
-                b.body_class, b.position, b.params, b.is_cached, b.blk_order
+                b.body_class, b.position, b.params, b.is_cached
             FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
                     {$this->conf['table']['block_role']} br
             WHERE   b.is_enabled = 1 " . $addWhere .
@@ -222,7 +223,7 @@ class SGL_BlockLoader
     {
         if (count($this->_aData) > 0) {
             foreach ($this->_aData as $oBlock) {
-                $this->aBlocks[$oBlock->position][$oBlock->blk_order] = $oBlock;
+                $this->aBlocks[$oBlock->position][$oBlock->block_id] = $oBlock;
             }
         }
         unset($this->_aData);
