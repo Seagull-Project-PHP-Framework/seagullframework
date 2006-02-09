@@ -78,6 +78,16 @@
         </td>
     </tr>
     <tr>
+        <td class="fieldName">{translate(#Deny list#)}</td>
+        <td class="fieldValue"><textarea name="conf[site][denyList]" cols="50" rows="3">{conf[site][denyList]}</textarea></td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Allow list#)}</td>
+        <td class="fieldValue"><textarea name="conf[site][allowList]" cols="50" rows="3">{conf[site][allowList]}</textarea></td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
         <td class="fieldName">{translate(#Enable Safe deleting#)}</td>
         <td class="fieldValue">
             {generateRadioPair(#conf[site][safeDelete]#,conf[site][safeDelete]):h}
@@ -306,8 +316,8 @@
         <td class="fieldValue">
             {generateRadioPair(#conf[site][adminGuiEnabled]#,conf[site][adminGuiEnabled]):h}
         </td>
-        <td>
-            &nbsp;
+        <td>&nbsp;
+            
         </td>
     </tr>
 
