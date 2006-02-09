@@ -57,7 +57,7 @@
             </td>
         </tr>
     {end:}
-        {if:isAdmin}
+        {if:isAdmin()}
             {if:conf[OrgMgr][enabled]}
         	<tr>
         		<td class="fieldName">Organisation Name</td>
@@ -154,7 +154,7 @@
             <td class="fieldName">{translate(#Mobile#)}</td>
             <td align="left"><input name="user[mobile]" type="text" value="{user.mobile}" /></td>
         </tr>
-        {if:isAdmin}
+        {if:isAdmin()}
         <tr>
             <td class="fieldName">{translate(#Is Active?#)}</td>
             <td align="left"><input name="user[is_acct_active]" flexy:raw="{isAcctActive}" type="checkbox" value="1" /> {translate(#check if active#)}</td>
@@ -184,7 +184,7 @@
                 </div><input name="user[security_answer]" type="text" value="{user.security_answer}" />
             </td>
         </tr>
-        {if:isAdmin}
+        {if:isAdmin()}
     	<tr>
     		<td class="fieldName">{translate(#Role#)}</td>
     		<td align="left">
@@ -197,7 +197,7 @@
         <tr>
             <td valign="top" align="center" colspan="2">
                 <input class="wideButton" name="submitted" value="{translate(#Submit#)}" type="submit" />&nbsp;
-                {if:isAdmin}
+                {if:isAdmin()}
                     <input class="wideButton" type="button" value="{translate(#Cancel#)}"
                         onclick="javascript:document.location.href='{makeUrl(##,#user#,#user#)}'" />
                 {else:}

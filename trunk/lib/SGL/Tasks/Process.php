@@ -673,10 +673,6 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  set isAdmin flag
-        $input->data->isAdmin = (SGL_Session::getUserType() == SGL_ADMIN)
-            ? true : false;
-
         //  setup login stats
         if (SGL_Session::getUserType() > SGL_GUEST) {
             $input->data->loggedOnUser = $_SESSION['username'];

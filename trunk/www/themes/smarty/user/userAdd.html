@@ -1,20 +1,20 @@
 <form action="" method="post" name="frmUser" id="frmUser">
     <p>
     {if $result->isAdd}
-    <input name="action" type="hidden" value="insert" /> 
+    <input name="action" type="hidden" value="insert" />
     {if $result->redir}
     <input type="hidden" name="redir" value="{$result->redir}" />
-    {/if} 
+    {/if}
     {else}
-    <input name="action" type="hidden" value="update" /> 
-    <input name="user[usr_id]" type="hidden" value="{$result->user->usr_id}" /> 
-    <input name="user[role_id_orig]" type="hidden" value="{$result->user->role_id}" /> 
+    <input name="action" type="hidden" value="update" />
+    <input name="user[usr_id]" type="hidden" value="{$result->user->usr_id}" />
+    <input name="user[role_id_orig]" type="hidden" value="{$result->user->role_id}" />
     <input name="user[organisation_id_orig]" type="hidden" value="{$result->user->organisation_id}" />
     {/if}
     </p>
     <h1 class="pageTitle">{$result->translate($result->pageTitle)}</h1>
     {if $result->msgGet()}
-    <span>{$result->msgGet()}</span> 
+    <span>{$result->msgGet()}</span>
     {/if}
 
     <table class="narrow">
@@ -68,7 +68,7 @@
             </td>
         </tr>
     {/if}
-        {if $result->isAdmin}
+        {if $result->isAdmin()}
             {if $result->conf.OrgMgr.enabled}
         	<tr>
         		<td class="fieldName">Organisation Name</td>
@@ -179,7 +179,7 @@
             <td class="fieldName">{$result->translate('Mobile')}</td>
             <td align="left"><input name="user[mobile]" type="text" value="{$result->user->mobile}" /></td>
         </tr>
-        {if $result->isAdmin}
+        {if $result->isAdmin()}
         <tr>
             <td class="fieldName">{$result->translate('Is Active?')}</td>
             <td align="left"><input name="user[is_acct_active]" flexy:raw="{isAcctActive}" type="checkbox" value="1" /> {$result->translate('check if active')}</td>
@@ -214,7 +214,7 @@
                 <input name="user[security_answer]" type="text" value="{$result->user->security_answer}" />
             </td>
         </tr>
-        {if $result->isAdmin}
+        {if $result->isAdmin()}
     	<tr>
     		<td class="fieldName">{$result->translate('Role')}</td>
     		<td align="left">
@@ -226,11 +226,11 @@
         {/if}
         <tr>
             <td valign="top" align="center" colspan="2">
-                <input class="wideButton" name="submitted" value="{$result->translate('Submit')}" type="submit" />&nbsp; 
-                {if $result->isAdmin} 
-                    <input class="wideButton" type="button" value="{$result->translate('Cancel')}" 
-                        onclick="javascript:document.location.href='{makeUrl('','user','user')}'" /> 
-                {else} 
+                <input class="wideButton" name="submitted" value="{$result->translate('Submit')}" type="submit" />&nbsp;
+                {if $result->isAdmin()}
+                    <input class="wideButton" type="button" value="{$result->translate('Cancel')}"
+                        onclick="javascript:document.location.href='{makeUrl('','user','user')}'" />
+                {else}
                     <input class="wideButton" value="{$result->translate('Reset')}" type="reset" />
                 {/if}
             </td>
@@ -238,7 +238,7 @@
 
         <tr>
             <td valign="top" align="center" colspan="2">
-                <span class="error">*</span> 
+                <span class="error">*</span>
                 <span>{$result->translate('denotes required field')}</span>
             </td>
         </tr>

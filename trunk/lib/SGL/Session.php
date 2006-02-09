@@ -357,7 +357,11 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        return $_SESSION['uid'];
+        if (count($_SESSION && isset($_SESSION['uid']))) {
+            return $_SESSION['uid'];
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -370,7 +374,11 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        return $_SESSION['rid'];
+        if (count($_SESSION && isset($_SESSION['rid']))) {
+            return $_SESSION['rid'];
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -383,7 +391,11 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        return $_SESSION['oid'];
+        if (count($_SESSION && isset($_SESSION['oid']))) {
+            return $_SESSION['oid'];
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -397,6 +409,7 @@ class SGL_Session
     function remove($sessVarName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (isset($sessVarName)) {
             unset($_SESSION[$sessVarName]);
             return true;
