@@ -70,6 +70,7 @@ class DefaultMgr extends SGL_Manager
         $input->pageTitle   = $this->pageTitle;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->newsID      = $req->get('frmNewsID');
+        $input->javascriptSrc   = array('TreeMenu.js');//JavaScript code for the CategoryNav block should be available on the front page. 
     }
 
     function _showNews(&$input, &$output)

@@ -439,13 +439,21 @@ class CategoryMgr extends SGL_Manager
         }
         $crumbs = $nestedSet->getBreadcrumbs($category_id);        
         $htmlString = '';
-
-        //  build url for current page
+        //Fix: on article detail page, breadbrumbs lead to broken page, by making a link such as:
+        //http://site/seagull/index.php/publisher/articleview/action/view/frmCatID/25/
+        //If URL has action/view, you need an article id, not a category id.
+        //Instead, we need action/summary
         $req = & SGL_HTTP_Request::singleton();
-        $url = SGL_Url::makeLink(   $req->get('action'), 
-                                    $req->get('managerName'),
+        $action = $req->get('action');
+        $managerName = $req->get('managerName');
+        if ($action == 'view' && $managerName == 'articleview'){
+                $action = 'summary';
+        }
+        $url = SGL_Url::makeLink(   $action, 
+                                    $managerName,
                                     $req->get('moduleName')                             
                                     );
+        //  build url for current page
         $url .= 'frmCatID/';
         
         foreach ($crumbs as $crumb) {

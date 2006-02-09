@@ -6,44 +6,44 @@
 
     <table class="wide">
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Article type#)}</th>
-            <td width="70%">{article.type}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Article type#)}</th>
+            <td width="85%">{article.type}</td>
         </tr>
 
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Author#)}</th>
-            <td width="70%">{article.creatorName}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Author#)}</th>
+            <td width="85%">{article.creatorName}</td>
         </tr>
 
         {if:aCategories}
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Category#)}</th>
-            <td width="70%">{breadCrumbs:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Category#)}</th>
+            <td width="85%">{breadCrumbs:h}</td>
         </tr>
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Change Category#)}</th>
-            <td width="70%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
+            <th width="15%" nowrap="nowrap">{translate(#Change Category#)}</th>
+            <td width="85%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
         </tr>
         {end:}
         {if:flesch}
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Flesch score#)}</th>
-            <td width="70%">{flesch} &nbsp; (<a href="#" onclick="javascript:window.open('{fleschLink}','Flesch','WIDTH=500,HEIGHT=300,TOP=200,LEFT=300,SCROLLBARS=YES')">{translate(#whats this?#)}</a>)</td>
+            <th width="15%" nowrap="nowrap">{translate(#Flesch score#)}</th>
+            <td width="85%">{flesch} &nbsp; (<a href="#" onclick="javascript:window.open('{fleschLink}','Flesch','WIDTH=500,HEIGHT=300,TOP=200,LEFT=300,SCROLLBARS=YES')">{translate(#whats this?#)}</a>)</td>
         </tr>
         {end:}
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Date created#)}</th>
-            <td width="70%">{formatDate(article.dateCreated)}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Date created#)}</th>
+            <td width="85%">{formatDate(article.dateCreated)}</td>
         </tr>
 
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Start Date#)}</th>
-            <td width="70%">{dateSelectorStart:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Start Date#)}</th>
+            <td width="85%">{dateSelectorStart:h}</td>
         </tr>
 
         <tr>
-            <th width="30%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
-            <td width="70%">{dateSelectorExpiry:h}</td>
+            <th width="15%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
+            <td width="85%">{dateSelectorExpiry:h}</td>
         </tr>
         {dynaContent:h}
         <tr>

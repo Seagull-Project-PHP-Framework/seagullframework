@@ -104,9 +104,16 @@ class ArticleViewMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        //  get category info
+	//  get category info
         $catMgr = & new CategoryMgr();
-        $output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
+	// If $output->articleID is set (as on the article detail page, but not not the article summary page),
+	// set $output->catID from the relevant Item object
+	// This ensures breadcrumbs and current category are displayed correctly
+	if (! empty($output->articleID)) {
+    	$ret = SGL_Item::getItemDetail($output->articleID);
+    	$output->catID = $ret['categoryID'];
+	}
+	$output->path = $catMgr->getBreadCrumbs($output->catID, true, 'linkCrumbsAlt1');
         $output->currentCat = $catMgr->getLabel($output->catID);
     }
 
@@ -122,6 +129,8 @@ class ArticleViewMgr extends SGL_Manager
         }
         $output->leadArticle = $ret;
 
+	//Ensure $input->catID corressponds to this article's category
+	$input->catID = $ret['categoryID'];
         if ($output->leadArticle['type'] != 'Static Html Article') {
             $output->articleList = SGL_Item::getItemListByCatID(
                 $input->catID, $input->dataTypeID, $this->mostRecentArticleID);

@@ -306,7 +306,8 @@ class ArticleMgr extends SGL_Manager
         $item->set('lastUpdatedById', $input->createdByID);
 
         //  only update catID if it's  a dynamic html article
-        if ($input->dataTypeID == 2) {
+	// Pull dataTypeID from current SGL_Item object, NOT from $input object
+        if ($item->get('typeID') == 2) {
             $item->set('catID', $input->articleCatID);
         }
         $item->set('lastUpdated', SGL::getTime());
