@@ -9,6 +9,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+09-02-06    Ban IP, Allow and Deny list can now be processed (Tomasz Osmialowski)
 08-02-06    Blocks are now cacheable on an individual basis - schema change
             (Andrey Podshivalov)
 08-02-06    Implemented a SGL::objectHasState() method to prevent inserting

@@ -18,6 +18,9 @@
         'Config Manager' => 'Config Manager',
         'config info successfully updated' => 'Config info successfully updated',
 
+        'Deny list' => 'Deny list',
+        'Allow list' => 'Allow list',
+
 /*  FOOTER  */
         'Execution Time' => 'Execution Time',
         'seconds' => 'seconds',
