@@ -163,16 +163,13 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         * Loop through subnodes
         */
         if (isset($this->menu->items)) {
+            for ($i = 0; $i < count($this->menu->items); $i++) {
 
-            for ($i=0; $i<count($this->menu->items); $i++) {
-
-                    // We don't want HiddentRoot, with id 0 (on PostgreSQL) to be shown as part of the menu
-                    $currItem = $this->menu->items[$i];
-
-                    // if neq 0
-                    if (! empty($currItem->id)) {
-                        $html .= $this->_nodeToHTML($this->menu->items[$i], $menuObj);
-                    }
+                // We don't want HiddentRoot, with id 0 (on PostgreSQL) to be shown as part of the menu
+                $currItem = $this->menu->items[$i];
+                if (!empty($currItem->id)) {
+                    $html .= $this->_nodeToHTML($this->menu->items[$i], $menuObj);
+                }
             }
         }
 
