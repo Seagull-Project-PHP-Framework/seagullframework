@@ -146,6 +146,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template   = 'articleMgrAdd.html';
+        $output->pageTitle .= ' :: New Article';
 
         //  don't show wysiwyg for 'news' articles
         if ($input->dataTypeID != 4) {
@@ -195,6 +196,8 @@ class ArticleMgr extends SGL_Manager
             $output->currentCat = $input->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
+
+        $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
     }
 
     function _insert(&$input, &$output)
@@ -235,7 +238,7 @@ class ArticleMgr extends SGL_Manager
         $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
             $input->aDataItemType, $input->articleLang);
 
-        SGL::raiseMsg('Article successfully added');
+        SGL::raiseMsg('Article successfully added', true, SGL_MESSAGE_INFO);
     }
 
     function _edit(&$input, &$output)
@@ -335,6 +338,8 @@ class ArticleMgr extends SGL_Manager
             $output->currentCat = $item->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
+
+        $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
     }
 
     function _update(&$input, &$output)
@@ -373,7 +378,7 @@ class ArticleMgr extends SGL_Manager
         //  updateDataItems
         $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->aDataItemType, $input->articleLang);
 
-        SGL::raiseMsg('Article successfully updated');
+        SGL::raiseMsg('Article successfully updated', true, SGL_MESSAGE_INFO);
     }
 
     function _changeStatus(&$input, &$output)
@@ -383,7 +388,7 @@ class ArticleMgr extends SGL_Manager
         $item = & new SGL_Item($input->articleID);
         $item->changeStatus($input->status);
         $output->template = 'articleManager.html';
-        SGL::raiseMsg('Article status has been successfully changed');
+        SGL::raiseMsg('Article status has been successfully changed', true, SGL_MESSAGE_INFO);
     }
 
     function _delete(&$input, &$output)
@@ -392,7 +397,7 @@ class ArticleMgr extends SGL_Manager
         $item = & new SGL_Item();
         $item->delete($input->aDelete);
 
-        SGL::raiseMsg('The selected article(s) have successfully been deleted');
+        SGL::raiseMsg('The selected article(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _view(&$input, &$output)
@@ -440,7 +445,9 @@ class ArticleMgr extends SGL_Manager
         if ($this->isAdmin) {
             $theme = $_SESSION['aPrefs']['theme'];
             $output->addOnLoadEvent('checkNewButton()');
-            if (!$this->conf['site']['adminGuiEnabled']) {
+            if ($this->conf['site']['adminGuiEnabled']) {
+                $output->addOnLoadEvent("switchRowColorOnHover()");
+            } else {
                 $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
             }
             $menu = & new MenuBuilder('SelectBox');

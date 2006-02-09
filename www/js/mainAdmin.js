@@ -1,4 +1,11 @@
 /**
+    * REMINDER
+    * Progressively change functions so they use document.getElementById() func
+    * instead of document.<form name>
+    * as forms must not have a "name" value according to xHTML STRICT DOCTYPE
+    */
+
+/**
     * Allows to create/modify a field value within a form before submitting it.
     * Launches the above function depending on the status of a trigger checkbox 
  
@@ -9,27 +16,37 @@
     *
     * @return  void Submit the form
     */
-function formSubmit(formName, fieldName, fieldValue, doCreate)
+function formSubmit(formId, fieldName, fieldValue, doCreate)
 {
-    var form = document.forms[formName];
+    var selectedForm = document.getElementById(formId);
     if (typeof doCreate != "undefined" && doCreate == 1) {
         newInput = document.createElement("input");
         newInput.setAttribute('name', fieldName);
         newInput.setAttribute('value', fieldValue);
         newInput.setAttribute('type', 'hidden');
-        form.appendChild(newInput);
+        selectedForm.appendChild(newInput);
     } else {
         if (fieldName) {
-            var elm = form.elements[fieldName];
+            var elm = selectedForm.elements[fieldName];
             elm.value = fieldValue;
         }
     }
-    form.submit();
+    selectedForm.submit();
 }
+
+//  Allows to reset a form
+function formReset(formId)
+{
+    var selectedForm = document.getElementById(formId);
+    if (!selectedForm) {
+        return;
+    }
+    selectedForm.reset();
+}
+
 //  Allows to show/hide a block of options (defined within a fieldset) in any form
 function showSelectedOptions(formId, option)
 {
-
     var selectedForm = document.getElementById(formId);
     if (!selectedForm) return true;
     var elms = selectedForm.getElementsByTagName("fieldset");
@@ -40,6 +57,16 @@ function showSelectedOptions(formId, option)
             } else {
                 elms[i].style.display = "none";
             }
+        }
+    }
+
+    var items = document.getElementById("optionsLinks").getElementsByTagName("li");
+    for (i=0; i<items.length; i++) {
+        if (items[i].className.match(new RegExp(" current\\b"))) {
+            items[i].className = items[i].className.replace(new RegExp(" current\\b"), "");
+        }
+        if (items[i].className.match(new RegExp(option +"\\b"))) {
+            items[i].className +=" current";
         }
     }
 }
@@ -59,7 +86,7 @@ function createAvailOptionsLinks(formId, titleTag)
     var optionsLinks = '<ul>';
     for (i=0; i<elms.length; i++) {
         if (elms[i].className.match(new RegExp("options\\b"))) {
-            optionsLinks += "<li><a href='javascript:showSelectedOptions(\""+formId +"\",\""+elms[i].id +"\")'>"+elms[i].getElementsByTagName(titleTag)[0].innerHTML +"</a></li>";
+            optionsLinks += "<li class=\""+elms[i].id+"\"><a href='javascript:showSelectedOptions(\""+formId +"\",\""+elms[i].id +"\")'>"+elms[i].getElementsByTagName(titleTag)[0].innerHTML +"</a></li>";
         }
     }
     optionsLinks += "</ul>";

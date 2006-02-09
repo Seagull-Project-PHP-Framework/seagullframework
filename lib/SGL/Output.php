@@ -426,7 +426,7 @@ class SGL_Output
             default:
                 $class = 'error';
             }
-            echo '<div class="' . $class . 'Message">' . $message . '</div><br />';
+            echo '<div class="' . $class . 'Message">' . $message . '</div>';
 
             //  required to remove message that persists when register_globals = on
             unset($GLOBALS['message']);

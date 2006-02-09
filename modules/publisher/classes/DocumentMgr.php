@@ -243,9 +243,11 @@ class DocumentMgr extends FileMgr
         $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
         $asset->date_created  = SGL_Date::getTime();
-        $asset->name = SGL_String::censor($asset->name);
+        $asset->name = SGL_String::censor(ucfirst(strtolower($asset->name)));
         $asset->description = SGL_String::censor($asset->description);
-        $asset->insert();
+        if ($asset->insert()) {
+            SGL::raiseMsg('The asset has successfully been added', true, SGL_MESSAGE_INFO);
+        }
 
         //  if file has been renamed
         if ($input->document->orig_name != $asset->name) {
@@ -303,7 +305,7 @@ class DocumentMgr extends FileMgr
                     SGL_UPLOAD_DIR . '/' . $document->name);
         }
         $output->asset = $document;
-        SGL::raiseMsg('The asset has successfully been updated');
+        SGL::raiseMsg('The asset has successfully been updated', true, SGL_MESSAGE_INFO);
     }
 
     function _delete(&$input, &$output)
@@ -321,7 +323,7 @@ class DocumentMgr extends FileMgr
             $document->delete();
             unset($document);
         }
-        SGL::raiseMsg('The asset has successfully been deleted');
+        SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _list(&$input, &$output)
@@ -373,7 +375,11 @@ class DocumentMgr extends FileMgr
         }
 
         //  prepare data for publisher subnav
-        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
+        }
 
         //  prepare breadcrumbs
         $menu = & new MenuBuilder('SelectBox');
