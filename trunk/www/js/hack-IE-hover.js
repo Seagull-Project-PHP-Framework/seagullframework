@@ -1,6 +1,6 @@
-// IE hack to simulate :hover on "li" tags
-// As IE only accept :hover css pseudo element on "a" tags, this hack automatically
-// adds a "sfhover" class name to all li tags.
+//  IE hack to simulate :hover on "li" tags
+//  As IE only accept :hover css pseudo element on "a" tags, this hack automatically
+//  adds a "sfhover" class name to all li tags.
 /******************************************************************************************/
 sfHover = function() {
 	var sfEls = document.getElementsByTagName("li");

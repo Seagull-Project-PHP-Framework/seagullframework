@@ -88,6 +88,9 @@ class ModuleMgr extends SGL_Manager
         $input->totalItems      = $req->get('totalItems');
 
         $input->action = ($req->get('action')) ? $req->get('action') : 'overview';
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $input->action = ($req->get('action')) ? $req->get('action') : 'list';
+        }
         if (!is_null($input->from) && $input->action == 'overview') {
             $input->action = 'list';
         }
@@ -214,7 +217,7 @@ class ModuleMgr extends SGL_Manager
 
         $ok = $this->da->addModule($oModule);
         if ($ok) {
-            SGL::raiseMsg('Module successfully added to the manager.');
+            SGL::raiseMsg('Module successfully added to the manager.', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -244,7 +247,7 @@ class ModuleMgr extends SGL_Manager
         $success = $newEntry->update();
 
         if ($success) {
-            SGL::raiseMsg('module successfully updated');
+            SGL::raiseMsg('module successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -270,12 +273,23 @@ class ModuleMgr extends SGL_Manager
         $query = "SELECT * FROM {$this->conf['table']['module']} ORDER BY name";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         // if there are modules, clean up output
@@ -288,6 +302,10 @@ class ModuleMgr extends SGL_Manager
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        }
+
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
         }
     }
 }
