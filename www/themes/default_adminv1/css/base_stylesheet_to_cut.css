@@ -1,0 +1,15 @@
+
+
+/**
+        Form general layout -----------------------------------------*/
+
+
+form p.row, form p.col {
+    padding: 2px 0;
+}
+p.col {
+    float: left;
+    margin-right: 1em;
+}
+
+
