@@ -58,13 +58,13 @@
                 <input type="button" name="frmReset" value="{$result->translate('reset')}"
                     onclick="javascript:document.location.href='{$result->makeUrl('requestPasswordReset','user','',$result->aPagedData.data,'frmUserID|usr_id',$key)}'" />
             </td>
-            {if !$result->isAdmin($result->aValue.role_id)}
+            {if !$result->isAdmin()}
             <td align="center">
                 <input type="button" name="frmReset" value="{$result->translate('change')}"
                     onClick="javascript:document.location.href='{$result->makeUrl('editPerms','user','',$result->aPagedData.data,'frmUserID|usr_id',$key)}'" />
             </td>
             {/if}
-            {if $result->isAdmin($aValue.role_id)}
+            {if $result->isAdmin()}
             <td align="center">&nbsp;</td>
             {else}
             <td align="center"><a href="{$result->makeUrl('viewLogin','user','',$result->aPagedData.data,'frmUserID|usr_id',$key)}">list</a></td>

@@ -444,10 +444,11 @@ class SGL_Output
         }
     }
 
-    //  return true if role id  denotes admin (1)
-    function isAdmin($rid)
+    //  return true if role id  is admin (1)
+    function isAdmin()
     {
-        return ($rid == SGL_ADMIN) ? true : false;
+        $rid = SGL_Session::getRoleId();
+        return ($rid && $rid == SGL_ADMIN) ? true : false;
     }
 
     //  return true if $rid is 1 or -1

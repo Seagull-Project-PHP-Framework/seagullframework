@@ -64,8 +64,8 @@ class Article
 
         $blockOutput          = new SGL_Output();
         $blockOutput->theme   = $output->theme;
-        $blockOutput->isAdmin = $output->isAdmin;
-        
+        $blockOutput->isAdmin = $blockOutput->isAdmin();
+
         //  set block params
         if (array_key_exists('articleId', $aParams)) {
             $articleId = (int)$aParams['articleId'];
@@ -84,13 +84,13 @@ class Article
     }
 
     function process(&$output)
-    {        
+    {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;
         $output->masterTemplate = $this->template;
 
         $view = new SGL_HtmlSimpleView($output);
-        return $view->render();    
+        return $view->render();
     }
 }
 ?>

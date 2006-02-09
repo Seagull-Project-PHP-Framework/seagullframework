@@ -5,7 +5,7 @@
 
 {if:pager}<flexy:include src="pager.html" />{end:}
 
-{if:articleList}   
+{if:articleList}
     {foreach:articleList,key,aValue}
         <h2><strong>{aValue[title]}</strong></h2>
         <div><em>{formatDatePretty(aValue[startDate])}, {translate(#contributed by#)}: <a href="{makeUrl(#view#,#profile#,#user#,articleList,#frmUserID|createdByID#,key)}">{aValue[creatorName]}</a></em></div>
@@ -17,7 +17,7 @@
         {end:}
         <p>&nbsp;</p>
         <p>[<a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}" title="{aValue[title]}">{translate(#full story#)} "{aValue[title]}"</a>]
-        {if:isAdmin}
+        {if:isAdmin()}
             <a href="{makeUrl(#edit#,#article#,#publisher#,articleList,#frmArticleID|item_id#,key)}" />
                 [{translate(#edit#)}]
             </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
