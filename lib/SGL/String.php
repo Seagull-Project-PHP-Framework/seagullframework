@@ -255,13 +255,8 @@ class SGL_String
 
             if ($isArray && $conf['translation']['container'] == 'db') {
                 $delimitedTrans = $trans[$key];
-                $aPieces = explode('||', $delimitedTrans);
-                foreach ($aPieces as $values) {
-                    if (!empty($values)) {
-                        list($k, $value) = explode('|', $values);
-                        $ret[$k] = $value;
-                    }
-                }
+                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $delimitedTrans, $aPieces);
+                $ret = $aPieces[2];
             } else {
                 $ret = $trans[$key];
             }
