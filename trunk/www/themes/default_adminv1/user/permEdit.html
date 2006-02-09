@@ -1,0 +1,29 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form action="" method="post" name="frmPermEdit" id="frmPermEdit" flexy:ignore>
+    <fieldset class="main">
+        <input type="hidden" name="action" value="update" />
+        <input type="hidden" name="perm[permission_id]" value="{permId}" />
+    
+        <h3>{translate(#Editiong permission#)} #{permId}</h3>
+    
+        <p>
+            <label for="perm[name]">{translate(#Name#)}<span class="required"> *</span></label>
+            <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+            <input type="text" class="longText" name="perm[name]" id="perm[name]" value="{perm.name}" />
+        </p>
+        <p>
+            <label for="perm[module_id]">{translate(#Module#)}</label>
+            <select name="perm[module_id]" id="perm[module_id]">
+                {generateSelect(aModules,currentModule):h}
+            </select>
+        </p>
+        <p>
+            <label for="perm[description]">{translate(#Description#)}</label>
+            <textarea class="longText" rows="3" name="perm[description]" id="perm[description]">{perm.description}</textarea>
+        </p>
+        <p>
+            <span class="error">*</span><span class="small"> {translate(#denotes required field#)}</span>
+        </p>
+    </fieldset>
+</form>
