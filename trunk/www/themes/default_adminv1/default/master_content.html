@@ -1,0 +1,89 @@
+<flexy:include src="header.html" />
+<flexy:include src="banner.html" />
+<flexy:include src="leftBlock.html" />
+            <div id="middle-column">
+                <div id="main">
+                    <div id="manager-infos">
+                        <h1>{GLOBALS.ucfirst(moduleName)}</h1>
+                        <a id="module-conf" href="javascript:alert('Will be shortly available ;-)')">{translate(#Configuration#)}</a>
+                    </div>
+                    <div id="breadcrumbs">
+                        <p><a href="">Admin</a><a href="">Content</a><span> Browse articles</span></p>
+                    </div>
+                    <div id="manager-actions">
+                        <span>Action:&nbsp;</span> <a class="action add" href="">New article</a><a href="" class="action edit">Edit</a>
+                    </div>
+                    <div id="content">
+                        <div id="content-header">
+                            <h2>{translate(pageTitle)}</h2>
+                            <div class="message"><p class="error">Please fill in required fields !</p></div>
+                        </div>
+                        <form>
+                            <p>3 users found</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th width="5%"><input type="checkbox"></th>
+                                        <th width="5%">ID</th>
+                                        <th width="15%" class="left">Username</th>
+                                        <th width="15%" class="left">Email</th>
+                                        <th width="10%">Role</th>
+                                        <th width="10%">Status</th>
+                                        <th width="10%">Edit</th>
+                                        <th width="10%">Password</th>
+                                        <th width="10%">Permissions</th>
+                                        <th width="10%">Login</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>1</td>
+                                        <td class="left">Admin</td>
+                                        <td class="left">admin@example.com</td>
+                                        <td>root</td>
+                                        <td><img src="images/status_enabled.gif" alt="enabled" /></td>
+                                        <td><img src="{webRoot}/themes/{theme}/images/16/action_edit.gif" alt="edit" /></td>
+                                        <td>reset</td>
+                                        <td>change</td>
+                                        <td>list</td>
+                                    </tr>
+                                    <tr class="bg_dark">
+                                        <td><input type="checkbox"></td>
+                                        <td>1</td>
+                                        <td class="left">Admin</td>
+                                        <td class="left">admin@example.com</td>
+                                        <td>root</td>
+                                        <td><img src="images/status_disabled.png" alt="enabled" /></td>
+                                        <td><img src="{webRoot}/themes/{theme}/images/16/action_edit.gif" alt="edit" /></td>
+                                        <td>reset</td>
+                                        <td>change</td>
+                                        <td>list</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>1</td>
+                                        <td class="left">Admin</td>
+                                        <td class="left">admin@example.com</td>
+                                        <td>root</td>
+                                        <td><img src="images/status_enabled.gif" alt="enabled" /></td>
+                                        <td><img src="{webRoot}/themes/{theme}/images/22/action_edit1.gif" alt="edit" /></td>
+                                        <td>reset</td>
+                                        <td>change</td>
+                                        <td>list</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="10">
+                                        showing page 1 out of 2
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </form>
+                    </div> <!-- end of #content -->
+                </div> <!-- end of #main -->
+            </div> <!-- end of #middle-column -->
+<flexy:include src="footer.html" />

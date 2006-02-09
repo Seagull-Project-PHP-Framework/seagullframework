@@ -1,0 +1,14 @@
+<flexy:include src="header.html" />
+<flexy:include src="banner.html" />
+<flexy:include src="leftBlock.html" />
+            <div id="middle-column">
+                <div id="main">
+                    <div id="manager-infos">
+                        <h1>{GLOBALS.ucfirst(moduleName)} / {translate(pageTitle)}</h1>
+                        <a id="module-conf" href="javascript:alert('Will be shortly available ;-)')">{translate(#Configuration#)}</a>
+                    </div>
+                    {outputBody()}
+                    </div> <!-- end of #content -->
+                </div> <!-- end of #main -->
+            </div> <!-- end of #middle-column -->
+<flexy:include src="footer.html" />
