@@ -1,0 +1,14 @@
+            <div id="left-column">
+                <div id="block-container">
+                    <div class="block-header">
+                        Admin menu
+                    </div>
+                    <div class="block-content" id="nav">
+                        {foreach:blocksAdminNav,key,valueObj}
+                            {valueObj.content:h}
+                        {end:}
+                    </div>
+                    <div class="block-footer">
+                    </div>
+                </div>
+            </div> <!-- end of #left-column -->

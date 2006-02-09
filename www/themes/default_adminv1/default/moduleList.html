@@ -1,0 +1,92 @@
+<div id="manager-actions">
+    <span>Action:&nbsp;</span> <a class="action add" href="{makeUrl(#add#,#module#,#default#)}">Add</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <div class="fieldsetlike" id="moduleList">
+    <h3>{translate(#Module list#)}</h3>
+        <table class="full">
+            <thead>
+                <tr class="infos">
+                    <td class="right" colspan="9">
+                    {if:pager}<flexy:include src="pager_table.html" />{end:}
+                    </td>
+                </tr>
+                <tr>
+                    <th width="3%">ID</th>
+                    <th width="30%" class="left">{translate(#Module title#)}</th>
+                    <th width="3%"></th>
+                    <th width="20%" class="left">{translate(#Module Name#)}</th>
+                    <th width="5%">{translate(#Disable#)}</th>
+                </tr>
+            </thead>
+            {if:aPagedData[data]}
+            <tfoot>
+                <tr class="infos">
+                    <td class="right" colspan="9">
+                    &lt;&lt; Start &lt; Previous (1 - 10 of 15) Next &gt; End &gt;&gt;
+                    </td>
+                </tr>
+            </tfoot>
+            {end:}
+            <tbody>
+            {if:aPagedData[data]}
+                <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                    <td>{aValue[module_id]}</td>
+                    <td class="left">
+                        <a class="tipOwner" href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}
+                            <span class="tipText">{aValue[description]}</span>
+                        </a>
+                    </td>
+                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}.gif" alt="" /></td>
+                    <td class="left">{aValue[name]}</td>
+                    <td><a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {aValue[title]}"><img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" /></a></td>
+                </tr>
+            {else:}
+                <tr>
+                    <td colspan="9">{translate(#no results found#)}</td>
+                </tr>
+            {end:}
+            </tbody>
+        </table>
+    </div>
+</div>
+    {foreach:aModules,key,valueObj}
+        {if:switchTrueFalse()}
+        <div class="moduleBlock clearLeft">
+        {else:}
+        <div class="moduleBlock">
+        {end:}
+            {if:isAdmin}
+            <span class="moduleManageLinks">
+            <a href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}" title="{translate(#edit#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/document-properties.png" alt="{translate(#edit#)}" /></a>
+            <a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/status_disabled.gif" alt="{translate(#disable#)}" /></a>
+            </span>
+            {end:}
+            {if:valueObj.is_configurable}
+            <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
+            {end:}
+            <h2>{valueObj.title}</h2>
+            {if:valueObj.is_configurable}
+            </a>
+            {end:}
+
+            <div class="moduleName">
+            {if:valueObj.is_configurable}
+            <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
+            {end:}
+                <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" />
+            {if:valueObj.is_configurable}
+            </a>
+            {end:}
+            </div>
+            <p class="moduleDesc">
+                {valueObj.description}
+            </p>
+            <div class="spacer"></div>
+        </div>
+    {end:}
