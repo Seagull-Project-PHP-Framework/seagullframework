@@ -374,7 +374,7 @@ html>body select, html>body input, html>body textarea {
 html>body input[type="text"] {
     text-indent: 2px;
 }
-select:focus, input:focus, textarea:focus {
+input:focus, textarea:focus {
     background: <?php echo $primaryLightest ?>;
 
 }
@@ -445,7 +445,7 @@ thead tr {
     color: <?php echo $tertiaryLightest ?>;
 }
 thead tr.infos, tfoot tr.infos {
-    
+
     background: <?php echo $tertiaryDark ?>;
     font-size: 10px;
     color: <?php echo $primary; ?>;
