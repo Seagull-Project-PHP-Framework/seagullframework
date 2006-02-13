@@ -456,7 +456,6 @@ class ArticleMgr extends SGL_Manager
             
             if ($this->conf['site']['adminGuiEnabled']) {
                 $output->addOnLoadEvent("switchRowColorOnHover()");
-                $output->addOnLoadEvent("selectArticleType('newArticle', 'articleTypeSelect')");
             } else {
                 $output->addOnLoadEvent('checkNewButton()');
                 $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
@@ -622,7 +621,7 @@ class ArticleMgr extends SGL_Manager
                 ";
         $templateTypes = $this->dbh->getAssoc($query);
         if ($mode == 'selector') {
-            $templateTypes[1] = '&ndash;&ndash; ' . SGL_String::translate('Article type') . ' &ndash;&ndash;';
+            unset($templateTypes[1]);
         }
         return $templateTypes;
     }

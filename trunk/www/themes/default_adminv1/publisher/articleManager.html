@@ -34,17 +34,40 @@ function hideCategoryBlock()
     var catBlock = document.getElementById("categoryNav");
     catBlock.style.display = 'none';
 }
+function showCombox(comboxId, ev)
+{
+    var combox = document.getElementById(comboxId);
+    if (combox.style.display == 'block') {
+        combox.style.display = 'none';
+    } else {
+        combox.style.display = 'block';
+        /*if (document.all) {
+            combox.style.left = event.screenX +30 +'px';
+            combox.style.top = '100%';
+        } else {
+            combox.style.left = ev.screenX +20 +'px';
+            combox.style.top = '100%';
+        }*/
+    }
+}
+function hideCombox(comboxId)
+{
+    var combox = document.getElementById(comboxId);
+    combox.style.display = 'none';
+}
 //-->
 </script>
 <div class="hide" id="errorNoType">{translate(#Please select an article type#)}</div>
 <div id="manager-actions">
     <span>Action:&nbsp;</span>
-    <select name="articleTypeSelect" id="articleTypeSelect" flexy:ignore
-            onchange="javascript:selectArticleType('newArticle', 'articleTypeSelect')">
-        {generateSelect(aArticleSelect,dataTypeID):h}
-    </select><a class="action add" id="newArticle" href="{makeUrl(#add#,#article#,#publisher#)}">{translate(#New Article#)}</a>
+    <div class="combox" id="articleTypeSelector">
+        {foreach:aArticleSelect,key,value}
+        <a href="{makeUrl(#add#,#article#,#publisher#)}frmArticleTypeID/{key}">{value}</a>
+        {end:}
+    </div>
+    <a class="action add" id="newArticle" href="javascript:void(0)" onclick="javascript:showCombox('articleTypeSelector', event)">{translate(#New Article#)}</a>
 </div>
-<div id="content">
+<div id="content" onclick="hideCombox('articleTypeSelector')">
     <div id="content-header">
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
