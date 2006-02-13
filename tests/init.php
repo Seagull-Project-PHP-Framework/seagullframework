@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | init.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -47,31 +47,24 @@
 //     - File (optional)
 
 function STR_init()
-{   
+{
     // Database connection constants
     define('STR_DSN_ARRAY',                 0);
     define('STR_DSN_STRING',                1);
-    
-    $sessSavePath = ini_get('session.save_path');
-    if (empty($sessSavePath)) {
-        $sessSavePath = '/tmp';
-    }
-    define('STR_TMP_DIR', (isset($_ENV["TEMP"])) 
-        ? $_ENV["TEMP"] 
-        : $sessSavePath);
-    
+    define('STR_TMP_DIR', dirname(__FILE__) . '/../var');
+
     // Define the different environment configurations
     define('NO_DB',          0);
     define('DB_NO_TABLES',   1);
     define('DB_WITH_TABLES', 2);
     define('DB_WITH_DATA',   3);
     define('DB_WITH_DATA_AND_WEB',   4);
-    
+
     // Define the directory that tests should be stored in
     // (e.g. "tests", "tests/unit", etc.).
     define('unit_TEST_STORE', 'tests');
     define('web_TEST_STORE', 'tests');
-    
+
     // The different "layers" that can be tested, defined in terms of
     // layer test codes (ie. the test files for the layer will be
     // xxxxx.code.test.php), and the layer names and database
@@ -82,14 +75,14 @@ function STR_init()
             'wdd'   => array('DB with tables and data', DB_WITH_DATA),
             'ndb'   => array('PHP only', NO_DB),
         );
-        
+
     $GLOBALS['_STR']['web_layers'] = array(
             'web'   => array('Web tests', DB_WITH_DATA_AND_WEB),
         );
-        
+
     // set error reporting as verbose as possible
     error_reporting(E_ALL);
-    
+
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
         // Define the project installation base path
@@ -100,12 +93,12 @@ function STR_init()
 
         // Parse the testing configuration file
         $GLOBALS['_STR']['CONF'] = $conf = parseIniFile();
-        
+
         // The directories where tests can be found, to help
-        // reduce filesystem parsing time   
+        // reduce filesystem parsing time
         $GLOBALS['_STR']['directories'] =
             explode(',', $GLOBALS['_STR']['CONF']['general']['directoriesToScan']);
-        
+
         //  load target app bridge
         if (isset($conf['general']['initBridge'])) {
             require_once STR_PATH . '/' .$conf['general']['initBridge'];
@@ -119,15 +112,15 @@ function parseIniFile()
     $configPath = STR_TMP_DIR;
 
     // Does the test environment config exist?
-    if (file_exists($configPath . '/test.conf.ini')) {
-        $ret = parse_ini_file($configPath . '/test.conf.ini', true);
+    if (file_exists($configPath . '/test.conf.ini.php')) {
+        $ret = parse_ini_file($configPath . '/test.conf.ini.php', true);
     } else {
         // copy the default configuration file to the users tmp directory
-        if (!copy(STR_PATH . '/tests/test.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini')) {
-            die('ERROR WHEN COPYING CONFIG FILE TO ' . STR_TMP_DIR . '/test.conf.ini');
+        if (!copy(STR_PATH . '/tests/test.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini.php')) {
+            die('ERROR WHEN COPYING CONFIG FILE TO ' . STR_TMP_DIR . '/test.conf.ini.php');
         }
         define('TEST_ENVIRONMENT_NO_CONFIG', true);
-        $ret = parse_ini_file($configPath . '/test.conf.ini', true);
+        $ret = parse_ini_file($configPath . '/test.conf.ini.php', true);
     }
     return $ret;
 }
