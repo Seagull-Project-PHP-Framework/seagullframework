@@ -214,7 +214,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Navigation type (driver)'=>'Navigation type (driver)',
         'Navigation menu stylesheet'=>'Navigation menu stylesheet',
         'Debugging Options'=>'Debugging Options',
-        'Enable authentication'=>'Enable authentication',
+        'Enable authorisation'=>'Enable authorisation',
         'Enable custom error handler'=>'Enable custom error handler',
         'Enable debug session'=>'Enable debug session',
         'Production website'=>'Production website',
