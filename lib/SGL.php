@@ -155,6 +155,10 @@ class SGL
                 }
             }
         }
+        if ($priority == PEAR_LOG_DEBUG) {
+            $message .= ' time: ' . (string)(getSystemTime() - @SGL_START_TIME) . 'ms';
+        }
+
         // Log the message
         return $logger->log($message, $priority);
     }
