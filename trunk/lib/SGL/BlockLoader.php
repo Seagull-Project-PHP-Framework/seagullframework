@@ -102,7 +102,6 @@ class SGL_BlockLoader
     function SGL_BlockLoader($sectionId)
     {
         $this->_rid = (int)SGL_Session::get('rid');
-        $this->_staticId = (isset($_GET['staticId'])) ? $_GET['staticId'] : 0;
         if (isset($sectionId)) {
             $this->_currentSectionId = $sectionId;
         }
@@ -123,8 +122,8 @@ class SGL_BlockLoader
         //  put data generated so far into class scope
         $this->output = &$output;
         $cache = & SGL_Cache::singleton();
-        $cacheId = basename($_SERVER['PHP_SELF']) . $this->_rid
-            . $this->_staticId . $output->currLang;
+        $cacheId = $this->_currentSectionId . $this->_rid
+            . $output->currLang . $output->charset;
         if ($data = $cache->get($cacheId, 'blocks')) {
             $this->aBlocks = unserialize($data);
 
