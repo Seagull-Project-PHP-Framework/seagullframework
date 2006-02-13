@@ -132,7 +132,7 @@ class SGL_Request
             }
             $data = serialize($url);
             $cache->save($data, $cacheId, 'urls');
-            SGL::logMessage('url parsed', PEAR_LOG_DEBUG);
+            SGL::logMessage('url parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
         if (PEAR::isError($aQueryData)) {
