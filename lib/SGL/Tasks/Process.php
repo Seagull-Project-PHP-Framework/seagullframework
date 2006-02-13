@@ -259,7 +259,8 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
         if (isset( $this->conf[$mgrName]['requiresAuth'])
-                && $this->conf[$mgrName]['requiresAuth'] == true)
+                && $this->conf[$mgrName]['requiresAuth'] == true
+                && $this->conf['debug']['authorisationEnabled'])
         {
             //  check that session is not invalid or timed out
             if (!$session->isValid() || $timeout) {
