@@ -6,6 +6,29 @@
 #frmAddArticle p label {
     width: 140px;
 }
+#articleTypeSelector {
+    display: none;
+    position: absolute;
+    top: 2.4em;
+    left: 6.25em;
+    background: <?php echo $tertiaryLightest ?>;
+    border-style: solid;
+    border-color: <?php echo $primary ?>;
+    border-width: 1px;
+}
+#articleTypeSelector a {
+    display: block;
+    clear: left;
+    float: left;
+    margin: 0;
+    padding: 0 5px;
+    border: none;
+    background: none;
+    text-indent: 10px;
+}
+#articleTypeSelector a:hover {
+    border: none;
+}
 
 /*
 -- articleMgrAdd.html / articleMgrEdit.html ------------------*/

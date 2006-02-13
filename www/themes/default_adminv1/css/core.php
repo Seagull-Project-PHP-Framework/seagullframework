@@ -274,6 +274,7 @@ a#module-conf {
     color: <?php echo $primary ?>;
 }
 #manager-actions {
+    position: relative;
     float: left;
     width: 100%;
     height: 32px;
@@ -308,10 +309,20 @@ html>body #manager-actions {
     -----------------------------------------------*/
 }
 #manager-actions a:hover {
+    background-color: <?php echo $tertiaryLightest ?>;
     border-style: solid;
     border-width: 1px;
     border-color: <?php echo $tertiaryDarkest ?>;
 }
+#manager-actions a:active {
+    background-color: <?php echo $tertiaryLightest ?>;
+    border: none;
+}
+#manager-actions a:focus {
+    background-color: <?php echo $tertiaryLightest ?>;
+    border: none;
+}
+
 #manager-actions select {
     float: left;
     margin-top: 5px;
@@ -526,9 +537,6 @@ span#becareful {
 a.action {
     background-position: 3px 50%;
     background-repeat: no-repeat;
-}
-a.action:hover {
-    background-color: <?php echo $tertiaryLightest ?>;
 }
 a.add {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_add.gif');
