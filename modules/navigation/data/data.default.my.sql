@@ -27,13 +27,13 @@ INSERT INTO `section` VALUES (22, 'Admin menu', 'admin/adminmenu', '1', 22, 0, 2
 INSERT INTO `section` VALUES (158, 'Users and security', 'user/user', '1', 158, 22, 22, 28, 37, 6, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (29, 'Global', 'default/module', '1', 29, 22, 22, 4, 11, 2, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (25, 'Configuration', 'default/config', '1', 25, 29, 22, 5, 6, 1, 3, 1, NULL, NULL, NULL);
-INSERT INTO `section` VALUES (8, 'Register', 'user/register', '1,0', 0, 1, 1, 4, 5, 2, 2, 1, 0, '', '');
+INSERT INTO `section` VALUES (8, 'My Account', 'user/account', '1', 0, 1, 1, 4, 5, 2, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (162, 'Home', 'default/default', '1', 162, 22, 22, 2, 3, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (47, 'Navigation', 'navigation/page', '1', 47, 22, 22, 12, 15, 3, 2, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (168, 'Manage roles', 'user/role', '1', 168, 158, 22, 31, 32, 2, 3, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (174, 'Manage users', 'user/user', '1', 174, 158, 22, 35, 36, 4, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (127, 'Manage Pear packages', 'default/pear', '1', 127, 29, 22, 9, 10, 3, 3, 1, NULL, NULL, NULL);
-INSERT INTO `section` VALUES (1, 'User menu', 'default/default', '1,2,0', NULL, 0, 1, 1, 6, 1, 1, 1, NULL, '1', NULL);
+INSERT INTO `section` VALUES (1, 'User menu', 'default/default', '1,2,0', NULL, 0, 1, 1, 10, 1, 1, 1, NULL, '1', NULL);
 INSERT INTO `section` VALUES (41, 'Home', '', '1,2,0', 41, 1, 1, 2, 3, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (172, 'Manage preferences', 'user/preference', '1', 172, 158, 22, 33, 34, 3, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (27, 'Publication', 'publisher/article', '1', 27, 22, 22, 18, 27, 5, 2, 1, NULL, NULL, NULL);
@@ -41,4 +41,5 @@ INSERT INTO `section` VALUES (69, 'Categories', 'navigation/category', '1', 69, 
 INSERT INTO `section` VALUES (32, 'Articles', 'publisher/article', '1', 32, 27, 22, 21, 22, 2, 3, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (73, 'Documents', 'publisher/document', '1', 73, 27, 22, 23, 24, 3, 3, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (186, 'Content types', 'publisher/contenttype', '1', 186, 27, 22, 25, 26, 4, 3, 1, 0, '', '');
-        
+INSERT INTO `section` VALUES (188, 'Modules', 'default/module/action/overview', '1', 188, 1, 1, 6, 7, 3, 2, 1, 0, '', '');
+INSERT INTO `section` VALUES (190, 'Config', 'default/config', '1', 190, 1, 1, 8, 9, 4, 2, 1, 0, '', '');
