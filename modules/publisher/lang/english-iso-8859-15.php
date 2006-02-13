@@ -8,6 +8,8 @@
         'Change Category' => 'Change Category',
         'article' => 'article',
         'Article Name' => 'Article Name',
+        'New Article' => 'New Article',
+        'Please select an article type' => 'Please select an article type',
         'Start Date' => 'Start',
         'Expiry Date' => 'Expiry',
         'Modif. By' => 'Modif. By',
@@ -41,6 +43,8 @@
         'whole DB' => 'all categories',
         'this category' => 'this category',
         'showing results for' => 'showing results for',
+        'Articles list' => 'Articles list',
+        'Articles filter' => 'Articles filter',
         
 /* ArticleViewMgr */
         'Article Browser' => 'Article Browser',
@@ -63,7 +67,6 @@
 /*  DOCUMENT MGR    */
         'Document Manager' => 'Document Manager',
         'Content Type' => 'Content Type',
-        'New Article' => 'New Article',
         'New Asset' => 'New Document',
         'Asset Name' => 'Name',
         'Date Added' => 'Added',
@@ -96,6 +99,10 @@
         
 /*  CONTENT TYPE MGR */
         'Content Type Manager' => 'Content Type Manager',
+        'Number of fields' => 'Number of fields',
+        'field' => 'field',
+        'New content type' => 'New content type',
+        'Give a name to this field and select its type' => 'Give a name to this field and select its type',
         'Add Type' => 'Add Type',
         'With selected content type(s)' => 'With selected content type(s)',
         'content type has successfully been added' => 'content type has successfully been added',

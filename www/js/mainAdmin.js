@@ -6,6 +6,41 @@
     */
 
 /**
+    * Functions to manage article types in publisher/list template
+    * 1.    Update the New article action link with selected article type
+    * 2.    Prevent link to work if no article type selected
+    */
+function selectArticleType(actionLinkId, articleTypeSelectorId)
+{
+    var actionLink = document.getElementById(actionLinkId);
+    var articleType = getSelectedValue(document.getElementById(articleTypeSelectorId));
+    var errorMsg = document.getElementById('errorNoType').innerHTML;
+
+    if (articleType == "1") { // don't allow to create with articleType == 'all'
+        actionLink.href = 'javascript:alert("' +errorMsg +'")';
+    } else {
+        if (actionLink.href.match(new RegExp(/^javascript/))) {
+        //  case 1 We just have disable the link, rewrite url from scratch
+            actionLink.href = document.location.href +'action/add/';
+            if (actionLink.href.match(new RegExp(/frmArticleTypeID/))) {
+                //  case 1.a Current Url already has the frmArticleTypeID parameter (because of a filtered search)
+                actionLink.href = actionLink.href.replace(new RegExp(/\d\/*$/), articleType +'/');
+            } else {
+                //  case 1.b Current url has no frmArticleTypeID parameter
+                actionLink.href = actionLink.href +'frmArticleTypeID/' +articleType +'/';
+            }
+        }
+        else if (actionLink.href.match(new RegExp(/frmArticleTypeID/))) {
+            //  case 2 We only have to replace an article type by another
+            actionLink.href = actionLink.href.replace(new RegExp(/\d\/*$/), articleType +'/');
+        } else {
+            //  case 3 This is the first time we are selecting an article type
+            actionLink.href += 'frmArticleTypeID/' +articleType +'/';
+        }
+    }
+}
+
+/**
     * Allows to create/modify a field value within a form before submitting it.
     * Launches the above function depending on the status of a trigger checkbox 
  

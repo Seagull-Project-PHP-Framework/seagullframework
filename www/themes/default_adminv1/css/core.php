@@ -4,6 +4,10 @@
 
 /*
 ==========================General=============================*/
+html {
+    height: 100%;
+    margin-bottom: 1px;
+}
 body, h1, h2, h3, h4, p, ul, li {
     margin: 0;
     padding: 0;
@@ -64,7 +68,7 @@ img {
     border-color: <?php echo $errorMessage ?>;
     color: <?php echo $errorMessage ?>;
 }
-.error {
+.error, .required {
     color: <?php echo $errorMessage ?>;
 }
 .warningMessage {
@@ -112,8 +116,9 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
 }
 #inner-wrapper {
     clear: both;
-    padding-top: 10px;
+    padding: 10px 0 10px;
     border-top: 1px solid <?php echo $borderLight ?>;
+    border-bottom: 1px solid <?php echo $borderDark ?>;
 }
 #container {
 
@@ -135,15 +140,15 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
 }
 #content {
     clear: both;
-    padding: 5px 5px 0;
+    padding: 5px 8px 0;
     background: <?php echo $tertiaryLight ?>; /* FIXME tertiaryLight? */
     -moz-border-radius: 0 0 0.4em 0.4em;
     border-top: 1px solid <?php echo $borderLight ?>;
     padding-bottom: 40px; /* TO REMOVE */
 }
 #footer {
-    margin: 5px 0;
     text-align: center;
+    border-top: 1px solid <?php echo $borderLight ?>;
     background: <?php echo $tertiary ?>;
 }
 
@@ -154,39 +159,48 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/bg_header_blue.gif') repeat-x;
     border-bottom: 2px solid <?php echo $secondary ?>;
 }
+#header h1, #header h1 a {
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+#header h1 {
+    height: 50px;
+    background: url('<?php echo $baseUrl ?>/images/logo.png') no-repeat 10px 50%;
+    font-size: 2.4em;
+}
+#header h1 a {
+    position: relative;
+    padding: 10px 0 10px;
+    text-indent: 100px;
+    letter-spacing: 0.1em;
+    color: <?php echo $secondary ?>;
+}
+#header h1 a:hover {
+    text-decoration: none;
+}
+#header h1 a span {
+    position: relative;
+    top: 15px;
+    left: -20px;
+    font-size: 0.5em;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    color: #000;
+}
 #header-right {
-    height: 20px;
-    line-height: 20px;
     background-color: <?php echo $tertiary ?>;
     border-top: 1px solid <?php echo $borderLight ?>;
     border-bottom: 1px solid <?php echo $borderDark ?>;
     text-align: right;
 }
-#header .info {
+#header-right .info {
     height: 20px;
     line-height: 20px;
     padding: 0 10px;
 }
-#header h1, #header h1 a {
-    float: left;
-    width: 270px;
-    height: 50px;
-    margin: 0;
-    padding: 0;
-}
-#header h1 {
-    background: url('<?php echo $baseUrl ?>/images/logo.png') no-repeat 10px 50%;
-}
-#header h1 a {
-    position: relative;
-    height: 50px;
-    line-height: 50px;
-    text-indent: 90px;
-    color: <?php echo $tertiaryLightest ?>;
-}
-#header h1 a span {
-    position: absolute;
-    left: -9999px
+#header-right img {
+    vertical-align: middle;
 }
 
 /*
@@ -268,7 +282,7 @@ a#module-conf {
     border-top: 1px solid <?php echo $borderLight ?>;
     border-bottom: 1px solid <?php echo $borderDark ?>;
 }
-body * #manager-actions {
+html>body #manager-actions {
     padding: 1px 0 0;
 }
 #manager-actions span {
@@ -298,6 +312,11 @@ body * #manager-actions {
     border-width: 1px;
     border-color: <?php echo $tertiaryDarkest ?>;
 }
+#manager-actions select {
+    float: left;
+    margin-top: 5px;
+    margin-right: 5px;
+}
 #content-header {
 
 }
@@ -314,7 +333,7 @@ div.fieldsetlike { /*
 --------------------- as some pages don't use forms/fieldsets
 - e.g. module/overview, we have to put data in a fieldset like
 - div to have same render ------------------------------------*/
-    padding: 0 5px;
+    padding: 0;
 }
 div.fieldsetlike h3 {
     margin-bottom: 0.5em;
@@ -335,11 +354,14 @@ fieldset {
     border: 1px solid <?php echo $borderDark ?>;
 }
 select, input, textarea {
-    font-size: 1em;
+    font-size: 1.1em;
     z-index: 1;
 }
 html>body select, html>body input, html>body textarea {
     border: 1px solid <?php echo $primary ?>;
+}
+html>body input[type="text"] {
+    text-indent: 2px;
 }
 select:focus, input:focus, textarea:focus {
     background: <?php echo $primaryLightest ?>;
@@ -350,7 +372,7 @@ fieldset.noBorder {
     border: none;
 }
 fieldset.inside { /*
-    ---------------------------- also for pages without form (e.g. module/overview) */
+    -------------- also for pages without form (e.g. module/overview) */
     background: <?php echo $tertiaryLightest ?>;
 }
 fieldset.options {
@@ -358,9 +380,14 @@ fieldset.options {
     background: <?php echo $tertiaryLightest ?>;
     border-top: none;
 }
-form h3, fieldset h3 {
+form h3 {
     margin-bottom: 0.5em;
     font-size: 1.2em;
+}
+fieldset h3 {
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+    color: <?php echo $tertiaryDarkest ?>;
 }
 fieldset p {
     clear: left;
@@ -379,13 +406,14 @@ form p.col label {
 
 /*
 ==================Tables default layout=======================*/
-table {
+#container table { /*
+------------------- Actually concerns all table but #container specialization is required not to interfere ------------------- with FCKeditor or JsCalendar css */
     background: #fff;
     border-collapse: collapse;
     border: 1px solid <?php echo $tertiaryLightest ?>;
     font-family: helvetica;
 }
-tr {
+#container tr {
     height: 24px;
     line-height: 24px;
     vertical-align: middle;
@@ -402,17 +430,17 @@ tr th {
     font-weight: bold;
 }
 thead tr {
-    height: 20px;
-    line-height: 20px;
     background: <?php echo $primary; ?>;
     color: <?php echo $tertiaryLightest ?>;
 }
 thead tr.infos, tfoot tr.infos {
-    height: 16px;
-    line-height: 16px;
+    
     background: <?php echo $tertiaryDark ?>;
     font-size: 10px;
     color: <?php echo $primary; ?>;
+}
+thead td {
+    padding: 0 12px;
 }
 thead th, thead th a {
     color: <?php echo $tertiaryLightest ?>;
@@ -469,6 +497,14 @@ span.tipOwner, label.tipOwner, input.tipOwner {
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
 }
 <?php } ?>
+/* Holly Hack here so that tooltips don't act screwy:
+ * http://www.positioniseverything.net/explorer/threepxtest.html */
+/* Hide next from Mac IE plus non-IE \*/
+* html #content {
+    height: 1%;
+}
+/* End hide from IE5/mac plus non-IE */
+
 /*-- Special TipText boxes ----------------------------------*/
 span#becareful {
     top: -35px;
@@ -486,7 +522,7 @@ span#becareful {
 /*-- Each action link (<a> tag) has a standard "action" class name
   -- plus a specific <action-type> class name e.g. "add", "edit",...
   -- to define which image to use. This allows to change assigned
-  -- images in a single location : here. -------------------------*/
+  -- images in a single location : here. ---------------------*/
 a.action {
     background-position: 3px 50%;
     background-repeat: no-repeat;
@@ -514,6 +550,21 @@ a.undo {
 }
 a.upload {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_upload.gif');
+}
+a.reorder {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_reorder.gif');
+}
+a.search {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_search.gif');
+}
+a.addcat {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_addcat.gif');
+}
+a.addrootcat {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_addrootcat.gif');
+}
+a.adduser {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_adduser.gif');
 }
 
 /*
@@ -581,7 +632,7 @@ div.close span {
 #optionsLinks a {
     display:block;
     background: url('<?php echo $baseUrl ?>/images/backgrounds/tab_left.gif') no-repeat left top;
-    padding:5px 15px 4px;
+    padding:5px 10px 4px;
 }
 #optionsLinks li.current a {
     background-image: url('<?php echo $baseUrl ?>/images/backgrounds/tab_left_on.gif');
