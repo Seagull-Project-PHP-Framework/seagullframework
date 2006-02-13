@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SimpleNav.php,v 1.43 2005/06/20 23:28:37 demian Exp $
 
-require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
 
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
@@ -202,27 +201,22 @@ class SimpleNav
      */
     var $_breadcrumbs = true;
 
+    /**
+     * Enable navigation cache by default.
+     *
+     * @access  private
+     * @var     boolean
+     */
+    var $_cacheEnabled = true;
+
     function SimpleNav(&$output)
     {
         $this->_rid        = (int)SGL_Session::get('rid');
         $this->output      = &$output;
         $this->req         = $output->get('request');
         $this->conf        = &$output->conf;
-        $this->querystring = $this->req->getUri();
         $this->_staticId   = $this->req->get('staticId');
-        $this->da          = &DA_Default::singleton();
 
-        if (is_null($output->get('navLang'))) {
-            $langId = SGL_Translation::getLangID();
-            $output->set('navLang', $langId);
-        }
-        //  detect if trans2 support required
-        if ($this->conf['translation']['container'] == 'db') {
-            require_once SGL_CORE_DIR . '/Translation.php';
-            $this->trans = & SGL_Translation::singleton();
-            $this->_aTranslations =
-                SGL_Translation::getTranslations('nav', $output->get('navLang'));
-        }
         // set default driver params
         $this->setParams();
     }
@@ -259,7 +253,7 @@ class SimpleNav
     function render()
     {
         static $aAllSectionNodes, $aAllCurrentPages, $startParentNode,
-            $currentSectionId, $homePage;
+            $currentSectionId, $homePage, $aTranslations;
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
@@ -268,9 +262,10 @@ class SimpleNav
         $cache   = & SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
-            . $this->_collapsed . $this->_showAlways;
+            . $this->_collapsed . $this->_showAlways 
+            . $this->output->currLang . $this->output->charset;
 
-        if ($data = $cache->get($cacheId, 'nav')) {
+        if ($this->_cacheEnabled && $data = $cache->get($cacheId, 'nav')) {
             $aUnserialized    = unserialize($data);
             $currentSectionId = $aUnserialized['sectionId'];
             $html             = $aUnserialized['html'];
@@ -285,12 +280,25 @@ class SimpleNav
 
             //  generate sections nodes
             if ($this->_startParentNode !== $startParentNode) {
+
+                //  detect if trans2 support required
+                if ($this->conf['translation']['container'] == 'db') {
+                    $this->trans = &SGL_Translation::singleton();
+                    if (empty($aTranslations)) {
+                        $navLang = SGL_Translation::getLangID();
+                        $aTranslations =
+                            SGL_Translation::getTranslations('nav', $navLang);
+                    }
+                    $this->_aTranslations = &$aTranslations;
+                }
+
                 $aSectionNodes    = $this->getSectionsByRoleId($this->_startParentNode);
                 $aAllSectionNodes = $aSectionNodes;
                 $aAllCurrentPages = $this->_aAllCurrentPages;
                 $startParentNode  = $this->_startParentNode;
                 $currentSectionId = $this->_currentSectionId;
                 $homePage         = $this->_homePage;
+
             } else {
                 $aSectionNodes           = $aAllSectionNodes;
                 $this->_aAllCurrentPages = $aAllCurrentPages;
@@ -331,11 +339,13 @@ class SimpleNav
             }
 
             //  cache stuff
-            $aNav = array(  'sectionId'   => $currentSectionId,
-                            'html'        => $html,
-                            'breadcrumbs' => $breadcrumbs,
-                            'title'       => $this->_currentTitle);
-            $cache->save(serialize($aNav), $cacheId, 'nav');
+            if ($this->_cacheEnabled) {
+                $aNav = array(  'sectionId'   => $currentSectionId,
+                                'html'        => $html,
+                                'breadcrumbs' => $breadcrumbs,
+                                'title'       => $this->_currentTitle);
+                $cache->save(serialize($aNav), $cacheId, 'nav');
+            }
 
             SGL::logMessage('nav tabs from db', PEAR_LOG_DEBUG);
         }
@@ -354,9 +364,8 @@ class SimpleNav
      */
     function getSectionsByRoleId($sectionId = 0)
     {
-        $this->_currentSectionId = 0;
-        $this->_currentTitle     = '';
-        $this->_aAllCurrentPages = array();
+        $this->querystring = $this->req->getUri();
+        $this->da          = &DA_Default::singleton();
 
         // get navigation tree
         $aSectionNodes = $this->_getSections($sectionId);
@@ -503,7 +512,7 @@ class SimpleNav
                 $this->_homePage = $section;
             }
 
-            if ($section->children) {
+            if (!empty($section->children)) {
                 $this->_searchExactMatches($section->children);
 
                 //  if children node is current mark parent node
@@ -547,7 +556,7 @@ class SimpleNav
     function _searchInExactMatches(&$aSectionNodes)
     {
         foreach ($aSectionNodes as $key => $section) {
-            if ($section->children) {
+            if (!empty($section->children)) {
                 $this->_searchInExactMatches($section->children);
 
                 //  if children node is current mark parent node
@@ -610,8 +619,10 @@ class SimpleNav
                     $url = $this->_makeLinkFromNode($section);
                 }
 
-                $anchor      = '<a' . ' href="' . $url . '">' . $section->title . '</a>';
-                $listItems  .= "<li" . $liAtts . '>' . $anchor;
+                $accessKey  = !empty($section->access_key)
+                    ? ' accesskey="' . $section->access_key . '"' : '';
+                $anchor     = '<a' . ' href="' . $url . '"' . $accessKey . '>' . $section->title . '</a>';
+                $listItems .= "<li" . $liAtts . '>' . $anchor;
 
                 // show children nodes
                 if ($section->children
