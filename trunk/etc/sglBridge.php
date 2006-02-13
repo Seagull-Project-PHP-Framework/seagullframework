@@ -94,8 +94,12 @@ class SGL_Process_MinimalSession extends SGL_DecorateProcess
     }
 }
 
+//  value from php.ini, before sgl modifies it
+$oldIncludePath = ini_get('include_path');
+
 TestRunnerInit::run();
 
+//  add global path, so SimpleTest lib can be included
 $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-ini_set('include_path', ini_get('include_path') . $includeSeparator . '/usr/local/lib/php');
+ini_set('include_path', ini_get('include_path') . $includeSeparator . $oldIncludePath);
 ?>
