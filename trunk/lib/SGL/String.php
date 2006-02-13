@@ -267,7 +267,7 @@ class SGL_String
             return $ret;
         } else {
             //  add translation
-            if (!$isArray && $conf['translation']['addMissingTrans'] 
+            if (!$isArray && $conf['translation']['addMissingTrans']
                 && $conf['translation']['container'] == 'db') {
 
                 //  get a reference to the request object
@@ -277,6 +277,7 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
+                require_once SGL_CORE_DIR . '/Translation.php';
                 $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }

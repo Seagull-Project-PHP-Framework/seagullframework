@@ -68,6 +68,7 @@ class NavStyleMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         //  forward default values
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
@@ -134,7 +135,8 @@ class NavStyleMgr extends SGL_Manager
 
             $output->groupsRadioButtons .="\n". '<input type="radio"' . $radioChecked .
                 ' onClick="location.href=\'' .
-                SGL_Url::makeLink('list', 'navstyle', 'navigation', array(), "staticId|{$output->staticId}||rid|$rid"). '\'">' . $role;
+                SGL_Url::makeLink('list', 'navstyle', 'navigation', array(),
+                    "staticId|{$output->staticId}||rid|$rid"). '\'">' . $role;
         }
         //  build html unordered list of sections
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';

@@ -69,14 +69,6 @@ class SGL_BlockLoader
     var $aBlocks = array();
 
     /**
-     * $_GET param used to determine uniqueness of pages.
-     *
-     * @access  private
-     * @var     int
-     */
-    var $_staticId = 0;
-
-    /**
      * The role id, used so blocks can be cached per role.
      *
      * @access  private
