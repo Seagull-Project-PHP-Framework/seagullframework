@@ -326,7 +326,6 @@ class PageMgr extends SGL_Manager
         $output->action = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->actionIsAdd = true;
-        $output->addOnLoadEvent("toggleAliasElements(false)");
     }
 
     function _insert(&$input, &$output)
@@ -430,7 +429,7 @@ class PageMgr extends SGL_Manager
 
         //  possible DO bug here as correct insert always returns int 0
         if ($nodeId) {
-            SGL::raiseMsg('Section successfully added' . $errorMsg);
+            SGL::raiseMsg('Section successfully added' . $errorMsg, true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }
@@ -510,11 +509,6 @@ class PageMgr extends SGL_Manager
                 }
             }
             $section['uri_alias'] = $this->da->getAliasBySectionId($section['section_id']);
-        }
-        if (!empty($uriAlias)) {
-            $output->addOnLoadEvent("document.getElementById('page[uri_alias_enable]').checked=true");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('page[uri_alias]').disabled=true");
         }
         $output->section = $section;
     }
@@ -606,7 +600,7 @@ class PageMgr extends SGL_Manager
         if (!$parentId = $nestedSet->updateNode($input->section['section_id'], $input->section)) {
             SGL::raiseError('There was a problem updating the record',
                 SGL_ERROR_NOAFFECTEDROWS);
-            SGL::raiseMsg('Section details updated, no data changed');
+            SGL::raiseMsg('Section details updated, no data changed', true, SGL_MESSAGE_INFO);
             SGL_HTTP::redirect();
         }
         //  If changing activation status, we need to enable/disable this node's children too
@@ -616,7 +610,7 @@ class PageMgr extends SGL_Manager
                 foreach ($children as $child){
                     //  change the child's is_enabled status to that of its parent
                     if (!$nestedSet->updateNode($child['section_id'], array('is_enabled' => $input->section['is_enabled']))) {
-                        SGL::raiseMsg('Section details updated, no data changed');
+                        SGL::raiseMsg('Section details updated, no data changed', true, SGL_MESSAGE_INFO);
                     }
                 }
             }
@@ -657,7 +651,7 @@ class PageMgr extends SGL_Manager
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
-        SGL::raiseMsg($message . $errorMsg);
+        SGL::raiseMsg($message . $errorMsg, true, SGL_MESSAGE_INFO);
     }
 
     function _delete(&$input, &$output)
@@ -691,7 +685,7 @@ class PageMgr extends SGL_Manager
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
-        SGL::raiseMsg('The selected section(s) have successfully been deleted');
+        SGL::raiseMsg('The selected section(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _reorder(&$input, &$output)
@@ -708,7 +702,7 @@ class PageMgr extends SGL_Manager
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
-        SGL::raiseMsg('Sections reordered successfully');
+        SGL::raiseMsg('Sections reordered successfully', true, SGL_MESSAGE_INFO);
     }
 
     /**

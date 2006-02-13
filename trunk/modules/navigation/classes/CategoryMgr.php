@@ -104,7 +104,7 @@ class CategoryMgr extends SGL_Manager
         } elseif ($input->action =='insert') {
             $input->category['parent_id'] = $req->get('frmCatID');
         } else {
-            $input->category_id = $req->get('frmCatID');
+            $input->category_id = ($req->get('frmCatID') == '') ? 1 : $req->get('frmCatID');
         }
 
     }
@@ -122,7 +122,9 @@ class CategoryMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  prepare data for publisher subnav
-        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
+        if (!$this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
+        }
 
         //  load category
         if (!$this->_category->load($input->category_id)) {
@@ -148,7 +150,7 @@ class CategoryMgr extends SGL_Manager
         $message = $this->_category->update($input->category_id, $values);
 
         if ($message != '') {
-            SGL::raiseMsg($message);
+            SGL::raiseMsg($message, true, SGL_MESSAGE_INFO);
             $this->_redirectCatId = $input->category_id;
         } else {
             SGL::raiseError('Problem updating category', SGL_ERROR_NOAFFECTEDROWS);
@@ -162,7 +164,7 @@ class CategoryMgr extends SGL_Manager
 
         //  do not allow deletion of root category
         if ($input->category_id == 1) {
-            SGL::raiseMsg('do not delete root category');
+            SGL::raiseMsg('do not delete root category', true, SGL_MESSAGE_WARNING);
 
             $aParams = array(
                 'moduleName'    => 'navigation',
@@ -177,7 +179,7 @@ class CategoryMgr extends SGL_Manager
         $this->_category->delete($input->aDelete);
         $output->category_id = 0;
 
-        SGL::raiseMsg('The category has successfully been deleted');
+        SGL::raiseMsg('The category has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _reorder(&$input, &$output)
@@ -185,6 +187,10 @@ class CategoryMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'categoryReorder.html';
         $output->categoryTree = $this->_category->getTree();
+
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        }
     }
 
     function _reorderUpdate(&$input, &$output)
@@ -194,7 +200,7 @@ class CategoryMgr extends SGL_Manager
                          'AF' => 'down');
         if (isset($input->category_id, $input->targetId) && ($pos = array_search($input->move, $aMoveTo))) {
             $this->_category->move($input->category_id, $input->targetId, $pos);
-            SGL::raiseMsg('Categories reordered successfully');
+            SGL::raiseMsg('Categories reordered successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
