@@ -69,6 +69,7 @@ class Navigation
                 'levelsToRender'  => 0,
                 'collapsed'       => 0,
                 'showAlways'      => 0,
+                'cacheEnabled'    => 1,
                 'breadcrumbs'     => 0,
         );
 
