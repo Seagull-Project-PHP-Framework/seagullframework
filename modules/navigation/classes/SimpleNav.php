@@ -211,11 +211,12 @@ class SimpleNav
 
     function SimpleNav(&$output)
     {
-        $this->_rid        = (int)SGL_Session::get('rid');
-        $this->output      = &$output;
-        $this->req         = $output->get('request');
-        $this->conf        = &$output->conf;
-        $this->_staticId   = $this->req->get('staticId');
+        $c = &SGL_Config::singleton();
+        $this->conf         = $c->getAll();
+        $this->_rid         = (int)SGL_Session::get('rid');
+        $this->output       = &$output;
+        $this->req          = $output->get('request');
+        $this->_staticId    = $this->req->get('staticId');
 
         // set default driver params
         $this->setParams();
@@ -229,7 +230,6 @@ class SimpleNav
      */
     function setParams($aParams = array())
     {
-
         //  set driver params from configuration
         foreach ($this->conf['navigation'] as $key => $value) {
             $this->{'_' . $key} = $value;
@@ -262,8 +262,8 @@ class SimpleNav
         $cache   = & SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
-            . $this->_collapsed . $this->_showAlways 
-            . $this->output->currLang . $this->output->charset;
+            . $this->_collapsed . $this->_showAlways
+            . @$this->output->currLang . @$this->output->charset;
 
         if ($this->_cacheEnabled && $data = $cache->get($cacheId, 'nav')) {
             $aUnserialized    = unserialize($data);
