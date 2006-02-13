@@ -122,23 +122,24 @@ class PublisherOutput
      * @param   string  $input
      * @return  string  $output colour-coded status indicator
      */
-    function applyStatusColour($input) 
+    function applyStatusColour($input, $webRoot = '', $theme = '') 
     {
+        $imageDir = "$webRoot/themes/$theme/images/16/";
         switch($input) {
         case SGL_STATUS_ARCHIVED:
-            $output = "<span class='archived'>" . SGL_String::translate('Archived') . "</span>";
+            $output = "<span class='archived'><img src='{$imageDir}status_archived.gif' alt='" . SGL_String::translate('Archived') . "' title='" . SGL_String::translate('Archived') . "' /></span>";
             break;
 
         case SGL_STATUS_PUBLISHED:
-            $output = "<span class='published'>" . SGL_String::translate('Published') . "</span>";
+            $output = "<span class='published'><img src='{$imageDir}status_published.gif' alt='" . SGL_String::translate('Published') . "' title='" . SGL_String::translate('Published') . "' /></span>";
             break;
 
         case SGL_STATUS_APPROVED:
-            $output = "<span class='approved'>" . SGL_String::translate('Approved') . "</span>";
+            $output = "<span class='approved'><img src='{$imageDir}status_approved.gif' alt='" . SGL_String::translate('Approved') . "' title='" . SGL_String::translate('Approved') . "' /></span>";
             break;
 
         case SGL_STATUS_FOR_APPROVAL:
-            $output = "<span class='forApproval'>" . SGL_String::translate('For Approval') . "</span>";
+            $output = "<span class='forApproval'><img src='{$imageDir}status_forapproval.gif' alt='" . SGL_String::translate('For Approval') . "' title='" . SGL_String::translate('For Approval') . "' /></span>";
             break;
 
         default:

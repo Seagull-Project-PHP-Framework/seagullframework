@@ -53,6 +53,14 @@
                 {generateRadioPair(#conf[site][banIpEnabled]#,conf[site][banIpEnabled]):h}
             </p>
             <p>
+                <label for="conf[site][denyList]">{translate(#Deny list#)}</label>
+                <input type="text" class="longText" name="conf[site][denyList]" id="conf[site][denyList]" value="{conf[site][denyList]}" />
+            </p>
+            <p>
+                <label for="conf[site][allowList]">{translate(#Allow list#)}</label>
+                <input type="text" class="longText" name="conf[site][allowList]" id="conf[site][allowList]" value="{conf[site][allowList]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[site][safeDelete]">{translate(#Enable Safe deleting#)}
                 <span class="tipText">{translate(#This way no content items are really deleting from DB, just marked as deleted#)}</span>
                 </label>
@@ -214,7 +222,7 @@
         </fieldset>
 
         <fieldset class="main options" id="debuggingOptions">
-            <h3>{translate(#Debugging#)}</h3>
+            <h3>{translate(#Debug#)}</h3>
             <p>
                 <label class="tipOwner" for="conf[debug][authorisationEnabled]">{translate(#Enable authentication#)}
                 <span class="tipText">{translate(#Debugging easier when this is disabled#)}</span>
@@ -327,6 +335,7 @@
                 </label>
                 <input type="text" class="longText" name="conf[db][post-connect]" id="conf[db][post-connect]" value="{conf[db][post-connect]}" />
             </p>
+            <h3>{translate(#Database Table Mappings#)}</h3>
             <p flexy:foreach="conf[table],key,var">
                 <label for="conf[table][{key}]">{key}</label>
                 <input type="text" name="conf[table][{key}]" id="conf[table][{key}]" value="{var}" />

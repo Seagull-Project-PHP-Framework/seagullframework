@@ -25,7 +25,7 @@
                 <label>{translate(#Date Added#)}</label>
                 <span>{formatDate(asset.date_created)}</span>
             </p>
-            {if:isAdmin}
+            {if:isAdmin()}
             <p>
                 <label>{translate(#Category#)}</label>
                 <span>{breadCrumbs:h}</span>

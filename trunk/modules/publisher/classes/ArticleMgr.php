@@ -140,6 +140,8 @@ class ArticleMgr extends SGL_Manager
         //  generate template type options for article type chooser
         //  returns an assoc array: typeID => typeName
         $output->aArticleTypes = $this->getTemplateTypes();
+        $output->aArticleSelect = $this->getTemplateTypes('selector');
+        //echo'<pre>';die(print_r($output->aArticleSelect));
     }
 
     function _add(&$input, &$output)
@@ -173,7 +175,9 @@ class ArticleMgr extends SGL_Manager
         $output->expiryDate = strftime("%Y-%m-%d %H:%M:%S", $expiryDate);
         $output->dateSelectorExpiry =
             SGL_Output::showDateSelector($aDate, 'frmExpiryDate');
-        if ($this->conf['ArticleMgr']['noExpiry']) $aDate = '';
+        if ($this->conf['ArticleMgr']['noExpiry']) {
+            $aDate = '';
+        }
         $output->noExpiry = SGL_Output::getNoExpiryCheckbox($aDate, 'frmExpiryDate');
         $output->addOnLoadEvent("time_select_reset('frmExpiryDate','false')");
 
@@ -191,13 +195,16 @@ class ArticleMgr extends SGL_Manager
         $htmlOptions = $menu->toHtml();
 
         //  only display categories if 'html article' type is chosen
-        if ($item->get('typeID') == 2) {
+        //echo'<pre>';die(print_r($item);
+        if ($input->dataTypeID == 2) {
             $output->aCategories = $htmlOptions;
             $output->currentCat = $input->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
 
-        $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
+        }
     }
 
     function _insert(&$input, &$output)
@@ -339,7 +346,9 @@ class ArticleMgr extends SGL_Manager
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
 
-        $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
+        }
     }
 
     function _update(&$input, &$output)
@@ -444,10 +453,12 @@ class ArticleMgr extends SGL_Manager
         //  prep publisher sub nav
         if ($this->isAdmin) {
             $theme = $_SESSION['aPrefs']['theme'];
-            $output->addOnLoadEvent('checkNewButton()');
+            
             if ($this->conf['site']['adminGuiEnabled']) {
                 $output->addOnLoadEvent("switchRowColorOnHover()");
+                $output->addOnLoadEvent("selectArticleType('newArticle', 'articleTypeSelect')");
             } else {
+                $output->addOnLoadEvent('checkNewButton()');
                 $output->addOnLoadEvent("document.getElementById('frmResourceChooser').articles.disabled = true");
             }
             $menu = & new MenuBuilder('SelectBox');
@@ -602,14 +613,18 @@ class ArticleMgr extends SGL_Manager
      * @access  public
      * @return  array   hash of template types
      */
-    function getTemplateTypes()
+    function getTemplateTypes($mode = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "  SELECT  item_type_id, item_type_name
                     FROM    {$this->conf['table']['item_type']}
                 ";
-        return $this->dbh->getAssoc($query);
+        $templateTypes = $this->dbh->getAssoc($query);
+        if ($mode == 'selector') {
+            $templateTypes[1] = '&ndash;&ndash; ' . SGL_String::translate('Article type') . ' &ndash;&ndash;';
+        }
+        return $templateTypes;
     }
 
     function _generateActionLinks($itemID, $itemStatusID)

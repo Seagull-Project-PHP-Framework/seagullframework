@@ -219,7 +219,9 @@ class ConfigMgr extends SGL_Manager
             $output->addMissingTrans = ($this->conf['translation']['addMissingTrans']) ? true : false;
         }
 
-        $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
+        }
     }
 
     function _edit(&$input, &$output)
@@ -246,7 +248,7 @@ class ConfigMgr extends SGL_Manager
         $ok = $c->save(SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php');
 
         if (!is_a($ok, 'PEAR_Error')) {
-            SGL::raiseMsg('config info successfully updated');
+            SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem saving your configuration, make sure /var is writable',
                 SGL_ERROR_FILEUNWRITABLE);
