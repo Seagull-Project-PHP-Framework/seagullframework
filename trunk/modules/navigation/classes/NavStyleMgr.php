@@ -117,13 +117,15 @@ class NavStyleMgr extends SGL_Manager
     function _list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'navStyleList.html';
         $output->styleFiles = SGL_Util::getStyleFiles($this->getCurrentStyle());
         $output->currentStyle = $this->getCurrentStyle();
-        $output->staticId = (is_numeric($input->staticId)) ? $input->staticId : $this->generateStaticId();
+        $output->staticId = (is_numeric($input->staticId))
+            ? $input->staticId
+            : $this->generateStaticId();
 
         //  build string of radio buttons html for selecting group
-
         $aRoles = $this->da->getRoles();
         $aRoles[0]= 'guest';
         $output->groupsRadioButtons = '';
@@ -137,7 +139,7 @@ class NavStyleMgr extends SGL_Manager
         //  build html unordered list of sections
         require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
 
-        $nav = & new SimpleNav($input);
+        $nav = & new SimpleNav($output);
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
         $nav->setDisableLinks(true);
