@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2003-2005 m3 Media Services Limited                         |
+// | Copyright (c) 2003-2006 m3 Media Services Limited                         |
 // | For contact details, see: http://www.m3.net/                              |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -81,7 +81,7 @@ function STR_init()
         );
 
     // set error reporting as verbose as possible
-    error_reporting(E_ALL);
+    error_reporting(E_ALL ^ E_NOTICE);
 
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
