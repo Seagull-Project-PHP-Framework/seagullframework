@@ -427,9 +427,7 @@ class PermissionMgr extends SGL_Manager
 
         //  get all perms currently in db
         $dbPerms = $this->da->getPermsByModuleId('', SGL_RET_ARRAY);
-
         $filePerms = $this->retrievePermsFromFiles();
-
         $orphanedPerms = array();
 
         //  attempt to find each file perm in the db perms.

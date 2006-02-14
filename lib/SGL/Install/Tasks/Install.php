@@ -87,11 +87,14 @@ class SGL_Task_CreateConfig extends SGL_Task
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
 
-        //  store site language for post-install task
-        $_SESSION['install_language'] = $data['siteLanguage'];
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush(PEAR::raiseError($ok));
         }
+        //  store site language for post-install task
+        $_SESSION['install_language'] = $data['siteLanguage'];
+
+        //  and tz
+        $_SESSION['install_timezone'] = $data['serverTimeOffset'];
     }
 }
 
@@ -868,19 +871,31 @@ PHP;
         $lang = isset($_SESSION['install_language'])
             ? $_SESSION['install_language']
             : 'en-iso-8859-15';
-        $ok1 = $da->updateMasterPrefs(array('language' => $lang));
-        if (PEAR::isError($ok1)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok1));
+        $ok = $da->updateMasterPrefs(array('language' => $lang));
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
         }
-
         //  update lang in admin prefs
         $aMapping = $da->getPrefsMapping();
         $langPrefId = $aMapping['language'];
-        $ok2 = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
-        if (PEAR::isError($ok2)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok2));
+        $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
         }
-
+        //  update tz in default prefs
+        $tz = isset($_SESSION['install_timezone'])
+            ? $_SESSION['install_timezone']
+            : 'UTC';
+        $ok = $da->updateMasterPrefs(array('timezone' => $tz));
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+        }
+        //  update tz in admin prefs
+        $tzPrefId = $aMapping['timezone'];
+        $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+        }
     }
 }
 ?>

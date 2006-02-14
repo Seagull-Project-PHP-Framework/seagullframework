@@ -13,6 +13,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+14-02-06    Timezone support from installer correctly implemented
 14-02-06    All action methods are now prefixed with '_cmd' to differentiate
             them from private methods
 14-02-06    SGL_UrlParser_SefStrategy::resolveArrayElems renamed to
