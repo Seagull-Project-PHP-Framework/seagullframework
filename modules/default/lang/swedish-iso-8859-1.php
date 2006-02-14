@@ -1,4 +1,8 @@
 <?php
+$defaultWords['Output URL handler'] = 'Utmatnings URL hanterare';
+$defaultWords['What format would you like your output URLs, Seagull Search Engine Friendly is the default'] = 'I vilket format vill du mata ut URL:er? Seagull Sökmotorvänliga är standard.';
+$defaultWords['Sort by'] = 'Sortera efter';
+$defaultWords['Publishing'] = 'Publicering';
 $defaultWords['Deny list'] = 'Neka åtkomst lista';
 $defaultWords['Allow list'] = 'Tillåt åtkomst lista';
 $defaultWords['delete selected'] = 'radera valda';
@@ -19,7 +23,7 @@ $defaultWords['allow backend to display in separate GUI'] = 'tillåt backend att 
 $defaultWords['Configuration'] = 'Konfigurering';
 $defaultWords['Manage'] = 'Hantera';
 $defaultWords['Post-connection query'] = 'Post-anslutnings fråga';
-$defaultWords['Words which system was unable to translate will be enclosed in "> <" marks'] = 'Ord som systemet inte kunnat översätta kommer inneslutas i \\\">';
+$defaultWords['Words which system was unable to translate will be enclosed in "> <" marks'] = 'Ord som systemet inte kunnat översätta kommer inneslutas i \\\\\">';
 $defaultWords['This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8'] = 'Denna fråga används för att sätta standard teckenuppsättningen för gällande anslutning (MySQL 4.1 eller högre). Till exempel: SET NAMES utf8';
 $defaultWords['Maintenance Manager'] = 'Underhållshantering';
 $defaultWords['With selected record(s)'] = 'Med valda poster';
@@ -243,8 +247,6 @@ $defaultWords['database'] = 'databas';
 $defaultWords['never'] = 'aldrig';
 $defaultWords['Show debug reporting link'] = 'Visa debug rapporteringslänk';
 $defaultWords['Send feedback to project for bugs'] = 'Skicka feedback till projektet för buggar';
-$defaultWords['URL handler'] = 'URL-hanterare';
-$defaultWords['What format would you like your URLs, Seagull Search Engine Friendly is the default'] = 'Vilket format vill ni ha era URL:er? Seagull sökmotorvänliga är standard';
 $defaultWords['The classic URL handler has not been implemented yet'] = 'Den klassiska URL-hanteraren är inte implementerad ännu';
 $defaultWords['Template Engine'] = 'Mallmotor';
 $defaultWords['Seagull allows you to use the template engine of your choice'] = 'Seagull låter dig använda den mallmotor du vill.';

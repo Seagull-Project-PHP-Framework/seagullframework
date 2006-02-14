@@ -157,6 +157,14 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         return array_merge($aParsedUri, $aQsParams);
     }
 
+    /**
+     * Parses an array of querystring param names and values and returns a
+     * key/value hash.
+     *
+     * @param array $aUriParts  The list of candidate values.
+     * @param array $aParsedUri The list of existing valid value, to avoid overwriting
+     * @return array            A hash of k/v pairs
+     */
     function resolveArrayElems($aUriParts, $aParsedUri = array())
     {
         $numParts = count($aUriParts);
