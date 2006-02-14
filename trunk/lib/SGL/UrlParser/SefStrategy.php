@@ -223,7 +223,9 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         $mod = (empty($mod)) ? $req->get('moduleName'): $mod;
         $mgr = (empty($mgr)) ? 'default' : $mgr;
         $mod = (empty($mod)) ? 'default' : $mod;
-        $url = ($conf['site']['frontScriptName'] != false) ? $conf['site']['frontScriptName'] . '/' : '';
+        $url = ($conf['site']['frontScriptName'] != false)
+            ? $conf['site']['frontScriptName'] . '/'
+            : '';
 
         //  allow for default managers, ie, in faqMgr, don't
         //  return http://localhost.localdomain/seagull/www/index.php/faq/faq/action/edit/

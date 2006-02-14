@@ -66,7 +66,7 @@ class SGL_Request
         }
         return $res;
     }
-    
+
     /**
      * Returns a singleton Request instance.
      *
@@ -87,7 +87,7 @@ class SGL_Request
         // If the instance is not there, create one
         if (!isset($instance)) {
             $instance = new SGL_Request();
-            $err = $instance->init();            
+            $err = $instance->init();
         }
         return $instance;
     }
@@ -107,7 +107,6 @@ class SGL_Request
         SGL_URL::resolveServerVars($conf);
 
         //  get current url object
-        #$urlHandler = $conf['site']['urlHandler'];
         $cache = & SGL_Cache::singleton();
         $cacheId = md5($_SERVER['PHP_SELF']);
 

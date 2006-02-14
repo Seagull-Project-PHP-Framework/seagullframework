@@ -119,9 +119,9 @@
     <tr>
         <td class="fieldName">{$result->translate('URL handler')}</td>
         <td class="fieldValue">
-            {if $result->error.urlHandler}<div class="error">{$result->error.urlHandler}</div>{/if}
-            <select name="conf[site][urlHandler]">
-                {$result->generateSelect($result->aUrlHandlers,$result->conf.site.urlHandler)}
+            {if $result->error.outputUrlHandler}<div class="error">{$result->error.outputUrlHandler}</div>{/if}
+            <select name="conf[site][outputUrlHandler]">
+                {$result->generateSelect($result->aUrlHandlers,$result->conf.site.outputUrlHandler)}
             </select>
         </td>
         <td>

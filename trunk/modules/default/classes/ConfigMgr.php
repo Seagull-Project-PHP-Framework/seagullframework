@@ -147,11 +147,6 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
             }
 
-            //  catch invalid URL handler
-            if ($input->conf['site']['urlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
-                $aErrors['urlHandler'] = 'The classic URL handler has not been implemented yet';
-            }
-
             switch ($input->conf['mta']['backend']) {
 
             case 'sendmail':
@@ -175,7 +170,6 @@ class ConfigMgr extends SGL_Manager
                 }
                 break;
             }
-
             //  session validations
             if (  !empty($input->conf['site']['single_user'])
                 && empty($input->conf['site']['extended_session'])) {
