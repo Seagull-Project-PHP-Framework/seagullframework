@@ -426,4 +426,6 @@ $defaultWords['P3P'] = 'P3P';
 $defaultWords['Admin GUI Feature'] = 'Admin GUI Feature';
 $defaultWords['allow backend to display in separate GUI'] = 'allow backend to display in separate GUI';
 $defaultWords['Configuration'] = 'Configuration';
+$defaultWords['Sort by'] = 'Sort by';
+$defaultWords['Publishing'] = 'Publishing';
 ?>
