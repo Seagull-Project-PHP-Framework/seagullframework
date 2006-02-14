@@ -73,7 +73,7 @@ class BlogMgr extends SGL_Manager
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -54,7 +54,7 @@ class UserImportMgr extends UserMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::UserMgr();
-        
+
         $this->pageTitle    = 'User Import Manager';
         $this->template     = 'userImport.html';
         $this->da           = & DA_User::singleton();
@@ -117,9 +117,44 @@ class UserImportMgr extends UserMgr
         $output->aFiles = $this->_getCsvFiles();
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+    }
+
+    function _cmd_insertImportedUsers(&$input, &$output)
+    {
+        //  read in selected CSV file
+        $aUsers = $this->_readCsvFile($input->csvFile);
+
+        //  wrap _insert method to import users
+        foreach ($aUsers as $aUser) {
+            $user = new StdClass();
+            $user->first_name = $aUser['firstname'];
+            $user->last_name = $aUser['lastname'];
+            $user->email = $aUser['email'];
+            $user->role_id = $input->role;
+            $user->organisation_id = $input->organisation;
+            $user->username = strtolower($user->first_name);
+            $user->passwd = md5('password');
+
+            //  assign to input object
+            $input->user = $user;
+
+            //  call parent _insert method
+            $this->_insert($input, $output);
+        }
+    }
+
+    /**
+     * Redirects to UserMgr::list()
+     *
+     * @access  private
+     */
+    function _cmd_redirectToUserMgr(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL_HTTP::redirect(array('manager' => 'user'));
     }
 
     function _getCsvFiles()
@@ -128,10 +163,10 @@ class UserImportMgr extends UserMgr
         if (@$fh = opendir(SGL_UPLOAD_DIR)) {
             while (false !== ($file = readdir($fh))) {
                 //  remove unwanted dir elements
-                if ($file == '.' || $file == '..' || $file == 'CVS') {
+                if ($file == '.' || $file == '..' || $file == 'svn') {
                     continue;
                 }
-                //  and anything without php extension
+                //  and anything without csv extension
                 if (($ext = end(explode('.', $file))) != 'csv') {
                     continue;
                 }
@@ -178,41 +213,6 @@ class UserImportMgr extends UserMgr
             unset($aRecord);
         }
         return $aResults;
-    }
-
-    function _insertImportedUsers(&$input, &$output)
-    {
-        //  read in selected CSV file
-        $aUsers = $this->_readCsvFile($input->csvFile);
-
-        //  wrap _insert method to import users
-        foreach ($aUsers as $aUser) {
-            $user = new StdClass();
-            $user->first_name = $aUser['firstname'];
-            $user->last_name = $aUser['lastname'];
-            $user->email = $aUser['email'];
-            $user->role_id = $input->role;
-            $user->organisation_id = $input->organisation;
-            $user->username = strtolower($user->first_name);
-            $user->passwd = md5('password');
-
-            //  assign to input object
-            $input->user = $user;
-
-            //  call parent _insert method
-            $this->_insert($input, $output);
-        }
-    }
-
-    /**
-     * Redirects to UserMgr::list()
-     *
-     * @access  private
-     */
-    function _redirectToUserMgr()
-    {
-        $url = SGL_Output::makeUrl('','user');
-        SGL_HTTP::redirect($url);
     }
 }
 ?>

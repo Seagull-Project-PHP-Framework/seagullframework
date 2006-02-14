@@ -81,7 +81,7 @@ class Gallery2Mgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output) {
+    function _cmd_list(&$input, &$output) {
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -144,7 +144,7 @@ class ArticleMgr extends SGL_Manager
         //echo'<pre>';die(print_r($output->aArticleSelect));
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template   = 'articleMgrAdd.html';
@@ -207,7 +207,7 @@ class ArticleMgr extends SGL_Manager
         }
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -248,7 +248,7 @@ class ArticleMgr extends SGL_Manager
         SGL::raiseMsg('Article successfully added', true, SGL_MESSAGE_INFO);
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -351,7 +351,7 @@ class ArticleMgr extends SGL_Manager
         }
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'articleMgrEdit.html';
@@ -390,7 +390,7 @@ class ArticleMgr extends SGL_Manager
         SGL::raiseMsg('Article successfully updated', true, SGL_MESSAGE_INFO);
     }
 
-    function _changeStatus(&$input, &$output)
+    function _cmd_changeStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -400,7 +400,7 @@ class ArticleMgr extends SGL_Manager
         SGL::raiseMsg('Article status has been successfully changed', true, SGL_MESSAGE_INFO);
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $item = & new SGL_Item();
@@ -409,7 +409,7 @@ class ArticleMgr extends SGL_Manager
         SGL::raiseMsg('The selected article(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _view(&$input, &$output)
+    function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->masterTemplate = 'masterBlank.html';
@@ -417,7 +417,7 @@ class ArticleMgr extends SGL_Manager
         $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -453,7 +453,7 @@ class ArticleMgr extends SGL_Manager
         //  prep publisher sub nav
         if ($this->isAdmin) {
             $theme = $_SESSION['aPrefs']['theme'];
-            
+
             if ($this->conf['site']['adminGuiEnabled']) {
                 $output->addOnLoadEvent("switchRowColorOnHover()");
             } else {
@@ -509,8 +509,11 @@ class ArticleMgr extends SGL_Manager
                     i.start_date,
                     i.expiry_date,
                     i.status
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
+            FROM    {$this->conf['table']['item']} i,
+                    {$this->conf['table']['item_addition']} ia,
+                    {$this->conf['table']['item_type']} it,
+                    {$this->conf['table']['item_type_mapping']} itm,
+                    {$this->conf['table']['user']} u
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -626,6 +629,19 @@ class ArticleMgr extends SGL_Manager
         return $templateTypes;
     }
 
+    /**
+     * Add article objects to elements array for counting.
+     *
+     * @access  public
+     * @param   mixed   $mElement
+     * @return  void
+     */
+    function add($mElement)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $this->aElements = $mElement;
+    }
+
     function _generateActionLinks($itemID, $itemStatusID)
     {
         //  prepare translations
@@ -668,19 +684,5 @@ EOF;
         }
         return $linksHTML;
     }
-
-    /**
-     * Add article objects to elements array for counting.
-     *
-     * @access  public
-     * @param   mixed   $mElement
-     * @return  void
-     */
-    function add($mElement)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->aElements = $mElement;
-    }
-
 }
 ?>

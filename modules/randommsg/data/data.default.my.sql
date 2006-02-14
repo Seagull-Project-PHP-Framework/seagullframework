@@ -3,7 +3,7 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'randommsg', 'Random Messages', 'Al
 SELECT @moduleId := MAX(module_id) FROM module;
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_add', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_insert', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_delete', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_cmd_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_cmd_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_cmd_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rndmsgmgr_cmd_list', '', @moduleId);

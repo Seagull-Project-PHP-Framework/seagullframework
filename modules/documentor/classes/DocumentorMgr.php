@@ -60,7 +60,7 @@ class DocumentorMgr extends SGL_Manager
         $this->pageTitle        = 'Manual Generator';
         $this->template         = 'manual.html';
         $this->_aActionsMapping =  array(
-            'list'   => array('list'), 
+            'list'   => array('list'),
         );
     }
 
@@ -75,7 +75,7 @@ class DocumentorMgr extends SGL_Manager
         $input->template    = $this->template;
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         $output->template = 'manual.html';
         //  build TOC

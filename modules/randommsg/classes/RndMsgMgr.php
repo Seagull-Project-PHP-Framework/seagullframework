@@ -130,29 +130,14 @@ class RndMsgMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = 'RndMsg Manager :: Add';
         $output->template  = 'rndMsgAdd.html';
     }
 
-    /**
-     * Splits text files into an array of strings
-     *
-     * Can handle files whose line endings are whatever
-     * <LF> (*nix), <CR><LF> (M$) or <CR> (Mac)
-     */
-    function file2($filename)
-    {
-        $fp = fopen($filename, "rb");
-        $buffer = fread($fp, filesize($filename));
-        fclose($fp);
-        $lines = preg_split("/\r?\n|\r/", $buffer);
-        return $lines;
-    }
-
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -180,7 +165,7 @@ class RndMsgMgr extends SGL_Manager
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->msgDelete)) {
@@ -197,7 +182,7 @@ class RndMsgMgr extends SGL_Manager
         SGL::raiseMsg('Message(s) successfully removed.');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -218,6 +203,21 @@ class RndMsgMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
+    }
+
+    /**
+     * Splits text files into an array of strings
+     *
+     * Can handle files whose line endings are whatever
+     * <LF> (*nix), <CR><LF> (M$) or <CR> (Mac)
+     */
+    function file2($filename)
+    {
+        $fp = fopen($filename, "rb");
+        $buffer = fread($fp, filesize($filename));
+        fclose($fp);
+        $lines = preg_split("/\r?\n|\r/", $buffer);
+        return $lines;
     }
 }
 ?>

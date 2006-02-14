@@ -39,7 +39,7 @@
 // $Id: WikiScrapeMgr.php,v 1.2 2005/04/17 02:15:02 demian Exp $
 
 /**
- * Type your class description here ...
+ * Content scraper.
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -48,7 +48,7 @@
 class WikiScrapeMgr extends SGL_Manager
 {
     var $html = '';
-    
+
     function WikiScrapeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -56,7 +56,7 @@ class WikiScrapeMgr extends SGL_Manager
         $this->pageTitle    = 'WikiScrape Manager';
         $this->template     = 'wikiScrapeList.html';
         $this->_aActionsMapping =  array(
-            'list'      => array('list'), 
+            'list'      => array('list'),
         );
     }
 
@@ -79,46 +79,46 @@ class WikiScrapeMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         if (!SGL::isPhp5() || !extension_loaded('tidy')) {
             return SGL::raiseError('You need to be running PHP5 and have the Tidy extension enabled'
                 .' to use this manager.');
         }
         $aLines = file($input->wikiUrl);
         $options = array(
-            'wrap' => 0, 
+            'wrap' => 0,
             'indent' => true,
             'indent-spaces' => 4,
             'output-xhtml' => true,
             'drop-font-tags' => false,
             'clean' => false,
-        ); 
-    
+        );
+
         if (count($aLines)) {
             $tidy = new Tidy();
             $tidy->parseString(implode("\n", $aLines), $options, 'utf8');
             $tidy->cleanRepair();
-        
+
             $tree = $tidy->body();
-        
+
             $this->traverseTree($tree);
             $output->wikiHtml = $this->html;
         }
     }
 
-    function traverseTree($node) 
+    function traverseTree($node)
     {
         /* Put something there if the node name is empty */
         $nodename = trim(strtoupper($node->name));
         $nodename = (empty($nodename)) ? "[EMPTY]" : $nodename;
-        
+
         if (@$node->id == TIDY_TAG_DIV && $node->attribute['class'] == 'page') {
             $this->html .= $node->value;
         }
-        
+
         /* Recurse along the children to generate the remaining nodes */
         if ($node->hasChildren()) {
             foreach($node->child as $child) {

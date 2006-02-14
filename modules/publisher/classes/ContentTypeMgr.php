@@ -48,13 +48,13 @@
  */
 class ContentTypeMgr extends SGL_Manager
 {
-/**
- * Field Types
- *
- * @access  public
- * @var     array
- */
-var $fieldTypes;
+    /**
+     * Field Types
+     *
+     * @access  public
+     * @var     array
+     */
+    var $fieldTypes;
 
     /**
      * Constructor
@@ -129,7 +129,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'contentTypeAdd.html';
@@ -147,7 +147,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -192,7 +192,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'contentTypeEdit.html';
@@ -247,7 +247,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -307,7 +307,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -373,7 +373,7 @@ var $fieldTypes;
      * @param   object  $output
      * @return  void
      */
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

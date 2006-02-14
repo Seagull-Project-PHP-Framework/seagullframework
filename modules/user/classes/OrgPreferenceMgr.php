@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgPreferenceMgr.php                                                      |
 // +---------------------------------------------------------------------------+
@@ -60,13 +60,13 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
-        
+
         $this->template     = 'prefOrgEdit.html';
         $this->pageTitle    = 'Organisation Preferences';
 
         $this->_aActionsMapping =  array(
-            'editAll'   => array('editAll'), 
-            'updateAll' => array('updateAll', 'redirectToDefault'), 
+            'editAll'   => array('editAll'),
+            'updateAll' => array('updateAll', 'redirectToDefault'),
         );
     }
 
@@ -84,21 +84,21 @@ class OrgPreferenceMgr extends PreferenceMgr
         $input->aPrefs      = $req->get('prefs');
     }
 
-    function _editAll(&$input, &$output)
+    function _cmd_editAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aPrefs = $this->da->getUserPrefsByOrgId($input->orgId);
-        $output->aDateFormats = $this->aDateFormats;        
+        $output->aDateFormats = $this->aDateFormats;
         $output->aThemes = $this->aThemes;
         $output->aTimeouts = $this->aTimeouts;
         $output->aResPerPage = $this->aResPerPage;
         $output->prefs = $aPrefs;
     }
 
-    function _updateAll(&$input, &$output)
+    function _cmd_updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $query1 = " DELETE FROM {$this->conf['table']['org_preference']}
                     WHERE organisation_id = " . $input->orgId;
         $this->dbh->query($query1);
@@ -107,20 +107,20 @@ class OrgPreferenceMgr extends PreferenceMgr
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$this->conf['table']['org_preference']} 
-                (   org_preference_id, 
-                    organisation_id, 
-                    preference_id, 
+            INSERT INTO {$this->conf['table']['org_preference']}
+                (   org_preference_id,
+                    organisation_id,
+                    preference_id,
                     value)
-            VALUES(" . 
-                    $this->dbh->nextId($this->conf['table']['org_preference']) . ", 
+            VALUES(" .
+                    $this->dbh->nextId($this->conf['table']['org_preference']) . ",
                     $input->orgId,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
             $res = $this->dbh->query($query2);
             if (DB::isError($res)) {
-                SGL::raiseError('Error inserting prefs, exiting ...', 
+                SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
         }

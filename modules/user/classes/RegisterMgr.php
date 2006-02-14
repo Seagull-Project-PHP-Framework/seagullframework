@@ -185,7 +185,7 @@ class RegisterMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -195,7 +195,7 @@ class RegisterMgr extends SGL_Manager
             $input->user->password_confirm : '';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -234,7 +234,7 @@ class RegisterMgr extends SGL_Manager
                 $input->username = $input->user->username;
                 $input->password = $input->user->passwd;
                 $oLogin = new LoginMgr();
-                $oLogin->_login($input, $output);
+                $oLogin->_cmd_login($input, $output);
             } else {
                SGL::raiseMsg('user successfully registered');
             }

@@ -80,7 +80,7 @@ class DefaultMgr extends SGL_Manager
 //        $output->preview = $item->preview();
 //    }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }

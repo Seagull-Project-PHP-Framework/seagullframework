@@ -111,7 +111,7 @@ class ArticleViewMgr extends SGL_Manager
      *
      * @return void
      */
-    function _view(&$input, &$output)
+    function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -139,7 +139,7 @@ class ArticleViewMgr extends SGL_Manager
         }
     }
 
-    function _summary(&$input, &$output)
+    function _cmd_summary(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

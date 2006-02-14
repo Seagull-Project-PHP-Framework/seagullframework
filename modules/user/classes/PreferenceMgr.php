@@ -148,7 +148,7 @@ class PreferenceMgr extends SGL_Manager
         $output->aTimezones = $tz;
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'prefAdd.html';
@@ -156,7 +156,7 @@ class PreferenceMgr extends SGL_Manager
         $output->pref = DB_DataObject::factory($this->conf['table']['preference']);
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -176,7 +176,8 @@ class PreferenceMgr extends SGL_Manager
             $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->find();
             while ($oUser->fetch()) {
-                $ret = $this->da->addPrefsByUserId(array($oPref->preference_id => $oPref->default_value), $oUser->usr_id);
+                $ret = $this->da->addPrefsByUserId(
+                    array($oPref->preference_id => $oPref->default_value), $oUser->usr_id);
             }
 
         } else {
@@ -185,9 +186,10 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'prefEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oPref = DB_DataObject::factory($this->conf['table']['preference']);
@@ -195,9 +197,10 @@ class PreferenceMgr extends SGL_Manager
         $output->pref = $oPref;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->get($input->pref->preference_id);
         $oPref->setFrom($input->pref);
@@ -213,9 +216,10 @@ class PreferenceMgr extends SGL_Manager
         SGL::raiseMsg('pref successfully updated');
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $aToDelete = array();
         foreach ($input->aDelete as $index => $prefId) {
             $oPref = DB_DataObject::factory($this->conf['table']['preference']);
@@ -237,7 +241,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::raiseMsg('pref successfully deleted');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

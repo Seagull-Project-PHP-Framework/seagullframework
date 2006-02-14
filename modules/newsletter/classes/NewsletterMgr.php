@@ -157,7 +157,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
@@ -169,7 +169,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _subscribe(&$input, &$output)
+    function _cmd_subscribe(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -248,7 +248,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _unsubscribe(&$input, &$output)
+    function _cmd_unsubscribe(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -317,7 +317,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _authorize(&$input, &$output)
+    function _cmd_authorize(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'authorize.html';
@@ -380,7 +380,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _send(&$input, &$output)
+    function _cmd_send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -524,10 +524,10 @@ class NewsletterMgr extends SGL_Manager
         $newsLists = $this->_getList();
         $subscribedLists = $this->getSubscribedLists($userID);
 
-        foreach ($newsLists as $nKey => $nValues) {
-            foreach ($subscribedLists as $sKey => $sValues) {
+        foreach ($newsLists as $k => $nValues) {
+            foreach ($subscribedLists as $sValues) {
                 if ($nValues['name'] == $sValues->list) {
-                    unset($newsLists[$nKey]);
+                    unset($newsLists[$k]);
                 }
             }
         }

@@ -248,7 +248,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->wysiwyg = true;
@@ -262,7 +262,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _listSubscribers(&$input, &$output)
+    function _cmd_listSubscribers(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -301,7 +301,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _editSubscriber(& $input, & $output)
+    function _cmd_editSubscriber(& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editSubscriber.html';
@@ -319,7 +319,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _updateSubscriber (& $input, & $output)
+    function _cmd_updateSubscriber (& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editSubscriber.html';
@@ -355,7 +355,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _deleteSubscriber (& $input, & $output)
+    function _cmd_deleteSubscriber (& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {
@@ -378,7 +378,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _listLists(&$input, &$output)
+    function _cmd_listLists(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -417,7 +417,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _addList(& $input, & $output)
+    function _cmd_addList(& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -438,7 +438,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _editList(& $input, & $output)
+    function _cmd_editList(& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editList.html';
@@ -457,7 +457,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _updateList(& $input, & $output)
+    function _cmd_updateList(& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -510,7 +510,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _deleteLists(& $input, & $output)
+    function _cmd_deleteLists(& $input, & $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -534,7 +534,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _send(&$input, &$output)
+    function _cmd_send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -602,7 +602,7 @@ class ListMgr extends NewsletterMgr
     * @access public
     *
     */
-    function _addressBook(&$input, &$output)
+    function _cmd_addressBook(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -625,7 +625,7 @@ class ListMgr extends NewsletterMgr
 
 
     /**
-    * Returns all the subscribers of one list
+    * Returns all the subscribers of one list.
     *
     * @access   private
     * @author   Benea Rares <rbenea@bluestardesign.ro>
@@ -659,7 +659,7 @@ class ListMgr extends NewsletterMgr
 
 
     /**
-    * Checks if exists an list with same name but different ID
+    * Checks if exists an list with same name but different ID.
     *
     * @access   private
     * @author   Benea Rares <rbenea@bluestardesign.ro>

@@ -445,9 +445,16 @@ class SGL_Output
     }
 
     //  return true if role id  is admin (1)
-    function isAdmin()
+    /**
+     * Returns true if current user or passed role ID is that of an admin.
+     *
+     * @return boolean
+     */
+    function isAdmin($rid = null)
     {
-        $rid = SGL_Session::getRoleId();
+        if (is_null($rid)) {
+            $rid = SGL_Session::getRoleId();
+        }
         return ($rid && $rid == SGL_ADMIN) ? true : false;
     }
 

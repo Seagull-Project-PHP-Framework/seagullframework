@@ -101,7 +101,7 @@ class GuestbookMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = 'Guestbook Manager :: Add';
@@ -111,7 +111,7 @@ class GuestbookMgr extends SGL_Manager
         $output->guestbook = DB_DataObject::factory($this->conf['table']['guestbook']);
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -133,7 +133,7 @@ class GuestbookMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

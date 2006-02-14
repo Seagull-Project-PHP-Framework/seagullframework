@@ -103,7 +103,7 @@ class LoginMgr extends SGL_Manager
         $output->addOnLoadEvent('document.getElementById("frmLogin").frmUsername.focus()');
     }
 
-    function _login(&$input, &$output)
+    function _cmd_login(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -142,7 +142,7 @@ class LoginMgr extends SGL_Manager
         }
     }
 
-    function _logout(&$input, &$output)
+    function _cmd_logout(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         SGL_Cache::clear('blocks');
@@ -154,7 +154,7 @@ class LoginMgr extends SGL_Manager
         SGL_HTTP::redirect($aParams);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }

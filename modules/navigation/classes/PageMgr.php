@@ -200,33 +200,6 @@ class PageMgr extends SGL_Manager
         }
     }
 
-    /**
-     * Returns a hash of articles.
-     *
-     * @return array
-     *
-     * @todo move to DA_Publisher
-     */
-    function _getStaticArticles()
-    {
-        $query = "
-             SELECT  i.item_id,
-                     ia.addition
-             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
-                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
-             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-             AND     it.item_type_id  = itm.item_type_id
-             AND     i.item_id = ia.item_id
-             AND     i.item_type_id = it.item_type_id
-             AND     itm.field_name = 'title'
-             AND it.item_type_id  = '5'         /* Static Html Article */
-             AND i.status  > " . SGL_STATUS_DELETED . "
-             ORDER BY i.last_updated DESC
-        ";
-        $res = $this->dbh->getAssoc($query);
-        return ($res)? $res : false;
-    }
-
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -318,7 +291,7 @@ class PageMgr extends SGL_Manager
 //        }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -328,7 +301,7 @@ class PageMgr extends SGL_Manager
         $output->actionIsAdd = true;
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -435,7 +408,7 @@ class PageMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -513,7 +486,7 @@ class PageMgr extends SGL_Manager
         $output->section = $section;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -654,7 +627,7 @@ class PageMgr extends SGL_Manager
         SGL::raiseMsg($message . $errorMsg, true, SGL_MESSAGE_INFO);
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -688,7 +661,7 @@ class PageMgr extends SGL_Manager
         SGL::raiseMsg('The selected section(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _reorder(&$input, &$output)
+    function _cmd_reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $nestedSet = new SGL_NestedSet($this->_params);
@@ -718,7 +691,7 @@ class PageMgr extends SGL_Manager
      * @param   object $input    not used;might want to eliminate; here only for consistency with other process methods
      * @return  object $output
      */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'sectionList.html';
@@ -758,6 +731,33 @@ class PageMgr extends SGL_Manager
         if ($this->conf['site']['adminGuiEnabled']) {
             $output->addOnLoadEvent("switchRowColorOnHover()");
         }
+    }
+
+    /**
+     * Returns a hash of articles.
+     *
+     * @return array
+     *
+     * @todo move to DA_Publisher
+     */
+    function _getStaticArticles()
+    {
+        $query = "
+             SELECT  i.item_id,
+                     ia.addition
+             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
+                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
+             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
+             AND     it.item_type_id  = itm.item_type_id
+             AND     i.item_id = ia.item_id
+             AND     i.item_type_id = it.item_type_id
+             AND     itm.field_name = 'title'
+             AND it.item_type_id  = '5'         /* Static Html Article */
+             AND i.status  > " . SGL_STATUS_DELETED . "
+             ORDER BY i.last_updated DESC
+        ";
+        $res = $this->dbh->getAssoc($query);
+        return ($res)? $res : false;
     }
 
     function _generateSectionNodesOptions($sectionNodesArray, $selected = null)

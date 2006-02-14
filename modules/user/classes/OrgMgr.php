@@ -193,14 +193,14 @@ class OrgMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgAdd.html';
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -233,7 +233,7 @@ class OrgMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgEdit.html';
@@ -249,7 +249,7 @@ class OrgMgr extends SGL_Manager
         $output->org = (object)$aOrgNode;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -293,7 +293,7 @@ class OrgMgr extends SGL_Manager
         SGL::raiseMsg($message);
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -338,7 +338,7 @@ class OrgMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

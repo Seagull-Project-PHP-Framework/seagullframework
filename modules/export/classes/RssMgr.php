@@ -123,7 +123,7 @@ class RssMgr extends SGL_Manager
      *
      * @return  string      XML
      */
-    function _news(&$input, &$output)
+    function _cmd_news(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

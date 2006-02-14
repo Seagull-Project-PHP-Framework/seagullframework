@@ -5,8 +5,8 @@ SELECT @moduleId := MAX(module_id) FROM module;
 
 #perms
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr', 'Permission to use block manager', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_add', 'Permission to add new block', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_edit', 'Permission to edit existing block', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_delete', 'Permission to remove block', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_reorder', 'Permission to reorder blocks', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_list', 'Permission to view block listing', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_add', 'Permission to add new block', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_edit', 'Permission to edit existing block', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_delete', 'Permission to remove block', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_reorder', 'Permission to reorder blocks', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_list', 'Permission to view block listing', @moduleId);

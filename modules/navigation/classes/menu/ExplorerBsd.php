@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | ExplorerBsd.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,7 @@ class Menu_ExplorerBsd
         $this->conf = $conf;
     }
 
-    function render($id = 0) 
+    function render($id = 0)
     {
         $menu = $this->getGuruTree($id);
         $html = $menu->printMenu();
@@ -62,16 +62,16 @@ class Menu_ExplorerBsd
 
         //  initialise the class options
         require_once 'HTML/TreeMenu.php';
-        
+
         //  build url for current page
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink(   '', 
+        $url = SGL_Url::makeLink(   '',
                                     $req->get('managerName'),
-                                    $req->get('moduleName')                             
+                                    $req->get('moduleName')
                                     );
         $url .= 'frmCatID/';
         $nodeOptions = array(
-         'text'          => '', 
+         'text'          => '',
          'link'          => $url,
          'icon'          => 'folder.gif',
          'expandedIcon'  => 'openfoldericon.gif',
@@ -103,7 +103,7 @@ class Menu_ExplorerBsd
     function &createFromSQL($id = 0)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         require_once 'HTML/Tree.php';
 
         $dbh = &SGL_DB::singleton();
@@ -123,14 +123,14 @@ class Menu_ExplorerBsd
                     unset($row['parent_id']);
                     $nodeList[$row['id']] = &new Tree_Node($row);
                     $tree->nodes->addNode($nodeList[$row['id']]);
-                 
+
                 // Parent node has already been added to tree
                 } elseif (!empty($nodeList[$row['parent_id']])) {
                     $parentNode = &$nodeList[$row['parent_id']];
                     unset($row['parent_id']);
                     $nodeList[$row['id']] = &new Tree_Node($row);
                     $parentNode->nodes->addNode($nodeList[$row['id']]);
-                       
+
                 } else {
                     // Orphan node ?
                 }
@@ -139,7 +139,7 @@ class Menu_ExplorerBsd
 
         // jump into the cat tree at a predefined depth
         // if $id = 0 return the hole tree OR if $id != 0 return from $id branch
-        $result = ($id) ? $nodeList[$id] : $tree;     
+        $result = ($id) ? $nodeList[$id] : $tree;
         return $result;
     }
 }

@@ -225,7 +225,7 @@ class SGL_Manager
 
         //  all tests passed, execute relevant method
         foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-            $methodName = '_'.$methodName;
+            $methodName = '_cmd_'.$methodName;
             $this->{$methodName}($input, $output);
         }
         return true;
@@ -295,7 +295,7 @@ class SGL_Manager
      * @param unknown_type $input
      * @param unknown_type $output
      */
-    function _redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault(&$input, &$output)
     {
         //  must not logmessage here
 

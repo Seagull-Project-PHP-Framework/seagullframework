@@ -167,15 +167,15 @@ class UserMgr extends RegisterMgr
         $output->isAcctActive = ($output->user->is_acct_active) ? ' checked' : '';
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        parent::_add($input, $output);
+        parent::_cmd_add($input, $output);
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -202,7 +202,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -212,7 +212,7 @@ class UserMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -263,9 +263,10 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'docBlank.html';
 
         $results = array();
@@ -296,7 +297,7 @@ class UserMgr extends RegisterMgr
         SGL::raiseMsg("$succeeded user(s) successfully deleted. $failed user(s) failed.");
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -344,7 +345,7 @@ class UserMgr extends RegisterMgr
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
     }
 
-    function _viewLogin(&$input, &$output)
+    function _cmd_viewLogin(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -387,7 +388,7 @@ class UserMgr extends RegisterMgr
 
     }
 
-    function _truncateLoginTbl(&$input, &$output)
+    function _cmd_truncateLoginTbl(&$input, &$output)
     {
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -406,7 +407,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _requestChangeUserStatus(&$input, &$output)
+    function _cmd_requestChangeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -416,7 +417,7 @@ class UserMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _changeUserStatus(&$input, &$output)
+    function _cmd_changeUserStatus(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -436,30 +437,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _sendStatusNotification($oUser, $isEnabled)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        require_once SGL_CORE_DIR . '/Emailer.php';
-        $realName = $oUser->first_name . ' ' . $oUser->last_name;
-        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
-        $options = array(
-                'toEmail'   => $oUser->email,
-                'toRealName' => $recipientName,
-                'isEnabled' => $isEnabled,
-                'fromEmail' => $this->conf['email']['admin'],
-                'replyTo'   => $this->conf['email']['admin'],
-                'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
-                    . '/user/email_status_notification.php',
-                'username'  => $oUser->username,
-        );
-        $message = & new SGL_Emailer($options);
-        $ok = $message->prepare();
-        return ($ok) ? $message->send() : $ok;
-    }
-
-    function _requestPasswordReset(&$input, &$output)
+    function _cmd_requestPasswordReset(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -469,7 +447,7 @@ class UserMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _resetPassword(&$input, &$output)
+    function _cmd_resetPassword(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -493,7 +471,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _editPerms(&$input, &$output)
+    function _cmd_editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -511,7 +489,7 @@ class UserMgr extends RegisterMgr
             $aUserPerms, 'frmPerms[]');
     }
 
-    function _updatePerms(&$input, &$output)
+    function _cmd_updatePerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -561,7 +539,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _syncToRole(&$input, &$output)
+    function _cmd_syncToRole(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -572,6 +550,29 @@ class UserMgr extends RegisterMgr
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
         SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false);
+    }
+
+    function _sendStatusNotification($oUser, $isEnabled)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once SGL_CORE_DIR . '/Emailer.php';
+        $realName = $oUser->first_name . ' ' . $oUser->last_name;
+        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
+        $options = array(
+                'toEmail'   => $oUser->email,
+                'toRealName' => $recipientName,
+                'isEnabled' => $isEnabled,
+                'fromEmail' => $this->conf['email']['admin'],
+                'replyTo'   => $this->conf['email']['admin'],
+                'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
+                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                    . '/user/email_status_notification.php',
+                'username'  => $oUser->username,
+        );
+        $message = & new SGL_Emailer($options);
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
 
     /**
@@ -596,10 +597,8 @@ class UserMgr extends RegisterMgr
         if (!is_array($aUsers)) {
             $aUsers = array($aUsers);
         }
-
         //  container role(s) perms
         $aRolesPerms = array();
-
         require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
 
         //  use specified roleId for all users (each user's own roleId is used if

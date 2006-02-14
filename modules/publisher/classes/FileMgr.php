@@ -77,7 +77,7 @@ class FileMgr extends SGL_Manager
         $input->assetID         = $req->get('frmAssetID');
     }
 
-    function _download(&$input, &$output)
+    function _cmd_download(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -97,7 +97,7 @@ class FileMgr extends SGL_Manager
         }
     }
 
-    function _downloadZipped(&$input, &$output)
+    function _cmd_downloadZipped(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -119,7 +119,7 @@ class FileMgr extends SGL_Manager
         exit;
     }
 
-    function _view(&$input, &$output)
+    function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

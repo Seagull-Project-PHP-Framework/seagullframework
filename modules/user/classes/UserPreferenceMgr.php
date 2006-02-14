@@ -81,7 +81,7 @@ class UserPreferenceMgr extends PreferenceMgr
         $input->aPrefs      = $req->get('prefs');
     }
 
-    function _editAll(&$input, &$output)
+    function _cmd_editAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aDateFormats = $this->aDateFormats;
@@ -91,7 +91,7 @@ class UserPreferenceMgr extends PreferenceMgr
         $output->prefs = $_SESSION['aPrefs'];
     }
 
-    function _updateAll(&$input, &$output)
+    function cmd_updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | NavStyleMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -83,7 +83,7 @@ class NavStyleMgr extends SGL_Manager
         $input->rid             = (int)$req->get('rid');
     }
 
-    function _changeStyle(&$input, &$output)
+    function _cmd_changeStyle(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -115,7 +115,7 @@ class NavStyleMgr extends SGL_Manager
      * @param   object $input
      * @param   object $output
      */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -151,6 +151,20 @@ class NavStyleMgr extends SGL_Manager
         if (!$output->navListPreview) {
             $output->navListPreview = 'There are no sections accessible to members of the selected role: ' .
                 $aRoles[$input->rid] . '.';
+        }
+    }
+
+    function _cmd_redirectToDefault(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array('rid' => $input->rid));
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
         }
     }
 
@@ -190,20 +204,6 @@ class NavStyleMgr extends SGL_Manager
             $this->_currentStyle = $this->conf['navigation']['stylesheet'];
         }
         return $this->_currentStyle;
-    }
-
-    function _redirectToDefault(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  if no errors have occured, redirect
-        if (!SGL_Error::count()) {
-            SGL_HTTP::redirect(array('rid' => $input->rid));
-
-        //  else display error with blank template
-        } else {
-            $output->template = 'docBlank.html';
-        }
     }
 }
 ?>

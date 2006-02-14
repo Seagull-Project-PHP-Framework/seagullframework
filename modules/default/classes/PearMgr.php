@@ -117,12 +117,12 @@ class PearMgr extends SGL_Manager
         return str_replace('^', '/',$str);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
 
     }
 
-    function _doRequest(&$input, &$output)
+    function _cmd_doRequest(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

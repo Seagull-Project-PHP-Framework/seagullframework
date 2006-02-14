@@ -13,6 +13,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+14-02-06    All action methods are now prefixed with '_cmd' to differentiate
+            them from private methods
 14-02-06    SGL_UrlParser_SefStrategy::resolveArrayElems renamed to
             SGL_Url::querystringArrayToHash, moved up inheritance hierarchy so it
             can be shared

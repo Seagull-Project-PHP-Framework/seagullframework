@@ -136,7 +136,7 @@ class ContactUsMgr extends SGL_Manager
         SGL_Session::set('token', $output->token);
     }
 
-    function _send(&$input, &$output)
+    function _cmd_send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -164,7 +164,7 @@ class ContactUsMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

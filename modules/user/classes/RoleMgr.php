@@ -118,7 +118,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleAdd.html';
@@ -126,7 +126,7 @@ class RoleMgr extends SGL_Manager
         $output->role = DB_DataObject::factory($this->conf['table']['role']);
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -150,7 +150,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleEdit.html';
@@ -160,7 +160,7 @@ class RoleMgr extends SGL_Manager
         $output->role = $oRole;
     }
 
-    function _update($input)
+    function _cmd_update($input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
@@ -177,7 +177,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -200,46 +200,7 @@ class RoleMgr extends SGL_Manager
         SGL::raiseMsg($msg);
     }
 
-    /**
-     * Updates any users whose role has been deleted to a role status of
-     * SGL_UNASSIGNED (-1).
-     *
-     * @access  private
-     * @param   int     $roleId  id of role to be set to SGL_UNASSIGNED
-     * @return  void
-     */
-    function _deleteCleanup($roleId)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  select all users and orgs with a given role id
-        $aUsers = $this->da->getUsersByRoleId($roleId);
-
-        //  and update users to 'unassigned' role
-        if (count($aUsers)) {
-            foreach ($aUsers as $userId) {
-                $this->dbh->query('   UPDATE ' . $this->conf['table']['user'] . '
-                                SET role_id = ' . SGL_UNASSIGNED . '
-                                WHERE usr_id =' . $userId);
-
-                //  remove all user perms associated with deleted role
-                $this->dbh->query('   DELETE FROM ' . $this->conf['table']['user_permission'] . '
-                                WHERE   usr_id = ' . $userId);
-            }
-        }
-
-        //  and update orgs to 'unassigned' role
-        $aOrgs = $this->da->getOrgsByRoleId($roleId);
-        if (count($aOrgs)) {
-            foreach ($aOrgs as $orgId) {
-                $this->dbh->query('   UPDATE ' . $this->conf['table']['organisation'] . '
-                                SET role_id = ' . SGL_UNASSIGNED . '
-                                WHERE organisation_id =' . $orgId);
-            }
-        }
-    }
-
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -275,7 +236,7 @@ class RoleMgr extends SGL_Manager
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
     }
 
-    function _duplicate(&$input, &$output)
+    function _cmd_duplicate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -286,18 +247,20 @@ class RoleMgr extends SGL_Manager
         //  insert new role duplicate, wrap in transaction
         $this->dbh->autocommit();
         $newRoleId = $this->dbh->nextId($this->conf['table']['role']);
-        $res1 = $this->dbh->query('INSERT INTO ' . $this->conf['table']['role'] . "
-                            (role_id, name, description)
-                            VALUES ($newRoleId, '$duplicateName', 'please enter description')");
+        $res1 = $this->dbh->query('
+            INSERT INTO ' . $this->conf['table']['role'] . "
+            (role_id, name, description)
+            VALUES ($newRoleId, '$duplicateName', 'please enter description')");
 
         //  insert role perms
         $aRolePerms = $this->da->getPermNamesByRoleId($input->roleId);
         $isError = false;
         if (count($aRolePerms)) {
             foreach ($aRolePerms as $permId => $permName) {
-                $res2 = $this->dbh->query('INSERT INTO ' . $this->conf['table']['role_permission'] . "
-                                     (role_permission_id, role_id, permission_id)
-                                     VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) . ", $newRoleId, $permId)");
+                $res2 = $this->dbh->query('
+                    INSERT INTO ' . $this->conf['table']['role_permission'] . "
+                    (role_permission_id, role_id, permission_id)
+                    VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) . ", $newRoleId, $permId)");
             }
             $isError = DB::isError($res2);
         }
@@ -311,7 +274,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _editPerms(&$input, &$output)
+    function _cmd_editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'roleEditPerms.html';
@@ -331,7 +294,7 @@ class RoleMgr extends SGL_Manager
         $output->aRemainingPerms = $aRemainingPerms;
     }
 
-    function _updatePerms(&$input, &$output)
+    function _cmd_updatePerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aPermsToAdd     = $this->_parsePermsString($input->permsToAdd);
@@ -368,6 +331,48 @@ class RoleMgr extends SGL_Manager
             return false;
         }
         return $aPerms;
+    }
+
+    /**
+     * Updates any users whose role has been deleted to a role status of
+     * SGL_UNASSIGNED (-1).
+     *
+     * @access  private
+     * @param   int     $roleId  id of role to be set to SGL_UNASSIGNED
+     * @return  void
+     */
+    function _deleteCleanup($roleId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  select all users and orgs with a given role id
+        $aUsers = $this->da->getUsersByRoleId($roleId);
+
+        //  and update users to 'unassigned' role
+        if (count($aUsers)) {
+            foreach ($aUsers as $userId) {
+                $this->dbh->query('
+                    UPDATE ' . $this->conf['table']['user'] . '
+                    SET role_id = ' . SGL_UNASSIGNED . '
+                    WHERE usr_id =' . $userId);
+
+                //  remove all user perms associated with deleted role
+                $this->dbh->query('
+                    DELETE FROM ' . $this->conf['table']['user_permission'] . '
+                    WHERE   usr_id = ' . $userId);
+            }
+        }
+
+        //  and update orgs to 'unassigned' role
+        $aOrgs = $this->da->getOrgsByRoleId($roleId);
+        if (count($aOrgs)) {
+            foreach ($aOrgs as $orgId) {
+                $this->dbh->query('
+                    UPDATE ' . $this->conf['table']['organisation'] . '
+                    SET role_id = ' . SGL_UNASSIGNED . '
+                    WHERE organisation_id =' . $orgId);
+            }
+        }
     }
 }
 ?>
