@@ -166,6 +166,8 @@ class SGL_Item
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $roleId = SGL_Session::get('rid');
+
         //  get default fields
         $query = "
             SELECT  u.username,
@@ -181,10 +183,13 @@ class SGL_Item
                     i.status
             FROM    {$this->conf['table']['item']} i,
                     {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['user']} u
+                    {$this->conf['table']['user']} u,
+                    {$this->conf['table']['category']} c
             WHERE   it.item_type_id = i.item_type_id
             AND     i.created_by_id = u.usr_id
             AND     i.item_id = $itemID
+            AND     i.category_id = c.category_id
+            AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
                 ";
         $result = $this->dbh->query($query);
         if (!DB::isError($result)) {
