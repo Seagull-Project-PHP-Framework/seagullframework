@@ -498,6 +498,10 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     /**
      * Ensures the module's config file was loaded.
      *
+     * This is required when the homepage is set to custom mod/mgr/params,
+     * and the module config file loaded while initialising the request is
+     * not the file required for the custom invocation.
+     *
      * @param string $moduleName
      * @return mixed    true on success, PEAR_Error on failure
      */
@@ -505,7 +509,8 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     {
         if (!defined('SGL_MODULE_CONFIG_LOADED')
         		|| $this->conf['localConfig']['moduleName'] != $moduleName) {
-            $modConfigPath = realpath(SGL_MOD_DIR . '/' . $moduleName . '/conf.ini');
+            $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
+            $modConfigPath = realpath($path);
 
             if ($modConfigPath) {
                 $aModuleConfig = $this->c->load($modConfigPath);
@@ -525,7 +530,8 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                     $ret = true;
                 }
             } else {
-                $ret = false;
+                $ret = SGL::raiseError("Config file could not be found at '$path'",
+                    SGL_ERROR_NOFILE);
             }
         } else {
             $ret = true;
