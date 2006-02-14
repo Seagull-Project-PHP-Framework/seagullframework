@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.5.6        |
 +-----------------------+
 BUGFIXES
+14-02-06    Fixed bug where session expiry would not be tested on screens where
+            requiresAuth was false (during authenticated session)
 14-02-06    SQL errors, if existent, correctly returned in articles
 09-02-06    Fixed inability to change an article's category (Jayesh Sheth)
 03-02-06    Checks for session timeout improved (Andrey Podshivalov)
