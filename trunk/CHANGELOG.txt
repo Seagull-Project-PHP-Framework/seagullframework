@@ -4,13 +4,14 @@ CHANGELOG
 | VERSION: 0.5.6        |
 +-----------------------+
 BUGFIXES
+14-02-06    SQL errors, if existent, correctly returned in articles
 09-02-06    Fixed inability to change an article's category (Jayesh Sheth)
 03-02-06    Checks for session timeout improved (Andrey Podshivalov)
 31-01-06    Fixed error that occurs when empty array passed to implodeWithKeys()
             (sirphp)
 
 IMPROVEMENTS
-13-02-06    Updated to latest jscalendar
+14-02-06    Updated to latest jscalendar
 13-02-06    Swedish translation updated (Peter Palotas)
 13-02-06    Moved test.conf.ini to more secure location
 09-02-06    Ban IP, Allow and Deny list can now be processed (Tomasz Osmialowski)

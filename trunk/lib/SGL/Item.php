@@ -286,7 +286,7 @@ class SGL_Item
                 switch ($itemType[$itemID[$x]]) {
                     case 'htmltextarea':
                     $editedTxt = SGL_String::tidy($editedTxt);
-                    break;                   
+                    break;
                 }
             }
 
@@ -358,7 +358,7 @@ class SGL_Item
                 switch ($itemType[$itemID[$x]]) {
                     case 'htmltextarea':
                     $editedTxt = SGL_String::tidy($editedTxt);
-                    break;                   
+                    break;
                 }
             }
 
@@ -877,8 +877,7 @@ class SGL_Item
                 $ret['type'] = $item->type;
                 return $ret;
             } else {
-                SGL::raiseError('No preview available at ' . __FILE__ . ', ' . __LINE__,
-                    SGL_ERROR_NODATA);
+                return $ret;
             }
         } else {
             return false;
