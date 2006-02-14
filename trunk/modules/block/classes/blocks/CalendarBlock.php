@@ -19,14 +19,14 @@ class CalendarBlock
     function getBlockContent()
     {
     	$theme = $_SESSION['aPrefs']['theme'];
-    	$cssUrl = SGL_BASE_URL . '/js/jscal/calendar-win2k-cold-1.css';
-    	$jsUrl = SGL_BASE_URL . '/js/jscal/calendar.js';
-    	$langUrl = SGL_BASE_URL . '/js/jscal/lang/calendar-' . SGL::getCurrentLang() . '.js';
-    	$setupUrl = SGL_BASE_URL . '/js/jscal/calendar-setup.js';
+    	$cssUrl = SGL_BASE_URL . '/js/jscalendar/calendar-brown.css';
+    	$jsUrl = SGL_BASE_URL . '/js/jscalendar/calendar.js';
+    	$langUrl = SGL_BASE_URL . '/js/jscalendar/lang/calendar-' . SGL::getCurrentLang() . '.js';
+    	$setupUrl = SGL_BASE_URL . '/js/jscalendar/calendar-setup.js';
         $baseUrl = SGL_BASE_URL;
 
         $text = <<< CALENDAR
-<link rel="stylesheet" type="text/css" media="all" href="{$cssUrl}" title="win2k-cold-1" />
+<link rel="stylesheet" type="text/css" media="all" href="{$cssUrl}" title="calendar-brown" />
 <script type="text/javascript" src="{$jsUrl}"></script>
 <script type="text/javascript" src="{$langUrl}"></script>
 <script type="text/javascript" src="{$setupUrl}"></script>
@@ -46,7 +46,7 @@ class CalendarBlock
     flat         : "calendar-container", // ID of the parent element
     flatCallback : dateChanged,          // our callback function
     weekNumbers  : false,                // don't display week numbers
-    firstDay     : 1                    // monday is the first day of the week
+    firstDay     : 1                     // monday is the first day of the week
   }
   );
 </script>

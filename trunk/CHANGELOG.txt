@@ -10,6 +10,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+13-02-06    Updated to latest jscalendar
 13-02-06    Swedish translation updated (Peter Palotas)
 13-02-06    Moved test.conf.ini to more secure location
 09-02-06    Ban IP, Allow and Deny list can now be processed (Tomasz Osmialowski)
