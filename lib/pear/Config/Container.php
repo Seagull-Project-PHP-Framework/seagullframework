@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +---------------------------------------------------------------------+
 //
-// $Id: Container.php,v 1.37 2005/12/24 02:28:42 aashley Exp $
+// $Id: Container.php,v 1.40 2006/02/14 00:47:46 aashley Exp $
 
 require_once 'Config.php';
 
@@ -89,7 +89,11 @@ class Config_Container {
         $this->content    = $content;
         $this->attributes = $attributes;
         $this->parent     = null;
-        $this->_id        = uniqid($name.$type, true);
+        if (version_compare(PHP_VERSION, '5.0.0', 'gt')) {
+            $this->_id    = uniqid($name.$type, true);
+        } else {
+            $this->_id    = uniqid(substr($name.$type, 0, 114), true);
+        }
     } // end constructor
 
     /**
@@ -286,13 +290,15 @@ class Config_Container {
             if (isset($itemsArr[$index])) {
                 return $itemsArr[$index];
             } else {
-                return false;
+                $return = false;
+                return $return;
             }
         } else {
             if ($count = count($itemsArr)) {
                 return $itemsArr[$count-1];
             } else {
-                return false;
+                $return = false;
+                return $return;
             }
         }
     } // end func &getItem
@@ -333,7 +339,8 @@ class Config_Container {
         $match =& $this->getItem(null, $name, null, $attributes);
 
         if (!$match) {
-            return false;
+            $return = false;
+            return $return;
         }
         if (!empty($args)) {
             return $match->searchPath($args);
