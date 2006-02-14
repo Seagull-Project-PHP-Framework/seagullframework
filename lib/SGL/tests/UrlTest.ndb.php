@@ -32,6 +32,11 @@ class UrlTest extends UnitTestCase {
         $conf = $c->getAll();
         $this->url = new SGL_Url(null, false, new stdClass());
         $this->baseUrlString = SGL_BASE_URL . '/' . $conf['site']['frontScriptName'] . '/';
+        $this->aStrats = array(
+            new SGL_UrlParser_ClassicStrategy(),
+            new SGL_UrlParser_SefStrategy(),
+            new SGL_UrlParser_AliasStrategy()
+            );
     }
 
     function testToPartialArray()
@@ -375,13 +380,7 @@ class UrlTest extends UnitTestCase {
 
     function testArrayOfStrategiesParam()
     {
-        $aStrats = array(
-            new SGL_UrlParser_ClassicStrategy(),
-            new SGL_UrlParser_SefStrategy(),
-            new SGL_UrlParser_AliasStrategy()
-            );
-
-        $url = new SGL_Url(null, true, $aStrats);
+        $url = new SGL_Url(null, true, $this->aStrats);
         $this->assertTrue(count($url->aStrategies), 3);
         foreach ($url->aStrategies as $strat) {
             $this->assertIsA($strat, 'SGL_UrlParser_Strategy');
@@ -426,13 +425,7 @@ class UrlTest extends UnitTestCase {
     {
         $uri = 'http://example.com?moduleName=user&managerName=account';
 
-        $aStrats = array(
-            new SGL_UrlParser_ClassicStrategy(),
-            new SGL_UrlParser_SefStrategy(),
-            new SGL_UrlParser_AliasStrategy()
-            );
-
-        $url = new SGL_Url($uri, true, $aStrats);
+        $url = new SGL_Url($uri, true, $this->aStrats);
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -448,13 +441,7 @@ class UrlTest extends UnitTestCase {
     {
         $uri = 'http://example.com/index.php/default/bug/';
 
-        $aStrats = array(
-            new SGL_UrlParser_ClassicStrategy(),
-            new SGL_UrlParser_SefStrategy(),
-            new SGL_UrlParser_AliasStrategy()
-            );
-
-        $url = new SGL_Url($uri, true, $aStrats);
+        $url = new SGL_Url($uri, true, $this->aStrats);
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -470,13 +457,7 @@ class UrlTest extends UnitTestCase {
     {
         $uri = 'http://example.com/index.php/seagull-php-framework/';
 
-        $aStrats = array(
-            new SGL_UrlParser_ClassicStrategy(),
-            new SGL_UrlParser_SefStrategy(),
-            new SGL_UrlParser_AliasStrategy()
-            );
-
-        $url = new SGL_Url($uri, true, $aStrats);
+        $url = new SGL_Url($uri, true, $this->aStrats);
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -491,13 +472,7 @@ class UrlTest extends UnitTestCase {
 
     function testGetStrategiesFingerprint()
     {
-        $aStrats = array(
-            new SGL_UrlParser_ClassicStrategy(),
-            new SGL_UrlParser_SefStrategy(),
-            new SGL_UrlParser_AliasStrategy()
-            );
-
-		$url = new SGL_Url('', true, $aStrats);
+		$url = new SGL_Url('', true, $this->aStrats);
 		$fingerprint = $url->getStrategiesFingerprint($url->aStrategies);
 		$target = 'sgl_urlparser_classicstrategysgl_urlparser_sefstrategysgl_urlparser_aliasstrategy';
         $this->assertEqual($fingerprint, $target);
