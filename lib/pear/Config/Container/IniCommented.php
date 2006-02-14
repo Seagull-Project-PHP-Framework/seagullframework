@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: IniCommented.php,v 1.24 2006/01/03 05:19:01 aashley Exp $
+// $Id: IniCommented.php,v 1.25 2006/02/14 00:48:30 aashley Exp $
 
 /**
 * Config parser for PHP .ini files with comments
@@ -216,6 +216,11 @@ class Config_Container_IniCommented {
                                 $return[$returnpos] = array('normal', '');
                             }
                             $return[$returnpos][1] .= $char;
+                            if (strcasecmp('true', $return[$returnpos][1]) == 0) {
+                              $return[$returnpos][1] = '1';
+                            } elseif (strcasecmp('false', $return[$returnpos][1]) == 0) {
+                              $return[$returnpos][1] = '';
+                            }
                         }
                     } else {
                         if (trim($char) != '') {
