@@ -159,6 +159,7 @@ class PasswordMgr extends SGL_Manager
     function _update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_Session::getUid());
         $oUser->passwd = md5($input->password);

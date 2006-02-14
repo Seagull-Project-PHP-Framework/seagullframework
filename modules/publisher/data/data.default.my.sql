@@ -44,20 +44,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_delete', '', @moduleI
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_reorder', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'categorymgr_reorderUpdate', NULL, @moduleId);
 
-#guest role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'articleviewmgr_summary';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'articleviewmgr_view';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_download';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_downloadZipped';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'filemgr_view';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'wikiscrapemgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'articlemgr_add';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);

@@ -78,8 +78,9 @@ class ProfileMgr extends SGL_Manager
 
     function _view(&$input, &$output)
     {
-        require_once 'DB/DataObject.php';
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once 'DB/DataObject.php';
         $user = DB_DataObject::factory($this->conf['table']['user']);
 
         if (is_null($input->userId)) {
@@ -110,7 +111,7 @@ class ProfileMgr extends SGL_Manager
         //  if current user is viewing his/her own profile,
         //  disable 'add to contacts' & 'send message'
         $output->allowContact = ($input->userId == SGL_Session::getUid()
-                              || SGL_Session::getUserType() == SGL_GUEST)
+                || SGL_Session::getUserType() == SGL_GUEST)
             ? false
             : true;
     }

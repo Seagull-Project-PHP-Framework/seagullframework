@@ -2,7 +2,7 @@
 //  translations
 $passwdReminder = SGL_Output::translate('Password Reminder');
 $message = SGL_Output::translate('You are being sent this email because');
-$logonIs = SGL_Output::translate('Your logon is');
+$logonIs = SGL_Output::translate('Your username is');
 $passwdIs = SGL_Output::translate('Your new password is');
 $click = SGL_Output::translate('Click');
 $here = SGL_Output::translate('here');

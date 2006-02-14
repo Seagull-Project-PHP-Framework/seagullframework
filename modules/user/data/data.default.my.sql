@@ -128,22 +128,22 @@ INSERT INTO role VALUES (2,'member','has a limited set of privileges',NULL,NULL,
 #
 
 #guest role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_login';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_forgot';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_retrieve';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'profilemgr_view';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_add';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_insert';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'usermgr_requestPasswordReset';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_list';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'loginmgr_login';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_forgot';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'passwordmgr_retrieve';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'profilemgr_view';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_add';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'registermgr_insert';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
+#SELECT @permissionId := permission_id FROM permission WHERE name = 'usermgr_requestPasswordReset';
+#INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
 
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'accountmgr';

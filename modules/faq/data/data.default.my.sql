@@ -12,10 +12,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_list', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_reorder', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_reorderUpdate', '', @moduleId);
 
-#guest role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'faqmgr_list';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, @permissionId);
-
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'faqmgr_list';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
