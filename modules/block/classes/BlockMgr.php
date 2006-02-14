@@ -179,7 +179,7 @@ class BlockMgr extends SGL_Manager
 
         // clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('blocks');
-        SGL::raiseMsg('Block details successfully updated');
+        SGL::raiseMsg('Block details successfully updated', true, SGL_MESSAGE_INFO);
         SGL_HTTP::redirect();
     }
 
@@ -201,7 +201,7 @@ class BlockMgr extends SGL_Manager
         SGL_Cache::clear('blocks');
 
         //  Redirect on success
-        SGL::raiseMsg('Block successfully added');
+        SGL::raiseMsg('Block successfully added', true, SGL_MESSAGE_INFO);
         SGL_HTTP::redirect();
     }
 
@@ -225,7 +225,7 @@ class BlockMgr extends SGL_Manager
 
         //clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('blocks');
-        SGL::raiseMsg('The selected block(s) have successfully been deleted');
+        SGL::raiseMsg('The selected block(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _reorder(&$input, &$output)
@@ -242,7 +242,7 @@ class BlockMgr extends SGL_Manager
             SGL_Cache::clear('blocks');
 
             //  Redirect on success
-            SGL::raiseMsg('Block details successfully updated');
+            SGL::raiseMsg('Block details successfully updated', true, SGL_MESSAGE_INFO);
             SGL_HTTP::redirect();
         } else {
             $output->mode       = 'Reorder blocks';
@@ -278,12 +278,23 @@ class BlockMgr extends SGL_Manager
                     $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
 
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $this->_rebuildPagedData($aPagedData);
@@ -291,6 +302,10 @@ class BlockMgr extends SGL_Manager
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        }
+
+        if ($this->conf['site']['adminGuiEnabled']) {
+                $output->addOnLoadEvent("switchRowColorOnHover()");
         }
     }
 

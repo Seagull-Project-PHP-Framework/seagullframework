@@ -50,5 +50,35 @@
         'With selected block(s)'=>'With selected block(s)',
         'Can view' => 'Can view',
         'All roles' => 'All roles',
+        'Block list' => 'Block list',
+        'Block title tooltip' => 'This is the title that will be displayed within the block header',
+        'Block class name tooltip' => 'This is the block class name to use',
+        'Template name' => 'Template name',
+        
+        // Navigation Block
+        'Start root node' => 'Start root node',
+        'Start rendering the tree from this node ID' => 'Start rendering the tree from this node ID',
+        'Start rendered level' => 'Start rendered level',
+        'Nodes will be rendered starting from level 0 by default' => 'Nodes will be rendered starting from level 0 by default',
+        'How many levels to render' => 'How many levels to render',
+        'To render all levels set to 0' => 'To render all levels set to 0',
+        'Collapsible mode' => 'Collapsible mode',
+        'When collapsible mode is enabled, children will only be displayed when parent is current' => 'When collapsible mode is enabled, children will only be displayed when parent is current',
+        'Show always' => 'Show always',
+        'If yes, navigation menu will always be shown, even if a different branch of navigation tree is current' => 'If yes, navigation menu will always be shown, even if a different branch of navigation tree is current',
+        'Use cacheable navigation menu' => 'Use cacheable navigation menu',
+        'If no, navigation menu will be recalculated every time' => 'If no, navigation menu will be recalculated every time',
+        'Generate breadcrumbs objects' => 'Generate breadcrumbs objects',
+        'Tells navigation driver to generate bredcrumbs objects' => 'Tells navigation driver to generate bredcrumbs objects',
+        
+        // Breadcrumbs Block
+        'Start parent node' => 'Start parent node',
+        'Parent node will not be shown' => 'Parent node will not be shown',
+        'Breadcrumbs will be rendered with this template' => 'Breadcrumbs will be rendered with this template',
+        
+        // Article Block
+        'Static Html article' => 'Static Html article',
+        'Set id of static Html article' => 'Set id of static Html article',
+        'Article will be rendered with this template' => 'Article will be rendered with this template',
     );
 ?>

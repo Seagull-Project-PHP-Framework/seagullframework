@@ -364,4 +364,5 @@ $defaultWords['allow backend to display in separate GUI'] = 'Afficher le mode d\
 $defaultWords['Post-connection query'] = 'Requête post connexion';
 $defaultWords['This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8'] = 'Cette requête est utilisée pour définir le jeu de caractères par défaut de la connexion actuelle (MySQL 4.1 ou plus récent). Par exemple : SET NAMES utf8';
 $defaultWords['Configuration'] = 'Configuration';
+$defaultWords['Publishing'] = 'Publication';
 ?>
