@@ -91,7 +91,7 @@ class UserPreferenceMgr extends PreferenceMgr
         $output->prefs = $_SESSION['aPrefs'];
     }
 
-    function cmd_updateAll(&$input, &$output)
+    function _cmd_updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

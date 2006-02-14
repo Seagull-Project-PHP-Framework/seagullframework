@@ -188,11 +188,12 @@ class SGL_Manager
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
-            //  setup classwide perm
-            $classPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
+            //  determine global manager perm, ie that is valid for all actions
+            //  in the mgr
+            $mgrPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
-            $ok = $this->_authorise($classPerm, $input);
+            $ok = $this->_authorise($mgrPerm, $mgrName, $input);
             if ($ok !== true) {
 
                 //  test for possible errors
@@ -234,14 +235,15 @@ class SGL_Manager
     /**
      * Perform authorisation on specified action methods.
      *
-     * @param integer $classPerm
+     * @param integer $mgrPerm
+     * @param string  $mgrName
      * @param SGL_Registry $input
      * @return mixed true on success, array of class/method names on failure
      */
-    function _authorise($classPerm, $input)
+    function _authorise($mgrPerm, $mgrName, $input)
     {
-        // if user has no class perms check for each action
-        if (!SGL_Session::hasPerms($classPerm)) {
+        // if user has no global manager perms check for each action
+        if (!SGL_Session::hasPerms($mgrPerm)) {
 
             // and if chained methods to be called are allowed
             $ret = true;
@@ -251,10 +253,10 @@ class SGL_Manager
                 if ($methodName == 'redirectToDefault') {
                     continue;
                 }
-                $methodName = '_' . $methodName;
+                $methodName = '_cmd_' . $methodName;
 
                 //  build relevant perms constant
-                $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
+                $perm = @constant('SGL_PERMS_' . strtoupper($mgrName . $methodName));
 
                 //  return false if user doesn't have method specific or classwide perms
                 if (SGL_Session::hasPerms($perm) === false) {
