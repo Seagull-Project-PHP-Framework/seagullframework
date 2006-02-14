@@ -82,9 +82,6 @@
     width: 35%;
     text-align: left;
 }
-#configuration #optionsLinks a {
-    padding: 5px 5px 4px;
-}
 #configuration input.longText, #configuration textarea.longText{
     width: 58%;
 }
