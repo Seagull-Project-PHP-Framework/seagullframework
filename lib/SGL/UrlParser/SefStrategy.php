@@ -142,7 +142,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             array_unshift($aUriParts, 'action');
         }
 
-        $aQsParams = $this->resolveArrayElems($aUriParts, $aParsedUri);
+        $aQsParams = SGL_Url::querystringArrayToHash($aUriParts, $aParsedUri);
 
         //  remove frontScriptName
         unset($aParsedUri['frontScriptName']);
@@ -155,55 +155,6 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
 
         //  and merge the default request fields with extracted param k/v pairs
         return array_merge($aParsedUri, $aQsParams);
-    }
-
-    /**
-     * Parses an array of querystring param names and values and returns a
-     * key/value hash.
-     *
-     * @param array $aUriParts  The list of candidate values.
-     * @param array $aParsedUri The list of existing valid value, to avoid overwriting
-     * @return array            A hash of k/v pairs
-     */
-    function resolveArrayElems($aUriParts, $aParsedUri = array())
-    {
-        $numParts = count($aUriParts);
-
-        //  if varName/varValue don't match, assign a null varValue to the last varName
-        if ($numParts % 2) {
-            array_push($aUriParts, null);
-            ++ $numParts;
-        }
-
-        //  parse FC querystring params
-        $aQsParams = array();
-
-        for ($i = 0; $i < $numParts; $i += 2) {
-            $varName  = urldecode($aUriParts[$i]);
-            $varValue = urldecode($aUriParts[$i+1]);
-
-            //  check if the variable is an array
-            if ((strpos($varName, '[') !== false) &&
-                (strpos($varName, ']') !== false))
-            {
-                //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
-                preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
-                $aRequestVars = array_merge($_REQUEST, $aParsedUri);
-                if (    !array_key_exists($matches[1], $aRequestVars)
-                    &&  !array_key_exists($matches[1], $aQsParams)) {
-                        $aQsParams[$matches[1]] = array();
-                }
-                //  no key given => append to array
-                if (empty($matches[2])) {
-                    array_push($aQsParams[$matches[1]], $varValue);
-                } else {
-                    $aQsParams[$matches[1]][$matches[2]] = $varValue;
-                }
-            } else {
-                $aQsParams[$varName] = $varValue;
-            }
-        }
-        return $aQsParams;
     }
 
     /**

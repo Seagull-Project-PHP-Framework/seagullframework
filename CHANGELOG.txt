@@ -11,6 +11,9 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+14-02-06    SGL_UrlParser_SefStrategy::resolveArrayElems renamed to
+            SGL_Url::querystringArrayToHash, moved up inheritance hierarchy so it
+            can be shared
 14-02-06    Updated to latest jscalendar
 13-02-06    Swedish translation updated (Peter Palotas)
 13-02-06    Moved test.conf.ini to more secure location
