@@ -122,9 +122,10 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permAdd.html';
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->perm = DB_DataObject::factory($this->conf['table']['permission']);
@@ -134,9 +135,10 @@ class PermissionMgr extends SGL_Manager
         $output->currentModule = $input->permId;
     }
 
-    function _scanNew(&$input, &$output)
+    function _cmd_scanNew(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permScan.html';
 
         //  switch for template re-use
@@ -152,9 +154,10 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _scanOrphaned(&$input, &$output)
+    function _cmd_scanOrphaned(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permScan.html';
 
         //  switch for template re-use
@@ -169,7 +172,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -202,7 +205,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _insertNew(&$input, &$output)
+    function _cmd_insertNew(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -239,7 +242,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _deleteOrphaned(&$input, &$output)
+    function _cmd_deleteOrphaned(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -263,7 +266,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'permEdit.html';
@@ -277,7 +280,7 @@ class PermissionMgr extends SGL_Manager
         $output->currentModule = $this->da->getModuleIdByPermId($input->permId);
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
@@ -297,7 +300,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         foreach ($input->aDelete as $index => $permId) {
@@ -315,7 +318,7 @@ class PermissionMgr extends SGL_Manager
         SGL::raiseMsg('perm successfully deleted');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';
@@ -352,8 +355,6 @@ class PermissionMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
-//            'append'    => false,
-//            'fileName'  => 'pageID/%d/'
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions, $disabled);
 
@@ -441,7 +442,6 @@ class PermissionMgr extends SGL_Manager
                     break;
                 }
             }
-
             //  add each, if not found. store display name and a
             //  delimited value used for form submission
             if (!$found) {
@@ -540,7 +540,6 @@ class PermissionMgr extends SGL_Manager
                     'module_name' => $moduleName);
             }
             unset($aActions);
-
         }
         return $permsFound;
     }

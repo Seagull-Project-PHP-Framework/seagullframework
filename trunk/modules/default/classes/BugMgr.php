@@ -113,7 +113,7 @@ class BugMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         if (SGL_Session::getUserType() != SGL_GUEST) {
             $user = $this->getCurrentUserInfo();
@@ -127,22 +127,22 @@ class BugMgr extends SGL_Manager
         }
     }
 
+    function _cmd_send(&$input, &$output)
+    {
+        $ok = $this->_sendEmail($input->bug, $input->moduleName);
+        if (!PEAR::isError($ok)) {
+            SGL::raiseMsg('email submitted successfully');
+        } else {
+            SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
+        }
+    }
+
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->environment = $this->buildEnvironmentReport();
         $output->aSeverityTypes = $this->aSeverityTypes;
-    }
-
-    function _send(&$input, &$output)
-    {
-        $ok = $this->sendEmail($input->bug, $input->moduleName);
-        if (!PEAR::isError($ok)) {
-            SGL::raiseMsg('email submitted successfully');
-        } else {
-            SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
-        }
     }
 
     function getServerInfo()
@@ -192,7 +192,7 @@ class BugMgr extends SGL_Manager
         return $html;
     }
 
-    function sendEmail($oData, $moduleName)
+    function _sendEmail($oData, $moduleName)
     {
         $body = "The following bug report was submitted: \n\n";
 

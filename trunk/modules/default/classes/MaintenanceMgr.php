@@ -212,7 +212,7 @@ class MaintenanceMgr extends SGL_Manager
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
     }
 
-    function _verify(&$input, &$output)
+    function _cmd_verify(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
@@ -253,7 +253,7 @@ class MaintenanceMgr extends SGL_Manager
     * @access private
     */
 
-    function _checkAllModules(&$input, &$output)
+    function _cmd_checkAllModules(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'langCheckAll.html';
@@ -346,7 +346,7 @@ class MaintenanceMgr extends SGL_Manager
         $output->modules = $aModules;
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
@@ -363,7 +363,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = new Config();
@@ -385,7 +385,7 @@ class MaintenanceMgr extends SGL_Manager
     }
 
     //  for amended translations that were diffed
-    function _append(&$input, &$output)
+    function _cmd_append(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -438,8 +438,8 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    //    regenerate dataobject entity files
-    function _dbgen(&$input, &$output)
+    //  regenerate dataobject entity files
+    function _cmd_dbgen(&$input, &$output)
     {
         require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
         $res = SGL_Task_CreateDataObjectEntities::run();
@@ -447,7 +447,7 @@ class MaintenanceMgr extends SGL_Manager
         SGL::logMessage($res, PEAR_LOG_DEBUG);
     }
 
-    function _checkLatestVersion(&$input, &$output)
+    function _cmd_checkLatestVersion(&$input, &$output)
     {
         require_once SGL_CORE_DIR . '/Install/Common.php';
         $localVersion = SGL_Install_Common::getFrameworkVersion();
@@ -471,7 +471,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _rebuildSequences(&$input, &$output)
+    function _cmd_rebuildSequences(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -484,7 +484,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _clearCache(&$input, &$output)
+    function _cmd_clearCache(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -519,7 +519,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _createModule(&$input, &$output)
+    function _cmd_createModule(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -563,6 +563,7 @@ class MaintenanceMgr extends SGL_Manager
             'delete'=> array("'delete'    => array('delete', 'redirectToDefault'),"),
         );
         foreach ($aPossibleMethods as $method=>$mapping) {
+
             //  if checked add to aMethods array
             if (isset($input->createModule->$method)) {
                 $aMethods[] = $method;
@@ -576,7 +577,7 @@ class MaintenanceMgr extends SGL_Manager
                 if (isset($input->createModule->$method)) {
                     $methods .= <<< EOF
 
-    function _$method(&\$input, &\$output)
+    function _cmd_$method(&\$input, &\$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
@@ -679,12 +680,12 @@ EOF;
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -102,15 +102,16 @@ class FaqMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'faqEdit.html';
         $output->action   = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -142,9 +143,10 @@ class FaqMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'faqEdit.html';
         $output->action   = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
@@ -155,9 +157,10 @@ class FaqMgr extends SGL_Manager
         $output->faq = $faq;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->get($input->faq->faq_id);
         $faq->setFrom($input->faq);
@@ -170,9 +173,10 @@ class FaqMgr extends SGL_Manager
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $faqId) {
                 $faq = DB_DataObject::factory($this->conf['table']['faq']);
@@ -187,9 +191,10 @@ class FaqMgr extends SGL_Manager
         SGL::raiseMsg('faq deleted successfully');
     }
 
-    function _reorder(&$input, &$output)
+    function _cmd_reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = $this->pageTitle . ' :: Reorder';
         $output->template = 'faqReorder.html';
         $faqList = DB_DataObject::factory($this->conf['table']['faq']);
@@ -204,7 +209,7 @@ class FaqMgr extends SGL_Manager
         }
     }
 
-    function _reorderUpdate(&$input, &$output)
+    function _cmd_reorderUpdate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aNewOrder = explode(',', $input->items);
@@ -222,7 +227,7 @@ class FaqMgr extends SGL_Manager
         SGL::raiseMsg('faqs reordered successfully');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (SGL_Session::getUserType() == SGL_ADMIN) {

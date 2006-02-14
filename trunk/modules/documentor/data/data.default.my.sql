@@ -3,4 +3,4 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'documentor', 'Documentor', '''Docu
 SELECT @moduleId := MAX(module_id) FROM module;
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentormgr', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentormgr_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'documentormgr_cmd_list', '', @moduleId);

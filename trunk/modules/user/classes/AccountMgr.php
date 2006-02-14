@@ -95,9 +95,10 @@ class AccountMgr extends RegisterMgr
         $output->isAcctActive = (@$output->user->is_acct_active) ? ' checked' : '';
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = 'My Profile :: Edit';
         $output->template = 'userAdd.html';
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
@@ -105,9 +106,10 @@ class AccountMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_Session::getUid());
         $original = clone($oUser);
@@ -123,9 +125,10 @@ class AccountMgr extends RegisterMgr
         }
     }
 
-    function _viewProfile(&$input, &$output)
+    function _cmd_viewProfile(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'account.html';
         $output->pageTitle = 'My Profile';
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
@@ -133,9 +136,10 @@ class AccountMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _summary(&$input, &$output)
+    function _cmd_summary(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'accountSummary.html';
         $currentUid = SGL_Session::getUid();
         $oUser = DB_DataObject::factory($this->conf['table']['user']);

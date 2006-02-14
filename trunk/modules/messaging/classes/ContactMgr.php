@@ -84,7 +84,7 @@ class ContactMgr extends SGL_Manager
         $input->totalItems  = $req->get('totalItems');
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'docBlank.htm';
@@ -104,7 +104,7 @@ class ContactMgr extends SGL_Manager
         SGL::raiseMsg('contacts successfully deleted');
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         if (SGL_Session::getUserType() != SGL_ADMIN) {
             SGL_DB::setConnection($this->dbh);
@@ -140,7 +140,7 @@ class ContactMgr extends SGL_Manager
         SGL::raiseMsg($message);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -168,7 +168,7 @@ class ContactMgr extends SGL_Manager
         }
     }
 
-    function _redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

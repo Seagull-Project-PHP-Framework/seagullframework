@@ -48,8 +48,6 @@ require_once 'DB/DataObject.php';
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.47 $
- * @since   PHP 4.1
  * @todo    handle uploads with HTTP::Upload
  */
 class DocumentMgr extends FileMgr
@@ -184,7 +182,7 @@ class DocumentMgr extends FileMgr
         $output->queryRange = PublisherBase::getQueryRange($output);
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->docCatID = $input->docCatID;
@@ -229,7 +227,7 @@ class DocumentMgr extends FileMgr
         }
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -257,7 +255,7 @@ class DocumentMgr extends FileMgr
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
@@ -277,7 +275,7 @@ class DocumentMgr extends FileMgr
         $output->asset = $document;
     }
 
-    function _setDownload(&$input, &$output)
+    function _cmd_setDownload(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -288,7 +286,7 @@ class DocumentMgr extends FileMgr
         }
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $document = DB_DataObject::factory($this->conf['table']['document']);
@@ -308,7 +306,7 @@ class DocumentMgr extends FileMgr
         SGL::raiseMsg('The asset has successfully been updated', true, SGL_MESSAGE_INFO);
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
@@ -326,7 +324,7 @@ class DocumentMgr extends FileMgr
         SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -340,8 +338,10 @@ class DocumentMgr extends FileMgr
                 dt.name AS document_type_name,
                 u.username AS document_added_by
             FROM
-                {$this->conf['table']['document']} d, {$this->conf['table']['category']} c,
-                {$this->conf['table']['document_type']} dt, {$this->conf['table']['user']} u
+                {$this->conf['table']['document']} d,
+                {$this->conf['table']['category']} c,
+                {$this->conf['table']['document_type']} dt,
+                {$this->conf['table']['user']} u
             WHERE dt.document_type_id = d.document_type_id
             AND c.category_id = d.category_id
             AND u.usr_id = d.added_by

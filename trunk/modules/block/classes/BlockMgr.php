@@ -136,7 +136,14 @@ class BlockMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function display(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->aBlocksNames = $this->aBlocksNames;
+    }
+
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -146,7 +153,7 @@ class BlockMgr extends SGL_Manager
         $this->_editDisplay($output);
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -162,7 +169,7 @@ class BlockMgr extends SGL_Manager
         $this->_editDisplay($output);
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -183,7 +190,7 @@ class BlockMgr extends SGL_Manager
         SGL_HTTP::redirect();
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -205,7 +212,7 @@ class BlockMgr extends SGL_Manager
         SGL_HTTP::redirect();
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -228,7 +235,7 @@ class BlockMgr extends SGL_Manager
         SGL::raiseMsg('The selected block(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _reorder(&$input, &$output)
+    function _cmd_reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -252,7 +259,7 @@ class BlockMgr extends SGL_Manager
         }
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -309,13 +316,6 @@ class BlockMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->aBlocksNames = $this->aBlocksNames;
-    }
-
     function _editDisplay(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -336,7 +336,6 @@ class BlockMgr extends SGL_Manager
                 $block->loadBlockParams($output, $blockClass, $output->blockId);
             }
         }
-
         //  get section list
         $sectionList = DB_DataObject::factory($this->conf['table']['section']);
         $sectionList->orderBy('left_id');
@@ -358,7 +357,7 @@ class BlockMgr extends SGL_Manager
                     $sections[ $sectionList->section_id ];
             }
         }
-        $sections[0]       = SGL_String::translate('All sections');
+        $sections[0] = SGL_String::translate('All sections');
         $output->aSections = $sections;
 
         //  get roles list

@@ -101,7 +101,7 @@ class InstantMessageMgr extends SGL_Manager
         $input->instantMessage = $instantMessage;
     }
 
-    function _inbox(&$input, &$output)
+    function _cmd_inbox(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  display messages of current user, inbox
@@ -147,7 +147,7 @@ class InstantMessageMgr extends SGL_Manager
         }
     }
 
-    function _outbox(&$input, &$output)
+    function _cmd_outbox(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  display messages of current user, outbox
@@ -203,7 +203,7 @@ class InstantMessageMgr extends SGL_Manager
         $output->urlParams = 'frmFromOutbox/1/';
     }
 
-    function _compose(&$input, &$output)
+    function _cmd_compose(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -264,33 +264,7 @@ class InstantMessageMgr extends SGL_Manager
         $output->messageToIds = $hiddenFields;
     }
 
-    function verifyUserAccess($instantMessage)
-    {
-        // Get the user id from the current session
-        $uid = SGL_Session::getUid();
-
-        // Do not display messages you did not send or receive
-        if ($instantMessage->user_id_to != $uid && $instantMessage->user_id_from != $uid) {
-            return false;
-        }
-
-        if ($instantMessage->user_id_to == $uid && $instantMessage->delete_status < 2) {
-            // disable receiver reading messages he deleted
-            return false;
-        } elseif ($instantMessage->user_id_from == $uid &&
-            ($instantMessage->delete_status == 2 || $instantMessage->delete_status == 0) ) {
-
-            // disable sender reading messages he deleted
-            // Override for cases where the sender is the receiver
-            if ($instantMessage->user_id_to != $instantMessage->user_id_from) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    function _reply(&$input, &$output)
+    function _cmd_reply(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         SGL_DB::setConnection($this->dbh);
@@ -325,7 +299,7 @@ class InstantMessageMgr extends SGL_Manager
             SGL_HTTP::redirect($aParams);
         }
 
-        $res = $this->verifyUserAccess($origMsg);
+        $res = $this->_verifyUserAccess($origMsg);
         if (empty($res)) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array(
@@ -353,7 +327,7 @@ class InstantMessageMgr extends SGL_Manager
         $output->messageFrom  = SGL_Session::getUid();
     }
 
-    function _insert(&$input, &$output) // send
+    function _cmd_insert(&$input, &$output) // send
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'docBlank.html';
@@ -444,7 +418,7 @@ class InstantMessageMgr extends SGL_Manager
         }
     }
 
-    function _read(&$input, &$output)
+    function _cmd_read(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -466,7 +440,7 @@ class InstantMessageMgr extends SGL_Manager
         }
 
         $message->getLinks('link_%s');
-        $res = $this->verifyUserAccess($message);
+        $res = $this->_verifyUserAccess($message);
         if (empty($res)) {
             SGL::raiseMsg('Message could not be retrieved');
             $aParams = array( 'moduleName'    => 'messaging',
@@ -501,7 +475,7 @@ class InstantMessageMgr extends SGL_Manager
         $output->instantMessage = $message;
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'imRead.html';
@@ -557,7 +531,7 @@ class InstantMessageMgr extends SGL_Manager
         }
     }
 
-    function _sendAlert(&$input, &$output)
+    function _cmd_sendAlert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ($input->alertType > 0) {
@@ -595,6 +569,32 @@ class InstantMessageMgr extends SGL_Manager
         } else {
             SGL::raiseError('Incorrect params supplied to alert type', SGL_ERROR_INVALIDARGS);
         }
+    }
+
+    function _verifyUserAccess($instantMessage)
+    {
+        // Get the user id from the current session
+        $uid = SGL_Session::getUid();
+
+        // Do not display messages you did not send or receive
+        if ($instantMessage->user_id_to != $uid && $instantMessage->user_id_from != $uid) {
+            return false;
+        }
+
+        if ($instantMessage->user_id_to == $uid && $instantMessage->delete_status < 2) {
+            // disable receiver reading messages he deleted
+            return false;
+        } elseif ($instantMessage->user_id_from == $uid &&
+            ($instantMessage->delete_status == 2 || $instantMessage->delete_status == 0) ) {
+
+            // disable sender reading messages he deleted
+            // Override for cases where the sender is the receiver
+            if ($instantMessage->user_id_to != $instantMessage->user_id_from) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

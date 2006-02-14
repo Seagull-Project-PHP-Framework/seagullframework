@@ -54,15 +54,15 @@ class UserSearchMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        
+
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';
         $this->da = & DA_User::singleton();
-        
+
         $this->sortBy = 'usr_id';
         $this->validated = true;
 
-        $this->_aActionsMapping = array(  
+        $this->_aActionsMapping = array(
             'add'       => array('add'),
             'search'    => array('search'),
         );
@@ -74,15 +74,15 @@ class UserSearchMgr extends SGL_Manager
 
         $input->action = ($req->get('action')) ? $req->get('action') : 'search';
         $input->template = $this->template;
-        $input->masterTemplate  = 'masterMinimal.html';  
+        $input->masterTemplate  = 'masterMinimal.html';
 		$input->pageTitle = $this->pageTitle . ' :: Search';
-        $input->submit = $req->get('submitted');     
+        $input->submit = $req->get('submitted');
         $input->sortBy = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
         //  Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems = $req->get('totalItems');
-                
+
         //  search form data
         $input->search = $req->get('search');
         if (!empty($input->search['reg_date1'])) {
@@ -91,7 +91,7 @@ class UserSearchMgr extends SGL_Manager
         if (!empty($input->search['reg_date2'])) {
             $input->regDate2Str = SGL_Date::arrayToString($input->search['reg_date2']);
         }
-        
+
         if (!isset($aErrors)) {
             $aErrors = array();
         }
@@ -102,15 +102,15 @@ class UserSearchMgr extends SGL_Manager
             if (!empty($input->search['user_id']) && !(is_numeric($input->search['user_id']))) {
                 $aErrors['user_id'] = 'You must specify a numeric id';
             }
-            
+
             if ($input->search['reg_date_mod'] != 0) {
 
                 //  only validate dates if a date modifier is selected, enabling date search
                 if (!empty($input->search['reg_date1'])) {
-                    $s = $input->search['reg_date1']; 
+                    $s = $input->search['reg_date1'];
 
                     //  make sure date is real
-                    if (!checkdate($s['month'], $s['day'], $s['year'])) {            
+                    if (!checkdate($s['month'], $s['day'], $s['year'])) {
                         $aErrors['reg_date1'] = 'You must select a valid date';
                     }
                 } else {
@@ -120,11 +120,11 @@ class UserSearchMgr extends SGL_Manager
                 if ($input->search['reg_date_mod'] == 4) {
 
                     //  only validate 2nd date if 'between' modifier is selected
-                    if (!empty($input->search['reg_date2'])) {    
+                    if (!empty($input->search['reg_date2'])) {
                         $s = $input->search['reg_date2'];
 
                         //  make sure date is real
-                        if (!checkdate($s['month'], $s['day'], $s['year'])) {            
+                        if (!checkdate($s['month'], $s['day'], $s['year'])) {
                             $aErrors['reg_date2'] = 'You must select a valid date';
                         }
                     } else {
@@ -167,41 +167,41 @@ class UserSearchMgr extends SGL_Manager
         $output->addOnLoadEvent('updateFormInterface()');
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _search(&$input, &$output)
+    function _cmd_search(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 		$output->pageTitle = $this->pageTitle . ' :: Browse';
         $output->template = 'userManager.html';
         $criteria = '';
-        
+
         //  if search form data present, built search criteria SQL
         if (!(empty($input->search))) {
 
             $s = $input->search;
             if (array_key_exists('user_id', $s) && !empty($s['user_id'])) {
-                $criteria .= " AND usr_id = {$s['user_id']} ";	
+                $criteria .= " AND usr_id = {$s['user_id']} ";
             }
             if (array_key_exists('username', $s) && !empty($s['username'])) {
-                $criteria .= " AND username LIKE '%{$s['username']}%' ";	
+                $criteria .= " AND username LIKE '%{$s['username']}%' ";
             }
             if (array_key_exists('first_name', $s) && !empty($s['first_name'])) {
-                $criteria .= " AND first_name LIKE '%{$s['first_name']}%' ";	
+                $criteria .= " AND first_name LIKE '%{$s['first_name']}%' ";
             }
             if (array_key_exists('last_name', $s) && !empty($s['last_name'])) {
-                $criteria .= " AND last_name LIKE '%{$s['last_name']}%' ";	
+                $criteria .= " AND last_name LIKE '%{$s['last_name']}%' ";
             }
             if (array_key_exists('email', $s) && !empty($s['email'])) {
-                $criteria .= " AND u.email LIKE '%{$s['email']}%' ";	
+                $criteria .= " AND u.email LIKE '%{$s['email']}%' ";
             }
             if (array_key_exists('reg_date_mod', $s) && $s['reg_date_mod'] != 0) {
                 if ($s['reg_date_mod'] == 4) {
                     //use both dates (between)
-                    $criteria .= " AND u.date_created BETWEEN '{$input->regDate1Str}' AND '{$input->regDate2Str}' ";	
+                    $criteria .= " AND u.date_created BETWEEN '{$input->regDate1Str}' AND '{$input->regDate2Str}' ";
                 } else {
                     //use one date (before, after, is)
                     switch ($s['reg_date_mod']) {
@@ -210,17 +210,17 @@ class UserSearchMgr extends SGL_Manager
                 	case 2: $mod = '>'; break;
                 	case 3: $mod = '='; break;
                     }
-                    $criteria .= " AND u.date_created $mod '{$input->regDate1Str}' ";	
+                    $criteria .= " AND u.date_created $mod '{$input->regDate1Str}' ";
                 }
             }
             if (array_key_exists('status', $s) && $s['status'] != 0) {
                 $t = $s['status'] == 2 ? 0 : 1;
-                $criteria .= " AND is_acct_active=$t ";	
+                $criteria .= " AND is_acct_active=$t ";
             }
             if (array_key_exists('roles', $s) && !empty($s['roles'])) {
                 if (!is_array($s['roles'])) {
                     //search for one role
-                    $criteria .= " AND u.role_id = {$s['roles']} ";	
+                    $criteria .= " AND u.role_id = {$s['roles']} ";
                 } else {
                     //search for multiple roles
                     $criteria .= " AND (";
@@ -235,11 +235,11 @@ class UserSearchMgr extends SGL_Manager
                     }
                     $criteria .= ") ";
                 }
-            }            
+            }
             if (array_key_exists('orgs', $s) && !empty($s['orgs'])) {
                 if (!is_array($s['orgs'])) {
                     //search for one org
-                    $criteria .= " AND u.organisation_id = {$s['orgs']} ";	
+                    $criteria .= " AND u.organisation_id = {$s['orgs']} ";
                 } else {
                     //search for multiple orgs
                     $criteria .= " AND (";
@@ -256,7 +256,7 @@ class UserSearchMgr extends SGL_Manager
                 }
             }
         }
-        
+
         $allowedSortFields = array('usr_id','username','is_acct_active');
         if (  !empty($input->sortBy)
            && !empty($input->sortOrder)
@@ -287,7 +287,7 @@ class UserSearchMgr extends SGL_Manager
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
             'path'      => SGL_Output::makeUrl('search'),
-            'append'    => true,            
+            'append'    => true,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         if (PEAR::isError($aPagedData)) {

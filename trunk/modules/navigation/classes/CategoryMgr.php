@@ -109,7 +109,7 @@ class CategoryMgr extends SGL_Manager
 
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -117,7 +117,7 @@ class CategoryMgr extends SGL_Manager
         $this->_redirectCatId = $this->_category->create($values);
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -142,7 +142,7 @@ class CategoryMgr extends SGL_Manager
         $output->aCategories = $aCategories;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -158,7 +158,7 @@ class CategoryMgr extends SGL_Manager
 
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -182,7 +182,7 @@ class CategoryMgr extends SGL_Manager
         SGL::raiseMsg('The category has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _reorder(&$input, &$output)
+    function _cmd_reorder(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'categoryReorder.html';
@@ -193,7 +193,7 @@ class CategoryMgr extends SGL_Manager
         }
     }
 
-    function _reorderUpdate(&$input, &$output)
+    function _cmd_reorderUpdate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aMoveTo = array('BE' => 'up',
@@ -207,7 +207,7 @@ class CategoryMgr extends SGL_Manager
         }
     }
 
-    function _redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

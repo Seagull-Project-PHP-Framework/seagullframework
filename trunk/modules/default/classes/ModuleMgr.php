@@ -132,7 +132,7 @@ class ModuleMgr extends SGL_Manager
         $output->aAdminUris = SGL_Util::getAllModuleDirs($onlyRegistered = false);
     }
 
-    function _syncModules($aModules)
+    function _cmd_syncModules($aModules)
     {
         foreach ($aModules as $module) {
             $aModulesClean[] = $module->name;
@@ -157,7 +157,7 @@ class ModuleMgr extends SGL_Manager
         }
 
     }
-    function _overview(&$input, &$output)
+    function _cmd_overview(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -192,7 +192,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -201,7 +201,7 @@ class ModuleMgr extends SGL_Manager
         $output->template  = 'moduleEdit.html';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -224,7 +224,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -237,7 +237,7 @@ class ModuleMgr extends SGL_Manager
         $output->isConfigurable = ($oModule->is_configurable) ? ' checked' : '';
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
@@ -254,7 +254,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -265,7 +265,7 @@ class ModuleMgr extends SGL_Manager
         SGL::raiseMsg('module successfully removed');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

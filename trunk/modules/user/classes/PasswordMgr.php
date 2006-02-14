@@ -149,14 +149,14 @@ class PasswordMgr extends SGL_Manager
         $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'userPasswordEdit.html';
         $output->pageTitle = 'Change Password';
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -175,13 +175,13 @@ class PasswordMgr extends SGL_Manager
         }
     }
 
-    function _forgot(&$input, &$output)
+    function _cmd_forgot(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'loginForgot.html';
     }
 
-    function _retrieve(&$input, &$output)
+    function _cmd_retrieve(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -212,6 +212,12 @@ class PasswordMgr extends SGL_Manager
             //  redirect
             SGL::raiseMsg('email not in system');
         }
+    }
+
+    function _cmd_redirectToEdit(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL_HTTP::redirect(array('action' => 'edit'));
     }
 
     function _resetPassword($userId)
@@ -254,12 +260,6 @@ class PasswordMgr extends SGL_Manager
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
-    }
-
-    function _redirectToEdit(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_HTTP::redirect(array('action' => 'edit'));
     }
 }
 ?>

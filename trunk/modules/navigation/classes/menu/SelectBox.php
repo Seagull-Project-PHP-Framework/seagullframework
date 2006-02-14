@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SelectBox.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -49,9 +49,9 @@ class Menu_SelectBox extends SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Category();
-        
+
         $this->conf = $conf;
-        $this->_separator   = ($options['separator']) 
+        $this->_separator   = ($options['separator'])
                                 ? $options['separator']
                                 :'&nbsp;&nbsp;&nbsp;&nbsp;';
         $this->_excludeCatID = ($options['exclude']) ? $options['exclude']:'';
