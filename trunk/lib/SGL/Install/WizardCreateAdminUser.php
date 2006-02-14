@@ -40,13 +40,13 @@
 function appRootExists()
 {
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
-    return file_exists($aFormValues['installRoot']);
+    return is_file($aFormValues['installRoot']);
 }
 
 function webRootExists()
 {
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
-    return file_exists($aFormValues['webRoot']);
+    return is_file($aFormValues['webRoot']);
 }
 
 class WizardCreateAdminUser extends HTML_QuickForm_Page

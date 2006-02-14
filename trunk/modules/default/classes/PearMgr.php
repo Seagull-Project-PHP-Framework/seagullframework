@@ -251,7 +251,7 @@ class PearMgr extends SGL_Manager
      */
     function getPearConfigPath()
     {
-        if (!file_exists(SGL_TMP_DIR . '/pear.conf')) {
+        if (!is_file(SGL_TMP_DIR . '/pear.conf')) {
             $conf = &PEAR_Config::singleton();
 
             $conf->set('default_channel', 'pear.php.net');

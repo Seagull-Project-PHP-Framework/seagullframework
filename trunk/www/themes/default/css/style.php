@@ -51,18 +51,18 @@
 
     $modtimes = array();
 
-    if (file_exists($tmp = './vars.php')) {
+    if (is_file($tmp = './vars.php')) {
         $modTimes['vars'] = filemtime($tmp);
     }
-    if (file_exists($tmp = './core.php')) {
+    if (is_file($tmp = './core.php')) {
         $modTimes['core'] = filemtime($tmp);
     }
     $frmNavStyleSheet = @$_REQUEST['navStylesheet'];
-    if (file_exists($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
+    if (is_file($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
         $modTimes['navigation'] = filemtime($navStyleSheet);
     }
     $frmModuleName = @$_REQUEST['moduleName'];
-    if (file_exists($moduleName = realpath("./$frmModuleName.php"))) {
+    if (is_file($moduleName = realpath("./$frmModuleName.php"))) {
         $modTimes['module'] = filemtime($moduleName);
     }
 

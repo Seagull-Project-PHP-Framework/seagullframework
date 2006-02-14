@@ -214,7 +214,7 @@ HTML;
 if (!(function_exists('file_put_contents'))) {
     function file_put_contents($location, $data)
     {
-        if (file_exists($location)) {
+        if (is_file($location)) {
             unlink($location);
         }
         $fileHandler = fopen ($location, "w");

@@ -464,7 +464,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
                     //  build path to manager class
                     $classPath = $mgrPath . $managerName . '.php';
-                    if (@file_exists($classPath)) {
+                    if (@is_file($classPath)) {
                         require_once $classPath;
 
                         //  if class exists, instantiate it
@@ -559,7 +559,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
         $mgrName = SGL_Inflector::caseFix(SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
-        if (!file_exists($path)) {
+        if (!is_file($path)) {
             SGL::raiseError('could not locate default manager, '.$path, SGL_ERROR_NOFILE);
             return false;
         }
@@ -617,7 +617,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         }
 
         foreach ($aMatches as $match) {
-            if (!@file_exists($path . $match . '.php')) {
+            if (!@is_file($path . $match . '.php')) {
                 continue;
             } else {
                 return $match;
@@ -812,7 +812,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             $navClass = $this->conf['navigation']['driver'];
 
             $navDriver = $navClass . '.php';
-            if (file_exists(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
+            if (is_file(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
                 require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
             } else {
                 SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);

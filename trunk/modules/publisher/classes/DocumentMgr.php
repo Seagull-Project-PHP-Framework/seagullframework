@@ -317,7 +317,7 @@ class DocumentMgr extends FileMgr
         foreach ($input->deleteArray as $index => $assetID) {
             $document = DB_DataObject::factory($this->conf['table']['document']);
             $document->get($assetID);
-            if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {
+            if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
                 @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
             }
             $document->delete();

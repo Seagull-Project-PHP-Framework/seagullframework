@@ -14,12 +14,12 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-if (file_exists($rootDir .'/lib/SGL/AppController.php')) {
+if (is_file($rootDir .'/lib/SGL/AppController.php')) {
     require_once $rootDir .'/lib/SGL/AppController.php';
 }
 
 // determine if setup needed
-if (!file_exists($varDir . '/INSTALL_COMPLETE.php')) {
+if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
     header('Location: setup.php');
     exit;
 } else {

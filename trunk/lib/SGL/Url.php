@@ -573,7 +573,7 @@ class SGL_URL
     function resolveServerVars($conf = null)
     {
         //  cgi SERVER vars hack causes probs w/quickform
-        if (!file_exists(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+        if (!is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
             return;
         }
         //  it's apache

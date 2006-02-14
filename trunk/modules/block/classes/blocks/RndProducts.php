@@ -3,19 +3,19 @@
  * RndMsgBlock : Returns a random message, or empty string on failure
  *
  * @package block
- * @author  Ori shiloh 
+ * @author  Ori shiloh
  * @version 0.1
  */
- 
+
  /*
      TODO:
      Find a way to use only one sql query.
      Promotion variant.
      Translation: SGL blocks problem.
      Thumbnails: ""
-     Price: 
+     Price:
  */
- 
+
 include_once SGL_MOD_DIR . '/rate/classes/RateMgr.php';
 define('NUMBER_OF_PRODUCTS', 5);
 define('THUMBS_DIR','images/shop/thumb/');
@@ -29,59 +29,59 @@ class RndProducts
         $rateMgr = & new RateMgr();
         return $this->getBlockContent();
     }
-    
-    function currencyConverter ($amount, $from, $to, $format = true) 
+
+    function currencyConverter ($amount, $from, $to, $format = true)
     {
-        if (!(array_key_exists($from, $this->conf['exchangeRate']) 
+        if (!(array_key_exists($from, $this->conf['exchangeRate'])
                 && array_key_exists($to, $this->conf['exchangeRate']))) {
             return '';
-        } 
-        
+        }
+
         $price = $amount * $this->conf['exchangeRate'][$from] / $this->conf['exchangeRate'][$to];
-        
+
         if ($format) {
-           $decimal = $to=='RON' ? 2 : 0; 
+           $decimal = $to=='RON' ? 2 : 0;
            $price = number_format($price, $decimal, ',', '.');
-        } 
-        
+        }
+
         return $price;
     }
 
     function getBlockContent()
     {
-        
+
         $dbh = & SGL_DB::singleton();
-        
+
         $sql = "SELECT * FROM {$this->conf['table']['product']} WHERE promotion >= '1' ";
-        
+
         // get random number (max=number of messages)
         $res = & $dbh->query($sql);
-        
+
         // if we have less products then NUMBER_OF_PRODUCTS
         $numRows = $res->numRows();
-        
+
         if ($numRows == 0)
             return 'In aceasta perioada nu sunt promotii';
-        
+
         $maxNum = ($numRows <= NUMBER_OF_PRODUCTS) ? $numRows : NUMBER_OF_PRODUCTS;
         $luckyNumbers = array(); // The extracted numbers array
         while(count($luckyNumbers) < $maxNum) {
             $rnd = rand(0,( $numRows - 1));
             if (!in_array($rnd, $luckyNumbers))
-                $luckyNumbers[] = $rnd;             
+                $luckyNumbers[] = $rnd;
         }
-       
-        
+
+
         $aProduct = array();
         foreach($luckyNumbers as $value)
             $aProducts[] = $res->fetchRow(DB_FETCHMODE_OBJECT, $value);
-        
-        
+
+
         if (!isset($aProducts)) {
            //SGL::raiseError('perhaps no product tables exist', SGL_ERROR_NODATA);
            return 'In aceasta perioada nu sunt promotii';
         }
-            
+
         if (DB::isError($aProducts)) {
             //SGL::raiseError('perhaps no product tables exist', SGL_ERROR_NODATA);
             return 'In aceasta perioada nu sunt promotii';
@@ -90,26 +90,26 @@ class RndProducts
         if (is_array($aProducts) && count($aProducts)) {
             foreach ($aProducts as $key => $obj) {
               $obj->price = $this->currencyConverter($obj->price,$obj->currency,'EUR');
-              $HTMLoutput .= $this->render_product($obj); 
+              $HTMLoutput .= $this->render_product($obj);
             }
             $HTMLoutput = '<link rel="stylesheet" type="text/css" href="'.SGL_BASE_URL.'/themes/default/shop/rndProducts.css" />'.$HTMLoutput;
         } else {
             $HMTLoutput = 'In aceasta perioada nu sunt promotii';
-        } 
-        
+        }
+
        return $HTMLoutput;
     }
 
     function render_product($input)
-    { 
-      
-      
+    {
+
+
       $product_path = SGL_output :: makeUrl ('details','shop','shop');
       $product_path .= 'pid/'.$input->product_id.'/';
-      
-        if (isset($input->img) AND $input->img != '' AND file_exists(THUMBS_DIR.$input->img)) 
-        {  
-            $thumb_path = SGL_BASE_URL.'/'.THUMBS_DIR.$input->img;      
+
+        if (isset($input->img) AND $input->img != '' && is_file(THUMBS_DIR.$input->img))
+        {
+            $thumb_path = SGL_BASE_URL.'/'.THUMBS_DIR.$input->img;
        $output = <<< HTML
        <TABLE>
         <TBODY>

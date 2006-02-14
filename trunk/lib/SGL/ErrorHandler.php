@@ -227,7 +227,7 @@ EOF;
     	$sourceContext = null;
 
         //  check that file exists
-        if (!file_exists($file)) {
+        if (!is_file($file)) {
             $sourceContext = "Context cannot be shown - ($file) does not exist";
 
         //  check if line number is valid

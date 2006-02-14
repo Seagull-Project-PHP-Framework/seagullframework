@@ -419,7 +419,7 @@ class SimpleNav
                     $aClassParams = array();
                 }
                 $classFile = dirname(__FILE__) . '/addons/' . $className . '.php';
-                if (file_exists($classFile)) {
+                if (is_file($classFile)) {
                     require_once $classFile;
                     if (class_exists($className)) {
                         $addonDriver = new $className;
