@@ -627,7 +627,7 @@ div.close span {
     font-size: 0.9em;
 }
 #optionsLinks ul {
-    padding:10px 10px 0;
+    padding:10px 7px 0;
 }
 #optionsLinks li {
     float:left;
