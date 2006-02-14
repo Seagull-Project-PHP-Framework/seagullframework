@@ -689,7 +689,7 @@ class SimpleNav
         }
 
         $url = ($this->_disableLinks)
-            ? $_SERVER['PHP_SELF'] . '/staticId/' . $aSections->section_id . '/rid/' . $this->_rid . '/'
+            ? SGL_Url::makeLink('', '', '') . 'staticId/' . $aSections->section_id . '/rid/' . $this->_rid . '/'
             : SGL_Url::makeLink('', $managerName, $moduleName) . $qs;
 
         //  extract anchor and place at end if exists
