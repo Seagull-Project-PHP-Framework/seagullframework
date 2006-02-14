@@ -33,7 +33,7 @@
  * @author     Richard Heyes <richard@phpguru.org>
  * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Common.php,v 1.44 2006/01/20 13:42:00 quipo Exp $
+ * @version    CVS: $Id: Common.php,v 1.45 2006/02/03 10:28:42 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -662,7 +662,7 @@ class Pager_Common
             if ($this->_append) {
                 $href = '?' . $this->_http_build_query_wrapper($this->_linkData);
             } else {
-                $href = sprintf($this->_fileName, $this->_linkData[$this->_urlVar]);
+                $href = str_replace('%d', $this->_linkData[$this->_urlVar], $this->_fileName);
             }
             return sprintf('<a href="%s"%s title="%s">%s</a>',
                            htmlentities($this->_url . $href),
@@ -1023,7 +1023,7 @@ class Pager_Common
         if ($this->_append) {
             $href = '?' . $this->_http_build_query_wrapper($this->_linkData);
         } else {
-            $href = sprintf($this->_fileName, $this->_linkData[$this->_urlVar]);
+            $href = str_replace('%d', $this->_linkData[$this->_urlVar], $this->_fileName);
         }
         return htmlentities($this->_url . $href);
     }
