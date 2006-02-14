@@ -670,10 +670,22 @@ class SimpleNav
             $managerName = $moduleName;
         }
 
-        //  get querysting values if any
-        $qs = '';
-        foreach ($aTmp as $val) {
-            $qs .= urlencode($val) . '/';
+        //  get querystring values if any
+        if ($this->conf['site']['outputUrlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
+            $qs = '&';
+            $x = 0;
+            foreach ($aTmp as $val) {
+                $token = !($x%2) ? '=' : '&';
+                $qs .= urlencode($val) . $token;
+                $x++;
+            }
+            $qs = substr($qs, 0, -1);
+        //  must be SEF
+        } else {
+            $qs = '';
+            foreach ($aTmp as $val) {
+                $qs .= urlencode($val) . '/';
+            }
         }
 
         $url = ($this->_disableLinks)

@@ -82,12 +82,12 @@
                 </select>
             </p>
             <p>
-                <label class="tipOwner" for="conf[site][urlHandler]">{translate(#URL handler#)}
+                <label class="tipOwner" for="conf[site][outputUrlHandler]">{translate(#Output URL handler#)}
                 <span class="tipText">{translate(#What format would you like your URLs, Seagull Search Engine Friendly is the default#)}</span>
                 </label>
-                <div class="error" flexy:if="error[urlHandler]">{error[urlHandler]}</div>
-                <select name="conf[site][urlHandler]">
-                    {generateSelect(aUrlHandlers,conf[site][urlHandler]):h}
+                <div class="error" flexy:if="error[outputUrlHandler]">{error[outputUrlHandler]}</div>
+                <select name="conf[site][outputUrlHandler]">
+                    {generateSelect(aUrlHandlers,conf[site][outputUrlHandler]):h}
                 </select>
             </p>
             <p>

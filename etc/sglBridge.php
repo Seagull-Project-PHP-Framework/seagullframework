@@ -20,7 +20,7 @@ class TestRunnerInit extends SGL_AppController
         SGL_URL::resolveServerVars($conf);
 
         //  get current url object
-        $urlHandler = $conf['site']['urlHandler'];
+        $urlHandler = $conf['site']['outputUrlHandler'];
         $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
 
         //  assign to registry

@@ -341,13 +341,20 @@ class SGL_URL
         return SGL::raiseError('no uri data', SGL_ERROR_NODATA);
     }
 
+
+    /**
+     * SGL_Url singletons are currently only used for output URLs, so the output
+     * format is taken from $conf.
+     *
+     * @return SGL_Url
+     */
     function &singleton()
     {
         static $instance;
         if (!isset($instance)) {
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
-            $parserStrategy = $conf['site']['urlHandler'];
+            $parserStrategy = $conf['site']['outputUrlHandler'];
             $class = __CLASS__;
             $instance = new $class(null, true, new $parserStrategy());
         }
@@ -469,14 +476,10 @@ class SGL_URL
     function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0, $output = '')
     {
-        //  a hack for 0.4.x style of building SEF URLs
+        //  a workaround for 0.4.x style of building SEF URLs
         $url = & SGL_Url::singleton();
-        foreach ($url->aStrategies as $strategy) {
-            if (is_a($strategy, 'SGL_UrlParser_SefStrategy')) {
-                return $strategy->makeLink(
-                    $action, $mgr, $mod, $aList, $params, $idx, $output);
-            }
-        }
+        return $url->aStrategies[0]->makeLink(
+            $action, $mgr, $mod, $aList, $params, $idx, $output);
     }
 
     /**
