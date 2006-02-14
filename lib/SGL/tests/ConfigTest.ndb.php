@@ -46,7 +46,7 @@ class ConfigTest extends UnitTestCase {
         $tmpFileName = tempnam('/tmp', 'test');
         $iniTmpFileName = $tmpFileName . '.ini';
         $ok = $this->c->save($iniTmpFileName);
-        $this->assertTrue(file_exists($iniTmpFileName));
+        $this->assertTrue(is_file($iniTmpFileName));
         $this->assertTrue(is_array(parse_ini_file($iniTmpFileName)));
     }
 
@@ -62,7 +62,7 @@ class ConfigTest extends UnitTestCase {
         $phpTmpFileName = $tmpFileName . '.php';
         $ok = $this->c->save($phpTmpFileName);
         $this->assertTrue($ok);
-        $this->assertTrue(file_exists($phpTmpFileName));
+        $this->assertTrue(is_file($phpTmpFileName));
         $aConf = $this->c->load($phpTmpFileName);
         $this->assertTrue(is_array($aConf));
         $this->assertEqual(count($aConf), 14);

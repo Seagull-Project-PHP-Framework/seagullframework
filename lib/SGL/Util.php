@@ -233,7 +233,7 @@ class SGL_Util
 
         $filePath = $moduleDir . '/classes/' . $managerFileName;
 
-        if (file_exists($filePath)) {
+        if (is_file($filePath)) {
             require_once $filePath;
             $aElems = explode('/', $filePath);
             $last = array_pop($aElems);
@@ -383,7 +383,7 @@ class SGL_Util
         $details = '';
         $aPreparedParams = array();
 
-        if (file_exists($ini_file)) {
+        if (is_file($ini_file)) {
 
             //  get details section
             $aParams = @parse_ini_file($ini_file, true);

@@ -127,7 +127,7 @@ class FileMgr extends SGL_Manager
         $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
-        if (!@file_exists($fileName)) {
+        if (!@is_file($fileName)) {
             SGL::raiseError('The specified file does not appear to exist',
                 SGL_ERROR_NOFILE);
             return false;

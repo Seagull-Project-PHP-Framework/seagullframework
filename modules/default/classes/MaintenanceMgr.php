@@ -166,7 +166,7 @@ class MaintenanceMgr extends SGL_Manager
         //  get target array
         $target = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' . $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
 
-        if (file_exists($target)){
+        if (is_file($target)){
             @include $target;
             $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
         } else {
@@ -296,7 +296,7 @@ class MaintenanceMgr extends SGL_Manager
             $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
                 $GLOBALS['_SGL']['LANGUAGE'][$input->currentLang][1] . '.php';
 
-            if (file_exists($aModules[$name]['src'])) {
+            if (is_file($aModules[$name]['src'])) {
                 @include $aModules[$name]['src'];
                 $aTargetLang = isset($defaultWords) ? $defaultWords : @$words;
 
@@ -315,7 +315,7 @@ class MaintenanceMgr extends SGL_Manager
             // 4: target has more entries than source
 
             //  if the target lang file does not exist
-            if (!file_exists($aModules[$name]['src'])){
+            if (!is_file($aModules[$name]['src'])){
                 $aModules[$name]['status'] = $status['2'];
              }
 

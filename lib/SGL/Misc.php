@@ -622,7 +622,7 @@ class SGL_Inflector
         $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
 
         //  if the file exists, mgr name is valid and has not been omitted
-        return !file_exists($path);
+        return !is_file($path);
     }
 
     /**

@@ -151,7 +151,7 @@ class ConfigMgr extends SGL_Manager
 
             case 'sendmail':
                 if (empty($input->conf['mta']['sendmailPath']) ||
-                    !file_exists($input->conf['mta']['sendmailPath'])) {
+                    !is_file($input->conf['mta']['sendmailPath'])) {
                     $aErrors['sendmailPath'] = 'Please enter a valid path to Sendmail';
                 }
                 if (empty($input->conf['mta']['sendmailArgs'])) {

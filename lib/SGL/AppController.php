@@ -98,7 +98,7 @@ class SGL_AppController
     {
         SGL_AppController::setupMinimumEnv();
 
-        $autoLoad = (file_exists(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
+        $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
         $c = &SGL_Config::singleton($autoLoad);
@@ -163,7 +163,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
         $rendererFile = $templateEngine.'Strategy.php';
 
-        if (file_exists(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
+        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
         	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
         } else {
         	PEAR::raiseError('Could not find renderer',
@@ -247,7 +247,7 @@ class SGL_HtmlSimpleView extends SGL_View
         $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
         $rendererFile = $templateEngine.'Strategy.php';
 
-        if (file_exists(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
+        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
         	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
         } else {
         	PEAR::raiseError('Could not find renderer',

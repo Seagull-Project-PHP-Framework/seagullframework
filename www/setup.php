@@ -108,7 +108,7 @@ if (isset($_GET['start'])) {
 }
 
 //  check authorization
-if (file_exists(SGL_PATH . '/var/INSTALL_COMPLETE.php')
+if (is_file(SGL_PATH . '/var/INSTALL_COMPLETE.php')
         && empty($_SESSION['valid'])) {
 
     if (!empty($_POST['frmPassword'])) {
