@@ -174,14 +174,6 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
             if (setlocale($cat, $locale) == false) {
                 setlocale(LC_TIME, $locale);
             }
-
-            if (strtoupper(substr(PHP_OS, 0,3)) === 'WIN') {
-                $timeFromGmt = date('O');
-                $pattern = '/([+-])([0-9]{2})([0-9]{2})/';
-                preg_match($pattern, $timeFromGmt, $match);
-                $match[1] = ($match[1] == '+') ? '-' : '+';
-                $timezone = 'GMT' . $match[1] . $match[2];
-            }
             @putenv('TZ=' . $timezone);
 
             if (strtoupper(substr(PHP_OS, 0,3)) === 'WIN') {

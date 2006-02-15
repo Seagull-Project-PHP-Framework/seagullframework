@@ -1,5 +1,5 @@
  +---------------------------------------------------------------------------+
- | Copyright (c) 2005, Demian Turner, Seagull Systems                        |
+ | Copyright (c) 2006, Demian Turner, Seagull Systems                        |
  | All rights reserved.                                                      |
  |                                                                           |
  | Redistribution and use in source and binary forms, with or without        |
