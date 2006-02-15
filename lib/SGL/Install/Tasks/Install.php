@@ -61,6 +61,8 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
+        $enabled = isset($data['installAllModules']) ? true : false;
+        $c->set('site', array('blocksEnabled' => $enabled));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
