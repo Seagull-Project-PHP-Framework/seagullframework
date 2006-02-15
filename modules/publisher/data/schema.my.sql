@@ -85,7 +85,7 @@ create table if not exists item_addition
    item_id                        int                            not null,
    item_type_mapping_id           int                            not null,
    addition                       text,
-   trans_id                       int,
+   trans_id                       int                           default NULL,
    primary key (item_addition_id)
 );
 
