@@ -107,9 +107,13 @@ class Menu_ExplorerBsd
         require_once 'HTML/Tree.php';
 
         $dbh = &SGL_DB::singleton();
-        $query = '  SELECT  category_id as id, parent_id, label AS text
-                    FROM    ' . $this->conf['table']['category'] .'
-                    ORDER BY parent_id, order_id';
+        $roleId = SGL_Session::get('rid'); 
+        $query = "  SELECT  category_id as id, parent_id, label AS text
+                    FROM    
+                        {$this->conf['table']['category']}
+                    WHERE
+                        $roleId NOT IN (COALESCE(perms, '-1'))                         
+                    ORDER BY parent_id, order_id";
         $tree     = &new Tree();
         $nodeList = array();
 
