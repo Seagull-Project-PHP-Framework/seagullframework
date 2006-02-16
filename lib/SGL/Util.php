@@ -252,7 +252,7 @@ class SGL_Util
         }
     }
 
-    function getAllNavDrivers()
+    function getAllNavRenderers()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -267,11 +267,11 @@ class SGL_Util
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));
 
         //  propagate changes to keys as well
-        $aDrivers = array();
+        $aRenderers = array();
         foreach ($ret as $k => $v) {
-            $aDrivers[$v] = $v;
+            $aRenderers[$v] = $v;
         }
-        return $aDrivers;
+        return $aRenderers;
     }
 
     function getAllBlocks()

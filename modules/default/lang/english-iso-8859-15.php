@@ -215,7 +215,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Default manager'=>'Default manager',
         'Navigation Options'=>'Navigation Options',
         'Enable Navigation'=>'Enable Navigation',
-        'Navigation type (driver)'=>'Navigation type (driver)',
+        'Navigation Html renderer'=>'Navigation Html renderer',
         'Navigation menu stylesheet'=>'Navigation menu stylesheet',
         'Debugging Options'=>'Debugging Options',
         'Enable authorisation'=>'Enable authorisation',

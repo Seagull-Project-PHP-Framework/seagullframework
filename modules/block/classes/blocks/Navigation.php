@@ -58,9 +58,7 @@ class Navigation
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  prepare navigation driver
-        $navClass  = $output->conf['navigation']['driver'];
-        $navDriver = $navClass . '.php';
-        $nav       = & new $navClass($output);
+        $nav = & new NavBuilder($output);
 
         //  set default params
         $aDefaultParams = array(
@@ -74,10 +72,8 @@ class Navigation
         );
 
         //  set custom params
-        foreach ($aDefaultParams as $key => $value) {
-            if (array_key_exists($key, $aParams)) {
-                $aDefaultParams[$key] = (int)$aParams[$key];
-            }
+        foreach ($aParams as $key => $value) {
+            $aDefaultParams[$key] = $value;
         }
 
         //  set new navigation driver params

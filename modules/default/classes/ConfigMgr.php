@@ -55,7 +55,7 @@ class ConfigMgr extends SGL_Manager
     var $aLogNames;
     var $aMtaBackends;
     var $aCensorModes;
-    var $aNavDrivers;
+    var $aNavRenderers;
     var $aTranslationContainers;
 
     function ConfigMgr()
@@ -91,7 +91,7 @@ class ConfigMgr extends SGL_Manager
             3 => 'word fragment',
             );
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
-        $this->aNavDrivers = SGL_Util::getAllNavDrivers();
+        $this->aNavRenderers = SGL_Util::getAllNavRenderers();
         $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
         $this->aUrlHandlers = array(
             'SGL_UrlParser_SefStrategy' => 'Seagull SEF',
@@ -200,7 +200,7 @@ class ConfigMgr extends SGL_Manager
         $output->aEmailThresholds   = $aLogLevels;
         $output->aMtaBackends       = $this->aMtaBackends;
         $output->aCensorModes       = $this->aCensorModes;
-        $output->aNavDrivers        = $this->aNavDrivers;
+        $output->aNavRenderers      = $this->aNavRenderers;
         $output->aStyleFiles        = $this->aStyleFiles;
         $output->aSessHandlers      = $this->aSessHandlers;
         $output->aUrlHandlers       = $this->aUrlHandlers;
