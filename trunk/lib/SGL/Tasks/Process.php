@@ -816,22 +816,12 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
 
         //  generate navigation from appropriate driver
         if ($this->conf['navigation']['enabled']) {
-            $navClass = $this->conf['navigation']['driver'];
-
-            $navDriver = $navClass . '.php';
-            if (is_file(SGL_MOD_DIR . '/navigation/classes/' . $navDriver)) {
-                require_once SGL_MOD_DIR . '/navigation/classes/' . $navDriver;
-            } else {
-                SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
-            }
-            if (!class_exists($navClass)) {
-                SGL::raiseError('problem with navigation object', SGL_ERROR_NOCLASS);
-            }
-            $nav = & new $navClass($input->data);
+            require_once SGL_MOD_DIR . '/navigation/classes/NavBuilder.php';
+            $nav  = & new NavBuilder($input->data);
             $aRes = $nav->render();
             if (!PEAR::isError($aRes)) {
-                list($sectionId, $html) = $aRes;
-                $input->data->sectionId = $sectionId;
+                list($sectionId, $html)  = $aRes;
+                $input->data->sectionId  = $sectionId;
                 $input->data->navigation = $html;
                 $input->data->currentSectionName = $nav->getCurrentSectionName();
             }

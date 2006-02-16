@@ -64,9 +64,7 @@ class Breadcrumbs
         $blockOutput->theme = $output->theme;
 
         //  prepare navigation driver
-        $navClass  = $output->conf['navigation']['driver'];
-        $navDriver = $navClass . '.php';
-        $nav       = & new $navClass($output);
+        $nav = & new NavBuilder($output);
 
         //  set default params
         $aDefaultParams = array(

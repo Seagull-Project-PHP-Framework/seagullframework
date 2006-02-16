@@ -139,9 +139,9 @@ class NavStyleMgr extends SGL_Manager
                     "staticId|{$output->staticId}||rid|$rid"). '\'">' . $role;
         }
         //  build html unordered list of sections
-        require_once SGL_MOD_DIR . '/navigation/classes/SimpleNav.php';
+        require_once SGL_MOD_DIR . '/navigation/classes/NavBuilder.php';
 
-        $nav = & new SimpleNav($output);
+        $nav = & new NavBuilder($output);
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
         $nav->setDisableLinks(true);
