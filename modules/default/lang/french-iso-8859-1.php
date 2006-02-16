@@ -376,4 +376,5 @@ $defaultWords['active'] = 'actif';
 $defaultWords['inactive'] = 'inactif';
 $defaultWords['Module list'] = 'Liste des modules';
 $defaultWords['preferences'] = 'préférences';
+$defaultWords['Session'] = 'Session';
 ?>

@@ -22,12 +22,6 @@
                 <input type="text" class="longText" name="conf[site][baseUrl]" id="conf[site][baseUrl]" value="{conf[site][baseUrl]}" />
             </p>
             <p>
-                <label class="tipOwner" for="conf[session][maxLifetime]">{translate(#Session max lifetime (secs)#)}
-                <span class="tipText">{translate(#Zero means until the browser is closed#)}</span>
-                </label>
-                <input type="text" class="longText" name="conf[session][maxLifetime]" id="conf[session][maxLifetime]" value="{conf[session][maxLifetime]}" />
-            </p>
-            <p>
                 <label for="conf[site][name]">{translate(#Site name#)}</label>
                 <input type="text" class="longText" name="conf[site][name]" id="conf[site][name]" value="{conf[site][name]}" />
             </p>
@@ -154,9 +148,22 @@
                 <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
                 <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
             </p>
+            
+            <h3>{translate(#Paths#)}</h3>
+            <p>
+                <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
+                <div class="error" flexy:if="error[installRoot]">{error[installRoot]}</div>
+                <input type="text" class="longText" name="conf[path][installRoot]" id="conf[path][installRoot]" value="{conf[path][installRoot]}" />
+            </p>
+            <p>
+                <label for="conf[path][webRoot]">{translate(#Web Root#)}</label>
+                <div class="error" flexy:if="error[webRoot]">{error[webRoot]}</div>
+                <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="sessionOptions">
+            <h3>{translate(#Session#)}</h3>
             <p>
                 <label class="tipOwner" for="conf[session][handler]">{translate(#Session handler#)}
                 <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
@@ -164,6 +171,12 @@
                 <select name="conf[session][handler]]">
                     {generateSelect(aSessHandlers,conf[session][handler]):h}
                 </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][maxLifetime]">{translate(#Session max lifetime (secs)#)}
+                <span class="tipText">{translate(#Zero means until the browser is closed#)}</span>
+                </label>
+                <input type="text" name="conf[session][maxLifetime]" id="conf[session][maxLifetime]" value="{conf[session][maxLifetime]}" />
             </p>
             <p>
                 <label class="tipOwner" for="conf[session][extended]">{translate(#Extended Session#)}
@@ -187,21 +200,6 @@
                 {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
             </p>
         </fieldset>
-
-        <fieldset class="main options" id="paths">
-            <h3>{translate(#Paths#)}</h3>
-            <p>
-                <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
-                <div class="error" flexy:if="error[installRoot]">{error[installRoot]}</div>
-                <input type="text" class="longText" name="conf[path][installRoot]" id="conf[path][installRoot]" value="{conf[path][installRoot]}" />
-            </p>
-            <p>
-                <label for="conf[path][webRoot]">{translate(#Web Root#)}</label>
-                <div class="error" flexy:if="error[webRoot]">{error[webRoot]}</div>
-                <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
-            </p>
-        </fieldset>
-
         <fieldset class="main options" id="navigationOptions">
             <h3>{translate(#Navigation#)}</h3>
             <p>
