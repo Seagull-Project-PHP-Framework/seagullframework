@@ -748,7 +748,7 @@ class SGL_URL
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        if ($conf['site']['sessionInUrl']) {
+        if ($conf['session']['allowedInUri']) {
 
             //  determine is session propagated in cookies or URL
             $sessionInfo = defined('SID') ? SID : '';

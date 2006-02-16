@@ -121,7 +121,7 @@ class SGL_Session
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
 
-        if ($conf['site']['sessionHandler'] == 'database') {
+        if ($conf['session']['handler'] == 'database') {
              $ok = session_set_save_handler(
                 array(& $this, 'dbOpen'),
                 array(& $this, 'dbClose'),
@@ -222,12 +222,12 @@ class SGL_Session
             $oldSessionId = session_id();
             session_regenerate_id();
 
-            if ($conf['site']['sessionHandler'] == 'file') {
+            if ($conf['session']['handler'] == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
                 @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
 
-            } elseif ($conf['site']['sessionHandler'] == 'database') {
+            } elseif ($conf['session']['handler'] == 'database') {
                 $value = $this->dbRead($oldSessionId);
                 $this->dbDestroy($oldSessionId);
                 $this->dbRead(session_id());          // creates new session record
@@ -642,7 +642,7 @@ class SGL_Session
             return $sessionContent;
         } else {
             $timeStamp = SGL_Date::getTime(true);
-            if (!empty($conf['site']['extendedSession'])) {
+            if (!empty($conf['session']['extended'])) {
                 $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
                 $username = $_SESSION['username'];
                 $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
@@ -680,7 +680,7 @@ class SGL_Session
         $timeStamp = SGL_Date::getTime(true);
         $qval = $dbh->quote($value);
         $user_session = $conf['table']['user_session'];
-        if (!empty($conf['site']['extendedSession'])) {
+        if (!empty($conf['session']['extended'])) {
             $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
             $username = $_SESSION['username'];
             $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
@@ -737,7 +737,7 @@ class SGL_Session
         $user_session = $conf['table']['user_session'];
 
         // For extended sessions, enforce session deletion per user expiry setting
-        if (!empty($conf['site']['extendedSession'])) {
+        if (!empty($conf['session']['extended'])) {
             $query = "
                 DELETE  FROM {$user_session}
                 WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry
