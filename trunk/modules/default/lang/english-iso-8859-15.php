@@ -13,6 +13,7 @@
 
 /*  MODULE MGR  */
         'Module Manager' => 'Module Manager',
+        'Module Manager :: Add' => 'Module Manager :: Add',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',
@@ -46,6 +47,7 @@
 
 /*  MODULE MGR */
         'Module' => 'Module',
+        'Module list' => 'Module list',
         'Active' => 'Active',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
@@ -119,6 +121,7 @@
 
 // Status
         'Enabled' => 'Enabled',
+        'Disable' => 'Disable',
         'Disabled' => 'Disabled',
         'Are you sure you want to delete this' => 'Are you sure you want to delete this',
         'You must select an element to delete' => 'You must select an element to delete',
@@ -428,4 +431,12 @@ $defaultWords['allow backend to display in separate GUI'] = 'allow backend to di
 $defaultWords['Configuration'] = 'Configuration';
 $defaultWords['Sort by'] = 'Sort by';
 $defaultWords['Publishing'] = 'Publishing';
+$defaultWords['Admin GUI theme'] = 'Admin GUI theme';
+$defaultWords['before'] = 'before';
+$defaultWords['after'] = 'after';
+$defaultWords['is'] = 'is';
+$defaultWords['between'] = 'between';
+$defaultWords['active'] = 'active';
+$defaultWords['inactive'] = 'inactive';
+$defaultWords['page'] = 'page';
 ?>
