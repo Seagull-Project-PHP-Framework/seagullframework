@@ -34,6 +34,10 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_verify', '', @
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_checkAllModules', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_rebuildSequences', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_createModule', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_checkLatestVersion', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_doRequest', '', @moduleId);
 
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';
