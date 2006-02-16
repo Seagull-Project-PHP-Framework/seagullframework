@@ -401,8 +401,8 @@ class PermissionMgr extends SGL_Manager
             //  delimited value used for form submission
             if (!$found) {
 
-                //  ignore 'redirectToDefault' type perms
-                if (strpos($filePerm['perm'], 'redirectToDefault') !== false) {
+                //  ignore 'redirect*' type perms
+                if (preg_match("/redirect/", $filePerm['perm'])) {
                     continue;
                 }
                 $permType = (strpos($filePerm['perm'], '_') === false) ? 'class' : 'method';
@@ -533,7 +533,7 @@ class PermissionMgr extends SGL_Manager
             //  delimited value used for form submission
             foreach ($aActions as $k2 => $v2) {
                 $permsFound[] = array(
-                    'perm' => "{$className}_{$v2}",
+                    'perm' => "{$className}_cmd_{$v2}",
                     'module_id' => $moduleId,
                     'module_name' => $moduleName);
             }

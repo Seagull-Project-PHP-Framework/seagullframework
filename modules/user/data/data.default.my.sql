@@ -21,6 +21,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_delete', '', @moduleId
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_list', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_retrieve', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_forgot', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_edit', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_update', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_add', '', @moduleId);
@@ -81,7 +82,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_insertImportedU
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_syncToRole', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_redirectToEdit', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_add', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_insert', NULL, @moduleId);
@@ -89,7 +89,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_edit', NULL, @modu
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_update', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_delete', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_list', NULL, @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_redirectToUserMgr', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_requestChangeUserStatus', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_changeUserStatus', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_viewLogin', NULL, @moduleId);
@@ -167,8 +166,6 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'userpasswordmgr_cmd_edit';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'userpasswordmgr_cmd_update';
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
-SELECT @permissionId := permission_id FROM permission WHERE name = 'userpasswordmgr_cmd_redirectToEdit';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 SELECT @permissionId := permission_id FROM permission WHERE name = 'preferencemgr_cmd_edit';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
