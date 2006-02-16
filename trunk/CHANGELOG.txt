@@ -13,6 +13,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+16-02-06    Moved session options to their own config group
 16-02-06    All config keys now follow consistent bumpyCap naming standard
 15-02-06    Recover password and change password functionality broken down into
             separate managers

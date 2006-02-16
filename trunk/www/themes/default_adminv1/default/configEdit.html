@@ -22,10 +22,10 @@
                 <input type="text" class="longText" name="conf[site][baseUrl]" id="conf[site][baseUrl]" value="{conf[site][baseUrl]}" />
             </p>
             <p>
-                <label class="tipOwner" for="conf[site][sessionMaxLifetime]">{translate(#Session max lifetime (secs)#)}
+                <label class="tipOwner" for="conf[session][maxLifetime]">{translate(#Session max lifetime (secs)#)}
                 <span class="tipText">{translate(#Zero means until the browser is closed#)}</span>
                 </label>
-                <input type="text" class="longText" name="conf[site][sessionMaxLifetime]" id="conf[site][sessionMaxLifetime]" value="{conf[site][sessionMaxLifetime]}" />
+                <input type="text" class="longText" name="conf[session][maxLifetime]" id="conf[session][maxLifetime]" value="{conf[session][maxLifetime]}" />
             </p>
             <p>
                 <label for="conf[site][name]">{translate(#Site name#)}</label>
@@ -91,35 +91,6 @@
                 </select>
             </p>
             <p>
-                <label class="tipOwner" for="conf[site][sessionHandler]">{translate(#Session handler#)}
-                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
-                </label>
-                <select name="conf[site][sessionHandler]">
-                    {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
-                </select>
-            </p>
-            <p>
-                <label class="tipOwner" for="conf[site][extendedSession]">{translate(#Extended Session#)}
-                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
-                </label>
-                <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
-                {generateRadioPair(#conf[site][extendedSession]#,conf[site][extendedSession]):h}
-            </p>
-            <p>
-                <label class="tipOwner" for="conf[site][singleUser]">{translate(#Enforce Single User#)}
-                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
-                </label>
-                <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
-                {generateRadioPair(#conf[site][singleUser]#,conf[site][singleUser]):h}
-            </p>
-            <p>
-                <label class="tipOwner" for="conf[site][sessionInUrl]">{translate(#Allow Session in URL#)}
-                <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
-                </label>
-                <div class="error" flexy:if="error[sessionInUrl]">{error[sessionInUrl]}</div>
-                {generateRadioPair(#conf[site][sessionInUrl]#,conf[site][sessionInUrl]):h}
-            </p>
-            <p>
                 <label class="tipOwner" for="conf[site][blocksEnabled]">{translate(#Enable Blocks#)}
                 <span class="tipText">{translate(#You can turn the blocks off globally#)}</span>
                 </label>
@@ -182,6 +153,38 @@
             <p>
                 <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
                 <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="sessionOptions">
+            <p>
+                <label class="tipOwner" for="conf[session][handler]">{translate(#Session handler#)}
+                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
+                </label>
+                <select name="conf[session][handler]]">
+                    {generateSelect(aSessHandlers,conf[session][handler]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][extended]">{translate(#Extended Session#)}
+                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
+                </label>
+                <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
+                {generateRadioPair(#conf[session][extended]#,conf[session][extended]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][singleUser]">{translate(#Enforce Single User#)}
+                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
+                </label>
+                <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
+                {generateRadioPair(#conf[session][singleUser]#,conf[session][singleUser]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][allowedInUri]">{translate(#Allow Session in URL#)}
+                <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
+                </label>
+                <div class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</div>
+                {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
             </p>
         </fieldset>
 

@@ -22,7 +22,7 @@
     <tr>
         <td class="fieldName">{translate(#Session max lifetime (secs)#)}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][sessionMaxLifetime]" value="{conf[site][sessionMaxLifetime]}" size="50" />
+            <input type="text" name="conf[session][maxLifetime]" value="{conf[session][maxLifetime]}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
@@ -142,59 +142,6 @@
             <span class="tipOwner">
                 <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
                 <span class="tipText">{translate(#What format would you like your output URLs, Seagull Search Engine Friendly is the default#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{translate(#Session handler#)}</td>
-        <td class="fieldValue">
-            <select name="conf[site][sessionHandler]">
-                {generateSelect(aSessHandlers,conf[site][sessionHandler]):h}
-            </select>
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{translate(#Extended Session#)}</td>
-        <td class="fieldValue">
-            <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
-            {generateRadioPair(#conf[site][extendedSession]#,conf[site][extendedSession]):h}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{translate(#Enforce Single User#)}</td>
-        <td class="fieldValue">
-            <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
-            {generateRadioPair(#conf[site][singleUser]#,conf[site][singleUser]):h}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{translate(#Allow Session in URL#)}</td>
-        <td class="fieldValue">
-            <div class="error" flexy:if="error[sessionInUrl]">{error[sessionInUrl]}</div>
-            {generateRadioPair(#conf[site][sessionInUrl]#,conf[site][sessionInUrl]):h}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
-                <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
             </span>
         </td>
     </tr>
@@ -334,6 +281,67 @@
 
         </td>
     </tr>
+
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{translate(#Session Options#)}</th>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Session handler#)}</td>
+        <td class="fieldValue">
+            <select name="conf[session][handler]">
+                {generateSelect(aSessHandlers,conf[session][handler]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Extended Session#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
+            {generateRadioPair(#conf[session][extended]#,conf[session][extended]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Enforce Single User#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
+            {generateRadioPair(#conf[session][singleUser]#,conf[session][singleUser]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{translate(#Allow Session in URL#)}</td>
+        <td class="fieldValue">
+            <div class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</div>
+            {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
+            </span>
+        </td>
+    </tr>
+
 
     <tr>
         <td colspan="3" align="center">&nbsp;</td>

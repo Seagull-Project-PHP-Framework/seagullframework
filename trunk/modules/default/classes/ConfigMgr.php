@@ -171,12 +171,12 @@ class ConfigMgr extends SGL_Manager
                 break;
             }
             //  session validations
-            if (  !empty($input->conf['site']['singleUser'])
-                && empty($input->conf['site']['extendedSession'])) {
+            if (  !empty($input->conf['session']['singleUser'])
+                && empty($input->conf['session']['extended'])) {
                     $aErrors['singleUser'] = 'Single session per user requires extended session';
             }
-            if (   !empty($input->conf['site']['extendedSession'])
-                && $input->conf['site']['sessionHandler'] != 'database') {
+            if (   !empty($input->conf['session']['extended'])
+                && $input->conf['session']['handler'] != 'database') {
                     $aErrors['extendedSession'] = 'Extended session requires database session handling';
             }
         }

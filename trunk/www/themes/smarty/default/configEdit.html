@@ -22,7 +22,7 @@
     <tr>
         <td class="fieldName">{$result->translate('Session max lifetime (secs)')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][sessionMaxLifetime]" value="{$result->conf.site.sessionMaxLifetime}" size="50" />
+            <input type="text" name="conf[session][maxLifetime]" value="{$result->conf.session.maxLifetime}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
@@ -131,59 +131,7 @@
             </span>
         </td>
     </tr>
-    <tr>
-        <td class="fieldName">{$result->translate('Session handler')}</td>
-        <td class="fieldValue">
-            <select name="conf[site][sessionHandler]">
-                {$result->generateSelect($result->aSessHandlers,$result->conf.site.sessionHandler)}
-            </select>
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
-                <span class="tipText">{$result->translate('Use the database session handler if youre running a load-balanced environment')}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{$result->translate('Extended Session')}</td>
-        <td class="fieldValue">
-            {if $result->error.extendedSession}<div class="error">{$result->error.extendedSession}</div>{/if}
-            {$result->generateRadioPair('conf[site][extendedSession]',$result->conf.site.extendedSession)}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
-                <span class="tipText">{$result->translate('Enables extended session API when using database sessions. This allows the site to enforce one session per user.')}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{$result->translate('Enforce Single User')}</td>
-        <td class="fieldValue">
-            {if $result->error.singleUser}<div class="error">{$result->error.singleUser}</div>{/if}
-            {$result->generateRadioPair('conf[site][singleUser]',$result->conf.site.singleUser)}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
-                <span class="tipText">{$result->translate('Enforces one session per user on this site (requires database session handling, and extended session to be on).')}</span>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fieldName">{$result->translate('Allow Session in URL')}</td>
-        <td class="fieldValue">
-            {if $result->error.sessionInUrl}<div class="error">{$result->error.sessionInUrl}</div>{/if}
-            {$result->generateRadioPair('conf[site][sessionInUrl]',$result->conf.site.sessionInUrl)}
-        </td>
-        <td>
-            <span class="tipOwner">
-                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
-                <span class="tipText">{$result->translate('If users have cookies disabled, this will allow them to use sessions with Seagull')}</span>
-            </span>
-        </td>
-    </tr>
+
     <tr>
         <td class="fieldName">{$result->translate('Enable left/right columns')}</td>
         <td class="fieldValue">
@@ -271,6 +219,67 @@
             <span class="tipOwner">
                 <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="" />
                 <span class="tipText">{$result->translate('Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir')}</span>
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3" align="center">&nbsp;</td>
+    </tr>
+    <tr>
+        <th colspan="3">{$result->translate('Session Options')}</th>
+    </tr>
+
+    <tr>
+        <td class="fieldName">{$result->translate('Session handler')}</td>
+        <td class="fieldValue">
+            <select name="conf[session][handler]">
+                {$result->generateSelect($result->aSessHandlers,$result->conf.session.handler)}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Use the database session handler if youre running a load-balanced environment')}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{$result->translate('Extended Session')}</td>
+        <td class="fieldValue">
+            {if $result->error.extendedSession}<div class="error">{$result->error.extendedSession}</div>{/if}
+            {$result->generateRadioPair('conf[session][extended]',$result->conf.session.extended)}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Enables extended session API when using database sessions. This allows the site to enforce one session per user.')}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{$result->translate('Enforce Single User')}</td>
+        <td class="fieldValue">
+            {if $result->error.singleUser}<div class="error">{$result->error.singleUser}</div>{/if}
+            {$result->generateRadioPair('conf[session][singleUser]',$result->conf.session.singleUser)}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('Enforces one session per user on this site (requires database session handling, and extended session to be on).')}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fieldName">{$result->translate('Allow Session in URL')}</td>
+        <td class="fieldValue">
+            {if $result->error.sessionInUri}<div class="error">{$result->error.sessionInUri}</div>{/if}
+            {$result->generateRadioPair('conf[session][allowedInUri]',$result->conf.session.allowedInUri)}
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{$result->webRoot}/themes/{$result->theme}/images/info.gif" alt="info" />
+                <span class="tipText">{$result->translate('If users have cookies disabled, this will allow them to use sessions with Seagull')}</span>
             </span>
         </td>
     </tr>
