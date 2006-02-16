@@ -219,11 +219,11 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
             //  build P3P headers
             if ($this->conf['p3p']['policies']) {
                 $p3pHeader = '';
-                if ($this->conf['p3p']['policy_location'] != '') {
-                    $p3pHeader .= " policyref=\"" . $this->conf['p3p']['policy_location']."\"";
+                if ($this->conf['p3p']['policyLocation'] != '') {
+                    $p3pHeader .= " policyref=\"" . $this->conf['p3p']['policyLocation']."\"";
                 }
-                if ($this->conf['p3p']['compact_policy'] != '') {
-                    $p3pHeader .= " CP=\"" . $this->conf['p3p']['compact_policy']."\"";
+                if ($this->conf['p3p']['compactPolicy'] != '') {
+                    $p3pHeader .= " CP=\"" . $this->conf['p3p']['compactPolicy']."\"";
                 }
                 if ($p3pHeader != '') {
                     header("P3P: $p3pHeader");
@@ -742,13 +742,13 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
 		if (isset($input->data->wysiwyg) && $input->data->wysiwyg == true) {
 
             // you can preset this var in your code
-			if (!isset($input->data->wysiwyg_editor)) {
-				$input->data->wysiwyg_editor = isset($this->conf['site']['wysiwyg_editor'])
-				    ? $this->conf['site']['wysiwyg_editor']
+			if (!isset($input->data->wysiwygEditor)) {
+				$input->data->wysiwygEditor = isset($this->conf['site']['wysiwygEditor'])
+				    ? $this->conf['site']['wysiwygEditor']
                     : 'fck';
 			}
 
-			switch ($input->data->wysiwyg_editor) {
+			switch ($input->data->wysiwygEditor) {
 
             case 'fck':
             	$input->data->wysiwyg_fck = true;

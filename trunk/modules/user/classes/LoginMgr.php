@@ -115,7 +115,7 @@ class LoginMgr extends SGL_Manager
             // Check for multiple user sessions: allow one only excluding current one.
             $multiple = SGL_Session::getUserSessionCount($uid, session_id());
             if ($multiple > 0) {
-                if ($this->conf['site']['single_user']) {
+                if ($this->conf['site']['singleUser']) {
                     SGL_Session::destroyUserSessions($uid, session_id());
                     SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
                 } else {

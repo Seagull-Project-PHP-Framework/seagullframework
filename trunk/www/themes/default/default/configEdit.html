@@ -162,8 +162,8 @@
     <tr>
         <td class="fieldName">{translate(#Extended Session#)}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[extended_session]">{error[extended_session]}</div>
-            {generateRadioPair(#conf[site][extended_session]#,conf[site][extended_session]):h}
+            <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
+            {generateRadioPair(#conf[site][extendedSession]#,conf[site][extendedSession]):h}
         </td>
         <td>
             <span class="tipOwner">
@@ -175,8 +175,8 @@
     <tr>
         <td class="fieldName">{translate(#Enforce Single User#)}</td>
         <td class="fieldValue">
-            <div class="error" flexy:if="error[single_user]">{error[single_user]}</div>
-            {generateRadioPair(#conf[site][single_user]#,conf[site][single_user]):h}
+            <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
+            {generateRadioPair(#conf[site][singleUser]#,conf[site][singleUser]):h}
         </td>
         <td>
             <span class="tipOwner">
@@ -279,7 +279,7 @@
     <tr>
         <td class="fieldName">{translate(#Editor type#)}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][wysiwyg_editor]" value="{conf[site][wysiwyg_editor]}" size="50" />
+            <input type="text" name="conf[site][wysiwygEditor]" value="{conf[site][wysiwygEditor]}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
@@ -611,7 +611,7 @@
     <tr>
         <td class="fieldName">{translate(#Post-connection query#)}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[db][post-connect]" value="{conf[db][post-connect]}" size="50" />
+            <input type="text" name="conf[db][postConnect]" value="{conf[db][postConnect]}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
@@ -982,14 +982,14 @@
     <tr>
         <td class="fieldName">{translate(#Policy location#)}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][policy_location]" value="{conf[p3p][policy_location]}" size="50" />
+            <input type="text" name="conf[p3p][policyLocation]" value="{conf[p3p][policyLocation]}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td class="fieldName">{translate(#Compact policy#)}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][compact_policy]" value="{conf[p3p][compact_policy]}" size="50" />
+            <input type="text" name="conf[p3p][compactPolicy]" value="{conf[p3p][compactPolicy]}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
