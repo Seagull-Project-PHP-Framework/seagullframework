@@ -83,7 +83,8 @@ class ArticleMgr extends SGL_Manager
             $this->template = 'publisher.html';
         }
         $this->validated        = true;
-        $input->masterTemplate  = ((SGL_Session::getUserType() == SGL_ADMIN) && !$this->conf['site']['adminGuiEnabled'])
+        $input->masterTemplate  = ((SGL_Session::getUserType() == SGL_ADMIN)
+                && !$this->conf['site']['adminGuiEnabled'])
             ? 'masterLeftCol.html'
             : $this->masterTemplate;
         $input->error           = array();
@@ -96,7 +97,7 @@ class ArticleMgr extends SGL_Manager
             ? 'jscalendar/lang/calendar-'. $lang . '.js'
             : 'jscalendar/lang/calendar-en.js';
         $input->javascriptSrc   = ($this->conf['site']['adminGuiEnabled'])
-            ? array('TreeMenu.js','jscalendar/calendar.js',$jscalendarLangFile,'jscalendar/calendar-setup.js')
+            ? array('TreeMenu.js','jscalendar/calendar.js',$jscalendarLangFile, 'jscalendar/calendar-setup.js')
             : array('TreeMenu.js');
 
         //  form vars
@@ -141,7 +142,6 @@ class ArticleMgr extends SGL_Manager
         //  returns an assoc array: typeID => typeName
         $output->aArticleTypes = $this->getTemplateTypes();
         $output->aArticleSelect = $this->getTemplateTypes('selector');
-        //echo'<pre>';die(print_r($output->aArticleSelect));
     }
 
     function _cmd_add(&$input, &$output)
@@ -195,7 +195,6 @@ class ArticleMgr extends SGL_Manager
         $htmlOptions = $menu->toHtml();
 
         //  only display categories if 'html article' type is chosen
-        //echo'<pre>';die(print_r($item);
         if ($input->dataTypeID == 2) {
             $output->aCategories = $htmlOptions;
             $output->currentCat = $input->catID;

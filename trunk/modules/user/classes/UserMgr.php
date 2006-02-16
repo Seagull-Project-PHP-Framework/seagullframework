@@ -475,7 +475,6 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
         $output->pageTitle = $this->pageTitle . ' :: Edit permissions';
         $output->template = 'userPermsEdit.html';
 
@@ -599,7 +598,6 @@ class UserMgr extends RegisterMgr
         }
         //  container role(s) perms
         $aRolesPerms = array();
-        require_once SGL_MOD_DIR . '/user/classes/PermissionMgr.php';
 
         //  use specified roleId for all users (each user's own roleId is used if
         //  $roleId = null

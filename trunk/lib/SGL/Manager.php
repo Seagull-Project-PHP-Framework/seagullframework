@@ -250,7 +250,7 @@ class SGL_Manager
             foreach ($this->_aActionsMapping[$input->action] as $methodName) {
 
                 //  allow redirects without perms
-                if ($methodName == 'redirectToDefault') {
+                if (preg_match("/redirect/", $methodName)) {
                     continue;
                 }
                 $methodName = '_cmd_' . $methodName;
@@ -260,7 +260,7 @@ class SGL_Manager
 
                 //  return false if user doesn't have method specific or classwide perms
                 if (SGL_Session::hasPerms($perm) === false) {
-                    $ret = array($className, $methodName);
+                    $ret = array($mgrName, $methodName);
                     break;
                 }
             }

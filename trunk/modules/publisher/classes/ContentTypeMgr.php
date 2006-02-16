@@ -264,7 +264,6 @@ class ContentTypeMgr extends SGL_Manager
         }
 
         //  update item type fields
-
         foreach ($input->type['fields'] as $aKey => $aValue) {
             //  field name clause
             if ($aValue['field_name'] !== $aValue['field_name_original']) {

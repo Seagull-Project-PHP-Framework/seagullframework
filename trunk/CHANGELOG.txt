@@ -13,6 +13,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+15-02-06    Recover password and change password functionality broken down into
+            separate managers
 14-02-06    Timezone support from installer correctly implemented
 14-02-06    All action methods are now prefixed with '_cmd' to differentiate
             them from private methods
