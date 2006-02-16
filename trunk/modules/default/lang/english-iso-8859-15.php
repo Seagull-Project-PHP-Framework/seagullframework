@@ -44,6 +44,7 @@
         'message ID not recognised' => 'message ID not recognised',
         'Please fill in the indicated fields' => 'Please fill in all the indicated fields and try again',
         'Your alert has been sent successfully' => 'Your alert has been sent successfully',
+        'Are you sure you want to delete this' => 'Are you sure you want to delete this',
 
 /*  MODULE MGR */
         'Module' => 'Module',
