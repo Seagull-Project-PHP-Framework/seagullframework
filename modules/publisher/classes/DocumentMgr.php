@@ -185,6 +185,7 @@ class DocumentMgr extends FileMgr
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->docCatID = $input->docCatID;
         $output->template = 'documentMgrAdd.html';
         if ($input->submit) { // if file uploaded
@@ -195,7 +196,8 @@ class DocumentMgr extends FileMgr
                 $success = System::mkDir(array(SGL_UPLOAD_DIR));
                 if (!$success) {
                     SGL::raiseError('The upload directory does not appear to be writable, please give the
-                    webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+                    webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+                    return false;
                 }
             }
             copy($_FILES['assetFile']['tmp_name'], SGL_UPLOAD_DIR . '/' . $input->assetFileName);
@@ -289,6 +291,7 @@ class DocumentMgr extends FileMgr
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->setFrom($input->document);

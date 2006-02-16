@@ -46,8 +46,6 @@ require_once SGL_CORE_DIR . '/Download.php';
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.15 $
- * @since   PHP 4.1
  */
 class FileMgr extends SGL_Manager
 {
