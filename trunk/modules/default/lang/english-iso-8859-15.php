@@ -440,5 +440,5 @@ $defaultWords['between'] = 'between';
 $defaultWords['active'] = 'active';
 $defaultWords['inactive'] = 'inactive';
 $defaultWords['page'] = 'page';
-$defaultWords['Session Options'] = 'Session Options';
+$defaultWords['Session'] = 'Session';
 ?>
