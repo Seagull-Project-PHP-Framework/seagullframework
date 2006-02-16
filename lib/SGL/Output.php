@@ -275,8 +275,11 @@ class SGL_Output
      * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $output user-friendly format (european)
      */
-    function formatDate($date)
+    function formatDate($date = '')
     {
+        if (empty($date)) {
+            $date = SGL_Date::getTime();
+        }
         return SGL_Date::format($date);
     }
 
@@ -287,8 +290,11 @@ class SGL_Output
      * @param   string  $date  Date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $formatted  user-friendly format (european)
      */
-    function formatDatePretty($date)
+    function formatDatePretty($date = '')
     {
+        if (empty($date)) {
+            $date = SGL_Date::getTime();
+        }
         return SGL_Date::formatPretty($date);
     }
 
