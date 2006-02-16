@@ -642,7 +642,7 @@ class SGL_Session
             return $sessionContent;
         } else {
             $timeStamp = SGL_Date::getTime(true);
-            if (!empty($conf['site']['extended_session'])) {
+            if (!empty($conf['site']['extendedSession'])) {
                 $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
                 $username = $_SESSION['username'];
                 $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
@@ -680,7 +680,7 @@ class SGL_Session
         $timeStamp = SGL_Date::getTime(true);
         $qval = $dbh->quote($value);
         $user_session = $conf['table']['user_session'];
-        if (!empty($conf['site']['extended_session'])) {
+        if (!empty($conf['site']['extendedSession'])) {
             $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : 0;
             $username = $_SESSION['username'];
             $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
@@ -737,7 +737,7 @@ class SGL_Session
         $user_session = $conf['table']['user_session'];
 
         // For extended sessions, enforce session deletion per user expiry setting
-        if (!empty($conf['site']['extended_session'])) {
+        if (!empty($conf['site']['extendedSession'])) {
             $query = "
                 DELETE  FROM {$user_session}
                 WHERE   (UNIX_TIMESTAMP('$timeStamp') - UNIX_TIMESTAMP(last_updated)) > $max_expiry

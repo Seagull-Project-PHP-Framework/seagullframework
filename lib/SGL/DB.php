@@ -83,8 +83,8 @@ class SGL_DB
                 return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                     SGL_ERROR_DBFAILURE, $fatal);
             }
-            if (!empty($conf['db']['post-connect'])) {
-                $conn->query($conf['db']['post-connect']);
+            if (!empty($conf['db']['postConnect'])) {
+                $conn->query($conf['db']['postConnect']);
             }
             $conn->setFetchMode(DB_FETCHMODE_OBJECT);
             $aInstances[$signature] = $conn;

@@ -148,8 +148,8 @@
     <tr>
         <td class="fieldName">{$result->translate('Extended Session')}</td>
         <td class="fieldValue">
-            {if $result->error.extended_session}<div class="error">{$result->error.extended_session}</div>{/if}
-            {$result->generateRadioPair('conf[site][extended_session]',$result->conf.site.extended_session)}
+            {if $result->error.extendedSession}<div class="error">{$result->error.extendedSession}</div>{/if}
+            {$result->generateRadioPair('conf[site][extendedSession]',$result->conf.site.extendedSession)}
         </td>
         <td>
             <span class="tipOwner">
@@ -161,8 +161,8 @@
     <tr>
         <td class="fieldName">{$result->translate('Enforce Single User')}</td>
         <td class="fieldValue">
-            {if $result->error.single_user}<div class="error">{$result->error.single_user}</div>{/if}
-            {$result->generateRadioPair('conf[site][single_user]',$result->conf.site.single_user)}
+            {if $result->error.singleUser}<div class="error">{$result->error.singleUser}</div>{/if}
+            {$result->generateRadioPair('conf[site][singleUser]',$result->conf.site.singleUser)}
         </td>
         <td>
             <span class="tipOwner">
@@ -265,7 +265,7 @@
     <tr>
         <td class="fieldName">{$result->translate('Editor type')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[site][wysiwyg_editor]" value="{$result->conf.site.wysiwyg_editor}" size="50" />
+            <input type="text" name="conf[site][wysiwygEditor]" value="{$result->conf.site.wysiwygEditor}" size="50" />
         </td>
         <td>
             <span class="tipOwner">
@@ -846,14 +846,14 @@
     <tr>
         <td class="fieldName">{$result->translate('Policy location')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][policy_location]" value="{$result->conf.p3p.policy_location}" size="50" />
+            <input type="text" name="conf[p3p][policyLocation]" value="{$result->conf.p3p.policyLocation}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td class="fieldName">{$result->translate('Compact policy')}</td>
         <td class="fieldValue">
-            <input type="text" name="conf[p3p][compact_policy]" value="{$result->conf.p3p.compact_policy}" size="50" />
+            <input type="text" name="conf[p3p][compactPolicy]" value="{$result->conf.p3p.compactPolicy}" size="50" />
         </td>
         <td>&nbsp;</td>
     </tr>
