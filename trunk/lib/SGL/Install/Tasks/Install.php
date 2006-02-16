@@ -51,6 +51,10 @@ class SGL_Task_CreateConfig extends SGL_Task
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));
 
+        //  demo mode
+        if (is_file(SGL_VAR_DIR . '/DEMO_MODE')) {
+            $c->set('tuples', array('demoMode' => true));
+        }
         //  paths
         $c->set('path', array('installRoot' => $data['installRoot']));
         $c->set('path', array('webRoot' => $data['webRoot']));
