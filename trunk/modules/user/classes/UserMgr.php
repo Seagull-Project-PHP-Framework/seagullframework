@@ -108,7 +108,10 @@ class UserMgr extends RegisterMgr
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
-        $input->roleSync        = $req->get('roleSync');
+        // This will tell HTML_Flexy which key is used to sort data
+        $input->{ 'sort_' . $input->sortBy } = true;
+
+        $input->roleSync = $req->get('roleSync');
         if ($input->roleSync == 'null') {
             $input->roleSync = null;
         }
@@ -164,7 +167,7 @@ class UserMgr extends RegisterMgr
             $aSyncModes[SGL_ROLESYNC_ADD] = SGL_String::translate('add missing perms');
             $output->aSyncModes = $aSyncModes;
         }
-        $output->isAcctActive = ($output->user->is_acct_active) ? ' checked' : '';
+        $output->isAcctActive = ($output->user->is_acct_active) ? ' checked="checked"' : '';
     }
 
     function _cmd_add(&$input, &$output)
@@ -173,6 +176,10 @@ class UserMgr extends RegisterMgr
 
         parent::_cmd_add($input, $output);
         $output->pageTitle = $input->pageTitle . ' :: Add';
+
+        //  get default values for new users
+        $defaultRoleId = $this->conf['UserMgr']['defaultRoleId'];
+        $output->user->role_id = $defaultRoleId;
     }
 
     function _cmd_insert(&$input, &$output)
@@ -195,7 +202,7 @@ class UserMgr extends RegisterMgr
 
         //  check for errors
         if (!PEAR::isError($success)) {
-            SGL::raiseMsg('user successfully added');
+            SGL::raiseMsg('user successfully added', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -224,7 +231,7 @@ class UserMgr extends RegisterMgr
             $input->user->organisation_id_orig);
 
         if (!PEAR::isError($success)) {
-            SGL::raiseMsg('details successfully updated');
+            SGL::raiseMsg('details successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -261,9 +268,15 @@ class UserMgr extends RegisterMgr
         $results = array_count_values($results);
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
-
+        if ($succeeded && !$failed) {
+            $errorType = SGL_MESSAGE_INFO;
+        } elseif (!$succeeded && $failed) {
+            $errorType = SGL_MESSAGE_ERROR;
+        } else {
+            $errorType = SGL_MESSAGE_WARNING;
+        }
         //  redirect on success
-        SGL::raiseMsg("$succeeded user(s) successfully deleted. $failed user(s) failed.");
+        SGL::raiseMsg("$succeeded user(s) successfully deleted. $failed user(s) failed.", false, $errorType);
     }
 
     function _cmd_list(&$input, &$output)
@@ -298,12 +311,23 @@ class UserMgr extends RegisterMgr
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $output->aPagedData = $aPagedData;
@@ -311,7 +335,12 @@ class UserMgr extends RegisterMgr
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = $aPagedData['totalItems'];
-        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
+
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
+        }
     }
 
     function _cmd_viewLogin(&$input, &$output)
@@ -342,19 +371,32 @@ class UserMgr extends RegisterMgr
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        }
     }
 
     function _cmd_truncateLoginTbl(&$input, &$output)
@@ -368,7 +410,7 @@ class UserMgr extends RegisterMgr
                 $this->dbh->query($query);
             }
         	//  redirect on success
-        	SGL::raiseMsg('Deleted successfully');
+        	SGL::raiseMsg('Deleted successfully', true, SGL_MESSAGE_INFO);
 
         } else {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
@@ -398,7 +440,7 @@ class UserMgr extends RegisterMgr
         }
         //  redirect on success
         if ($success) {
-            SGL::raiseMsg('Status changed successfully');
+            SGL::raiseMsg('Status changed successfully', true, SGL_MESSAGE_INFO);
         } else {
             $output->template = 'userManager.html';
             SGL::raiseError('There was a problem modifying the record',
@@ -432,7 +474,7 @@ class UserMgr extends RegisterMgr
         }
         //  redirect on success
         if ($success) {
-            SGL::raiseMsg('Password updated successfully');
+            SGL::raiseMsg('Password updated successfully', true, SGL_MESSAGE_INFO);
         } else {
             $output->template = 'userManager.html';
             SGL::raiseError('There was a problem inserting the record',
@@ -448,13 +490,23 @@ class UserMgr extends RegisterMgr
         $output->template = 'userPermsEdit.html';
 
         //  build module filter
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
         $output->currentModule = $input->moduleId;
 
         $aUserPerms = $this->da->getPermsByUserId($input->userID);
-        $hAllPerms = $this->da->getPermsByModuleId($input->moduleId);
-        $output->permCheckboxes = SGL_Output::generateCheckboxList($hAllPerms,
-            $aUserPerms, 'frmPerms[]');
+        if ($this->conf['site']['adminGuiEnabled']) {
+            foreach ($aModules as $moduleId => $moduleName) {
+                $hAllPerms = $this->da->getPermsByModuleId($moduleId);
+                $output->aModules[$moduleId]['id'] = $moduleId;
+                $output->aModules[$moduleId]['name'] = $moduleName;
+                $output->aModules[$moduleId]['perms'] = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
+                $output->aModulesList = $aModules;
+            }
+        } else {
+            $hAllPerms = $this->da->getPermsByModuleId($input->moduleId);
+            $output->permCheckboxes = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
+            $output->aModules = $aModules;
+        }
     }
 
     function _cmd_updatePerms(&$input, &$output)
@@ -481,7 +533,7 @@ class UserMgr extends RegisterMgr
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
-                SGL::raiseMsg('perm successfully updated');
+                SGL::raiseMsg('perm successfully updated', true, SGL_MESSAGE_INFO);
             }
 
         //  else we're dealing with one module's perms
@@ -502,7 +554,7 @@ class UserMgr extends RegisterMgr
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
-                SGL::raiseMsg('perm successfully updated');
+                SGL::raiseMsg('perm successfully updated', true, SGL_MESSAGE_INFO);
             }
         }
     }
@@ -517,7 +569,14 @@ class UserMgr extends RegisterMgr
         $results = array_count_values($results);
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
-        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false);
+        if ($succeeded && !$failed) {
+            $errorType == SGL_MESSAGE_INFO;
+        } elseif (!$succeeded && $failed) {
+            $errorType == SGL_MESSAGE_ERROR;
+        } else {
+            $errorType == SGL_MESSAGE_WARNING;
+        }
+        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false, $errorType);
     }
 
     function _sendStatusNotification($oUser, $isEnabled)
