@@ -150,7 +150,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template   = 'articleMgrAdd.html';
-        $output->pageTitle .= ' :: New Article';
+        $output->pageTitle .= ' :: Add';
 
         //  don't show wysiwyg for 'news' articles
         if ($input->dataTypeID != 4) {
@@ -202,10 +202,6 @@ class ArticleMgr extends SGL_Manager
             $output->currentCat = $input->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
-
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
-        }
     }
 
     function _cmd_insert(&$input, &$output)
@@ -254,6 +250,7 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'articleMgrEdit.html';
+        $output->pageTitle .= ' :: Edit';
 
         //  don't show wysiwyg for 'news' articles
         if ($input->dataTypeID != 4) {
@@ -346,10 +343,6 @@ class ArticleMgr extends SGL_Manager
             $output->currentCat = $item->catID;
         }
         $output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
-
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("showSelectedOptions('article','articleAddContent')");
-        }
     }
 
     function _cmd_update(&$input, &$output)
