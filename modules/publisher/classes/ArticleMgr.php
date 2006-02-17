@@ -123,6 +123,8 @@ class ArticleMgr extends SGL_Manager
         $input->aDataItemValue  = $req->get('frmFieldName', $allowTags = true);
         $input->queryRange      = $req->get('frmQueryRange');
 
+        $input->redir           = $req->get('redir');
+
         //  session var persistence
         PublisherBase::maintainState($input);
     }
@@ -387,6 +389,11 @@ class ArticleMgr extends SGL_Manager
         $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->aDataItemType, $input->articleLang);
 
         SGL::raiseMsg('Article successfully updated', true, SGL_MESSAGE_INFO);
+
+        //  if redirect captured
+        if (!empty($input->redir)) {
+            SGL_HTTP::redirect(urldecode($input->redir));
+        }
     }
 
     function _cmd_changeStatus(&$input, &$output)
