@@ -18,6 +18,8 @@ $words['content type has successfully been deleted'] = 'le type de contenu a été
 $words['content type has successfully been updated'] = 'le type de contenu a été mis à jour avec succès';
 $words['Publisher'] = 'Editeur';
 $words['Article Manager'] = 'Gestionnaire d\'articles';
+$words['Article Manager :: Add'] = 'Gestionnaire d\'articles :: Ajouter';
+$words['Article Manager :: Edit'] = 'Gestionnaire d\'articles :: Editer';
 $words['Current Category'] = 'Catégorie courante';
 $words['Change Category'] = 'Changer de catégorie';
 $words['article'] = 'article';
@@ -104,4 +106,5 @@ $words['Number of fields'] = 'Nombre de champs';
 $words['Please select an article type'] = 'Veuillez choisir un type d\'article';
 $words['Articles list'] = 'Liste des articles';
 $words['Articles filter'] = 'Filtrage des articles';
+$words['Content'] = 'Contenu';
 ?>

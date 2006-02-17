@@ -50,23 +50,21 @@ img {
 .message div {
     width: 60%;
     margin: 0 auto 15px;
-    padding: 5px 0;
+    padding: 5px 25px;
     background-color: <?php echo $tertiaryLightest ?>;
     background-position: 0 50%;
     background-repeat: no-repeat;
-    border-width: 1px;
+    border-width: 2px;
     border-style: solid;
     -moz-border-radius: 0.4em;
 }
 .infoMessage {
     background-image: url('<?php echo $baseUrl ?>/images/22/dialog_info.gif');
     border-color: <?php echo $infoMessage ?>;
-    color: <?php echo $infoMessage ?>;
 }
 .errorMessage {
     background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
     border-color: <?php echo $errorMessage ?>;
-    color: <?php echo $errorMessage ?>;
 }
 .error, .required {
     color: <?php echo $errorMessage ?>;
@@ -74,7 +72,6 @@ img {
 .warningMessage {
     background-image: url('<?php echo $baseUrl ?>/images/22/dialog_warning.gif');
     border-color: <?php echo $warningMessage ?>;
-    color: <?php echo $warningMessage ?>;
 }
 
 /*
@@ -101,6 +98,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     border-width: 2px;
     border-color: <?php echo $primary ?> <?php echo $primaryLightest ?> <?php echo $primaryLightest ?> <?php echo $primary ?>;
     color: <?php echo $tertiaryDarkest ?>;
+    text-decoration: none;
 }
 
 /*
@@ -332,7 +330,7 @@ html>body #manager-actions {
 
 }
 #content-header h2 {
-    margin: 5px 0 10px;
+    margin: 5px 0 20px;
     font-size: 1.5em;
     font-weight: normal;
     color: <?php echo $primary ?>;
@@ -419,10 +417,17 @@ form p.col label {
 ==================Tables default layout=======================*/
 #container table { /*
 ------------------- Actually concerns all table but #container specialization is required not to interfere ------------------- with FCKeditor or JsCalendar css */
+    margin: 5px 0;
     background: #fff;
     border-collapse: collapse;
-    border: 1px solid <?php echo $tertiaryLightest ?>;
+    border-width: 1px;
+    border-style: solid;
+    border-color: <?php echo $tertiaryLightest ?> <?php echo $tertiaryDarker ?> <?php echo $tertiaryDarker ?> <?php echo $tertiaryLightest ?>;
     font-family: helvetica;
+}
+html>body #container table {
+    border-collapse: separate;
+    border-spacing: 0px;
 }
 #container tr {
     height: 24px;
@@ -445,7 +450,6 @@ thead tr {
     color: <?php echo $tertiaryLightest ?>;
 }
 thead tr.infos, tfoot tr.infos {
-
     background: <?php echo $tertiaryDark ?>;
     font-size: 10px;
     color: <?php echo $primary; ?>;
@@ -459,15 +463,15 @@ thead th, thead th a {
 thead tr a:hover {
     color: <?php echo $primaryDark ?>;
 }
-tr.backLight {
+tr.backLight td {
     background: <?php echo $tableRowLight ?>;
     border-bottom: 1px solid <?php echo $primaryLight ?>;
 }
-tr.backDark {
+tr.backDark td {
     background: <?php echo $tableRowDark ?>;
     border-bottom: 1px solid <?php echo $primaryLight ?>;
 }
-tr.backHighlight {
+tr.backHighlight td {
     background: <?php echo $primaryLightest ?>;
 }
 
@@ -550,6 +554,9 @@ a.delete {
 a.save {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_save.gif');
 }
+a.validate {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_validate.gif');
+}
 a.cancel {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_cancel.gif');
 }
@@ -573,6 +580,12 @@ a.addrootcat {
 }
 a.adduser {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_adduser.gif');
+}
+a.scannew {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_scannew.gif');
+}
+a.delorphaned {
+    background-image: url('<?php echo $baseUrl ?>/images/22/action_delorphaned.gif');
 }
 
 /*
@@ -638,13 +651,13 @@ div.close span {
     background-image: url('<?php echo $baseUrl ?>/images/backgrounds/tab_right_on.gif');
 }
 #optionsLinks a {
-    display:block;
+    display: block;
     background: url('<?php echo $baseUrl ?>/images/backgrounds/tab_left.gif') no-repeat left top;
-    padding:5px 10px 4px;
+    padding: 5px 10px 4px;
 }
 #optionsLinks li.current a {
     background-image: url('<?php echo $baseUrl ?>/images/backgrounds/tab_left_on.gif');
-    padding-bottom:5px;
+    padding-bottom: 5px;
 }
 
 /*
@@ -675,6 +688,9 @@ div.close span {
 .hide {
     display: none;
 }
+.narrow {
+    width: 45%;
+}
 .full {
     width: 100%;
 }
@@ -685,18 +701,33 @@ div.close span {
     white-space: nowrap;
     font-size: 1.1em;
 }
+.pager .results {
+    padding-right: 0.5em;
+    color: <?php echo $tertiaryDarkest ?>;
+}
 .pager .currentPage {
     font-weight: bold;
-    padding: 0 1em;
+    padding: 0 0.75em;
     color: <?php echo $primaryDark ?>;
     font-weight: bold;
 }
 .pager a {
-    padding: 0 1em;
+    padding: 0 0.75em;
     color: <?php echo $primary ?>;
     font-weight: bold;
 }
 .pager a:hover {
     background: <?php echo $primaryDark ?>;
     color: <?php echo $tertiaryLightest ?>;
+}
+a.clearSearch {
+    background: url('<?php echo $baseUrl ?>/images/16/action_no.gif') no-repeat 5px 50%;
+    margin-left: 10px;
+    padding: 3px 5px 3px 25px;
+    color: <?php echo $tertiaryDarkest ?>;
+    font-size: 1.1em;
+}
+a.clearSearch:hover {
+    text-decoration: none;
+    color: <?php echo $tertiaryDarkest ?>;
 }

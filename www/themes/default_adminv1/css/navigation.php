@@ -31,12 +31,12 @@ p.errorMsg {
 #frmCategoryMgr span.tipText {
     width: 300px;
 }
-#frmCategoryMgr fieldset#rightManagement {
+#frmCategoryMgr fieldset#permissions {
     width: 80%;
     margin-top: 1em;
     border: 1px solid <?php echo $tertiaryDark ?>;
 }
-#frmCategoryMgr #rightManagement p label {
+#frmCategoryMgr #permissions p label {
     width: 160px;
 }
 

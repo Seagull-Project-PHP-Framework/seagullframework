@@ -26,11 +26,11 @@ a.blockMoveUp {
     display: block;
     margin-top: 80px;
     padding: 0 20px;
-    background: url('<?php echo $baseUrl ?>/images/16/sort_desc.gif') 0 50% no-repeat;
+    background: url('<?php echo $baseUrl ?>/images/16/move_up.gif') 0 50% no-repeat;
 }
 a.blockMoveDown {
     display: block;
     margin-top: 10px;
     padding: 0 20px;
-    background: url('<?php echo $baseUrl ?>/images/16/sort_asc.gif') 0 50% no-repeat;
+    background: url('<?php echo $baseUrl ?>/images/16/move_down.gif') 0 50% no-repeat;
 }

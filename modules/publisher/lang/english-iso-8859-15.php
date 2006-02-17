@@ -4,6 +4,8 @@
 
 /*  ARTICLE MGR */
         'Article Manager' => 'Article Manager',
+        'Article Manager :: Add' => 'Article Manager :: Add',
+        'Article Manager :: Edit' => 'Article Manager :: Edit',
         'Current Category' => 'Current Category',
         'Change Category' => 'Change Category',
         'article' => 'article',
@@ -62,7 +64,7 @@
         'Author' => 'Author',
         'Date created' => 'Date Created',
         'Flesch score' => 'Flesch Score',
-
+        'Content' => 'Content',
 
 /*  DOCUMENT MGR    */
         'Document Manager' => 'Document Manager',
