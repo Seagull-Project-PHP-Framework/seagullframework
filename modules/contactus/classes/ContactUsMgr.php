@@ -140,7 +140,7 @@ class ContactUsMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         //  1. Take data from validated contact object and pass
         //  to sendEmail() method
         $bEmailSent = $this->sendEmail($input->contact, $input->moduleName);

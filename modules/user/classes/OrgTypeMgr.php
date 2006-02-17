@@ -117,7 +117,7 @@ class OrgTypeMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->setFrom($input->orgTypes);
         $orgType->organisation_type_id = $this->dbh->nextId($this->conf['table']['organisation_type']);

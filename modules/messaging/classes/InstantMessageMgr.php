@@ -267,7 +267,7 @@ class InstantMessageMgr extends SGL_Manager
     function _cmd_reply(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
 
         //  as compose and reply are very similar, they use the same template
         $output->template = 'imCompose.html';

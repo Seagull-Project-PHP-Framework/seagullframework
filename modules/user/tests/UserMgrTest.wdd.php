@@ -25,7 +25,7 @@ class TestUserMgr extends UnitTestCase {
             $this->dbh = & SGL_DB::singleton();
             $locator->register('DB', $this->dbh);
         }
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
     }
 
     function testInsertingAUserIncrementsTotalCount()

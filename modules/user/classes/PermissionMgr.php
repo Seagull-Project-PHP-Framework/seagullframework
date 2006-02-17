@@ -180,7 +180,7 @@ class PermissionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
         //  check to see if perm already exists

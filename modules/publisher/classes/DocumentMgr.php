@@ -237,7 +237,7 @@ class DocumentMgr extends FileMgr
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $asset = DB_DataObject::factory($this->conf['table']['document']);
         $asset->setFrom($input->document);
         $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);

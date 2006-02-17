@@ -140,47 +140,35 @@ class SGL_DB
     }
 
     /**
-     * Sets the DB global DB handle for optionally specified dsn. You can
+     * Sets the DB_DataObject DB resource to be the same as the sgl DB singleton. You can
      * use this for sharing connections between PEAR::DataObjects and SGL_DB.
      * This enables you to use DataObjects and SGL_DB in the same transaction.
      *
      * example usage:
      * $oUser = DB_DataObject::factory($this->conf['table']['user']);
-     * $dbh = & $oUser->getDatabaseConnection();
-     * SGL_DB::setConnection($dbh);
+     * SGL_DB::setConnection();
      * $dbh->autocommit();
      * ... do some transactional DO and SGL_DB stuff
      * $dbh->commit();
      *
      * @access  public
+     * @param   string $dsn Supplied database resource name
      * @static
-     * @param   object  $dbh    PEAR::DB instance
-     * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      */
-    function setConnection(&$dbh, $dsn = null)
+    function setConnection($dsn = null)
     {
-        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        $dsnMd5 = md5($dsn);
-
         $locator = &SGL_ServiceLocator::singleton();
         $singleton = $locator->get('DB');
         if (!$singleton) {
             $singleton = & SGL_DB::singleton();
             $locator->register('DB', $singleton);
         }
-//        if ($dbh !== $singleton) {
-//            unset($dbh);
-//            $dbh = &$singleton;
-//            #$dbh->setFetchMode(DB_FETCHMODE_OBJECT);
-//        }
-        #$dsnMd5 = md5($dsn);
+
+        $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        $dsnMd5 = md5($dsn);
 
         unset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]);
         $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = &$singleton;
-        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_ASSOC);
-
-        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5] = $dbh;
-        #$GLOBALS['_SGL']['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
     }
 
     /**

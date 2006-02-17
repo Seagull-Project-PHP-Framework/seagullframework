@@ -311,7 +311,7 @@ class DA_Default
 
     function addModule($oModule)
     {
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         if (!isset($oModule->module_id)) {
             $oModule->module_id = $this->dbh->nextId($this->conf['table']['module']);
         }
