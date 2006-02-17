@@ -100,7 +100,7 @@ class SGL_DB
      * @param int $type  a constant that specifies the return type, ie, array or string
      * @return mixed     a string or array contained the data source name
      */
-    function getDsn($type = SGL_DSN_ARRAY)
+    function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -115,9 +115,11 @@ class SGL_DB
                 'password' => $conf['db']['pass'],
                 'protocol' => $conf['db']['protocol'],
                 'hostspec' => $conf['db']['host'],
-                'database' => $conf['db']['name'],
                 'port'     => $conf['db']['port']
             );
+            if (!$excludeDbName) {
+                $dsn['database'] = $conf['db']['name'];
+            }
         } else {
         	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
             $port = (!empty($conf['db']['port'])
@@ -129,8 +131,10 @@ class SGL_DB
                 $conf['db']['user'] . ':' .
                 $conf['db']['pass'] . '@' .
                 $protocol .
-                $conf['db']['host'] . $port . '/' .
-                $conf['db']['name'];
+                $conf['db']['host'] . $port;
+            if (!$excludeDbName) {
+                $dsn .= '/' . $conf['db']['name'];
+            }
         }
         return $dsn;
     }
