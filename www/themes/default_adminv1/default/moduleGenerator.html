@@ -1,0 +1,67 @@
+<div id="manager-actions">
+    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('module')">Save</a><a class="action undo" href="javascript:formReset('module')">Undo</a><a class="action cancel" href="{makeUrl(#list#,#module#,#default#)}">Cancel</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)} <span flexy:if="module.module_id">{module.title}</span></h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+
+<!--    <form name="dataobjects" method="post" id="dataobjects" flexy:ignore>
+        <h3>{translate(#Rebuild Data Objects#)}</h3>
+        <fieldset class="inside">
+            <p class="center">
+                <input type="hidden" name="action" value="dbgen" />
+                <input type="submit" class="sgl-button"name="dbgen" value="{translate(#Rebuild Dataobjects Now#)}" />
+            </p>
+        </fieldset>
+    </form>-->
+
+    <form name="moduleCreator" method="post" id="moduleCreator" flexy:ignore>
+        <h3>{translate(#Create a module#)}</h3>
+
+        <fieldset class="inside">
+            <table>
+                <tr>
+                    <td valign="top" class="left">
+                        <div class="error" flexy:if="error[moduleName]">
+                            {error[moduleName]}
+                        </div>
+                        <input type="hidden" name="action" value="createModule" />
+                        <input type="text" name="frmCreateModule[moduleName]"  value="{createModule.moduleName}"/>{translate(#Module Name#)}<br />
+
+                        <div class="error" flexy:if="error[managerName]">
+                            {error[managerName]}
+                        </div>
+                        <input type="text" name="frmCreateModule[managerName]" value="{createModule.managerName}" />{translate(#Manager Name#)}
+                    </td>
+                    <td class="left">
+                        <input type="checkbox" name="frmCreateModule[add]" value="1" />add<br />
+                        <input type="checkbox" name="frmCreateModule[insert]" value="1" />insert<br />
+                        <input type="checkbox" name="frmCreateModule[edit]" value="1" />edit<br />
+                        <input type="checkbox" name="frmCreateModule[update]" value="1" />update<br />
+                        <input type="checkbox" name="frmCreateModule[delete]" value="1" />delete<br />
+                        <input type="checkbox" name="frmCreateModule[list]" value="1" />list
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="frmCreateModule[createTemplates]" value="1" />{translate(#Create Templates#)}<br />
+                        <input type="checkbox" name="frmCreateModule[createIniFile]" value="1" />{translate(#Create ini file#)}<br />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <div class="error" flexy:if="error[moduleNothingChecked]">
+                            {error[moduleNothingChecked]}
+                        </div><input type="submit" name="submitted" value="{translate(#Create Module Now#)}" />
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+
+    <div class="spacer"></div>
+</div>

@@ -77,7 +77,6 @@ class RoleMgr extends SGL_Manager
             'update'    => array('update', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
-
             'editPerms' => array('editPerms'),
             'updatePerms' => array('updatePerms', 'redirectToDefault'),
             'duplicate' => array('duplicate', 'redirectToDefault'),
