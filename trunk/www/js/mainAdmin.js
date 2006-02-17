@@ -9,8 +9,8 @@
 
 /**
     * Allows to create/modify a field value within a form before submitting it.
-    * Launches the above function depending on the status of a trigger checkbox 
- 
+    * Launches the above function depending on the status of a trigger checkbox
+
     * @param   string   formName Obviously the form name you want to submit
     * @param   string   fieldToUpdate The element name you want to modify
     * @param   string   fieldValue
@@ -101,7 +101,7 @@ var oldDate;
 oldDate = new Array();
 
 function time_select_reset(prefix, changeBack){
-    
+
     if (typeof SGL_JS_ADMINGUI == "undefined") {
         /*
          * adds a empty node as first node of a date selector
@@ -122,21 +122,21 @@ function time_select_reset(prefix, changeBack){
                 return oldValue;
             }
         }
-    
+
         function setActive(id) {
             if (dateSelector = document.getElementById(id)) {
                 relocate_select(dateSelector, oldDate[id]);
                 dateSelector.disabled = false;
             }
-    
+
         }
-    
+
         selectors = new Array(prefix+'_year', prefix+'_month', prefix+'_day', prefix+'_hour', prefix+'_minute', prefix+'_second');
         d = new Date();
-    
+
         if (oldDate.length == 0){
         }
-    
+
         if( document.getElementById(prefix+'NoExpire').checked ){
             for (var i = 0; i <= selectors.length; i++){
                 oldDate[(selectors[i])] = setEmpty(selectors[i]);
@@ -149,7 +149,7 @@ function time_select_reset(prefix, changeBack){
             }
         }
     } else if (SGL_JS_ADMINGUI == 1) {
-        //  Equivalent function if we are in "admin mode". 
+        //  Equivalent function if we are in "admin mode".
         //  TODO: Remove or rewrite this whole function (time_select_reset()) when adminGui is implemented.
         function setEmpty(id) {
             if (dateSelector = document.getElementById(id)) {
@@ -163,13 +163,13 @@ function time_select_reset(prefix, changeBack){
                 }
             }
         }
-    
+
         function setActive(id) {
             if (dateSelector = document.getElementById(id)) {
                 dateSelector.value = oldDate;
                 dateSelectorToShow.innerHTML = oldDateToShow;
             }
-    
+
         }
 
         if (document.getElementById(prefix+'NoExpire').checked) {
@@ -286,7 +286,7 @@ function MoveOption (MoveFrom, MoveTo, ToDo)
     container=eval('document.main_form.' + ToDo + MoveFrom);
   }
   if (SelectedIndex == -1) {
-    alert("Please select a person(s) to move.");
+    alert("Please select a permission(s) to move.");
   } else {
     for (i=0; i<SelectFrom.options.length; i ++) {
       if (SelectFrom.options[i].selected) {
@@ -441,13 +441,13 @@ function setCheckboxes(the_form, element_name, do_check)
 }
 
 /**
- * Launches the above function depending on the status of a trigger checkbox 
+ * Launches the above function depending on the status of a trigger checkbox
  *
  * @param   string   the form name
  * @param   string   the element name
  * @param   boolean   the status of trigger checkbox
  *
- * @return  void 
+ * @return  void
  */
 function applyToAllCheckboxes(formName, elementName, isChecked)
 {
