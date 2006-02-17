@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | Install.php                                                                  |
+// | Install.php                                                               |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -109,6 +109,9 @@ class SGL_Install_Common
      */
     function printHeader($title = '')
     {
+        if (SGL::runningFromCli()) {
+            return false;
+        }
         $baseUrl = SGL_BASE_URL;
         $html = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -143,6 +146,9 @@ HTML;
 
     function printFooter()
     {
+        if (SGL::runningFromCli()) {
+            return false;
+        }
         $html = <<<HTML
     <div id="footer">
     Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>

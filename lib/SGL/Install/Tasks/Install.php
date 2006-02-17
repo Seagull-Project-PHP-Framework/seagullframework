@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/../../Task.php';
+require_once dirname(__FILE__) . '/../../Install/Common.php';
 
 class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
@@ -153,6 +154,10 @@ class SGL_UpdateHtmlTask extends SGL_Task
 {
     function updateHtml($id, $displayHtml)
     {
+        if (SGL::runningFromCli()) {
+            return false;
+        }
+
         if ($id == 'status') {
             $msg = $displayHtml;
             $displayHtml = '<span class=\\"pageTitle\\">' . $msg . '</span>';
@@ -234,6 +239,33 @@ class SGL_UpdateHtmlTask extends SGL_Task
     }
 }
 
+class SGL_Task_DropDatabase extends SGL_Task
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
+        $dbh = & SGL_DB::singleton();
+        $query = "DROP DATABASE {$this->conf['db']['name']}";
+        $res = $dbh->query($query);
+    }
+}
+
+class SGL_Task_CreateDatabase extends SGL_Task
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
+        $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName = true);
+        $dbh = & SGL_DB::singleton($dsn);
+        $query = "CREATE DATABASE {$this->conf['db']['name']}";
+        $res = $dbh->query($query);
+    }
+}
+
 class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -241,12 +273,16 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
         require_once SGL_CORE_DIR . '/Sql.php';
 
         SGL_Install_Common::printHeader('Building Database');
-        echo '<span class="title">Status: </span><span id="status"></span>
-        <div id="progress_bar">
-            <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
-        </div>
-        <div id="additionalInfo"></div>';
-        flush();
+
+        if (!SGL::runningFromCli()) {
+            echo '<span class="title">Status: </span><span id="status"></span>
+            <div id="progress_bar">
+                <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
+            </div>
+            <div id="additionalInfo"></div>';
+            flush();
+        }
+
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
             $this->setup();
@@ -267,7 +303,10 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             }
             $out .=        '<th class="alignCenter">Add Constraints</th>
                         </tr>';
-            echo $out;
+
+            if (!SGL::runningFromCli()) {
+                echo $out;
+            }
 
             $aModuleList = (isset($data['installAllModules']))
                 ? SGL_Install_Common::getModuleList()
@@ -285,10 +324,16 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 }
                 $out .= '<td id="' . $module . '_constraints" class="alignCenter"></td>
                      </tr>';
-                echo $out;
+
+                if (!SGL::runningFromCli()) {
+                    echo $out;
+                }
             }
-            echo '</table>';
-            flush();
+
+            if (!SGL::runningFromCli()) {
+                echo '</table>';
+                flush();
+            }
 
             $statusText .= ', creating and loading tables';
             $this->updateHtml('status', $statusText);

@@ -86,7 +86,6 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
 }
 
 session_start();
-require_once $rootDir  . '/lib/SGL/Install/Common.php';
 require_once $rootDir . '/lib/SGL/AppController.php';
 SGL_AppController::init();
 

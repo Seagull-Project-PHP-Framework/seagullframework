@@ -36,6 +36,53 @@ class DbTest extends UnitTestCase {
 
         $this->assertReference($dbh1, $dbh2);
     }
+
+    function testGetDsnArray()
+    {
+		$dbh = & SGL_DB::singleton($this->dsn);
+		$dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
+		$expected = array (
+          'phptype' => 'mysql_SGL',
+          'username' => 'root',
+          'password' => '',
+          'protocol' => 'unix',
+          'hostspec' => 'localhost',
+          'port' => '3306',
+          'database' => 'seagull',
+        );
+        $this->assertEqual($dsn, $expected);
+    }
+
+    function testGetDsnArrayWithoutDb()
+    {
+		$dbh = & SGL_DB::singleton($this->dsn);
+		$dsn = SGL_DB::getDsn(SGL_DSN_ARRAY, true);
+		$expected = array (
+          'phptype' => 'mysql_SGL',
+          'username' => 'root',
+          'password' => '',
+          'protocol' => 'unix',
+          'hostspec' => 'localhost',
+          'port' => '3306',
+        );
+        $this->assertEqual($dsn, $expected);
+    }
+
+    function testGetDsnString()
+    {
+		$dbh = & SGL_DB::singleton($this->dsn);
+		$dsn = SGL_DB::getDsn(SGL_DSN_STRING);
+		$expected = 'mysql_SGL://root:@unix+localhost/seagull';
+        $this->assertEqual($dsn, $expected);
+    }
+
+    function testGetDsnStringWithoutDb()
+    {
+		$dbh = & SGL_DB::singleton($this->dsn);
+		$dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
+		$expected = 'mysql_SGL://root:@unix+localhost';
+        $this->assertEqual($dsn, $expected);
+    }
 }
 
 ?>
