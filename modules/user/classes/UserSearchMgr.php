@@ -160,16 +160,28 @@ class UserSearchMgr extends SGL_Manager
 
         $output->regDate1 = SGL_Output::showDateSelector(@$output->regDate1Str,'search[reg_date1]', false);
         $output->regDate2 = SGL_Output::showDateSelector(@$output->regDate2Str,'search[reg_date2]', false);
-        $output->regDateMod = array('','before','after','is','between');
+        $output->regDateMod = array
+            (
+                '',
+                SGL_String::translate('before'),
+                SGL_String::translate('after'),
+                SGL_String::translate('is'),
+                SGL_String::translate('between')
+            );
 
         $output->permSync = SGL_Output::generateCheckbox('perm_sync', '', @$output->search['perm_sync']);
-        $output->status = array('','active','disabled');
-        $output->addOnLoadEvent('updateFormInterface()');
+        $output->status = array
+            (
+                '',
+                SGL_String::translate('active'),
+                SGL_String::translate('inactive')
+            );
     }
 
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->addOnLoadEvent('updateFormInterface()');
     }
 
     function _cmd_search(&$input, &$output)
@@ -300,7 +312,11 @@ class UserSearchMgr extends SGL_Manager
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = @$aPagedData['totalItems'];
-        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
+        }
     }
 }
 ?>

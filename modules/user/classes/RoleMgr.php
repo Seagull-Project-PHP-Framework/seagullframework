@@ -103,8 +103,11 @@ class RoleMgr extends SGL_Manager
         $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
+        // This will tell HTML_Flexy which key is used to sort data
+        $input->{ 'sort_' . $input->sortBy } = true;
+
         $aErrors = array();
-        if ($input->submit && $input->action =='insert') {
+        if ($input->submit && ($input->action =='insert' || $input->action =='update')) {
             if (empty($input->role->name)) {
                 $this->validated = false;
                 $aErrors['name'] = 'You must enter an role name';
@@ -114,14 +117,28 @@ class RoleMgr extends SGL_Manager
         if (is_array($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            $input->template = ($input->action == 'update') ? 'roleEdit.html' : 'roleAdd.html';
+            if ($this->conf['site']['adminGuiEnabled']) {
+                $input->template = 'roleEdit.html';
+                if ($input->action == 'update') {
+                    $input->roleEdit = true;
+                } else {
+                    $input->roleAdd = true;
+                }
+            } else {
+                $input->template = ($input->action == 'update') ? 'roleEdit.html' : 'roleAdd.html';
+            }
         }
     }
 
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'roleAdd.html';
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->template = 'roleEdit.html';
+            $output->roleAdd = true;
+        } else {
+            $output->template = 'roleAdd.html';
+        }
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->role = DB_DataObject::factory($this->conf['table']['role']);
     }
@@ -143,9 +160,9 @@ class RoleMgr extends SGL_Manager
         $oRole->created_by = $oRole->updated_by = SGL_Session::getUid();
         $success = $oRole->insert();
         if ($success) {
-            SGL::raiseMsg('role successfully added');
+            SGL::raiseMsg('role successfully added', true, SGL_MESSAGE_INFO);
         } else {
-           SGL::raiseError('There was a problem inserting the record',
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
@@ -153,6 +170,9 @@ class RoleMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->roleEdit = true;
+        }
         $output->template = 'roleEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
@@ -170,7 +190,7 @@ class RoleMgr extends SGL_Manager
         $oRole->updated_by = SGL_Session::getUid();
         $success = $oRole->update();
         if ($success) {
-            SGL::raiseMsg('role successfully updated');
+            SGL::raiseMsg('role successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -197,7 +217,7 @@ class RoleMgr extends SGL_Manager
             //  cleanup
             $this->_deleteCleanup($roleId);
         }
-        SGL::raiseMsg($msg);
+        SGL::raiseMsg($msg, true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
@@ -222,18 +242,33 @@ class RoleMgr extends SGL_Manager
                     FROM {$this->conf['table']['role']} " .$orderBy_query;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
+        }
     }
 
     function _cmd_duplicate(&$input, &$output)
@@ -270,7 +305,7 @@ class RoleMgr extends SGL_Manager
                 SGL_ERROR_DBTRANSACTIONFAILURE);
         } else {
             $this->dbh->commit();
-            SGL::raiseMsg('role successfully duplicated');
+            SGL::raiseMsg('role successfully duplicated', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -305,7 +340,7 @@ class RoleMgr extends SGL_Manager
         if (is_array($aPermsToRemove) && count($aPermsToRemove)) {
             $ret = $this->da->updateRolePermissionAssocs($aPermsToRemove, $input->roleId, SGL_ROLE_REMOVE);
         }
-        SGL::raiseMsg('role assignments successfully updated');
+        SGL::raiseMsg('role assignments successfully updated', true, SGL_MESSAGE_INFO);
     }
 
     /**

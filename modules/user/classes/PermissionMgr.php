@@ -100,9 +100,12 @@ class PermissionMgr extends SGL_Manager
         $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
+        // This will tell HTML_Flexy which key is used to sort data
+        $input->{ 'sort_' . $input->sortBy } = true;
+
         $aErrors = array();
         if ($input->submit) {
-            if ($input->action == 'insert') {
+            if ($input->action == 'insert' || $input->action == 'update') {
                 if (empty($input->perm->name)) {
                     $this->validated = false;
                     $aErrors['name'] = 'You must enter a permission name';
@@ -195,13 +198,13 @@ class PermissionMgr extends SGL_Manager
             SGL_Cache::clear('perms');
 
             if ($success) {
-                SGL::raiseMsg('perm successfully added');
+                SGL::raiseMsg('perm successfully added', true, SGL_MESSAGE_INFO);
             } else {
                 SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_NOAFFECTEDROWS);
             }
         } else {
-            SGL::raiseMsg('perm already defined');
+            SGL::raiseMsg('perm already defined', true, SGL_MESSAGE_WARNING);
         }
     }
 
@@ -211,7 +214,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected');
+            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
             return false;
         }
         $input->template = 'permScan.html';
@@ -238,7 +241,7 @@ class PermissionMgr extends SGL_Manager
 
             //  update perms superset cache
             SGL_Cache::clear('perms');
-            SGL::raiseMsg('perm(s) successfully added');
+            SGL::raiseMsg('perm(s) successfully added', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -248,7 +251,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected');
+            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
             return;
         }
         $input->template = 'permScan.html';
@@ -262,7 +265,7 @@ class PermissionMgr extends SGL_Manager
 
             //  update perms superset cache
             SGL_Cache::clear('perms');
-            SGL::raiseMsg('perm successfully deleted');
+            SGL::raiseMsg('perm successfully deleted', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -293,7 +296,7 @@ class PermissionMgr extends SGL_Manager
         SGL_Cache::clear('perms');
 
         if ($success) {
-            SGL::raiseMsg('perm successfully updated');
+            SGL::raiseMsg('perm successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem updating the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -315,7 +318,7 @@ class PermissionMgr extends SGL_Manager
         SGL_Cache::clear('perms');
 
         //  redirect on success
-        SGL::raiseMsg('perm successfully deleted');
+        SGL::raiseMsg('perm successfully deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
@@ -350,19 +353,34 @@ class PermissionMgr extends SGL_Manager
             $whereClause
             $orderBy_query ";
 
-        $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions, $disabled);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit || $input->moduleId) ? false : true;
         }
-        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').perms.disabled = true");
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
+        } else {
+            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').perms.disabled = true");
+        }
 
         //  setup module combobox
         $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);

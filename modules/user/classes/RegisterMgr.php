@@ -102,17 +102,13 @@ class RegisterMgr extends SGL_Manager
             if ($input->action != 'update') {
                 if (empty($input->user->passwd)) {
                     $aErrors['passwd'] = 'You must enter a password';
-                } else {
-                    if (!$v->string($input->user->passwd, array('min_length' => 5, 'max_length' => 10 ))) {
-                        $aErrors['passwd'] = 'Password must be between 5 to 10 characters';
-                    }
+                } elseif (!$v->string($input->user->passwd, array('min_length' => 5, 'max_length' => 10 ))) {
+                    $aErrors['passwd'] = 'Password must be between 5 to 10 characters';
                 }
                 if (empty($input->user->password_confirm)) {
                     $aErrors['password_confirm'] = 'Please confirm password';
-                } else {
-                    if ($input->user->passwd != $input->user->password_confirm) {
-                        $aErrors['password_confirm'] = 'Passwords are not the same';
-                    }
+                } elseif ($input->user->passwd != $input->user->password_confirm) {
+                    $aErrors['password_confirm'] = 'Passwords are not the same';
                 }
                 //  username must be unique
                 if (!$this->da->isUniqueUsername($input->user->username)) {
@@ -138,10 +134,8 @@ class RegisterMgr extends SGL_Manager
             }
             if (empty($input->user->email)) {
                 $aErrors['email'] = 'You must enter your email';
-            } else {
-                if (!$v->email($input->user->email)) {
-                    $aErrors['email'] = 'Your email is not correctly formatted';
-                }
+            } elseif (!$v->email($input->user->email)) {
+                $aErrors['email'] = 'Your email is not correctly formatted';
             }
             if (empty($input->user->security_question)) {
                 $aErrors['security_question'] = 'You must choose a security question';

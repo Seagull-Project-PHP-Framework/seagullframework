@@ -1,7 +1,12 @@
-<span flexy:if="msgGet()">{msgGet()}</span>
-
-<form action="" method="post" name="frmUserAdd" flexy:ignore id="frmUserAdd">
-    <fieldset class="main">
+<div id="manager-actions">
+    <span>Action:&nbsp;</span><a class="action save" href="javascript:formSubmit('frmUserAdd','submitted',1,1)">{translate(#Save#)}</a><a class="action cancel" href="{makeUrl(#list#,#user#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmUserAdd" flexy:ignore id="frmUserAdd">
         {if:isAdd}
         <input type="hidden" name="action" value="insert" />
             {if:redir}
@@ -9,21 +14,19 @@
             {end:}
         {else:}
         <input type="hidden" name="action" value="update" />
+        {end:}
         <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
         <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
         <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
-        {end:}
 
         <h3 flexy:if="isAdd">{translate(#add user#,#ucfirst#)}</h3>
         <h3 flexy:if="!isAdd">{translate(#edit user#,#ucfirst#)} "{user.username}"</h3>
-        <fieldset id="userDetails">
-            <legend>{translate(#Personal Details#)}</legend>
+        <fieldset class="inside" id="userDetails">
+            <h3>{translate(#Personal Details#)}</h3>
             <p>
                 <label for="user[username]"><span class="required">*</span> {translate(#Username#)}</label>
-                <div style="float:left;width:55%;margin-bottom:0.4em;">
-                    <div class="error" flexy:if="error[username]">{translate(error[username])}</div>
-                    <input type="text" name="user[username]" id="user[username]" value="{user.username}" />
-                </div>
+                <div class="error" flexy:if="error[username]">{translate(error[username])}</div>
+                <input type="text" name="user[username]" id="user[username]" value="{user.username}" />
             </p>
             <p>
                 <label for="user[first_name]">{translate(#First Name#)}</label>
@@ -45,7 +48,7 @@
                 <input type="password" name="user[password_confirm]" id="user[password_confirm]" value="{user.password_confirm}" />
             </p>
             {end:}
-            {if:isAdmin}
+            {if:isAdmin()}
                 {if:conf[OrgMgr][enabled]}
             <p>
                 <label for="user[organisation_id]">{translate(#Organisation name#)}</label>
@@ -57,8 +60,8 @@
             {end:}
         </fieldset>
 
-        <fieldset id="userContact">
-            <legend>{translate(#Contact#)}</legend>
+        <fieldset class="inside" id="userContact">
+            <h3>{translate(#Contact#)}</h3>
             <p>
                 <label for="user[email]"><span class="required">*</span> {translate(#Email#)}</label>
                 <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
@@ -72,7 +75,7 @@
                 <label for="user[mobile]">{translate(#Mobile#)}</label>
                 <input type="text" name="user[mobile]" id="user[mobile]" value="{user.mobile}" />
             </p>
-            {if:isAdmin}
+            {if:isAdmin()}
             <p>
                 <label for="user[is_acct_active]">{translate(#Is Active?#)}</label>
                 <input type="checkbox" name="user[is_acct_active]" id="user[is_acct_active]" flexy:raw="{isAcctActive}" value="1" /> {translate(#check if active#)}
@@ -80,8 +83,8 @@
             {end:}
         </fieldset>
 
-        <fieldset class="clear">
-            <legend>{translate(#Location#)}</legend>
+        <fieldset class="inside">
+            <h3>{translate(#Location#)}</h3>
             <p>
                 <label for="user[addr_1]"><span class="required">*</span> {translate(#Address 1#)}</label>
                 <div class="error" flexy:if="error[addr_1]">{translate(error[addr_1])}</div>
@@ -120,8 +123,8 @@
             </p>
         </fieldset>
         
-        <fieldset>
-            <legend>{translate(#Security#)}</legend>
+        <fieldset class="inside">
+            <h3>{translate(#Security#)}</h3>
             <p>
                 <label for="user[security_question]"><span class="required">*</span> {translate(#Security question#)}</label>
                 <div class="error" flexy:if="error[security_question]">{translate(error[security_question])}</div>
@@ -134,17 +137,20 @@
                 <div class="error" flexy:if="error[security_answer]">{translate(error[security_answer])}</div>
                 <input type="text" class="longText" name="user[security_answer]" id="user[security_answer]" value="{user.security_answer}" />
             </p>
-            {if:isAdmin}
+            {if:isAdmin()}
+                {if:!isEqual(user.usr_id,#1#)}
             <p>
                 <label for="user[role_id]">{translate(#Role#)}</label>
                 <select name="user[role_id]" id="user[role_id]">
                     {generateSelect(aRoles,user.role_id):h}
                 </select>
             </p>
+                {end:}
             {end:}
         </fieldset>
         <p>
             <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
         </p>
-    </fieldset>
-</form>
+    </form>
+    <div class="spacer"></div>
+</div>
