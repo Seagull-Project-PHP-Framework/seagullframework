@@ -135,7 +135,7 @@ class RoleMgr extends SGL_Manager
             return false;
         }
 
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->setFrom($input->role);
         $oRole->role_id = $this->dbh->nextId($this->conf['table']['role']);

@@ -28,7 +28,7 @@ class DbTest extends UnitTestCase {
     {
         $locator = &SGL_ServiceLocator::singleton();
         $dbh1 = $locator->get('DB');
-		SGL_DB::setConnection($dbh1);
+		SGL_DB::setConnection();
 
     	require_once 'DB/DataObject.php';
     	$dbdo = DB_DataObject::factory($this->conf['table']['module']);

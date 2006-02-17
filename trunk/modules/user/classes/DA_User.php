@@ -111,7 +111,7 @@ class DA_User extends SGL_Delegator
 
     function addUser($oUser)
     {
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $this->dbh->autocommit();
 
         $oUser->usr_id = $this->dbh->nextId($this->conf['table']['user']);
@@ -120,20 +120,18 @@ class DA_User extends SGL_Delegator
         if (!$ok) {
             return PEAR::raiseError('Problem inserting user DataObject');
         }
-
         //  assign permissions associated with role user belongs to
         //  first get all perms associated with user's role
         $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
-        if ((PEAR::isError($aRolePerms))) {
+        if (PEAR::isError($aRolePerms)) {
             return $aRolePerms;
         }
 
         //  then assign them to the user_permission table
         $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
-        if ((PEAR::isError($ok))) {
+        if (PEAR::isError($ok)) {
             return $ok;
         }
-
         //  assign preferences associated with org user belongs to
         //  first get all prefs associated with user's org or default
         //  prefs if orgs are disabled
@@ -142,14 +140,78 @@ class DA_User extends SGL_Delegator
         } else {
             $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
         }
-        if ((PEAR::isError($aPrefs))) {
+        if (PEAR::isError($aPrefs)) {
             return $aPrefs;
         }
 
         //  then assign them to the user_preference table
         $ok = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
-        if ((PEAR::isError($ok))) {
+        if (PEAR::isError($ok)) {
             return $ok;
+        }
+
+        if ($ok && !SGL_Error::count()) {
+            $this->dbh->commit();
+            return true;
+        } else {
+            $this->dbh->rollback();
+            return PEAR::raiseError('Problem encountered adding user');
+        }
+    }
+
+    function updateUser($oUser, $roleIdOrig = null, $orgIdOrig = null)
+    {
+
+        SGL_DB::setConnection();
+        $this->dbh->autocommit();
+
+        $ok = $oUser->update();
+
+        if (!$ok) {
+            return PEAR::raiseError('Problem inserting user DataObject');
+        }
+        //  change perms if role is modified
+        if (!is_null($roleIdOrig) && ($oUser->role_id != $roleIdOrig)) {
+
+            //  disallow usr_id(1) admin from changing role
+            if ($oUser->usr_id == SGL_ADMIN) {
+                return PEAR::raiseError('User with ID = 1 cannot change role');
+            }
+
+
+            //  first delete old perms
+            $ok = $this->deletePermsByUserId($oUser->usr_id);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            //  assign permissions associated with role user has been moved to
+            //  first get all perms associated with user's new role
+            $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
+
+            //  then assign them to the user_permission table
+            $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+        }
+
+        //  change prefs if org is modified
+        if (!is_null($orgIdOrig) && ($oUser->organisation_id  != $orgIdOrig)) {
+
+            //  first delete old preferences
+            $ok = $this->deletePrefsByUserId($oUser->usr_id);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            //  assign preferences associated with org user belongs to
+            //  first get all prefs associated with user's org
+            $aOrgPrefs = $this->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
+
+            //  then assign them to the user_preference table
+            $ok = $this->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
         }
 
         if ($ok && !SGL_Error::count()) {

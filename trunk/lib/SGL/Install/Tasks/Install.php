@@ -400,7 +400,6 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
     }
 }
 
-
 class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 {
     function run($data)

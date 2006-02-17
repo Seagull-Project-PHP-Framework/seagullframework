@@ -173,7 +173,7 @@ class NewsletterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $errorLists = false;
 
         // Process registration for every list selected

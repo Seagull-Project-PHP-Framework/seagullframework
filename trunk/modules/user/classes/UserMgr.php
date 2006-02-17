@@ -194,7 +194,7 @@ class UserMgr extends RegisterMgr
         $success = $this->da->addUser($oUser);
 
         //  check for errors
-        if ($success) {
+        if (!PEAR::isError($success)) {
             SGL::raiseMsg('user successfully added');
         } else {
             SGL::raiseError('There was a problem inserting the record',
@@ -216,48 +216,16 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
         $oUser = $this->da->getUserById($input->user->usr_id);
-        $this->dbh->autocommit();
         $oUser->setFrom($input->user);
         $oUser->last_updated = SGL_Date::getTime();
         $oUser->updated_by = SGL_Session::getUid();
-        $success = $oUser->update();
+        $success = $this->da->updateUser($oUser, $input->user->role_id_orig,
+            $input->user->organisation_id_orig);
 
-        //  change perms if role is modified
-        if (isset($input->user->role_id_orig) && ($oUser->role_id != $input->user->role_id_orig)) {
-
-            //  first delete old perms
-            $ret = $this->da->deletePermsByUserId($oUser->usr_id);
-
-            //  assign permissions associated with role user has been moved to
-            //  first get all perms associated with user's new role
-            $aRolePerms = $this->da->getPermsByRoleId($oUser->role_id);
-
-            //  then assign them to the user_permission table
-            $ret = $this->da->addPermsByUserId($aRolePerms, $oUser->usr_id);
-        }
-
-        //  change prefs if org is modified
-        if (isset($input->user->organisation_id_orig)
-                && ($oUser->organisation_id  != $input->user->organisation_id_orig)) {
-
-            //  first delete old preferences
-            $ret = $this->da->deletePrefsByUserId($oUser->usr_id);
-
-            //  assign preferences associated with org user belongs to
-            //  first get all prefs associated with user's org
-            $aOrgPrefs = $this->da->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
-
-            //  then assign them to the user_preference table
-            $ret = $this->da->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
-        }
-
-        if ($success && !SGL_Error::count()) {
-            $this->dbh->commit();
+        if (!PEAR::isError($success)) {
             SGL::raiseMsg('details successfully updated');
         } else {
-            $this->dbh->rollback();
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
@@ -272,6 +240,7 @@ class UserMgr extends RegisterMgr
         $results = array();
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $userId) {
+
                 //  don't allow admin to be deleted
                 if ($userId == SGL_ADMIN) {
                     continue;

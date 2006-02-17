@@ -119,7 +119,7 @@ class FaqMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        SGL_DB::setConnection($this->faq);
+        SGL_DB::setConnection();
 
         //  get new order number
         $faq = DB_DataObject::factory($this->conf['table']['faq']);

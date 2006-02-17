@@ -119,7 +119,7 @@ class GuestbookMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $newEntry = DB_DataObject::factory($this->conf['table']['guestbook']);
         $newEntry->setFrom($input->guestbook);
         $newEntry->guestbook_id = $this->dbh->nextId($this->conf['table']['guestbook']);

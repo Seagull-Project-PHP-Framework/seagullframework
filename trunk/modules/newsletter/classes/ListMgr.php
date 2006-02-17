@@ -421,7 +421,7 @@ class ListMgr extends NewsletterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Add';
 
@@ -461,7 +461,7 @@ class ListMgr extends NewsletterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_DB::setConnection($this->dbh);
+        SGL_DB::setConnection();
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
 
