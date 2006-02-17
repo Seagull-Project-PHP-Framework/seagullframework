@@ -62,8 +62,13 @@
         <tr>
             <td width="100%" colspan="2" align="center" nowrap="nowrap">
                 <input class="wideButton" type="SUBMIT" value="{translate(#Save#)}" />
-                <input class="wideButton" type="button" value="{translate(#Cancel#)}"
-                    onclick="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}'" />
+                {if:redir}
+                    <input class="wideButton" type="button" value="{translate(#Cancel#)}"
+                        onclick="javascript:document.location.href='{redir}'" />
+                {else:}
+                    <input class="wideButton" type="button" value="{translate(#Cancel#)}"
+                        onclick="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}'" />
+                {end:}
             </td>
         </tr>
     </table>
