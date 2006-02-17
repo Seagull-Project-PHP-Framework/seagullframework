@@ -1,5 +1,6 @@
 <h1 class="pageTitle">{translate(#Editing Article#)}</h1>
 <form method="post" name="article" flexy:ignore id="article">
+    <input type="hidden" name="redir" value="{redir}" />
     <input type="hidden" name="action" value="update" />
     <input type="hidden" name="frmArticleCatID" value="{article.catID}" />
     <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
