@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.5.6        |
 +-----------------------+
 BUGFIXES
+17-02-06    Fixed bug where cookie path was being incorrectly set due to SEF
+            URIs (Miha Vrhovnik)
 14-02-06    Fixed bug where session expiry would not be tested on screens where
             requiresAuth was false (during authenticated session)
 14-02-06    SQL errors, if existent, correctly returned in articles
