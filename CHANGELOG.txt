@@ -15,6 +15,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+17-02-06    Factored out module builder code into its own manager, ModuleGenerationMgr
 17-02-06    CLI installer added, see seagull/var/demoRebuild.php
 17-02-06    Added ability to edit modules' config files through GUI
             (Eric Persson)
