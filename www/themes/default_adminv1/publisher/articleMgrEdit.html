@@ -1,5 +1,10 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('article')">Save</a><a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">Cancel</a>
+    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('article')">Save</a>
+    {if:redir}
+        <a class="action cancel" href="{redir}">Cancel</a>
+    {else:}
+        <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">Cancel</a>
+    {end:}
 </div>
 <div id="content">
     <div id="content-header">
