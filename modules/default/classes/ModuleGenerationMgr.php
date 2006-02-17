@@ -97,6 +97,11 @@ class ModuleGenerationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            SGL::raiseMsg('Modules cannot be generated in demo mode', false, SGL_MESSAGE_WARNING);
+            return false;
+        }
+
         $modName = strtolower($input->createModule->moduleName);
         $mgrName = ucfirst($input->createModule->managerName);
         $aActions = '';
