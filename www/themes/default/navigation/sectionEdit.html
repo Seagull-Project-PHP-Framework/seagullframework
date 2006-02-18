@@ -70,7 +70,7 @@ function toggleAliasElements(myCheckbox)
             <td><select name="frmNavLang" id="frmNavLang"><option value="{navLang}">{fullNavLang}</option></select></td>
             {else:}
             <td><select name="frmNavLang" id="frmNavLang"
-                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                        onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                 {generateSelect(availableLangs,navLang):h}
                 </select>
             </td>
@@ -98,7 +98,7 @@ function toggleAliasElements(myCheckbox)
 
             <td>
                 <select name="page[articleType]" multiple
-                    onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                    onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
 
                 <option value="static" flexy:raw="{staticSelected}">
                     {translate(#static articles#)}
@@ -121,24 +121,24 @@ function toggleAliasElements(myCheckbox)
                 {if:staticSelected}
                     <select size="1" name="page[staticArticleId]">
                         {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
-                    </select> static article title
+                    </select> {translate(#static article title#)}
                 {end:}
                 {if:dynamicSelected}
                     <select size="1" name="page[module]"
-                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                        onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                         {generateSelect(aModules,section[module]):h}
-                    </select> module<br />
+                    </select> {translate(#module#)}<br />
                     <select size="1" name="page[manager]"
-                        onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                        onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                         {generateSelect(aManagers,section[manager]):h}
-                    </select> manager<br />
+                    </select> {translate(#manager#)}<br />
                     <select size="1" name="page[actionMapping]">
-                        <option value="">none
+                        <option value="">{translate(#none#)}
                         {generateSelect(aActions,section[actionMapping]):h}
-                    </select> action
+                    </select> {translate(#action#)}
                 {end:}
                 {if:wikiSelected}
-                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> wiki page URL
+                    <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#wiki page URL#)}
                 {end:}
                 {if:uriExternalSelected}
                     <input type="text" size="50" name="page[resource_uri]" value="{section[resource_uri]}"> {translate(#external page URI#)}
@@ -148,7 +148,7 @@ function toggleAliasElements(myCheckbox)
 
         <tr>
             <th align="left">{translate(#Alias#)}:</th>
-            <td><input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" onClick="toggleAliasElements();">Add an alias?
+            <td><input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" onclick="toggleAliasElements();">{translate(#Add an alias?#)}
 <!--                <select name="urialiases" id="urialiases" onChange="document.sectionEdit.elements['page[uri_alias]'].value=document.sectionEdit.urialiases.value">
                     <option value="">- {translate(#Choose URI from Aliases#)} -</option>
                     {generateSelect(aUriAliases,page[resource_uri]):h}

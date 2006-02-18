@@ -373,4 +373,9 @@ $words['Select a module'] = 'Select a module';
 $words['for user id'] = 'for user id';
 $words['Connection list'] = 'Connection list';
 $words['Edit permissions'] = 'Edit permissions';
+
+$words['list'] = 'list';
+$words['Use the document manager to upload CSV files.'] = 'Use the document manager to upload CSV files.';
+$words['Import users into selected organisation.'] = 'Import users into selected organisation.';
+$words['User will be assigned to selected role.'] = 'User will be assigned to selected role.';
 ?>

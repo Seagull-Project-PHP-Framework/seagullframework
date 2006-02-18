@@ -444,4 +444,5 @@ $defaultWords['Session'] = 'Session';
 $defaultWords['top'] = 'top';
 $defaultWords['check all'] = 'check all';
 $defaultWords['uncheck all'] = 'uncheck all';
+$defaultWords['Session Options'] = 'Session Options';
 ?>

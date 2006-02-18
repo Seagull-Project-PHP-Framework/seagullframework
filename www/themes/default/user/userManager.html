@@ -59,10 +59,10 @@
             </td>
             <td align="center" flexy:if="!isAdmin(aValue[role_id])">
                 <input type="button" name="frmReset" value="{translate(#change#)}"
-                    onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
+                    onclick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
             </td>
             <td align="center" flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
-            <td align="center"><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">list</a></td>
+            <td align="center"><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#list#)}</a></td>
         </tr>
         <tr>
             <td colspan="10">{translate(#With selected user(s)#)}: <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('{translate(#user#)}', 'users')" />
