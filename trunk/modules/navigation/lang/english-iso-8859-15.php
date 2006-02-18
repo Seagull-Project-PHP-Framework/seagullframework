@@ -118,5 +118,11 @@
         'Note' => 'Note',
         'Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.' => 'Permissions are set by default to allow all users into all catgories. If you would like to deny a certain group access to a category, choose "no" in response to "has permissions" for the given group.',
         'return to category manager' => 'return to category manager',
+        'static article title' => 'static article title',
+        'Add an alias?' => 'Add an alias?',
+        'wiki page URL' => 'wiki page URL',
+        'manager' => 'manager',
+        'module' => 'module',
+        'none' => 'none',
  );
 ?>

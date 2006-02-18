@@ -1,4 +1,15 @@
 <?php
+$words['Article Manager :: Add'] = 'Gerenciador de Artigos :: Adicionar';
+$words['Article Manager :: Edit'] = 'Gerenciador de Artigos :: Editar';
+$words['Please select an article type'] = 'Por favor selecione um tipo de artigo';
+$words['Articles list'] = 'Lista de artigos';
+$words['Articles filter'] = 'Filtro de artigos';
+$words['Content'] = 'Conteúdo';
+$words['Document type'] = 'Tipo do documento';
+$words['Number of fields'] = 'Número de campos';
+$words['field'] = 'campo';
+$words['New content type'] = 'Novo tipo de conteúdo';
+$words['Give a name to this field and select its type'] = 'Dê um nome a esse campo e selecione o seu tipo';
 $words['WikiScrape Manager'] = 'Gerenciador do WikiScrape';
 $words['contributed by'] = 'enviado por';
 $words['Contributed by'] = 'Enviado por';
