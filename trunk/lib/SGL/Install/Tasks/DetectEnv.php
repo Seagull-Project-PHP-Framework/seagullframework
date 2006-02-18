@@ -37,6 +37,14 @@ class SGL_EnvSummaryTask extends SGL_Task
     {
         $html = '<table width="70%" border=1>'.EOL;
         $html .= '<th colspan="3">'.$this->title.'</th>'.EOL;
+
+        // check if in "php.ini Settings" portion of environment detection
+        if (array_key_exists('register_globals', $this->aData)) {
+            $cfg_file_path = (get_cfg_var("cfg_file_path"))
+                ? get_cfg_var("cfg_file_path")
+                : "<strong>php.ini not available</strong>";
+            $html .= '<tr><td colspan="3"><strong>Note:</strong> Your php configuration file (php.ini) is located at: ' . $cfg_file_path . '</td></tr>';
+        }
         if (!$this->mandatory) {
             $html .= '<tr><td>&nbsp;</td><td><em>Recommended</em></td><td><em>Actual</em></td></tr>'.EOL;
         }
