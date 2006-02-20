@@ -14,7 +14,7 @@
             <p>
                 <label>{translate(#filter by module#)}</label>
                 <select name="frmModuleId"
-                    onChange="javascript:if(this.value == 0) {document.location.href='{makeUrl(#list#,#permission#,#user#)}'} else {document.location.href='{makeUrl(#list#,#permission#,#user#)}frmModuleId/' + this.value + '/'};" />    
+                    onChange="javascript:if(this.value == 0) {document.location.href='{makeUrl(#list#,#permission#,#user#)}'} else {document.location.href='{makeUrl(#list#,#permission#,#user#)}frmModuleId/' + this.value + '/'};" />
                     <option value="0" />{translate(#all#)}
                     {generateSelect(aModules,currentModule):h}
                 </select>
@@ -27,7 +27,7 @@
                 <thead>
                     <tr class="infos" flexy:if="pager">
                         <td class="right" colspan="4">
-                            <flexy:include src="pager_table.html" />
+                            <flexy:include src="admin_pager_table.html" />
                         </td>
                     </tr>
                     <tr>
@@ -45,7 +45,7 @@
                 <tfoot>
                     <tr class="infos" flexy:if="pager">
                         <td class="right" colspan="5">
-                            <flexy:include src="pager_table.html" />
+                            <flexy:include src="admin_pager_table.html" />
                         </td>
                     </tr>
                 </tfoot>

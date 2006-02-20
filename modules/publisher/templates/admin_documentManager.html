@@ -27,14 +27,14 @@
                 </div>
             </p>
         </fieldset>
-            
+
         <h3>{translate(#Document list#)}</h3>
         <fieldset class="noBorder">
             <table class="full">
                 <thead>
                     <tr class="infos">
                         <td class="right" colspan="14">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                     <tr class="noBg">
@@ -66,7 +66,7 @@
                 <tfoot>
                     <tr class="infos">
                         <td class="right" colspan="15">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                 </tfoot>
@@ -82,7 +82,7 @@
                         <td>{formatDate(aValue[date_created])}</td>
                         <td>{aValue[document_added_by]}</td>
                         <td>
-                            <a  onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)" 
+                            <a  onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)"
                                 href="#">
                                 <img src="{webRoot}/themes/{theme}/images/16/action_view.gif" alt="view" />
                             </a>
@@ -101,7 +101,7 @@
                     {end:}
                 </tbody>
             </table>
-            <input type="submit" class="sgl-button" name="deleteButton" value="{translate(#delete#)}" 
+            <input type="submit" class="sgl-button" name="deleteButton" value="{translate(#delete#)}"
                    onclick="return confirmSubmit('{translate(#asset#)}', 'newAsset')" />
         </fieldset>
     </form>
@@ -127,7 +127,7 @@ function showCategoryBlock(ev)
     }
 }
 function hideCategoryBlock()
-{    
+{
     var catBlock = document.getElementById("categoryNav");
     catBlock.style.display = 'none';
 }

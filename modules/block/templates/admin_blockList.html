@@ -18,7 +18,7 @@
                 <thead>
                     <tr class="infos">
                         <td class="right" colspan="9">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                     <tr>
@@ -28,27 +28,27 @@
                                 <input type="checkbox" name="checkAll" id="checkAll" onClick="javascript:applyToAllCheckboxes('frmBlockMgr', 'frmDelete[]', this.checked)" />
                             </span>
                         </th>
-                        <th width="5%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|block_id||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#ID#)}">{translate(#ID#)}</a> 
+                        <th width="5%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|block_id||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#ID#)}">{translate(#ID#)}</a>
                             {if:sort_block_id}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
-                        <th width="18%" class="left"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|title||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Title#)}">{translate(#Title#)}</a> 
+                        <th width="18%" class="left"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|title||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Title#)}">{translate(#Title#)}</a>
                             {if:sort_title}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
-                        <th width="18%" class="left"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Name#)}">{translate(#Name#)}</a> 
-                            {if:sort_name}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>    
+                        <th width="18%" class="left"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Name#)}">{translate(#Name#)}</a>
+                            {if:sort_name}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                         <th width="30%">{translate(#Sections#)}</th>
-                        <th width="10%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|position||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Position#)}">{translate(#Position#)}</a> 
+                        <th width="10%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|position||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Position#)}">{translate(#Position#)}</a>
                             {if:sort_position}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
-                            
-                        <th width="8%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|blk_order||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Order#)}">{translate(#Order#)}</a> 
+
+                        <th width="8%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|blk_order||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Order#)}">{translate(#Order#)}</a>
                             {if:sort_blk_order}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
-                            
-                        <th width="8%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|is_enabled||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Status#)}">{translate(#Status#)}</a> 
+
+                        <th width="8%"><a href="{makeUrl(#list#,#block#,#block#,##,#frmSortBy|is_enabled||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Status#)}">{translate(#Status#)}</a>
                             {if:sort_is_enabled}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr class="infos">
                         <td class="right" colspan="9">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                 </tfoot>

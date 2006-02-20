@@ -10,12 +10,12 @@
     <form name="frmPrefManager" method="post" flexy:ignore id="frmPrefManager">
         <fieldset class="noBorder">
             <input type="hidden" name="action" value="delete" />
-    
+
             <table class="full">
                 <thead>
                     <tr class="infos">
                         <td class="right" colspan="4">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                     <tr>
@@ -33,7 +33,7 @@
                 <tfoot>
                     <tr class="infos">
                         <td class="right" colspan="4">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                 </tfoot>
@@ -46,7 +46,7 @@
                     </tr>
                 </tbody>
             </table>
-            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" 
+            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}"
                    onclick="return confirmSubmit('{translate(#preference#)}', 'prefs')" />
         </fieldset>
     </form>
