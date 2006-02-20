@@ -320,20 +320,18 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->aAllBlocks     = SGL_Util::getAllClassesFromFolder(SGL_BLK_DIR);
         $output->blockIsEnabled = empty($output->block->is_enabled) ? '' : 'checked';
         $output->blockIsCached  = empty($output->block->is_cached) ? '' : 'checked';
 
         //  check class existing
-        if (!empty($output->block->name)) {
-            $blockClass = $output->block->name;
-            require_once SGL_BLK_DIR . '/' . $blockClass . '.php';
-            if (class_exists($blockClass)) {
+        if (!empty($output->block->name) && is_file($fileName = SGL_MOD_DIR . '/' . $output->block->name . '.php')) {
+            require_once $fileName;
+            if (preg_match('/^.*\/blocks\/(.*)$/', $output->block->name, $aMatch) && class_exists($aMatch[1])) {
                 $output->checked = true;
 
                 //  load block params
                 $block = & new Block();
-                $block->loadBlockParams($output, $blockClass, $output->blockId);
+                $block->loadBlockParams($output, $output->block->name, $output->blockId);
             }
         }
         //  get section list
@@ -369,9 +367,22 @@ class BlockMgr extends SGL_Manager
             $roles[$value->role_id] = $value->name;
         }
         $output->aRoles = $roles;
+
+        //  search blocks from modules
+        $aAllBlocks  = array();
+        $aModuleDirs = SGL_Util::getAllModuleDirs();
+        foreach ($aModuleDirs as $value) {
+            $aModuleBlocks = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR .
+                '/' . $value . '/blocks');
+            foreach ($aModuleBlocks as $block) {
+                $aAllBlocks[$value . '/blocks' . '/' . $block] = $value . ' - ' . $block;
+            }
+        }
+        $output->aAllBlocks = $aAllBlocks;
     }
 
-    function _addSpaces($order) {
+    function _addSpaces($order)
+    {
         $s = '';
         for ($i = 1; $i < $order; $i++) {
             $s .= '&nbsp;&nbsp;';

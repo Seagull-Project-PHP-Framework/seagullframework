@@ -399,7 +399,7 @@ class Block
      */
     function loadBlockParams(&$output, $blockClass, $blockId = false)
     {
-        $ini_file = SGL_BLK_DIR . '/' . $blockClass . '.ini';
+        $ini_file = SGL_MOD_DIR . '/' . $blockClass . '.ini';
 
         //  load params from db
         if ($blockId) {
@@ -411,7 +411,7 @@ class Block
         } else {
             $aSavedParams = array();
         }
-        
+
         //  get current params
         if (empty($output->aParams)) {
             $aCurrentParams = array();
@@ -419,7 +419,7 @@ class Block
             $aCurrentParams = $output->aParams;
             unset($output->aParams);
         }
-        
+
         //  get params from ini
         $aParams = SGL_Util::loadParams($ini_file, $aSavedParams, $aCurrentParams);
 
