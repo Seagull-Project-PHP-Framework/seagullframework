@@ -324,14 +324,19 @@ class BlockMgr extends SGL_Manager
         $output->blockIsCached  = empty($output->block->is_cached) ? '' : 'checked';
 
         //  check class existing
-        if (!empty($output->block->name) && is_file($fileName = SGL_MOD_DIR . '/' . $output->block->name . '.php')) {
-            require_once $fileName;
-            if (preg_match('/^.*\/blocks\/(.*)$/', $output->block->name, $aMatch) && class_exists($aMatch[1])) {
-                $output->checked = true;
+        if (!empty($output->block->name)) {
+            preg_match('/^(.*)_.*_(.*)$/', $output->block->name, $aMatches);
+            @$blockPath = strtolower($aMatches[1]) . '/blocks/' . $aMatches[2];
+            $fileName = SGL_MOD_DIR . '/' . $blockPath . '.php';
+            if (is_file($fileName)) {
+                @require_once $fileName;
+                if (class_exists($output->block->name)) {
+                    $output->checked = true;
 
-                //  load block params
-                $block = & new Block();
-                $block->loadBlockParams($output, $output->block->name, $output->blockId);
+                    //  load block params
+                    $block = & new Block();
+                    $block->loadBlockParams($output, $blockPath, $output->blockId);
+                }
             }
         }
         //  get section list
@@ -375,7 +380,8 @@ class BlockMgr extends SGL_Manager
             $aModuleBlocks = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR .
                 '/' . $value . '/blocks');
             foreach ($aModuleBlocks as $block) {
-                $aAllBlocks[$value . '/blocks' . '/' . $block] = $value . ' - ' . $block;
+                $blockClassName = ucfirst($value) . '_Block_' . $block;
+                $aAllBlocks[$blockClassName] = $blockClassName;
             }
         }
         $output->aAllBlocks = $aAllBlocks;
