@@ -42,8 +42,6 @@
  *
  * @package block
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.11 $
- * @since   PHP 4.1
  */
 class Publisher_Block_RecentHtmlArticles2
 {
