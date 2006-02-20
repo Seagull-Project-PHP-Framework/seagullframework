@@ -31,7 +31,7 @@ function toggleAliasElements(myCheckbox)
 </div>
 <div id="content">
     <div id="content-header">
-        <h2>{translate(pageTitle)}</h2>
+        <h2>{translate(pageTitle)} :: {translate(mode)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit" action="">
@@ -43,12 +43,21 @@ function toggleAliasElements(myCheckbox)
                 {else:}
                 {translate(#New page#)}{end:}
             </h3>
-            <input type="hidden" name="action" value="{action}" />
+            <input type="hidden" name="mode" value="{mode}" />
+            <input type="hidden" name="page[edit]" value="1" />
+        {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="isadd" value="1" />
+            <input type="hidden" name="frmNavLang" value="{navLang}" />
+        {else:}
+            <input type="hidden" name="action" value="update" />
             <input type="hidden" name="page[section_id]" value="{section[section_id]}" />
             <input type="hidden" name="page[order_id]" value="{section[order_id]}" />
-            <input type="hidden" name="page[original_parent_id]" value="{section[parent_id]}" />
-            <input type="hidden" name="page[original_is_enabled]" value="{section[is_enabled]}" />
+            <input type="hidden" name="page[parent_id_original]" value="{section[parent_id_original]}" />
+            <input type="hidden" name="page[is_enabled_original]" value="{section[is_enabled_original]}" />
             <input type="hidden" name="page[trans_id]" value="{section[trans_id]}" />
+            <input type="hidden" name="page[title_original]" value="{section[title_original]:h}" />
+            <input type="hidden" name="page[aParams]" value="{section[aParams]:h}" />
             {foreach:availableLangs,langID,langName}
             <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
             {end:}
@@ -58,21 +67,15 @@ function toggleAliasElements(myCheckbox)
             </p>
             <p flexy:if="isEqual(conf[translation][container],#db#)">
                 <label for="frmNavLang">{translate(#Language#)}</label>
-                {if:actionIsAdd}
-                <select name="frmNavLang" id="frmNavLang">
-                    <option value="{navLang}">{fullNavLang}</option>
-                </select>
-                {else:}
                 <select name="frmNavLang" id="frmNavLang"
                         onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
                     {generateSelect(availableLangs,navLang):h}
                 </select>
-                {end:}
             </p>
+        {end:}
             <p>
-                <label for="page[title]">{translate(#Page Title#)} - {fullNavLang}</label>
+                <label for="page[title]">{translate(#Page Title#)} {fullNavLang}</label>
                 <input type="text" class="longText" name="page[title]" id="page[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'page[title]','page[uri_alias]')"/>
-                <input type="hidden" name="page[title_original]" value="{section[title]:h}" />
             </p>
             <p>
                 <label for="page[parent_id]">{translate(#Parent Page#)}</label>
@@ -81,7 +84,7 @@ function toggleAliasElements(myCheckbox)
                 </select>
             </p>
             <p>
-                <label for="page[articleType]">{translate(#target#,#ucfirst#)}</label>
+                <label for="page[articleType]">{translate(#Target#)}</label>
                 <select name="page[articleType]" id="page[articleType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="articleType">
                     <option value="static" flexy:raw="{staticSelected}">
                         {translate(#static articles#)}
@@ -94,8 +97,17 @@ function toggleAliasElements(myCheckbox)
                         wiki
                     </option>
                     {end:}
+                    <option value="uriNode" flexy:raw="{uriNodeSelected}">
+                        {translate(#link to page#)}
+                    </option>
+                    <option value="uriAddon" flexy:raw="{uriAddonSelected}">
+                        {translate(#addon#)}
+                    </option>
                     <option value="uriExternal" flexy:raw="{uriExternalSelected}">
                         {translate(#external URI#)}
+                    </option>
+                    <option value="uriEmpty" flexy:raw="{uriEmptySelected}">
+                        {translate(#empty link#)}
                     </option>
                 </select>
             </p>
@@ -105,6 +117,12 @@ function toggleAliasElements(myCheckbox)
                 <select size="1" name="page[staticArticleId]" id="page[staticArticleId]">
                     {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
                 </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="page[anchor]">{translate(#Anchor#)}
+                    <span class="tipText">{translate(#just the anchor name#)}</span>
+                </label>
+                <input type="text" class="longText" name="page[anchor]" id="page[anchor]" value="{section[anchor]}" />
             </p>
             {end:}
             {if:dynamicSelected}
@@ -135,6 +153,12 @@ function toggleAliasElements(myCheckbox)
                 </label>
                 <input type="text" class="longText" name="page[add_params]" id="page[add_params]" value="{section[add_params]}" />
             </p>
+            <p>
+                <label class="tipOwner" for="page[anchor]">{translate(#Anchor#)}
+                    <span class="tipText">{translate(#just the anchor name#)}</span>
+                </label>
+                <input type="text" class="longText" name="page[anchor]" id="page[anchor]" value="{section[anchor]}" />
+            </p>
             {end:}
             {if:wikiSelected}
             <p>
@@ -148,17 +172,35 @@ function toggleAliasElements(myCheckbox)
                 <input type="text" class="longText" name="page[resource_uri]" id="page[resource_uri]" value="{section[resource_uri]}">
             </p>
             {end:}
+            {if:uriNodeSelected}
             <p>
-                <label class="tipOwner" for="page[anchor]">{translate(#Anchor#)}
-                    <span class="tipText">{translate(#just the anchor name#)}</span>
-                </label>
-                <input type="text" class="longText" name="page[anchor]" id="page[anchor]" value="{section[anchor]}" />
+                <label for="page[uri_node]">{translate(#Choose page#)}</label>
+                <select name="page[uri_node]" id="page[uri_node]">
+                    {sectionNodesOptions2:h}
+                </select>
             </p>
+            {end:}
+            {if:uriAddonSelected}
+            <p>
+                <label for="page[addon]">{translate(#Addon class name#)}</label>
+                <select name="page[addon]" id="page[addon]" onchange="document.sectionEdit.submit()">
+                    <option value="">- {translate(#Choose class name#)} -</option>
+                    {generateSelect(aAllAddons,section[addon]):h}
+                </select>
+            </p>
+            <p>
+                <label flexy:if="details.description">{translate(#Addon description#)}</label>
+                <span>{details.description}</span>
+            </p>
+                {if:aParams}
+                    <flexy:include src="editParams.html" />
+                {end:}
+            {end:}
         </fieldset>
         <fieldset class="options" id="navigationRights">
             <h3>{translate(#Editing options#)}</h3>
             <p>
-                <label class="tipOwner" for="page[is_enabled]">{translate(#publish#,#ucfirst#)}
+                <label class="tipOwner" for="page[is_enabled]">{translate(#Publish#)}
                 <span class="tipText">{translate(#check to activate#)}</span>
                 </label>
                 <input type="checkbox" name="page[is_enabled]" id="page[is_enabled]" flexy:raw="{pageIsEnabled}" />
@@ -172,6 +214,7 @@ function toggleAliasElements(myCheckbox)
                 </select>
             </p>
         </fieldset>
+        {if:!uriAddonSelected}
         <fieldset class="options" id="navigationOptimisation">
             <h3>{translate(#Optimisation#)}</h3>
             <p>
@@ -186,15 +229,18 @@ function toggleAliasElements(myCheckbox)
                 </label>
                 <input type="text" name="page[rel]" id="page[rel]" value="{section[rel]}" />
             </p>
+            {if:uriAliasAllowed}
             <p>
-                    <label for="page[uri_alias_enable]">{translate(#add an alias#,#ucfirst#)}?</label>
-                    <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" onClick="toggleAliasElements();">
-                </p>
-                <p>
-                    <label for="page[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                    <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}">
-                </p>
+                <label for="page[uri_alias_enable]">{translate(#Add an alias#)}?</label>
+                <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();">
+            </p>
+            <p>
+                <label for="page[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
+                <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}">
+            </p>
+            {end:}
         </fieldset>
+        {end:}
     </form>
     <div class="spacer"></div>
 </div>

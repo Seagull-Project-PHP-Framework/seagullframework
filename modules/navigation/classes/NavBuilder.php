@@ -479,12 +479,12 @@ class NavBuilder
             //  internal link:
             if (preg_match('/^uriNode:([0-9]+)/', $section->resource_uri, $aUri)) {
                 $linkedSection = $this->da->getSectionById($aUri[1]);
+                $section->dontMatch = true;
                 if ($linkedSection &&
                     (in_array($this->_rid, explode(',', $linkedSection->perms)))) {
-                    $section->dontMatch    = true;
                     $section->resource_uri = $linkedSection->resource_uri;
                 } else {
-                    continue;
+                    $section->is_enabled = false;
                 }
             }
 

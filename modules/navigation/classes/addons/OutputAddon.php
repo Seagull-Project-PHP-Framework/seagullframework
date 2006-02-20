@@ -45,7 +45,7 @@
  *
  * @package navigation
  * @author  Andrey Podshivalov <planetaz@gmail.com>
- * @version 0.1
+ * @version 0.2
  * @access  public
  * @since   PHP 4.4.2
  */
@@ -61,10 +61,13 @@ class OutputAddon
         if (!$section->is_enabled) {
             return false;
         }
-
-        if (isset($output->navAddon)) {
+        $navAddon = @$aParams['navAddon'];
+        if (empty($navAddon)) {
+            $navAddon = 'navAddon';
+        }
+        if (isset($output->$navAddon)) {
             $this->sectionId = $section->section_id;
-            $aSections       = $output->navAddon;
+            $aSections       = $output->$navAddon;
             $this->_setSectionId($aSections);
             return $aSections;
         } else {
