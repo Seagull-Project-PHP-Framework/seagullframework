@@ -177,7 +177,7 @@ class PageMgr extends SGL_Manager
                     }
                 }
             }
-        } elseif (!empty($input->section[edit])) {
+        } elseif (!empty($input->section['edit'])) {
             unset($input->aParams);
             $this->validated = false;
         }
@@ -378,15 +378,14 @@ class PageMgr extends SGL_Manager
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                $aManagers             = @parse_ini_file(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
-                $aManagerKeys          = @array_keys($aManagers);
-                $aManagerKeysLowerCase = @array_map('strtolower', $aManagerKeys);
-                $key                   = @array_search($section['manager'] . 'mgr', $aManagerKeysLowerCase);
-                if ($key !== false) {
-                    $section['manager'] = $aManagerKeys[$key] . '.php';
+                $c          = &SGL_Config::singleton();
+                $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
+                $c->merge($moduleConf);
+                $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                if ($className) {
+                    $section['manager'] = $className . '.php';
                 } else {
                     SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
-                    $section['manager'] = '';
                 }
 
                 //  represent additional params as string
@@ -806,7 +805,7 @@ class PageMgr extends SGL_Manager
                 $output->$key = $value;
             }
 
-            $output->aAllAddons = $this->_getAllAddons();
+            $output->aAllAddons = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR . '/navigation/classes/addons/');
             break;
     }
 
@@ -894,25 +893,5 @@ class PageMgr extends SGL_Manager
         }
         return "<script type='text/javascript'>\nvar nodeArray = new Array()\n" . $nodesArrayJS . "</script>\n";
     }
-
-    function _getAllAddons()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        require_once 'File/Util.php';
-
-        //  match files with php extension
-        $ret = SGL_Util::listDir(SGL_MOD_DIR . '/navigation/classes/addons/', FILE_LIST_FILES, $sort = FILE_SORT_NAME,
-                create_function('$a', 'return preg_match("/^.*\.php$/", $a);'));
-
-        //  parse out filename w/o extension and .
-        $aAddons = array();
-        foreach ($ret as $k => $v) {
-            preg_match("/^(.*)\.php$/", $v, $matches);
-            $aAddons[$matches[1]] = $matches[1];
-        }
-        return $aAddons;
-    }
-
 }
 ?>

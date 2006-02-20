@@ -320,7 +320,7 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->aAllBlocks     = SGL_Util::getAllBlocks();
+        $output->aAllBlocks     = SGL_Util::getAllClassesFromFolder(SGL_BLK_DIR);
         $output->blockIsEnabled = empty($output->block->is_enabled) ? '' : 'checked';
         $output->blockIsCached  = empty($output->block->is_cached) ? '' : 'checked';
 
