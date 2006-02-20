@@ -56,6 +56,10 @@ $words['Use cacheable navigation menu'] = 'Permettre la mise en cache du menu';
 $words['If no, navigation menu will be recalculated every time'] = 'Permet de ne pas recalculer le menu à chaque page (conseillé)';
 $words['Generate breadcrumbs objects'] = 'Générer un fil d\'Ariane';
 $words['Tells navigation driver to generate bredcrumbs objects'] = 'Demande au gestionnaire de navigation de créer les éléments du fil d\'Ariane';
+$words['Navigation Html renderer class'] = 'Classe du pilote d\'affichage Html du menu';
+$words['Indicate renderer class from modules/navigation/classes/*Nav.php'] = 'Indique la classe du pilote d\'affichage depuis modules/navigation/classes/*Nav.php';
+$words['Template name (optional)'] = 'Nom du template (optionnel)';
+$words['For navigation renderer which requires template'] = 'Pour un pilote d\'affichage qui nécessite un template ';
 
 // Breadcrumbs Block
 $words['Start parent node'] = 'Noeud parent de départ';

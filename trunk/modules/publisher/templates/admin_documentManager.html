@@ -1,5 +1,6 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action add" href="{makeUrl(#add#,#document#,#publisher#)}">{translate(#New Asset#)}</a>
+    <span>Action:&nbsp;</span>
+    <a class="action add" href="{makeUrl(#add#,#document#,#publisher#)}">{translate(#New Asset#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -39,28 +40,28 @@
                     </tr>
                     <tr class="noBg">
                         <td colspan="8">&nbsp;</td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_word.gif" alt="Miscrosoft Word" /></td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_excel.gif" alt="Microsoft Excel" /></td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_ppt.gif" alt="Microsoft Powerpoint" /></td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_url.gif" alt="url" /></td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_image.gif" alt="image" /></td>
-                        <td><img src="{webRoot}/themes/{theme}/images/16/doc_pdf.gif" alt="Portable Document Format (PDF)" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_word.gif" alt="Miscrosoft Word" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_excel.gif" alt="Microsoft Excel" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_ppt.gif" alt="Microsoft Powerpoint" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_url.gif" alt="url" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_image.gif" alt="image" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_pdf.gif" alt="Portable Document Format (PDF)" /></td>
                     </tr>
                     <tr>
-                        <th>
+                        <th width="3%">
                             <span class="tipOwner">
                                 <span class="tipText" id="becareful">Be Careful !</span>
                                 <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('newAsset', 'frmDelete[]', this.checked)" />
                             </span>
                         </th>
-                        <th class="left"><a href="#">{translate(#Asset Name#)}</a></th>
-                        <th><a href="#">{translate(#Size#)}</a></th>
-                        <th><a href="#">{translate(#Type#)}</a></th>
-                        <th><a href="#">{translate(#Date Added#)}</a></th>
-                        <th><a href="#">{translate(#Owner#)}</a></th>
-                        <th><a href="#">{translate(#View#)}</a></th>
-                        <th><a href="#">{translate(#Download#)}</a></th>
-                        <th colspan="6">{translate(#Document Type#)}</th>
+                        <th width="20%" class="left"><a href="#">{translate(#Asset Name#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#Size#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#Type#)}</a></th>
+                        <th width="12%"><a href="#">{translate(#Date Added#)}</a></th>
+                        <th width="10%"><a href="#">{translate(#Owner#)}</a></th>
+                        <th width="5%">{translate(#View#)}</a></th>
+                        <th width="10%">{translate(#Download#)}</a></th>
+                        <th colspan="6">{translate(#Document type#)}</th>
                     </tr>
                 </thead>
                 <tfoot>

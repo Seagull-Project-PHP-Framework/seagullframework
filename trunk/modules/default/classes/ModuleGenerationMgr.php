@@ -255,7 +255,7 @@ EOF;
             SGL::raiseError('There was a problem creating the files',
                 SGL_ERROR_FILEUNWRITABLE);
         } else {
-            SGL::raiseMsg('Module files successfully created' . $append, false);
+            SGL::raiseMsg('Module files successfully created' . $append, false, SGL_MESSAGE_INFO);
         }
     }
 

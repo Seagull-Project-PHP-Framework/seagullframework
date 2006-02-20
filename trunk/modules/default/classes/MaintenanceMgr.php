@@ -223,7 +223,7 @@ class MaintenanceMgr extends SGL_Manager
                         SGL_ERROR_NOFILE);
                 }
             } else {
-                SGL::raiseMsg('Congratulations, the target translation appears to be up to date');
+                SGL::raiseMsg('Congratulations, the target translation appears to be up to date', true, SGL_MESSAGE_INFO);
             }
         } else {
             SGL::raiseMsg('The target lang file '.$filename.' does not exist. Please create it.',
@@ -365,7 +365,7 @@ class MaintenanceMgr extends SGL_Manager
         $arrayName = ($input->currentModule == 'default') ? 'defaultWords' : 'words';
         $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
         if (!is_a($result, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated');
+            SGL::raiseMsg('translation successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem updating the translation',
                 SGL_ERROR_FILEUNWRITABLE);
@@ -419,7 +419,7 @@ class MaintenanceMgr extends SGL_Manager
         $arrayName = ($input->currentModule == 'default') ? 'defaultWords' : 'words';
         $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
         if (!is_a($result, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated');
+            SGL::raiseMsg('translation successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem updating the translation',
                 SGL_ERROR_FILEUNWRITABLE);
@@ -431,7 +431,7 @@ class MaintenanceMgr extends SGL_Manager
     {
         require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
         $res = SGL_Task_CreateDataObjectEntities::run();
-        SGL::raiseMsg('Data Objects rebuilt successfully');
+        SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
         SGL::logMessage($res, PEAR_LOG_DEBUG);
     }
 
@@ -449,13 +449,16 @@ class MaintenanceMgr extends SGL_Manager
             SGL::raiseError('remote interface problem');
         } else {
             $res = version_compare($localVersion, $remoteVersion);
+            $msgType = SGL_MESSAGE_ERROR;
             if ($res < 0) {
                 $msg = 'There is a newer version available: ' . $remoteVersion . ', please upgrade '.
                 '<a href="http://seagull.phpkitchen.com/index.php/publisher/articleview/frmArticleID/12/staticId/20/">here</a>';
+                $msgType = SGL_MESSAGE_WARNING;
             } else {
                 $msg = "Your current version, $localVersion, is up to date";
+                $msgType = SGL_MESSAGE_INFO;
             }
-            SGL::raiseMsg($msg, false);
+            SGL::raiseMsg($msg, false, $msgType);
         }
     }
 
@@ -468,7 +471,7 @@ class MaintenanceMgr extends SGL_Manager
         if (PEAR::isError($res)) {
             return $res;
         } else {
-            SGL::raiseMsg('Sequences rebuilt successfully');
+            SGL::raiseMsg('Sequences rebuilt successfully', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -489,7 +492,7 @@ class MaintenanceMgr extends SGL_Manager
                 SGL::raiseError('There was a problem deleting the files',
                     SGL_ERROR_FILEUNWRITABLE);
             } else {
-                SGL::raiseMsg('Cache files successfully deleted');
+                SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
             }
         }
         if (count($input->cache) > 0) {
@@ -502,7 +505,7 @@ class MaintenanceMgr extends SGL_Manager
                 SGL::raiseError('There was a problem deleting the files',
                     SGL_ERROR_FILEUNWRITABLE);
             } else {
-                SGL::raiseMsg('Cache files successfully deleted');
+                SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
             }
         }
     }

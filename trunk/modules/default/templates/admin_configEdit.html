@@ -1,5 +1,8 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('configuration')">Save</a><a class="action undo" href="javascript:formReset('configuration')">Undo</a><a class="action cancel" href="{makeUrl(##,#config#,#default#)}">Cancel</a>
+    <span>Action:&nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('configuration')">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('configuration')">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#config#,#default#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">

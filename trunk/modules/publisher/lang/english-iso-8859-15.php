@@ -45,8 +45,8 @@
         'whole DB' => 'all categories',
         'this category' => 'this category',
         'showing results for' => 'showing results for',
-        'Articles list' => 'Articles list',
-        'Articles filter' => 'Articles filter',
+        'Article list' => 'Article list',
+        'Article filter' => 'Article filter',
         
 /* ArticleViewMgr */
         'Article Browser' => 'Article Browser',
@@ -68,6 +68,8 @@
 
 /*  DOCUMENT MGR    */
         'Document Manager' => 'Document Manager',
+        'Document list' => 'Document list',
+        'Document filter' => 'Document filter',
         'Content Type' => 'Content Type',
         'New Asset' => 'New Document',
         'Asset Name' => 'Name',

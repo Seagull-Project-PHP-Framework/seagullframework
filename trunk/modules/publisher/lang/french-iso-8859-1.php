@@ -104,7 +104,9 @@ $words['Give a name to this field and select its type'] = 'Donnez un nom à ce ch
 $words['field'] = 'champs';
 $words['Number of fields'] = 'Nombre de champs';
 $words['Please select an article type'] = 'Veuillez choisir un type d\'article';
-$words['Articles list'] = 'Liste des articles';
-$words['Articles filter'] = 'Filtrage des articles';
+$words['Article list'] = 'Liste des articles';
+$words['Article filter'] = 'Trier les articles';
 $words['Content'] = 'Contenu';
+$words['Document list'] = 'Liste des documents';
+$words['Document filter'] = 'Trier les documents';
 ?>

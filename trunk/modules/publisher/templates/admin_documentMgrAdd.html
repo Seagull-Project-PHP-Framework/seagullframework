@@ -46,7 +46,7 @@
 <div id="manager-actions">
     <span>Action:&nbsp;</span>
     {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset')">{translate(#Save#)}</a>
-    {else:}<a class="action upload" href="javascript:void(0)" onclick="javascript:formSubmit('uploadAsset')">{translate(#Upload#)}</a>
+    {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Upload#)}</a>
     {end:}
     <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">Cancel</a>
 </div>
