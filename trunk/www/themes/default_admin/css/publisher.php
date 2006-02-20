@@ -48,6 +48,7 @@
 img.calendar{
     border: none;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 /*
