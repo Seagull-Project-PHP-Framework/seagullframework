@@ -270,6 +270,20 @@ class SGL_Manager
         return $ret;
     }
 
+    function getTemplate(&$input)
+    {
+        $req = $input->getRequest();
+        $mgr = $req->get('managerName');
+        $userRid = SGL_Session::getUserType();
+        
+        if (isset($this->conf[$mgrName]['adminGuiAllowed'])
+               && $this->conf[$mgrName]['adminGuiAllowed']
+               && $userRid == SGL_ADMIN) {
+            $this->template = 'admin_' . $this->template;
+        }
+        //echo'<pre>';die(print_r($mgr));
+    }
+
     /**
      * Abstract page display method.
      *
