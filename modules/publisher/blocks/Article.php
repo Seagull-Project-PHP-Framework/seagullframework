@@ -43,10 +43,8 @@ require_once SGL_CORE_DIR . '/Item.php';
  * Show static Html article in a block.
  *
  * @package block
- * @version $Revision: 0.1 $
- * @since   PHP 4.4.2
  */
-class Article
+class Publisher_Block_Article
 {
     var $template     = 'articleViewStaticHtmlArticle.html';
     var $templatePath = 'publisher';

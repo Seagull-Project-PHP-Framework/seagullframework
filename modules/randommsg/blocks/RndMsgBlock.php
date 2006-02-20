@@ -6,12 +6,8 @@
  * @author  Micha�l Willemot <michael@sotto.be>
  * @version 0.4
  */
-class RndMsgBlock
+class RndMsg_Block_Fortune
 {
-    function SampleBlock1()
-    {
-    }
-
     function init()
     {
         return $this->getBlockContent();
@@ -22,7 +18,7 @@ class RndMsgBlock
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-                
+
         $sql = "SELECT msg FROM {$conf['table']['rndmsg_message']}";
 
         // get random number (max=number of messages)

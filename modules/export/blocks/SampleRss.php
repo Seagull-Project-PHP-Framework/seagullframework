@@ -8,7 +8,7 @@
 
 require_once "XML/RSS.php";
 
-class SampleRss
+class Export_Block_SampleRss
 {
     var $rssSource = 'http://rss.gmane.org/messages/excerpts/gmane.comp.php.seagull.general';
 

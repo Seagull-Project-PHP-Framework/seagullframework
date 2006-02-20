@@ -7,7 +7,7 @@
  * @version $Revision: 1.1 $
  * @since   PHP 4.1
  */
-class SampleBlock1
+class Default_Block_Sample1
 {
     function SampleBlock1()
     {

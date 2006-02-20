@@ -44,7 +44,7 @@
  * @author  Andrey Podshivalov <planetaz@gmail.com>
  * @version 0.5
  */
-class HtmlBlock
+class Publisher_Block_Html
 {
 
     function init(&$output, $blockId, &$aParams)
@@ -53,7 +53,7 @@ class HtmlBlock
 
         return $this->getBlockContent($aParams);
     }
-    
+
     function getBlockContent(&$aParams)
     {
         $html = array_key_exists('html', $aParams) ? $aParams['html'] : false;

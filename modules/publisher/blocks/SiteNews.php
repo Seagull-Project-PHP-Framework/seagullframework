@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
 // | SiteNews.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -42,10 +42,8 @@
  *
  * @package block
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.11 $
- * @since   PHP 4.1
  */
-class SiteNews
+class Publisher_Block_SiteNews
 {
     var $webRoot = SGL_BASE_URL;
 
@@ -78,13 +76,13 @@ INTRO;
         $dbh = & SGL_DB::singleton();
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        
+
         $query = "
                 SELECT      i.item_id,
                             ia.addition,
                             i.start_date
-                FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia, 
-                        {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm                
+                FROM    {$conf['table']['item']} i, {$conf['table']['item_addition']} ia,
+                        {$conf['table']['item_type']} it, {$conf['table']['item_type_mapping']} itm
                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
                 AND     it.item_type_id  = itm.item_type_id
                 AND     i.item_id = ia.item_id

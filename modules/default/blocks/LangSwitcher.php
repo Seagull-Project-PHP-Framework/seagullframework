@@ -4,10 +4,8 @@
  *
  * @package block
  * @author  Andrey Podshivalov <planetaz@gmail.com>
- * @version $Revision: 1.0 $
- * @since   PHP 4.4.2
  */
-class LangSwitcher
+class Default_Block_LangSwitcher
 {
     function init()
     {

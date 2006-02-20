@@ -10,7 +10,7 @@
 require_once SGL_MOD_DIR . '/newsletter/classes/NewsletterMgr.php';
 require_once SGL_MOD_DIR . '/newsletter/classes/Output.php';
 
-class NewsletterBlock
+class Newsletter_Block_Subscribe
 {
     function init($output)
     {
