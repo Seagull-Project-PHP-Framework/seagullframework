@@ -267,7 +267,7 @@ class SGL_String
             return $ret;
         } else {
             //  add translation
-            if (!$isArray && $conf['translation']['addMissingTrans']
+            if (!empty($key) && !$isArray && $conf['translation']['addMissingTrans']
                 && $conf['translation']['container'] == 'db') {
 
                 //  get a reference to the request object
