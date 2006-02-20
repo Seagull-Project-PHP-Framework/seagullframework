@@ -18,7 +18,7 @@
                             <a class="clearSearch" href="{makeUrl(#search#,#usersearch#,#user#,##,#frmSortBy|sortBy||frmSortOrder|sortOrder#)}" flexy:if="search">{translate(#clear search#)}</a>
                         </td>
                         <td class="right" colspan="5">
-                        {if:pager}<flexy:include src="pager_table.html" />{end:}
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                     <tr>
@@ -44,7 +44,7 @@
                 <tfoot>
                     <tr class="infos">
                         <td class="right" colspan="10">
-                            {if:pager}<flexy:include src="pager_table.html" />{end:}
+                            {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
                 </tfoot>
