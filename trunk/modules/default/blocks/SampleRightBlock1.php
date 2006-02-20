@@ -4,10 +4,8 @@
  *
  * @package block
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.2 $
- * @since   PHP 4.1
  */
-class SampleRightBlock1
+class Default_Block_SampleRight1
 {
     var $webRoot = SGL_BASE_URL;
 

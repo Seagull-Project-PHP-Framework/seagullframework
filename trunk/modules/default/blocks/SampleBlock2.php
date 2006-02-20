@@ -7,10 +7,10 @@
  * @version $Revision: 1.1 $
  * @since   PHP 4.1
  */
-class SampleBlock2
+class Default_Block_Sample2
 {
     var $webRoot = SGL_BASE_URL;
-    
+
     function SampleBlock2()
     {
     }

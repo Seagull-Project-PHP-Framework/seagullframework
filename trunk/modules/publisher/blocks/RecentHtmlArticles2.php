@@ -45,7 +45,7 @@
  * @version $Revision: 1.11 $
  * @since   PHP 4.1
  */
-class RecentHtmlArticles2
+class Publisher_Block_RecentHtmlArticles2
 {
     var $webRoot = SGL_BASE_URL;
 

@@ -5,10 +5,8 @@
  *
  * @package block
  * @author  Sbaturzio Cantina (sbaturzio@satellite1.191.it)
- * @version $Revision: 1.3 $
- * @since   PHP 4.1
  */
-class CalendarBlock
+class Default_Block_Calendar
 {
 
     function init()

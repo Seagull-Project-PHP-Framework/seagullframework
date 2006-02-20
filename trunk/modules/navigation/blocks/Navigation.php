@@ -41,10 +41,8 @@
  * Section Navigation block.
  *
  * @package block
- * @version $Revision: 1.0 $
- * @since   PHP 4.4.1
  */
-class Navigation
+class Navigation_Block_Navigation
 {
     function init(&$output, $block_id, &$aParams)
     {

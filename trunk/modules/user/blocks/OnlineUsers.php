@@ -1,6 +1,6 @@
 <?php
 
-class OnlineUsers
+class User_Block_OnlineUsers
 {
     var $template     = 'OnlineUsers.html';
     var $templatePath = 'block/blocks';

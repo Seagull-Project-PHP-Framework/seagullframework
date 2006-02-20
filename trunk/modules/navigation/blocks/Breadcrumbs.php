@@ -41,10 +41,8 @@
  * Breadcrumbs block.
  *
  * @package block
- * @version $Revision: 0.1 $
- * @since   PHP 4.4.1
  */
-class Breadcrumbs
+class Navigation_Block_Breadcrumbs
 {
     var $template     = 'Breadcrumbs.html';
     var $templatePath = 'block/blocks';
@@ -96,13 +94,13 @@ class Breadcrumbs
     }
 
     function process(&$output)
-    {        
+    {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;
         $output->masterTemplate = $this->template;
 
         $view = new SGL_HtmlSimpleView($output);
-        return $view->render();    
+        return $view->render();
     }
 }
 ?>

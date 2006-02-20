@@ -45,7 +45,7 @@
  * @version $Revision: 1.5 $
  * @since   PHP 4.1
  */
-class CategoryNav
+class Navigation_Block_CategoryNav
 {
 
     function init($output)
