@@ -63,15 +63,14 @@ class PageMgr extends SGL_Manager
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
 
-        $dataAccess = & DA_User::singleton();
-        $dataAccessDefault = & DA_Default::singleton();
+        $dataAccess        = &DA_User::singleton();
+        $dataAccessDefault = &DA_Default::singleton();
         $dataAccess->add($dataAccessDefault);
-        $this->da = $dataAccess;
+        $this->da          = &$dataAccess;
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            require_once SGL_CORE_DIR . '/Translation.php';
-            $this->trans = & SGL_Translation::singleton('admin');
+            $this->trans = &SGL_Translation::singleton('admin');
         }
 
         $this->_aActionsMapping =  array(
@@ -124,11 +123,11 @@ class PageMgr extends SGL_Manager
         $input->targetId    = $req->get('targetId');
         $input->move        = $req->get('move');
         $input->section     = $req->get('page');
-        $input->section['is_enabled'] = (isset($input->section['is_enabled'])) ? 1 : 0;
-
+        $input->section['is_enabled']       = (isset($input->section['is_enabled'])) ? 1 : 0;
+        $input->section['uri_alias_enable'] = (isset($input->section['uri_alias_enable'])) ? 1 : 0;
         $input->navLang     = $req->get('frmNavLang');
-        $input->availableLangs = $req->get('frmAvailableLangs');
         $input->articleType = @$input->section['articleType'];
+
         if (is_null($input->articleType)) {
             $input->articleType = 'static';
         }
@@ -139,34 +138,23 @@ class PageMgr extends SGL_Manager
             : null;
 
         //  Misc.
-        $this->validated    = true;
-        $this->submit       = $req->get('submitted');
+        $this->validated = true;
+        $this->submit    = $req->get('submitted');
+        $input->aParams  = $req->get('aParams', $allowTags = true);
+        $input->isAdd    = $req->get('isadd');
+        $input->mode     = $req->get('mode');
 
-        //  fc hacks needed as a result of JS submit
-        if ($input->action == 'insert' && is_null($this->submit)) {
-            $input->action = 'add';
-        }
-        $refreshScreen = false;
-        if ($input->action == 'update' && is_null($this->submit)) {
-            $this->submit = $refreshScreen = true;
-            $aErrors[] = 'Please supply full nav info';
-        }
         //  validate form data
         if ($this->submit) {
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
-            }
-            //  ensure correct translation is being sent to output
-            if ($this->conf['translation']['container'] == 'db'
-                    && $input->action == 'update' && $refreshScreen == true) {
-                $input->section['title'] = $this->trans->get($input->section['section_id'],
-                    'nav', $input->navLang);
             }
 
             //  zero is a valid property, refers to public role
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
             }
+
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
             if (($input->action == 'update' || $input->action == 'insert') && $input->section['parent_id'] != 0) {
@@ -189,106 +177,22 @@ class PageMgr extends SGL_Manager
                     }
                 }
             }
+        } elseif (!empty($input->section[edit])) {
+            unset($input->aParams);
+            $this->validated = false;
         }
 
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields');
+            SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_WARNING);
             $input->error = $aErrors;
             $this->validated = false;
+        }
+
+        if (!$this->validated) {
             $input->template = 'sectionEdit.html';
+            $this->_editDisplay($input);
         }
-    }
-
-    function display(&$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  pre-check enabled box
-        $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
-            $output->section['is_enabled'] == 1) ? 'checked' : '';
-
-        $output->staticSelected = '';
-        $output->dynamicSelected = '';
-        if ($this->conf['PageMgr']['wikiScreenTypeEnabled']) {
-            $output->wikiSelected = '';
-        }
-        $output->uriExternalSelected = '';
-
-        if ($this->conf['translation']['container'] == 'db') {
-            $output->availableLangs = $this->trans->getLangs();
-
-            $navLang = (isset($output->navLang) && !empty($output->navLang))
-                ? $output->navLang
-                : SGL_Translation::getLangID();
-
-            $output->navLang = $navLang;
-            $output->fullNavLang = $output->availableLangs[$navLang];
-        }
-
-        switch ($output->articleType) {
-        case 'static':
-            $output->staticSelected = 'selected';
-
-            //  build static article list
-            if ($this->da->moduleIsRegistered('publisher')) {
-                $articles = $this->_getStaticArticles();
-                if ($articles && $this->conf['translation']['container'] == 'db') {
-                    foreach ($articles as $key => $value) {
-                    	if (is_numeric($value)){
-                            $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
-                    	}
-                    }
-                }
-                $output->aStaticArticles = $articles;
-            } else {
-                $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
-            }
-            break;
-
-        case 'wiki':
-            $output->wikiSelected = 'selected';
-            break;
-
-        case 'dynamic':
-            $output->dynamicSelected = 'selected';
-
-            //  build dynamic section choosers
-            $output->aModules = SGL_Util::getAllModuleDirs();
-            $currentModule = isset($output->section['module'])
-                ? $output->section['module']
-                : key($output->aModules);
-            $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
-            $currentMgr = (isset($output->section['manager'])
-                        && isset($output->aManagers[$output->section['manager']]))
-                ? $output->section['manager']
-                : key($output->aManagers);
-            $output->aActions = ($currentMgr != 'none')
-                ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
-                : array();
-            break;
-
-        case'uriExternal':
-            $output->uriExternalSelected = 'selected';
-            break;
-        }
-
-        //  build role widget
-        $aRoles = $this->da->getRoles();
-        $aRoles[0]= 'guest';
-        $output->aRoles = $aRoles;
-        $output->aSelectedRoles = explode(',', @$output->section['perms']);
-
-        //  get array of section node objects and add images for folder-tree display
-        $nestedSet = new SGL_NestedSet($this->_params);
-        $output->sectionNodesOptions = $this->_generateSectionNodesOptions($nestedSet->getTree(),
-            @$output->section['parent_id']);
-
-        // build uriAliases select options
-//        $aUriAliases = $this->da->getAllAliases();
-//        foreach ($aUriAliases as $key => $value) {
-//            $output->aUriAliases[$key] = $key . ' -> ' . $value;
-//        }
     }
 
     function _cmd_add(&$input, &$output)
@@ -296,9 +200,10 @@ class PageMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'sectionEdit.html';
-        $output->action = 'insert';
-        $output->pageTitle = $this->pageTitle . ' :: Add';
-        $output->actionIsAdd = true;
+        $output->action   = 'insert';
+        $output->mode     = 'New page';
+        $output->isAdd    = true;
+        $this->_editDisplay($output);
     }
 
     function _cmd_insert(&$input, &$output)
@@ -331,6 +236,21 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = $string;
             break;
 
+        case 'uriNode':
+            $string = 'uriNode:' . $input->section['uri_node'];
+            $input->section['resource_uri'] = $string;
+            break;
+
+        case 'uriEmpty':
+            $string = 'uriEmpty:';
+            $input->section['resource_uri'] = $string;
+            break;
+
+        case 'uriAddon':
+            $string = 'uriAddon:' . $input->section['addon'] . ':' . @serialize($input->aParams);
+            $input->section['resource_uri'] = $string;
+            break;
+
         case 'dynamic':
 
             //  strip extension and 'Mgr'
@@ -360,14 +280,14 @@ class PageMgr extends SGL_Manager
         //  prepare resource_uri string for alias format
         if (!empty($input->section['uri_alias'])) {
             $nextAliasId = $this->dbh->nextId($this->conf['table']['uri_alias']);
-            $input->section['resource_uri'] = 'uriAlias:' . $nextAliasId.':'.$input->section['resource_uri'];
+            $input->section['resource_uri'] = 'uriAlias:' . $nextAliasId .':' . $input->section['resource_uri'];
         }
         //  remove trailing slash/ampersand if one is present
         if (substr($input->section['resource_uri'], -1) == $separator) {
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
+        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']);
 
         //  add translations
         if ($this->conf['translation']['container'] == 'db') {
@@ -388,6 +308,7 @@ class PageMgr extends SGL_Manager
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
+
         //  deal with potential alias
         if (!empty($input->section['uri_alias'])) {
             $aliasName = SGL_String::dirify($input->section['uri_alias']);
@@ -397,6 +318,7 @@ class PageMgr extends SGL_Manager
                 $errorMsg = ' but alias creation failed as there can be no duplicates';
             }
         }
+
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
 
@@ -412,30 +334,24 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->mode = 'Edit section';
+        $output->mode     = 'Edit page';
         $output->template = 'sectionEdit.html';
-        $output->action = 'update';
-        $output->pageTitle = $this->pageTitle . ' :: Edit';
+        $output->action   = 'update';
 
         //  get DB_NestedSet_Node object for this section
         $nestedSet = new SGL_NestedSet($this->_params);
-        $section = $nestedSet->getNode($input->sectionId);
-
-        //  if title is numeric retreive translation else populate with current title
-        if ($this->conf['translation']['container'] == 'db') {
-            $section['title'] = $this->trans->get($section['trans_id'], 'nav', $input->navLang);
-            $section['language'] = $output->availableLangs[$input->navLang];
-        } else {
-            $section['language'] = $output->availableLangs[$input->navLang];
-        }
+        $section   = $nestedSet->getNode($input->sectionId);
+        $section['title_original']      = $section['title'];
+        $section['is_enabled_original'] = $section['is_enabled'];
+        $section['parent_id_original']  = $section['parent_id'];
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
 
             //  setup article type, dropdowns built in display()
             if (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $section['resource_uri'], $aMatches)) {
-                $section['resource_uri'] = $aMatches[3];
-                $uriAlias = true;
+                $section['resource_uri']     = $aMatches[3];
+                $section['uri_alias_enable'] = $uriAlias = true;
             }
             if (preg_match("@^publisher/wikiscrape/url@", $section['resource_uri'])) {
                 $aElems = explode('/', $section['resource_uri']);
@@ -444,20 +360,34 @@ class PageMgr extends SGL_Manager
                 $output->articleType = 'wiki';
             } elseif (preg_match('/^uriExternal:(.*)/', $section['resource_uri'], $aUri)) {
                 $section['resource_uri'] = $aUri[1];
-                $output->articleType = 'uriExternal';
+                $output->articleType     = 'uriExternal';
+            } elseif (preg_match('/^uriAddon:([^:]*):(.*)/', $section['resource_uri'], $aUri)) {
+                $section['addon'] = $aUri[1];
+                $section['aParams'] = base64_encode($aUri[2]);
+                $output->articleType = 'uriAddon';
+             } elseif (preg_match('/^uriNode:(.*)/', $section['resource_uri'], $aUri)) {
+                $section['uri_node'] = $aUri[1];
+                $output->articleType = 'uriNode';
+             } elseif ('uriEmpty:' == $section['resource_uri']) {
+                $output->articleType = 'uriEmpty';
             } else {
                 $output->articleType = ($section['is_static']) ? 'static' : 'dynamic';
 
                 //  parse url details
-                #$url = new SGL_Url($section['resource_uri'], false, new SGL_UrlParser_SimpleStrategy());
-                #$parsed = $url->getQueryData($strict = true);
-
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                $className = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
-                $section['manager'] = $className . '.php';
+                $aManagers             = @parse_ini_file(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
+                $aManagerKeys          = @array_keys($aManagers);
+                $aManagerKeysLowerCase = @array_map('strtolower', $aManagerKeys);
+                $key                   = @array_search($section['manager'] . 'mgr', $aManagerKeysLowerCase);
+                if ($key !== false) {
+                    $section['manager'] = $aManagerKeys[$key] . '.php';
+                } else {
+                    SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
+                    $section['manager'] = '';
+                }
 
                 //  represent additional params as string
                 if (array_key_exists('parsed_params', $parsed) && count($parsed['parsed_params'])) {
@@ -484,6 +414,7 @@ class PageMgr extends SGL_Manager
             $section['uri_alias'] = $this->da->getAliasBySectionId($section['section_id']);
         }
         $output->section = $section;
+        $this->_editDisplay($output);
     }
 
     function _cmd_update(&$input, &$output)
@@ -508,6 +439,21 @@ class PageMgr extends SGL_Manager
 
         case 'uriExternal':
             $string = 'uriExternal:' . $input->section['resource_uri'];
+            $input->section['resource_uri'] = $string;
+            break;
+
+        case 'uriNode':
+            $string = 'uriNode:' . $input->section['uri_node'];
+            $input->section['resource_uri'] = $string;
+            break;
+
+        case 'uriEmpty':
+            $string = 'uriEmpty:';
+            $input->section['resource_uri'] = $string;
+            break;
+
+        case 'uriAddon':
+            $string = 'uriAddon:' . $input->section['addon'] . ':' . @serialize($input->aParams);
             $input->section['resource_uri'] = $string;
             break;
 
@@ -562,8 +508,10 @@ class PageMgr extends SGL_Manager
         if ($this->conf['translation']['container'] == 'db') {
             if (strcmp($input->section['title'], $input->section['title_original']) !== 0) {
                 if ($input->section['trans_id']) {
-                    $strings[$input->navLang] = $input->section['title'];
                     $ok = $this->trans->add($input->section['trans_id'], 'nav', array($input->navLang => $input->section['title']));
+                }
+                if ($input->navLang != SGL_Translation::getFallbackLangID()) {
+                    $input->section['title'] = $input->section['title_original'];
                 }
             }
         }
@@ -577,7 +525,7 @@ class PageMgr extends SGL_Manager
             SGL_HTTP::redirect();
         }
         //  If changing activation status, we need to enable/disable this node's children too
-        if (($input->section['is_enabled'] != $input->section['original_is_enabled'])){
+        if (($input->section['is_enabled'] != $input->section['is_enabled_original'])){
             $children = $nestedSet->getSubBranch($input->section['section_id']);
             if ($children) {
                 foreach ($children as $child){
@@ -591,7 +539,7 @@ class PageMgr extends SGL_Manager
 
         //  move node if needed
         switch ($input->section['parent_id']) {
-        case $input->section['original_parent_id']:
+        case $input->section['parent_id_original']:
             //  usual case, no change => do nothing
             $message = 'Section details successfully updated';
             break;
@@ -695,6 +643,7 @@ class PageMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'sectionList.html';
+        $output->mode     = 'Browse';
         $nestedSet = new SGL_NestedSet($this->_params);
         $nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
         $sectionNodes = $nestedSet->getTree();
@@ -731,6 +680,141 @@ class PageMgr extends SGL_Manager
         if ($this->conf['site']['adminGuiEnabled']) {
             $output->addOnLoadEvent("switchRowColorOnHover()");
         }
+    }
+
+    function _editDisplay(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  pre-check enabled box
+        $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
+            $output->section['is_enabled'] == 1) ? 'checked' : '';
+
+        $output->uriAliasEnabled = (isset($output->section['uri_alias_enable']) &&
+            $output->section['uri_alias_enable'] == 1) ? 'checked' : '';
+
+        //  get array of section node objects
+        $nestedSet = new SGL_NestedSet($this->_params);
+        $output->sectionNodesOptions = $this->_generateSectionNodesOptions($nestedSet->getTree(),
+            @$output->section['parent_id']);
+
+        $output->staticSelected = '';
+        $output->dynamicSelected = '';
+        if ($this->conf['PageMgr']['wikiScreenTypeEnabled']) {
+            $output->wikiSelected = '';
+        }
+        $output->uriExternalSelected = '';
+
+        if ($this->conf['translation']['container'] == 'db') {
+            $output->availableLangs = $this->trans->getLangs();
+
+            $navLang = (isset($output->navLang) && !empty($output->navLang))
+                ? $output->navLang
+                : SGL_Translation::getLangID();
+
+            $output->navLang = $navLang;
+            $output->fullNavLang = $output->availableLangs[$navLang];
+            $output->section['title'] = $this->trans->get($output->section['trans_id'], 'nav', $output->navLang);
+        }
+
+        switch ($output->articleType) {
+        case 'static':
+            $output->staticSelected = 'selected';
+
+            //  build static article list
+            if ($this->da->moduleIsRegistered('publisher')) {
+                $articles = $this->_getStaticArticles();
+                if ($articles && $this->conf['translation']['container'] == 'db') {
+                    foreach ($articles as $key => $value) {
+                        if (is_numeric($value)){
+                            $articles[$key] = $this->trans->get($value, 'content', $output->navLang);
+                        }
+                    }
+                }
+                $output->aStaticArticles = $articles;
+            } else {
+                $output->aStaticArticles = array('' => 'invalid w/out Publisher module');
+            }
+            $output->uriAliasAllowed = true;
+            break;
+
+        case 'wiki':
+            $output->wikiSelected = 'selected';
+            break;
+
+        case 'dynamic':
+            $output->dynamicSelected = 'selected';
+
+            //  build dynamic section choosers
+            $output->aModules = SGL_Util::getAllModuleDirs();
+            $currentModule = isset($output->section['module'])
+                ? $output->section['module']
+                : key($output->aModules);
+            $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
+            $currentMgr = (isset($output->section['manager'])
+                        && isset($output->aManagers[$output->section['manager']]))
+                ? $output->section['manager']
+                : key($output->aManagers);
+            $output->aActions = ($currentMgr != 'none')
+                ? SGL_Util::getAllActionMethodsPerMgr(SGL_MOD_DIR .'/'. $currentModule .'/classes/'. $currentMgr)
+                : array();
+            $output->uriAliasAllowed = true;
+            break;
+
+        case'uriExternal':
+            $output->uriExternalSelected = 'selected';
+            $output->uriAliasAllowed = true;
+            break;
+
+        case'uriEmpty':
+            $output->uriEmptySelected = 'selected';
+            $output->uriAliasEnabled  = false;
+            $output->uriAliasAllowed  = false;
+            break;
+
+        case'uriNode':
+            $output->uriNodeSelected = 'selected';
+            $output->uriAliasEnabled = false;
+            $output->uriAliasAllowed = false;
+
+            //  get array of section node objects for internal link
+            $sectionTree = $nestedSet->getTree();
+            unset($sectionTree[0]);
+            $output->sectionNodesOptions2 = $this->_generateSectionNodesOptions($sectionTree, @$output->section['uri_node']);
+            break;
+
+        case'uriAddon':
+            $output->uriAddonSelected = 'selected';
+            $output->uriAliasEnabled  = false;
+            $output->uriAliasAllowed  = false;
+
+            //  get current params
+            if (empty($output->aParams)) {
+                $aCurrentParams = array();
+            } else {
+                $aCurrentParams = $output->aParams;
+                unset($output->aParams);
+            }
+
+            //  get params from ini
+            $ini_file = SGL_MOD_DIR . '/navigation/classes/addons/' . $output->section['addon'] . '.ini';
+            if (!is_array($aSavedParams = @unserialize(base64_decode($output->section['aParams'])))) {
+                $aSavedParams = array();
+            }
+            $aParams = SGL_Util::loadParams($ini_file, $aSavedParams, $aCurrentParams);
+            foreach ($aParams as $key => $value) {
+                $output->$key = $value;
+            }
+
+            $output->aAllAddons = $this->_getAllAddons();
+            break;
+    }
+
+        //  build role widget
+        $aRoles = $this->da->getRoles();
+        $aRoles[0]= 'guest';
+        $output->aRoles = $aRoles;
+        $output->aSelectedRoles = explode(',', @$output->section['perms']);
     }
 
     /**
@@ -810,5 +894,25 @@ class PageMgr extends SGL_Manager
         }
         return "<script type='text/javascript'>\nvar nodeArray = new Array()\n" . $nodesArrayJS . "</script>\n";
     }
+
+    function _getAllAddons()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once 'File/Util.php';
+
+        //  match files with php extension
+        $ret = SGL_Util::listDir(SGL_MOD_DIR . '/navigation/classes/addons/', FILE_LIST_FILES, $sort = FILE_SORT_NAME,
+                create_function('$a', 'return preg_match("/^.*\.php$/", $a);'));
+
+        //  parse out filename w/o extension and .
+        $aAddons = array();
+        foreach ($ret as $k => $v) {
+            preg_match("/^(.*)\.php$/", $v, $matches);
+            $aAddons[$matches[1]] = $matches[1];
+        }
+        return $aAddons;
+    }
+
 }
 ?>
