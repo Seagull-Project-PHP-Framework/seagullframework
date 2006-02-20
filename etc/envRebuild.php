@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | demoRebuild.php                                                           |
+// | envRebuild.php                                                            |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -42,7 +42,7 @@
     * Expects to find localhost.conf.php in var dir
     * build a config you're happy with, make a copy called localhost.conf.php
 
-    Usage: $ php etc/demoRebuild.php
+    Usage: $ php etc/envRebuild.php
 */
 
 //  setup seagull environment
@@ -56,10 +56,15 @@ class RebuildController extends SGL_AppController
         if (!defined('SGL_INITIALISED')) {
             SGL_AppController::init();
         }
-
         //  get config singleton
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
+
+        if (!count($conf)) {
+            SGL::raiseError('This script can only be run after you have created ' .
+            'a valid config file, ie, using the web installer',
+                SGL_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE);
+        }
 
         //  resolve value for $_SERVER['PHP_SELF'] based in host
         SGL_URL::resolveServerVars($conf);

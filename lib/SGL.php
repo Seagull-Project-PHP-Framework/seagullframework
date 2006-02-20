@@ -93,7 +93,7 @@ class SGL
         $conf = $c->getAll();
 
         // Logging is not activated
-        if ($conf['log']['enabled'] == false) {
+        if (empty($conf['log']['enabled']) || $conf['log']['enabled'] == false) {
             return;
         }
 
@@ -191,12 +191,13 @@ class SGL
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  if fatal
         if ($behaviour > 0) {
-            if ($conf['debug']['production']) {
+            if (isset($conf['debug']['production']) && $conf['debug']['production']) {
                 die ('Sorry your request can not be processed now. Try again later');
             }
             //  must log fatal msgs here as execution stops after
@@ -340,10 +341,14 @@ class SGL
      {
         require_once SGL_CORE_DIR . '/Install/Common.php';
         SGL_Install_Common::printHeader('An error has occurred');
-        echo '  <div class="errorContainer">
-                    <div class="errorHeader">Error</div>
-                    <div class="errorContent">' . $msg . '</div>
-                </div>';
+        if (SGL::runningFromCli()) {
+            print $msg;
+        } else {
+            echo '  <div class="errorContainer">
+                        <div class="errorHeader">Error</div>
+                        <div class="errorContent">' . $msg . '</div>
+                    </div>';
+        }
         SGL_Install_Common::printFooter();
         exit();
      }
