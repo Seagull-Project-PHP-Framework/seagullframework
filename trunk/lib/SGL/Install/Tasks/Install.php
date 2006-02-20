@@ -105,51 +105,6 @@ class SGL_Task_CreateConfig extends SGL_Task
     }
 }
 
-class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
-{
-    function run($data)
-    {
-        $c = &SGL_Config::singleton();
-
-        $aModuleList = SGL_Install_Common::getModuleList();
-//            ? SGL_Install_Common::getModuleList()
-//            : $this->getMinimumModuleList();
-
-        foreach ($aModuleList as $module) {
-            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
-            if (file_exists($tableAliasIniPath)) {
-                $aData = parse_ini_file($tableAliasIniPath);
-                foreach ($aData as $k => $v) {
-                    $c->set('table', array($k => $v));
-                }
-            }
-        }
-
-        //  save
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-        $ok = $c->save($configFile);
-        if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
-        }
-    }
-}
-
-class SGL_Task_DisableForeignKeyChecks extends SGL_Task
-{
-    function run($data)
-    {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-
-        //  disable fk constraints if mysql (>= 4.1.x)
-        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {
-            $dbh = & SGL_DB::singleton();
-            $query = 'SET FOREIGN_KEY_CHECKS=0;';
-            $res = $dbh->query($query);
-        }
-    }
-}
-
 class SGL_UpdateHtmlTask extends SGL_Task
 {
     function updateHtml($id, $displayHtml)
@@ -236,6 +191,51 @@ class SGL_UpdateHtmlTask extends SGL_Task
         $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
         $this->failure = '<span class=\\"error\\">ERROR</span>';
         $this->noFile  = '<strong>N/A</strong>';
+    }
+}
+
+class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+
+        $aModuleList = SGL_Install_Common::getModuleList();
+//            ? SGL_Install_Common::getModuleList()
+//            : $this->getMinimumModuleList();
+
+        foreach ($aModuleList as $module) {
+            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
+            if (file_exists($tableAliasIniPath)) {
+                $aData = parse_ini_file($tableAliasIniPath);
+                foreach ($aData as $k => $v) {
+                    $c->set('table', array($k => $v));
+                }
+            }
+        }
+
+        //  save
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $ok = $c->save($configFile);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+        }
+    }
+}
+
+class SGL_Task_DisableForeignKeyChecks extends SGL_Task
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
+        //  disable fk constraints if mysql (>= 4.1.x)
+        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {
+            $dbh = & SGL_DB::singleton();
+            $query = 'SET FOREIGN_KEY_CHECKS=0;';
+            $res = $dbh->query($query);
+        }
     }
 }
 
