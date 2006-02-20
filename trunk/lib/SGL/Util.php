@@ -274,23 +274,23 @@ class SGL_Util
         return $aRenderers;
     }
 
-    function getAllBlocks()
+    function getAllClassesFromFolder($folder = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
 
         //  match files with php extension
-        $ret = SGL_Util::listDir(SGL_BLK_DIR, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
+        $ret = SGL_Util::listDir($folder, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
                 create_function('$a', 'return preg_match("/^.*\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
-	$aBlocks = array();
-	foreach ($ret as $k => $v) {
-	    preg_match("/^(.*)\.php$/", $v, $matches);
-    	    $aBlocks[$matches[1]] = $matches[1];
+        $aClasses = array();
+        foreach ($ret as $k => $v) {
+            preg_match("/^(.*)\.php$/", $v, $matches);
+            $aClasses[$matches[1]] = $matches[1];
         }
-        return $aBlocks;
+        return $aClasses;
     }
 
     /**
