@@ -1,9 +1,10 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('article')">Save</a>
+    <span>Action:&nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('article')">{translate(#Save#)}</a>
     {if:redir}
-        <a class="action cancel" href="{redir}">Cancel</a>
+        <a class="action cancel" href="{redir}">{translate(#Cancel#)}</a>
     {else:}
-        <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">Cancel</a>
+        <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">{translate(#Cancel#)}</a>
     {end:}
 </div>
 <div id="content">
@@ -23,8 +24,28 @@
         </fieldset>
 
         <div id="optionsLinks"></div>
+        <fieldset class="options" id="articleAddContent">
+            <h3>{translate(#Content#)}</h3>
+            {if:isEqual(conf[translation][container],#db#)}
+            <p class="row">
+                <label class="tipOwner">{translate(#Language#)}
+                <span class="tipText">{translate(#switching language will cause changes to be lost#)}</span>
+                </label>
+                <select name="frmArticleLang"
+                        onChange="javascript:document.location.href='{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}frmArticleLang/' + this.options[selectedIndex].value + '/';">
+                    {generateSelect(availableLangs,articleLang):h}
+                </select>
+            </p>
+            {end:}
+            {foreach:dynaContent,fieldName,fieldContent}
+            <p class="row">
+                <label>{translate(fieldName)}</label>
+                {fieldContent:h}
+            </p>
+            {end:}
+        </fieldset>
         <fieldset class="options" id="articleAddOptions">
-            <h3>Infos</h3>
+            <h3>{translate(#Editing options#)}</h3>
             {if:aCategories}
             <p class="row">
                 <label>{translate(#Category#)}</label>
@@ -66,26 +87,6 @@
             </p>
             {end:}
         </fieldset>
-        <fieldset class="options" id="articleAddContent">
-            <h3>{translate(#Editing Article#)} (id#{article.id})</h3>
-            {if:isEqual(conf[translation][container],#db#)}
-            <p class="row">
-                <label class="tipOwner">{translate(#Language#)}
-                <span class="tipText">{translate(#switching language will cause changes to be lost#)}</span>
-                </label>
-                <select name="frmArticleLang"
-                        onChange="javascript:document.location.href='{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}frmArticleLang/' + this.options[selectedIndex].value + '/';">
-                    {generateSelect(availableLangs,articleLang):h}
-                </select>
-            </p>
-            {end:}
-            {foreach:dynaContent,fieldName,fieldContent}
-            <p class="row">
-                <label>{translate(fieldName)}</label>
-                {fieldContent:h}
-            </p>
-            {end:}
-        </fieldset>
     </form>
     <div class="spacer"></div>
 </div>
@@ -94,7 +95,7 @@
 </style>
 <script type="text/javascript">
 createAvailOptionsLinks('article','h3');
-showSelectedOptions('article','articleAddOptions');
+showSelectedOptions('article','articleAddContent');
 Calendar.setup(
     {
         inputField  : "frmStartDate",         // ID of the input field

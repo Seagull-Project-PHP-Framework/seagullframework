@@ -27,7 +27,9 @@ function toggleAliasElements(myCheckbox)
 </script>
 
 <div id="manager-actions">
-    <span>{translate(#Action#)}:&nbsp;</span><a class="action save" href="javascript:formSubmit('sectionEdit','submitted',1,1)">{translate(#Save#)}</a><a class="action cancel" href="{makeUrl(#list#,#page#,#navigation#)}">{translate(#Cancel#)}</a>
+    <span>{translate(#Action#)}:&nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('sectionEdit','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#page#,#navigation#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -37,12 +39,7 @@ function toggleAliasElements(myCheckbox)
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit" action="">
         <div id="optionsLinks"></div>
         <fieldset class="options" id="navigationContent">
-            <h3>
-                {if:section[section_id]}
-                {translate(#page#,#ucfirst#)} (id#{section[section_id]}) : {section[title]}
-                {else:}
-                {translate(#New page#)}{end:}
-            </h3>
+            <h3>{translate(#Page infos#)}</h3>
             <input type="hidden" name="mode" value="{mode}" />
             <input type="hidden" name="page[edit]" value="1" />
         {if:isAdd}
@@ -201,7 +198,7 @@ function toggleAliasElements(myCheckbox)
             <h3>{translate(#Editing options#)}</h3>
             <p>
                 <label class="tipOwner" for="page[is_enabled]">{translate(#Publish#)}
-                <span class="tipText">{translate(#check to activate#)}</span>
+                <span class="tipText">{translate(#check to activate#,#ucfirst#)}</span>
                 </label>
                 <input type="checkbox" name="page[is_enabled]" id="page[is_enabled]" flexy:raw="{pageIsEnabled}" />
             </p>

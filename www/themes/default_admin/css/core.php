@@ -429,6 +429,9 @@ html>body #container table {
     border-collapse: separate;
     border-spacing: 0px;
 }
+#container table.noBorder {
+    border: none;
+}
 #container tr {
     height: 24px;
     line-height: 24px;

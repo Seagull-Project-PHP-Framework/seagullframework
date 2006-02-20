@@ -1,5 +1,8 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('module')">Save</a><a class="action undo" href="javascript:formReset('module')">Undo</a><a class="action cancel" href="{makeUrl(#list#,#module#,#default#)}">Cancel</a>
+    <span>Action:&nbsp;</span>
+    <a class="action validate" href="javascript:formSubmit('moduleCreator','submitted',1,1)">{translate(#Create Module Now#)}</a>
+    <a class="action undo" href="javascript:formReset('moduleCreator')">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#module#,#default#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -43,11 +46,9 @@
                 <label for="frmCreateModule[createIniFile]">{translate(#Create ini file#)}</label>
                 <input type="checkbox" name="frmCreateModule[createIniFile]" id="frmCreateModule[createIniFile]" value="1" checked="checked" />
             </p>
-            <p class="center">
-                <p class="error" flexy:if="error[moduleNothingChecked]">
-                    {error[moduleNothingChecked]}
-                </p>
-                <input type="submit" class="sgl-button"name="submitted" value="{translate(#Create Module Now#)}" />
+            <p>
+                <label>&nbsp;</label>
+                <input type="submit" class="sgl-button" name="submitted" value="{translate(#Create Module Now#)}" />
             </p>
         </fieldset>
     </form>

@@ -38,7 +38,7 @@
         'link to page' => 'link to page',
         'addon' => 'addon',
         'empty link' => 'empty link',
-        'external page URI' => 'external page URI',
+        'External page URI' => 'External page URI',
         'Choose page' => 'Choose page',
         'Addon class name' => 'Addon class name',
         'Choose class name' => 'Choose class name',
@@ -134,5 +134,9 @@
         'manager' => 'manager',
         'module' => 'module',
         'none' => 'none',
+        'Page infos' => 'Page infos',
+        'Optimisation' => 'Optimisation',
+        'Target' => 'Target',
+        'Select roles to which you want to grant access' => 'Select roles to which you want to grant access',
  );
 ?>

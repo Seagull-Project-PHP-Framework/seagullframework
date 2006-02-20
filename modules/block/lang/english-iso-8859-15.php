@@ -70,6 +70,10 @@
         'If no, navigation menu will be recalculated every time' => 'If no, navigation menu will be recalculated every time',
         'Generate breadcrumbs objects' => 'Generate breadcrumbs objects',
         'Tells navigation driver to generate bredcrumbs objects' => 'Tells navigation driver to generate bredcrumbs objects',
+        'Navigation Html renderer class' => 'Navigation Html renderer class',
+        'Indicate renderer class from modules/navigation/classes/*Nav.php' => 'Indicate renderer class from modules/navigation/classes/*Nav.php',
+        'Template name (optional)' => 'Template name (optional)',
+        'For navigation renderer which requires template' => 'For navigation renderer which requires template',
         
         // Breadcrumbs Block
         'Start parent node' => 'Start parent node',

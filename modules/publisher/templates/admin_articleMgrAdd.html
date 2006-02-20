@@ -1,5 +1,7 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span> <a class="action save" href="javascript:formSubmit('article')">Save</a><a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">Cancel</a>
+    <span>Action:&nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('article')">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -13,10 +15,18 @@
             <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
             <input type="hidden" name="frmArticleLang" value="{articleLang}" />
         </fieldset>
-
         <div id="optionsLinks"></div>
+        <fieldset class="options" id="articleAddContent">
+            <h3>{translate(#Content#)}</h3>
+            {foreach:dynaFields,fieldName,fieldContent}
+            <p class="row">
+                <label>{translate(fieldName)}</label>
+                {fieldContent:h}
+            </p>
+            {end:}
+        </fieldset>
         <fieldset class="options" id="articleAddOptions">
-            <h3>Infos</h3>
+            <h3>{translate(#Editing options#)}</h3>
             {if:aCategories}
             <p class="row">
                 <label>{translate(#Category#)}</label>
@@ -54,16 +64,6 @@
                 <span>{noExpiry:h}</span>
             </p>
         </fieldset>
-
-        <fieldset class="options" id="articleAddContent">
-            <h3>{translate(#Content#)}</h3>
-            {foreach:dynaFields,fieldName,fieldContent}
-            <p class="row">
-                <label>{translate(fieldName)}</label>
-                {fieldContent:h}
-            </p>
-            {end:}
-        </fieldset>
     </form>
     <div class="spacer"></div>
 </div>
@@ -72,7 +72,7 @@
 </style>
 <script type="text/javascript">
 createAvailOptionsLinks('article','h3');
-showSelectedOptions('article','articleAddOptions')
+showSelectedOptions('article','articleAddContent')
 Calendar.setup(
     {
         inputField  : "frmStartDate",         // ID of the input field
