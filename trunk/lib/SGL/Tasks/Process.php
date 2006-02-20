@@ -879,7 +879,8 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
                 // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
                 $input->data->adminGuiAllowed = true;
                 $input->data->theme = $this->conf['site']['adminGuiTheme'];
-                $input->data->masterTemplate = 'master.html';
+                $input->data->masterTemplate = 'admin_master.html';
+                $input->data->template = 'admin_' . $input->data->template;
             }
         }
 
