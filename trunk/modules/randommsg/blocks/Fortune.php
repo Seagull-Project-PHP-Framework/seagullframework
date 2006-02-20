@@ -6,7 +6,7 @@
  * @author  Micha�l Willemot <michael@sotto.be>
  * @version 0.4
  */
-class RndMsg_Block_Fortune
+class Randommsg_Block_Fortune
 {
     function init()
     {
