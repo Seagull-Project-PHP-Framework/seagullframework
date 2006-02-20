@@ -124,7 +124,7 @@ class SGL_BlockLoader
 
             SGL::logMessage('blocks from cache', PEAR_LOG_DEBUG);
         } else {
-            $this->_loadBlocks(true);
+            $this->_loadBlocks();
             $data = serialize($this->aBlocks);
             $cache->save($data, $cacheId, 'blocks');
             SGL::logMessage('blocks from db', PEAR_LOG_DEBUG);
@@ -184,8 +184,10 @@ class SGL_BlockLoader
         if (count($this->_aData) > 0 ) {
             foreach ($this->_aData as $index => $oBlock) {
                 $blockClass = $oBlock->name;
-                $blockPath = SGL_BLK_DIR . '/' . $blockClass . '.php';
+                $blockPath = SGL_MOD_DIR . '/' . $blockClass . '.php';
                 @include_once $blockPath;
+                preg_match('/^.*\/blocks\/(.*)$/', $blockClass, $aMatch);
+                @$blockClass = $aMatch[1];
                 if (!class_exists($blockClass)) {
                     unset($this->_aData[$index]);
                     SGL::raiseError($blockClass . ' is not a valid block classname',
