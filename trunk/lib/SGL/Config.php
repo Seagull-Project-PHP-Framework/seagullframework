@@ -129,8 +129,12 @@ class SGL_Config
         if ($data !== false) {
             return $data;
         } else {
-            return SGL::raiseError('Problem reading config file',
-                SGL_ERROR_INVALIDFILEPERMS);
+            if (defined('SGL_INITIALISED')) {
+                return SGL::raiseError('Problem reading config file',
+                    SGL_ERROR_INVALIDFILEPERMS);
+            } else {
+                SGL::displayStaticPage('No global config file could be found');
+            }
         }
     }
 

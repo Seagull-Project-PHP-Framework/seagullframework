@@ -267,8 +267,12 @@ class SGL_String
             return $ret;
         } else {
             //  add translation
-            if (!empty($key) && !$isArray && $conf['translation']['addMissingTrans']
-                && $conf['translation']['container'] == 'db') {
+            if (!empty($key)
+                    && !$isArray
+                    && isset($conf['translation']['addMissingTrans'])
+                    && $conf['translation']['addMissingTrans']
+                    && isset($conf['translation']['container'])
+                    && $conf['translation']['container'] == 'db') {
 
                 //  get a reference to the request object
                 $req = & SGL_Request::singleton();
@@ -284,7 +288,9 @@ class SGL_String
 
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
 
-            $key = ($conf['debug']['showUntranslated']) ? '>' . $key . '<' : $key;
+            $key = (isset($conf['debug']['showUntranslated']) && $conf['debug']['showUntranslated'])
+                ? '>' . $key . '<'
+                : $key;
             return $key;
         }
     }
