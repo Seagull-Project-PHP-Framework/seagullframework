@@ -3,7 +3,7 @@
 class User_Block_OnlineUsers
 {
     var $template     = 'OnlineUsers.html';
-    var $templatePath = 'block/blocks';
+    var $templatePath = 'user';
 
     function init(&$output, $block_id)
     {

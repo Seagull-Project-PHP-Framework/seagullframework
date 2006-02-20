@@ -397,9 +397,9 @@ class Block
      * @access  public
      * @return  void
      */
-    function loadBlockParams(&$output, $blockClass, $blockId = false)
+    function loadBlockParams(&$output, $blockPath, $blockId = false)
     {
-        $ini_file = SGL_MOD_DIR . '/' . $blockClass . '.ini';
+        $ini_file = SGL_MOD_DIR . '/' . $blockPath . '.ini';
 
         //  load params from db
         if ($blockId) {

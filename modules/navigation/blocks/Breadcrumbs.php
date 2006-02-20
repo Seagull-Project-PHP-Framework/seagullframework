@@ -45,7 +45,7 @@
 class Navigation_Block_Breadcrumbs
 {
     var $template     = 'Breadcrumbs.html';
-    var $templatePath = 'block/blocks';
+    var $templatePath = 'navigation';
 
     function init(&$output, $block_id, &$aParams)
     {
