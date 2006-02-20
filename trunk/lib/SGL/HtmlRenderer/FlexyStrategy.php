@@ -65,15 +65,17 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
-                                   // the current module's templates dir from the custom theme
-            'templateDir'       => SGL_THEME_DIR . '/' . $data->theme . '/' . $data->moduleName . PATH_SEPARATOR .
 
-                                   // the default module's templates dir from the custom theme
-                                   SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
+            'templateDir'       =>
+                // the current module's templates dir from the custom theme
+                SGL_THEME_DIR . PATH_SEPARATOR . $data->theme . PATH_SEPARATOR . $data->moduleName . PATH_SEPARATOR .
 
-                                   // the current module's templates dir from the default theme
-                                   SGL_THEME_DIR . '/default/' . $data->moduleName . PATH_SEPARATOR .
-                                   SGL_THEME_DIR . '/default/default',
+                // the default module's templates dir from the custom theme
+                SGL_THEME_DIR . PATH_SEPARATOR . $data->theme . PATH_SEPARATOR .'default'          . PATH_SEPARATOR .
+
+                // the default template dir from the default theme
+                SGL_THEME_DIR . PATH_SEPARATOR . 'default'    . PATH_SEPARATOR . $data->moduleName . PATH_SEPARATOR .
+                SGL_THEME_DIR . PATH_SEPARATOR . 'default'    . PATH_SEPARATOR . 'default',
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
             'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $data->theme,
