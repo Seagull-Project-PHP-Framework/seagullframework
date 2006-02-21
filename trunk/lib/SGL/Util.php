@@ -325,10 +325,11 @@ class SGL_Util
      */
     function listDir($path, $list = FILE_LIST_ALL, $sort = FILE_SORT_NONE, $cb = null)
     {
-        $aFiles = File_Util::listDir($path, $list, $sort, $cb);
         $aRet = array();
-        foreach ($aFiles as $oFile) {
-            $aRet[$oFile->name] = $oFile->name;
+        if (is_array($aFiles = File_Util::listDir($path, $list, $sort, $cb))) {
+            foreach ($aFiles as $oFile) {
+                $aRet[$oFile->name] = $oFile->name;
+            }
         }
         return $aRet;
     }
