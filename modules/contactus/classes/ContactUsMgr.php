@@ -129,7 +129,7 @@ class ContactUsMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  build contact type dropdown
-        $output->aContactType = SGL_String::translate('aContactType', false, true);
+        $output->aContactType = SGL_String::translate('aContactType');
 
         //  generate one-time token for additional form security
         $output->token = md5(time());
