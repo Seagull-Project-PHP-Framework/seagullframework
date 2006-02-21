@@ -149,7 +149,7 @@ class UserMgr extends RegisterMgr
         if (!in_array($output->action, $aDisallowedMethods)) {
             $output->states = SGL::loadRegionList('states');
             $output->countries = SGL::loadRegionList('countries');
-            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
+            $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false);
         }
         if (!in_array($output->action, array(
                 'requestPasswordReset', 'resetPassword',

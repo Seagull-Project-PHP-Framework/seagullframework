@@ -244,7 +244,7 @@ class SGL_String
      *
      * @todo get rid of 3rd arg
      */
-    function translate($key, $filter = false, $isArray = false)
+    function translate($key, $filter = false)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -252,10 +252,8 @@ class SGL_String
 
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
-
-            if ($isArray && $conf['translation']['container'] == 'db') {
-                $delimitedTrans = $trans[$key];
-                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $delimitedTrans, $aPieces);
+            if (strstr($trans[$key], '||') && $conf['translation']['container'] == 'db') {
+                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$key], $aPieces);
                 $ret = $aPieces[2];
             } else {
                 $ret = $trans[$key];
@@ -268,7 +266,6 @@ class SGL_String
         } else {
             //  add translation
             if (!empty($key)
-                    && !$isArray
                     && isset($conf['translation']['addMissingTrans'])
                     && $conf['translation']['addMissingTrans']
                     && isset($conf['translation']['container'])

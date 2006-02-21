@@ -119,7 +119,7 @@ class UserPasswordMgr extends PasswordMgr
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions', false, true);
+        $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
     }
 
     function _cmd_edit(&$input, &$output)
