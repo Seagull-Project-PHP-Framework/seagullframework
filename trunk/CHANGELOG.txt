@@ -17,6 +17,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+21-02-06    Module generator refactored and now auto-registers new modules
+            (Gerald Fischer)
 20-02-06    Moved all blocks within their respective modules, those without strong
             ties allocated to 'default' module
 20-02-06    Moved all default templates within modules
