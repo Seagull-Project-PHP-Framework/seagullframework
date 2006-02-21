@@ -62,7 +62,8 @@ class Navigation_Block_Breadcrumbs
         $blockOutput->theme = $output->theme;
 
         //  prepare navigation driver
-        $nav = & new NavBuilder($output);
+        $navDriver = $output->conf['navigation']['driver'];
+        $nav       = & new $navDriver($output);
 
         //  set default params
         $aDefaultParams = array(
@@ -86,8 +87,7 @@ class Navigation_Block_Breadcrumbs
         $nav->setParams($aDefaultParams);
 
         //  call navigation renderer
-        $aNav = $nav->render();
-
+        $aNav = $nav->render(null);
         $blockOutput->breadcrumbs = $aNav[2];
 
         return $this->process($blockOutput);

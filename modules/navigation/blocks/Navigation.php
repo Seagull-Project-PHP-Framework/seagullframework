@@ -56,7 +56,8 @@ class Navigation_Block_Navigation
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  prepare navigation driver
-        $nav = & new NavBuilder($output);
+        $navDriver = $output->conf['navigation']['driver'];
+        $nav       = & new $navDriver($output);
 
         //  set default params
         $aDefaultParams = array(
@@ -78,7 +79,7 @@ class Navigation_Block_Navigation
         $nav->setParams($aDefaultParams);
 
         //  call navigation renderer
-        $aNav = $nav->render();
+        $aNav = $nav->render($aParams['renderer']);
 
         //  return $aNav[1] - return rendered navigation menu
         //  return $aNav[2] - return breadcrumbs
