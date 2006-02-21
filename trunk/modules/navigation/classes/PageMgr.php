@@ -796,13 +796,15 @@ class PageMgr extends SGL_Manager
             }
 
             //  get params from ini
-            $ini_file = SGL_MOD_DIR . '/navigation/classes/addons/' . $output->section['addon'] . '.ini';
-            if (!is_array($aSavedParams = @unserialize(base64_decode($output->section['aParams'])))) {
-                $aSavedParams = array();
-            }
-            $aParams = SGL_Util::loadParams($ini_file, $aSavedParams, $aCurrentParams);
-            foreach ($aParams as $key => $value) {
-                $output->$key = $value;
+            if (!empty($output->section['addon'])) {
+                $ini_file = SGL_MOD_DIR . '/navigation/classes/addons/' . $output->section['addon'] . '.ini';
+                if (!is_array($aSavedParams = @unserialize(base64_decode($output->section['aParams'])))) {
+                    $aSavedParams = array();
+                }
+                $aParams = SGL_Util::loadParams($ini_file, $aSavedParams, $aCurrentParams);
+                foreach ($aParams as $key => $value) {
+                    $output->$key = $value;
+                }
             }
 
             $output->aAllAddons = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR . '/navigation/classes/addons/');
