@@ -239,27 +239,25 @@ class SGL_String
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
-     * @param boolen $array     is string or array
      * @return string
      *
-     * @todo get rid of 3rd arg
      */
     function translate($key, $filter = false)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
-            if (strstr($trans[$key], '||') && $conf['translation']['container'] == 'db') {
+            if (!is_array($trans[$key])
+                    && strstr($trans[$key], '||')
+                    && $conf['translation']['container'] == 'db') {
                 preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$key], $aPieces);
                 $ret = $aPieces[2];
             } else {
                 $ret = $trans[$key];
             }
-
-            if ($filter && function_exists($filter)) {
+            if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
                 $ret = $filter($ret);
             }
             return $ret;
