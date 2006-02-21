@@ -12,16 +12,18 @@ function addFormValue(myElement, form)
 
 function toggleAliasElements(myCheckbox)
 {
-    var myCheckbox = document.getElementById('page[uri_alias_enable]').checked;
-    var aliasList = document.getElementById('urialiases');
-    var aliasValue = document.getElementById('page[uri_alias]');
-
-    if (myCheckbox) {
-        //aliasList.disabled = false;
-        aliasValue.disabled = false;
-    } else {
-        //aliasList.disabled = true;
-        aliasValue.disabled = true;
+    if (document.getElementById('page[uri_alias_enable]')) {
+        var myCheckbox = document.getElementById('page[uri_alias_enable]').checked;
+        var aliasList = document.getElementById('urialiases');
+        var aliasValue = document.getElementById('page[uri_alias]');
+    
+        if (myCheckbox) {
+            //aliasList.disabled = false;
+            aliasValue.disabled = false;
+        } else {
+            //aliasList.disabled = true;
+            aliasValue.disabled = true;
+        }
     }
 }
 </script>
@@ -193,6 +195,16 @@ function toggleAliasElements(myCheckbox)
                     <flexy:include src="admin_editParams.html" />
                 {end:}
             {end:}
+            {if:uriAliasAllowed}
+            <p>
+                <label for="page[uri_alias_enable]">{translate(#Add an alias#)}?</label>
+                <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();">
+            </p>
+            <p>
+                <label for="page[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
+                <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}">
+            </p>
+            {end:}
         </fieldset>
         <fieldset class="options" id="navigationRights">
             <h3>{translate(#Editing options#)}</h3>
@@ -226,16 +238,6 @@ function toggleAliasElements(myCheckbox)
                 </label>
                 <input type="text" name="page[rel]" id="page[rel]" value="{section[rel]}" />
             </p>
-            {if:uriAliasAllowed}
-            <p>
-                <label for="page[uri_alias_enable]">{translate(#Add an alias#)}?</label>
-                <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();">
-            </p>
-            <p>
-                <label for="page[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}">
-            </p>
-            {end:}
         </fieldset>
         {end:}
     </form>
@@ -244,7 +246,7 @@ function toggleAliasElements(myCheckbox)
 <script type="text/javascript" src="{webRoot}/js/cleanUrls.js"></script>
 <script type="text/javascript">
 createAvailOptionsLinks('sectionEdit','h3');
-// FIXME -- Need to call these 2 functions here so they work on target change
 showSelectedOptions('sectionEdit','navigationContent');
 toggleAliasElements();
+refreshMetaTitle('page[title]','page[uri_alias]')
 </script>

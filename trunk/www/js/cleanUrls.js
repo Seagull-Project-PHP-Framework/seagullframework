@@ -27,5 +27,8 @@ function replaceUri(cat)
 }
 function refreshMetaTitle(input, meta)
 {
-    meta.value = input;
+    inputField = replaceUri(document.getElementById(input).value);
+    if (metaField = document.getElementById(meta)) {
+        metaField.value = inputField;
+    }
 }
