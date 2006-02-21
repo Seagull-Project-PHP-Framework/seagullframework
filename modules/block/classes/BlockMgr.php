@@ -267,22 +267,13 @@ class BlockMgr extends SGL_Manager
         $output->mode        = 'Browse';
         $secondarySortClause = $this->conf['BlockMgr']['secondarySortClause'];
 
-        $query = "  SELECT
-                        b.block_id, b.name, b.title, b.title_class,
-                        b.body_class, b.blk_order, b.position, b.is_enabled,
-                        ba.section_id as sections, s.title as section_title,
-                        trans_id
-                    FROM {$this->conf['table']['block']} b
-                    LEFT JOIN {$this->conf['table']['block_assignment']} ba
-                    ON ba.block_id=b.block_id
-                    LEFT JOIN {$this->conf['table']['section']} s
-                    ON s.section_id=ba.section_id
-                    GROUP BY
-                        b.block_id, b.name, b.title, b.title_class, b.body_class,
-                        b.blk_order, b.position, b.is_enabled, sections, section_title,
-                        trans_id
-                    ORDER BY " .
-                    $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
+        $query = "
+            SELECT
+                block_id, name, title, title_class,
+                body_class, blk_order, position, is_enabled
+            FROM {$this->conf['table']['block']}
+            ORDER BY " .
+            $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         if ($this->conf['site']['adminGuiEnabled']) {
@@ -304,7 +295,17 @@ class BlockMgr extends SGL_Manager
         }
 
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-        $this->_rebuildPagedData($aPagedData);
+
+        $query = "
+            SELECT
+                ba.block_id, ba.section_id as sections, s.title as section_title, trans_id
+            FROM {$this->conf['table']['block_assignment']} ba,
+            {$this->conf['table']['section']} s
+            WHERE s.section_id=ba.section_id";
+
+        $aBlockSections = $this->dbh->getAssoc($query, false, array(), DB_FETCHMODE_ASSOC, true);
+
+        $this->_rebuildPagedData($aPagedData, $aBlockSections);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
@@ -348,7 +349,8 @@ class BlockMgr extends SGL_Manager
                 $title = '';
                 if (!empty($sectionList->trans_id) && $this->conf['translation']['container']=='db') {
                     if (!$title = $this->trans->get($sectionList->trans_id,'nav', SGL_Translation::getLangID())) {
-                        $title = $this->trans->get($sectionList->trans_id,'nav', SGL_Translation::getFallbackLangID());
+                         $title = $this->trans->get($sectionList->trans_id,'nav',
+                            SGL_Translation::getFallbackLangID());
                     }
                 }
                 if ($title) {
@@ -396,81 +398,37 @@ class BlockMgr extends SGL_Manager
         return $s;
     }
 
-    function _rebuildPagedData(&$aPagedData)
+    function _rebuildPagedData(&$aPagedData, &$aBlockSections)
     {
         if (count($aPagedData['data'])) {
 
-            //  rebuild $aPagedData['data']
-            foreach ($aPagedData['data'] as $k => $aValue) {
-                $title = '';
-                if (isset($pKey) && isset($pBlock)) {
-                    if ($pBlock == $aValue['block_id']) {
-                        if ($aValue['trans_id'] != 0 && $this->conf['translation']['container'] == 'db') {
-                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
-                            }
-                        }
-                        if ($title) {
-                            $data[$pKey]['sections'][$aValue['sections']] = $title;
-                        } else {
-                            $data[$pKey]['sections'][$aValue['sections']] = $aValue['section_title'];
-                        }
-                    } else {
-                        $data[$k] = $aValue;
-                        if ($aValue['sections']) {
-                            unset ($data[$k]['sections']);
-                            if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)
-                                && $this->conf['translation']['container'] == 'db') {
-                                if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                    $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
-                                }
-                            }
-                           if ($title) {
-                                $data[$k]['sections'][$aValue['sections']] = $title;
-                            } else {
-                                $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
-                            }
-                            $pKey = $k;
-                        } elseif ($aValue['sections'] == 0 ) {
-                            unset($data[$k]['sections']);
-                            $data[$k]['sections'][$aValue['sections']] = 'All Sections';
-                            $pKey = $k;
-                        }
-                    }
-                    $pBlock = $aValue['block_id'];
-                } else {
-                    $data[$k] = $aValue;
-                    if ($aValue['sections']) {
-                        unset ($data[$k]['sections']);
-                        if (isset($aValue['trans_id']) && ($aValue['trans_id'] != 0)
-                            && $this->conf['translation']['container'] == 'db') {
-                            if (!$title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                $title = $this->trans->get($aValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
-                            }
-                        }
-                        if ($title) {
-                            $data[$k]['sections'][$aValue['sections']] = $title;
-                        } else {
-                            $data[$k]['sections'][$aValue['sections']] = $aValue['section_title'];
-                        }
-                        $pKey = $k;
-                    } elseif ($aValue['sections'] == 0 ) {
-                        unset($data[$k]['sections']);
-                        $data[$k]['sections'][$aValue['sections']] = 'All Sections';
-                        $pKey = $k;
-                    }
-                    $pBlock = $aValue['block_id'];
-                    $pKey = $k;
-                }
-            }
-            unset($aPagedData['data']);
+            $data = array();
 
-            //  reindex
-            $aReindexedData = array();
-            foreach ($data as $kk => $vv) {
-                $aReindexedData[$vv['block_id']] = $vv;
+            //  rebuild $aPagedData['data']
+            foreach ($aPagedData['data'] as $aValue) {
+                $title = '';
+                foreach ($aBlockSections[$aValue['block_id']] as $aaValue) {
+                    if ($aaValue['sections']) {
+                        if (isset($aaValue['trans_id']) && $aaValue['trans_id']
+                            && $this->conf['translation']['container'] == 'db') {
+                            if (!$title = $this->trans->get($aaValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
+                                 $title = $this->trans->get($aaValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                            }
+                        }
+                        if ($title) {
+                            $aValue['sections'][$aaValue['sections']] = $title;
+                        } else {
+                            $aValue['sections'][$aaValue['sections']] = $aaValue['section_title'];
+                        }
+                    } elseif (!$aaValue['sections']) {
+                        unset($aValue['sections']);
+                        $aValue['sections'][$aaValue['sections']] = 'All Sections'; // need translation ?
+                        break;
+                    }
+                }
+                $data[$aValue['block_id']] = $aValue;
             }
-            $aPagedData['data'] = $aReindexedData;
+            $aPagedData['data'] = $data;
         }
     }
 
