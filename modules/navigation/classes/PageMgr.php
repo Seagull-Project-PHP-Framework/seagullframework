@@ -287,7 +287,7 @@ class PageMgr extends SGL_Manager
             $input->section['resource_uri'] = substr($input->section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']);
+        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
 
         //  add translations
         if ($this->conf['translation']['container'] == 'db') {
@@ -704,7 +704,8 @@ class PageMgr extends SGL_Manager
         }
         $output->uriExternalSelected = '';
 
-        if ($this->conf['translation']['container'] == 'db') {
+        if ($this->conf['translation']['container'] == 'db'
+                && !empty($output->section['trans_id'])) {
             $output->availableLangs = $this->trans->getLangs();
 
             $navLang = (isset($output->navLang) && !empty($output->navLang))
