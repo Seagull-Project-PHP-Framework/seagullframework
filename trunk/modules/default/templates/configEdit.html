@@ -385,6 +385,20 @@
         </td>
     </tr>
     <tr>
+        <td class="fieldName">{translate(#Navigation driver#)}</td>
+        <td class="fieldValue">
+            <select name="conf[navigation][driver]">
+                {generateSelect(aNavDrivers,conf[navigation][driver]):h}
+            </select>
+        </td>
+        <td>
+            <span class="tipOwner">
+                <img src="{webRoot}/themes/{theme}/images/info.gif" alt="info" />
+                <span class="tipText">{translate(#Use this option to choose from various menu types - currently only 1 provided#)}</span>
+            </span>
+        </td>
+    </tr>
+    <tr>
         <td class="fieldName">{translate(#Navigation Html renderer#)}</td>
         <td class="fieldValue">
             <select name="conf[navigation][renderer]">

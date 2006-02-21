@@ -139,13 +139,23 @@ class NavStyleMgr extends SGL_Manager
                     "staticId|{$output->staticId}||rid|$rid"). '\'">' . $role;
         }
         //  build html unordered list of sections
-        require_once SGL_MOD_DIR . '/navigation/classes/NavBuilder.php';
+        $navDriver  = $this->conf['navigation']['driver'];
+        $navDrvFile = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
+        if (is_file($navDrvFile)) {
+            require_once $navDrvFile;
+        } else {
+            SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
+        }
+        if (!class_exists($navDriver)) {
+            SGL::raiseError('problem with navigation driver object', SGL_ERROR_NOCLASS);
+        }
+        $nav = & new $navDriver($output);
 
-        $nav = & new NavBuilder($output);
         $nav->setStaticId($output->staticId);
         $nav->setRid($input->rid);
         $nav->setDisableLinks(true);
-        $aRes = $nav->render();
+        $navRenderer = $this->conf['navigation']['renderer'];
+        $aRes = $nav->render($navRenderer);
         list($sectionId, $html) = $aRes;
         $output->navListPreview = $html;
         if (!$output->navListPreview) {

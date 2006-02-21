@@ -212,6 +212,14 @@
                 {generateRadioPair(#conf[navigation][enabled]#,conf[navigation][enabled]):h}
             </p>
             <p>
+                <label class="tipOwner" for="conf[navigation][driver]">{translate(#Navigation driver#)}
+                <span class="tipText">{translate(#Use this option to choose from various menu types - currently only 1 provided#)}</span>
+                </label>
+                <select name="conf[navigation][driver]" id="conf[navigation][driver]">
+                    {generateSelect(aNavDrivers,conf[navigation][driver]):h}
+                </select>
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[navigation][renderer]">{translate(#Navigation Html renderer#)}
                 <span class="tipText">{translate(#Use this option to choose from various menu types - currently only 1 provided#)}</span>
                 </label>

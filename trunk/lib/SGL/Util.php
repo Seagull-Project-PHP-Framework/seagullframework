@@ -252,29 +252,7 @@ class SGL_Util
         }
     }
 
-    function getAllNavRenderers()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        require_once 'File/Util.php';
-        $navDir = SGL_MOD_DIR . '/navigation/classes';
-
-        //  match files with *Nav.php format
-        $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE,
-                create_function('$a', 'return preg_match("/.*Nav\.php$/", $a);'));
-
-        //  parse out filename w/o extension and .
-        array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));
-
-        //  propagate changes to keys as well
-        $aRenderers = array();
-        foreach ($ret as $k => $v) {
-            $aRenderers[$v] = $v;
-        }
-        return $aRenderers;
-    }
-
-    function getAllClassesFromFolder($folder = '')
+    function getAllClassesFromFolder($folder = '', $filter = '.*')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -287,8 +265,9 @@ class SGL_Util
         //  parse out filename w/o extension and .
         $aClasses = array();
         foreach ($ret as $k => $v) {
-            preg_match("/^(.*)\.php$/", $v, $matches);
-            $aClasses[$matches[1]] = $matches[1];
+            if (preg_match("/^($filter)\.php$/", $v, $matches)) {
+                $aClasses[$matches[1]] = $matches[1];
+            }
         }
         return $aClasses;
     }
