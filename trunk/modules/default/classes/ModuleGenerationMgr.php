@@ -132,6 +132,130 @@ class ModuleGenerationMgr extends SGL_Manager
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
 
+        list($methods, $aActions) = $this->_buildMethods($input);
+        $output->methods = $methods;
+        $output->aActionMapping = $aActions;
+
+        $mgrTemplate = $this->_buildManager($output);
+
+        //  setup directories
+        $aDirectories['module']     = SGL_MOD_DIR . '/' . $output->moduleName;
+        $aDirectories['classes']    = $aDirectories['module'] . '/classes';
+        $aDirectories['lang']       = $aDirectories['module'] . '/lang';
+        $aDirectories['templates']  = $aDirectories['module'] . '/templates';
+
+        $ok = $this->_createDirectories($aDirectories);
+
+        //  write new manager to appropriate module
+        $targetMgrName = $aDirectories['classes'] . '/' . $output->managerName . 'Mgr.php';
+        $success = file_put_contents($targetMgrName, $mgrTemplate);
+
+        //  attempt to get apache user to set 'other' bit as writable, so
+        //  you can edit this file
+        @chmod($targetMgrName, 0666);
+
+        if (isset($input->createModule->createIniFile)){
+            $ok = $this->_createModuleConfig($aDirectories, $mgrLongName);
+        }
+        //  create language files
+        if (isset($input->createModule->createLangFiles)){
+            $ok = $this->_createLangFiles($aDirectories);
+        }
+        //  create templates
+        if (isset($input->createModule->createTemplates)){
+            $ok = $this->_createTemplates($aDirectories, $aTemplates);
+        }
+
+        $shortTags = ini_get('short_open_tag');
+        $append = empty($shortTags)
+            ? ' However, you currently need to set "short_open_tag" to On for the templates to generate correctly.'
+            : '';
+
+        if (!$success) {
+            SGL::raiseError('There was a problem creating the files',
+                SGL_ERROR_FILEUNWRITABLE);
+        } else {
+            SGL::raiseMsg('Module files successfully created' . $append, false, SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _createTemplates($aDirectories, $aTemplates)
+    {
+        foreach ($aTemplates as $template) {
+            $fileName = $aDirectories['templates'].'/'.$templatePrefix.$template;
+            $fileTemplate = 'Demo Template: '.$templatePrefix.$template;
+            $success = file_put_contents($fileName, $fileTemplate);
+            @chmod($fileName, 0666);
+        }
+    }
+
+    function _createLangFiles($aDirectories)
+    {
+        $fileTemplate = "<?php\n\$words=array();\n?>";
+        foreach ($GLOBALS['_SGL']['LANGUAGE'] as $language) {
+            $fileName = $aDirectories['module'] . '/lang/'.$language[1].'.php';
+            $success = file_put_contents($fileName, $fileTemplate);
+            @chmod($fileName, 0666);
+        }
+    }
+
+
+    function _createModuleConfig($aDirectories, $mgrLongName)
+    {
+        //  create conf.ini
+        $confIniName = $aDirectories['module'] . '/conf.ini';
+        $confTemplate = '['.$mgrLongName.']'."\n";
+        $confTemplate .= 'requiresAuth    = false';
+        $success = file_put_contents($confIniName, $confTemplate);
+        @chmod($confIniName, 0666);
+        return $success;
+    }
+
+    function _createDirectories($aDirectories)
+    {
+        if (is_writable(SGL_MOD_DIR)) {
+            require_once 'System.php';
+
+            foreach ($aDirectories as $directory){
+                //  pass path as array to avoid widows space parsing prob
+                $success = System::mkDir(array('-p', $directory));
+                //  attempt to get apache user to set 'other' bit as writable, so
+                //  you can edit this file
+                @chmod($directory, 0777);
+            }
+        } else {
+            SGL::raiseError('The modules directory does not appear to be writable, please give the
+                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+            return false;
+        }
+    }
+
+    function _buildManager($output)
+    {
+                //  initialise template engine
+        require_once 'HTML/Template/Flexy.php';
+        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        $options = array(
+            'templateDir'       => SGL_MOD_DIR . '/default/classes/',
+            'compileDir'        => SGL_TMP_DIR,
+            'forceCompile'      => 1,
+            'filters'           => array('SimpleTags','Mail'),
+            'compiler'          => 'Regex',
+            'flexyIgnore'       => 0,
+            'globals'           => true,
+            'globalfunctions'   => true,
+        );
+
+        $templ = & new HTML_Template_Flexy();
+        $templ->compile('ManagerTemplate.html');
+        $data = $templ->bufferedOutputObject($output, array());
+        $data = preg_replace("/\&amp;/s", '&', $data);
+        $mgrTemplate = "<?php\n" . $data . "\n?>";
+        return $mgrTemplate;
+    }
+
+    function _buildMethods($input)
+    {
         //  array: methodName => array (aActionsmapping string, templateName)
         $aPossibleMethods = array(
             'add'   => array("'add'       => array('add'),",'Add.html'),
@@ -141,7 +265,7 @@ class ModuleGenerationMgr extends SGL_Manager
             'list'  => array("'list'      => array('list'),",'List.html'),
             'delete'=> array("'delete'    => array('delete', 'redirectToDefault'),"),
         );
-        foreach ($aPossibleMethods as $method=>$mapping) {
+        foreach ($aPossibleMethods as $method => $mapping) {
 
             //  if checked add to aMethods array
             if (isset($input->createModule->$method)) {
@@ -165,98 +289,7 @@ EOF;
                 }
             }
         }
-
-        $output->methods = $methods;
-        $output->aActionMapping = $aActions;
-
-        //  initialise template engine
-        require_once 'HTML/Template/Flexy.php';
-        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
-        $options = array(
-            'templateDir'       => SGL_MOD_DIR . '/default/classes/',
-            'compileDir'        => SGL_TMP_DIR,
-            'forceCompile'      => 1,
-            'filters'           => array('SimpleTags','Mail'),
-            'compiler'          => 'Regex',
-            'flexyIgnore'       => 0,
-            'globals'           => true,
-            'globalfunctions'   => true,
-        );
-
-        $templ = & new HTML_Template_Flexy();
-        $templ->compile('ManagerTemplate.html');
-        $data = $templ->bufferedOutputObject($output, array());
-        $data = preg_replace("/\&amp;/s", '&', $data);
-        $mgrTemplate = "<?php\n" . $data . "\n?>";
-
-        //  setup directories
-        $aDirectories['module']     = SGL_MOD_DIR . '/' . $output->moduleName;
-        $aDirectories['classes']    = $aDirectories['module'] . '/classes';
-        $aDirectories['lang']       = $aDirectories['module'] . '/lang';
-        $aDirectories['templates']  = $aDirectories['module'] . '/templates';
-
-        if (is_writable(SGL_MOD_DIR)) {
-            require_once 'System.php';
-
-            foreach ($aDirectories as $directory){
-                //  pass path as array to avoid widows space parsing prob
-                $success = System::mkDir(array('-p', $directory));
-                //  attempt to get apache user to set 'other' bit as writable, so
-                //  you can edit this file
-                @chmod($directory, 0777);
-            }
-        } else {
-            SGL::raiseError('The modules directory does not appear to be writable, please give the
-                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
-            return false;
-        }
-        //  write new manager to appropriate module
-        $targetMgrName = $aDirectories['classes'] . '/' . $output->managerName . 'Mgr.php';
-        $success = file_put_contents($targetMgrName, $mgrTemplate);
-
-        //  attempt to get apache user to set 'other' bit as writable, so
-        //  you can edit this file
-        @chmod($targetMgrName, 0666);
-        if (isset($input->createModule->createIniFile)){
-
-            //  create conf.ini
-            $confIniName = $aDirectories['module'] . '/conf.ini';
-            $confTemplate = '['.$mgrLongName.']'."\n";
-            $confTemplate .= 'requiresAuth    = false';
-            $success = file_put_contents($confIniName, $confTemplate);
-            @chmod($confIniName, 0666);
-        }
-        //  create language files
-        if (isset($input->createModule->createLangFiles)){
-            $fileTemplate = "<?php\n\$words=array();\n?>";
-            foreach ($GLOBALS['_SGL']['LANGUAGE'] as $language) {
-                $fileName = $aDirectories['module'] . '/lang/'.$language[1].'.php';
-                $success = file_put_contents($fileName, $fileTemplate);
-                @chmod($fileName, 0666);
-            }
-        }
-        //  create templates
-        if (isset($input->createModule->createTemplates)){
-            foreach($aTemplates as $template) {
-                $fileName = $aDirectories['templates'].'/'.$templatePrefix.$template;
-                $fileTemplate = 'Demo Template: '.$templatePrefix.$template;
-                $success = file_put_contents($fileName, $fileTemplate);
-                @chmod($fileName, 0666);
-            }
-        }
-
-        $shortTags = ini_get('short_open_tag');
-        $append = empty($shortTags)
-            ? ' However, you currently need to set "short_open_tag" to On for the templates to generate correctly.'
-            : '';
-
-
-        if (!$success) {
-            SGL::raiseError('There was a problem creating the files',
-                SGL_ERROR_FILEUNWRITABLE);
-        } else {
-            SGL::raiseMsg('Module files successfully created' . $append, false, SGL_MESSAGE_INFO);
-        }
+        return array($methods, $aActions);
     }
 
     function _cmd_list(&$input, &$output)
