@@ -49,22 +49,22 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
                 // records stored in section table in following format:
                 // uriAlias:10:default/bug
                 // parse out SEF url from 2nd semi-colon onwards
-                $ok = preg_match('/(uriAlias:)([0-9]+:)(.*)/', $key, $aMatches);
-                $aliasUri = $aMatches[3];
+                if (preg_match('/^(uriAlias:)([0-9]+:)(.*)$/', $key, $aMatches)) {
+                    $aliasUri = $aMatches[3];
 
-                // check for uriExternal
-                if (preg_match('/^uriExternal:(.*)/', $aliasUri, $aUri)) {
-                    header('Location: ' . $aUri[1]);
-                    exit;
+                    // check for uriExternal
+                    if (preg_match('/^uriExternal:(.*)$/', $aliasUri, $aUri)) {
+                        header('Location: ' . $aUri[1]);
+                        exit;
+                    }
+
+                    $tmp = new stdClass();
+                    $tmp->url = $aliasUri;
+                    $ret = parent::parseQueryString($tmp, $conf);
                 }
-
-                $tmp = new stdClass();
-                $tmp->url = $aliasUri;
-                $ret = parent::parseQueryString($tmp, $conf);
             }
         }
         return $ret;
     }
 }
-
 ?>
