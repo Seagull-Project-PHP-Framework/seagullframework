@@ -394,6 +394,7 @@ class MaintenanceMgr extends SGL_Manager
         //$aUpdatedTrans = array_merge($input->aTranslation,$aTargetLang);
 
         //old version:
+        $input->aTranslation = SGL_Array::removeBlanks($input->aTranslation);
         $aUpdatedTrans = array_merge($input->aTranslation,$input->aTargetLang);
 
         //debugging only
