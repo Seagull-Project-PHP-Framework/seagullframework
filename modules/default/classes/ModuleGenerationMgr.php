@@ -56,9 +56,7 @@ class ModuleGenerationMgr extends SGL_Manager
 
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'moduleGenerator.html';
-
         $this->da = &DA_Default::singleton();
-
         $this->_aActionsMapping =  array(
             'createModule' => array('createModule', 'redirectToDefault'),
             'list'         => array('list'),
