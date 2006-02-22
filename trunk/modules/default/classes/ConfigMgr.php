@@ -220,6 +220,9 @@ class ConfigMgr extends SGL_Manager
         if ($this->conf['site']['adminGuiEnabled']) {
             $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
         }
+        
+        //  disable translation options depending on the selected translation container.
+        $output->addOnLoadEvent("toggleTransElements()");
     }
 
     function _cmd_edit(&$input, &$output)
