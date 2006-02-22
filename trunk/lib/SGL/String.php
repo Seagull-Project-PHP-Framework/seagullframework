@@ -253,7 +253,7 @@ class SGL_String
                     && strstr($trans[$key], '||')
                     && $conf['translation']['container'] == 'db') {
                 preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$key], $aPieces);
-                $ret = $aPieces[2];
+                $ret = array_combine($aPieces[1], $aPieces[2]);
             } else {
                 $ret = $trans[$key];
             }
@@ -552,6 +552,21 @@ class SGL_String
     function stripIniFileIllegalChars($string)
     {
         return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
+    }
+}
+
+if (!function_exists('array_combine')) {
+    function array_combine($a, $b)
+    {
+        $c = array();
+        if (is_array($a) && is_array($b))
+            while (list(, $va) = each($a))
+                if (list(, $vb) = each($b)) {
+                    $c[$va] = $vb;
+                } else {
+                    break 1;
+                }
+        return $c;
     }
 }
 ?>

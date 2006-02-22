@@ -363,17 +363,12 @@ class SGL_Date
         if (empty($selected) && $selected != null) {
             $selected = date('m',time());
         }
-        for ($i = 1; $i <= 12; $i++) {
-            if ($i < 10) {
-                $mval = '0' . $i;
-            } else {
-                $mval = $i;
+        foreach ($aMonths as $k => $v) {
+            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k + 1) . '" ';
+            if ($k + 1 == $selected) {
+                $monthOptions .= 'selected="selected"';
             }
-            $monthOptions .= "\n<option value=\"" . $mval . '" ';
-            if ($i == $selected) {
-                $monthOptions .= 'selected="SELECTED"';
-            }
-            $monthOptions .= '>' . $aMonths[$mval + 12] . '</option>';
+            $monthOptions .= '>' . $v . '</option>';
         }
         return $monthOptions;
     }
@@ -398,7 +393,7 @@ class SGL_Date
             }
             $day_options .= "\n<option value=\"" . $dval . '" ';
             if ($i == $selected) {
-                $day_options .= 'selected="SELECTED"';
+                $day_options .= 'selected="selected"';
             }
             $day_options .= '>' . $dval . '</option>';
         }
@@ -491,7 +486,7 @@ class SGL_Date
             }
             $minute_options .= "\n<option value=\"" . $mval . '" ';
             if ($selected == $i && $selected!="" ) {
-                $minute_options .= 'selected="SELECTED"';
+                $minute_options .= 'selected="selected"';
             }
             $minute_options .= '>' . $mval . '</option>';
         }
