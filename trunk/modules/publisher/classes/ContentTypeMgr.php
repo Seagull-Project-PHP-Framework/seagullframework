@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: ContentTypeMgr.php,v 1.2 2005/02/26 21:02:21 demian Exp $
 
+require_once SGL_MOD_DIR  . '/publisher/classes/DA_Publisher.php';
+
 /**
  * Content Type Manager
  *
@@ -69,6 +71,7 @@ class ContentTypeMgr extends SGL_Manager
 
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
+        $this->da = &DA_Publisher::singleton();        
 
         $this->fieldTypes   = array('0' => 'single line', '1' => 'textarea', '2' => 'HTML textarea');
 
@@ -132,6 +135,7 @@ class ContentTypeMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $output->template = 'contentTypeAdd.html';
         for ($x = 1; $x <= $input->type['fields']; $x++) {
             $output->totalFields[$x] = $x;
@@ -310,8 +314,15 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "SELECT it.item_type_id, it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
+        $query = "SELECT 
+        			it.item_type_id, 
+        			it.item_type_name, 
+        			itm.item_type_mapping_id, 
+        			itm.field_name, 
+        			itm.field_type
+                  FROM 
+                  	{$this->conf['table']['item_type']} it, 
+                  	{$this->conf['table']['item_type_mapping']} itm
                   WHERE itm.item_type_id = it.item_type_id";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -347,9 +358,7 @@ class ContentTypeMgr extends SGL_Manager
                     $data[$item_type_id]['fields'][$item_type_mapping_id] = array($field_name => $this->fieldTypes[$value]);
                     break;
                 }
-
             }
-
         }
         //  unset data array
         $output->aPagedData['data'] = array();
