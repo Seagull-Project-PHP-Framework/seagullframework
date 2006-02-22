@@ -282,9 +282,9 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if ($this->conf['DocumentMgr']['zipDownloads']) {
-            $this->_downloadZipped($input, $output);
+            $this->_cmd_downloadZipped($input, $output);
         } else {
-            $this->_download($input, $output);
+            $this->_cmd_download($input, $output);
         }
     }
 
