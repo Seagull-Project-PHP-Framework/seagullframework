@@ -314,26 +314,10 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "SELECT 
-        			it.item_type_id, 
-        			it.item_type_name, 
-        			itm.item_type_mapping_id, 
-        			itm.field_name, 
-        			itm.field_type
-                  FROM 
-                  	{$this->conf['table']['item_type']} it, 
-                  	{$this->conf['table']['item_type_mapping']} itm
-                  WHERE itm.item_type_id = it.item_type_id";
-
-        $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-        );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-        $output->aPagedData = $aPagedData;
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
+        $aPagedData = $this->da->getItemsWithAttributes($paginated = true);
+        
+        $data = array();
+        foreach ($aPagedData['data'] as $aValues) {
             foreach ($aValues as $key => $value) {
                 switch ($key) {
 
@@ -361,14 +345,16 @@ class ContentTypeMgr extends SGL_Manager
             }
         }
         //  unset data array
-        $output->aPagedData['data'] = array();
+        unset($aPagedData['data']);
 
         //  set data array
-        $output->aPagedData['data'] = $data;
+        $aPagedData['data'] = $data;
+        
+        $output->aPagedData = $aPagedData;        
 
-        //  total number of fields allowed
+        //  build total fields combobox
         $totalFields = $this->conf['ContentTypeMgr']['totalFields'];
-        for($x = 1; $x <= $totalFields; $x++) {
+        for ($x = 1; $x <= $totalFields; $x++) {
             $output->totalFields[$x] = $x;
         }
     }

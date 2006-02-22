@@ -96,12 +96,31 @@ class DA_Publisher
         return $instance;
     }
 
-    function getSectionById($sectionId)
+    function getItemsWithAttributes($paginated = false)
     {
-        $query = "
-            SELECT  *
-            FROM    {$this->conf['table']['section']}
-            WHERE   section_id = " . $sectionId;
-        return $this->dbh->getRow($query);
+        $query = "SELECT 
+        			it.item_type_id, 
+        			it.item_type_name, 
+        			itm.item_type_mapping_id, 
+        			itm.field_name, 
+        			itm.field_type
+                  FROM 
+                  	{$this->conf['table']['item_type']} it, 
+                  	{$this->conf['table']['item_type_mapping']} itm
+                  WHERE itm.item_type_id = it.item_type_id";
+        
+        if ($paginated) {
+	        $limit = $_SESSION['aPrefs']['resPerPage'];
+	        $pagerOptions = array(
+	            'mode'     => 'Sliding',
+	            'delta'    => 3,
+	            'perPage'  => $limit,
+	        );        	
+	        $ret = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+	        
+        } else {
+        	$ret = $this->dbh->getAll($query, $paginated = false);
+        }
+        return $ret;
     }
 }
