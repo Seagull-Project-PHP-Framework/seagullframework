@@ -174,6 +174,9 @@ class SGL_MainProcess extends SGL_ProcessRequest
         $viewType = (SGL::runningFromCLI()) ? 'SGL_CliView' : 'SGL_HtmlView';
         $view = new $viewType($output, new $rendererClass());
         echo $view->render();
+        if ($conf['site']['outputBuffering']) {
+            ob_end_flush();
+        }
     }
 }
 
