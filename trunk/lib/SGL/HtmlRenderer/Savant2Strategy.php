@@ -116,9 +116,7 @@ class SGL_HtmlRenderer_Savant2Strategy extends SGL_OutputRendererStrategy
 
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        if ($conf['site']['outputBuffering']) {
-            ob_end_flush();
-        }
+
         return $data;
     }
 }
