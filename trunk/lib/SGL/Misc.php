@@ -525,8 +525,13 @@ class SGL_Date
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $html = '';
-        $html .= "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
-        $html .= "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
+        $month_html = "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
+        $day_html = "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
+        if ($_SESSION['aPrefs']['dateFormat'] == 'US') {
+            $html .= $month_html . $day_html;
+        } else {
+            $html .= $day_html . $month_html;
+        }
         $html .= "\n<select name='" . $sFormName . "[year]' id='".$sFormName."_year'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years) . '</select>';
         if ($bShowTime) {
             $html .= '&nbsp;&nbsp; ';
