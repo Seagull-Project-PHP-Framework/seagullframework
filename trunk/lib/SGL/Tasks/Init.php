@@ -510,9 +510,9 @@ class SGL_View
      * @param SGL_OutputRendererStrategy $rendererStrategy
      * @return SGL_View
      */
-    function SGL_View($data, $rendererStrategy)
+    function SGL_View(&$data, $rendererStrategy)
     {
-    	$this->data = $data;
+    	$this->data = &$data;
     	$this->rendererStrategy = $rendererStrategy;
     }
 
