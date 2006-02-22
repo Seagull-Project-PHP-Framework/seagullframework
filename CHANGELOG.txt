@@ -17,6 +17,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+21-02-06    Improvements to html controls (Olivier Burgard)
 21-02-06    Module generator refactored and now auto-registers new modules
             (Gerald Fischer)
 20-02-06    Moved all blocks within their respective modules, those without strong

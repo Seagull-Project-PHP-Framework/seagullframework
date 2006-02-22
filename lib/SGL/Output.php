@@ -89,23 +89,30 @@ class SGL_Output
      * @param   array   $array      hash of select values
      * @param   mixed   $selected   default selected element, array for multiple elements
      * @param   boolean $multiple   true if multiple
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  select options
      */
-    function generateSelect($aValues, $selected = null, $multiple = false)
+    function generateSelect($aValues, $selected = null, $multiple = false, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (!is_array($aValues)) {
+        if (!is_array($aValues) || (isset($options) && !is_array($options))) {
             SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         if (is_numeric($selected)) {
             $selected = (int) $selected;
         }
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($options as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
         $r = '';
         if ($multiple && is_array($selected)) {
             foreach ($aValues as $k => $v) {
                 $isSelected = in_array($k, $selected) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"" . $isSelected . ">$v</option>";
+                $r .= "\n<option value=\"$k\"" . $isSelected . $optionsString . ">$v</option>";
             }
         } else {
             //  ensure $selected is not the default null arg, allowing
@@ -113,7 +120,7 @@ class SGL_Output
             $r = '';
             foreach ($aValues as $k => $v) {
                 $isSelected = ($k === $selected && !is_null($selected)) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"". $isSelected .">$v</option>";
+                $r .= "\n<option value=\"$k\"". $isSelected . $optionsString . ">$v</option>";
             }
         }
         return $r;
@@ -126,21 +133,28 @@ class SGL_Output
      * @param   array   $hElements  hash of checkbox values
      * @param   array   $aChecked   array of checked elements
      * @param   string  $groupName  usually an array name that will contain all elements
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html        list of checkboxes
      */
-    function generateCheckboxList($hElements, $aChecked, $groupName)
+    function generateCheckboxList($hElements, $aChecked, $groupName, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (!is_array($hElements) || !is_array($aChecked)) {
-            SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
-                SGL_ERROR_INVALIDARGS);
+        if (!is_array($hElements) || !is_array($aChecked) || (isset($options) && !is_array($options))) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
+        }
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
         }
         $html = '';
         foreach ($hElements as $k => $v) {
             $isChecked = (in_array($k, $aChecked)) ? ' checked' : '';
             $html .= "<input class='noBorder' type='checkbox' name='$groupName' " .
-                     "id='$groupName-$k' value='$k' $isChecked><label for='$groupName-$k'>$v</label><br />\n";
+                     "id='$groupName-$k' value='$k'" . $optionsString . " $isChecked><label for='$groupName-$k'>$v</label><br />\n";
         }
         return $html;
     }
@@ -152,18 +166,26 @@ class SGL_Output
      * @param   string   $name       element name
      * @param   string   $value      element value
      * @param   boolean  $checked    is checked
+     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html         checkbox tag w/label
      */
-    function generateCheckbox($name, $value, $checked, $label=true)
+    function generateCheckbox($name, $value, $checked, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $isChecked = $checked ? ' checked' : '';
-        $html = "<input class='noBorder' type='checkbox' name='$name' " .
-            "id='$name' value='$value' $isChecked>";
-        if ($label) {
-            $html .= "<label for='$name'>$value</label><br />";
+        if (isset($options) && !is_array($options)) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
         }
-        $html .= "\n";
+        $isChecked = $checked ? ' checked' : '';
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
+        $html = "<input class='noBorder' type='checkbox' name='$name' " .
+            "id= '$name' value='$value'" . $optionsString . " $isChecked><label for='$name'>$value</label><br />\n";
         return $html;
     }
 
@@ -173,11 +195,17 @@ class SGL_Output
      * @access  public
      * @param   string   $radioName  name of radio element
      * @param   boolean  $checked    is checked
+     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string   html        yes/no radio pair
      */
-    function generateRadioPair($radioName, $checked)
+    function generateRadioPair($radioName, $checked, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (isset($options) && !is_array($options)) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
+        }
         $radioString = '';
         if ($checked) {
             $yesChecked = ' checked';
@@ -186,8 +214,14 @@ class SGL_Output
             $yesChecked = '';
             $noChecked = ' checked';
         }
-        $radioString .= "<input type='radio' name='$radioName' id='$radioName' value='0' $noChecked>".SGL_String::translate('no')."\n";
-        $radioString .= "<input type='radio' name='$radioName' id='$radioName' value='1' $yesChecked>".SGL_String::translate('yes')."\n";
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
+        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked>".SGL_String::translate('no')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked>".SGL_String::translate('yes')."\n";
         return $radioString;
     }
 
@@ -197,59 +231,65 @@ class SGL_Output
      * @access  public
      * @param   array   $elements   array of  values or radio button
      * @param   array   $selected   array selected key ... single array with only zero index , i am need in array
- 	 * @param   string  $groupname  usually an array name that will contain all elements
-	 * @param   integer $newline    how many columns to display for this radio group
-     * @param 	boolean $inTable  	true for adding table formatting
+     * @param   string  $groupname  usually an array name that will contain all elements
+     * @param   integer $newline    how many columns to display for this radio group
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param 	boolean $inTable    true for adding table formatting
      * @return  string  $html       a list of radio buttons
      */
-    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true)
+    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true, $options = null)
     {
-		SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (!is_array($elements) ) {
-            SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
-                SGL_ERROR_INVALIDARGS);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (!is_array($elements) || (isset($options) && !is_array($options))) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
         }
-		$elementcount = count($elements);
+        $elementcount = count($elements);
         $html = '';
-		$i = 0;
-		if ($inTable == false){
-			foreach ($elements as $k => $v) {
-				$i = $i + 1;
-				$html .= "<input name='".$groupname."' type='radio' value='".$k."' ";
-				if ($selected[0] == $k ){
-					$html .= " checked";
-				}
-				$html .= " />$v ";
-				$modvalue = $i % $newline;
-				if ($modvalue == 0 ) {
-    				$html .= "<br/>\n";
-				}
+        $i = 0;
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
             }
-		} else {
-			$html ="<table>";
-			$html .="<tr>";
-		    foreach ($elements as $k => $v) {
-    			$i = $i + 1;
-                $html .= "<td nowrap='nowrap'><input name='".$groupname."' type='radio' value='".$k."' ";
-    			if ($selected[0] == $k ) {
+        }
+        if ($inTable == false){
+            foreach ($elements as $k => $v) {
+                $i = $i + 1;
+                $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
+                if ($selected[0] == $k ){
+                    $html .= " checked";
+                }
+                $html .= " />$v ";
+                $modvalue = $i % $newline;
+                if ($modvalue == 0 ) {
+                    $html .= "<br/>\n";
+                }
+            }
+        } else {
+            $html ="<table>";
+            $html .="<tr>";
+            foreach ($elements as $k => $v) {
+                $i = $i + 1;
+                $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
+                if ($selected[0] == $k ) {
                     $html .= " checked ";
                 }
-    			$html .= " />$v </td>\n";
-    			$modvalue = $i % $newline;
-    			if ( $modvalue == 0 ) {
-    				if ($i < $elementcount){
-    				    $html .="</tr>\n<tr>";
-    				} else {
-    				    $html .="</tr>\n";
-    				}
-    			}
-			}
-			$html .="</table>";
-		}
+                $html .= " />$v </td>\n";
+                $modvalue = $i % $newline;
+                if ( $modvalue == 0 ) {
+                    if ($i < $elementcount){
+                        $html .="</tr>\n<tr>";
+                    } else {
+                        $html .="</tr>\n";
+                    }
+                }
+            }
+            $html .="</table>";
+        }
         return $html;
-	}
+    }
 
     /**
      * Wrapper for SGL_String::formatBytes(),
