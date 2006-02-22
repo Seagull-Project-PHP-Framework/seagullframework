@@ -50,14 +50,6 @@
 
 class SimpleRenderer
 {
-    /**
-     * Holds current rendered level.
-     *
-     * @access  private
-     * @var     integer
-     */
-    var $_currentRenderedLevel = 0;
-
     function SimpleRenderer(&$navDriver)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -68,16 +60,16 @@ class SimpleRenderer
     /**
      * Returns HTML unordered list with subsections nested; can be used with CSS for navigation
      * tabs. Adds attribute class="current" to <li> tags.
-     * Returns false if passed an empty array (if getTabsByRid() found no sections.)
      *
      * @access  public
      * @param   array $sectionNodes   array of DataObjects_Section objects
+     * @param   int $currentRenderedLevel
      * @return  string | false
      */
-    function toHtml(&$aSectionNodes)
+    function toHtml(&$aSectionNodes, $currentRenderedLevel = 0)
     {
         $listItems = '';
-        $this->_currentRenderedLevel++;
+        $currentRenderedLevel++;
 
         foreach ($aSectionNodes as $section) {
             if ($section->is_enabled) {
@@ -86,9 +78,6 @@ class SimpleRenderer
                     $liAtts = ' class="current"';
                 }
                 if (isset($section->uriExternal) && empty($section->uriAlias)) {
-                    if (isset($section->uriAlias)) {
-                        $section->resource_uri = $section->uriAlias;
-                    }
                     $url = $section->resource_uri;
                 } elseif (isset($section->uriEmpty)) {
                     $url = 'javascript:void(0)';
@@ -106,13 +95,13 @@ class SimpleRenderer
 
                     // check levelsToRender stuff
                     && (!$this->driver->_levelsToRender
-                        || $this->driver->_levelsToRender > $this->_currentRenderedLevel)
+                        || $this->driver->_levelsToRender > $currentRenderedLevel)
 
                     // check collapsed stuff
                     && (!$this->driver->_collapsed
                         || array_key_exists($section->section_id, $this->driver->_aAllCurrentPages)))
                 {
-                   $listItems .= $this->toHtml($section->children);
+                   $listItems .= $this->toHtml($section->children, $currentRenderedLevel);
                 }
                 $listItems .= "</li>\n";
             }
