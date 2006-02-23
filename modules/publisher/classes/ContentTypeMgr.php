@@ -71,7 +71,7 @@ class ContentTypeMgr extends SGL_Manager
 
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
-        $this->da = &DA_Publisher::singleton();        
+        $this->da = &DA_Publisher::singleton();
 
         $this->fieldTypes   = array('0' => 'single line', '1' => 'textarea', '2' => 'HTML textarea');
 
@@ -97,7 +97,7 @@ class ContentTypeMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -125,6 +125,20 @@ class ContentTypeMgr extends SGL_Manager
         }
     }
 
+    function display(&$output)
+    {
+        //  build total fields combobox, check if num fields value passed from
+        //  list screen
+        $totalFields = (isset($output->type['fields'])
+                &&  is_scalar($output->type['fields']))
+            ? $output->type['fields']
+            : $this->conf['ContentTypeMgr']['totalFields'];
+        for ($x = 1; $x <= $totalFields; $x++) {
+            $output->totalFields[$x] = $x;
+        }
+        $output->fieldTypes = $this->fieldTypes;
+    }
+
     /**
      * Creates array used to create field name/type form.
      *
@@ -136,16 +150,13 @@ class ContentTypeMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $output->template = 'contentTypeAdd.html';
-        for ($x = 1; $x <= $input->type['fields']; $x++) {
-            $output->totalFields[$x] = $x;
-        }
-        $output->fieldTypes = $this->fieldTypes;
     }
 
     /**
-     * Inserts Item Type into item_type table and Item Type fields into item_type_mapping table.
+     * Inserts Item Type into item_type table and Item Type fields into
+     * item_type_mapping table.
      *
      * @access  private
      * @param   object  $input
@@ -157,33 +168,20 @@ class ContentTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  insert item type into item_type table.
-        $item_type_id   = $this->dbh->nextId($this->conf['table']['item_type']);
-        $item_type_name = $input->type['item_type_name'];
-        $query = "
-            INSERT INTO {$this->conf['table']['item_type']} (item_type_id, item_type_name)
-            VALUES ($item_type_id, '". $item_type_name . "')";
-
-        $result = $this->dbh->query($query);
-        if (DB::isError($result)) {
-            SGL::raiseError('Error inserting item type name exiting ...',
-                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-        } else {
-            $nameInserted = true;
+        $itemTypeId = $this->da->addItemType($input->type['item_type_name']);
+        if (PEAR::isError($ok)) {
+            SGL::raiseError('There was a problem inserting the content type',
+                SGL_ERROR_NOAFFECTEDROWS);
+            return false;
         }
-
         //  insert item type fields into item_type_mapping table.
-        foreach ($input->type['field_name'] as $nKey => $nValue) {
-            $field_type = $input->type['field_type'][$nKey];
-            $item_type_mapping_id = $this->dbh->nextId($this->conf['table']['item_type_mapping']);
-            $subquery = "INSERT INTO {$this->conf['table']['item_type_mapping']}
-                            (item_type_mapping_id, item_type_id, field_name, field_type)
-                         VALUES ($item_type_mapping_id, $item_type_id, '" . $nValue . "', $field_type)";
-            $subresult = $this->dbh->query($subquery);
-            if (DB::isError($subresult)) {
-                SGL::raiseError('Error inserting item type fields exiting ...',
-                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-            } else {
-                $fieldsInserted = true;
+        foreach ($input->type['field_name'] as $k => $name) {
+      		$ok = $this->da->addItemAttributes($itemTypeId, $name,
+      		    $input->type['field_type'][$k]);
+            if (PEAR::isError($ok)) {
+	            SGL::raiseError('There was a problem updating the content attributes',
+	                SGL_ERROR_NOAFFECTEDROWS);
+	            return false;
             }
         }
         SGL::raiseMsg('content type has successfully been added');
@@ -200,48 +198,39 @@ class ContentTypeMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'contentTypeEdit.html';
+        $aRes = $this->da->getItemAttributesByItemId($input->contentTypeID);
 
-        $query = "SELECT    itm.item_type_id,  it.item_type_name, itm.item_type_mapping_id, itm.field_name, itm.field_type
-                  FROM      {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['item_type']} it
-                  WHERE     itm.item_type_id = $input->contentTypeID
-                  AND       it.item_type_id = $input->contentTypeID";
-        $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-        );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
-        foreach ($aPagedData['data'] as $aKey => $aValues) {
+        $data = array();
+        foreach ($aRes as $aValues) {
             foreach ($aValues as $key => $value) {
                 switch ($key) {
 
                 case 'item_type_id':
                     $item_type_id = $value;
                     break;
+
                 case 'item_type_name':
                     $data[$key] = $value;
                     break;
+
                 case 'item_type_mapping_id':
                     $item_type_mapping_id = $value;
                     break;
+
                 case 'field_name':
                     $field_name = $value;
                     break;
-                break;
+
                 case 'field_type':
                     $data['fields'][$item_type_mapping_id]['field_name'] = $field_name;
                     $data['fields'][$item_type_mapping_id]['field_type'] = $value;
-                    $data['fields'][$item_type_mapping_id]['item_type_mapping_id'] = $item_type_mapping_id;
                     break;
                 }
-
             }
         }
         $output->type = $data;
-        $output->fieldTypes = $this->fieldTypes;
     }
 
     /**
@@ -257,9 +246,10 @@ class ContentTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  check for item type name change
-        if ($input->type['item_type_name'] !== $input->type['item_type_name_original']) {
+        if ($input->type['item_type_name'] != $input->type['item_type_name_original']) {
 
-            $ok = $this->da->updateItemTypeName($input->contentTypeID, $input->type['item_type_name']);
+            $ok = $this->da->updateItemTypeName($input->contentTypeID,
+                $input->type['item_type_name']);
             if (PEAR::isError($ok)) {
 	            SGL::raiseError('There was a problem updating the content type name',
 	                SGL_ERROR_NOAFFECTEDROWS);
@@ -291,16 +281,12 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $aPagedData = $this->da->getItemsWithAttributes($paginated = true);
-        
+        $aPagedData = $this->da->getItemAttributesByItemId(null, $paginated = true);
+
         $data = array();
         foreach ($aPagedData['data'] as $aValues) {
             foreach ($aValues as $key => $value) {
                 switch ($key) {
-
-                case 'item_type_mapping_id':
-                    $item_type_mapping_id = $value;
-                    break;
 
                 case 'item_type_id':
                     $item_type_id = $value;
@@ -311,12 +297,17 @@ class ContentTypeMgr extends SGL_Manager
                     $data[$item_type_id][$key] = $value;
                     break;
 
+                case 'item_type_mapping_id':
+                    $item_type_mapping_id = $value;
+                    break;
+
                 case 'field_name':
                     $field_name = $value;
                     break;
 
                 case 'field_type':
-                    $data[$item_type_id]['fields'][$item_type_mapping_id] = array($field_name => $this->fieldTypes[$value]);
+                    $data[$item_type_id]['fields'][$item_type_mapping_id] =
+                        array($field_name => $this->fieldTypes[$value]);
                     break;
                 }
             }
@@ -326,14 +317,7 @@ class ContentTypeMgr extends SGL_Manager
 
         //  set data array
         $aPagedData['data'] = $data;
-        
-        $output->aPagedData = $aPagedData;        
-
-        //  build total fields combobox
-        $totalFields = $this->conf['ContentTypeMgr']['totalFields'];
-        for ($x = 1; $x <= $totalFields; $x++) {
-            $output->totalFields[$x] = $x;
-        }
+        $output->aPagedData = $aPagedData;
     }
 
     /**
@@ -351,7 +335,7 @@ class ContentTypeMgr extends SGL_Manager
         if (is_array($input->aDelete)) {
 
             foreach ($input->aDelete as $itemTypeId) {
-                
+
             	//  delete item type from item_type
 				$ok = $this->da->deleteItemTypeById($itemTypeId);
                 if (PEAR::isError($ok)) {
