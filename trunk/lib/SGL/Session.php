@@ -365,6 +365,23 @@ class SGL_Session
     }
 
     /**
+     * Returns the current user's username.
+     *
+     * @access  public
+     * @return  int the role id
+     */
+    function getUsername()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (count($_SESSION && isset($_SESSION['username']))) {
+            return $_SESSION['username'];
+        } else {
+            return false;
+        }        
+    }
+
+    /**
      * Returns the current user's role id.
      *
      * @access  public

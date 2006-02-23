@@ -427,20 +427,26 @@ class ArticleMgr extends SGL_Manager
         $langID = SGL_Translation::getLangID();
 
         //  grab article with template type from session preselected
-        $aResult = $this->retrievePaginated(
+        $aResult = SGL_Item::retrievePaginated(
             $input->catID,
             $bPublished = false,
             $input->dataTypeID,
             $input->queryRange,
-            $input->from,
-            $langID);
+            $input->from);
 
-        //  generate action links for each article
-        for ($n = 0; $n < count($aResult['data']); $n++) {
-            $aResult['data'][$n]['actionLinks'] =
-                $this->_generateActionLinks(
-                    $aResult['data'][$n]['item_id'],
-                    $aResult['data'][$n]['status']);
+        //  rebuild item data
+        foreach ($aResult['data'] as $key => $aValues) {
+            if ($aValues['username'] != SGL_Session::getUsername() 
+                && SGL_Session::getUserType() != SGL_ADMIN) {
+                //  remove articles that don't belong to the current user
+                unset($aResult['data'][$key]);
+            } else {
+                //  generate action links for each article
+                $aResult['data'][$key]['actionLinks'] =
+                    $this->_generateActionLinks(
+                        $aValues['item_id'],
+                        $aValues['status']);
+            }
         }
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
@@ -462,109 +468,6 @@ class ArticleMgr extends SGL_Manager
             $menu = & new MenuBuilder('SelectBox');
             $output->breadCrumbs = $menu->getBreadCrumbs($input->catID);
         }
-    }
-
-    /**
-     * Gets paginated list of articles.
-     *
-     * @access  public
-     * @param   int     $dataTypeID template ID of article, ie, new article, weather article, etc.
-     * @param   string  $queryRange flag to indicate if results limited to specific category
-     * @param   int     $catID      optional cat ID to limit results to
-     * @param   int     $from       row ID offset for pagination
-     * @return  array   $aResult    returns array of article objects, pager data, and show page flag
-     * @see     retrieveAll()
-     */
-    function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1,
-                                $queryRange = 'thisCategory', $from = '', $lang)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
-        }
-
-        //  if published flag set, only return published articles
-        $isPublishedClause = ($bPublished)?
-            ' AND i.status  = ' . SGL_STATUS_PUBLISHED :
-            ' AND i.status  > ' . SGL_STATUS_DELETED ;
-
-        //  if user only wants contents from current category, add where clause
-        $rangeWhereClause   = ($queryRange == 'all') ?
-                                '' : " AND i.category_id = $catID";
-
-        //  dataTypeID 1 = all template types, otherwise only a specific one
-        $typeWhereClause    = ($dataTypeID == 1)?'' : " AND it.item_type_id  = '$dataTypeID'";
-        $limitByAuthorClause = (SGL_Session::getUserType() == SGL_ADMIN)
-            ? ''
-            : ' AND i.updated_by_id = ' . SGL_Session::getUid();
-        $query = "
-            SELECT  i.item_id,
-                    ia.addition,
-                    ia.trans_id,
-                    u.username,
-                    i.date_created,
-                    i.start_date,
-                    i.expiry_date,
-                    i.status
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['item_type_mapping']} itm,
-                    {$this->conf['table']['user']} u
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-            AND     i.updated_by_id = u.usr_id
-            AND     it.item_type_id  = itm.item_type_id
-            AND     i.item_id = ia.item_id
-            AND     i.item_type_id = it.item_type_id
-            AND     itm.field_name = 'title'" . //  match item addition type, 'title'
-            $typeWhereClause .                  //  match datatype
-            $rangeWhereClause .
-            $isPublishedClause .
-            $limitByAuthorClause . "
-            ORDER BY i.last_updated DESC
-            ";
-        $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
-        //  fetch title translation
-        if ($this->conf['translation']['container'] == 'db') {
-            $fallbackLang = $this->conf['translation']['fallbackLang'];
-            foreach ($aPagedData['data'] as $k => $aValues) {
-                if ($aValues['trans_id']) {
-
-                    //  get translation by language set in users preference
-                    if ($title = $this->trans->get($aValues['trans_id'], 'content', $lang)) {
-                        $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $lang) .')';
-                    } else {
-                        //  get first available translation any installed language
-                        if ($title = $this->trans->get($aValues['trans_id'], 'content', $fallbackLang)) {
-                            $aPagedData['data'][$k]['addition'] = $title . ' ('. str_replace('_', '-', $fallbackLang) .')';
-                        }
-                    }
-                }
-            }
-        }
-
-        return $aPagedData;
     }
 
     /**
