@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.25 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.27 2006/02/22 16:17:37 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -65,7 +65,7 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
      */
     function _fetchTableNames()
     {
-        $this->db->loadModule('manager');
+        $this->db->loadModule('Manager');
         return $this->db->manager->listTables();
     }
 
@@ -110,11 +110,15 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
                              $this->options['string_id_col'],
                              $lang_col
         );
-        $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_index ON %s (%s)',
+        $mysqlClause = ($this->db->phptype == 'mysql') ? '(255)' : '';
+        $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_%s_index ON %s (%s, %s%s)',
                              $langData['table_name'],
+                             $this->options['string_page_id_col'],
                              $this->options['string_id_col'],
                              $langData['table_name'],
-                             $this->options['string_id_col']
+                             $this->options['string_page_id_col'],
+                             $this->options['string_id_col'],
+                             $mysqlClause
         );
         $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
                              $langData['table_name'],
@@ -122,16 +126,17 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
                              $langData['table_name'],
                              $this->options['string_page_id_col']
         );
-        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
+        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s%s)',
                              $langData['table_name'],
                              $this->options['string_id_col'],
                              $langData['table_name'],
-                             $this->options['string_id_col']
+                             $this->options['string_id_col'],
+                             $mysqlClause
         );
         foreach($queries as $query) {
             ++$this->_queries;
             $res = $this->db->query($query);
-            if ($res == false) {
+            if (PEAR::isError($res)) {
                 return $res;
             }
         }

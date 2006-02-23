@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Container.php,v 1.15 2005/09/08 17:27:35 quipo Exp $
+ * @version    CVS: $Id: Container.php,v 1.16 2006/02/11 18:26:36 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -282,7 +282,12 @@ class Translation2_Container
      */
     function raiseError($msg, $code, $mode=PEAR_ERROR_TRIGGER, $option=E_USER_WARNING)
     {
-        //PEAR::raiseError($msg, $code, $this->_pearErrorMode);
+        if (isset($GLOBALS['_PEAR_default_error_mode'])) {
+            $mode = $GLOBALS['_PEAR_default_error_mode'];
+        }
+        if (isset($GLOBALS['_PEAR_default_error_options'])) {
+            $option = $GLOBALS['_PEAR_default_error_options'];
+        }
         if ($mode == PEAR_ERROR_RETURN) {
             return PEAR::raiseError($msg, $code, $mode, $option);
         } else {
