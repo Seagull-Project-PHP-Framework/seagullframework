@@ -33,7 +33,7 @@
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.24 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.25 2006/01/07 16:44:28 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -53,7 +53,7 @@ require_once 'Translation2/Container/gettext.php';
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.24 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.25 2006/01/07 16:44:28 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Admin_Container_gettext extends Translation2_Container_gettext
@@ -408,10 +408,10 @@ class Translation2_Admin_Container_gettext extends Translation2_Container_gettex
                     if (PEAR::isError($e = $gtFile->save($file))) {
                         return $e;
                     }
+
+                    //refresh cache
+                    $this->cachedDomains[$lang][$pageID] = $gtFile->strings;
                 }
-                
-                //refresh cache
-                $this->cachedDomains[$lang][$pageID] = $gtFile->strings;
             }
         }
         

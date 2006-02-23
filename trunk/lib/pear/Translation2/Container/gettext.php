@@ -33,7 +33,7 @@
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.26 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.27 2006/01/07 16:44:28 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -59,7 +59,7 @@ require_once 'I18Nv2.php';
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.26 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.27 2006/01/07 16:44:28 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  * @see        /docs/gettext_readme.txt for an usage example
  */
@@ -242,7 +242,7 @@ class Translation2_Container_gettext extends Translation2_Container
                 return $this->raiseError(sprintf(
                         '%s [%s on line %d]', $e->getMessage(), __FILE__, __LINE__
                     ),
-                    TRANSLATION2_ERROR
+                    TRANSLATION2_ERROR, PEAR_ERROR_RETURN
                 );
             }
             $this->_switchLang($oldLang);
@@ -250,7 +250,7 @@ class Translation2_Container_gettext extends Translation2_Container
                     'Cannot find file "%s" [%s on line %d]',
                     $file, __FILE__, __LINE__
                 ),
-                TRANSLATION2_ERROR_CANNOT_FIND_FILE
+                TRANSLATION2_ERROR_CANNOT_FIND_FILE, PEAR_ERROR_RETURN
             );
         }
         
@@ -289,6 +289,13 @@ class Translation2_Container_gettext extends Translation2_Container
         
         // use File_Gettext
         $page = $this->getPage($pageID, $langID);
+        if (PEAR::isError($page = $this->getPage($pageID, $langID))) {
+            if ($page->getCode() == TRANSLATION2_ERROR_CANNOT_FIND_FILE) {
+                $page = array();
+            } else {
+                return $this->raiseError($page->getMessage(), $page->getCode());
+            }
+        }
         
         // return original string if there's no translation available
         if (isset($page[$stringID]) && strlen($page[$stringID])) {

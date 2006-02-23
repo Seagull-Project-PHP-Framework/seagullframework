@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.19 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.20 2006/02/22 16:31:55 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -52,7 +52,7 @@ require_once 'Translation2/Container.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.19 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.20 2006/02/22 16:31:55 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_mdb2 extends Translation2_Container
@@ -116,8 +116,8 @@ class Translation2_Container_mdb2 extends Translation2_Container
                                     PEAR_ERROR_RETURN);
         }
 
-        if (MDB2::isError($this->db) || PEAR::isError($this->db)) {
-            return PEAR::raiseError($this->db->getMessage(), $this->db->code);
+        if (PEAR::isError($this->db)) {
+            return $this->db;
         }
         return true;
     }

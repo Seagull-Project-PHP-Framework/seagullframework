@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Admin.php,v 1.16 2005/09/08 17:27:35 quipo Exp $
+ * @version    CVS: $Id: Admin.php,v 1.18 2005/10/13 06:41:39 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -153,10 +153,11 @@ class Translation2_Admin extends Translation2
         require_once $decorator_path;
         if (func_num_args() > 1) {
             $obj =& func_get_arg(1);
-            return new $decorator_class($obj);
+            $ret = new $decorator_class($obj);
         } else {
-            return new $decorator_class($this);
+            $ret = new $decorator_class($this);
         }
+        return $ret;
     }
 
     // }}}

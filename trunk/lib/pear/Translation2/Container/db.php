@@ -33,7 +33,7 @@
  * @author     Ian Eure <ieure at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Ian Eure
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: db.php,v 1.27 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: db.php,v 1.28 2006/02/22 16:31:55 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -54,7 +54,7 @@ require_once 'Translation2/Container.php';
  * @author     Ian Eure <ieure at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Ian Eure
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: db.php,v 1.27 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: db.php,v 1.28 2006/02/22 16:31:55 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_db extends Translation2_Container
@@ -119,8 +119,8 @@ class Translation2_Container_db extends Translation2_Container
                                     PEAR_ERROR_RETURN);
         }
 
-        if (DB::isError($this->db) || PEAR::isError($this->db)) {
-            return PEAR::raiseError($this->db->getMessage(), $this->db->getCode());
+        if (PEAR::isError($this->db)) {
+            return $this->db;
         }
         return true;
     }

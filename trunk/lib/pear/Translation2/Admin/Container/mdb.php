@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.27 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.29 2006/02/22 16:17:37 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -96,11 +96,15 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
                              $this->options['string_id_col'],
                              $lang_col
         );
-        $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_index ON %s (%s)',
+        $mysqlClause = ($this->db->phptype == 'mysql') ? '(255)' : '';
+        $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_%s_index ON %s (%s, %s%s)',
                              $langData['table_name'],
+                             $this->options['string_page_id_col'],
                              $this->options['string_id_col'],
                              $langData['table_name'],
-                             $this->options['string_id_col']
+                             $this->options['string_page_id_col'],
+                             $this->options['string_id_col'],
+                             $mysqlClause
         );
         $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
                              $langData['table_name'],
@@ -108,16 +112,17 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
                              $langData['table_name'],
                              $this->options['string_page_id_col']
         );
-        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
+        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s%s)',
                              $langData['table_name'],
                              $this->options['string_id_col'],
                              $langData['table_name'],
-                             $this->options['string_id_col']
+                             $this->options['string_id_col'],
+                             $mysqlClause
         );
         foreach($queries as $query) {
             ++$this->_queries;
             $res = $this->db->query($query);
-            if ($res == false) {
+            if (PEAR::isError($res)) {
                 return $res;
             }
         }
@@ -326,46 +331,6 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
             }
         }
 
-
-        $unquoted_stringID = $stringID;
-        $unquoted_pageID = $pageID;
-        $stringID = $this->db->getTextValue($stringID);
-        $pageID = is_null($pageID) ? 'NULL' : $this->db->getTextValue($pageID);
-        // Loop over the tables we need to insert into.
-        foreach ($this->_tableLangs($langs) as $table => $tableLangs) {
-            //before INSERTing a new record, check if it exists already.
-            $exists = $this->_recordExists($unquoted_stringID, $unquoted_pageID, $table);
-            if (PEAR::isError($exists)) {
-                return $exists;
-            }
-            if ($exists) {
-                $this->update($unquoted_stringID, $unquoted_pageID,
-                    $this->_filterStringsByTable($stringArray, $table));
-                continue;
-            }
-
-            $tableCols = $this->_getLangCols($tableLangs);
-            $langData = array();
-            foreach ($tableLangs as $lang) {
-                $langData[$lang] = $this->db->getTextValue($stringArray[$lang]);
-            }
-
-            $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (%s, %s, %s)',
-                             $table,
-                             $this->options['string_id_col'],
-                             $this->options['string_page_id_col'],
-                             implode(', ', $tableCols),
-                             $stringID,
-                             $pageID,
-                             implode(', ', $langData)
-            );
-            ++$this->_queries;
-            $res = $this->db->query($query);
-            if (PEAR::isError($res)) {
-                return $res;
-            }
-        }
-
         return true;
     }
 
@@ -523,7 +488,7 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
      * @param   array  $langs  Languages to get mapping for
      * @return  array  Table -> language mapping
      * @access  private
-     * @see     Translation2_Container_DB::_getLangTable()
+     * @see     Translation2_Container_MDB::_getLangTable()
      * @author  Ian Eure
      */
     function &_tableLangs($langs)
