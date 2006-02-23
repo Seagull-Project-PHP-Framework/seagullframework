@@ -97,6 +97,7 @@ class ContentTypeMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -255,49 +256,25 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  update item type name
+        //  check for item type name change
         if ($input->type['item_type_name'] !== $input->type['item_type_name_original']) {
-            $query = "UPDATE {$this->conf['table']['item_type']} SET item_type_name='" . $input->type['item_type_name'] . "'
-                      WHERE item_type_id=" . $input->contentTypeID;
-            $result = $this->dbh->query($query);
-            if (DB::isError($result)) {
-                SGL::raiseError('Error updating item type name exiting ...',
-                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+
+            $ok = $this->da->updateItemTypeName($input->contentTypeID, $input->type['item_type_name']);
+            if (PEAR::isError($ok)) {
+	            SGL::raiseError('There was a problem updating the content type name',
+	                SGL_ERROR_NOAFFECTEDROWS);
+	            return false;
             }
-            unset($query);
         }
-
         //  update item type fields
-        foreach ($input->type['fields'] as $aKey => $aValue) {
-            //  field name clause
-            if ($aValue['field_name'] !== $aValue['field_name_original']) {
-                $fieldNameClause = "field_name='" . $aValue['field_name'] . "'";
+        foreach ($input->type['fields'] as $attributeId => $aItemAttributes) {
+
+      		$ok = $this->da->updateItemAttributes($attributeId, $aItemAttributes);
+            if (PEAR::isError($ok)) {
+	            SGL::raiseError('There was a problem updating the content attributes',
+	                SGL_ERROR_NOAFFECTEDROWS);
+	            return false;
             }
-
-            //  field type clause
-            if ($aValue['field_type'] !== $aValue['field_type_original']) {
-                $fieldTypeClause = "field_type=". $aValue['field_type'];
-            }
-
-            //  build query
-            if (!empty($fieldNameClause) && isset($fieldTypeClause)) {   //  update field_name & field_type
-                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause, $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);
-
-            } else if (isset($fieldNameClause)) {                       //  update only field_name
-                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldNameClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);
-
-            } else if (isset($fieldTypeClause)) {                       //  update only field_type
-                $query = "UPDATE {$this->conf['table']['item_type_mapping']} SET $fieldTypeClause WHERE item_type_mapping_id=" . $aKey;
-                $result = $this->dbh->query($query);
-            }
-
-            if (DB::isError($result)) {
-                SGL::raiseError('Error updating item type fields exiting ...',
-                    SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-            }
-            unset($query);
         }
         SGL::raiseMsg('content type has successfully been updated');
     }

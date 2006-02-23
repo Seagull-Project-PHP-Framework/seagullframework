@@ -123,4 +123,54 @@ class DA_Publisher
         }
         return $ret;
     }
+    
+    function updateItemTypeName($itemTypeId, $newName)
+    {
+        $query = "
+        	UPDATE {$this->conf['table']['item_type']} 
+        	SET item_type_name='" . $newName . "'
+            WHERE item_type_id=" . $itemTypeId;
+        return $this->dbh->query($query);    	
+    }
+    
+    function updateItemAttributes($attributeId, $aItemAttributes)
+    {
+        //  field name clause
+        if ($aItemAttributes['field_name'] != $aItemAttributes['field_name_original']) {
+            $fieldNameClause = "field_name='" . $aItemAttributes['field_name'] . "'";
+        }
+
+        //  field type clause
+        if ($aItemAttributes['field_type'] != $aItemAttributes['field_type_original']) {
+            $fieldTypeClause = "field_type=". $aItemAttributes['field_type'];
+        }
+
+        //  update field_name & field_type
+        if (isset($fieldNameClause) && isset($fieldTypeClause)) {   
+            $query = "
+            	UPDATE {$this->conf['table']['item_type_mapping']} 
+            	SET $fieldNameClause, $fieldTypeClause 
+            	WHERE item_type_mapping_id=" . $attributeId;
+
+        //  update only field_name
+        } elseif (isset($fieldNameClause)) {                       
+            $query = "
+            	UPDATE {$this->conf['table']['item_type_mapping']} 
+            	SET $fieldNameClause 
+            	WHERE item_type_mapping_id=" . $attributeId;
+
+        //  update only field_type
+        } elseif (isset($fieldTypeClause)) {                       
+            $query = "
+            	UPDATE {$this->conf['table']['item_type_mapping']} 
+            	SET $fieldTypeClause 
+            	WHERE item_type_mapping_id=" . $attributeId;
+        }
+        if (isset($query)) {
+        	$ret = $this->dbh->query($query);        
+        } else {
+        	$ret = false;
+        }
+		return $ret;
+    }
 }
