@@ -66,7 +66,7 @@ function toggleAliasElements(myCheckbox)
         <tr>
             <th align="left">{translate(#Language#)}</th>
 
-            {if:actionIsAdd}
+            {if:isAdd}
             <td><select name="frmNavLang" id="frmNavLang"><option value="{navLang}">{fullNavLang}</option></select></td>
             {else:}
             <td><select name="frmNavLang" id="frmNavLang"
