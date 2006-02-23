@@ -90,103 +90,123 @@ class DA_Publisher
 
         // If the instance is not there, create one
         if (!isset($instance)) {
-            $class = __CLASS__;        	
+            $class = __CLASS__;
             $instance = new $class();
         }
         return $instance;
     }
 
-    function getItemsWithAttributes($paginated = false)
+    function getItemAttributesByItemId($id = null, $paginated = false)
     {
-        $query = "SELECT 
-        			it.item_type_id, 
-        			it.item_type_name, 
-        			itm.item_type_mapping_id, 
-        			itm.field_name, 
+        $contstraint = (is_null($id))
+            ? 'WHERE itm.item_type_id = it.item_type_id'
+            : "WHERE     itm.item_type_id = $id
+               AND       it.item_type_id = $id";
+        $query = "SELECT
+        			it.item_type_id,
+        			it.item_type_name,
+        			itm.item_type_mapping_id,
+        			itm.field_name,
         			itm.field_type
-                  FROM 
-                  	{$this->conf['table']['item_type']} it, 
+                  FROM
+                  	{$this->conf['table']['item_type']} it,
                   	{$this->conf['table']['item_type_mapping']} itm
-                  WHERE itm.item_type_id = it.item_type_id";
-        
+                  $contstraint";
+
         if ($paginated) {
 	        $limit = $_SESSION['aPrefs']['resPerPage'];
 	        $pagerOptions = array(
 	            'mode'     => 'Sliding',
 	            'delta'    => 3,
 	            'perPage'  => $limit,
-	        );        	
+	        );
 	        $ret = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-	        
+
         } else {
-        	$ret = $this->dbh->getAll($query, $paginated = false);
+        	$ret = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
         }
         return $ret;
     }
-    
+
+    function addItemType($name)
+    {
+        $id = $this->dbh->nextId($this->conf['table']['item_type']);
+        $item_type_name = $input->type['item_type_name'];
+        $query = "
+            INSERT INTO {$this->conf['table']['item_type']}
+                (item_type_id, item_type_name)
+            VALUES ($id, '". $name . "')";
+
+        $ok = $this->dbh->query($query);
+        return (PEAR::isError($ok)) ? $ok : $id;
+    }
+
+    function addItemAttributes($itemTypeId, $name, $type)
+    {
+        $id = $this->dbh->nextId($this->conf['table']['item_type_mapping']);
+        $query = "INSERT INTO {$this->conf['table']['item_type_mapping']}
+                    (item_type_mapping_id, item_type_id, field_name, field_type)
+                  VALUES ($id, $itemTypeId, '" . $name . "', $type)";
+        return $this->dbh->query($query);
+    }
+
     function updateItemTypeName($itemTypeId, $newName)
     {
         $query = "
-        	UPDATE {$this->conf['table']['item_type']} 
+        	UPDATE {$this->conf['table']['item_type']}
         	SET item_type_name='" . $newName . "'
             WHERE item_type_id=" . $itemTypeId;
-        return $this->dbh->query($query);    	
+        return $this->dbh->query($query);
     }
-    
+
     function updateItemAttributes($attributeId, $aItemAttributes)
     {
         //  field name clause
         if ($aItemAttributes['field_name'] != $aItemAttributes['field_name_original']) {
             $fieldNameClause = "field_name='" . $aItemAttributes['field_name'] . "'";
         }
-
         //  field type clause
         if ($aItemAttributes['field_type'] != $aItemAttributes['field_type_original']) {
             $fieldTypeClause = "field_type=". $aItemAttributes['field_type'];
         }
 
         //  update field_name & field_type
-        if (isset($fieldNameClause) && isset($fieldTypeClause)) {   
-            $query = "
-            	UPDATE {$this->conf['table']['item_type_mapping']} 
-            	SET $fieldNameClause, $fieldTypeClause 
-            	WHERE item_type_mapping_id=" . $attributeId;
+        if (isset($fieldNameClause) && isset($fieldTypeClause)) {
+            $setClause = "SET $fieldNameClause, $fieldTypeClause";
 
         //  update only field_name
-        } elseif (isset($fieldNameClause)) {                       
-            $query = "
-            	UPDATE {$this->conf['table']['item_type_mapping']} 
-            	SET $fieldNameClause 
-            	WHERE item_type_mapping_id=" . $attributeId;
+        } elseif (isset($fieldNameClause)) {
+            $setClause = "SET $fieldNameClause";
 
         //  update only field_type
-        } elseif (isset($fieldTypeClause)) {                       
-            $query = "
-            	UPDATE {$this->conf['table']['item_type_mapping']} 
-            	SET $fieldTypeClause 
-            	WHERE item_type_mapping_id=" . $attributeId;
+        } elseif (isset($fieldTypeClause)) {
+            $setClause = "SET $fieldTypeClause";
         }
-        if (isset($query)) {
-        	$ret = $this->dbh->query($query);        
+        if (isset($setClause)) {
+            $query = "
+            	UPDATE {$this->conf['table']['item_type_mapping']}
+            	$setClause
+            	WHERE item_type_mapping_id=" . $attributeId;
+        	$ret = $this->dbh->query($query);
         } else {
         	$ret = false;
         }
 		return $ret;
     }
-    
+
     function deleteItemTypeById($id)
     {
 		$query = "
-			DELETE FROM {$this->conf['table']['item_type']} 
-			WHERE item_type_id=$id";   
+			DELETE FROM {$this->conf['table']['item_type']}
+			WHERE item_type_id=$id";
 		$this->dbh->query($query);
     }
-    
+
     function deleteItemAttributesByItemTypeId($id)
     {
 		$query = "
-			DELETE FROM {$this->conf['table']['item_type_mapping']} 
-			WHERE item_type_id=$id";   
+			DELETE FROM {$this->conf['table']['item_type_mapping']}
+			WHERE item_type_id=$id";
 		$this->dbh->query($query);
     }
 }
