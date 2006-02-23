@@ -933,10 +933,14 @@ class SGL_Item
                     u.username,
                     i.date_created,
                     i.start_date,
-                    i.expiry_date
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm,
-                    {$this->conf['table']['user']} u, {$this->conf['table']['category']} c
+                    i.expiry_date, 
+                    i.status
+            FROM    {$this->conf['table']['item']} i,
+                    {$this->conf['table']['item_addition']} ia,
+                    {$this->conf['table']['item_type']} it,
+                    {$this->conf['table']['item_type_mapping']} itm,
+                    {$this->conf['table']['user']} u,
+                    {$this->conf['table']['category']} c
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
             AND     i.updated_by_id = u.usr_id
             AND     it.item_type_id  = itm.item_type_id
@@ -952,17 +956,32 @@ class SGL_Item
             ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-        );
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+        } else {
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+        }
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         if ($this->conf['translation']['container'] == 'db') {
             foreach ($aPagedData['data'] as $k => $aValues) {
-                $aPagedData['data'][$k]['trans_id'] = $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getLangID());
+                $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
+                    'content', SGL_Translation::getLangID()))
+                    ? $translation 
+                    : $this->trans->get($aValues['trans_id'],
+                    'content', SGL_Translation::getFallbackLangID());
             }
         }
         return $aPagedData;
