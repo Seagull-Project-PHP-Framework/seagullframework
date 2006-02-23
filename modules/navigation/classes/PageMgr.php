@@ -704,17 +704,21 @@ class PageMgr extends SGL_Manager
         }
         $output->uriExternalSelected = '';
 
-        if ($this->conf['translation']['container'] == 'db'
-                && !empty($output->section['trans_id'])) {
-            $output->availableLangs = $this->trans->getLangs();
+        if ($this->conf['translation']['container'] == 'db') {
+            $availableLangs = $this->trans->getLangs();
 
-            $navLang = (isset($output->navLang) && !empty($output->navLang))
-                ? $output->navLang
-                : SGL_Translation::getLangID();
-
-            $output->navLang = $navLang;
-            $output->fullNavLang = $output->availableLangs[$navLang];
-            $output->section['title'] = $this->trans->get($output->section['trans_id'], 'nav', $output->navLang);
+            if ($output->action == 'insert') {
+                $output->navLang        = SGL_Translation::getFallbackLangID();
+                $output->fullNavLang    = $availableLangs[$output->navLang];
+            } elseif ($output->action == 'update' && !empty($output->section['trans_id'])) {
+                $navLang = (isset($output->navLang) && !empty($output->navLang))
+                    ? $output->navLang
+                    : SGL_Translation::getLangID();
+                $output->navLang            = $navLang;
+                $output->fullNavLang        = $availableLangs[$navLang];
+                $output->availableLangs     = $availableLangs;
+                $output->section['title']   = $this->trans->get($output->section['trans_id'], 'nav', $output->navLang);
+            }
         }
 
         switch ($output->articleType) {
