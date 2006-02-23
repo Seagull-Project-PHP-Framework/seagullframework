@@ -350,22 +350,25 @@ class ContentTypeMgr extends SGL_Manager
 
         if (is_array($input->aDelete)) {
 
-            foreach ($input->aDelete as $index => $itemTypeId) {
-                //  delete item type from item_type table
-                $query = "DELETE FROM {$this->conf['table']['item_type']} WHERE item_type_id=$itemTypeId";
-                if (DB::isError($this->dbh->query($query))) {
-                    SGL::raiseError('Error updating item type name exiting ...',
-                        SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+            foreach ($input->aDelete as $itemTypeId) {
+                
+            	//  delete item type from item_type
+				$ok = $this->da->deleteItemTypeById($itemTypeId);
+                if (PEAR::isError($ok)) {
+		            SGL::raiseError('There was a problem deleting the content type',
+		                SGL_ERROR_NOAFFECTEDROWS);
+		            return false;
                 }
-                unset($query);
+
                 //  delete item type fields from item_type_mapping
-                $query = "DELETE FROM {$this->conf['table']['item_type_mapping']} WHERE item_type_id=$itemTypeId";
-                if (DB::isError($this->dbh->query($query))) {
-                    SGL::raiseError('Error updating item type name exiting ...',
-                        SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+				$ok = $this->da->deleteItemAttributesByItemTypeId($itemTypeId);
+                if (PEAR::isError($ok)) {
+		            SGL::raiseError('There was a problem deleting the content attributes',
+		                SGL_ERROR_NOAFFECTEDROWS);
+		            return false;
                 }
-                SGL::raiseMsg('content(s) type has successfully been deleted');
             }
+			SGL::raiseMsg('content(s) type has successfully been deleted');
         } else {
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);

@@ -173,4 +173,20 @@ class DA_Publisher
         }
 		return $ret;
     }
+    
+    function deleteItemTypeById($id)
+    {
+		$query = "
+			DELETE FROM {$this->conf['table']['item_type']} 
+			WHERE item_type_id=$id";   
+		$this->dbh->query($query);
+    }
+    
+    function deleteItemAttributesByItemTypeId($id)
+    {
+		$query = "
+			DELETE FROM {$this->conf['table']['item_type_mapping']} 
+			WHERE item_type_id=$id";   
+		$this->dbh->query($query);
+    }
 }
