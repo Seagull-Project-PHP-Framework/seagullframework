@@ -103,7 +103,7 @@ class STR_TestEnv
     function restoreConfig()
     {
         // Re-parse the config file
-        $newConf = @parse_ini_file(STR_TMP_DIR . '/test.conf.ini', true);
+        $newConf = @parse_ini_file(STR_TMP_DIR . '/test.conf.ini.php', true);
         foreach ($newConf as $configGroup => $configGroupSettings) {
             foreach ($configGroupSettings as $confName => $confValue) {
                 $GLOBALS['_STR']['CONF'][$configGroup][$confName] = $confValue;
