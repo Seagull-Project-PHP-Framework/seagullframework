@@ -213,11 +213,11 @@ class SimpleDriver
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $c = &SGL_Config::singleton();
-        $this->conf         = $c->getAll();
-        $this->_rid         = (int)SGL_Session::get('rid');
-        $this->output       = &$output;
-        $this->req          = $output->get('request');
-        $this->_staticId    = $this->req->get('staticId');
+        $this->conf      = $c->getAll();
+        $this->_rid      = (int)SGL_Session::get('rid');
+        $this->output    = &$output;
+        $this->req       = $output->get('request');
+        $this->_staticId = $this->req->get('staticId');
 
         // set default driver params from configuration
         foreach ($this->conf['navigation'] as $key => $value) {
@@ -264,7 +264,8 @@ class SimpleDriver
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
             . $this->_collapsed . $this->_showAlways
-            . @$this->output->currLang . @$this->output->charset . $navRendererClass;
+            . @$this->output->currLang . @$this->output->charset
+            . __CLASS__ . $navRendererClass;
 
         if ($this->_cacheEnabled && $data = $cache->get($cacheId, 'nav')) {
             $aUnserialized    = unserialize($data);
@@ -515,7 +516,7 @@ class SimpleDriver
             if (!empty($section->trans_id) && $this->conf['translation']['container'] == 'db') {
                 if (array_key_exists($section->trans_id, $this->_aTranslations)) {
                     $section->title = $this->_aTranslations[$section->trans_id];
-                } elseif ($title = $this->trans->get($section->section_id, 'nav',
+                } elseif ($title = $this->trans->get($section->trans_id, 'nav',
                     SGL_Translation::getFallbackLangID())) {
                     $section->title = $title;
                 }
