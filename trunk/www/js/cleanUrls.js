@@ -15,13 +15,11 @@ function replaceUri(cat)
 {
     var chaine = cat;
     chaine = chaine.replace(/[יטךכ]/g,"e");
-	chaine = chaine.replace(/[אגה]/g,"a");
-	chaine = chaine.replace(/[ןמ]/g,"i");
-	chaine = chaine.replace(/[שûü]/g,"u");
-	chaine = chaine.replace(/[צפ]/g,"o");
-    chaine = chaine.replace(/\b[\s'\?\!\/]+\b/g,"-");
-    chaine = chaine.replace(/^[\s'\?\!\/]+/g,"");
-    chaine = chaine.replace(/[\s'\?\!\/]+$/g,"");
+	chaine = chaine.replace(/[באגה]/g,"a");
+	chaine = chaine.replace(/[םןמ]/g,"i");
+	chaine = chaine.replace(/[תשûü]/g,"u");
+	chaine = chaine.replace(/[ףצפ]/g,"o");
+    chaine = chaine.replace(/(\w)[\W]+(\w)/g,"$1-$2");
     chaine = chaine.toLowerCase();
     return chaine;
 }

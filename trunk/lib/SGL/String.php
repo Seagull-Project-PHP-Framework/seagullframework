@@ -476,8 +476,8 @@ class SGL_String
          // by a non-alphanumeric character (eg. space, tag...).
 //         $s = preg_replace('!&[^;\s]+;!','',$s);    ## remove HTML entities.
          $s = preg_replace('!&#?[A-Za-z0-9]{1,7};?!', '', $s);    ## remove HTML entities.
-         $s = preg_replace('![^\w\s]!', '',$s);      ## remove non-word/space chars.
-         $s = preg_replace('!\s+!', '_',$s);         ## change space chars to underscores.
+         $s = preg_replace('![^\w\s-]!', '',$s);    ## remove non-word/space chars.
+         $s = preg_replace('!\s+!', '_',$s);        ## change space chars to underscores.
          return $s;
     }
 
