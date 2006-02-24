@@ -253,6 +253,7 @@ class UserMgr extends RegisterMgr
                     continue;
                 }
                 $ret = $this->da->deletePrefsByUserId($userId);
+                $ret = $this->da->deletePermsByUserId($userId);
                 $query = "DELETE FROM {$this->conf['table']['user']} WHERE usr_id=$userId";
                 if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                     $results[$userId] = 0; //log result for user
