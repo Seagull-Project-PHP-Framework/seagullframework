@@ -209,7 +209,6 @@ class RegisterMgr extends SGL_Manager
         if ($this->conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
-        $oUser->usr_id = $this->dbh->nextId($this->conf['table']['user']);
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
