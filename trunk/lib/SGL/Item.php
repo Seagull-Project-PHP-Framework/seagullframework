@@ -407,6 +407,7 @@ class SGL_Item
                 UPDATE {$this->conf['table']['item']}
                 SET status = " . SGL_STATUS_DELETED . "
                 WHERE item_id = ?");
+
             foreach ($aItems as $row) {
                 $this->dbh->execute($sth, $row);
             }
@@ -417,12 +418,13 @@ class SGL_Item
                 $this->dbh->query($sql);
             }
             foreach ($aItems as $row) {
-                //  fetch item translation ids
-                $query = "SELECT * FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
-                $additionTrans = $this->dbh->getAssoc($query);
 
+                //  fetch item translation ids
                 if ($this->conf['translation']['container'] == 'db') {
-                    foreach ($additionTrans as $key => $values) {
+                    $query = "SELECT * FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
+                    $additionTrans = $this->dbh->getAssoc($query);
+
+                    foreach ($additionTrans as $values) {
                         $this->trans->remove($values->trans_id, 'content');
                     }
                 }
@@ -933,7 +935,7 @@ class SGL_Item
                     u.username,
                     i.date_created,
                     i.start_date,
-                    i.expiry_date, 
+                    i.expiry_date,
                     i.status
             FROM    {$this->conf['table']['item']} i,
                     {$this->conf['table']['item_addition']} ia,
@@ -979,7 +981,7 @@ class SGL_Item
             foreach ($aPagedData['data'] as $k => $aValues) {
                 $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
                     'content', SGL_Translation::getLangID()))
-                    ? $translation 
+                    ? $translation
                     : $this->trans->get($aValues['trans_id'],
                     'content', SGL_Translation::getFallbackLangID());
             }
