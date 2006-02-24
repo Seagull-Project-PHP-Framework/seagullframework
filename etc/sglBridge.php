@@ -88,6 +88,7 @@ class SGL_Process_MinimalSession extends SGL_DecorateProcess
     {
         session_start();
         $_SESSION['uid'] = 1;
+        $_SESSION['rid'] = 1;
         $_SESSION['aPrefs'] = array();
 
         $this->processRequest->process($input);
