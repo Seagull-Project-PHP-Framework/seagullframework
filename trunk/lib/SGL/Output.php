@@ -544,35 +544,14 @@ class SGL_Output
         return in_array($styleSheet, array('SglListamaticSubtle', 'verticalSimple'));
     }
 
-    function outputBody()
+    function outputBody($templateEngine = null)
     {
-	    $conf = $this->aProps['manager']->conf;
-
-	    if ($conf['site']['templateEngine'] == 'flexy') {
-	        $body = new HTML_Template_Flexy();
-	        if (empty($this->template)) {
-	            $this->template = 'docBlank.html';
-	        }
-	        $body->compile($this->template);
-	        $body->outputObject($this);
-
-	    } elseif ($conf['site']['templateEngine'] == 'smarty') {
-
-	    	//  grab current moduleName to build path to smarty template
-	        $reg = &SGL_Registry::singleton();
-	        $moduleName = $reg->moduleName;
-	        $templateName = $moduleName . '/' . $this->template;
-	        $smarty = & SGL_Smarty::singleton();
-    	    $ok = $smarty->display($templateName);
-
-	    } elseif ($conf['site']['templateEngine'] == 'savant2') {
-
-	        $savant2 = & SGL_Savant2::singleton();
-	        if (empty($this->template)) {
-	            $this->template = 'docBlank.html';
-	        }
-    	        $savant2->display($this->template);
-	    }
+        if (empty($this->template)) {
+	    $this->template = 'docBlank.html';
+        }
+        $this->masterTemplate = $this->template;
+        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
+        echo $view->render();
     }
 
     /**
