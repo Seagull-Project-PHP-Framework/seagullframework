@@ -74,7 +74,7 @@ function toggleAliasElements(myCheckbox)
         {end:}
             <p>
                 <label for="page[title]">{translate(#Page Title#)} {fullNavLang}</label>
-                <input type="text" class="longText" name="page[title]" id="page[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'page[title]','page[uri_alias]')"/>
+                <input type="text" class="longText" name="page[title]" id="page[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'page[title]','page[uri_alias]')" />
             </p>
             <p>
                 <label for="page[parent_id]">{translate(#Parent Page#)}</label>
@@ -198,11 +198,11 @@ function toggleAliasElements(myCheckbox)
             {if:uriAliasAllowed}
             <p>
                 <label for="page[uri_alias_enable]">{translate(#Add an alias#)}?</label>
-                <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();">
+                <input type="checkbox" name="page[uri_alias_enable]" id="page[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();" />
             </p>
             <p>
                 <label for="page[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}">
+                <input type="text" class="longText" name="page[uri_alias]" id="page[uri_alias]" value="{section[uri_alias]}" onkeyup="this.value=replaceUri(this.value)" />
             </p>
             {end:}
         </fieldset>
