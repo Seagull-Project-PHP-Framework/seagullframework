@@ -90,7 +90,7 @@ class SGL_Sql
 #FIXME: the above code fails in certain situations, write tests to improve regex
             #$line = trim($line);
             $cmt  = substr($line, 0, 2);
-            if ($cmt == '--' || trim($cmt) == '#') {
+            if ($cmt == '--' || preg_match("/^#/", $cmt)) {
                 continue;
             }
 #END:FIXME
