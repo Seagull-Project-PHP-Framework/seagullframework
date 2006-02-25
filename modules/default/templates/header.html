@@ -105,8 +105,13 @@
                }
             }
         }
-   </script>
+    </script>
     {end:}
+    {if:wysiwyg_tinyfck}
+        <script language="javascript" type="text/javascript" src="{webRoot}/tinyfck/tiny_mce_gzip.php"></script>
+        <script language="javascript" type="text/javascript" src="{webRoot}/js/SglTinyFckConfig.js"></script>
+    {end:}
+
     {end:}
 
     {foreach:headerExtras,extra}

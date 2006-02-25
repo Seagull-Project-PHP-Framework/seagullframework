@@ -20,7 +20,7 @@
             <h3>{translate(#Content#)}</h3>
             {foreach:dynaFields,fieldName,fieldContent}
             <p class="row">
-                <label>{translate(fieldName)}</label>
+                <label>{translate(fieldName)}</label><br / flexy:if=wysiwyg_tinyfck>
                 {fieldContent:h}
             </p>
             {end:}
