@@ -17,6 +17,8 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+25-02-06    Renamed PageMgr to SectionMgr, and all references to 'page' changed
+            to section
 21-02-06    Improvements to html controls (Olivier Burgard)
 21-02-06    Module generator refactored and now auto-registers new modules
             (Gerald Fischer)
