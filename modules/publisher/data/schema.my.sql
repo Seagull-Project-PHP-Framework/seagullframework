@@ -57,6 +57,7 @@ create table if not exists item
    start_date                     datetime,
    expiry_date                    datetime,
    status                         smallint,
+   hits                           int,
    primary key (item_id)
 );
 
