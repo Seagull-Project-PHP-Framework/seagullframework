@@ -58,8 +58,9 @@ class Navigation_Block_Breadcrumbs
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blockOutput        = new SGL_Output();
-        $blockOutput->theme = $output->theme;
+        $blockOutput          = &new SGL_Output();
+        $blockOutput->theme   = $output->theme;
+        $blockOutput->webRoot = $output->webRoot;
 
         //  prepare navigation driver
         $navDriver = $output->conf['navigation']['driver'];
