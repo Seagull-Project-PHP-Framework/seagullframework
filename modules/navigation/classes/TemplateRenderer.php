@@ -93,6 +93,7 @@ class TemplateRenderer
             $output->level     = $currentRenderedLevel;
             $output->aSections = $aSectionNodes;
             $html              = $this->view->render();
+            $output->level     = $currentRenderedLevel-1;
         }
 
         return $html;
