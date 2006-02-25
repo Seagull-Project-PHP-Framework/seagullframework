@@ -5,7 +5,7 @@ $message = SGL_Output::translate('The following user has just registered');
 $username = SGL_Output::translate('username');
 $click = SGL_Output::translate('Click');
 $here = SGL_Output::translate('here');
-$toEnable = SGL_Output::translate('to enable the new user\'s account');
+$toEnable = SGL_Output::translate('to enable the new users account');
 
 $body = <<< EOF
 <table class="wide">

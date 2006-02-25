@@ -1,4 +1,17 @@
 <?php
+$words['Article Manager :: Add'] = 'Artikel Manager :: Hinzufügen';
+$words['Article Manager :: Edit'] = 'Artikel Manager :: Bearbeiten';
+$words['Please select an article type'] = 'Bitte wählen Sie einen Artikeltyp aus';
+$words['Article list'] = 'Artikelliste';
+$words['Article filter'] = 'Artikelfilter';
+$words['Content'] = 'Inhalt';
+$words['Document list'] = 'Dokumentenliste';
+$words['Document filter'] = 'Dokumentenfilter';
+$words['Document type'] = 'Dokumententyp';
+$words['Number of fields'] = 'Nummer der Felder';
+$words['field'] = 'Feld';
+$words['New content type'] = 'Neuer Artikeltyp';
+$words['Give a name to this field and select its type'] = 'Bitte geben Sie einen Namen des Felds an und wählen Sie den Typ aus';
 $words['Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'] = 'Mit dem Publisher können Sie verschiedene Arten von Inhalt spielend erstellen. Hier werden drei Arten besprochen:';
 $words['What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'] = 'Artikel des Typs HTML Artikel erlauben es Ihnen, den Inhalt Ihrer Homepage Kategorien zu ordnen die Sie mit dem Kategorien Knopf oben erstellen können. Sehr praktisch für Intranetseiten oder grosse Seiten. Die Dokumente und Datein werden in Kästen innerhalb der einzelnen Kategorien angezeigt.';
 $words['However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the'] = 'Wenn sie alleinstehende Seiten erstellen wollen, die einen eigenen Punkt in der Navigation haben, können Sie den Typ Static HTML Article verwenden. Um die dazugehörige Navigation zu erstellen benutzen Sie das';
