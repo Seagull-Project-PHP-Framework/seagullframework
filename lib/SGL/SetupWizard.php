@@ -423,19 +423,22 @@ class SGL_SetupWizard
                     $this->conf['cookie']['domain'], $this->conf['cookie']['secure']);
 
         echo '
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
             <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+            <title>Seagull Database Initialisation</title>
             <link rel="stylesheet" type="text/css" href="' . SGL_BASE_URL . '/themes/default/css/style.php" />
             </head>
             <body style="margin: 0 auto; padding: 10">
-            <h1> Seagull Database Initialisation </h1>';
+            <h1>Seagull Database Initialisation</h1>';
 
         $instructions = '
             <p>Fill out the form with the information on how to access your seagull database.</p>
             <p>You must have already created a database named \'seagull\' or whatever you specify below.</p>
-            <hr>';
+            <hr />';
         $warning = <<<EOF
-            <p style="color:#FF0000"><strong>Note</strong>: It appears you're using Apache as a webserver
+            <p class="error"><strong>Note</strong>: It appears you're using Apache as a webserver
             so you should consider copying the file 'htaccess.dist' from the etc folder to the root of your
             Seagull install, and renaming it .htaccess.  This will prevent users from being able
             to view the contents of ini files where configuration details are kept.  If you are using
@@ -456,22 +459,28 @@ EOF;
             'setupType[setConnectionDetails]'  => true,
             ));
 
-        $form->addElement('header','MyHeader', 'Database parameters');
-        $form->addElement('text',  'name',     'Database name: ');
-        $form->addElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 0);
-        $form->addElement('radio', 'type',     '', "mysql", 1);
-        $form->addElement('radio', 'type',     '', "postgres",2);
-        $form->addElement('radio', 'type',     '', "oci8",3);
-        $form->addElement('radio', 'type',     '', "maxdb",4);
-        $form->addElement('text',  'host',     'Host: ');
-        $form->addElement('radio', 'protocol', 'Protocol: ',"unix (fine for localhost connections)", 0);
-        $form->addElement('radio', 'protocol', '',"tcp", 1);
-        $form->addElement('radio', 'port',     'TCP port: ',"3306 (mysql default)",0);
-        $form->addElement('radio', 'port',     '',"5432 (postgres default)",1);
-        $form->addElement('radio', 'port',     '',"1521 (Oracle default)",2);
-        $form->addElement('radio', 'port',     '',"7210 (MaxDB default)",3);
-        $form->addElement('text',  'user',     'Database username: ');
-        $form->addElement('password', 'pass', 'Database password: ');
+        $dbType = array("0"=>"MySQL SGL (all sequences in one table)",
+                        "1"=>"MySQL",
+                        "2"=>"PostgreSQL",
+                        "3"=>"Oracle",
+                        "4"=>"MaxDB");
+
+        $protocol = array("0"=>"Unix socket (only local clients)",
+                          "1"=>"TCP");
+                   
+        $tcpPort = array("0"=>"3306 (MySQL default)",
+                         "1"=>"5432 (PostgreSQL default)",
+                         "2"=>"1521 (Oracle default)",
+                         "3"=>"7210 (MaxDB default)");
+                         
+        $form->addElement('header',   'MyHeader', 'Database parameters');
+        $form->addElement('text',     'name',     'Database name:');
+        $form->addElement('select',   'type',     'Database type:', $dbType);
+        $form->addElement('text',     'host',     'Host:');
+        $form->addElement('select',   'protocol', 'Protocol:', $protocol);
+        $form->addElement('select',   'port',     'TCP port:', $tcpPort);
+        $form->addElement('text',     'user',     'Database username:');
+        $form->addElement('password', 'pass',     'Database password:');
 
         $form->addElement('header','MyHeader', 'Setup');
         
@@ -480,7 +489,7 @@ EOF;
         $checkbox[] = &HTML_QuickForm::createElement('checkbox', 'setConnectionDetails', null, 'set connection details');
         $form->addGroup($checkbox, 'setupType', 'Actions', '<br />');    
      
-        $form->addElement('submit', 'btnSubmit', 'Execute (pls be patient if schema creation selected)');
+        $form->addElement('submit', 'btnSubmit', 'Execute');
 
         $form->setDefaults($this->conf['db']);
         
