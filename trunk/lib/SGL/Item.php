@@ -594,7 +594,7 @@ class SGL_Item
 
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' id='frmFieldName[$fieldName]' name='frmFieldName[]' value='$fieldValue' />";
+            $formHTML = "<input type='text' id='frmFieldName[$fieldName]' name='frmFieldName[]' value=\"$fieldValue\" />";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
