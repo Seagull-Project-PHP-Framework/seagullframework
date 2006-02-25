@@ -3,7 +3,7 @@
 /*  SECTION MANAGER */
         'Sections'  => 'Sections',
         'Section Manager' => 'Section Manager',
-        'New page' => 'New page',
+        'New section' => 'New section',
         'Reorder sections' => 'Reorder sections',
         'Resource URI' => 'Resource URI',
         'Parent ID' => 'Parent ID',
