@@ -114,7 +114,7 @@ function toggleAliasElements(myCheckbox)
             <p>
                 <label for="page[staticArticleId]">{translate(#static article title#,#ucfirst#)}</label>
                 <select size="1" name="page[staticArticleId]" id="page[staticArticleId]">
-                    {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
+                    {generateSelect(aStaticArticles,section[staticArticleId],currentLang):h}
                 </select>
             </p>
             <p>
