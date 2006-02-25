@@ -54,12 +54,12 @@ class SectionMgr extends SGL_Manager
 {
     var $_params = array();
 
-    function PageMgr()
+    function SectionMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle        = 'Page Manager';
+        $this->pageTitle        = 'Section Manager';
         $this->masterTemplate   = 'masterMinimal.html';
         $this->template         = 'sectionList.html';
 
