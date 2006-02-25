@@ -24,7 +24,7 @@
     remove_script_host : true,
     relative_urls: false,
     width : "100%",
-    external_image_list_url : ".",
+    external_image_list_url : "."
 });
 
 function fileBrowserCallBack(field_name, url, type, win)
