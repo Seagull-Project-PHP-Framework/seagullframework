@@ -20,7 +20,6 @@
         'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".' => 'Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".',
 
 /* Add / Edit template */
-
         'Add section' => 'Add section',
         'Edit section' => 'Edit section',
         'Section ID' => 'Section ID',
