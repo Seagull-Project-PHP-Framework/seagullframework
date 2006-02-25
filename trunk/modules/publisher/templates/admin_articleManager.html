@@ -59,7 +59,7 @@ function hideCombox(comboxId)
 </script>
 <div class="hide" id="errorNoType">{translate(#Please select an article type#)}</div>
 <div id="manager-actions">
-    <span>Action:&nbsp;</span>
+    <span>{translate(#Action#)}: &nbsp;</span>
     <div class="combox" id="articleTypeSelector">
         {foreach:aArticleSelect,key,value}
         <a href="{makeUrl(#add#,#article#,#publisher#)}frmArticleTypeID/{key}">{value}</a>

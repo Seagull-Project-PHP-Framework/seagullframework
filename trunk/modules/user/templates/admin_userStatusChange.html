@@ -1,5 +1,5 @@
 <div id="manager-actions">
-    <span>Action:&nbsp;</span>
+    <span>{translate(#Action#)}: &nbsp;</span>
     <a class="action save" href="javascript:formSubmit('frmUserStatusChange','submitted',1,1)" flexy:if="user.is_acct_active">{translate(#Disable Now#)}</a>
     <a class="action save" href="javascript:formSubmit('frmUserStatusChange','submitted',1,1)" flexy:if="!user.is_acct_active">{translate(#Enable Now#)}</a>
     <a class="action cancel" href="{makeUrl(#list#,#user#,#user#)}">{translate(#Cancel#)}</a>
