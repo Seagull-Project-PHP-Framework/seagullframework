@@ -149,13 +149,13 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $html  = "\n";
         $html .= '<script type="text/javascript">' . "\n\t";
         $html .= sprintf('%s = new TreeMenu("%s", "%s", "%s", "%s", %s, %s);',
-                     $menuObj,
-                     $this->images,
-                     $menuObj,
-                     $this->linkTarget,
-                     $this->defaultClass,
-                     $this->usePersistence ? 'true' : 'false',
-                     $this->noTopLevelImages ? 'true' : 'false');
+                    $menuObj,
+                    $this->images,
+                    $menuObj,
+                    $this->linkTarget,
+                    $this->defaultClass,
+                    $this->usePersistence ? 'true' : 'false',
+                    $this->noTopLevelImages ? 'true' : 'false');
 
         $html .= "\n";
 
@@ -194,7 +194,7 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $html = sprintf("\t %s = %s.addItem(new TreeNode('%s', %s, %s, %s, %s, '%s', '%s', %s));\n",
                     addslashes($return),
                     $prefix,
-                    $nodeObj->text,
+                    addslashes($nodeObj->text),
                     !empty($nodeObj->icon) ? "'" . $nodeObj->icon . "'" : 'null',
 #                   !empty($nodeObj->link) ? "'" . $nodeObj->link . "'" : 'null',
                     !empty($nodeObj->link) ? "'" . $nodeObj->link . $nodeObj->id ."/'" : 'null',
