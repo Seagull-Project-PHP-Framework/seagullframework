@@ -224,8 +224,8 @@ class SGL_DB
 		$pager_options['currentPage'] = $req->get('pageID');
 
 		require_once 'Pager/Pager.php';
-		$pager_options['append'] = false;
-        $pager_options['fileName'] = '/pageID/%d/';
+        $pager_options['append']   = isset($pager_options['append'])   ? $pager_options['append']   : 'false';
+        $pager_options['fileName'] = isset($pager_options['fileName']) ? $pager_options['fileName'] : '/pageID/%d/';
         $pager = Pager::factory($pager_options);
 
         $page = array();
