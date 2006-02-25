@@ -20,6 +20,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', @module
 
 INSERT INTO section VALUES (0, 'none', '', '0', 0, 0, 0, 1, 2, 0, 1, 0, 0, '', '');
 INSERT INTO section VALUES (45, 'Blocks', 'block/block', '1', 45, 22, 22, 16, 17, 4, 2, 1, NULL, NULL, NULL);
+INSERT INTO section VALUES (22, 'Admin menu', 'uriEmpty:', '1', 22, 0, 22, 1, 38, 2, 1, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (49, 'Manage menu', 'navigation/section', '1', 49, 47, 22, 13, 14, 1, 3, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (164, 'Manage permissions', 'user/permission', '1', 164, 158, 22, 31, 32, 2, 3, 1, 0, '', '');
 INSERT INTO section VALUES (176, 'Maintenance', 'default/maintenance', '1', 176, 29, 22, 7, 8, 2, 3, 1, NULL, NULL, NULL);
