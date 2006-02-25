@@ -42,5 +42,5 @@ INSERT INTO section VALUES (73, 'Documents', 'publisher/document', '1', 73, 27, 
 INSERT INTO section VALUES (186, 'Content types', 'publisher/contenttype', '1', 186, 27, 22, 25, 26, 4, 3, 1, 0, '', '');
 INSERT INTO section VALUES (188, 'Modules', 'default/module/action/overview', '1', 188, 1, 1, 6, 7, 3, 2, 1, 0, '', '');
 INSERT INTO section VALUES (190, 'Config', 'default/config', '1', 190, 1, 1, 8, 9, 4, 2, 1, 0, '', '');
-INSERT INTO section VALUES (192, 'Module Generator', 'default/modulegeneration/action/list', '1', 192, 29, 22, 11, 12, 4, 3, 1, 0, '', '');
+INSERT INTO section VALUES (192, 'Module Generator', 'default/modulegeneration', '1', 192, 29, 22, 11, 12, 4, 3, 1, 0, '', '');
 INSERT INTO section VALUES (32, 'Articles', 'publisher/article', '1', 32, 27, 22, 19, 20, 1, 3, 1, NULL, NULL, NULL);
