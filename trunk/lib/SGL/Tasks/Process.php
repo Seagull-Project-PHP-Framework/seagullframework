@@ -762,6 +762,10 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
             	$input->data->wysiwyg_htmlarea = true;
             	$input->data->addOnLoadEvent('HTMLArea.init()');
             	break;
+            case 'tinyfck':
+                $input->data->wysiwyg_tinyfck = true;
+                //note: tinymce doesn't need an onLoad event to initialise
+                break;
 			}
 		}
         //  get all html onLoad events
