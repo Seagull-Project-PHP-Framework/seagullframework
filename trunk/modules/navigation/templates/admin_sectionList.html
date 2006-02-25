@@ -1,7 +1,7 @@
 {sectionArrayJS:h}
 <div id="manager-actions">
     <span>{translate(#Action#)}:&nbsp;</span>
-    <a class="action add" href="{makeUrl(#add#,#page#,#navigation#)}">{translate(#New page#)}</a>
+    <a class="action add" href="{makeUrl(#add#,#section#,#navigation#)}">{translate(#New section#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -38,18 +38,18 @@
                         <td>{section[section_id]}</td>
                         <td align="center">
                             {if:section[images][moveDownTarget]}
-                                <a href="{makeUrl(#reorder#,#page#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveDownTarget]||move|down#,key)}">
+                                <a href="{makeUrl(#reorder#,#section#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveDownTarget]||move|down#,key)}">
                                     <img src="{webRoot}/themes/{theme}/{section[images][moveDownImg]:h}" alt="Move {section[title]} down" /></a>
                             {else:} <img src="{webRoot}/themes/{theme}/{section[images][moveDownImg]:h}" alt="Move {section[title]} down" />
                             {end:}
 
                             {if:section[images][moveUpTarget]}
-                                <a href="{makeUrl(#reorder#,#page#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveUpTarget]||move|up#,key)}">
+                                <a href="{makeUrl(#reorder#,#section#,#navigation#,results,#frmSectionId|section_id||targetId|images[moveUpTarget]||move|up#,key)}">
                                     <img src="{webRoot}/themes/{theme}/{section[images][moveUpImg]:h}" alt="Move {section[title]} up" /></a>
                             {else:} <img src="{webRoot}/themes/{theme}/{section[images][moveUpImg]:h}" alt="Move {section[title]} up" />
                             {end:}
                         </td>
-                        <td class="left">{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:} <a href="{makeUrl(#edit#,#page#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}">{section[title]:h}</a></td>
+                        <td class="left">{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:} <a href="{makeUrl(#edit#,#section#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}">{section[title]:h}</a></td>
                         <td class="left">{summarise(section[resource_uri])}</td>
                         <td>{section[parent_id]}</td>
                         <td>{section[order_id]}</td>

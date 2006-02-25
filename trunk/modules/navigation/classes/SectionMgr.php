@@ -122,7 +122,7 @@ class SectionMgr extends SGL_Manager
         $input->sectionId   = $req->get('frmSectionId');
         $input->targetId    = $req->get('targetId');
         $input->move        = $req->get('move');
-        $input->section     = $req->get('page');
+        $input->section     = $req->get('section');
         $input->section['is_enabled']       = (isset($input->section['is_enabled'])) ? 1 : 0;
         $input->section['uri_alias_enable'] = (isset($input->section['uri_alias_enable'])) ? 1 : 0;
         $input->navLang     = $req->get('frmNavLang');
@@ -168,8 +168,8 @@ class SectionMgr extends SGL_Manager
                     $aPerms = explode(',', $input->section['perms']);
                     foreach ($aPerms as $permID) {
                         if (strpos($parent['perms'], $permID) === false){
-                            $aErrors[] = 'To access this page, a user must have access' .
-                                         ' to the parent page. One or more of the roles ' .
+                            $aErrors[] = 'To access this section, a user must have access' .
+                                         ' to the parent section. One or more of the roles ' .
                                          'you selected does not have access to ' . $parent['title'] . '.';
                         }
                     }
@@ -198,7 +198,7 @@ class SectionMgr extends SGL_Manager
 
         $output->template = 'sectionEdit.html';
         $output->action   = 'insert';
-        $output->mode     = 'New page';
+        $output->mode     = 'New section';
         $output->isAdd    = true;
         $this->_editDisplay($output);
     }
@@ -215,7 +215,7 @@ class SectionMgr extends SGL_Manager
         $separator = '/'; // can be configurable later
         $errorMsg  = '';
 
-        //  if pageType = static, append articleId, else build section url
+        //  if sectionType = static, append articleId, else build section url
         $input->section['is_static'] = 0;
         switch ($input->section['articleType']) {
         case 'static':
@@ -332,7 +332,7 @@ class SectionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->mode     = 'Edit page';
+        $output->mode     = 'Edit section';
         $output->template = 'sectionEdit.html';
         $output->action   = 'update';
 
@@ -421,7 +421,7 @@ class SectionMgr extends SGL_Manager
         $separator = '/';
         $errorMsg  = '';
 
-        //  if pageType = static, append articleId, else build page url
+        //  if sectionType = static, append articleId, else build section url
         $input->section['is_static'] = 0;
         switch ($input->section['articleType']) {
         case 'static':
@@ -590,7 +590,7 @@ class SectionMgr extends SGL_Manager
                         $this->trans->remove($section['trans_id'], 'nav');
                     }
 
-                    //  remove page
+                    //  remove section
                     $nestedSet->deleteNode($sectionId);
 
                     //  remove alias
@@ -685,7 +685,7 @@ class SectionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  pre-check enabled box
-        $output->pageIsEnabled = (isset($output->section['is_enabled']) &&
+        $output->sectionIsEnabled = (isset($output->section['is_enabled']) &&
             $output->section['is_enabled'] == 1) ? 'checked' : '';
 
         $output->uriAliasEnabled = (isset($output->section['uri_alias_enable']) &&
@@ -698,7 +698,7 @@ class SectionMgr extends SGL_Manager
 
         $output->staticSelected = '';
         $output->dynamicSelected = '';
-        if ($this->conf['PageMgr']['wikiScreenTypeEnabled']) {
+        if ($this->conf['SectionMgr']['wikiScreenTypeEnabled']) {
             $output->wikiSelected = '';
         }
         $output->uriExternalSelected = '';
