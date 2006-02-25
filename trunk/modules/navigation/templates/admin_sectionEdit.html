@@ -74,7 +74,8 @@ function toggleAliasElements(myCheckbox)
         {end:}
             <p>
                 <label for="section[title]">{translate(#Section Title#)} {fullNavLang}</label>
-                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'section[title]','section[uri_alias]')" />
+                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'section[title]','section[uri_alias]')" flexy:if="isAdd"/>
+                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" flexy:if="!isAdd"/>
             </p>
             <p>
                 <label for="section[parent_id]">{translate(#Parent Section#)}</label>
@@ -202,7 +203,9 @@ function toggleAliasElements(myCheckbox)
             </p>
             <p>
                 <label for="section[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" onkeyup="this.value=replaceUri(this.value)" />
+                <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" onkeyup="this.value=replaceUri(this.value)" flexy:if="isAdd"/>
+                <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" flexy:if="!isAdd"/>
+                
             </p>
             {end:}
         </fieldset>
@@ -248,5 +251,7 @@ function toggleAliasElements(myCheckbox)
 createAvailOptionsLinks('sectionEdit','h3');
 showSelectedOptions('sectionEdit','navigationContent');
 toggleAliasElements();
-refreshMetaTitle('section[title]','section[uri_alias]')
+</script>
+<script flexy:if="isAdd">
+refreshMetaTitle('section[title]','section[uri_alias]');
 </script>
