@@ -120,7 +120,7 @@ function toggleAliasElements(myCheckbox)
                 <br />
                 {if:staticSelected}
                     <select size="1" name="page[staticArticleId]">
-                        {generateSelect(aStaticArticles,section[resource_uri],currentLang):h}
+                        {generateSelect(aStaticArticles,section[staticArticleId],currentLang):h}
                     </select> {translate(#static article title#)}
                 {end:}
                 {if:dynamicSelected}

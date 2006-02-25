@@ -400,7 +400,7 @@ class PageMgr extends SGL_Manager
                 //  deal with static articles
                 if ($section['is_static'] && $this->da->moduleIsRegistered('publisher')) {
                     if (isset($parsed['parsed_params'])) {
-                        $section['resource_uri'] = $parsed['parsed_params']['frmArticleID'];
+                        $section['staticArticleId'] = $parsed['parsed_params']['frmArticleID'];
                     }
                     $section['add_params'] = '';
                 }
