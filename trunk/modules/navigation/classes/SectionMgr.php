@@ -32,12 +32,12 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | PageMgr.php                                                               |
+// | SectionMgr.php                                                            |
 // +---------------------------------------------------------------------------+
 // | Authors:   Andy Crain <crain@fuse.net>                                    |
 // |            Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
-// $Id: PageMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
+// $Id: SectionMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
 require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
@@ -50,7 +50,7 @@ require_once SGL_MOD_DIR  . '/default/classes/ModuleMgr.php';
  * @package navigation
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class PageMgr extends SGL_Manager
+class SectionMgr extends SGL_Manager
 {
     var $_params = array();
 
@@ -149,12 +149,10 @@ class PageMgr extends SGL_Manager
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
-
             //  zero is a valid property, refers to public role
             if (is_null($input->section['perms'])) {
                 $aErrors[] = 'Please assign viewing rights to least one role';
             }
-
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
             if (($input->action == 'update' || $input->action == 'insert') && $input->section['parent_id'] != 0) {
@@ -181,7 +179,6 @@ class PageMgr extends SGL_Manager
             unset($input->aParams);
             $this->validated = false;
         }
-
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_WARNING);
@@ -218,12 +215,13 @@ class PageMgr extends SGL_Manager
         $separator = '/'; // can be configurable later
         $errorMsg  = '';
 
-        //  if pageType = static, append articleId, else build page url
+        //  if pageType = static, append articleId, else build section url
         $input->section['is_static'] = 0;
         switch ($input->section['articleType']) {
         case 'static':
             $input->section['is_static'] = 1;
-            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' . $input->section['staticArticleId'] . '/';
+            $input->section['resource_uri'] =  'publisher/articleview/frmArticleID/' .
+                $input->section['staticArticleId'] . '/';
             break;
 
         case 'wiki':
@@ -658,7 +656,8 @@ class PageMgr extends SGL_Manager
             $fallbackLang = $this->conf['translation']['fallbackLang'];
 
             //  fetch translations title
-            $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang), $fallbackLang);
+            $aTranslations = SGL_Translation::getTranslations('nav', str_replace('-', '_' , $lang),
+                $fallbackLang);
 
             //  FIXME currently only set translation if numeric
             foreach ($sectionNodes as $k => $aValues) {
@@ -717,7 +716,8 @@ class PageMgr extends SGL_Manager
                 $output->navLang            = $navLang;
                 $output->fullNavLang        = $availableLangs[$navLang];
                 $output->availableLangs     = $availableLangs;
-                $output->section['title']   = $this->trans->get($output->section['trans_id'], 'nav', $output->navLang);
+                $output->section['title']   = $this->trans->get($output->section['trans_id'],
+                    'nav', $output->navLang);
             }
         }
 
@@ -812,7 +812,8 @@ class PageMgr extends SGL_Manager
                 }
             }
 
-            $output->aAllAddons = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR . '/navigation/classes/addons/');
+            $output->aAllAddons = SGL_Util::getAllClassesFromFolder(SGL_MOD_DIR .
+                '/navigation/classes/addons/');
             break;
     }
 
@@ -835,8 +836,10 @@ class PageMgr extends SGL_Manager
         $query = "
              SELECT  i.item_id,
                      ia.addition
-             FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
-                     {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm
+             FROM    {$this->conf['table']['item']} i,
+                     {$this->conf['table']['item_addition']} ia,
+                     {$this->conf['table']['item_type']} it,
+                     {$this->conf['table']['item_type_mapping']} itm
              WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
              AND     it.item_type_id  = itm.item_type_id
              AND     i.item_id = ia.item_id
@@ -869,7 +872,8 @@ class PageMgr extends SGL_Manager
                         $sectionNode['title'] = $title;
                     }
                 }
-                $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer . $sectionNode['title'] . "</option>\n";
+                $ret .= '<option value="' . $k . '" ' . $toSelect . '>' . $spacer .
+                    $sectionNode['title'] . "</option>\n";
             }
         }
         return $ret;
