@@ -116,28 +116,22 @@ class RoleMgr extends SGL_Manager
         if (is_array($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            if ($this->conf['site']['adminGuiEnabled']) {
-                $input->template = 'roleEdit.html';
-                if ($input->action == 'update') {
-                    $input->roleEdit = true;
-                } else {
-                    $input->roleAdd = true;
-                }
+
+            if ($input->action == 'update') {
+                $input->roleEdit = true;
             } else {
-                $input->template = ($input->action == 'update') ? 'roleEdit.html' : 'roleAdd.html';
+                $input->roleAdd = true;
             }
+            $input->template = 'roleEdit.html';
         }
     }
 
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->template = 'roleEdit.html';
-            $output->roleAdd = true;
-        } else {
-            $output->template = 'roleAdd.html';
-        }
+
+        $output->template = 'roleEdit.html';
+        $output->roleAdd = true;
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->role = DB_DataObject::factory($this->conf['table']['role']);
     }
@@ -169,9 +163,8 @@ class RoleMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->roleEdit = true;
-        }
+
+        $output->roleEdit = true;
         $output->template = 'roleEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
@@ -241,33 +234,23 @@ class RoleMgr extends SGL_Manager
                     FROM {$this->conf['table']['role']} " .$orderBy_query;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
+
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').roles.disabled = true");
-        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function _cmd_duplicate(&$input, &$output)

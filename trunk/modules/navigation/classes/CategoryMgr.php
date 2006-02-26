@@ -121,11 +121,6 @@ class CategoryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  prepare data for publisher subnav
-        if (!$this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').categories.disabled = true");
-        }
-
         //  load category
         if (!$this->_category->load($input->category_id)) {
             $output->noEditForm = 1;
@@ -188,9 +183,7 @@ class CategoryMgr extends SGL_Manager
         $output->template = 'categoryReorder.html';
         $output->categoryTree = $this->_category->getTree();
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function _cmd_reorderUpdate(&$input, &$output)

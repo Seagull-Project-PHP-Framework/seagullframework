@@ -352,37 +352,23 @@ class DocumentMgr extends FileMgr
             ORDER BY d.date_created DESC";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'totalItems'=> $input->totalItems,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'totalItems'=> $input->totalItems,
-            );
-        }
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'totalItems'=> $input->totalItems,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
 
-        //  prepare data for publisher subnav
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
 
         //  prepare breadcrumbs
         $menu = & new MenuBuilder('SelectBox');

@@ -870,35 +870,32 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
         $adminGuiAllowed = $adminGuiRequested = false;
 
         //  setup which GUI to load depending on user and manager
-        if (!empty($this->conf['site']['adminGuiEnabled']) &&
-                $this->conf['site']['adminGuiEnabled'] == true) {
-            $input->data->adminGuiAllowed = false;
+        $input->data->adminGuiAllowed = false;
 
-            // first check if userRID allows to switch to adminGUI
-            if ($userRid == SGL_ADMIN) {
-                $adminGuiAllowed = true;
+        // first check if userRID allows to switch to adminGUI
+        if ($userRid == SGL_ADMIN) {
+            $adminGuiAllowed = true;
+        }
+
+        // then check if manager requires to switch to adminGUI
+        if (isset($this->conf[$mgrName]['adminGuiAllowed'])
+            && $this->conf[$mgrName]['adminGuiAllowed']) {
+            $adminGuiRequested = true;
+
+            // exception
+            // 1. allows to preview articles with default theme
+            if ($mgrName == 'ArticleMgr' && $action == 'view') {
+                $adminGuiRequested = false;
             }
+        }
 
-            // then check if manager requires to switch to adminGUI
-            if (isset($this->conf[$mgrName]['adminGuiAllowed'])
-                && $this->conf[$mgrName]['adminGuiAllowed']) {
-                $adminGuiRequested = true;
+        if ($adminGuiAllowed && $adminGuiRequested) {
 
-                // exception
-                // 1. allows to preview articles with default theme
-                if ($mgrName == 'ArticleMgr' && $action == 'view') {
-                    $adminGuiRequested = false;
-                }
-            }
-
-            if ($adminGuiAllowed && $adminGuiRequested) {
-
-                // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
-                $input->data->adminGuiAllowed = true;
-                $input->data->theme = $this->conf['site']['adminGuiTheme'];
-                $input->data->masterTemplate = 'admin_master.html';
-                $input->data->template = 'admin_' . $input->data->template;
-            }
+            // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
+            $input->data->adminGuiAllowed = true;
+            $input->data->theme = $this->conf['site']['adminGuiTheme'];
+            $input->data->masterTemplate = 'admin_master.html';
+            $input->data->template = 'admin_' . $input->data->template;
         }
 
         $this->processRequest->process($input);

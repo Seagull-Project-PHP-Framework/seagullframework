@@ -675,9 +675,7 @@ class SectionMgr extends SGL_Manager
         $output->results = $sectionNodes;
         $output->sectionArrayJS = $this->_createNodesArrayJS($sectionNodes);
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function _editDisplay(&$output)
