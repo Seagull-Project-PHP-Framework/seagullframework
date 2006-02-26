@@ -120,6 +120,11 @@ class SGL_Translation
             require_once 'Translation2.php';
             $oTranslation = &Translation2::factory($driver, $dsn, $params);
         }
+        //  switch phptype to mysql when using mysql_SGL otherwise the langs table
+        //  and index's will not be created.
+        if ($dsn['phptype'] == 'mysql_SGL') {
+            $oTranslation->storage->db->phptype = 'mysql';
+        }
         return $oTranslation;
     }
 
