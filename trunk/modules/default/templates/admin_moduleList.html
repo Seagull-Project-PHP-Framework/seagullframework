@@ -7,9 +7,8 @@
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
-
     <div class="fieldsetlike" id="moduleList">
-    <h3>{translate(#Module list#)}</h3>
+        <h3>{translate(#Module list#)}</h3>
         <table class="full">
             <thead>
                 <tr class="infos">
@@ -19,9 +18,9 @@
                 </tr>
                 <tr>
                     <th width="3%">ID</th>
-                    <th width="30%" class="left">{translate(#Title#)}</th>
-                    <th width="3%"></th>
-                    <th width="20%" class="left">{translate(#Module Name#)}</th>
+                    <th width="5%">&nbsp;</th>
+                    <th width="12%" class="left">{translate(#Title#)}</th>
+                    <th width="75%" class="left">{translate(#Description#)}</th>
                     <th width="5%">{translate(#Disable#)}</th>
                 </tr>
             </thead>
@@ -38,13 +37,11 @@
             {if:aPagedData[data]}
                 <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
                     <td>{aValue[module_id]}</td>
-                    <td class="left">
-                        <a class="tipOwner" href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}
-                            <span class="tipText">{aValue[description]}</span>
-                        </a>
-                    </td>
                     <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}.gif" alt="" /></td>
-                    <td class="left">{aValue[name]}</td>
+                    <td class="left">
+                        <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
+                    </td>
+                    <td class="left desc">{aValue[description]}</td>
                     <td><a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {aValue[title]}"><img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" /></a></td>
                 </tr>
             {else:}
@@ -56,38 +53,3 @@
         </table>
     </div>
 </div>
-    {foreach:aModules,key,valueObj}
-        {if:switchTrueFalse()}
-        <div class="moduleBlock clearLeft">
-        {else:}
-        <div class="moduleBlock">
-        {end:}
-            {if:isAdmin}
-            <span class="moduleManageLinks">
-            <a href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}" title="{translate(#edit#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/document-properties.png" alt="{translate(#edit#)}" /></a>
-            <a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {valueObj.title}"><img src="{webRoot}/themes/{theme}/images/16/status_disabled.gif" alt="{translate(#disable#)}" /></a>
-            </span>
-            {end:}
-            {if:valueObj.is_configurable}
-            <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
-            {end:}
-            <h2>{valueObj.title}</h2>
-            {if:valueObj.is_configurable}
-            </a>
-            {end:}
-
-            <div class="moduleName">
-            {if:valueObj.is_configurable}
-            <a href="{makeUrl(##,valueObj.manager,valueObj.module)}">
-            {end:}
-                <img src="{webRoot}/themes/{theme}/images/{valueObj.icon}" alt="{valueObj.title}" />
-            {if:valueObj.is_configurable}
-            </a>
-            {end:}
-            </div>
-            <p class="moduleDesc">
-                {valueObj.description}
-            </p>
-            <div class="spacer"></div>
-        </div>
-    {end:}

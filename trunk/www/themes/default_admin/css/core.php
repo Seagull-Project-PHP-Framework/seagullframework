@@ -203,7 +203,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
 
 /*
 ====================Left column block=========================*/
-#block-container {
+.container {
     min-height: 300px;
     margin: 0 5px;
     padding-bottom: 3em;
@@ -214,7 +214,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     border: 1px solid <?php echo $borderDark ?>;
     -moz-border-radius: 0.4em;
 }
-.block-header {
+.block .header {
     margin: 0;
     height: 30px;
     line-height: 30px;
@@ -226,7 +226,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     border-bottom: 1px solid <?php echo $borderDark ?>;
     -moz-border-radius: 0.4em 0.4em 0 0;
 }
-.block-content {
+.block .content {
     border-bottom: 1px solid <?php echo $borderLight ?>;
 }
 
