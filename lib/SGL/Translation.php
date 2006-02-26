@@ -56,7 +56,8 @@ class SGL_Translation
      *  o admin - translation2_admin
      * Storage drivers: (Set in global config under site)
      *  o single - all translations in a single table (translations)
-     *  o multiple (default) - all translations in a seperate table (translation_en, translation_pl, translation_de)
+     *  o multiple (default) - all translations in a seperate table
+     * (translation_en, translation_pl, translation_de)
      *
      * @static
      * @access  public
@@ -180,47 +181,53 @@ class SGL_Translation
      */
     function getTranslations($module, $lang, $fallbackLang = false)
     {
-        if (!empty($module) && !empty($lang)) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
-            //  fallback lang clause
-            $fallbackLang = ($fallbackLang) ? $fallbackLang : $conf['translation']['fallbackLang'];
+        if ($conf['translation']['container'] == 'db') {
+            if (!empty($module) && !empty($lang)) {
+                //  fallback lang clause
+                $fallbackLang = ($fallbackLang)
+                    ? $fallbackLang
+                    : $conf['translation']['fallbackLang'];
 
-            //  if langauge not installed resort to fallback
-            if (!in_array($lang, explode(',', $conf['translation']['installedLanguages']))) {
-                $lang = $fallbackLang;
+                //  if langauge not installed resort to fallback
+                if (!in_array($lang, explode(',', $conf['translation']['installedLanguages']))) {
+                    $lang = $fallbackLang;
+                }
+                //  instantiate translation2 object
+                $translation = &SGL_Translation::singleton();
+
+                //  set language
+                $langInstalled = $translation->setLang($lang);
+
+                //  set translation group
+                $translation->setPageID($module);
+
+                //  create decorator for fallback language
+                if (isset($fallbackLang) && !strcmp($lang, $fallbackLang)) {
+                    $translation = & $translation->getDecorator('Lang');
+                    $translation->setOption('fallbackLang', $fallbackLang);
+                }
+                //  instantiate cachelite decorator and set options
+                if ($conf['cache']['enabled']) {
+                    $translation = &$translation->getDecorator('CacheLiteFunction');
+                    $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
+                    $translation->setOption('lifeTime', $conf['cache']['lifetime']);
+                }
+
+                //  fetch translations
+                $words = $translation->getPage();
+
+                SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
+                return $words;
+
+            } else {
+                SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                    SGL_ERROR_INVALIDARGS);
             }
-            //  instantiate translation2 object
-            $translation = &SGL_Translation::singleton();
-
-            //  set language
-            $langInstalled = $translation->setLang($lang);
-
-            //  set translation group
-            $translation->setPageID($module);
-
-            //  create decorator for fallback language
-            if ($lang !== $fallbackLang && $fallbackLang) {
-                $translation = & $translation->getDecorator('Lang');
-                $translation->setOption('fallbackLang', $fallbackLang);
-            }
-            //  instantiate cachelite decorator and set options
-            if ($conf['cache']['enabled']) {
-                $translation = &$translation->getDecorator('CacheLiteFunction');
-                $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
-                $translation->setOption('lifeTime', $conf['cache']['lifetime']);
-            }
-
-            //  fetch translations
-            $words = $translation->getPage();
-
-            SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
-
-            return $words;
-
         } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
         }
     }
 
