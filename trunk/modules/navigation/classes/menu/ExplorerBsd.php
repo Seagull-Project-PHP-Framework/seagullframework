@@ -32,8 +32,6 @@
  *
  * @package navigation
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.8 $
- * @since   PHP 4.1
  */
 
 class Menu_ExplorerBsd
@@ -65,10 +63,10 @@ class Menu_ExplorerBsd
 
         //  build url for current page
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink(   '',
-                                    $req->get('managerName'),
-                                    $req->get('moduleName')
-                                    );
+        $url = SGL_Url::makeLink('',
+            $req->get('managerName'),
+            $req->get('moduleName')
+            );
         $url .= 'frmCatID/';
         $nodeOptions = array(
          'text'          => '',
@@ -107,12 +105,12 @@ class Menu_ExplorerBsd
         require_once 'HTML/Tree.php';
 
         $dbh = &SGL_DB::singleton();
-        $roleId = SGL_Session::get('rid'); 
+        $roleId = SGL_Session::get('rid');
         $query = "  SELECT  category_id as id, parent_id, label AS text
-                    FROM    
+                    FROM
                         {$this->conf['table']['category']}
                     WHERE
-                        $roleId NOT IN (COALESCE(perms, '-1'))                         
+                        $roleId NOT IN (COALESCE(perms, '-1'))
                     ORDER BY parent_id, order_id";
         $tree     = &new Tree();
         $nodeList = array();
