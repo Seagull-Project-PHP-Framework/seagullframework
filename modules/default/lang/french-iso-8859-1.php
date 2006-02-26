@@ -260,6 +260,7 @@ $defaultWords['Welcome to'] = 'Bienvenue sur';
 $defaultWords['Home'] = 'Home';
 $defaultWords['Module Manager'] = 'Gestionnaire de modules';
 $defaultWords['Module Manager :: Add'] = 'Gestionnaire de modules :: Ajouter';
+$defaultWords['Module Manager :: Edit'] = 'Gestionnaire de modules :: Editer';
 $defaultWords['Config Manager'] = 'Gestionnaire de configuration';
 $defaultWords['config info successfully updated'] = 'Configuration modifiée avec succès';
 $defaultWords['Execution Time'] = 'Temps d\'execution';
@@ -395,4 +396,6 @@ $defaultWords['Add following methods'] = 'Ajouter les méthodes suivantes';
 $defaultWords['Editing options'] = 'Publication';
 $defaultWords['Publish'] = 'Publier';
 $defaultWords['user profile'] = 'profil utilisateur';
+$defaultWords['The name of the module must be the exact name of the folder containing files, beware of case sensiveness'] = 'Le nom du module doit correspondre exactement au nom du répertoire qui contient les fichiers, attention à bien respecter la casse (majuscules/minuscules)';
+$defaultWords['Here you can write what you want'] = 'Vous pouvez saisir ce que vous voulez';
 ?>

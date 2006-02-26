@@ -14,11 +14,11 @@
 /*  MODULE MGR  */
         'Module Manager' => 'Module Manager',
         'Module Manager :: Add' => 'Module Manager :: Add',
+        'Module Manager :: Edit' => 'Module Manager :: Edit',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',
         'config info successfully updated' => 'Config info successfully updated',
-
         'Deny list' => 'Deny list',
         'Allow list' => 'Allow list',
 
@@ -52,6 +52,8 @@
         'Active' => 'Active',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
+        'The name of the module must be the exact name of the folder containing files, beware of case sensiveness' => 'The name of the module must be the exact name of the folder containing files, beware of case sensiveness',
+        'Here you can write what you want' => 'Here you can write what you want',
 
 /*  NEWSLETTER BLOCK */
         'E-mail' => 'E-mail',
