@@ -125,7 +125,7 @@ class UserPreferenceMgr extends PreferenceMgr
         unset($_SESSION['aPrefs']);
         $_SESSION['aPrefs'] = $this->da->getPrefsByUserId($uid);
 
-        SGL::raiseMsg('details successfully updated');
+        SGL::raiseMsg('details successfully updated', true, SGL_MESSAGE_INFO);
     }
 }
 ?>

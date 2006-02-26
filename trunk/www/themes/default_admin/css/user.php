@@ -44,6 +44,18 @@
 }
 
 /*
+-- userPasswordEdit.html -------------------------------------*/
+#frmUpdatePasswd p label {
+    width: 170px;
+}
+
+/*
+-- userPasswordReset.html ------------------------------------*/
+#userPasswordReset p label {
+    width: 220px;
+}
+
+/*
 =====================Permission Manager=======================*/
 
 /*
@@ -157,14 +169,12 @@ select#frmRolePerms {
     width: 170px;
 }
 
-/*
--- userPasswordEdit.html -------------------------------------*/
-#frmUpdatePasswd p label {
-    width: 170px;
-}
 
 /*
--- userPasswordReset.html ------------------------------------*/
-#userPasswordReset p label {
+===================UserPreference Manager=====================*/
+
+/*
+-- prefUserEdit.html -----------------------------------------*/
+#frmUser p label {
     width: 170px;
 }

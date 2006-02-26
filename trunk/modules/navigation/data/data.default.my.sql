@@ -39,7 +39,7 @@ INSERT INTO section VALUES (27, 'Publication', 'publisher/article', '1', 27, 22,
 INSERT INTO section VALUES (69, 'Categories', 'navigation/category', '1', 69, 27, 22, 21, 22, 2, 3, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (174, 'Manage users', 'user/user', '1', 174, 158, 22, 29, 30, 1, 3, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (73, 'Documents', 'publisher/document', '1', 73, 27, 22, 23, 24, 3, 3, 1, NULL, NULL, NULL);
-INSERT INTO section VALUES (186, 'Content types', 'publisher/contenttype', '1', 186, 27, 22, 25, 26, 4, 3, 1, 0, '', '');
+#INSERT INTO section VALUES (186, 'Content types', 'publisher/contenttype', '1', 186, 27, 22, 25, 26, 4, 3, 1, 0, '', '');
 INSERT INTO section VALUES (188, 'Modules', 'default/module/action/overview', '1', 188, 1, 1, 6, 7, 3, 2, 1, 0, '', '');
 INSERT INTO section VALUES (190, 'Config', 'default/config', '1', 190, 1, 1, 8, 9, 4, 2, 1, 0, '', '');
 INSERT INTO section VALUES (192, 'Module Generator', 'default/modulegeneration', '1', 192, 29, 22, 11, 12, 4, 3, 1, 0, '', '');
