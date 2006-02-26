@@ -47,9 +47,6 @@ require_once 'DB/DataObject.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
- * @version $Revision: 1.25 $
- * @since   PHP 4.1
  */
 class AccountMgr extends RegisterMgr
 {

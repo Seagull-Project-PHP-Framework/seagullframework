@@ -20,7 +20,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', @module
 
 INSERT INTO section VALUES (0, 'none', '', '0', 0, 0, 0, 1, 2, 0, 1, 0, 0, '', '');
 INSERT INTO section VALUES (45, 'Blocks', 'block/block', '1', 45, 22, 22, 16, 17, 4, 2, 1, NULL, NULL, NULL);
-INSERT INTO section VALUES (22, 'Admin menu', 'uriEmpty:', '1', 22, 0, 22, 1, 38, 2, 1, 1, NULL, NULL, NULL);
+INSERT INTO section VALUES (22, 'Admin menu', 'uriEmpty:', '1', 22, 0, 22, 1, 44, 2, 1, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (49, 'Manage menu', 'navigation/section', '1', 49, 47, 22, 13, 14, 1, 3, 1, NULL, NULL, NULL);
 INSERT INTO section VALUES (164, 'Manage permissions', 'user/permission', '1', 164, 158, 22, 31, 32, 2, 3, 1, 0, '', '');
 INSERT INTO section VALUES (176, 'Maintenance', 'default/maintenance', '1', 176, 29, 22, 7, 8, 2, 3, 1, NULL, NULL, NULL);
@@ -44,3 +44,6 @@ INSERT INTO section VALUES (188, 'Modules', 'default/module/action/overview', '1
 INSERT INTO section VALUES (190, 'Config', 'default/config', '1', 190, 1, 1, 8, 9, 4, 2, 1, 0, '', '');
 INSERT INTO section VALUES (192, 'Module Generator', 'default/modulegeneration', '1', 192, 29, 22, 11, 12, 4, 3, 1, 0, '', '');
 INSERT INTO section VALUES (32, 'Articles', 'publisher/article', '1', 32, 27, 22, 19, 20, 1, 3, 1, NULL, NULL, NULL);
+INSERT INTO section VALUES (194, 'My Account', 'user/account/action/summary', '1', 194, 22, 22, 38, 43, 7, 2, 1, 0, '', '');
+INSERT INTO section VALUES (196, 'View Profile', 'user/account/action/viewProfile', '1', 196, 194, 22, 39, 40, 1, 3, 1, 0, '', '');
+INSERT INTO section VALUES (198, 'Edit Preferences', 'user/userpreference', '1', 198, 194, 22, 41, 42, 2, 3, 1, 0, '', '');
