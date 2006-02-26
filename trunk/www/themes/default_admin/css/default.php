@@ -46,7 +46,7 @@
 ===================Configuration Manager======================*/
 
 /*
--- configEdit.html.html -------------------------------------------*/
+-- configEdit.html -------------------------------------------*/
 #configuration p label {
     width: 35%;
     text-align: left;
@@ -59,4 +59,19 @@
 }
 #configuration span.tipText {
     width: 142%;
+}
+
+/*
+========================Pear Manager==========================*/
+
+/*
+-- pearList.html ---------------------------------------------*/
+#pearPackages p label {
+    width: 170px;
+}
+#pearPackages .sgl-button {
+    margin-right: 10px;
+}
+#pearPackages tbody tr {
+    line-height: normal;
 }
