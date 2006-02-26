@@ -589,10 +589,21 @@ class SGL_Output
      * @return 	boolean
      *
      */
-	function hasPerms($permName)
-	{
+    function hasPerms($permName)
+    {
         $permId = @constant('SGL_PERMS_' . strtoupper($permName));
-        return ( !empty( $permId) && SGL_Session::hasPerms($permId) ? true : false);
-	}
+        return (!empty($permId) && SGL_Session::hasPerms($permId) ? true : false);
+    }
+
+    /**
+     * printf function wrapper.
+     *
+     * @return string
+     */
+    function printf()
+    {
+        $argv = func_get_args();
+        return @call_user_func_array('sprintf', $argv);
+    }
 }
 ?>
