@@ -125,12 +125,8 @@ class SGL_Install_Common
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-
-    <style type="text/css" media="screen">
-        @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
-    </style>
+    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
 </head>
 <body>
 
