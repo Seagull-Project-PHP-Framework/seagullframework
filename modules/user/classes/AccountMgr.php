@@ -115,7 +115,7 @@ class AccountMgr extends RegisterMgr
         $success = $oUser->update($original);
 
         if ($success) {
-            SGL::raiseMsg('profile successfully updated');
+            SGL::raiseMsg('profile successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
