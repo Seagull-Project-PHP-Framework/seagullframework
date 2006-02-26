@@ -136,7 +136,7 @@ class PasswordMgr extends SGL_Manager
             $bEmailSent = $this->sendPassword($oUser, $passwd);
             if ($bEmailSent) {
                 //  redirect
-                SGL::raiseMsg('password emailed out');
+                SGL::raiseMsg('password emailed out', true, SGL_MESSAGE_INFO);
                 $aParams = array(
                     'moduleName'    => 'default',
                     'managerName'   => 'default',
