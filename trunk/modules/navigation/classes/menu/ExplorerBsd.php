@@ -63,7 +63,10 @@ class Menu_ExplorerBsd
 
         //  build url for current page
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink('',
+        $action = ($req->get('managerName') == 'articleview')
+            ? 'summary'
+            : '';
+        $url = SGL_Url::makeLink($action,
             $req->get('managerName'),
             $req->get('moduleName')
             );
