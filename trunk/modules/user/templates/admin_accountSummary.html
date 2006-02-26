@@ -7,29 +7,26 @@
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
-
     <form name="frmMyAccount" action="" method="post" flexy:ignore id="frmMyAccount">
-        <div>
-            <h3>{user.username}</h3>
-            <fieldset class="inside">
-                <p>
-                    <label>{translate(#Role#)}</label>
-                    <span>{user.role_name}</span>
-                </p>
-                <p>
-                    <label>{translate(#Date Registered#)}</label>
-                    <span>{formatDatePretty(user.date_created)}</span>
-                </p>
-                <p>
-                    <label>{translate(#Last Login#)}</label>
-                    <span>{if:login.last_login} {formatDatePretty(login.last_login)} {else:}{translate(#first login in progress#)}{end:}</span>
-                </p>
-                <p>
-                    <label>{translate(#Current IP Address#)}</label>
-                    <span>{remote_ip}</span>
-                </p>
-            </fieldset>
-        </div>
+        <h3>{user.username}</h3>
+        <fieldset class="inside">
+            <p>
+                <label>{translate(#Role#)}</label>
+                <span>{user.role_name}</span>
+            </p>
+            <p>
+                <label>{translate(#Date Registered#)}</label>
+                <span>{formatDatePretty(user.date_created)}</span>
+            </p>
+            <p>
+                <label>{translate(#Last Login#)}</label>
+                <span>{if:login.last_login} {formatDatePretty(login.last_login)} {else:}{translate(#first login in progress#)}{end:}</span>
+            </p>
+            <p>
+                <label>{translate(#Current IP Address#)}</label>
+                <span>{remote_ip}</span>
+            </p>
+        </fieldset>
     </form>
     <div class="spacer"></div>
 </div>

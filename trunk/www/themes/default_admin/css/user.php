@@ -21,25 +21,8 @@
 #frmUserAdd p label {
     width: 170px;
 }
-
 #frmUserAdd input.longText {
     width: 200px;
-}
-
-/*
--- accountSummary.html --------------------------------------*/
-#frmMyAccount p label {
-    width: 170px;
-}
-
-/*
--- userPasswordEdit.html ------------------------------------*/
-#frmUpdatePasswd p label {
-    width: 170px;
-}
--- userPasswordReset.html ------------------------------------*/
-#userPasswordReset p label {
-    width: 170px;
 }
 
 /*
@@ -163,4 +146,25 @@ select#frmRolePerms {
 }
 #registerDateOptions {
     float: left;
+}
+
+/*
+======================Account Manager=========================*/
+
+/*
+-- accountSummary.html ---------------------------------------*/
+#frmMyAccount p label {
+    width: 170px;
+}
+
+/*
+-- userPasswordEdit.html -------------------------------------*/
+#frmUpdatePasswd p label {
+    width: 170px;
+}
+
+/*
+-- userPasswordReset.html ------------------------------------*/
+#userPasswordReset p label {
+    width: 170px;
 }
