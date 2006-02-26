@@ -398,4 +398,15 @@ $defaultWords['Publish'] = 'Publier';
 $defaultWords['user profile'] = 'profil utilisateur';
 $defaultWords['The name of the module must be the exact name of the folder containing files, beware of case sensiveness'] = 'Le nom du module doit correspondre exactement au nom du répertoire qui contient les fichiers, attention à bien respecter la casse (majuscules/minuscules)';
 $defaultWords['Here you can write what you want'] = 'Vous pouvez saisir ce que vous voulez';
+$defaultWords['PEAR Manager'] = 'Gestionnaire de packages PEAR';
+$defaultWords['Choose channel'] = 'Choisir un canal';
+$defaultWords['List installed packages'] = 'Lister les packages installés';
+$defaultWords['List remote packages'] = 'Lister les packages distants';
+$defaultWords['Search package'] = 'Chercher un package';
+$defaultWords['Pear Manager Notice'] = 'La première fois que vous allez chercher la liste complète des "packages" PEAR, le temps d\'attente peut être assez long, une liste de + de 300 "packages" étant transférée via REST/XML-RPC. Comptez environ 30 secondes pour une connexion 512kbps. Vérifier également que le temps maximum d\'exécution est suffisant (dans la configuration de votre php.ini).';
+$defaultWords['Package Name'] = 'Nom du package';
+$defaultWords['Local'] = 'Locale';
+$defaultWords['Latest'] = 'Distante';
+$defaultWords['Install'] = 'Installer';
+$defaultWords['Uninstall'] = 'Désinstaller';
 ?>

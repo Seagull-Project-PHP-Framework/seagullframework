@@ -450,4 +450,15 @@ $defaultWords['Add following methods'] = 'Add following methods';
 $defaultWords['Editing options'] = 'Editing options';
 $defaultWords['Publish'] = 'Publish';
 $defaultWords['user profile'] = 'user profile';
+$defaultWords['PEAR Manager'] = 'PEAR Manager';
+$defaultWords['Choose channel'] = 'Choose channel';
+$defaultWords['List installed packages'] = 'List installed packages';
+$defaultWords['List remote packages'] = 'List remote packages';
+$defaultWords['Search package'] = 'Search package';
+$defaultWords['Pear Manager Notice'] = 'Calling the full list of PEAR packages the first time can take a while as some 300+ packages get transferred via REST/XML-RPC - so please be patient, allow 30 seconds for a 512 kbps line.';
+$defaultWords['Package Name'] = 'Package Name';
+$defaultWords['Local'] = 'Local';
+$defaultWords['Latest'] = 'Latest';
+$defaultWords['Install'] = 'Install';
+$defaultWords['Uninstall'] = 'Uninstall';
 ?>

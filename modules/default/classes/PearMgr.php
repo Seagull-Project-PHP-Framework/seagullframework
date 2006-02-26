@@ -62,6 +62,11 @@ class PearMgr extends SGL_Manager
             'list'      => array('list'),
             'doRequest'   => array('doRequest'),
         );
+        $this->aChannels = array(
+            'pear.php.net'          => 'PEAR',
+            'pear.phpkitchen.com'   => 'Seagull',
+            'pearified.com'         => 'Pearified',
+        );
     }
 
     function validate($req, &$input)
@@ -109,6 +114,16 @@ class PearMgr extends SGL_Manager
             $input->error = $aErrors;
             $input->template = 'moduleEdit.html';
             $this->validated = false;
+        }
+    }
+
+    function display(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->aChannels = $this->aChannels;
+        if ($this->conf['site']['adminGuiEnabled']) {
+            $output->addOnLoadEvent("switchRowColorOnHover()");
         }
     }
 
