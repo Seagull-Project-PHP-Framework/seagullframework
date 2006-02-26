@@ -26,12 +26,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
 
-    <style type="text/css" media="screen">
-        @import url("$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel");
-    </style>
     <script type="text/javascript">
         function disableLangList()
         {

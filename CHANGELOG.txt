@@ -17,6 +17,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+25-02-06    <link> instead of @import is more reliable for passing GET params
 25-02-06    Added 'hits' field to item table to track item hits
 25-02-06    Renamed PageMgr to SectionMgr, and all references to 'page' changed
             to section
