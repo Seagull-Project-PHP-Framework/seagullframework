@@ -142,16 +142,10 @@
                 <input type="text" name="conf[site][localeCategory]" id="conf[site][localeCategory]" value="{conf[site][localeCategory]}" />
             </p>
             <p>
-                <label class="tipOwner" for="conf[site][adminGuiAllowed]">{translate(#Admin GUI Feature#)}
-                <span class="tipText">{translate(#allow backend to display in separate GUI#)}</span>
-                </label>
-                {generateRadioPair(#conf[site][adminGuiEnabled]#,conf[site][adminGuiEnabled]):h}
-            </p>
-            <p>
                 <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
                 <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
             </p>
-            
+
             <h3>{translate(#Paths#)}</h3>
             <p>
                 <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
