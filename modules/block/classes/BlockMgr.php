@@ -276,23 +276,15 @@ class BlockMgr extends SGL_Manager
             $input->sortBy . ' ' . $input->sortOrder . $secondarySortClause;
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
 
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
@@ -312,9 +304,7 @@ class BlockMgr extends SGL_Manager
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-                $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function _editDisplay(&$output)

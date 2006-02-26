@@ -312,11 +312,9 @@ class UserSearchMgr extends SGL_Manager
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = @$aPagedData['totalItems'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
-        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");
+
     }
 }
 ?>

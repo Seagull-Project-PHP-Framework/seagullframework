@@ -122,9 +122,7 @@ class PearMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->aChannels = $this->aChannels;
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function restoreSlashes($str)

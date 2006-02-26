@@ -312,23 +312,16 @@ class UserMgr extends RegisterMgr
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
+
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $output->aPagedData = $aPagedData;
@@ -337,11 +330,7 @@ class UserMgr extends RegisterMgr
         }
         $output->totalItems = $aPagedData['totalItems'];
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').users.disabled = true");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     function _cmd_viewLogin(&$input, &$output)
@@ -372,32 +361,24 @@ class UserMgr extends RegisterMgr
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");
+
     }
 
     function _cmd_truncateLoginTbl(&$input, &$output)
@@ -495,18 +476,13 @@ class UserMgr extends RegisterMgr
         $output->currentModule = $input->moduleId;
 
         $aUserPerms = $this->da->getPermsByUserId($input->userID);
-        if ($this->conf['site']['adminGuiEnabled']) {
-            foreach ($aModules as $moduleId => $moduleName) {
-                $hAllPerms = $this->da->getPermsByModuleId($moduleId);
-                $output->aModules[$moduleId]['id'] = $moduleId;
-                $output->aModules[$moduleId]['name'] = $moduleName;
-                $output->aModules[$moduleId]['perms'] = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
-                $output->aModulesList = $aModules;
-            }
-        } else {
-            $hAllPerms = $this->da->getPermsByModuleId($input->moduleId);
-            $output->permCheckboxes = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
-            $output->aModules = $aModules;
+
+        foreach ($aModules as $moduleId => $moduleName) {
+            $hAllPerms = $this->da->getPermsByModuleId($moduleId);
+            $output->aModules[$moduleId]['id'] = $moduleId;
+            $output->aModules[$moduleId]['name'] = $moduleName;
+            $output->aModules[$moduleId]['perms'] = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
+            $output->aModulesList = $aModules;
         }
     }
 

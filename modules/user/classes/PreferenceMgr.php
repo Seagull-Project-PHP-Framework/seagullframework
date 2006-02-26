@@ -120,22 +120,13 @@ class PreferenceMgr extends SGL_Manager
         if (is_array($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            if ($this->conf['site']['adminGuiEnabled']) {
-                if ($input->action == 'insert') {
-                    $input->preferenceAdd = true;
-                } else {
-                    $input->preferenceEdit = true;
-                }
-                $input->template = 'prefEdit.html';
+
+            if ($input->action == 'insert') {
+                $input->preferenceAdd = true;
             } else {
-                if ($input->action == 'insert') {
-                    $input->pageTitle = $this->pageTitle . ' :: Add';
-                    $input->template = 'prefAdd.html';
-                } else {
-                    $input->pageTitle = $this->pageTitle . ' :: Edit';
-                    $input->template = 'prefEdit.html';
-                }
+                $input->preferenceEdit = true;
             }
+            $input->template = 'prefEdit.html';
             $this->validated = false;
         }
     }
@@ -160,12 +151,9 @@ class PreferenceMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->template = 'prefEdit.html';
-            $output->preferenceAdd = true;
-        } else {
-            $output->template = 'prefAdd.html';
-        }
+
+        $output->template = 'prefEdit.html';
+        $output->preferenceAdd = true;
         $output->pageTitle = $this->pageTitle . ' :: Add';
         $output->pref = DB_DataObject::factory($this->conf['table']['preference']);
     }
@@ -203,9 +191,7 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->preferenceEdit = true;
-        }
+        $output->preferenceEdit = true;
         $output->template = 'prefEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oPref = DB_DataObject::factory($this->conf['table']['preference']);
@@ -263,35 +249,24 @@ class PreferenceMgr extends SGL_Manager
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $query = "SELECT preference_id, name, default_value FROM {$this->conf['table']['preference']}";
-        $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
 
+        $limit = $_SESSION['aPrefs']['resPerPage'];
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        } else {
-            $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').prefs.disabled = true");
-        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 }
 ?>

@@ -87,10 +87,8 @@ class ModuleMgr extends SGL_Manager
         $input->from            = $req->get('pageID');
         $input->totalItems      = $req->get('totalItems');
 
-        $input->action = ($req->get('action')) ? $req->get('action') : 'overview';
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $input->action = ($req->get('action')) ? $req->get('action') : 'list';
-        }
+        $input->action = ($req->get('action')) ? $req->get('action') : 'list';
+
         if (!is_null($input->from) && $input->action == 'overview') {
             $input->action = 'list';
         }
@@ -273,23 +271,15 @@ class ModuleMgr extends SGL_Manager
         $query = "SELECT * FROM {$this->conf['table']['module']} ORDER BY name";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-                'spacesBeforeSeparator' => 0,
-                'spacesAfterSeparator'  => 0,
-                'curPageSpanPre'        => '<span class="currentPage">',
-                'curPageSpanPost'       => '</span>',
-            );
-        } else {
-            $pagerOptions = array(
-                'mode'     => 'Sliding',
-                'delta'    => 3,
-                'perPage'  => $limit,
-            );
-        }
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         // if there are modules, clean up output
@@ -304,9 +294,7 @@ class ModuleMgr extends SGL_Manager
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("switchRowColorOnHover()");
-        }
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 }
 ?>

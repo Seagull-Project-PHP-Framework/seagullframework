@@ -217,9 +217,7 @@ class ConfigMgr extends SGL_Manager
             $output->addMissingTrans = ($this->conf['translation']['addMissingTrans']) ? true : false;
         }
 
-        if ($this->conf['site']['adminGuiEnabled']) {
-            $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
-        }
+        $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
         
         //  disable translation options depending on the selected translation container.
         $output->addOnLoadEvent("toggleTransElements()");
