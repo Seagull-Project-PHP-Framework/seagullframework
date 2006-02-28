@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.83 2006/01/06 04:47:37 cellog Exp $
+// $Id: Validator.php,v 1.85 2006/02/08 01:21:47 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -42,6 +42,10 @@ class PEAR_PackageFile_v2_Validator
      * @var int
      */
     var $_isValid = 0;
+    /**
+     * @var int
+     */
+    var $_filesValid = 0;
     /**
      * @var int
      */
@@ -1709,6 +1713,8 @@ class PEAR_PackageFile_v2_Validator
     function analyzeSourceCode($file, $string = false)
     {
         if (!function_exists("token_get_all")) {
+            $this->_stack->push(__FUNCTION__, 'error', array('file' => $file),
+                'Parser error: token_get_all() function must exist to analyze source code');
             return false;
         }
         if (!defined('T_DOC_COMMENT')) {

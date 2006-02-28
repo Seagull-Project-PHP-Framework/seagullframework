@@ -23,8 +23,8 @@
 /**
  * @nodep Gtk
  */
-if ('/tmp/0.4-bugfix/lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', '/tmp/0.4-bugfix/lib/pear');
+if ('/var/www/html/seagull/branches/0.4-bugfix/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/var/www/html/seagull/branches/0.4-bugfix/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
