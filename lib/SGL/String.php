@@ -387,15 +387,27 @@ class SGL_String
      *
      * @access  public
      * @param   string  $str    Text to be shortened
-     * @param   integer $limit  Number of words to cut to
+     * @param   integer $limit  Number of words/chars to cut to
+     * @param   integer $element What string element type to count by
      * @param   string  $appendString  Trailing string to be appended
      * @return  string  $processedString    Correctly shortened text
      */
-    function summarise($str, $limit=50, $appendString=' ...')
+    function summarise($str, $limit=50, $element = SGL_WORD, $appendString=' ...')
     {
-        $words = explode(' ', $str);
-        $sliced = (count($words > $limit)) ? array_slice($words, 0, $limit) : $words;
-        return implode(' ', $sliced) . $appendString;
+        switch ($element) {
+        case SGL_CHAR:
+            $ret = (strlen($str) > $limit) ? substr($str, 0, $limit) . $appendString : $str;
+            break;
+
+        case SGL_WORD:
+            $limit--;
+            $words = explode(' ', $str);
+            $sliced = (count($words) > $limit) ? array_slice($words, 0, $limit) : $words;
+            $ret = implode(' ', $sliced);
+            $ret = (count($words) > $limit) ? $ret . $appendString : $ret;
+            break;
+        }
+        return  $ret;
     }
 
 

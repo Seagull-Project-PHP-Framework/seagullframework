@@ -444,9 +444,9 @@ class SGL_Output
      * @param   string  $appendString  Trailing string to be appended
      * @return  string  $processedString    Correctly shortened text
      */
-    function summarise($str, $limit=50, $appendString=' ...')
+    function summarise($str, $limit=50, $element=SGL_WORD, $appendString=' ...')
     {
-         return SGL_String::summarise($str, $limit, $appendString);
+         return SGL_String::summarise($str, $limit, $element, $appendString);
     }
 
     function msgGet()

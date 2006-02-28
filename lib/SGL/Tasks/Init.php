@@ -205,6 +205,10 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_RET_ARRAY',                 3);
         define('SGL_RET_STRING',                4);
 
+        //  define string element
+        define('SGL_CHAR',                      1);
+        define('SGL_WORD',                      2);
+
         //  various
         define('SGL_ANY_SECTION', 				0);
         define('SGL_NEXT_ID', 				    0);
