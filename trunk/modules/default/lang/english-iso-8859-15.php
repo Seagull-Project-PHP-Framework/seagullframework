@@ -237,6 +237,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Host'=>'Host',
         'Port'=>'Port',
         'Protocol'=>'Protocol',
+        'Socket'=>'Socket',
         'DB username'=>'DB username',
         'DB password'=>'DB password',
         'DB name'=>'DB name',

@@ -41,7 +41,16 @@ function canConnectToDbServer()
 {
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page3'];
 
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
+    $socket = (isset($aFormValues['dbProtocol']['protocol'])
+                && $aFormValues['dbProtocol']['protocol'] == 'unix'
+                && !empty($aFormValues['socket']))
+        ? '(' . $aFormValues['socket'] . ')'
+        : '';
+
+	$protocol = isset($aFormValues['dbProtocol']['protocol']) 
+        ? $aFormValues['dbProtocol']['protocol'] . $socket
+        : '';
+    $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
     $port = (!empty($aFormValues['dbPort']['port'])
                 && isset($aFormValues['dbProtocol']['protocol'])
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
@@ -54,7 +63,8 @@ function canConnectToDbServer()
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
         $protocol .
-        $aFormValues['host'] . $port . $dbName;
+        $host . $port . $dbName;
+
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
 
@@ -95,6 +105,9 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         //  host
         $this->addElement('text',  'host',     'Host: ');
         $this->addRule('host', 'Please specify the hostname', 'required');
+
+        //  socket
+        $this->addElement('text', 'socket', 'Socket: ');
 
         //  protocol
         unset($radio);
