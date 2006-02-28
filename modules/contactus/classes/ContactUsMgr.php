@@ -58,8 +58,8 @@ class ContactUsMgr extends SGL_Manager
         $this->template    = 'contact.html';
 
         $this->_aActionsMapping =  array(
-            'list'  => array('list'), 
-            'send'  => array('send', 'redirectToDefault'), 
+            'list'  => array('list'),
+            'send'  => array('send', 'redirectToDefault'),
         );
     }
 
@@ -137,8 +137,8 @@ class ContactUsMgr extends SGL_Manager
     function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+
+        $conf = & $GLOBALS['_SGL']['CONF'];
         //  require Contact entity
         require_once SGL_ENT_DIR . '/Contact_us.php';
 
@@ -175,13 +175,13 @@ class ContactUsMgr extends SGL_Manager
         require_once SGL_ENT_DIR . '/Usr.php';
 
         //  1. Set template
-        //  The default template set in the class vars is copied to the 
+        //  The default template set in the class vars is copied to the
         //  input object in validate which in turn gets passed to process.
-        //  In some cases you'll want different templates for each case 
+        //  In some cases you'll want different templates for each case
         //  statement, do this by setting $output->template = 'yourTemplates.html'
 
         //  2. Detect user status
-        //  If user is logged on, prepopulate form with his/her 
+        //  If user is logged on, prepopulate form with his/her
         //  details.
 
         //  check user auth level
@@ -217,11 +217,12 @@ class ContactUsMgr extends SGL_Manager
                 'toRealName'    => 'Admin',
                 'fromEmail'     => "\"{$contacterName}\" <{$oContact->email}>",
                 'fromRealName'  => $contacterName,
+                'fromEmailAdress' => "{$oContact->email}",
                 'replyTo'       => $oContact->email,
                 'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $conf['site']['name'],
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
-                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
+                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                     $this->module . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
