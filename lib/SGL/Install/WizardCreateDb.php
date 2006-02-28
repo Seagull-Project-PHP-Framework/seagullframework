@@ -52,7 +52,16 @@ function canCreateDb()
         $dbName = '/template1';
     }
 
-    $protocol = isset($aFormValues['dbProtocol']['protocol']) ? $aFormValues['dbProtocol']['protocol'] . '+' : '';
+    $socket = (isset($aFormValues['dbProtocol']['protocol'])
+                && $aFormValues['dbProtocol']['protocol'] == 'unix'
+                && !empty($aFormValues['socket']))
+        ? '(' . $aFormValues['socket'] . ')'
+        : '';
+
+    $protocol = isset($aFormValues['dbProtocol']['protocol']) 
+        ? $aFormValues['dbProtocol']['protocol'] . $socket
+        : '';
+    $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
     $port = (!empty($aFormValues['dbPort']['port'])
                 && isset($aFormValues['dbProtocol']['protocol'])
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
@@ -62,7 +71,7 @@ function canCreateDb()
         $aFormValues['user'] . ':' .
         $aFormValues['pass'] . '@' .
         $protocol .
-        $aFormValues['host'] . $port . $dbName;
+        $host . $port . $dbName;
 
     //  attempt to get db connection
     $dbh = & SGL_DB::singleton($dsn);
