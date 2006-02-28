@@ -397,28 +397,35 @@ class BlockMgr extends SGL_Manager
             //  rebuild $aPagedData['data']
             foreach ($aPagedData['data'] as $aValue) {
                 $title = '';
-                foreach ($aBlockSections[$aValue['block_id']] as $aaValue) {
-                    if ($aaValue['sections']) {
-                        if (isset($aaValue['trans_id']) && $aaValue['trans_id']
-                            && $this->conf['translation']['container'] == 'db') {
-                            if (!$title = $this->trans->get($aaValue['trans_id'], 'nav', SGL_Translation::getLangID())) {
-                                 $title = $this->trans->get($aaValue['trans_id'], 'nav', SGL_Translation::getFallbackLangID());
+                if (!empty($aBlockSections[$aValue['block_id']])) {
+                    foreach ($aBlockSections[$aValue['block_id']] as $aaValue) {
+                        if ($aaValue['sections']) {
+                            if (isset($aaValue['trans_id']) && $aaValue['trans_id']
+                                    && $this->conf['translation']['container'] == 'db') {
+                                if (!$title = $this->trans->get($aaValue['trans_id'],
+                                        'nav', SGL_Translation::getLangID())) {
+                                    $title = $this->trans->get($aaValue['trans_id'],
+                                        'nav', SGL_Translation::getFallbackLangID());
+                                }
                             }
+                            if ($title) {
+                                $aValue['sections'][$aaValue['sections']] = $title;
+                            } else {
+                                $aValue['sections'][$aaValue['sections']] = $aaValue['section_title'];
+                            }
+                        } elseif (!$aaValue['sections']) {
+                            unset($aValue['sections']);
+                            $aValue['sections'][] = SGL_String::translate('All Sections');
+                            break;
                         }
-                        if ($title) {
-                            $aValue['sections'][$aaValue['sections']] = $title;
-                        } else {
-                            $aValue['sections'][$aaValue['sections']] = $aaValue['section_title'];
-                        }
-                    } elseif (!$aaValue['sections']) {
-                        unset($aValue['sections']);
-                        $aValue['sections'][$aaValue['sections']] = 'All Sections'; // need translation ?
-                        break;
                     }
+                    $data[$aValue['block_id']] = $aValue;
+                } else {
+                    $aValue['sections'][] = SGL_String::translate('Not assigned');
+                    $data[$aValue['block_id']] = $aValue;
                 }
-                $data[$aValue['block_id']] = $aValue;
+                $aPagedData['data'] = $data;
             }
-            $aPagedData['data'] = $data;
         }
     }
 
