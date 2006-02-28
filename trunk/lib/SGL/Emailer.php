@@ -105,7 +105,7 @@ class SGL_Emailer
             $path = explode('/',dirname($includePath));
             $file = basename($includePath);
             $moduleName = end($path);
-            $includePath = SGL_THEME_DIR . '/' . 'default' . '/' . $moduleName . '/'. $file;
+            $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $file;
         }
 
         $ok = include $includePath;
