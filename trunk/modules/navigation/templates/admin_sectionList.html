@@ -50,7 +50,7 @@
                             {end:}
                         </td>
                         <td class="left">{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:} <a href="{makeUrl(#edit#,#section#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}">{section[title]:h}</a></td>
-                        <td class="left">{summarise(section[resource_uri])}</td>
+                        <td class="left">{summarise(section[resource_uri],#42#,#1#)}</td>
                         <td>{section[parent_id]}</td>
                         <td>{section[order_id]}</td>
                         <td>
