@@ -34,7 +34,7 @@ p.errorMsg {
 #frmCategoryMgr fieldset#permissions {
     width: 80%;
     margin-top: 1em;
-    border: 1px solid <?php echo $tertiaryDark ?>;
+    border: 1px solid <?php echo $borderDark ?>;
 }
 #frmCategoryMgr #permissions p label {
     width: 160px;

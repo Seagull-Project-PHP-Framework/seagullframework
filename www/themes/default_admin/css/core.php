@@ -19,7 +19,7 @@ body {
     margin: 0;
     padding: 0;
     color: <?php echo $primaryText ?>;
-    background-color: <?php echo $tertiaryDark ?>;
+    background-color: <?php echo $tertiaryBg ?>;
     text-align: center;
 }
 ul {
@@ -453,7 +453,7 @@ thead tr {
     color: <?php echo $tertiaryLightest ?>;
 }
 thead tr.infos, tfoot tr.infos {
-    background: <?php echo $tertiaryDark ?>;
+    background: <?php echo $tertiaryBg ?>;
     font-size: 10px;
     color: <?php echo $primary; ?>;
 }

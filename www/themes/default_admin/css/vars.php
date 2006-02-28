@@ -21,9 +21,10 @@
     $tertiaryLight          = '#f7f4ef'; // 
     $tertiaryMedium         = '#f1f1f1'; // 
     $tertiary               = '#efefef'; // 
-    $tertiaryDark           = 'ButtonFace'; // 
+    $tertiaryDark           = '#afafaf'; // 
     $tertiaryDarker         = '#cccccc'; // 
     $tertiaryDarkest        = '#666666'; // 
+    $tertiaryBg             = '#ebe7d4';
 
 /* Links related vars
     ------------------------------------------------- */
@@ -34,15 +35,15 @@
 
 /* Borders related vars
     ------------------------------------------------- */
-    $borderDark             = 'ButtonShadow';
-    $borderLight            = 'ButtonHighLight';
+    $borderDark             = $tertiaryDark;
+    $borderLight            = $tertiaryLightest;
 
 /* Block related vars
     ------------------------------------------------- */
     
 /* Table related vars
     ------------------------------------------------- */
-    $tableRowLight          = 'transparent';
+    $tableRowLight          = $tertiaryLightest;
     $tableRowDark           = $tertiaryLighter;
 
     $forApproval            = '#ff0000';
