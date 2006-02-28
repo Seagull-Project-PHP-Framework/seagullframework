@@ -99,7 +99,6 @@
         'add' => 'add',
         'edit' => 'edit',
         'move' => 'move',
-        'delete' => 'delete',
         'Manage' => 'Manage',
         'Title'  => 'Title',
         'Status' => 'Status',
@@ -126,7 +125,6 @@
         'Enabled' => 'Enabled',
         'Disable' => 'Disable',
         'Disabled' => 'Disabled',
-        'Are you sure you want to delete this' => 'Are you sure you want to delete this',
         'You must select an element to delete' => 'You must select an element to delete',
         'no results found' => 'no results found',
         'You have been banned' => 'You have been banned from this site. Contact the administrator for more information',
@@ -156,7 +154,6 @@
 /*
   Author: Michael willemot <michael@sotto.be>
 */
-        'Manage' => 'Manage',
         'Return to browse' => 'Return to browse',
         'ModuleManager Mgr' => 'ModuleManager Mgr',
         'Add' => 'Add',
@@ -197,7 +194,6 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Show logo'=>'Show logo',
         'Gzip compression'=>'Gzip compression',
         'Output buffering'=>'Output buffering',
-        'Enable IP banning'=>'Enable IP banning',
         'Enable IP banning'=>'Enable IP banning',
         'Enable Tidy html cleaning'=>'Enable Tidy html cleaning',
         'Session handler'=>'Session handler',
