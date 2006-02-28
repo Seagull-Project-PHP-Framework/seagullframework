@@ -114,7 +114,6 @@ class SGL_DB
                 'username' => $conf['db']['user'],
                 'password' => $conf['db']['pass'],
                 'protocol' => $conf['db']['protocol'],
-                'socket'   => $conf['db']['socket'],
                 'hostspec' => $conf['db']['host'],
                 'port'     => $conf['db']['port']
             );
@@ -122,15 +121,7 @@ class SGL_DB
                 $dsn['database'] = $conf['db']['name'];
             }
         } else {
-            $socket = (isset($conf['db']['protocol'])
-                        && $conf['db']['protocol'] == 'unix'
-                        && !empty($conf['db']['socket']))
-                ? '(' . $conf['db']['socket'] . ')'
-                : '';
-            $protocol = isset($conf['db']['protocol']) 
-                ? $conf['db']['protocol'] . $socket
-                : '';
-            $host = empty($conf['db']['socket']) ? '+' . $conf['host'] : '';
+        	$protocol = isset($conf['db']['protocol']) ? $conf['db']['protocol'] . '+' : '';
             $port = (!empty($conf['db']['port'])
                         && isset($conf['db']['protocol'])
                         && ($conf['db']['protocol'] == 'tcp'))
@@ -140,7 +131,7 @@ class SGL_DB
                 $conf['db']['user'] . ':' .
                 $conf['db']['pass'] . '@' .
                 $protocol .
-                $host . $port;
+                $conf['db']['host'] . $port;
             if (!$excludeDbName) {
                 $dsn .= '/' . $conf['db']['name'];
             }
