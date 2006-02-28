@@ -174,6 +174,54 @@ class SGL_Translation
         }
     }
 
+    /**
+     * Update GUI Translations.
+     *
+     * @static
+     * @param array $aTrans hash containing tranlsations to be updated
+     * @param string $langID language id
+     * @param string $module module
+     *
+     * @return boolean true on success and PEAR Error on failure
+     */
+
+    function updateGuiTranslations($module, $langID, $aTrans)
+    {
+        switch (strtolower($this->conf['translation']['container'])) {
+        case 'db':
+            require_once SGL_CORE_DIR . '/Translation.php';
+            $trans = &SGL_Translation::singleton('admin');
+
+            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_TRANS2);
+
+            foreach ($aTrans as $key => $value) {
+                $string = array($langID => $value);
+                $result = $trans->add($key, $module, $string);
+
+                if (is_a($result, 'PEAR_Error')) {
+                    return $result;
+                }
+            }
+            return true;
+        case 'file':
+        default:
+            //  read translation data and get reference to root
+            $c = new Config();
+            $root = & $c->parseConfig($aTrans, 'phparray');
+
+            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_TYPE_ID_SGL);
+
+            //  write translation to file
+            $filename = SGL_MOD_DIR . '/' . $module . '/lang/' .
+                $GLOBALS['_SGL']['LANGUAGE'][$langID][1] . '.php';
+            $arrayName = ($module == 'default') ? 'defaultWords' : 'words';
+            $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
+            if (is_a($result, 'PEAR_Error')) {
+                return $result;
+            }
+            return true;
+        }
+    }
 
     /**
      * Returns a dictionary of translated strings from the db.
@@ -189,17 +237,12 @@ class SGL_Translation
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        if ($conf['translation']['container'] == 'db') {
-            if (!empty($module) && !empty($lang)) {
-                //  fallback lang clause
-                $fallbackLang = ($fallbackLang)
-                    ? $fallbackLang
-                    : $conf['translation']['fallbackLang'];
+        if (!empty($module) && !empty($lang)) {
+            $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_TRANS2);
+            $installedLangs = explode(',', $conf['translation']['installedLanguages']);
 
-                //  if langauge not installed resort to fallback
-                if (!in_array($lang, explode(',', $conf['translation']['installedLanguages']))) {
-                    $lang = $fallbackLang;
-                }
+            if ($conf['translation']['container'] == 'db'
+                && in_array($lang, $installedLangs)) {
                 //  instantiate translation2 object
                 $translation = &SGL_Translation::singleton();
 
@@ -210,7 +253,11 @@ class SGL_Translation
                 $translation->setPageID($module);
 
                 //  create decorator for fallback language
-                if (isset($fallbackLang) && !strcmp($lang, $fallbackLang)) {
+                if ($fallbackLang) {
+                    $fallbackLang = (is_string($fallbackLang))
+                        ? $fallbackLang
+                        : $conf['translation']['fallbackLang'];
+
                     $translation = & $translation->getDecorator('Lang');
                     $translation->setOption('fallbackLang', $fallbackLang);
                 }
@@ -226,13 +273,15 @@ class SGL_Translation
 
                 SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
                 return $words;
-
+            } elseif ($conf['translation']['container'] == 'file') {
+                $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
+                return  SGL_Translation::getGuiTranslationsFromFile($module, $lang);
             } else {
-                SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
-                    SGL_ERROR_INVALIDARGS);
+                return array();
             }
         } else {
-            return false;
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
         }
     }
 
@@ -264,6 +313,41 @@ class SGL_Translation
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         return $conf['translation']['fallbackLang'];
+    }
+
+    /**
+     * Transform langID to opposite format
+     *
+     * SGL_LANG_ID_SGL - en-iso-8859-15
+     * SGL_LANG_ID_TRANS2 - en_iso_8859_15
+     *
+     * @static
+     * @param string langID language id
+     * @param int format language id format
+     * @return langID string
+     */
+     function transformLangID($langID, $format = null)
+     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if ($conf['translation']['container'] == 'db') {
+            if (isset($format)) {
+                $langID = ($format == SGL_LANG_ID_SGL)
+                            ? str_replace('_', '-', $langID)
+                            : str_replace('-', '_', $langID);
+
+                return $langID;
+            } else {
+                $langID = (strstr($langID, '-'))
+                            ? str_replace('-', '_', $langID)
+                            : str_replace('_', '-', $langID);
+                return $langID;
+            }
+        } else {
+            // always return en-iso-8859-15 when the container is file.
+            return str_replace('_', '-', $langID);
+        }
     }
 }
 ?>
