@@ -1,7 +1,7 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}:&nbsp;</span>
     <a class="action save" href="javascript:formSubmit('translations','submitted',1,1)">{translate(#Save#)}</a>
-    <a class="action cancel" href="{makeUrl(##,#maintenance#,#default#)}">{translate(#Cancel#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#translation#,#default#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -15,10 +15,6 @@
     
         <h3>{translate(#You are editing: Module#)} "{currentModuleName}"</h3>
         <fieldset class="inside">
-            <input type="submit" class="sgl-button" name="save" value="{translate(#Save Translation#)}" />
-            <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}" 
-                        onclick="document.location.href='{makeUrl(##,#maintenance#)}'" />
-    
             <table class="full">
                 <thead>
                     <tr>
@@ -48,7 +44,7 @@
             </table>
             <input type="submit" class="sgl-button" name="save" value="{translate(#Save Translation#)}" />
             <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}" 
-                        onclick="document.location.href='{makeUrl(##,#maintenance#)}'" />
+                        onclick="document.location.href='{makeUrl(##,#translation#,#default#)}'" />
         </fieldset>
     </form>
     <div class="spacer"></div>

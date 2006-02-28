@@ -320,4 +320,8 @@ class DA_Default
         $ok = $oModule->insert();
         return $ok;
     }
+
+    function updateGuiTranslations ($aTrans, $langID, $module) {
+        SGL_Translation::updateGuiTranslation($aTrans, $langID, $module);
+    }
 }

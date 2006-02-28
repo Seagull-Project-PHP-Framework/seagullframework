@@ -209,6 +209,10 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_CHAR',                      1);
         define('SGL_WORD',                      2);
 
+        //  define language id types
+        define('SGL_LANG_ID_SGL',          1);
+        define('SGL_LANG_ID_TRANS2',       2);
+
         //  various
         define('SGL_ANY_SECTION', 				0);
         define('SGL_NEXT_ID', 				    0);

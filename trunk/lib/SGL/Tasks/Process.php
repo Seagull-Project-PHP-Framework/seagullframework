@@ -367,24 +367,15 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         }
         //  fetch default translation
         $langID = str_replace('-', '_', $lang);
-        if ($this->conf['translation']['container'] == 'db') {
-            $defaultWords = SGL_Translation::getTranslations('default', $langID);
-        } else {
-            $defaultWords = SGL_Translation::getGuiTranslationsFromFile('default', $langID);
-        }
+        $defaultWords = SGL_Translation::getTranslations('default', $langID);
 
         //  fetch module translations
         $moduleName = ($req->get('moduleName'))
             ? $req->get('moduleName')
             : $this->conf['site']['defaultManager'];
 
-//        if ($moduleName != 'default') {
-//            $words = SGL_Translation::getTranslations($moduleName, $langID);
-//        }
-        if ($moduleName != 'default' && $this->conf['translation']['container'] == 'db') {
+        if ($moduleName != 'default') {
             $words = SGL_Translation::getTranslations($moduleName, $langID);
-        } else {
-            $words = SGL_Translation::getGuiTranslationsFromFile($moduleName, $langID);
         }
 
         //  if current module is not the default module
