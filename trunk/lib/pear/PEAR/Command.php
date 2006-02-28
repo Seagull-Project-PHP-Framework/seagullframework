@@ -94,7 +94,7 @@ $GLOBALS['_PEAR_Command_objects'] = array();
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.6
+ * @version    Release: 1.4.7
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -118,7 +118,6 @@ class PEAR_Command
         if (empty($GLOBALS['_PEAR_Command_commandlist'])) {
             PEAR_Command::registerCommands();
         }
-
         if (isset($GLOBALS['_PEAR_Command_shortcuts'][$command])) {
             $command = $GLOBALS['_PEAR_Command_shortcuts'][$command];
         }
@@ -282,12 +281,10 @@ class PEAR_Command
                     }
                 }
             }
-            #print '<pre>';print_r($GLOBALS['_PEAR_Command_commandlist']);
         }
         ksort($GLOBALS['_PEAR_Command_shortcuts']);
         ksort($GLOBALS['_PEAR_Command_commandlist']);
         @closedir($dp);
-
         return true;
     }
 
