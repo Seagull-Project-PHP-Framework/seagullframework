@@ -14,7 +14,8 @@ $body = <<< EOF
             <td><strong>Name</strong>: {$this->options['fromRealName']}</td>
         </tr>
         <tr>
-            <td><strong>Email</strong>: {$this->options['fromEmail']}</td>
+            <td><strong>Email</strong>:
+            <a href="mailto:{$this->options['fromEmailAdress']}">{$this->options['fromEmailAdress']}</a></td>
         </tr>
         <tr>
             <td><strong>Enquiry Type</strong>: {$this->options['type']}</td>
