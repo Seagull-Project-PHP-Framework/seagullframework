@@ -76,6 +76,12 @@ class ConfigTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('foo', $this->c->getAll()));
     }
 
+    function testGetProperty()
+    {
+        $var = $this->c->get(array('cache' => 'lifetime'));
+        $this->assertEqual($var, 86400);
+    }
+
     function testSetArrayProperty()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';

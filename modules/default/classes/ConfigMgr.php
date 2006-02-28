@@ -218,7 +218,7 @@ class ConfigMgr extends SGL_Manager
         }
 
         $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
-        
+
         //  disable translation options depending on the selected translation container.
         $output->addOnLoadEvent("toggleTransElements()");
     }
@@ -246,6 +246,11 @@ class ConfigMgr extends SGL_Manager
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
+
+        //  hack for AJ
+        if (!$c->get(array('translation' => 'installedLanguages'))) {
+            $c->set('translation', array('installedLanguages' => 'en_iso_8859_15'));
+        }
 
         //  write configuration to file
         $ok = $c->save(SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php');
