@@ -820,7 +820,7 @@ class SGL_URL
     function ensureWebrootSet()
     {
         if (!defined('SGL_BASE_URL')) {
-            if (@preg_match('/^(.*\/).*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
+            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
                 define('SGL_BASE_URL', $aMatches[1]);
             } else {
                 die('Could not set webroot');
