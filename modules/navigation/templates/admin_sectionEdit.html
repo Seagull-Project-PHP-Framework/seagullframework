@@ -56,7 +56,7 @@ function toggleAliasElements(myCheckbox)
             <input type="hidden" name="section[is_enabled_original]" value="{section[is_enabled_original]}" />
             <input type="hidden" name="section[trans_id]" value="{section[trans_id]}" />
             <input type="hidden" name="section[title_original]" value="{section[title_original]:h}" />
-            <input type="hidden" name="section[aParams]" value="{section[aParams]:h}" />
+            <input type="hidden" name="section[addonParams]" value="{section[addonParams]:h}" />
             {foreach:availableLangs,langID,langName}
             <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
             {end:}
@@ -80,12 +80,12 @@ function toggleAliasElements(myCheckbox)
             <p>
                 <label for="section[parent_id]">{translate(#Parent Section#)}</label>
                 <select name="section[parent_id]" id="section[parent_id]">
-                    {sectionNodesOptions:h}
+                    {generateSelect(sectionNodesOptions,section[parent_id]):h}
                 </select>
             </p>
             <p>
-                <label for="section[articleType]">{translate(#Target#)}</label>
-                <select name="section[articleType]" id="section[articleType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="articleType">
+                <label for="section[uriType]">{translate(#Target#)}</label>
+                <select name="section[uriType]" id="section[uriType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="uriType">
                     <option value="static" flexy:raw="{staticSelected}">
                         {translate(#static articles#)}
                     </option>
@@ -176,7 +176,7 @@ function toggleAliasElements(myCheckbox)
             <p>
                 <label for="section[uri_node]">{translate(#Choose section#)}</label>
                 <select name="section[uri_node]" id="section[uri_node]">
-                    {sectionNodesOptions2:h}
+                    {generateSelect(sectionNodesOptions2,section[uri_node]):h}
                 </select>
             </p>
             {end:}
@@ -199,13 +199,13 @@ function toggleAliasElements(myCheckbox)
             {if:uriAliasAllowed}
             <p>
                 <label for="section[uri_alias_enable]">{translate(#Add an alias#)}?</label>
-                <input type="checkbox" name="section[uri_alias_enable]" id="section[uri_alias_enable]" flexy:raw="{uriAliasEnabled}" onClick="toggleAliasElements();" />
+                <input type="checkbox" name="section[uri_alias_enable]" id="section[uri_alias_enable]" flexy:raw="{uriAliasIsEnabled}" onClick="toggleAliasElements();" />
             </p>
             <p>
                 <label for="section[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
                 <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" onkeyup="this.value=replaceUri(this.value)" flexy:if="isAdd"/>
                 <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" flexy:if="!isAdd"/>
-                
+
             </p>
             {end:}
         </fieldset>

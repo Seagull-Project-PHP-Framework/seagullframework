@@ -39,6 +39,7 @@
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
 require_once SGL_MOD_DIR . '/block/classes/Block.php';
+require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
 
 /**
  * To administer blocks.
@@ -57,6 +58,7 @@ class BlockMgr extends SGL_Manager
 
         include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;
+        $this->da           = &DA_Navigation::singleton();
 
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
@@ -330,30 +332,10 @@ class BlockMgr extends SGL_Manager
                 }
             }
         }
+
         //  get section list
-        $sectionList = DB_DataObject::factory($this->conf['table']['section']);
-        $sectionList->orderBy('left_id');
-        $result = $sectionList->find();
-        if ($result > 0) {
-            while ( $sectionList->fetch() ) {
-                $title = '';
-                if (!empty($sectionList->trans_id) && $this->conf['translation']['container']=='db') {
-                    if (!$title = $this->trans->get($sectionList->trans_id,'nav', SGL_Translation::getLangID())) {
-                         $title = $this->trans->get($sectionList->trans_id,'nav',
-                            SGL_Translation::getFallbackLangID());
-                    }
-                }
-                if ($title) {
-                    $sections[$sectionList->section_id] = $title;
-                } else {
-                    $sections[$sectionList->section_id] = $sectionList->title;
-                }
-                $sections[$sectionList->section_id] = $this->_addSpaces($sectionList->level_id) .
-                    $sections[ $sectionList->section_id ];
-            }
-        }
-        $sections[0] = SGL_String::translate('All sections');
-        $output->aSections = $sections;
+        $output->aSections[0] = SGL_String::translate('All sections');
+        $output->aSections    = $output->aSections + $this->da->getSectionsForSelect();
 
         //  get roles list
         $query = "SELECT role_id, name FROM {$this->conf['table']['role']}";
@@ -377,15 +359,6 @@ class BlockMgr extends SGL_Manager
             }
         }
         $output->aAllBlocks = $aAllBlocks;
-    }
-
-    function _addSpaces($order)
-    {
-        $s = '';
-        for ($i = 1; $i < $order; $i++) {
-            $s .= '&nbsp;&nbsp;';
-        }
-        return $s;
     }
 
     function _rebuildPagedData(&$aPagedData, &$aBlockSections)
@@ -415,7 +388,7 @@ class BlockMgr extends SGL_Manager
                             }
                         } elseif (!$aaValue['sections']) {
                             unset($aValue['sections']);
-                            $aValue['sections'][] = SGL_String::translate('All Sections');
+                            $aValue['sections'][] = SGL_String::translate('All sections');
                             break;
                         }
                     }
