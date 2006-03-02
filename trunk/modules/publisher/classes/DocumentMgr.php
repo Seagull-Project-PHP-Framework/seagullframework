@@ -92,7 +92,7 @@ class DocumentMgr extends FileMgr
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit          = $req->get('submit');
+        $input->submitted       = $req->get('submitted');
         $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom'):0;
         $input->catID           = $req->get('frmCatID');
         $input->docCatID        = $req->get('frmDocumentCatID');
@@ -188,7 +188,7 @@ class DocumentMgr extends FileMgr
 
         $output->docCatID = $input->docCatID;
         $output->template = 'documentMgrAdd.html';
-        if ($input->submit) { // if file uploaded
+        if ($input->submitted) { // if file uploaded
 
             //  check id dir exists, create if not
             if (!is_writable(SGL_UPLOAD_DIR)) {

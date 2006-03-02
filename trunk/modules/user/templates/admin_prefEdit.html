@@ -22,16 +22,16 @@
             {end:}
             <p>
                 <label for="pref[name]">{translate(#Name#)}<span class="required"> *</span></label>
-                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
                 <input type="text" class="longText" name="pref[name]" id="pref[name]" value="{pref.name}" />
             </p>
             <p>
                 <label for="pref[default_value]">{translate(#Default value#)}<span class="required"> *</span></label>
-                <div class="error" flexy:if="error[default_value]">{translate(error[default_value])}</div>
+                <span class="error" flexy:if="error[default_value]">{translate(error[default_value])}</span>
                 <input type="text" class="longText" name="pref[default_value]" id="pref[default_value]" value="{pref.default_value}" />
             </p>
-            <p>
-                <span class="error">*</span><span class="small"> {translate(#denotes required field#)}</span>
+            <p class="helpRequire">
+                <span class="required">*</span><span class="small"> {translate(#denotes required field#)}</span>
             </p>
         </fieldset>
     </form>

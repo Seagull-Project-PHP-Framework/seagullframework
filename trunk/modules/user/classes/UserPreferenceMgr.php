@@ -76,7 +76,7 @@ class UserPreferenceMgr extends PreferenceMgr
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'editAll';
         $input->aPrefs      = $req->get('prefs');
     }

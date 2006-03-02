@@ -1,6 +1,6 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('frmPermAdd');">{translate(#Save#)}</a>
+    <a class="action save" href="javascript:formSubmit('frmPermAdd','submitted',1,1);">{translate(#Save#)}</a>
     <a class="action undo" href="javascript:formReset('frmPermAdd');">{translate(#Reset#)}</a>
     <a class="action cancel" href="{makeUrl(##,#permission#,#user#)}">{translate(#Cancel#)}</a>
 </div>
@@ -15,7 +15,7 @@
             <input type="hidden" name="action" value="insert" />
             <p>
                 <label for="perm[name]">{translate(#Name#)}<span class="required"> *</span></label>
-                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
                 <input type="text" class="longText" name="perm[name]" id="perm[name]" value="{perm.name}" />
             </p>
             <p>
@@ -28,8 +28,8 @@
                 <label for="perm[description]">{translate(#Description#)}</label>
                 <textarea class="longText" name="perm[description]" id="perm[description]">{perm.description}</textarea>
             </p>
-            <p>
-                <span class="error">*</span><span class="small"> {translate(#denotes required field#)}</span>
+            <p class="helpRequire">
+                <span class="required">*</span><span class="small"> {translate(#denotes required field#)}</span>
             </p>
         </fieldset>
     </form>

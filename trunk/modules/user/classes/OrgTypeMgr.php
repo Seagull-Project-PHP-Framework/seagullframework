@@ -80,7 +80,7 @@ class OrgTypeMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->orgTypes    = (object)$req->get('orgTypes');
         $input->orgTypeId   = ($req->get('frmOrgTypeID')) ? $req->get('frmOrgTypeID') : '';
 
@@ -89,7 +89,7 @@ class OrgTypeMgr extends SGL_Manager
         }
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if (empty($input->orgTypes->name)) {
                 $aErrors['name'] = 'You must enter an organisation type name';
             }

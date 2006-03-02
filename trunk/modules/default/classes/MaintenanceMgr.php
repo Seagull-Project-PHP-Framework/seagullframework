@@ -76,12 +76,12 @@ class MaintenanceMgr extends SGL_Manager
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->cache       = ($req->get('frmCache')) ? $req->get('frmCache') : array();
 
-        if ($input->submit) {
-            if ($req->get('action') =='' || $req->get('action') =='list') {
+        if ($input->submitted) {
+            if ($req->get('action') == '' || $req->get('action') == 'list') {
                 $aErrors['noSelection'] = SGL_Output::translate('please specify an option');
             }
             if ($input->action == 'clearCache' && !count($input->cache)) {

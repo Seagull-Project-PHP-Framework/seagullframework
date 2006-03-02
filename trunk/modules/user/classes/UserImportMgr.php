@@ -76,12 +76,12 @@ class UserImportMgr extends UserMgr
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->csvFile     = $req->get('frmCsvFile');
         $input->organisation= $req->get('frmOrgId');
         $input->role        = $req->get('frmRoleId');
 
-        if ($input->submit) {
+        if ($input->submitted) {
             if (empty($input->csvFile)) {
                 $aErrors['csvFile'] = 'Please select a file.';
             }

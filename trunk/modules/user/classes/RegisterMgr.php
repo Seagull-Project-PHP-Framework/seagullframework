@@ -79,7 +79,7 @@ class RegisterMgr extends SGL_Manager
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
         $input->action      = ($req->get('action')) ? $req->get('action') : 'add';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->userID      = $req->get('frmUserID');
         $input->aDelete     = $req->get('frmDelete');
         $input->user        = (object)$req->get('user');
@@ -88,7 +88,7 @@ class RegisterMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submit && ($input->action == 'insert' || $input->action == 'update')) {
+        if ($input->submitted && ($input->action == 'insert' || $input->action == 'update')) {
             $v = & new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';

@@ -113,13 +113,13 @@ class SectionMgr extends SGL_Manager
 
         //  Misc.
         $this->validated = true;
-        $this->submit    = $req->get('submitted');
-        $input->aParams  = $req->get('aParams', $allowTags = true);
-        $input->isAdd    = $req->get('isadd');
-        $input->mode     = $req->get('mode');
+        $input->submitted   = $req->get('submitted');
+        $input->aParams     = $req->get('aParams', $allowTags = true);
+        $input->isAdd       = $req->get('isadd');
+        $input->mode        = $req->get('mode');
 
         //  validate form data
-        if ($this->submit) {
+        if ($input->submitted) {
             if (empty($input->section['title'])) {
                 $aErrors[] = 'Please fill in a title';
             }
@@ -155,7 +155,7 @@ class SectionMgr extends SGL_Manager
         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_ERROR);
             $input->error    = $aErrors;
             $this->validated = false;
         }

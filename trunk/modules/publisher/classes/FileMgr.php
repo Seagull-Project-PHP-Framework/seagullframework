@@ -71,7 +71,7 @@ class FileMgr extends SGL_Manager
 
         //  form vars
         $input->action          = $req->get('action');
-        $input->submit          = $req->get('submit');
+        $input->submitted       = $req->get('submitted');
         $input->assetID         = $req->get('frmAssetID');
     }
 

@@ -88,7 +88,7 @@ class PermissionMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
         $input->template        = $this->template;
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->from            = ($req->get('pageID'))? $req->get('pageID'):0;
         $input->permId          = $req->get('frmPermId');
@@ -104,7 +104,7 @@ class PermissionMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if ($input->action == 'insert' || $input->action == 'update') {
                 if (empty($input->perm->name)) {
                     $this->validated = false;

@@ -91,7 +91,7 @@ class RoleMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
         $input->template        = $this->template;
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->roleId          = $req->get('frmRoleID');
         $input->role            = (object) $req->get('role');
@@ -106,7 +106,7 @@ class RoleMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submit && ($input->action =='insert' || $input->action =='update')) {
+        if ($input->submitted && ($input->action =='insert' || $input->action =='update')) {
             if (empty($input->role->name)) {
                 $this->validated = false;
                 $aErrors['name'] = 'You must enter an role name';

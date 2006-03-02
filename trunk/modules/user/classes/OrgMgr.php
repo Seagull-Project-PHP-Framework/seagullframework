@@ -118,7 +118,7 @@ class OrgMgr extends SGL_Manager
 
         $this->validated        = true;
         $input->error           = array();
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
         $input->template        = $this->template;
@@ -129,7 +129,7 @@ class OrgMgr extends SGL_Manager
         $input->aDelete         = $req->get('frmDelete');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
             if (empty($input->org->name)) {
                 $aErrors['name'] = 'You must enter an organisation name';

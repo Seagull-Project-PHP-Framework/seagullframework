@@ -27,39 +27,39 @@
             <input name="action" type="hidden" value="search" />
             <p>
                 <label for="search[user_id]">{translate(#User ID#)}</label>
-                <div class="error" flexy:if="error[user_id]">{error[user_id]}</div>
+                <span class="error" flexy:if="error[user_id]">{error[user_id]}</span>
                 <input type="text" name="search[user_id]" id="search[user_id]" value="{search.user_id}" />
             </p>
             <p>
                 <label for="search[username]">{translate(#Username#)}</label>
-                <div class="error" flexy:if="error[username]">{error[username]}</div>
+                <span class="error" flexy:if="error[username]">{error[username]}</span>
                 <input type="text" name="search[username]" id="search[username]" value="{search.username}" />
             </p>
             <p>
                 <label for="search[first_name]">{translate(#First Name#)}</label>
-                <div class="error" flexy:if="error[first_name]">{error[first_name]}</div>
+                <span class="error" flexy:if="error[first_name]">{error[first_name]}</span>
                 <input type="text" name="search[first_name]" id="search[first_name]" value="{search.first_name}" />
             </p>
             <p>
                 <label for="search[last_name]">{translate(#Last Name#)}</label>
-                <div class="error" flexy:if="error[last_name]">{error[last_name]}</div>
+                <span class="error" flexy:if="error[last_name]">{error[last_name]}</span>
                 <input type="text" name="search[last_name]" id="search[last_name]" value="{search.last_name}" />
             </p>
             <p>
                 <label for="search[email]">{translate(#Email#)}</label>
-                <div class="error" flexy:if="error[email]">{error[email]}</div>
+                <span class="error" flexy:if="error[email]">{error[email]}</span>
                 <input type="text" class="longText" name="search[email]" id="search[email]" value="{search.email}" />
             </p>
             <p>
                 <label for="search[roles]">{translate(#Role#)}</label>
-                <div class="error" flexy:if="error[roles]">{error[roles]}</div>
+                <span class="error" flexy:if="error[roles]">{error[roles]}</span>
                 <select name="search[roles]" id="search[roles]" multiple="multiple" size="3">
                     {generateSelect(aRoles,user.role_id):h}
                 </select>
             </p>
             <p flexy:if="conf[OrgMgr][enabled]">
                 <label for="search[orgs]">{translate(#Organisation#)}</label>
-                <div class="error" flexy:if="error[orgs]">{error[orgs]}</div>
+                <span class="error" flexy:if="error[orgs]">{error[orgs]}</span>
                 <select name="search[orgs]" id="search[orgs]" multiple="multiple" size="3">
                     {generateSelect(aOrgs,user.organisation_id):h}
                 </select>
@@ -68,24 +68,24 @@
                 <label for="search[reg_date_mod]">{translate(#Register Date#)}</label>
                 <div id="registerDateOptions">
                     <p>
-                        <div class="error" flexy:if="error[reg_date_mod]">{error[reg_date_mod]}</div>
+                        <span class="error" flexy:if="error[reg_date_mod]">{error[reg_date_mod]}</span>
                         <select name="search[reg_date_mod]" id="search[reg_date_mod]" onchange="javascript:updateFormInterface(); return false;">
                             {generateSelect(regDateMod,search[reg_date_mod]):h}
                         </select>
                     </p>
                     <p>
-                    <div class="error" flexy:if="error[reg_date1]">{error[reg_date1]}</div>
+                    <span class="error" flexy:if="error[reg_date1]">{error[reg_date1]}</span>
                     {regDate1:h}
                     </p>
                     <p>
-                    <div class="error" flexy:if="error[reg_date2]">{error[reg_date2]}</div>
+                    <span class="error" flexy:if="error[reg_date2]">{error[reg_date2]}</span>
                     {regDate2:h}
                     </p>
                 </div>
             </p>
             <p>
                 <label for="search[status]">{translate(#Status#)}</label>
-                <div class="error" flexy:if="error[status]">{error[status]}</div>
+                <span class="error" flexy:if="error[status]">{error[status]}</span>
                 <select name="search[status]" id="search[status]">
                     {generateSelect(status,search[status]):h}
                 </select>

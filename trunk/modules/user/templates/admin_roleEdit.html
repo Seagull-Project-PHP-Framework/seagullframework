@@ -22,7 +22,7 @@
             {end:}
             <p>
                 <label for="role[name]">{translate(#Name#)}<span class="required"> *</span></label>
-                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
                 <input type="text" class="longText" name="role[name]" id="role[name]" value="{role.name}" />
             </p>
             <p>
@@ -33,8 +33,8 @@
                 <label>&nbsp;</label>
                 <a href="{makeUrl(#editPerms#,#role#,#user#)}frmRoleID/{roleId}" class="sgl-button">{translate(#Edit permissions#)}</a>
             </p>
-            <p>
-                <span class="error">*</span><span class="small"> {translate(#denotes required field#)}</span>
+            <p class="helpRequire">
+                <span class="required">*</span><span class="small"> {translate(#denotes required field#)}</span>
             </p>
         </fieldset>
     </form>

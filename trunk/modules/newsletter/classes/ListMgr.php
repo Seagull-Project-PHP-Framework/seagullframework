@@ -92,7 +92,7 @@ class ListMgr extends NewsletterMgr
         $input->masterTemplate = 'masterLeftCol.html';
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->from        = $req->get('frmFrom') ? $req->get('frmFrom') : $this->conf['email']['admin'];
         $input->email       = $req->get('frmEmail');
         $input->subject     = $req->get('frmSubject');
@@ -114,7 +114,7 @@ class ListMgr extends NewsletterMgr
 
         $aErrors = array();
 
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
 
             if (isset($input->from)) {

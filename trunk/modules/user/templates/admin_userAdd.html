@@ -9,17 +9,19 @@
         <div class="message">{msgGet()}</div>
     </div>
     <form action="" method="post" name="frmUserAdd" flexy:ignore id="frmUserAdd">
-        {if:isAdd}
-        <input type="hidden" name="action" value="insert" />
-            {if:redir}
-            <input type="hidden" name="redir" value="{redir}" />
+        <fieldset class="hide">
+            {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+                {if:redir}
+                <input type="hidden" name="redir" value="{redir}" />
+                {end:}
+            {else:}
+            <input type="hidden" name="action" value="update" />
             {end:}
-        {else:}
-        <input type="hidden" name="action" value="update" />
-        {end:}
-        <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
-        <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
-        <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
+            <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
+            <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
+            <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
+        </fieldset>
 
         <h3 flexy:if="isAdd">{translate(#add user#,#ucfirst#)}</h3>
         <h3 flexy:if="!isAdd">{translate(#edit user#,#ucfirst#)} "{user.username}"</h3>
@@ -27,7 +29,7 @@
             <h3>{translate(#Personal Details#)}</h3>
             <p>
                 <label for="user[username]"><span class="required">*</span> {translate(#Username#)}</label>
-                <div class="error" flexy:if="error[username]">{translate(error[username])}</div>
+                <span class="error" flexy:if="error[username]">{translate(error[username])}</span>
                 <input type="text" name="user[username]" id="user[username]" value="{user.username}" />
             </p>
             <p>
@@ -41,12 +43,12 @@
             {if:isAdd}
             <p>
                 <label for="user[passwd]"><span class="required">*</span> {translate(#Password#)}</label>
-                <div class="error" flexy:if="error[passwd]">{translate(error[passwd])}</div>
+                <span class="error" flexy:if="error[passwd]">{translate(error[passwd])}</span>
                 <input type="password" name="user[passwd]" id="user[passwd]" value="{user.passwd}" />
             </p>
             <p>
                 <label for="user[password_confirm]"><span class="required">*</span> {translate(#Confirm Password#)}</label>
-                <div class="error" flexy:if="error[password_confirm]">{translate(error[password_confirm])}</div>
+                <span class="error" flexy:if="error[password_confirm]">{translate(error[password_confirm])}</span>
                 <input type="password" name="user[password_confirm]" id="user[password_confirm]" value="{user.password_confirm}" />
             </p>
             {end:}
@@ -66,7 +68,7 @@
             <h3>{translate(#Contact#)}</h3>
             <p>
                 <label for="user[email]"><span class="required">*</span> {translate(#Email#)}</label>
-                <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
+                <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
                 <input type="text" class="longText" name="user[email]" id="user[email]" value="{user.email}" />
             </p>
             <p>
@@ -89,7 +91,7 @@
             <h3>{translate(#Location#)}</h3>
             <p>
                 <label for="user[addr_1]"><span class="required">*</span> {translate(#Address 1#)}</label>
-                <div class="error" flexy:if="error[addr_1]">{translate(error[addr_1])}</div>
+                <span class="error" flexy:if="error[addr_1]">{translate(error[addr_1])}</span>
                 <input type="text" class="longText" name="user[addr_1]" id="user[addr_1]" value="{user.addr_1}" />
             </p>
             <p>
@@ -102,7 +104,7 @@
             </p>
             <p>
                 <label for="user[city]"><span class="required">*</span> {translate(#City#)}</label>
-                <div class="error" flexy:if="error[city]">{translate(error[city])}</div>
+                <span class="error" flexy:if="error[city]">{translate(error[city])}</span>
                 <input type="text" class="longText" name="user[city]" id="user[city]" value="{user.city}" />
             </p>
             <p>
@@ -113,12 +115,12 @@
             </p>
             <p>
                 <label for="user[post_code]"><span class="required">*</span> {translate(#ZIP/Postal Code#)}</label>
-                <div class="error" flexy:if="error[post_code]">{translate(error[post_code])}</div>
+                <span class="error" flexy:if="error[post_code]">{translate(error[post_code])}</span>
                 <input type="text" name="user[post_code]" id="user[post_code]" value="{user.post_code}" />
             </p>
             <p>
                 <label for="user[country]"><span class="required">*</span> {translate(#Country#)}</label>
-                <div class="error" flexy:if="error[country]">{translate(error[country])}</div>
+                <span class="error" flexy:if="error[country]">{translate(error[country])}</span>
                 <select name="user[country]" id="user[country]">
                     {generateSelect(countries,user.country):h}
                 </select>
@@ -129,14 +131,14 @@
             <h3>{translate(#Security#)}</h3>
             <p>
                 <label for="user[security_question]"><span class="required">*</span> {translate(#Security question#)}</label>
-                <div class="error" flexy:if="error[security_question]">{translate(error[security_question])}</div>
+                <span class="error" flexy:if="error[security_question]">{translate(error[security_question])}</span>
                 <select name="user[security_question]" id="user[security_question]">
                     {generateSelect(aSecurityQuestions,user.security_question):h}
                 </select>
             </p>
             <p>
                 <label for="user[security_answer]"><span class="required">*</span> {translate(#Answer#)}</label>
-                <div class="error" flexy:if="error[security_answer]">{translate(error[security_answer])}</div>
+                <span class="error" flexy:if="error[security_answer]">{translate(error[security_answer])}</span>
                 <input type="text" class="longText" name="user[security_answer]" id="user[security_answer]" value="{user.security_answer}" />
             </p>
             {if:isAdmin()}
@@ -150,7 +152,7 @@
                 {end:}
             {end:}
         </fieldset>
-        <p>
+        <p class="requireHelp">
             <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
         </p>
     </form>

@@ -74,7 +74,7 @@ class ContactUsMgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->contact     = (object)$req->get('contact');
 
         //  if enquiry_type var is in $_GET
@@ -86,7 +86,7 @@ class ContactUsMgr extends SGL_Manager
         $input->token = $req->get('token');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
 
             //  check form security token generated in display
             if ($input->token != SGL_Session::get('token')) {

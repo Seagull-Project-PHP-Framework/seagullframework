@@ -105,11 +105,11 @@ class ContentTypeMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->type        = $req->get('type');
         $input->contentTypeID = $req->get('frmContentTypeID');
 
-        if (isset($input->submit) &&
+        if (isset($input->submitted) &&
             ($input->action == 'add' || $input->action == 'insert' || $input->action == 'update'))
         {
             if (empty($input->type['item_type_name'])) {

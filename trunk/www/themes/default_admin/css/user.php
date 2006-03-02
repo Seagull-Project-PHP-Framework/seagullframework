@@ -69,7 +69,7 @@
 #frmPermAdd p label {
     width: 150px;
 }
-p input.longText, p textarea.longText {
+#frmPermAdd input.longText, #frmPermAdd textarea.longText {
     width: 250px;
 }
 
@@ -78,7 +78,7 @@ p input.longText, p textarea.longText {
 #frmPermEdit p label {
     width: 150px;
 }
-p input.longText, p textarea.longText {
+#frmPermEdit input.longText, #frmPermEdit textarea.longText {
     width: 250px;
 }
 
