@@ -281,7 +281,7 @@ class SimpleDriver
             $html = false;
 
             //  generate sections nodes
-            if ((int)$this->_startParentNode !== (int)$startParentNode) {
+            if ($this->_startParentNode != $startParentNode || $startParentNode == null) {
 
                 //  detect if trans2 support required
                 if ($this->conf['translation']['container'] == 'db') {
