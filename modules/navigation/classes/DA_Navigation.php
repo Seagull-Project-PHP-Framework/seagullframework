@@ -39,7 +39,6 @@
 
 require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_CORE_DIR . '/NestedSet.php';
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 
 /**
  * Data access methods for the navigation module.
@@ -124,6 +123,34 @@ class DA_Navigation extends SGL_Delegator
     }
 
     /**
+     * Returns sections from parent section.
+     *
+     * @access  public
+     *
+     * @param   int $sectionId  Parent section id
+     * @return  array
+     */
+   function getSectionsFromParent($sectionId = 0)
+    {
+        $query = "
+            SELECT * FROM {$this->conf['table']['section']}
+            WHERE parent_id = " . $sectionId . '
+            ORDER BY order_id';
+
+        $result = $this->dbh->query($query);
+        if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
+            SGL::raiseError('The database exists, but does not appear to have any tables,
+                please delete the config file from the var directory and try the install again',
+                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
+        }
+        if (DB::isError($result)) {
+            SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
+        }
+        return $result;
+    }
+
+    /**
      * Returns section by given id.
      *
      * @access  public
@@ -135,8 +162,8 @@ class DA_Navigation extends SGL_Delegator
     {
         $section = array();
 
-        //  get DB_NestedSet_Node object for this section
-        $section = $this->nestedSet->getNode($sectionId);
+        //  get raw section
+        $section = $this->getRawSectionById($sectionId);
 
         //  passing a non-existent section id results in null or false $section
         if ($section) {
@@ -211,6 +238,19 @@ class DA_Navigation extends SGL_Delegator
             $section['uri_alias'] = $this->getAliasBySectionId($section['section_id']);
         }
         return $section;
+    }
+
+    /**
+     * Returns raw section by given id.
+     *
+     * @access  public
+     *
+     * @param   int $sectionId
+     * @return  array
+     */
+    function getRawSectionById($sectionId)
+    {
+        return $this->nestedSet->getNode($sectionId);
     }
 
     /**
