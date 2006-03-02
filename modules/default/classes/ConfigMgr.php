@@ -121,11 +121,11 @@ class ConfigMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'edit';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->conf        = $req->get('conf');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
             if (empty($input->conf['site']['baseUrl']) ||
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {

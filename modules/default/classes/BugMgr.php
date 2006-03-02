@@ -85,11 +85,11 @@ class BugMgr extends SGL_Manager
         $input->masterTemplate = 'masterMinimal.html';
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->bug         = (object)$req->get('bug');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
             if (empty($input->bug->reporter_email)) {
                 $aErrors['reporter_email'] = 'You must enter your email';

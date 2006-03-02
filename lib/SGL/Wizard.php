@@ -49,7 +49,7 @@
  *          parent::Wizard();
  *  3.  at the beginning of your validate method, fire the parent's validate, ie
  *          parent::validate($req, $input);
- *  4.  replace and instance of $input->submit with  $this->submit
+ *  4.  replace and instance of $input->submitted with  $this->submit
  *  5.  at the end of your validate method, fire the following method:
  *          $this->maintainState($input->obj); 
  *      where $input->obj represent the data from your form

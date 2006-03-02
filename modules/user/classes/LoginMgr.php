@@ -67,12 +67,12 @@ class LoginMgr extends SGL_Manager
         $this->validated    = true;
         $input->username    = '';
         $input->password    = '';
-        $input->submit      = '';
+        $input->submitted   = '';
         $input->error       = array();
         $input->pageTitle   = 'Login';
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = 'login.html';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->username    = $req->get('frmUsername');
         $input->password    = $req->get('frmPassword');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
@@ -81,7 +81,7 @@ class LoginMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if ($input->username == '') {
                 $aErrors['username'] = 'You must enter a username';
             }

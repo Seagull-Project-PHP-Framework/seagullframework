@@ -1,6 +1,6 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('configuration')">{translate(#Save#)}</a>
+    <a class="action save" href="javascript:formSubmit('configuration','submitted',1,1)">{translate(#Save#)}</a>
     <a class="action undo" href="javascript:formReset('configuration')">{translate(#Reset#)}</a>
     <a class="action cancel" href="{makeUrl(##,#config#,#default#)}">{translate(#Cancel#)}</a>
 </div>
@@ -21,7 +21,7 @@
             <h3>{translate(#General#)}</h3>
             <p>
                 <label for="conf[site][baseUrl]">{translate(#Base URL#)}</label>
-                <div class="error" flexy:if="error[baseUrl]">{error[baseUrl]}</div>
+                <span class="error" flexy:if="error[baseUrl]">{error[baseUrl]}</span>
                 <input type="text" class="longText" name="conf[site][baseUrl]" id="conf[site][baseUrl]" value="{conf[site][baseUrl]}" />
             </p>
             <p>
@@ -32,7 +32,7 @@
                 <label class="tipOwner" for="conf[site][showLogo]">{translate(#Show logo#)}
                 <span class="tipText">{translate(#If path to image is specified, image will be shown; if left blank, Site name from above will appear as text#)}</span>
                 </label>
-                <div class="error" flexy:if="error[showLogo]">{error[showLogo]}</div>
+                <span class="error" flexy:if="error[showLogo]">{error[showLogo]}</span>
                 <input type="text" class="longText" name="conf[site][showLogo]" id="conf[site][showLogo]" value="{conf[site][showLogo]}" />
             </p>
             <p>
@@ -73,7 +73,7 @@
                 <label class="tipOwner" for="conf[site][templateEngine]">{translate(#Template Engine#)}
                 <span class="tipText">{translate(#Seagull allows you to use the template engine of your choice#)}</span>
                 </label>
-                <div class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</div>
+                <span class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</span>
                 <select name="conf[site][templateEngine]">
                     {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
                 </select>
@@ -82,7 +82,7 @@
                 <label class="tipOwner" for="conf[site][outputUrlHandler]">{translate(#Output URL handler#)}
                 <span class="tipText">{translate(#What format would you like your output URLs, Seagull Search Engine Friendly is the default#)}</span>
                 </label>
-                <div class="error" flexy:if="error[outputUrlHandler]">{error[outputUrlHandler]}</div>
+                <span class="error" flexy:if="error[outputUrlHandler]">{error[outputUrlHandler]}</span>
                 <select name="conf[site][outputUrlHandler]">
                     {generateSelect(aUrlHandlers,conf[site][outputUrlHandler]):h}
                 </select>
@@ -149,12 +149,12 @@
             <h3>{translate(#Paths#)}</h3>
             <p>
                 <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
-                <div class="error" flexy:if="error[installRoot]">{error[installRoot]}</div>
+                <span class="error" flexy:if="error[installRoot]">{error[installRoot]}</span>
                 <input type="text" class="longText" name="conf[path][installRoot]" id="conf[path][installRoot]" value="{conf[path][installRoot]}" />
             </p>
             <p>
                 <label for="conf[path][webRoot]">{translate(#Web Root#)}</label>
-                <div class="error" flexy:if="error[webRoot]">{error[webRoot]}</div>
+                <span class="error" flexy:if="error[webRoot]">{error[webRoot]}</span>
                 <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
             </p>
         </fieldset>
@@ -179,21 +179,21 @@
                 <label class="tipOwner" for="conf[session][extended]">{translate(#Extended Session#)}
                 <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
                 </label>
-                <div class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</div>
+                <span class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</span>
                 {generateRadioPair(#conf[session][extended]#,conf[session][extended]):h}
             </p>
             <p>
                 <label class="tipOwner" for="conf[session][singleUser]">{translate(#Enforce Single User#)}
                 <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
                 </label>
-                <div class="error" flexy:if="error[singleUser]">{error[singleUser]}</div>
+                <span class="error" flexy:if="error[singleUser]">{error[singleUser]}</span>
                 {generateRadioPair(#conf[session][singleUser]#,conf[session][singleUser]):h}
             </p>
             <p>
                 <label class="tipOwner" for="conf[session][allowedInUri]">{translate(#Allow Session in URL#)}
                 <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
                 </label>
-                <div class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</div>
+                <span class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</span>
                 {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
             </p>
         </fieldset>
@@ -404,7 +404,7 @@
                 <label class="tipOwner" for="conf[mta][backend]">{translate(#Backend#)}
                 <span class="tipText">{translate(#PEAR::Mail backend#)}</span>
                 </label>
-                <div class="error" flexy:if="error[mtaBackend]">{error[mtaBackend]}</div>
+                <span class="error" flexy:if="error[mtaBackend]">{error[mtaBackend]}</span>
                 <select name="conf[mta][backend]" id="conf[mta][backend]">
                     {generateSelect(aMtaBackends,conf[mta][backend]):h}
                 </select>
@@ -413,14 +413,14 @@
                 <label class="tipOwner" for="conf[mta][sendmailPath]">{translate(#Sendmail path#)}
                 <span class="tipText">{translate(#Mandatory if you use Sendmail as Backend#)}</span>
                 </label>
-                <div class="error" flexy:if="error[sendmailPath]">{error[sendmailPath]}</div>
+                <span class="error" flexy:if="error[sendmailPath]">{error[sendmailPath]}</span>
                 <input type="text" name="conf[mta][sendmailPath]" id="conf[mta][sendmailPath]" value="{conf[mta][sendmailPath]}" />
             </p>
             <p>
                 <label class="tipOwner" for="conf[mta][sendmailArgs]">{translate(#Sendmail arguments#)}
                 <span class="tipText">{translate(#Optional if you use Sendmail as Backend#)}</span>
                 </label>
-                <div class="error" flexy:if="error[sendmailArgs]">{error[sendmailArgs]}</div>
+                <span class="error" flexy:if="error[sendmailArgs]">{error[sendmailArgs]}</span>
                 <input type="text" name="conf[mta][sendmailArgs]" id="conf[mta][sendmailArgs]" value="{conf[mta][sendmailArgs]}" />
             </p>
             <p>
@@ -443,14 +443,14 @@
                 <label class="tipOwner" for="conf[mta][smtpUsername]">{translate(#SMTP username#)}
                 <span class="tipText">{translate(#Mandatory if you use SMTP as Backend and SMTP authentication is enabled#)}</span>
                 </label>
-                <div class="error" flexy:if="error[smtpUsername]">{error[smtpUsername]}</div>
+                <span class="error" flexy:if="error[smtpUsername]">{error[smtpUsername]}</span>
                 <input type="text" name="conf[mta][smtpUsername]" id="conf[mta][smtpUsername]" value="{conf[mta][smtpUsername]}" />
             </p>
              <p>
                 <label class="tipOwner" for="conf[mta][smtpPassword]">{translate(#SMTP password#)}
                 <span class="tipText">{translate(#Mandatory if you use SMTP as Backend and SMTP authentication is enabled#)}</span>
                 </label>
-                <div class="error" flexy:if="error[smtpPassword]">{error[smtpPassword]}</div>
+                <span class="error" flexy:if="error[smtpPassword]">{error[smtpPassword]}</span>
                 <input type="password" name="conf[mta][smtpPassword]" id="conf[mta][smtpPassword]" value="{conf[mta][smtpPassword]}" />
             </p>
         </fieldset>

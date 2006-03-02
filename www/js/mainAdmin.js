@@ -5,8 +5,40 @@
     * as forms must not have a "name" value according to xHTML STRICT DOCTYPE
     */
 
-
-
+/**
+    * Errors checking
+    * Searching for <span class="error">,
+    *  Modifying parent node className
+    *  Setting appropriate left margin to other fields
+    */
+function formErrorCheck()
+{
+    var labels = document.getElementsByTagName("label");
+    if (labels) {
+        var labelWidth = labels[0].offsetWidth;
+        if (document.all && !window.sidebar) {
+           //  this check should recognise only IE
+           labelWidth += 3;
+        }
+    }
+    for (i=0; i<document.getElementsByTagName("form").length; i++) {
+        var errorSpans = document.forms[i].getElementsByTagName("span");
+        if (errorSpans) {
+            for (j=0; j<errorSpans.length; j++) {
+                if (errorSpans[j].className == "error") {
+                    var parentObject = errorSpans[j].parentNode;
+                    parentObject.className += " errorBlock";
+                    for (k=0; k<parentObject.childNodes.length; k++) {
+                        if (parentObject.childNodes[k].nodeName == "INPUT"
+                            || parentObject.childNodes[k].nodeName == "SELECT") {
+                            parentObject.childNodes[k].style.marginLeft = labelWidth +"px";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 /**
     * Allows to create/modify a field value within a form before submitting it.
     * Launches the above function depending on the status of a trigger checkbox

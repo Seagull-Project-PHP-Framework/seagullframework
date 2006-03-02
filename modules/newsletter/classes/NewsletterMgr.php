@@ -83,11 +83,11 @@ class NewsletterMgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->listName    = $req->get('frmListName');
         $input->actionRequest = $req->get('frmRequest');
         $input->actionKey   = $req->get('frmKey');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
 
         $input->validNewsList = $this->_getList();
 
@@ -103,7 +103,7 @@ class NewsletterMgr extends SGL_Manager
         }
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
 
             if (empty($input->email)) {
                 $aErrors['email'] = 'Please fill in the email field';

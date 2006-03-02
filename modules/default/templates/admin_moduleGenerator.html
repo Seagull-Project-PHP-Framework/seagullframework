@@ -19,12 +19,12 @@
 
             <p>
                 <label for="frmCreateModule[moduleName]">{translate(#Module Name#)}</label>
-                <div class="error" flexy:if="error[moduleName]">{error[moduleName]}</div>
+                <span class="error" flexy:if="error[moduleName]">{error[moduleName]}</span>
                 <input type="text" name="frmCreateModule[moduleName]" id="frmCreateModule[moduleName]"  value="{createModule.moduleName}"/>
             </p>
             <p>
                 <label for="frmCreateModule[managerName]">{translate(#Manager Name#)}</label>
-                <div class="error" flexy:if="error[managerName]">{error[managerName]}</div>
+                <span class="error" flexy:if="error[managerName]">{error[managerName]}</span>
                 <input type="text" name="frmCreateModule[managerName]" id="frmCreateModule[managerName]"  value="{createModule.managerName}"/>
             </p>
             <p>

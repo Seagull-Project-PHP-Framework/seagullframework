@@ -84,7 +84,7 @@ class PearMgr extends SGL_Manager
         $input->totalItems      = $req->get('totalItems');
         $input->action = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete         = $req->get('frmDelete');
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
 
         //  PEAR params
         $input->mode            = $req->get('mode');
@@ -94,7 +94,7 @@ class PearMgr extends SGL_Manager
 
         //  validate fields
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $aFields = array(
                 'name' => 'Please, specify a name',
                 'title' => 'Please, specify a title',

@@ -71,11 +71,11 @@ class ModuleGenerationMgr extends SGL_Manager
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->createModule = (object)$req->get('frmCreateModule');
 
-        if ($input->submit) {
+        if ($input->submitted) {
 
             //  checks for creating modules
             if ($input->action == 'createModule') {

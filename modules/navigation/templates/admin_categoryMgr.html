@@ -55,7 +55,7 @@ function collapseElement(display,elementId)
                 </p>
                 <p>
                     <label for="category[label]">{translate(#Current Category Name#)}</label>
-                    <div class="error" flexy:if="error[name]">{error[label]}</div>
+                    <span class="error" flexy:if="error[name]">{error[label]}</span>
                     <input type="text" class="longText" name="category[label]" id="category[label]" value="{category[label]}" />
                 </p>
                 <fieldset id="permissions">

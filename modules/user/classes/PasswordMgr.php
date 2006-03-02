@@ -78,12 +78,12 @@ class PasswordMgr extends SGL_Manager
         $input->question        = $req->get('frmQuestion');
         $input->answer          = $req->get('frmAnswer');
         $input->forgotEmail     = $req->get('frmEmail');
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
 
         $aErrors = array();
 
         //  forgot password validation
-        if ($input->submit && ($input->action == 'forgot' || $input->action == 'retrieve')) {
+        if ($input->submitted && ($input->action == 'forgot' || $input->action == 'retrieve')) {
             $v = & new Validate();
             if (empty($input->forgotEmail)) {
                 $aErrors['frmEmail'] = 'You must enter your email';

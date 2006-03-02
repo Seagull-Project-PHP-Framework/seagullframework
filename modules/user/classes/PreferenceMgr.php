@@ -98,7 +98,7 @@ class PreferenceMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
         $input->template        = $this->template;
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->from            = ($req->get('frmFrom'))?$req->get('frmFrom'):0;
         $input->prefId          = $req->get('frmPrefId');
@@ -108,7 +108,7 @@ class PreferenceMgr extends SGL_Manager
         $input->totalItems      = $req->get('totalItems');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if (empty($input->pref->name)) {
                 $aErrors['name'] = 'You must enter a preference name';
             }

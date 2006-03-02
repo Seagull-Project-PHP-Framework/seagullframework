@@ -76,7 +76,7 @@ class UserSearchMgr extends SGL_Manager
         $input->template = $this->template;
         $input->masterTemplate  = 'masterMinimal.html';
 		$input->pageTitle = $this->pageTitle . ' :: Search';
-        $input->submit = $req->get('submitted');
+        $input->submitted = $req->get('submitted');
         $input->sortBy = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder = SGL_Util::getSortOrder($req->get('frmSortOrder'));
 
@@ -96,7 +96,7 @@ class UserSearchMgr extends SGL_Manager
             $aErrors = array();
         }
 
-        if ($input->submit) {
+        if ($input->submitted) {
 
             //  validate search form
             if (!empty($input->search['user_id']) && !(is_numeric($input->search['user_id']))) {

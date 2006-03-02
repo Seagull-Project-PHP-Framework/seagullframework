@@ -75,13 +75,13 @@ class GuestbookMgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->guestbook   = (object)$req->get('guestbook');
         $input->from        = ($req->get('frmFrom')) ?
                                $req->get('frmFrom') : 0;
         $input->totalItems  = $req->get('totalItems');
 
-        if ($input->submit) {
+        if ($input->submitted) {
             if (empty($input->guestbook->name)) {
                 $aErrors['name'] = 'Please, specify your name';
             }

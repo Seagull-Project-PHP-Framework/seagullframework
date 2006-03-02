@@ -87,7 +87,7 @@ class RndMsgMgr extends SGL_Manager
                                $req->get('action') : 'list';
         $input->msgDelete   = $req->get('frmMsgDelete');
         $input->addMsgsText = $req->get('addMsgsText');
-        $input->submit      = ($req->get('submit') || $req->get('upload'));
+        $input->submitted   = ($req->get('submitted') || $req->get('upload'));
         $input->from        = ($req->get('frmFrom')) ?
                                $req->get('frmFrom') : 0;
         $input->totalItems  = $req->get('totalItems');
@@ -103,7 +103,7 @@ class RndMsgMgr extends SGL_Manager
         }
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if ($input->msgUpload) {
                 if ($input->msgFileSize < 1) {
                     $aErrors['noUpload'] = 'Please select a file to upload';

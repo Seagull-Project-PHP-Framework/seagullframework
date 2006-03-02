@@ -41,40 +41,6 @@ img {
 }
 
 /*
-=========================Messages=============================*/
-.message {
-    text-align: center;
-    font-size: 0.9em;
-    z-index: 1;
-}
-.message div {
-    width: 60%;
-    margin: 0 auto 15px;
-    padding: 5px 25px;
-    background-color: <?php echo $tertiaryLightest ?>;
-    background-position: 0 50%;
-    background-repeat: no-repeat;
-    border-width: 2px;
-    border-style: solid;
-    -moz-border-radius: 0.4em;
-}
-.infoMessage {
-    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_info.gif');
-    border-color: <?php echo $infoMessage ?>;
-}
-.errorMessage {
-    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
-    border-color: <?php echo $errorMessage ?>;
-}
-.error, .required {
-    color: <?php echo $errorMessage ?>;
-}
-.warningMessage {
-    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_warning.gif');
-    border-color: <?php echo $warningMessage ?>;
-}
-
-/*
 =======================Buttons like===========================*/
 a.sgl-button, input.sgl-button {
     margin: 0;
@@ -374,7 +340,6 @@ html>body input[type="text"] {
 }
 input:focus, textarea:focus {
     background: <?php echo $primaryLightest ?>;
-
 }
 fieldset.noBorder {
     padding: 0;
@@ -399,18 +364,14 @@ fieldset h3 {
     color: <?php echo $tertiaryDarkest ?>;
 }
 fieldset p {
-    clear: left;
     line-height: 1.8;
     margin: 0.5em 0 0.5em;
 }
-form p label {
+fieldset p label {
     float: left;
     text-align: right;
     padding-right: 20px;
     color: <?php echo $primaryDark ?>;
-}
-form p.col label {
-    padding-right: 1em;
 }
 
 /*
@@ -466,15 +427,15 @@ thead th, thead th a {
 thead tr a:hover {
     color: <?php echo $primaryDark ?>;
 }
-tr.backLight td {
+tr.backLight {
     background: <?php echo $tableRowLight ?>;
     border-bottom: 1px solid <?php echo $primaryLight ?>;
 }
-tr.backDark td {
+tr.backDark {
     background: <?php echo $tableRowDark ?>;
     border-bottom: 1px solid <?php echo $primaryLight ?>;
 }
-tr.backHighlight td {
+tr.backHighlight {
     background: <?php echo $primaryLightest ?>;
 }
 
@@ -490,7 +451,7 @@ label.tipOwner {
 span.tipOwner span.tipText, label.tipOwner span.tipText, input.tipOwner span.tipText {
     display: none;
     position: absolute;
-    top: 2em;
+    top: 1.8em;
     left: 100%;
     border: 1px solid <?php echo $borderDark ?>;
     background-color: <?php echo $primaryBackground ?>;
@@ -662,6 +623,66 @@ div.close span {
     background-image: url('<?php echo $baseUrl ?>/images/backgrounds/tab_left_on.gif');
     padding-bottom: 5px;
 }
+
+/*
+=========================Messages=============================*/
+.message {
+    text-align: center;
+    font-size: 0.9em;
+    z-index: 1;
+}
+.message div {
+    width: 60%;
+    margin: 0 auto 15px;
+    padding: 5px 25px;
+    background-color: <?php echo $tertiaryLightest ?>;
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+    border-width: 2px;
+    border-style: solid;
+    -moz-border-radius: 0.4em;
+}
+.infoMessage {
+    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_info.gif');
+    border-color: <?php echo $infoMessage ?>;
+}
+.errorMessage {
+    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
+    border-color: <?php echo $errorMessage ?>;
+}
+.warningMessage {
+    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_warning.gif');
+    border-color: <?php echo $warningMessage ?>;
+}
+.error, .required {
+    color: <?php echo $errorMessage ?>;
+}
+
+/*-- Errors in submitted forms ----------------------------------*/
+p.errorBlock label {
+    background: url('<?php echo $baseUrl ?>/images/16/dialog_error.gif') 98% 50% no-repeat;
+    font-weight: bold;
+}
+p.errorBlock span.required {
+    display: none;
+}
+p.errorBlock span.error {
+    line-height: normal;
+}
+p.errorBlock input, p.errorBlock select {
+    display: block;
+    border: 1px solid <?php echo $errorMessage ?>;
+}
+<?php
+    if ($isFormSubmitted) { ?>
+.required {
+    display: none;
+}
+.helpRequire {
+    display: none;
+}
+    <?php }
+?>
 
 /*
 ========================Miscellaneous=========================*/

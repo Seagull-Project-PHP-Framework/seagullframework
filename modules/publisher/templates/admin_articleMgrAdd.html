@@ -8,6 +8,7 @@
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
+    <div> <!-- hack for TinyFCK to avoid flickering -->
     <form method="post" name="article" flexy:ignore id="article">
         <fieldset class="hide">
             <input type="hidden" name="action" value="insert" />
@@ -19,10 +20,15 @@
         <fieldset class="options" id="articleAddContent">
             <h3>{translate(#Content#)}</h3>
             {foreach:dynaFields,fieldName,fieldContent}
-            <p class="row">
-                <label>{translate(fieldName)}</label><br / flexy:if=wysiwyg_tinyfck>
+            <div class="row">
+                {if:isEqual(fieldName,#BodyHtml#)}
+                <label>{translate(fieldName)}</label><br />
                 {fieldContent:h}
-            </p>
+                {else:}
+                <label>{translate(fieldName)}</label>
+                {fieldContent:h}
+                {end:}
+            </div>
             {end:}
         </fieldset>
         <fieldset class="options" id="articleAddOptions">
@@ -65,6 +71,7 @@
             </p>
         </fieldset>
     </form>
+    </div> <!-- end of tinyFCK hack div -->
     <div class="spacer"></div>
 </div>
 <style type="text/css">

@@ -45,7 +45,7 @@
 </script>
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset')">{translate(#Save#)}</a>
+    {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Save#)}</a>
     {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Upload#)}</a>
     {end:}
     <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">Cancel</a>
@@ -67,12 +67,12 @@
             {if:save}
                 <input type="hidden" name="action" value="insert" />
                 <div class="floatRight">
-                    <input class="sgl-button" type="submit" name="submit" value="{translate(#Save#)}" />
+                    <input class="sgl-button" type="submit" name="submitted" value="{translate(#Save#)}" />
                 </div>
             {else:}
                 <input type="hidden" name="action" value="add" />
                 <div class="floatRight">
-                    <input class="sgl-button" type="submit" name="submit" value="{translate(#Upload#)}" onclick="return doAttach();" />
+                    <input class="sgl-button" type="submit" name="submitted" value="{translate(#Upload#)}" onclick="return doAttach();" />
                     <div id="uploadLayer"></div>
                 </div>
             {end:}

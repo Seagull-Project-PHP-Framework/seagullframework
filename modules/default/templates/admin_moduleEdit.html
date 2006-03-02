@@ -23,14 +23,14 @@
                 <label class="tipOwner" for="module[name]">{translate(#Name#)}
                     <span class="tipText">{translate(#The name of the module must be the exact name of the folder containing files, beware of case sensiveness#)}</span>
                 </label>
-                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
                 <input type="text" class="text" name="module[name]" id="module[name]" value="{module.name}" />
             </p>
             <p>
                 <label class="tipOwner" for="module[title]">{translate(#Title#)}
                     <span class="tipText">{translate(#Here you can write what you want#)}</span>
                 </label>
-                <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+                <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
                 <input type="text" class="text" name="module[title]" id="module[title]" value="{module.title}" />
             </p>
             <p>
@@ -39,12 +39,12 @@
             </p>
             <p>
                 <label for="module[description]">{translate(#Description#)}</label>
-                <div class="error" flexy:if="error[description]">{translate(error[description])}</div>
+                <span class="error" flexy:if="error[description]">{translate(error[description])}</span>
                 <textarea name="module[description]" id="module[description]">{module.description}</textarea>
             </p>
             <p>
                 <label for="module[admin_uri]">{translate(#Admin URI#)}</label>
-                <div class="error" flexy:if="error[admin_uri]">{translate(error[admin_uri])}</div>
+                <span class="error" flexy:if="error[admin_uri]">{translate(error[admin_uri])}</span>
                 <select name="module[admin_uri]" id="module[admin_uri]">
                     <option value=""> N/A</option>
                         {generateSelect(aAdminUris,module.admin_uri):h}
@@ -52,7 +52,7 @@
             </p>
             <p>
                 <label for="module[icon]">{translate(#Icon#)}</label>
-                <div class="error" flexy:if="error[icon]">{translate(error[icon])}</div>
+                <span class="error" flexy:if="error[icon]">{translate(error[icon])}</span>
                 <input type="text" class="text" name="module[icon]" id="module[icon]" value="{module.icon}" />
             </p>
 

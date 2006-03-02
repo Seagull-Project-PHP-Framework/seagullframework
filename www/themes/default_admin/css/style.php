@@ -103,6 +103,11 @@
     } else {
         $browserFamily = 'None';
     }
+
+    //  get form context (submitted or not)
+    $isFormSubmitted = (isset($_REQUEST['submitted']) && $_REQUEST['submitted'] == "1")
+        ? true
+        : false;
     
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);

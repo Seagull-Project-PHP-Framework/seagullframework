@@ -82,10 +82,10 @@ class FaqMgr extends SGL_Manager
         $input->aDelete     = $req->get('frmDelete');
         $input->faqId       = $req->get('frmFaqId');
         $input->items       = $req->get('_items');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->faq         = (object)$req->get('faq');
 
-        if ($input->submit) {
+        if ($input->submitted) {
             if (empty($input->faq->question)) {
                 $aErrors['question'] = 'Please fill in a question';
             }

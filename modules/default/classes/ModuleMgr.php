@@ -96,11 +96,11 @@ class ModuleMgr extends SGL_Manager
         $input->moduleId        = $req->get('frmModuleId');
         $input->module          = (object)$req->get('module');
         $input->module->is_configurable = (isset($input->module->is_configurable)) ? 1 : 0;
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
 
         //  validate fields
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $aFields = array(
                 'name' => 'Please, specify a name',
                 'title' => 'Please, specify a title',

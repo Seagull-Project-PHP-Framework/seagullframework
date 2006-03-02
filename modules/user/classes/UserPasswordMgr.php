@@ -79,12 +79,12 @@ class UserPasswordMgr extends PasswordMgr
         $input->answer          = $req->get('frmAnswer');
         $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
         $input->forgotEmail     = $req->get('frmEmail');
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
 
         $aErrors = array();
 
         //  password update validation for AccountMgr
-        if ($input->submit && ($input->action == 'edit') || ($input->action == 'update')) {
+        if ($input->submitted && ($input->action == 'edit') || ($input->action == 'update')) {
             $v = & new Validate();
             if (empty($input->passwordOrig)) {
                 $aErrors['frmPasswordOrig'] = 'You must enter your original password';

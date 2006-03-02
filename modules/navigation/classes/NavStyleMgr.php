@@ -77,7 +77,7 @@ class NavStyleMgr extends SGL_Manager
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         //  misc.
         $this->validated        = true;
-        $this->submitted        = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->newStyle        = $req->get('newStyle');
         $input->staticId        = $req->get('staticId');
         $input->rid             = (int)$req->get('rid');

@@ -92,7 +92,7 @@ class BlockMgr extends SGL_Manager
         $input->aParams     = $req->get('aParams', $allowTags = true);
 
         // Misc.
-        $this->submitted    = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');
         $input->totalItems  = $req->get('totalItems');
@@ -106,7 +106,7 @@ class BlockMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         // validate on submit
-        if ($this->submitted && $input->action != 'reorder' ) {
+        if ($input->submitted && $input->action != 'reorder' ) {
 
             // validate input data
             if (empty($input->block->name)) {
@@ -126,7 +126,7 @@ class BlockMgr extends SGL_Manager
                 $input->error    = $aErrors;
                 $this->validated = false;
             }
-        } elseif (!empty($input->block->edit) && !$this->submitted) {
+        } elseif (!empty($input->block->edit) && !$input->submitted) {
             $this->validated = false;
             unset($input->aParams);
         }
@@ -242,7 +242,7 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $blocks = & new Block();
-        if ($this->submitted) {
+        if ($input->submitted) {
 
             $orderArray = explode(',', $input->items);
             $blocks->updateBlocksOrder($orderArray);

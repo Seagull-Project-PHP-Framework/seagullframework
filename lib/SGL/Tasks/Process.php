@@ -713,6 +713,10 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         $input->data->scriptClose      = "\n//--> </script>\n";
 		$input->data->conf = $this->conf;
 
+        if (isset($input->data->submitted) && $input->data->submitted) {
+        $input->data->addOnLoadEvent("formErrorCheck()");
+        }
+
         $this->processRequest->process($input);
     }
 }

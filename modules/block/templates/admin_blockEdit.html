@@ -25,14 +25,14 @@
                 <label class="tipOwner" for="block[title]"><span class="required">*</span>{translate(#Display Title#)}
                     <span class="tipText">{translate(#Block title tooltip#)}</span>
                 </label>
-                <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+                <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
                 <input type="text" name="block[title]" id="block[title]" value="{block.title}" />
             </p>
             <p>
                 <label class="tipOwner" for="block[name]"><span class="required">*</span>{translate(#Block Class Name#)}
                     <span class="tipText">{translate(#Block class name tooltip#)}</span>
                 </label>
-                <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
                 <select name="block[name]" id="block[name]" onchange="document.frmBlockEdit.submit()">
                     <option value="">- {translate(#Choose class name#)} -</option>
                     {generateSelect(aAllBlocks,block.name):h}

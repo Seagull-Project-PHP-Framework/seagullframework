@@ -87,7 +87,7 @@ class CategoryMgr extends SGL_Manager
         $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->category        = $req->get('category');
         $input->move            = $req->get('move');

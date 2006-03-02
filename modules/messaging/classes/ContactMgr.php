@@ -78,7 +78,7 @@ class ContactMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->from        = ($req->get('frmFrom'))?$req->get('frmFrom'):0;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $this->submitted    = $req->get('submitted');
+        $input->submitted = $req->get('submitted');
         $input->userID      = $req->get('frmUserID');
         $input->deleteArray = $req->get('frmDelete');
         $input->totalItems  = $req->get('totalItems');
