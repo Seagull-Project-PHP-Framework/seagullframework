@@ -38,6 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: NavBuilder.php,v 2.0 2006/02/14 23:28:37 demian Exp $
 
+require_once SGL_MOD_DIR  . '/navigation/classes/DA_Navigation.php';
 
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
@@ -380,7 +381,7 @@ class SimpleDriver
     function getSectionsByRoleId($sectionId = 0)
     {
         $this->querystring = $this->req->getUri();
-        $this->da          = &DA_Default::singleton();
+        $this->da          = &DA_Navigation::singleton();
 
         // get navigation tree
         $aSectionNodes = $this->_getSections($sectionId);
@@ -410,7 +411,7 @@ class SimpleDriver
         $aSectionNodes = array();
 
         //  get nodes from parent node
-        $result = $this->da->getSectionsByRoleId($sectionId);
+        $result = $this->da->getSectionsFromParent($sectionId);
 
         //  process with each node
         while ($result->fetchInto($sectionNode)) {
@@ -470,7 +471,7 @@ class SimpleDriver
             //  deal with different uri types
             //  internal link:
             if (preg_match('/^uriNode:([0-9]+)$/', $section->resource_uri, $aUri)) {
-                $linkedSection = $this->da->getSectionById($aUri[1]);
+                $linkedSection = (object)$this->da->getRawSectionById($aUri[1]);
                 $section->dontMatch = true;
                 if ($linkedSection &&
                     (in_array($this->_rid, explode(',', $linkedSection->perms)))) {

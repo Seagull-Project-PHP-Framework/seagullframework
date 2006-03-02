@@ -60,8 +60,10 @@ class SectionMgr extends SGL_Manager
         $this->masterTemplate = 'masterMinimal.html';
         $this->template       = 'sectionList.html';
 
-        $dataUser = &DA_User::singleton();
-        $this->da = &DA_Navigation::singleton();
+        $dataUser    = &DA_User::singleton();
+        $dataDefault = &DA_Default::singleton();
+        $this->da    = &DA_Navigation::singleton();
+        $this->da->add($dataDefault);
         $this->da->add($dataUser);
 
         //  detect if trans2 support required
