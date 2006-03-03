@@ -328,17 +328,20 @@ fieldset {
     padding: 10px;
     border: 1px solid <?php echo $borderDark ?>;
 }
+fieldset.options h3 {
+    visibility: hidden;
+}
 select, input, textarea {
     font-size: 1.1em;
     z-index: 1;
 }
-html>body select, html>body input, html>body textarea {
+html>body p select, html>body p input, html>body p textarea {
     border: 1px solid <?php echo $primary ?>;
 }
-html>body input[type="text"] {
+html>body p input[type="text"] {
     text-indent: 2px;
 }
-input:focus, textarea:focus {
+p input:focus, p textarea:focus {
     background: <?php echo $primaryLightest ?>;
 }
 fieldset.noBorder {
@@ -667,6 +670,7 @@ p.errorBlock span.required {
     display: none;
 }
 p.errorBlock span.error {
+    display: block;
     line-height: normal;
 }
 p.errorBlock input, p.errorBlock select {

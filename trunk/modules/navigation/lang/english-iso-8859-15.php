@@ -51,8 +51,9 @@
         'Status' => 'Status',
         'check to activate' => 'check to activate',
         'Can view' => 'Can view',
-        'intro text 1' => 'In this section you can create navigation that references 2 types of content in the system, static or dynamic. Static content is a static HTML page entered through the Publisher module, using the article type "Static Html Article".',
-        'intro text 2' => 'To reference dynamic content, you must select one of the modules in the system, a specific manager class, and the relevant action. For example to create a link to a screen that lists all uploaded files in the system you would set the "page type" to "dynamic pages", then select the "publisher" module, then the "DocumentMgr" manager, and finally the "list" action.',
+        'Please fill in a title' => 'Please fill in a title',
+        'You cannot activate unless you first activate.' => 'You cannot activate "%1" unless you first activate "%2"',
+        'To access this section, a user must have access to the parent section.' => 'To access this section, a user must have access to the parent section. One or more of the roles you selected does not have access to "%s".',
 
 
 /*  MESSAGES    */

@@ -1,10 +1,10 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('article')">{translate(#Save#)}</a>
+    <a class="action save" href="javascript:formSubmit('article')" accesskey="s">{translate(#Save#)}</a>
     {if:redir}
-        <a class="action cancel" href="javascript:document.location.href='{redir}'">{translate(#Cancel#)}</a>
+        <a class="action cancel" href="javascript:document.location.href='{redir}'" accesskey="c">{translate(#Cancel#)}</a>
     {else:}
-        <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">{translate(#Cancel#)}</a>
+        <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}" accesskey="c">{translate(#Cancel#)}</a>
     {end:}
 </div>
 <div id="content">
@@ -28,7 +28,7 @@
         <fieldset class="options" id="articleAddContent">
             <h3>{translate(#Content#)}</h3>
             {if:isEqual(conf[translation][container],#db#)}
-            <p class="row">
+            <p>
                 <label class="tipOwner">{translate(#Language#)}
                 <span class="tipText">{translate(#switching language will cause changes to be lost#)}</span>
                 </label>
@@ -39,7 +39,7 @@
             </p>
             {end:}
             {foreach:dynaContent,fieldName,fieldContent}
-            <div class="row">
+            <p>
                 {if:isEqual(fieldName,#BodyHtml#)}
                 <label>{translate(fieldName)}</label><br / flexy:if=wysiwyg_tinyfck>
                 {fieldContent:h}
@@ -47,47 +47,47 @@
                 <label>{translate(fieldName)}</label>
                 {fieldContent:h}
                 {end:}
-            </div>
+            </p>
             {end:}
         </fieldset>
         <fieldset class="options" id="articleAddOptions">
             <h3>{translate(#Editing options#)}</h3>
             {if:aCategories}
-            <p class="row">
+            <p>
                 <label>{translate(#Category#)}</label>
                 <span>{breadCrumbs:h}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Change Category#)}</label>
                 <select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select>
             </p>
             {end:}
-            <p class="row">
+            <p>
                 <label>{translate(#Article type#)}</label>
                 <span>{article.type}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Author#)}</label>
                 <span>{article.creatorName}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Start Date#)}</label>
                 <input type="hidden" name="frmStartDate" id="frmStartDate" value="{itemStartDate}" />
                 <img class="calendar" id="startDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
                 <span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(itemStartDate)}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Expiry Date#)}</label>
                 <input type="hidden" name="frmExpiryDate" id="frmExpiryDate" value="{itemExpiryDate}" />
                 <img class="calendar" id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
                 <span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(itemExpiryDate)}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>&nbsp;</label>
                 <span>{noExpiry:h}</span>
             </p>
             {if:flesch}
-            <p class="row">
+            <p>
                 <label>{translate(#Flesch score#)}</label>
                 <span>{flesch} &nbsp; (<a href="#" onclick="javascript:window.open('{fleschLink}','Flesch','width=500,height=300,top=200,left=300,scrollbars=yes')">{translate(#whats this?#)}</a>)</span>
             </p>

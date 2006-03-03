@@ -30,13 +30,13 @@ function toggleAliasElements(myCheckbox)
 
 <div id="manager-actions">
     <span>{translate(#Action#)}:&nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('sectionEdit','submitted',1,1)">{translate(#Save#)}</a>
-    <a class="action cancel" href="{makeUrl(#list#,#section#,#navigation#)}">{translate(#Cancel#)}</a>
+    <a class="action save" href="javascript:formSubmit('sectionEdit','submitted',1,1)" accesskey="s">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#section#,#navigation#)}" accesskey="c">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
         <h2>{translate(pageTitle)} :: {translate(mode)}</h2>
-        <div class="message">{msgGet()}</div>
+        <div class="message">{msgGet()}<br />
     </div>
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit" action="">
         <div id="optionsLinks"></div>
@@ -60,11 +60,8 @@ function toggleAliasElements(myCheckbox)
             {foreach:availableLangs,langID,langName}
             <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
             {end:}
-            <p class="errorMsg">{foreach:error,error,string}
-            {string}.
-            {end:}
-            </p>
-            <p flexy:if="isEqual(conf[translation][container],#db#)">
+            
+            <p flexy:if="availableLangs">
                 <label for="frmNavLang">{translate(#Language#)}</label>
                 <select name="frmNavLang" id="frmNavLang"
                         onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
@@ -74,6 +71,7 @@ function toggleAliasElements(myCheckbox)
         {end:}
             <p>
                 <label for="section[title]">{translate(#Section Title#)} {fullNavLang}</label>
+                <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
                 <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'section[title]','section[uri_alias]')" flexy:if="isAdd"/>
                 <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" flexy:if="!isAdd"/>
             </p>
@@ -215,12 +213,14 @@ function toggleAliasElements(myCheckbox)
                 <label class="tipOwner" for="section[is_enabled]">{translate(#Publish#)}
                 <span class="tipText">{translate(#check to activate#,#ucfirst#)}</span>
                 </label>
+                <span class="error" flexy:if="error[is_enabled]">{translate(error[is_enabled][string],#vprintf#,error[is_enabled][args])}</span>
                 <input type="checkbox" name="section[is_enabled]" id="section[is_enabled]" flexy:raw="{sectionIsEnabled}" />
             </p>
             <p>
                 <label class="tipOwner" for="section[perms][]">{translate(#Can view#)}
                 <span class="tipText">{translate(#Select roles to which you want to grant access#)}</span>
                 </label>
+                <span class="error" flexy:if="error[perms]">{translate(error[perms][string],#vprintf#,error[perms][args])}</span>
                 <select size="5" name="section[perms][]" id="section[perms][]" multiple="multiple">
                     {generateSelect(aRoles,aSelectedRoles,1):h}
                 </select>

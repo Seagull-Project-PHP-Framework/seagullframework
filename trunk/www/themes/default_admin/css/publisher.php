@@ -36,11 +36,11 @@
     width: 200px;
 }
 #articleAddContent p label {
-    width: 20%;
+    float: none;
     text-align: left;
 }
 #articleAddContent p input {
-    width: 78%;
+    width: 80%;
 }
 #articleAddContent span.tipText {
     width: 250%;

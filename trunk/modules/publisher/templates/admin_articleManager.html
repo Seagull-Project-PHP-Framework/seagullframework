@@ -65,7 +65,7 @@ function hideCombox(comboxId)
         <a href="{makeUrl(#add#,#article#,#publisher#)}frmArticleTypeID/{key}">{value}</a>
         {end:}
     </div>
-    <a class="action add" id="newArticle" href="javascript:void(0)" onclick="javascript:showCombox('articleTypeSelector', event)">{translate(#New Article#)}</a>
+    <a class="action add" id="newArticle" href="javascript:void(0)" accesskey="n" onclick="javascript:showCombox('articleTypeSelector', event)">{translate(#New Article#)}</a>
 </div>
 <div id="content" onclick="hideCombox('articleTypeSelector')">
     <div id="content-header">

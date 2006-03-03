@@ -49,7 +49,6 @@
 -- configEdit.html -------------------------------------------*/
 #configuration p label {
     width: 35%;
-    text-align: left;
 }
 #configuration input.longText, #configuration textarea.longText{
     width: 58%;

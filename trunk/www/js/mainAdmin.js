@@ -34,6 +34,22 @@ function formErrorCheck()
                             parentObject.childNodes[k].style.marginLeft = labelWidth +"px";
                         }
                     }
+                    //  check if this node is in a tab
+                    if (field = parentObject.parentNode) {
+                        if (field.className == "options") {
+                            var tabId = field.id;
+                            var tabs = document.getElementById("optionsLinks");
+                            var tabElements = tabs.getElementsByTagName("li");
+                            for (l=0; l<tabElements.length; l++) {
+                                if (tabElements[l].className.match(new RegExp(tabId+"\\b"))) {
+                                    var errorTab = tabElements[l].childNodes;
+                                    errorTab[0].className = "error";
+                                    var thisForm = document.forms[0].id;
+                                    showSelectedOptions(thisForm,tabId);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
