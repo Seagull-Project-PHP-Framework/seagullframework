@@ -123,29 +123,32 @@ class SectionMgr extends SGL_Manager
         //  validate form data
         if ($input->submitted) {
             if (empty($input->section['title'])) {
-                $aErrors[] = 'Please fill in a title';
+                $aErrors['title'] = 'Please fill in a title';
             }
             //  zero is a valid property, refers to public role
             if (is_null($input->section['perms'])) {
-                $aErrors[] = 'Please assign viewing rights to least one role';
+                $aErrors['perms'] = 'Please assign viewing rights to least one role';
             }
             //  If a child, need to make sure its is_enabled status OK with parents
             //  Only warn if they attempt to make child active when a parent is inactive
             if (($input->action == 'update' || $input->action == 'insert') && $input->section['parent_id'] != 0) {
                 $parent = $this->da->getSectionById($input->section['parent_id']);
                 if ($parent['is_enabled'] == 0 && $input->section['is_enabled'] == 1) {
-                    $aErrors[] = 'You cannot activate '
-                        . $input->section['title'] . ' unless you first activate '
-                        . $parent['title'] . '.';
+                    $aErrors['is_enabled']['string'] = 'You cannot activate unless you first activate.';
+                    $aErrors['is_enabled']['args'][] = (!empty($input->section['title']))
+                        ? $input->section['title']
+                        : ($input->action == 'insert')
+                            ? ''
+                            : $input->section['title_original'];
+                    $aErrors['is_enabled']['args'][] = $parent['title'];
                 }
                 //  check child has same or subset of parents permissions
                 if ($input->section['perms']) {
                     $aPerms = explode(',', $input->section['perms']);
                     foreach ($aPerms as $permID) {
                         if (strpos($parent['perms'], $permID) === false){
-                            $aErrors[] = 'To access this section, a user must have access' .
-                                         ' to the parent section. One or more of the roles ' .
-                                         'you selected does not have access to ' . $parent['title'] . '.';
+                            $aErrors['perms']['string'] = 'To access this section, a user must have access to the parent section.';
+                            $aErrors['perms']['args'][] = $parent['title'];
                             break;
                         }
                     }

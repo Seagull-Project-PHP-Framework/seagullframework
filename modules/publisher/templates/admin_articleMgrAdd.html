@@ -1,7 +1,7 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('article')">{translate(#Save#)}</a>
-    <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}">{translate(#Cancel#)}</a>
+    <a class="action save" href="javascript:formSubmit('article')" accesskey="s">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}" accesskey="c">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -20,7 +20,7 @@
         <fieldset class="options" id="articleAddContent">
             <h3>{translate(#Content#)}</h3>
             {foreach:dynaFields,fieldName,fieldContent}
-            <div class="row">
+            <p>
                 {if:isEqual(fieldName,#BodyHtml#)}
                 <label>{translate(fieldName)}</label><br />
                 {fieldContent:h}
@@ -28,44 +28,44 @@
                 <label>{translate(fieldName)}</label>
                 {fieldContent:h}
                 {end:}
-            </div>
+            </p>
             {end:}
         </fieldset>
         <fieldset class="options" id="articleAddOptions">
             <h3>{translate(#Editing options#)}</h3>
             {if:aCategories}
-            <p class="row">
+            <p>
                 <label>{translate(#Category#)}</label>
                 <span>{breadCrumbs:h}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Change Category#)}</label>
                 <select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select>
             </p>
             {end:}
-            <p class="row">
+            <p>
                 <label>{translate(#Article type#)}</label>
                 <select name="frmArticleTypeID" disabled="true">
                     {generateSelect(aArticleTypes,dataTypeID):h}
                 </select>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Author#)}</label>
                 <span>{loggedOnUser}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Start Date#)}</label>
                 <input type="hidden" name="frmStartDate" id="frmStartDate" value="{todaysDate}" />
                 <img class="calendar" id="startDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
                 <span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(todaysDate)}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>{translate(#Expiry Date#)}</label>
                 <input type="hidden" name="frmExpiryDate" id="frmExpiryDate" value="{expiryDate}" />
                 <img class="calendar" id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
                 <span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(expiryDate)}</span>
             </p>
-            <p class="row">
+            <p>
                 <label>&nbsp;</label>
                 <span>{noExpiry:h}</span>
             </p>

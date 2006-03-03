@@ -105,7 +105,7 @@
     }
 
     //  get form context (submitted or not)
-    $isFormSubmitted = (isset($_REQUEST['submitted']) && $_REQUEST['submitted'] == "1")
+    $isFormSubmitted = (isset($_REQUEST['isFormSubmitted']) && $_REQUEST['isFormSubmitted'] == "1")
         ? true
         : false;
     

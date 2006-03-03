@@ -11,19 +11,17 @@
 
     function doAttach()
     {
-        if (document.uploadAsset.assetFile.value==""){
+        if (document.uploadAsset.assetFile.value=="") {
             alert(alertNoFile);
-        return false;
-        } else {//Launch uploading document message
+            return false;
+        } else {
+            //Launch uploading document message
             avoidDown();
             msgUp();
         }
     }
 
-    var cteTxti = '<table class="wide">'
-                + '<tr><td align="left" width="250" nowrap><span class="error">'
-                + alertPleaseWait;
-    var cteTxtf = '<\/span><\/td><\/tr><\/table>';
+    var cteTxti = alertPleaseWait;
     var msgPts  = '';
 
     function msgUp()
@@ -31,8 +29,8 @@
             msgPts = (msgPts.length > 7) ? '.' : msgPts + '.';
             uploadLayer = document.getElementById('uploadLayer');
 
-            uploadLayer.innerHTML = cteTxti + msgPts + cteTxtf;
-            idetifier = setTimeout('msgUp()',100);
+            uploadLayer.innerHTML = cteTxti + msgPts;
+            identifier = setTimeout('msgUp()', 100);
     }
 
     function avoidDown()
@@ -46,7 +44,7 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
     {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Save#)}</a>
-    {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Upload#)}</a>
+    {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)" onclick="return doAttach();">{translate(#Upload#)}</a>
     {end:}
     <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">Cancel</a>
 </div>
@@ -66,15 +64,8 @@
             <input type="hidden" name="document[file_size]" value="{assetFileSize}" />
             {if:save}
                 <input type="hidden" name="action" value="insert" />
-                <div class="floatRight">
-                    <input class="sgl-button" type="submit" name="submitted" value="{translate(#Save#)}" />
-                </div>
             {else:}
                 <input type="hidden" name="action" value="add" />
-                <div class="floatRight">
-                    <input class="sgl-button" type="submit" name="submitted" value="{translate(#Upload#)}" onclick="return doAttach();" />
-                    <div id="uploadLayer"></div>
-                </div>
             {end:}
             <p>
                 <label>{translate(#Owner#)}</label>
@@ -115,6 +106,10 @@
              <p>
                 <label for="assetFile">{translate(#Locate#)}</label>
                 <input class="longText" type="file" name="assetFile" id="assetFile"/>
+            </p>
+            <p>
+                <label>&nbsp;</label>
+                <div id="uploadLayer" class="error"></div>
             </p>
             {end:}
         </fieldset>
