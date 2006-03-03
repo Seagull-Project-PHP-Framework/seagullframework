@@ -184,13 +184,20 @@ class SGL_String
         return SGL_String::trimWhitespace($clean);
     }
 
-    function removeJs($html)
+    function removeJs($var)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $search = "/<script[^>]*?>.*?<\/script\s*>/i";
-        $replace = '';
-        $html = preg_replace($search, $replace, $html);
-        return SGL_String::trimWhitespace($html);
+
+        if (isset($var)) {
+            if (!is_array($var)) {
+                $search = "/<script[^>]*?>.*?<\/script\s*>/i";
+                $replace = '';
+                $clean = preg_replace($search, $replace, $var);
+            } else {
+                $clean = array_map(array('SGL_String', 'removeJs'), $var);
+            }
+        }
+        return SGL_String::trimWhitespace($clean);
     }
 
     /**
