@@ -272,6 +272,15 @@ class SGL
         return $ret;
     }
 
+    //  to get around limitations of PHP4's aggregate_* methods
+    function objectCopy($src, &$target)
+    {
+        $aProps = get_object_vars($src);
+        foreach ($aProps as $attribName => $attribValue) {
+            $target->{$attribName} = $attribValue;
+        }
+    }
+
     /**
      * Determines current server API, ie, are we running from commandline or webserver.
      *

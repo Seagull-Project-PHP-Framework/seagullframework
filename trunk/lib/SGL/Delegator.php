@@ -79,6 +79,7 @@ class SGL_Delegator
     {
         if (!SGL::isPhp5()) {
             aggregate_methods($this, get_class($delegate));
+            SGL::objectCopy($delegate, $this); // aggregate_properties(); ignore private vars
         }
         $this->aDelegates[] = $delegate;
     }
