@@ -183,6 +183,7 @@ class SectionMgr extends SGL_Manager
         $output->mode     = 'New section';
         $output->isAdd    = true;
         $this->_editDisplay($output);
+        $output->addOnLoadEvent("UriAliasHandler('add','auto')");
     }
 
     function _cmd_edit(&$input, &$output)
@@ -200,6 +201,7 @@ class SectionMgr extends SGL_Manager
 
         $output->section = $section;
         $this->_editDisplay($output);
+        $output->addOnLoadEvent("UriAliasHandler('edit','manual')");
     }
 
     function _cmd_insert(&$input, &$output)
@@ -305,13 +307,12 @@ class SectionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  pre-check enabled box
-        $output->sectionIsEnabled  = !empty($output->section['is_enabled']) ? 'checked' : '';
-        $output->uriAliasIsEnabled = !empty($output->section['uri_alias_enable']) ? 'checked' : '';
+        $output->sectionIsEnabled  = !empty($output->section['is_enabled']) ? 'checked="checked"' : '';
+        $output->uriAliasIsEnabled = !empty($output->section['uri_alias_enable']) ? 'checked="checked"' : '';
+        $output->uriAutoAlias      = empty($output->section['uri_alias_enable']) ? 'checked="checked"' : '';
 
         //  get array of section node objects
-        $output->sectionNodesOptions[0] = SGL_String::translate('Top level (no parent)');
-        $output->sectionNodesOptions    = $output->sectionNodesOptions
-                                        + $this->da->getSectionsForSelect();
+        $output->sectionNodesOptions    = $this->da->getSectionsForSelect();
 
         if ($this->conf['translation']['container'] == 'db') {
             $availableLangs = $this->trans->getLangs();

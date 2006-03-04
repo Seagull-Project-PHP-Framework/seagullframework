@@ -9,24 +9,8 @@ function addFormValue(myElement, form)
     newInput.setAttribute('type', 'hidden');
     myForm.appendChild(newInput);
 }
-
-function toggleAliasElements(myCheckbox)
-{
-    if (document.getElementById('section[uri_alias_enable]')) {
-        var myCheckbox = document.getElementById('section[uri_alias_enable]').checked;
-        var aliasList = document.getElementById('urialiases');
-        var aliasValue = document.getElementById('section[uri_alias]');
-
-        if (myCheckbox) {
-            //aliasList.disabled = false;
-            aliasValue.disabled = false;
-        } else {
-            //aliasList.disabled = true;
-            aliasValue.disabled = true;
-        }
-    }
-}
 </script>
+<script type="text/javascript" src="{webRoot}/js/translit.js"></script>
 
 <div id="manager-actions">
     <span>{translate(#Action#)}:&nbsp;</span>
@@ -36,7 +20,7 @@ function toggleAliasElements(myCheckbox)
 <div id="content">
     <div id="content-header">
         <h2>{translate(pageTitle)} :: {translate(mode)}</h2>
-        <div class="message">{msgGet()}<br />
+        <div class="message">{msgGet()}</div>
     </div>
     <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit" action="">
         <div id="optionsLinks"></div>
@@ -72,12 +56,12 @@ function toggleAliasElements(myCheckbox)
             <p>
                 <label for="section[title]">{translate(#Section Title#)} {fullNavLang}</label>
                 <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
-                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" onkeyup="cleanUpUri(this.value,'section[title]','section[uri_alias]')" flexy:if="isAdd"/>
-                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" flexy:if="!isAdd"/>
+                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" />
             </p>
             <p>
                 <label for="section[parent_id]">{translate(#Parent Section#)}</label>
                 <select name="section[parent_id]" id="section[parent_id]">
+                    <option value="0">{translate(#Top level (no parent)#)}</option>
                     {generateSelect(sectionNodesOptions,section[parent_id]):h}
                 </select>
             </p>
@@ -195,14 +179,19 @@ function toggleAliasElements(myCheckbox)
                 {end:}
             {end:}
             {if:uriAliasAllowed}
-            <p>
+            <p id="uriAliasEnableBox">
                 <label for="section[uri_alias_enable]">{translate(#Add an alias#)}?</label>
-                <input type="checkbox" name="section[uri_alias_enable]" id="section[uri_alias_enable]" flexy:raw="{uriAliasIsEnabled}" onClick="toggleAliasElements();" />
+                <input type="checkbox" name="section[uri_alias_enable]" id="section[uri_alias_enable]" flexy:raw="{uriAliasIsEnabled}" />
             </p>
-            <p>
-                <label for="section[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" onkeyup="this.value=replaceUri(this.value)" flexy:if="isAdd"/>
-                <input type="text" class="longText" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" flexy:if="!isAdd"/>
+            <p id="uriAutoAliasBox">
+                <label for="section[uri_auto_alias]">{translate(#Automatic alias#)}?</label>
+                <input type="checkbox" name="section[uri_auto_alias]" id="section[uri_auto_alias]" flexy:raw="{uriAutoAlias}" />
+                <input type="text" class="longText hide" name="aliasInputText" id="aliasInputText" value="" />
+            </p>
+            <p id="uriAliasBox">
+                <label id="test1" for="section[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
+                <input type="hidden" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" />
+                <span id="uriAliasDisplay">{section[uri_alias]}</span>
 
             </p>
             {end:}
@@ -250,8 +239,4 @@ function toggleAliasElements(myCheckbox)
 <script type="text/javascript">
 createAvailOptionsLinks('sectionEdit','h3');
 showSelectedOptions('sectionEdit','navigationContent');
-toggleAliasElements();
-</script>
-<script flexy:if="isAdd">
-refreshMetaTitle('section[title]','section[uri_alias]');
 </script>

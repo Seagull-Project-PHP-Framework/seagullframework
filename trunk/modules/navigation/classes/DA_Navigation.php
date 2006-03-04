@@ -419,7 +419,7 @@ class DA_Navigation extends SGL_Manager
      */
     function addSection(&$section)
     {
-        $this->_prepareSection($section);
+        $this->prepareSection($section);
 
         //  prepare resource_uri string for alias format
         if (!empty($section['uri_alias'])) {
@@ -470,7 +470,7 @@ class DA_Navigation extends SGL_Manager
      */
     function updateSection(&$section)
     {
-        $this->_prepareSection($section);
+        $this->prepareSection($section);
 
         //  prepare resource_uri string for alias format
         if (!empty($section['uri_alias'])) {
@@ -557,7 +557,7 @@ class DA_Navigation extends SGL_Manager
      *
      * @param   array $section
      */
-    function _prepareSection(&$section)
+    function prepareSection(&$section)
     {
         $separator = '/'; // can be configurable later
 
