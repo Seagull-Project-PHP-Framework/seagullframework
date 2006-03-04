@@ -95,44 +95,6 @@ class DA_Default
         return $instance;
     }
 
-    function getSectionsByRoleId($sectionId = 0)
-    {
-        $query = "
-            SELECT * FROM {$this->conf['table']['section']}
-            WHERE parent_id = " . $sectionId . '
-            ORDER BY order_id';
-
-        $result = $this->dbh->query($query);
-        if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
-            SGL::raiseError('The database exists, but does not appear to have any tables,
-                please delete the config file from the var directory and try the install again',
-                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
-        }
-        if (DB::isError($result)) {
-            SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
-                SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
-        }
-        return $result;
-    }
-
-    function getSectionById($sectionId)
-    {
-        $query = "
-            SELECT  *
-            FROM    {$this->conf['table']['section']}
-            WHERE   section_id = " . $sectionId;
-        return $this->dbh->getRow($query);
-    }
-
-    function getSectionNameById($sectionId)
-    {
-        $query = "
-            SELECT  title
-            FROM    {$this->conf['table']['section']}
-            WHERE   section_id = " . $sectionId;
-        return $this->dbh->getOne($query);
-    }
-
     function getAllAliases()
     {
         $query = "
