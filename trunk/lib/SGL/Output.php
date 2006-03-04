@@ -62,9 +62,9 @@ class SGL_Output
      * @return  string          translated text
      * @see     setLanguage()
      */
-    function translate($key, $filter = false)
+    function translate($key, $filter = false, $aParams = array())
     {
-        return SGL_String::translate($key, $filter);
+        return SGL_String::translate($key, $filter, $aParams);
     }
 
     function get($key)
