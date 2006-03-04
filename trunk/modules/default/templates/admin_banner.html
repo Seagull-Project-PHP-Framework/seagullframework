@@ -13,9 +13,6 @@
                 {translate(#session started at#)} : {loggedOnSince}
             </span>
             <span class="info">
-                <a href="{makeUrl(##,#account#,#user#)}" title="{translate(#preferences#)}">{translate(#preferences#)}</a>
-            </span>
-            <span class="info">
                 <a href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a>
             </span>
             <span class="info" flexy:if="conf[debug][showBugReporterLink]">

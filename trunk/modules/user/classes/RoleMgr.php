@@ -109,7 +109,7 @@ class RoleMgr extends SGL_Manager
         if ($input->submitted && ($input->action =='insert' || $input->action =='update')) {
             if (empty($input->role->name)) {
                 $this->validated = false;
-                $aErrors['name'] = 'You must enter an role name';
+                $aErrors['name'] = 'You must enter a role name';
             }
         }
         //  if errors have occured
