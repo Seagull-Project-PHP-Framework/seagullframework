@@ -70,7 +70,7 @@ class SGL_Category
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $this->_da = & DA_User::singleton();
+        $this->da = & DA_User::singleton();
         $this->dbh = & SGL_DB::singleton();
 
         //  Nested Set Params
@@ -320,7 +320,7 @@ class SGL_Category
         }
 
         //  get assoc array of all roles
-        $aRoles = $this->_da->getRoles();
+        $aRoles = $this->da->getRoles();
         $aRoles[0] = 'guest';
 
         //  if no perms in category table for current category_id, set to empty array

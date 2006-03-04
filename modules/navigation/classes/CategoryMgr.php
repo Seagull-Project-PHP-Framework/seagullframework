@@ -61,7 +61,6 @@ class CategoryMgr extends SGL_Manager
         $this->aggregateOutput = true;
         $this->pageTitle        = 'Category Manager';
         $this->template         = 'categoryMgr.html';
-        $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
             'insert'    => array('insert', 'redirectToDefault'),

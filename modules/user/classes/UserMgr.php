@@ -41,6 +41,8 @@
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
 require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
+
 require_once 'Validate.php';
 
 /**
@@ -62,10 +64,11 @@ class UserMgr extends RegisterMgr
         $this->template = 'userManager.html';
         $this->sortBy = 'usr_id';
 
-        $dataAccess = & DA_User::singleton();
-        $dataAccessDefault = & DA_Default::singleton();
-        $dataAccess->add($dataAccessDefault);
-        $this->da = $dataAccess;
+        $daUser    = &DA_User::singleton();
+        $daDefault = &DA_Default::singleton();
+        $this->da = new SGL_Delegator();
+        $this->da->add($daUser);
+        $this->da->add($daDefault);
 
         $this->_aActionsMapping = array(
             'add'                   => array('add'),

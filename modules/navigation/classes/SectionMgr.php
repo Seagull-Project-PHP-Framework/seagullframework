@@ -39,9 +39,11 @@
 // +---------------------------------------------------------------------------+
 // $Id: SectionMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
 
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR  . '/navigation/classes/DA_Navigation.php';
 require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
 require_once SGL_MOD_DIR  . '/default/classes/ModuleMgr.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
 
 /**
  * To administer sections.
@@ -60,11 +62,13 @@ class SectionMgr extends SGL_Manager
         $this->masterTemplate = 'masterMinimal.html';
         $this->template       = 'sectionList.html';
 
-        $dataUser    = &DA_User::singleton();
-        $dataDefault = &DA_Default::singleton();
-        $this->da    = &DA_Navigation::singleton();
-        $this->da->add($dataDefault);
-        $this->da->add($dataUser);
+        $daDefault = &DA_Default::singleton();
+        $daUser    = &DA_User::singleton();
+        $daNav     = &DA_Navigation::singleton();
+        $this->da  = new SGL_Delegator();
+        $this->da->add($daDefault);
+        $this->da->add($daUser);
+        $this->da->add($daNav);
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
@@ -327,7 +331,7 @@ class SectionMgr extends SGL_Manager
             }
         }
 
-        switch (@$output->section[uriType]) {
+        switch (@$output->section['uriType']) {
         case 'wiki':
             $output->wikiSelected = 'selected';
             break;

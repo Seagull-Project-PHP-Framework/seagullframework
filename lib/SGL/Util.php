@@ -185,7 +185,7 @@ class SGL_Util
 
         //  match all folders except CVS
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
-                create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
+            create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
         foreach ($ret as $module) {
             if ($onlyRegistered && !$da->moduleIsRegistered($module)) {

@@ -39,7 +39,6 @@
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 require_once 'DB/DataObject.php';
-require_once SGL_CORE_DIR . '/Delegator.php';
 
 //  role sync constants
 define('SGL_ROLESYNC_ADD',              1);
@@ -52,11 +51,8 @@ define('SGL_ROLESYNC_VIEWONLY',         4);
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2005
- * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
-class DA_User extends SGL_Delegator
+class DA_User extends SGL_Manager
 {
     /**
      * Constructor - set default resources.
@@ -65,20 +61,7 @@ class DA_User extends SGL_Delegator
      */
     function DA_User()
     {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = $this->_getDb();
-    }
-
-    function &_getDb()
-    {
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
-            $locator->register('DB', $dbh);
-        }
-        return $dbh;
+        parent::SGL_Manager();
     }
 
     /**
