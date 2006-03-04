@@ -6,8 +6,8 @@
  * @author James Floyd <jgfloyd@btinternet.com>
  */
 
-require_once dirname(__FILE__)  . '/../../lib/SGL/AppController.php';
-SGL_AppController::init();
+require_once dirname(__FILE__)  . '/../../lib/SGL/FrontController.php';
+SGL_FrontController::init();
 
 require_once 'XML/RPC/Server.php';
 

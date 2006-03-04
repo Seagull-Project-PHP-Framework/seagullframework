@@ -1,6 +1,6 @@
 <?php
-include '../../../../../lib/SGL/AppController.php';
-SGL_AppController::init();
+include '../../../../../lib/SGL/FrontController.php';
+SGL_FrontController::init();
 session_start();
 
 /*

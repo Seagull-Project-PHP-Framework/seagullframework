@@ -1,7 +1,7 @@
 <?php
 //  init
-require_once dirname(__FILE__)  . '/../AppController.php';
-SGL_AppController::init();
+require_once dirname(__FILE__)  . '/../FrontController.php';
+SGL_FrontController::init();
 
 require_once SGL_LIB_DIR . '/SGL/XML/RPC/Remote.php';
 

@@ -1,14 +1,14 @@
 <?php
 //  setup seagull environment
-require_once dirname(__FILE__)  . '/../lib/SGL/AppController.php';
+require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
 require_once dirname(__FILE__)  . '/../tests/classes/DB.php';
 
-class TestRunnerInit extends SGL_AppController
+class TestRunnerInit extends SGL_FrontController
 {
     function run()
     {
         if (!defined('SGL_INITIALISED')) {
-            SGL_AppController::init();
+            SGL_FrontController::init();
         }
 
         //  get config singleton
