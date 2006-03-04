@@ -337,9 +337,11 @@ class Flexy2Smarty {
             $mod = '|escape';
         }
         
-        // keeps in mind this conversion
-        // aaaa.bbbb => aaaa->bbbb
+        // keeps in mind this conversions
+        // aaaa.bbbb  => aaaa->bbbb
+        // aaaa[bbbb] => aaaa.bbbb
         $str = str_replace('.', '->', $str);
+        $str = preg_replace('/\[([^\]]+)\]/', '.\\1', $str);
 
         // checking variables in foreach scope
         if ($this->stack['foreach'] && $this->_chkForeachStack($this->stack['foreach_vars'], $str)) {
@@ -371,7 +373,7 @@ class Flexy2Smarty {
 
     function _baseVar($var)
     {    
-        if (false !== ($pos = strpos($var, '->')) || false !== ($pos = strpos($var, '['))) {
+        if (false !== ($pos = strpos($var, '->')) || false !== ($pos = strpos($var, '.'))) {
             return substr($var, 0, $pos);
         }
         return $var;
