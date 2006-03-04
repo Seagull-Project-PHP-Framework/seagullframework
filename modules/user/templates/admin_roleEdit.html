@@ -29,10 +29,6 @@
                 <label for="role[description]">{translate(#Description#)}</label>
                 <textarea class="longText" rows="3" name="role[description]" id="role[description]">{role.description}</textarea>
             </p>
-            <p flexy:if="roleEdit">
-                <label>&nbsp;</label>
-                <a href="{makeUrl(#editPerms#,#role#,#user#)}frmRoleID/{roleId}" class="sgl-button">{translate(#Edit permissions#)}</a>
-            </p>
             <p class="helpRequire">
                 <span class="required">*</span><span class="small"> {translate(#denotes required field#)}</span>
             </p>
