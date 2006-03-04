@@ -1,3 +1,9 @@
+<script type="text/javascript">
+function toggleTransElements() {
+    document.getElementById('transContainer').disabled = true;
+}
+</script>
+
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
     <a class="action save" href="javascript:formSubmit('configuration','submitted',1,1)">{translate(#Save#)}</a>
@@ -490,22 +496,27 @@
         <fieldset class="main options" id="translationOptions">
             <h3>{translate(#Translation#)}</h3>
             <p>
-                <label for="conf[translation][container]">{translate(#Container#)}</label>
-                <select name="conf[translation][container]" id="conf[translation][container]">
+                <label class="tipOwner" for="conf[translation][container]">{translate(#Container#)}
+                    <span class="tipText">{translate(#Coming Soon - The ability to switch between translation storage containers.#)}</span>
+                </label>
+                <select name="conf[translation][container]" id="transContainer">
                     {generateSelect(aTranslationContainers,conf[translation][container]):h}
                 </select>
+                <input type="hidden" name="conf[translation][container]" value="{conf[translation][container]}" />
             </p>
             <p>
-                <label for="conf[translation][fallbackLang]">{translate(#Fallback Language#)}</label>
-                <input type="text" name="conf[translation][fallbackLang]" id="conf[translation][fallbackLang]" value="{conf[translation][fallbackLang]}" />
-                <!-- Send along installed languages -->
-                {foreach:aInstalledLangs,aKey,aValue}
-                    <input type="hidden" name="conf[translation][installedLanguages][]" value="{aKey}" />
-                {end:}
+                <label class="tipOwner" for="conf[translation][fallbackLang]">{translate(#Fallback Language#)}
+                    <span class="tipText">{translate(#Language to use when the current language does not have a translation.#)}</span>
+                </label>
+                <select name="conf[translation][fallbackLang]" id="transFallbackLang">
+                    {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}</select>
+                <input type="hidden" name="conf[translation][installedLanguages]" value="{conf[translation][installedLanguages]}" />
             </p>
             <p>
-                <label for="conf[translation][addMissingTrans]">{translate(#Add Missing Translations#)}</label>
-                {generateRadioPair(#conf[translation][addMissingTrans]#,addMissingTrans):h}
+                <label class="tipOwner" for="conf[translation][addMissingTrans]">{translate(#Add Missing Translations#)}
+                    <span class="tipText">{translate(#Add missing translations to the database.#)}</span>
+                </label>
+                {generateRadioPair(#conf[translation][addMissingTrans]#,conf[translation][addMissingTrans]):h}
             </p>
         </fieldset>
 

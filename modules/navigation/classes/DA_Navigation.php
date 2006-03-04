@@ -373,7 +373,6 @@ class DA_Navigation extends SGL_Manager
                 }
             }
         }
-
         //  remove first element of array which serves as a 'no section' fk
         //  for joins from the block_assignment table
         unset($sectionNodes[0]);

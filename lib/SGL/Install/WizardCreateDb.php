@@ -162,7 +162,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
             SGL_Util::getLangsDescriptionMap(), array('multiple' => 'multiple', 'id' => 'installLangs'));
 
         //  store translation in db
-        $this->addElement('checkbox', 'addMissingTranslationsToDB', 'Add missing Translations to Database?',
+        $this->addElement('checkbox', 'addMissingTranslationsToDB', 'EXPERIMENTAL - Add missing Translations to Database?',
             'Yes', "id = addMissingTranslationsToDB");
 
         //  test db creation
