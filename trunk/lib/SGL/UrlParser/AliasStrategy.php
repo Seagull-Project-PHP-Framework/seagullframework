@@ -7,7 +7,7 @@
  * @version $Revision: 1.5 $
  */
 
-require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
 
 /**
  * Concrete alias url parser strategy
@@ -17,7 +17,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 {
     function SGL_UrlParser_AliasStrategy()
     {
-        $this->da = & DA_Default::singleton();
+        $this->da = & DA_Navigation::singleton();
     }
     /**
      * Analyzes querystring content and parses it into module/manager/action and params.

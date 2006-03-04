@@ -38,8 +38,10 @@
 // +---------------------------------------------------------------------------+
 // $Id: ProfileMgr.php,v 1.17 2005/06/08 10:07:28 demian Exp $
 
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_MOD_DIR . '/default/classes/ModuleMgr.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
+
 
 /**
  * Display user account account info.
@@ -57,7 +59,11 @@ class ProfileMgr extends SGL_Manager
 
         $this->pageTitle    = 'User Profile';
         $this->template     = 'profile.html';
-        $this->da           = & DA_User::singleton();
+        $daUser    = &DA_User::singleton();
+        $daDefault = &DA_Default::singleton();
+        $this->da = new SGL_Delegator();
+        $this->da->add($daUser);
+        $this->da->add($daDefault);
 
         $this->_aActionsMapping =  array(
             'view'   => array('view'),
@@ -98,8 +104,7 @@ class ProfileMgr extends SGL_Manager
             return SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
         }
         //  total articles
-        $da = & DA_Default::singleton();
-        if ($da->moduleIsRegistered('publisher')) {
+        if ($this->da->moduleIsRegistered('publisher')) {
             $items = DB_DataObject::factory($this->conf['table']['item']);
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();

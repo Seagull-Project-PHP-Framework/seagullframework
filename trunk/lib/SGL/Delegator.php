@@ -45,11 +45,11 @@
 class SGL_Delegator
 {
     var $aDelegates = array();
-    
-    function __call($methodName, $parameters) 
+
+    function __call($methodName, $parameters)
     {
         $delegated = false;
-       
+
         foreach ($this->aDelegates as $delegate) {
             $class   = new ReflectionClass($delegate);
             $methods = $class->getMethods();
@@ -57,25 +57,25 @@ class SGL_Delegator
             foreach ($methods as $method) {
                if ($methodName == $method->getName()) {
                     $delegated = true;
-      
+
                     return call_user_func_array(
                         array($delegate, $method->getName()), $parameters);
                }
             }
-            if (!$delegated) {
-                $tmp = debug_backtrace();
-                $step = array_pop($tmp);
-                SGL::raiseError(
-                        'Fatal error: Call to undefined method '
-                        .$step['function'].'() in '
-                        .$step['file'].' on line '
-                        .$step['line'].'.',
-                        SGL_ERROR_NOMETHOD);
-            }
+//            if (!$delegated) {
+//                $tmp = debug_backtrace();
+//                $step = array_pop($tmp);
+//                SGL::raiseError(
+//                        'Fatal error: Call to undefined method '
+//                        .$step['function'].'() in '
+//                        .$step['file'].' on line '
+//                        .$step['line'].'.',
+//                        SGL_ERROR_NOMETHOD);
+//            }
         }
     }
-    
-    function add($delegate) 
+
+    function add($delegate)
     {
         if (!SGL::isPhp5()) {
             aggregate_methods($this, get_class($delegate));

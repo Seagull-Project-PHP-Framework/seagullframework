@@ -215,9 +215,10 @@ class SimpleDriver
 
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
-        $this->_rid      = (int)SGL_Session::get('rid');
+        $this->da        = &DA_Navigation::singleton();
         $this->output    = &$output;
         $this->req       = $output->get('request');
+        $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
 
         // set default driver params from configuration
@@ -381,7 +382,6 @@ class SimpleDriver
     function getSectionsByRoleId($sectionId = 0)
     {
         $this->querystring = $this->req->getUri();
-        $this->da          = &DA_Navigation::singleton();
 
         // get navigation tree
         $aSectionNodes = $this->_getSections($sectionId);

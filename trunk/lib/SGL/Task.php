@@ -1,18 +1,18 @@
 <?php
 
 class SGL_Task
-{   
+{
    /**
     * object of type DAL
     * @var object
     */
     var $oDal;
-    
+
     function SGL_Task()
     {
         #$this->oDal = & $this->_getDal();
     }
-    
+
     /**
      * @abstract
      *
@@ -21,9 +21,9 @@ class SGL_Task
     {
         return;
     }
-    
+
    /**
-    * Method to register Data Access Layer
+    * Example ...
     * @access private
     */
     function &_getDal()

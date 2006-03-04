@@ -313,9 +313,7 @@ class OrgMgr extends SGL_Manager
             while ((list($index, $orgId) = each($input->aDelete)) && $success) {
             	$org = $nestedSet->getNode($orgId);
                 if ($org) {
-
-                	$users = DA_User::getUsersByOrgId($orgId);
-
+                	$users = $this->da->getUsersByOrgId($orgId);
                 	if (empty($users)) {
                 		// ok, not dangerous to delete
                     	$nestedSet->deleteNode($orgId);

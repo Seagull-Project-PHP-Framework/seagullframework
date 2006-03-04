@@ -37,7 +37,6 @@
 // | Authors:   Andrey Podshivalov  <planetaz@gmail.com>                       |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_CORE_DIR . '/NestedSet.php';
 
 /**
@@ -47,7 +46,7 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Andrey Podshivalov <demian@phpkitchen.com>
  */
-class DA_Navigation extends SGL_Delegator
+class DA_Navigation extends SGL_Manager
 {
     var $_params  = array();
     var $_message = '';
@@ -59,11 +58,7 @@ class DA_Navigation extends SGL_Delegator
      */
     function DA_Navigation()
     {
-        $c             = &SGL_Config::singleton();
-        $this->conf    = $c->getAll();
-        $dataDefault   = &DA_Default::singleton();
-        $this->add($dataDefault);
-        $this->dbh     = $this->_getDb();
+        parent::SGL_Manager();
         $this->_params = array(
             'tableStructure' => array(
                 'section_id'    => 'id',
@@ -91,17 +86,6 @@ class DA_Navigation extends SGL_Delegator
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = &SGL_Translation::singleton('admin');
         }
-    }
-
-    function &_getDb()
-    {
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
-            $locator->register('DB', $dbh);
-        }
-        return $dbh;
     }
 
     /**
@@ -240,6 +224,16 @@ class DA_Navigation extends SGL_Delegator
         return $section;
     }
 
+    function getAliasById($id)
+    {
+        $query = "
+            SELECT uri_alias
+            FROM {$this->conf['table']['uri_alias']}
+            WHERE uri_alias_id = $id
+           ";
+        return $this->dbh->getOne($query);
+    }
+
     /**
      * Returns raw section by given id.
      *
@@ -293,6 +287,68 @@ class DA_Navigation extends SGL_Delegator
             //  remove alias
             $this->deleteAliasBySectionId($sectionId);
         }
+    }
+
+    function deleteAliasBySectionId($sectionId)
+    {
+        $query = "
+            DELETE FROM {$this->conf['table']['uri_alias']}
+            WHERE section_id = $sectionId";
+        return $this->dbh->query($query);
+    }
+
+    function getAliasIdBySectionId($id)
+    {
+        $query = "
+            SELECT uri_alias_id
+            FROM {$this->conf['table']['uri_alias']}
+            WHERE section_id = $id
+            ";
+        return $this->dbh->getOne($query);
+    }
+
+    function getAliasBySectionId($id)
+    {
+        $query = "
+            SELECT uri_alias
+            FROM {$this->conf['table']['uri_alias']}
+            WHERE section_id = $id
+            LIMIT 1";
+        return $this->dbh->getOne($query);
+    }
+
+    function updateUriAlias($aliasName, $target)
+    {
+        $aliasName = $this->dbh->quoteSmart($aliasName);
+
+        $query = "
+            UPDATE {$this->conf['table']['uri_alias']}
+            SET uri_alias = $aliasName
+            WHERE section_id = $target";
+        return $this->dbh->query($query);
+    }
+
+    function addUriAlias($id, $aliasName, $target)
+    {
+        $aliasName = $this->dbh->quoteSmart($aliasName);
+
+        $query = "
+            INSERT INTO {$this->conf['table']['uri_alias']}
+            (uri_alias_id, uri_alias, section_id)
+            VALUES($id, $aliasName, $target)";
+        return $this->dbh->query($query);
+    }
+
+    function getAllAliases()
+    {
+        $query = "
+            SELECT uri_alias, resource_uri
+            FROM
+                {$this->conf['table']['uri_alias']} u,
+                {$this->conf['table']['section']} s
+            WHERE u.section_id = s.section_id
+        ";
+        return $this->dbh->getAssoc($query);
     }
 
     /**

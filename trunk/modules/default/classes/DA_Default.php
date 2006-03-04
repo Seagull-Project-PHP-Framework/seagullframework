@@ -44,9 +44,8 @@
  * @package Default
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2005
- * @version $Revision: 1.14 $
  */
-class DA_Default
+class DA_Default extends SGL_Manager
 {
     /**
      * Constructor - set default resources.
@@ -55,20 +54,7 @@ class DA_Default
      */
     function DA_Default()
     {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = $this->_getDb();
-    }
-
-    function &_getDb()
-    {
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
-            $locator->register('DB', $dbh);
-        }
-        return $dbh;
+        parent::SGL_Manager();
     }
 
     /**
@@ -93,76 +79,6 @@ class DA_Default
             $instance = new DA_Default();
         }
         return $instance;
-    }
-
-    function getAllAliases()
-    {
-        $query = "
-        SELECT uri_alias, resource_uri
-        FROM {$this->conf['table']['uri_alias']} u, {$this->conf['table']['section']} s
-        WHERE u.section_id = s.section_id
-        ";
-        return $this->dbh->getAssoc($query);
-    }
-
-    function addUriAlias($id, $aliasName, $target)
-    {
-        $aliasName = $this->dbh->quoteSmart($aliasName);
-
-        $query = "
-            INSERT INTO {$this->conf['table']['uri_alias']}
-            (uri_alias_id, uri_alias, section_id)
-            VALUES($id, $aliasName, $target)";
-        return $this->dbh->query($query);
-    }
-
-    function updateUriAlias($aliasName, $target)
-    {
-        $aliasName = $this->dbh->quoteSmart($aliasName);
-
-        $query = "
-            UPDATE {$this->conf['table']['uri_alias']}
-            SET uri_alias = $aliasName
-            WHERE section_id = $target";
-        return $this->dbh->query($query);
-    }
-
-    function getAliasBySectionId($id)
-    {
-        $query = "
-            SELECT uri_alias
-            FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $id
-            LIMIT 1";
-        return $this->dbh->getOne($query);
-    }
-
-    function getAliasIdBySectionId($id)
-    {
-        $query = "
-            SELECT uri_alias_id
-            FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $id
-            ";
-        return $this->dbh->getOne($query);
-    }
-
-    function deleteAliasBySectionId($sectionId)
-    {
-        $query = "
-            DELETE FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $sectionId";
-        return $this->dbh->query($query);
-    }
-
-    function getAliasById($id)
-    {
-        $query = "
-            SELECT uri_alias
-            FROM {$this->conf['table']['uri_alias']}
-            WHERE uri_alias_id = $id
-           ";
-        return $this->dbh->getOne($query);
     }
 
     //  modules
@@ -283,7 +199,8 @@ class DA_Default
         return $ok;
     }
 
-    function updateGuiTranslations ($aTrans, $langID, $module) {
-        SGL_Translation::updateGuiTranslation($aTrans, $langID, $module);
-    }
+//    function updateGuiTranslations($aTrans, $langID, $module)
+//    {
+//        SGL_Translation::updateGuiTranslation($aTrans, $langID, $module);
+//    }
 }
