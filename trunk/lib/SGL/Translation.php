@@ -141,6 +141,7 @@ class SGL_Translation
     {
         //  fetch translations from database and cache
         $cache = & SGL_Cache::singleton();
+        $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
 
         //  returned cached translations else fetch from db and cache
         if ($serialized = $cache->get($module, 'translation_'. $lang)) {
@@ -163,13 +164,18 @@ class SGL_Translation
                 if ($module == 'default') {
                     $words = $defaultWords;
                 }
-                $serialized = serialize($words);
-                $cache->save($serialized, $module, 'translation_'. $lang);
-                SGL::logMessage('translations from file', PEAR_LOG_DEBUG);
-                return $words;
-
+                if (isset($words) && !empty($words)) {
+                    $serialized = serialize($words);
+                    $cache->save($serialized, $module, 'translation_'. $lang);
+                    SGL::logMessage('translations from file', PEAR_LOG_DEBUG);
+                    return $words;
+                } else {
+                    return array();
+                }
             } elseif ($module == 'default') {
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
+            } else {
+                return array();
             }
         }
     }
@@ -209,7 +215,7 @@ class SGL_Translation
             $c = new Config();
             $root = & $c->parseConfig($aTrans, 'phparray');
 
-            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_TYPE_ID_SGL);
+            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
             //  write translation to file
             $filename = SGL_MOD_DIR . '/' . $module . '/lang/' .
@@ -269,12 +275,11 @@ class SGL_Translation
                 }
 
                 //  fetch translations
-                $words = $translation->getPage();
+                $words = ($words = $translation->getPage()) ? $words : array();
 
                 SGL::logMessage('translations from db for '. $module, PEAR_LOG_DEBUG);
                 return $words;
             } elseif ($conf['translation']['container'] == 'file') {
-                $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
                 return  SGL_Translation::getGuiTranslationsFromFile($module, $lang);
             } else {
                 return array();
@@ -331,22 +336,17 @@ class SGL_Translation
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        if ($conf['translation']['container'] == 'db') {
-            if (isset($format)) {
-                $langID = ($format == SGL_LANG_ID_SGL)
-                            ? str_replace('_', '-', $langID)
-                            : str_replace('-', '_', $langID);
+        if (isset($format)) {
+            $langID = ($format == SGL_LANG_ID_SGL)
+                        ? str_replace('_', '-', $langID)
+                        : str_replace('-', '_', $langID);
 
-                return $langID;
-            } else {
-                $langID = (strstr($langID, '-'))
-                            ? str_replace('-', '_', $langID)
-                            : str_replace('_', '-', $langID);
-                return $langID;
-            }
+            return $langID;
         } else {
-            // always return en-iso-8859-15 when the container is file.
-            return str_replace('_', '-', $langID);
+            $langID = (strstr($langID, '-'))
+                        ? str_replace('-', '_', $langID)
+                        : str_replace('_', '-', $langID);
+            return $langID;
         }
     }
 }

@@ -16,25 +16,13 @@
             {translate(#The target translation has#)} {targetElements} {translate(#elements#)}.</p>
     </fieldset>
 
-    {if:aExtraKeys}
-    <fieldset class="inside">
-            <h4>{translate(#The following keys are missing from the source language: #)}</h4>
-            <p>
-            {foreach:aExtraKeys,value}
-                {value} <br />
-            {end:}
-            </p>
-            
-    </fieldset>
-    {end:}
-
     <form name="translations" action="" method="post" flexy:ignore id="translations">
         <input type="hidden" name="action" value="append" /> 
         <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
         <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
     
         <fieldset class="inside">
-            <p>{translate(#Please add#)} {currentLang} {translate(#values for the following keys which appear to be missing from the#)} {currentModule} {translate(#module#)}:</p>
+            <p>{translate(#Please add#)} {currentLangName} {translate(#values for the following keys which appear to be missing from the#)} {currentModule} {translate(#module#)}:</p>
     
             <table class="full">
                 <thead>

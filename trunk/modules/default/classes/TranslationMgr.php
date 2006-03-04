@@ -160,31 +160,33 @@ class TranslationMgr extends SGL_Manager
                 $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
             
             if(!is_file($target)) {
-                SGL::raiseMsg('the target lang file '. $target .
-                    'does not exist, please create it now',
-                    SGL_ERROR_NOFILE);
+                $errMsg = SGL_String::translate('the target lang file') .
+                            ' '. $target .
+                            ' '. SGL_String::translate('does not exist.') .
+                            ' '. SGL_String::translate('Please create it.');
+                SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
             }
         }
 
-        $aTargetLang = (is_array($aTargetLang)) 
-                ? SGL_Array::removeBlanks($aTargetLang) 
-                : $aTargetLang;
+        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
 
         if ($input->action != 'checkAllModules') {
-
             //  if target has more keys than source
             if (count($aTargetLang) > count($aSourceLang)) {
-                //  store extra keys and totals so the option to added extra keys
-                //  to the default module can be displayed.
+                $error = 'source trans has ' . count($aSourceLang) . ' keys<br />';
+                $error .= 'target trans has ' . count($aTargetLang) . ' keys<br />';
+                $error .= 'extra keys are:<br />';
                 $aDiff = array_diff(array_keys($aTargetLang), array_keys($aSourceLang));
-                $input->aExtraKeys          = $aDiff;
-                $input->aSourceLangTotal    = count($aSourceLang); 
-                $input->aTargetLangTotal    = count($aTargetLang);
+                foreach ($aDiff as $key => $value) {
+                    $error .= '['.$key.'] => '.$value.'<br />';
+                }
+                $error .= 'The translation file is probably contains more keys than the source';
+                SGL::raiseMsg($error);
             }
+            //  map to input for further processing
+            $input->aSourceLang = &$aSourceLang;
+            $input->aTargetLang = &$aTargetLang;            
         }
-        //  map to input for further processing
-        $input->aSourceLang = &$aSourceLang;
-        $input->aTargetLang = &$aTargetLang;
     }
 
     function display(&$output)
@@ -200,6 +202,8 @@ class TranslationMgr extends SGL_Manager
                             : $this->trans->getLangs();
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
+
+        $output->currentLangName = $output->aLangs[$output->currentLang];
     }
     
     function _cmd_list(&$input, &$output)
@@ -228,7 +232,7 @@ class TranslationMgr extends SGL_Manager
             } else {
                 $errMsg = SGL_String::translate('the target lang file') .
                             ' '. $filename .
-                            ' '. SGL_String::translate('does not exist') .
+                            ' '. SGL_String::translate('does not exist.') .
                             ' '. SGL_String::translate('Please create it.');
                 SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
                 $this->redirect = false;
@@ -272,7 +276,7 @@ class TranslationMgr extends SGL_Manager
             } else {
                 $errMsg = SGL_String::translate('the target lang file') .
                             ' '. $filename .
-                            ' '. SGL_String::translate('does not exist') .
+                            ' '. SGL_String::translate('does not exist.') .
                             ' '. SGL_String::translate('Please create it.');
                 SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
             }
@@ -326,14 +330,6 @@ class TranslationMgr extends SGL_Manager
         //  get hash of all modules
         $modules = $this->da->retrieveAllModules(SGL_RET_NAME_VALUE);
 
-        //  load available languages
-        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        uasort($availableLanguages, 'SGL_cmp');
-        foreach ($availableLanguages as $id => $tmplang) {
-            $lang_name = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $aLangOptions[$id] =  $lang_name . ' (' . $id . ')';
-        }
-
         //  ok, now check each module
         $status['1'] = 'ok';
         $status['2'] = 'no file';
@@ -367,6 +363,9 @@ class TranslationMgr extends SGL_Manager
             $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
                     $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
 
+            $aTargetLang = ($words = SGL_Translation::getTranslations($name, $curLang))
+                            ? $words
+                            : array();
 
             //  check status of target file
             // 1: ok, all fields ok
@@ -374,47 +373,47 @@ class TranslationMgr extends SGL_Manager
             // 3: target has less entries than source
             // 4: target has more entries than source
 
-            $aTargetLang = ($words = SGL_Translation::getTranslations($name, $curLang))
-                            ? $words
-                            : array();
-
             //  if the target lang file does not exist
-            if ($this->conf['translation']['container'] == 'file' 
-                && is_file($aModules[$name]['src'])){
-                //  if the target lang file is not writeable
-                if (!is_writeable($aModules[$name]['src'])) {
-                    $aModules[$name]['msg'] = "File not writeable";
-                }
-            } else {
-               $aModules[$name]['status'] = $status['2'];
-            }            
+            
+            if (!is_file($aModules[$name]['src'])){
+                $aModules[$name]['status'] = $status['2'];
+            }
 
             //  if target has less keys than source
-            if (count($aTargetLang) < count($aSourceLang)) {
+            elseif (array_diff(array_keys($aSourceLang),array_keys($aTargetLang))) {
                 $aModules[$name]['status'] = $status['3'];
                 $aModules[$name]['action'] = 'verify';
                 $aModules[$name]['actionTitle'] = 'Validate';
-            } elseif (count($aTargetLang) > count($aSourceLang)) {
-
-            //  if target has more keys than source
-                $aModules[$name]['status'] = $status['4'];
-                $aModules[$name]['action']= 'edit';
-            } else {
-                
-            //  so if there are no differences, everything should be ok
-                $aModules[$name]['status'] = $status['1'];
-                $aModules[$name]['action']= 'edit';
+                if ($this->conf['translation']['container'] == 'file'
+                    && !is_writeable($aModules[$name]['src'])) {
+                    $aModules[$name]['msg'] = "File not writeable";
+                } else {
+                    $aModules[$name]['diff'] = true;
+                }    
             }
 
-            if ($aModules[$name]['status'] != $status['2']
-                && !isset($aModules[$name]['msg'])) {
-                if ($aModules[$name]['status'] == $status['3']) {
-                    //  display diff
-                    $aModules[$name]['diff'] = true;
-                } else  {
-                    //  display edit 
+            //  if target has more keys than source
+            elseif (array_diff(array_keys($aTargetLang),array_keys($aSourceLang) )) {
+                $aModules[$name]['status'] = $status['4'];
+                $aModules[$name]['action']= 'edit';
+                if ($this->conf['translation']['container'] == 'file'
+                    && !is_writeable($aModules[$name]['src'])) {
+                    $aModules[$name]['msg'] = "File not writeable";
+                } else {
                     $aModules[$name]['edit'] = true;
-                }
+                }    
+
+             }
+            //  so if there are no differences, everything should be ok
+            else {
+                $aModules[$name]['status'] = $status['1'];
+                $aModules[$name]['action']= 'edit';
+                if ($this->conf['translation']['container'] == 'file'
+                    && !is_writeable($aModules[$name]['src'])) {
+                    $aModules[$name]['msg'] = "File not writeable";
+                } else {
+                    $aModules[$name]['edit'] = true;
+                }    
             }
 
             //  remove empty array elements

@@ -104,6 +104,12 @@ class ModuleGenerationMgr extends SGL_Manager
             return false;
         }
 
+        if (!is_writable(SGL_MOD_DIR)) {
+            SGL::raiseMsg('Please give the webserver write permissions to the modules directory',
+                false, SGL_MESSAGE_WARNING);
+            return false;
+        }
+
         $modName = strtolower($input->createModule->moduleName);
         $mgrName = ucfirst($input->createModule->managerName);
         $aActions = '';

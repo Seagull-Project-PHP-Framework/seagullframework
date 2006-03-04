@@ -458,4 +458,15 @@ $defaultWords['Local'] = 'Local';
 $defaultWords['Latest'] = 'Latest';
 $defaultWords['Install'] = 'Install';
 $defaultWords['Uninstall'] = 'Uninstall';
+$defaultWords['edit'] = 'Edit';
+$defaultWords['Translation Maintenance'] = 'Translation Maintenance';
+$defaultWords['Coming Soon - The ability to switch between translation storage containers.'] = 'Coming Soon - The ability to switch between translation storage containers.';
+$defaultWords['Language to use when the current language does not have a translation.'] = 'Language to use when the current language does not have a translation.';
+$defaultWords['Add missing translations to the database.'] = 'EXPERIMENTAL - Add missing translations to the database.';
+$defaultWords['the target lang file'] = 'The Target Language file';
+$defaultWords['is not writeable.'] = 'is not writeable.';
+$defaultWords['does not exist.'] = 'does not exist.';
+$defaultWords['Please change file permissions before editing.'] = 'Please change file permissions before editing.';
+$defaultWords['Please create it.'] = 'Please create it.';
+
 ?>

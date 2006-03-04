@@ -214,8 +214,9 @@ class ConfigMgr extends SGL_Manager
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
             $output->aInstalledLangs = $this->trans->getLangs();
-            $output->addMissingTrans = ($this->conf['translation']['addMissingTrans']) ? true : false;
-        }
+        } else {
+            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(), SGL_LANG_ID_TRANS2);
+        }      
 
         $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
 
@@ -236,21 +237,11 @@ class ConfigMgr extends SGL_Manager
             SGL::raiseMsg('Config settings cannot be modified in demo mode', false, SGL_MESSAGE_WARNING);
             return false;
         }
-        //  impload installed languages
-        if ($this->conf['translation']['container'] == 'db') {
-            $input->conf['translation']['installedLanguages'] =
-                implode(',', $input->conf['translation']['installedLanguages']);
-        }
 
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
         $c->replace($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
-
-        //  hack for AJ
-        if (!$c->get(array('translation' => 'installedLanguages'))) {
-            $c->set('translation', array('installedLanguages' => 'en_iso_8859_15'));
-        }
 
         //  write configuration to file
         $ok = $c->save(SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php');

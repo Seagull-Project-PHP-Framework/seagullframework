@@ -466,6 +466,10 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $c = &SGL_Config::singleton();
+        $aLangOptions = SGL_Util::getLangsDescriptionMap();
+
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
             require_once SGL_CORE_DIR .'/Translation.php';
             $trans = & SGL_Translation::singleton('admin');
@@ -476,17 +480,14 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  fetch available languages
-            $aLangOptions = SGL_Util::getLangsDescriptionMap();
             $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
 
             //  add languaged to inifile container
             $this->installedLanguages = $data['installLangs'];
 
-            $c = &SGL_Config::singleton();
             $c->set('translation', array('installedLanguages' => implode(',',
                 str_replace('-', '_', $data['installLangs']))));
 
-            $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
             $ok = $c->save($configFile);
             if (PEAR::isError($ok)) {
                 SGL_Install_Common::errorPush(PEAR::raiseError($ok));
@@ -547,6 +548,12 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                     }
                 }
             }
+        } else {
+            //  set installed languages
+            $installedLangs = implode(',', str_replace('-', '_', array_keys($aLangOptions)));
+            
+            $c->set('translation', array('installedLanguages' => $installedLangs));
+            $ok = $c->save($configFile);
         }
     }
 }

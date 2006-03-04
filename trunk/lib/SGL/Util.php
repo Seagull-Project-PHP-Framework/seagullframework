@@ -334,7 +334,7 @@ class SGL_Util
      *
      * @return array
      */
-    function getLangsDescriptionMap($aSelected = array())
+    function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
     {
         require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
@@ -342,12 +342,21 @@ class SGL_Util
         $aLangs = array();
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $keyId = ($langKeyType) 
+                ? SGL_Translation::transformLangID($id, $langKeyType) 
+                : $id; 
             if (count($aSelected) && in_array($id, $aSelected)) {
-                $aLangs[$id] =  $langName . ' (' . $id . ')';
+                $aSelectedLangs[$keyId] =  $langName . ' (' . $id . ')';
             } else {
-                $aLangs[$id] =  $langName . ' (' . $id . ')';
+                $aLangs[$keyId] =  $langName . ' (' . $id . ')';
             }
         }
+
+        //  if $aSelectedLangs has elements return it.
+        $aLangs = (isset ($aSelectedLangs) && !empty($aSelectedLangs))
+                    ? $aSelectedLangs
+                    : $aLangs;
+
         return $aLangs;
     }
 
