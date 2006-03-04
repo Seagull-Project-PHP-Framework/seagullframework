@@ -219,7 +219,7 @@ class NewsletterMgr extends SGL_Manager
                         $output->emailAddress = $input->email;
                         $output->emailList = $input->validNewsList[$list]['name'];
                         $output->emailKey = $oList->action_key;
-                        $ret = $this->_send($input, $output);
+                        $ret = $this->_cmd_send($input, $output);
                         if (!$ret) {
                            SGL::logMessage('Unable to send subscribe message to: '.$input->email);
                         }
@@ -534,5 +534,25 @@ class NewsletterMgr extends SGL_Manager
         return $newsLists;
      }
 
+    /**
+     * Default redirect for all Managers.
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     */
+    function _cmd_redirectToDefault(&$input, &$output)
+    {
+        //  must not logmessage here
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            $aParams = SGL_Manager::getDefaultPageParams();
+            SGL_HTTP::redirect($aParams);
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
+    }
 }
 ?>
