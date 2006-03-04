@@ -249,7 +249,7 @@ class SGL_String
      * @return string
      *
      */
-    function translate($key, $filter = false)
+    function translate($key, $filter = false, $aParams = array())
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -265,7 +265,17 @@ class SGL_String
                 $ret = $trans[$key];
             }
             if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
-                $ret = $filter($ret);
+                if (!empty($aParams) && is_array($aParams) && $filter = 'vprintf') {
+                    $i = 1;
+                    foreach ($aParams as $key => $value) {
+                        $ret = str_replace("%$i", $value, $ret);
+                        $ret = str_replace("%$key", $value, $ret);
+                        $i++;
+                    }
+                    $ret = vsprintf($ret, $aParams);
+                } else {
+                    $ret = $filter($ret);
+                }
             }
             return $ret;
         } else {
