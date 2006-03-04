@@ -912,7 +912,7 @@ class DA_User extends SGL_Manager
      *
      * @access  public
      * @param   int     $gid            id of target group
-     * @return  string  $emailList      groups's emails
+     * @return  string  $emailList      role's emails
      */
     function getEmailsByRole($rid)
     {
