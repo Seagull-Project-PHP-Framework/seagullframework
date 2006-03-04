@@ -17,6 +17,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+04-03-06    Renamed AppController to FrontController
 26-02-06    Added printf() method for templates, see
             http://trac.seagullproject.org/wiki/Howto/Templates/WorkingWithTemplates#UsingVariablesinLanguageStrings
             (Andrey Podshivalov)

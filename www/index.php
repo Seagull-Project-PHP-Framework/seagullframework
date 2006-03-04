@@ -14,8 +14,8 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-if (is_file($rootDir .'/lib/SGL/AppController.php')) {
-    require_once $rootDir .'/lib/SGL/AppController.php';
+if (is_file($rootDir .'/lib/SGL/FrontController.php')) {
+    require_once $rootDir .'/lib/SGL/FrontController.php';
 }
 
 // determine if setup needed
@@ -26,7 +26,7 @@ if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
     define('SGL_INSTALLED', true);
 }
 
-SGL_AppController::run();
+SGL_FrontController::run();
 
 /**
  * Returns systime in ms.

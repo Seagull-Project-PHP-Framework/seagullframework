@@ -2,7 +2,7 @@
 //  override the SGL app controller to introduce custom functionality
 //  or see etc/sglBridge.php for a lightweight eg used for testing
 
-class MyAppController extends SGL_AppController
+class MyFrontController extends SGL_FrontController
 {
     /**
      * Main invocation, init tasks plus main process.
@@ -11,7 +11,7 @@ class MyAppController extends SGL_AppController
     function run()
     {
         if (!defined('SGL_INITIALISED')) {
-            SGL_AppController::init();
+            SGL_FrontController::init();
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();

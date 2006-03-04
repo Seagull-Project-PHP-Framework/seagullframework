@@ -70,6 +70,7 @@ class DefaultMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->pageTitle   = $this->pageTitle;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->javascriptSrc   = array('TreeMenu.js');
 //        $input->newsID      = $req->get('frmNewsID');
     }
 

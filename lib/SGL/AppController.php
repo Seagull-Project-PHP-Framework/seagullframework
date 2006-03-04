@@ -33,7 +33,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.5                                                               |
 // +---------------------------------------------------------------------------+
-// | AppController.php                                                         |
+// | FrontController.php                                                         |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -55,7 +55,7 @@ require_once dirname(__FILE__)  . '/TaskRunner.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.49 $
  */
-class SGL_AppController
+class SGL_FrontController
 {
     /**
      * Main invocation, init tasks plus main process.
@@ -64,7 +64,7 @@ class SGL_AppController
     function run()
     {
         if (!defined('SGL_INITIALISED')) {
-            SGL_AppController::init();
+            SGL_FrontController::init();
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();
@@ -96,7 +96,7 @@ class SGL_AppController
 
     function init()
     {
-        SGL_AppController::setupMinimumEnv();
+        SGL_FrontController::setupMinimumEnv();
 
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
