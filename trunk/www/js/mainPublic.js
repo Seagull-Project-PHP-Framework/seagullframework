@@ -176,3 +176,40 @@ function confirmCustom(alertText, confirmText, formName)
     else
         return false;
 }
+
+//  for block manager
+
+var oldDate;
+oldDate = new Array();
+
+function time_select_reset(prefix, changeBack) {
+    //  TODO: Rewrite this whole function (time_select_reset()) when adminGui is implemented.
+    function setEmpty(id) {
+        if (dateSelector = document.getElementById(id)) {
+            oldDate = dateSelector.value;
+            dateSelectorToShow = document.getElementById("frmExpiryDateToShow");
+            oldDateToShow = dateSelectorToShow.innerHTML;
+            if (dateSelector.value != ''){
+                //alert(dateSelector.value);
+                dateSelector.value = '';
+                dateSelectorToShow.innerHTML = '';
+            }
+        }
+    }
+
+    function setActive(id) {
+        if (dateSelector = document.getElementById(id)) {
+            dateSelector.value = oldDate;
+            dateSelectorToShow.innerHTML = oldDateToShow;
+        }
+
+    }
+
+    if (document.getElementById(prefix+'NoExpire').checked) {
+        setEmpty('frmExpiryDate');
+    } else {
+        if (changeBack == true) {
+            setActive('frmExpiryDate');
+        }
+    }
+}
