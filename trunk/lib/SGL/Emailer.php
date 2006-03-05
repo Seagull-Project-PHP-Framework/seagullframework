@@ -101,13 +101,11 @@ class SGL_Emailer
         $includePath = $this->options['template'];
         if (!is_readable($includePath)) {
 
-            // try fallback with default theme...
-            $path = explode('/',dirname($includePath));
-            $file = basename($includePath);
-            $moduleName = end($path);
+            // try fallback with default template dir
+            $req = &SGL_Request::singleton();
+            $moduleName = $req->get('moduleName');
             $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $file;
         }
-
         $ok = include $includePath;
 
         if (!$ok) {
