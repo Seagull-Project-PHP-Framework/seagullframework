@@ -1,11 +1,11 @@
 <?php
-//  Flexy template settings - for php5, include with Flexy Renderer only
+//  Flexy template settings, include with Flexy Renderer only
 define('SGL_FLEXY_FORCE_COMPILE',       0);
 define('SGL_FLEXY_DEBUG',               0);
 define('SGL_FLEXY_FILTERS',             'SimpleTags');
 define('SGL_FLEXY_ALLOW_PHP',           true);
 define('SGL_FLEXY_LOCALE',              'en');
-define('SGL_FLEXY_COMPILER',            'Standard');
+define('SGL_FLEXY_COMPILER',            'Flexy');
 define('SGL_FLEXY_VALID_FNS',           'include');
 define('SGL_FLEXY_GLOBAL_FNS',          true);
 define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true

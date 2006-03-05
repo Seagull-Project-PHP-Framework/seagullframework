@@ -152,7 +152,6 @@ class SGL_MainProcess extends SGL_ProcessRequest
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
             if (PEAR::isError($ok)) {
-
                 //  stop with error page
                 SGL::displayStaticPage($ok->getMessage());
             }

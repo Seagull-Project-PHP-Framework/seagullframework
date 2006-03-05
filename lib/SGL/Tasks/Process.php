@@ -551,19 +551,23 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
         //  load module's config if not present
         $ok = $this->ensureModuleConfigLoaded($defaultModule);
         if (PEAR::isError($ok)) {
-            SGL::raiseError('could not locate module\'s config file', SGL_ERROR_NOFILE);
+            SGL::raiseError('could not locate module\'s config file',
+                SGL_ERROR_NOFILE);
             return false;
         }
 
-        $mgrName = SGL_Inflector::caseFix(SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
+        $mgrName = SGL_Inflector::caseFix(
+            SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
         if (!is_file($path)) {
-            SGL::raiseError('could not locate default manager, '.$path, SGL_ERROR_NOFILE);
+            SGL::raiseError('could not locate default manager, '.$path,
+                SGL_ERROR_NOFILE);
             return false;
         }
         require_once $path;
         if (!class_exists($mgrName)) {
-            SGL::raiseError('invalid class name for default manager', SGL_ERROR_NOCLASS);
+            SGL::raiseError('invalid class name for default manager',
+                SGL_ERROR_NOCLASS);
             return false;
         }
         $mgr = new $mgrName();
