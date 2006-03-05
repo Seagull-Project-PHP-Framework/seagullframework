@@ -207,7 +207,7 @@ class BugMgr extends SGL_Manager
             'subject'       => '[Seagull Bug report]',
             'body'          => $report->toString(),
             'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $moduleName . '/emailBugReport.php',
+                $moduleName . '/email_bug_report.php',
             'siteUrl'       => SGL_BASE_URL,
             'siteName'      => 'Seagull',
         );
