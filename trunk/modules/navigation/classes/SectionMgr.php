@@ -149,9 +149,9 @@ class SectionMgr extends SGL_Manager
                 //  check child has same or subset of parents permissions
                 if ($input->section['perms']) {
                     $aPerms = explode(',', $input->section['perms']);
+                    $aParentPerms = explode(',', $parent['perms']);
                     foreach ($aPerms as $permID) {
-                        $aParentPerms = explode(',', $parent['perms']);
-                        if (!in_array($permID, &$aPerms) && !in_array(SGL_ANY_ROLE, &$aPerms)) {
+                        if (!in_array($permID, $aParentPerms) && !in_array(SGL_ANY_ROLE, $aParentPerms)) {
                             $aErrors['perms']['string'] = 'To access this section, a user must have access to the parent section.';
                             $aErrors['perms']['args'][] = $parent['title'];
                             break;
