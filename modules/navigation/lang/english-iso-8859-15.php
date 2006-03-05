@@ -53,6 +53,7 @@
         'Status' => 'Status',
         'check to activate' => 'check to activate',
         'Can view' => 'Can view',
+        'All roles' => 'All roles',
         'Please fill in a title' => 'Please fill in a title',
         'You cannot activate unless you first activate.' => 'You cannot activate "%1" unless you first activate "%2"',
         'To access this section, a user must have access to the parent section.' => 'To access this section, a user must have access to the parent section. One or more of the roles you selected does not have access to "%s".',

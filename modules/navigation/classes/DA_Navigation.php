@@ -628,6 +628,17 @@ class DA_Navigation extends SGL_Manager
         if ($section['uriType'] != 'uriExternal' && substr($section['resource_uri'], -1) == $separator) {
             $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
         }
+
+        // delete 'all roles' option
+        $aRoles = explode(',', $section['perms']);
+        if (count($aRoles) > 1) {
+            foreach ($aRoles as $key => $value) {
+                if ($value == SGL_ANY_ROLE) {
+                    unset($aRoles[$key]);
+                }
+            }
+            $section['perms'] = implode(',', $aRoles);
+        }
     }
 
     /**

@@ -47,6 +47,7 @@
         'Right column' => 'Right column',
         'No section' => 'No section',
         'All sections' => 'All sections',
+        'Unassigned' => 'Unassigned',
         'With selected block(s)'=>'With selected block(s)',
         'Can view' => 'Can view',
         'All roles' => 'All roles',
@@ -54,7 +55,7 @@
         'Block title tooltip' => 'This is the title that will be displayed within the block header',
         'Block class name tooltip' => 'This is the block class name to use',
         'Template name' => 'Template name',
-        
+
         // Navigation Block
         'Start root node' => 'Start root node',
         'Start rendering the tree from this node ID' => 'Start rendering the tree from this node ID',
@@ -71,15 +72,15 @@
         'Generate breadcrumbs objects' => 'Generate breadcrumbs objects',
         'Tells navigation driver to generate bredcrumbs objects' => 'Tells navigation driver to generate bredcrumbs objects',
         'Navigation Html renderer class' => 'Navigation Html renderer class',
-        'Indicate renderer class from modules/navigation/classes/*Nav.php' => 'Indicate renderer class from modules/navigation/classes/*Nav.php',
+        'Indicate renderer class from modules/navigation/classes/*Renderer.php' => 'Indicate renderer class from modules/navigation/classes/*Renderer.php',
         'Template name (optional)' => 'Template name (optional)',
         'For navigation renderer which requires template' => 'For navigation renderer which requires template',
-        
+
         // Breadcrumbs Block
         'Start parent node' => 'Start parent node',
         'Parent node will not be shown' => 'Parent node will not be shown',
         'Breadcrumbs will be rendered with this template' => 'Breadcrumbs will be rendered with this template',
-        
+
         // Article Block
         'Static Html article' => 'Static Html article',
         'Set id of static Html article' => 'Set id of static Html article',
