@@ -314,9 +314,11 @@ class SectionMgr extends SGL_Manager
 
         //  get array of section node objects
         $output->sectionNodesOptions[0] = SGL_String::translate('Top level (no parent)');
-        $output->sectionNodesOptions    = $output->sectionNodesOptions
-                                          + $this->da->getSectionsForSelect();
-
+        $aNodesForSelect = $this->da->getSectionsForSelect();
+        if (is_array($aNodesForSelect) && count($aNodesForSelect)) {
+            $output->sectionNodesOptions  = $output->sectionNodesOptions
+                                          + $aNodesForSelect;
+        }
         if ($this->conf['translation']['container'] == 'db') {
             $availableLangs = $this->trans->getLangs();
 
