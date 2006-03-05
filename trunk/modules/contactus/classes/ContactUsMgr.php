@@ -115,6 +115,12 @@ class ContactUsMgr extends SGL_Manager
             if (empty($input->contact->user_comment)) {
                 $aErrors['user_comment'] = 'You must fill in your comment';
             }
+            //check for mail header injection
+            require_once SGL_CORE_DIR . '/Emailer.php';
+            $input->contact->first_name = SGL_Emailer::cleanMailInjection($input->contact->first_name);
+            $input->contact->last_name  = SGL_Emailer::cleanMailInjection($input->contact->last_name);
+            $input->contact->email      = SGL_Emailer::cleanMailInjection($input->contact->email);
+
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {
@@ -210,13 +216,13 @@ class ContactUsMgr extends SGL_Manager
                 'toEmail'       => $this->conf['email']['info'],
                 'toRealName'    => 'Admin',
                 'fromEmail'     => "\"{$contacterName}\" <{$oContact->email}>",
+                'fromEmailAdress' => "{$oContact->email}",
                 'fromRealName'  => $contacterName,
                 'replyTo'       => $oContact->email,
                 'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
-                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $moduleName . '/email_contact_us.php',
+                'template'      => SGL_MOD_DIR . '/' . $moduleName . '/templates/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();

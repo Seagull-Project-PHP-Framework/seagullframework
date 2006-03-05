@@ -139,9 +139,10 @@ class SGL_Emailer
             'text_charset' => $GLOBALS['_SGL']['CHARSET'],
             'head_charset' => $GLOBALS['_SGL']['CHARSET'],
         ));
-        $hdrs = $mime->headers($this->headers);
+        $headers = $mime->headers($this->headers);
+        $headers = $this->cleanMailInjection($headers);
         $mail = & SGL_Emailer::factory();
-        return $mail->send($this->options['toEmail'], $hdrs, $body);
+        return $mail->send($this->options['toEmail'], $headers, $body);
     }
 
     // PEAR Mail::factory wrapper
@@ -192,5 +193,30 @@ class SGL_Emailer
         }
         return Mail::factory($backend, $aParams);
     }
+   /**
+    * Takes a string or an associative array of mail headers with each
+    * key representing a header's name and a value representing
+    * a header's value. The function removes every additional
+    * header from each value to prevent mail injection attacks.
+    *
+    * @author Andreas Ahlenstorf, Werner M. Krauss <werner.krauss@hallstatt.net>
+    *
+    * @param mixed $headers
+    * @return string or array
+    */
+    function cleanMailInjection($headers)
+    {
+        $regex = "�(<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r|Content-Type:|bcc:|to:|cc:).*�i";
+        // strip all possible "additional" headers from the values
+        if (is_array($headers)) {
+            foreach ($headers as $key => $value) {
+               $headers[$key] = preg_replace($regex, null, $value);
+            }
+        } else {
+            $headers = preg_replace($regex, null, $headers);
+        }
+        return $headers;
+    }
+
 }
 ?>
