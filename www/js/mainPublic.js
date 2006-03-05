@@ -22,7 +22,7 @@ function switchRowColorOnHover() {
                 if (this.className.search(new RegExp("back"))>=0) {
                     this.className+=" backHighlight";
                 }
-                
+
             }
             row[j].onmouseout=function() {
                 this.className=this.className.replace(new RegExp(" backHighlight\\b"), "");
@@ -31,7 +31,7 @@ function switchRowColorOnHover() {
     }
 }
 
-function lockButtons(whichform) 
+function lockButtons(whichform)
 {
     ua = new String(navigator.userAgent);
     if (ua.match(/IE/g)) {
@@ -54,7 +54,7 @@ function openWindow()
     //  if dynamic window size args are passed
     if (nArgs > 1)
         newWin =  window.open ("","newWindow","toolbar=no,width=" + width + ",height=" + height + ",directories=no,status=no,scrollbars=yes,resizable=no,menubar=no");
-    else 
+    else
         newWin =  window.open ("","newWindow","toolbar=no,width=" + SGL_JS_WINWIDTH + ",height=" + SGL_JS_WINHEIGHT + ",directories=no,status=no,scrollbars=yes,resizable=no,menubar=no");
     newWin.location.href = url;
 }
@@ -66,7 +66,7 @@ function confirmSubmit(item, formName)
     for (var count = 0; count < evalFormName.elements.length; count++) {
         var tipo = evalFormName.elements[count].type
         if (tipo == 'checkbox' && evalFormName.elements[count].checked == true && evalFormName.elements[count].name != '')
-            flag = true 
+            flag = true
     }
     if (flag == false) {
         alert('You must select an element to delete')
@@ -86,7 +86,7 @@ function confirmSave(formName)
     for (var count = 0; count < evalFormName.elements.length; count++) {
         var tipo = evalFormName.elements[count].type
         if (tipo == 'checkbox' && evalFormName.elements[count].checked == true && evalFormName.elements[count].name != '')
-            flag = true 
+            flag = true
     }
     if (flag == false) {
         alert('You must select an element to save')
@@ -101,7 +101,7 @@ function confirmSend(formName)
     for (var count = 0; count < evalFormName.elements.length; count++) {
         var tipo = evalFormName.elements[count].type
         if (tipo == 'checkbox' && evalFormName.elements[count].checked == true && evalFormName.elements[count].name != '')
-            flag = true 
+            flag = true
     }
     if (flag == false) {
         alert('You must select at least one recipient')
@@ -109,7 +109,7 @@ function confirmSend(formName)
     }
 }
 
-function confirmCategoryDelete(item) 
+function confirmCategoryDelete(item)
 {
     var agree = confirm("Are you sure you want to delete this " + item + "?");
     if (agree)
@@ -118,7 +118,7 @@ function confirmCategoryDelete(item)
         return false;
 }
 
-function verifySelectionMade() 
+function verifySelectionMade()
 {
     var moveForm = document.moveCategory.frmNewCatParentID
     var selectedCat = moveForm.value
@@ -146,7 +146,7 @@ function getSelectedValue(selectObj)
 
 
 function toggleDisplay(myElement)
-{	
+{
 	boxElement = document.getElementById(myElement);
 
 	if (boxElement.style.display == 'none') {
@@ -164,7 +164,7 @@ function confirmCustom(alertText, confirmText, formName)
     for (var count = 0; count < evalFormName.elements.length; count++) {
         var tipo = evalFormName.elements[count].type
         if (tipo == 'checkbox' && evalFormName.elements[count].checked == true && evalFormName.elements[count].name != '')
-            flag = true 
+            flag = true
     }
     if (flag == false) {
         alert(alertText)
