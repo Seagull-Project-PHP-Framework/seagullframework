@@ -280,7 +280,7 @@ class ArticleMgr extends SGL_Manager
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
-            . '/themes/'.$_SESSION['aPrefs']['theme'].'/publisher/flesch.'
+            . '/themes/default/flesch.'
             . $_SESSION['aPrefs']['language'] . '.html';
 
         //  calculate flesch score if enabled
@@ -409,7 +409,7 @@ class ArticleMgr extends SGL_Manager
 
         //  rebuild item data
         foreach ($aResult['data'] as $key => $aValues) {
-            if ($aValues['username'] != SGL_Session::getUsername() 
+            if ($aValues['username'] != SGL_Session::getUsername()
                 && SGL_Session::getUserType() != SGL_ADMIN) {
                 //  remove articles that don't belong to the current user
                 unset($aResult['data'][$key]);
