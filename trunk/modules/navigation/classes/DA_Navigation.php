@@ -373,12 +373,16 @@ class DA_Navigation extends SGL_Manager
                 }
             }
         }
-        //  remove first element of array which serves as a 'no section' fk
-        //  for joins from the block_assignment table
-        unset($sectionNodes[0]);
+        if (is_array($sectionNodes) && count($sectionNodes)) {
+            //  remove first element of array which serves as a 'no section' fk
+            //  for joins from the block_assignment table
+            unset($sectionNodes[0]);
 
-        $this->nestedSet->addImages($sectionNodes);
-        return $sectionNodes;
+            $this->nestedSet->addImages($sectionNodes);
+            return $sectionNodes;
+        } else {
+            return false;
+        }
     }
 
     /**
