@@ -32,8 +32,8 @@ INSERT INTO `section` VALUES (8, 'My Account', 'user/account', '1', 0, 1, 1, 4, 
 INSERT INTO `section` VALUES (162, 'Home', 'default/default', '1', 162, 22, 22, 2, 3, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (47, 'Navigation', 'navigation/section', '1', 47, 22, 22, 12, 15, 3, 2, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (168, 'Manage roles', 'user/role', '1', 168, 158, 22, 33, 34, 3, 3, 1, NULL, NULL, NULL);
-INSERT INTO `section` VALUES (1, 'User menu', 'default/default', '1,2,0', NULL, 0, 1, 1, 10, 1, 1, 1, NULL, '1', NULL);
-INSERT INTO `section` VALUES (41, 'Home', '', '1,2,0', 41, 1, 1, 2, 3, 1, 2, 1, 0, '', '');
+INSERT INTO `section` VALUES (1, 'User menu', 'default/default', '-2', NULL, 0, 1, 1, 10, 1, 1, 1, NULL, '1', NULL);
+INSERT INTO `section` VALUES (41, 'Home', '', '-2', 41, 1, 1, 2, 3, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (172, 'Manage preferences', 'user/preference', '1', 172, 158, 22, 35, 36, 4, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (27, 'Publication', 'publisher/article', '1', 27, 22, 22, 18, 27, 5, 2, 1, NULL, NULL, NULL);
 INSERT INTO `section` VALUES (69, 'Categories', 'navigation/category', '1', 69, 27, 22, 21, 22, 2, 3, 1, NULL, NULL, NULL);

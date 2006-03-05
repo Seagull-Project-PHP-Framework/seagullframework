@@ -38,8 +38,10 @@
 // +---------------------------------------------------------------------------+
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
-require_once SGL_MOD_DIR . '/block/classes/Block.php';
-require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+require_once SGL_MOD_DIR  . '/block/classes/Block.php';
+require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR  . '/navigation/classes/DA_Navigation.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
 
 /**
  * To administer blocks.
@@ -58,7 +60,11 @@ class BlockMgr extends SGL_Manager
 
         include SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;
-        $this->da           = &DA_Navigation::singleton();
+        $daUser             = &DA_User::singleton();
+        $daNav              = &DA_Navigation::singleton();
+        $this->da           = new SGL_Delegator();
+        $this->da->add($daUser);
+        $this->da->add($daNav);
 
         $this->pageTitle    = 'Blocks Manager';
         $this->template     = 'blockList.html';
@@ -334,18 +340,13 @@ class BlockMgr extends SGL_Manager
         }
 
         //  get section list
-        $output->aSections[0] = SGL_String::translate('All sections');
-        $output->aSections    = $output->aSections + $this->da->getSectionsForSelect();
+        $output->aSections[SGL_ANY_SECTION] = SGL_String::translate('All sections');
+        $output->aSections = $output->aSections + $this->da->getSectionsForSelect();
 
-        //  get roles list
-        $query = "SELECT role_id, name FROM {$this->conf['table']['role']}";
-        $res = & $this->dbh->getAll($query);
-        $roles = array();
-        $roles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
-        foreach ($res as $key => $value) {
-            $roles[$value->role_id] = $value->name;
-        }
-        $output->aRoles = $roles;
+        //  build role widget
+        $aRoles[SGL_ANY_ROLE] = SGL_String::translate('All roles');
+        $aRoles[SGL_GUEST]    = SGL_String::translate('guest');
+        $output->aRoles       = $aRoles + $this->da->getRoles();
 
         //  search blocks from modules
         $aAllBlocks  = array();
@@ -394,7 +395,7 @@ class BlockMgr extends SGL_Manager
                     }
                     $data[$aValue['block_id']] = $aValue;
                 } else {
-                    $aValue['sections'][] = SGL_String::translate('Not assigned');
+                    $aValue['sections'][] = SGL_String::translate('Unassigned');
                     $data[$aValue['block_id']] = $aValue;
                 }
                 $aPagedData['data'] = $data;

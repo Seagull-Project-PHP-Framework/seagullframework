@@ -44,7 +44,7 @@ function addFormValue(myElement, form)
             {foreach:availableLangs,langID,langName}
             <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
             {end:}
-            
+
             <p flexy:if="availableLangs">
                 <label for="frmNavLang">{translate(#Language#)}</label>
                 <select name="frmNavLang" id="frmNavLang"
@@ -61,7 +61,6 @@ function addFormValue(myElement, form)
             <p>
                 <label for="section[parent_id]">{translate(#Parent Section#)}</label>
                 <select name="section[parent_id]" id="section[parent_id]">
-                    <option value="0">{translate(#Top level (no parent)#)}</option>
                     {generateSelect(sectionNodesOptions,section[parent_id]):h}
                 </select>
             </p>

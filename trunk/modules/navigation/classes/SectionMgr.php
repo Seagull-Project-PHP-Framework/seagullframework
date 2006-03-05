@@ -118,11 +118,11 @@ class SectionMgr extends SGL_Manager
             : null;
 
         //  Misc.
-        $this->validated = true;
-        $input->submitted   = $req->get('submitted');
-        $input->aParams     = $req->get('aParams', $allowTags = true);
-        $input->isAdd       = $req->get('isadd');
-        $input->mode        = $req->get('mode');
+        $this->validated  = true;
+        $input->submitted = $req->get('submitted');
+        $input->aParams   = $req->get('aParams', $allowTags = true);
+        $input->isAdd     = $req->get('isadd');
+        $input->mode      = $req->get('mode');
 
         //  validate form data
         if ($input->submitted) {
@@ -150,7 +150,8 @@ class SectionMgr extends SGL_Manager
                 if ($input->section['perms']) {
                     $aPerms = explode(',', $input->section['perms']);
                     foreach ($aPerms as $permID) {
-                        if (strpos($parent['perms'], $permID) === false){
+                        $aParentPerms = explode(',', $parent['perms']);
+                        if (!in_array($permID, &$aPerms) && !in_array(SGL_ANY_ROLE, &$aPerms)) {
                             $aErrors['perms']['string'] = 'To access this section, a user must have access to the parent section.';
                             $aErrors['perms']['args'][] = $parent['title'];
                             break;
@@ -312,7 +313,9 @@ class SectionMgr extends SGL_Manager
         $output->uriAutoAlias      = empty($output->section['uri_alias_enable']) ? 'checked="checked"' : '';
 
         //  get array of section node objects
-        $output->sectionNodesOptions    = $this->da->getSectionsForSelect();
+        $output->sectionNodesOptions[0] = SGL_String::translate('Top level (no parent)');
+        $output->sectionNodesOptions    = $output->sectionNodesOptions
+                                          + $this->da->getSectionsForSelect();
 
         if ($this->conf['translation']['container'] == 'db') {
             $availableLangs = $this->trans->getLangs();
@@ -426,10 +429,11 @@ class SectionMgr extends SGL_Manager
         }
 
         //  build role widget
-        $aRoles = $this->da->getRoles();
-        $aRoles[0]= 'guest';
-        $output->aRoles = $aRoles;
-        $output->aSelectedRoles = explode(',', @$output->section['perms']);
+        $aRoles[SGL_ANY_ROLE]   = SGL_String::translate('All roles');
+        $aRoles[SGL_GUEST]      = SGL_String::translate('guest');
+        $output->aRoles         = $aRoles + $this->da->getRoles();
+        $output->aSelectedRoles = isset($output->section['perms'])
+                ? explode(',', $output->section['perms']) : SGL_ANY_ROLE;
     }
 
     /**

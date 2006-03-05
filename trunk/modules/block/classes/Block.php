@@ -256,7 +256,7 @@ class Block
         }
 
         // delete 'all roles' option
-        if (count($this->roles) > 2) {
+        if (count($this->roles) > 1) {
             foreach ($this->roles as $key => $value) {
                 if ($value == SGL_ANY_ROLE) {
                     unset($this->roles[$key]);
@@ -344,7 +344,7 @@ class Block
             unset($block_role);
 
             // delete 'all roles' option
-            if (count($this->roles) > 2) {
+            if (count($this->roles) > 1) {
                 foreach ($this->roles as $key => $value) {
                     if ($value == SGL_ANY_ROLE) {
                         unset($this->roles[$key]);

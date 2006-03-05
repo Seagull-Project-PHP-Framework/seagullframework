@@ -417,7 +417,8 @@ class SimpleDriver
         while ($result->fetchInto($sectionNode)) {
 
             //  check permissions
-            if (!(in_array($this->_rid, explode(',', $sectionNode->perms)))) {
+            $aPerms = explode(',', $sectionNode->perms);
+            if (!in_array($this->_rid, &$aPerms) && !in_array(SGL_ANY_ROLE, &$aPerms)) {
                 continue;
             }
 
