@@ -232,15 +232,15 @@ class BlockMgr extends SGL_Manager
                 // This takes into account block assignments as well
                 $block->delete();
                 unset($block);
-            }
-        } else {
-            SGL::raiseError( 'Incorrect parameter passed to ' .
-                __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }
 
-        //clear cache so a new cache file is built reflecting changes
-        SGL_Cache::clear('blocks');
-        SGL::raiseMsg('The selected block(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
+            }
+            SGL::raiseMsg('The selected block(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
+
+            //clear cache so a new cache file is built reflecting changes
+            SGL_Cache::clear('blocks');
+        } else {
+            SGL::raiseMsg('There is no block to delete', true, SGL_MESSAGE_ERROR);
+        }
     }
 
     function _cmd_reorder(&$input, &$output)

@@ -33,6 +33,7 @@
         'Block details successfully updated' => 'Block details successfully updated',
         'The selected block(s) have successfully been deleted' => 'The selected block(s) have successfully been deleted',
         'There was a problem, block did not validate' => 'There was a problem, block did not validate',
+        'There is no block to delete' => 'There is no block to delete',
 
         // Errors
         'Please select a class name' => 'Please select a class name',
