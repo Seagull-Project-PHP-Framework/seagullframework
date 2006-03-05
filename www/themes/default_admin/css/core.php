@@ -150,7 +150,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     font-size: 0.5em;
     font-weight: bold;
     letter-spacing: 0.2em;
-    color: #000;
+    color: #2d89bb;
 }
 #header-right {
     background-color: <?php echo $tertiary ?>;
