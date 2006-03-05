@@ -84,8 +84,8 @@ class TranslationMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->submit      = $req->get('submitted');
         $input->action      = ($req->get('action'))
-                                ? $req->get('action')
-                                : 'list';
+            ? $req->get('action')
+            : 'list';
         $input->aTranslation = $req->get('translation');
 
         //  get current module, check session
@@ -123,7 +123,6 @@ class TranslationMgr extends SGL_Manager
             if (is_array($input->aTranslation)) {
                 foreach ($input->aTranslation as $k => $v) {
                     if (is_array($v)) {
-                        //array_map('addslashes', $v);
                         array_map('addslashes', $v);
                     } else {
                         $input->aTranslation[$k] = addslashes($v);
@@ -144,11 +143,9 @@ class TranslationMgr extends SGL_Manager
             $input->error = $aErrors;
             $this->validated = false;
         }
-
         //  retrieve source translations
         $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
             SGL_Translation::getFallbackLangID());
-
         //  retrieve target translations
         $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
             $input->currentLang);
@@ -198,8 +195,8 @@ class TranslationMgr extends SGL_Manager
 
         //  load available languages
         $output->aLangs = ($this->conf['translation']['container'] == 'file')
-                            ? SGL_Util::getLangsDescriptionMap()
-                            : $this->trans->getLangs();
+            ? SGL_Util::getLangsDescriptionMap()
+            : $this->trans->getLangs();
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
 
@@ -243,14 +240,14 @@ class TranslationMgr extends SGL_Manager
             $aDiff = array_diff(array_keys($input->aSourceLang), array_keys($input->aTargetLang));
 
             if (count($aDiff)) {
-                    $output->sourceElements = count($input->aSourceLang);
-                    $output->targetElements = count($input->aTargetLang);
-                    $output->template = 'langDiff.html';
-                    $output->aTargetLang = $aDiff;
-                    $output->currentModuleName = ucfirst($output->currentModule);
+                $output->sourceElements = count($input->aSourceLang);
+                $output->targetElements = count($input->aTargetLang);
+                $output->template = 'langDiff.html';
+                $output->aTargetLang = $aDiff;
+                $output->currentModuleName = ucfirst($output->currentModule);
 
-                    //  bypass redirection
-                    $this->redirect = false;
+                //  bypass redirection
+                $this->redirect = false;
             } else {
                 SGL::raiseMsg('Congratulations, the target translation' .
                     ' appears to be up to date', true, SGL_MESSAGE_INFO);

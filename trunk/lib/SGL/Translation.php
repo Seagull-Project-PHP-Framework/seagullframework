@@ -101,7 +101,6 @@ class SGL_Translation
             foreach ($aLangs as $lang) {
                 $params['strings_tables'][$lang] = $prefix . $lang;
             }
-
         } else {
             SGL::raiseError('translation table not specified check global config ',
                 SGL_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE);
@@ -162,7 +161,7 @@ class SGL_Translation
             if (is_readable($path . $globalLangFile)) {
                 include $path . $globalLangFile;
                 if ($module == 'default') {
-                    $words = $defaultWords;
+                    $words = &$defaultWords;
                 }
                 if (isset($words) && !empty($words)) {
                     $serialized = serialize($words);
