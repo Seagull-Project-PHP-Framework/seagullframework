@@ -257,6 +257,15 @@ hr {
 img {
     border: none;
 }
+pre.codeExample {
+ background: #f7f7f7;
+ border: 1px solid #d7d7d7;
+ margin: 1em 1.75em;
+ padding: .25em;
+ overflow: auto;
+ font-size: large;
+}
+
 .alignCenter {
     text-align: center;
 }
