@@ -21,7 +21,7 @@ class Default_Block_Sample1
     function getBlockContent()
     {
         $text = <<< HTML
-<p style="text-align: center;">
+<p class="alignCenter"
 <a href="https://sourceforge.net/projects/seagull/"><img src="http://sourceforge.net/sflogo.php?group_id=92482&amp;type=1" width="88" height="31" alt="SourceForge.net Logo" /></a>
 </p>
 HTML;
