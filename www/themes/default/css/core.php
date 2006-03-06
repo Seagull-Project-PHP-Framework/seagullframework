@@ -1,7 +1,3 @@
-/******************************************************************************/
-/*                                  LAYOUT CSS                                */
-/******************************************************************************/
-
 body {
     margin: 0;
     padding: 0;
@@ -52,51 +48,6 @@ body {
     border-color: <?php echo $button ?>;
 }
 
-/***************************** LAYOUT : TABLES ********************************/
-
-table {
-    border: none;
-    /* This is not a typo, we want first set a fallback for IE, then set the
-     * real margin for real browsers ;) */
-    margin: 0 5%;
-    margin: 0 auto;
-}
-td, th {
-    padding: 2px;
-}
-th {
-    background-color: <?php echo $tertiaryLight ?>;
-    color: <?php echo $tertiaryDarker ?>;
-    text-align: left;
-    font-size: 1.1em;
-    line-height: 1.75em;
-}
-#imRead {
-    background-color: <?php echo $tertiaryMedium ?>;
-}
-.moduleOverview {
-    width: 20.5em;
-    height: 8em;
-}
-.full {
-    width: 100%;
-}
-.wide {
-    width: 90%;
-}
-.narrow {
-    width: 60%;
-}
-.backLight {
-    background-color: <?php echo $tableRowLight ?>;
-}
-.backDark {
-    background-color: <?php echo $tableRowDark ?>;
-}
-.bold {
-    font-weight: bold;
-}
-
 /****************************** LAYOUT : MAIN *********************************/
 
 #sgl #container {
@@ -118,12 +69,6 @@ th {
 #sgl #rightSidebar {
     width: <?php echo $blocksWidthRight ?>;
     right: 0;
-}
-.navWidget {
-    overflow: auto;
-}
-.options-block {
-    margin: 20px 0;
 }
 #sgl .blockContainer {
     margin: 4px 1px 0 1px;
@@ -190,10 +135,6 @@ th {
     text-align: center;
 }
 
-/******************************************************************************/
-/*                                 CONTENT CSS                                */
-/******************************************************************************/
-
 /***************************** CONTENT : HEADINGS *****************************/
 
 h1 {
@@ -233,6 +174,39 @@ a:hover {
     color: <?php echo $secondaryDarker ?>;
     text-decoration: none;
 }
+.linkCrumbsAlt1 {
+    text-decoration: none;
+    color: <?php echo $secondaryDarker ?>;
+    font-weight: normal;
+    letter-spacing: 0.5px;
+}
+.linkCrumbsAlt1:hover {
+    text-decoration: underline;
+    color: <?php echo $secondaryDarker ?>;
+}
+
+/***************************** CONTENT : TABLES *******************************/
+
+table {
+    border: none;
+    /* This is not a typo, we want first set a fallback for IE, then set the
+     * real margin for real browsers ;) */
+    margin: 0 5%;
+    margin: 0 auto;
+}
+td, th {
+    padding: 2px;
+}
+th {
+    background-color: <?php echo $tertiaryLight ?>;
+    color: <?php echo $tertiaryDarker ?>;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.75em;
+}
+#imRead {
+    background-color: <?php echo $tertiaryMedium ?>;
+}
 
 /******************************* CONTENT : BLOCKS *****************************/
 
@@ -243,6 +217,12 @@ img.blocksAvatar {
     float: right;
     padding-left: 5px;
     align: left;
+}
+.navWidget {
+    overflow: auto;
+}
+.options-block {
+    margin: 20px 0;
 }
 
 /*************************** CONTENT : MISCELLANEOUS **************************/
@@ -257,17 +237,25 @@ hr {
 img {
     border: none;
 }
-pre.codeExample {
- background: #f7f7f7;
- border: 1px solid #d7d7d7;
- margin: 1em 1.75em;
- padding: .25em;
- overflow: auto;
- font-size: large;
+.codeExample {
+    background: #f7f7f7;
+    border: 1px solid <?php echo $tertiary ?>;
+    margin: 1em 1.75em;
+    padding: 0.25em;
+    overflow: auto;
+    font-size: large;
 }
-
 .alignCenter {
     text-align: center;
+}
+.backLight {
+    background-color: <?php echo $tableRowLight ?>;
+}
+.backDark {
+    background-color: <?php echo $tableRowDark ?>;
+}
+.bold {
+    font-weight: bold;
 }
 .error {
     color: <?php echo $errorTextMedium ?>;
@@ -278,71 +266,67 @@ pre.codeExample {
 .small {
     font-size: 0.8em;
 }
-.title {
-    color: <?php echo $tertiaryDark ?>;
-    font-weight: normal;
-    font-size: 1.5em;
+.narrow {
+    width: 60%;
+}
+.wide {
+    width: 90%;
+}
+.full {
+    width: 100%;
 }
 .detail {
     color: <?php echo $tertiaryDark ?>;
     font-weight: normal;
     font-size: 0.8em;
 }
+.navigator {
+    color: <?php echo $navigatorColor ?>;
+    background-color: <?php echo $navigatorBackground ?>;
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: right;
+    line-height: 18px;
+}
+.newsItem {
+    border: 1px solid <?php echo $tertiaryDark ?>;
+    margin: 0 auto;
+    padding: 0 10px 10px 10px;
+    background-color: <?php echo $errorTextLight ?>;
+}
+.pager {
+    background-color: <?php echo $errorTextLight ?>;
+    white-space: nowrap;
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+    padding: 2px 0;
+    border: 1px dashed <?php echo $errorDark ?>;
+}
+.title {
+    color: <?php echo $tertiaryDark ?>;
+    font-weight: normal;
+    font-size: 1.5em;
+}
 .toolBtnSeparate {
     margin-left: 20px;
 }
-
-/*************************** MODULE: PUBLISHER ********************************/
-
-.sectionHeader {
-    font-size: 1.3em;
-    font-weight: normal;
-    color: <?php echo $sectionHeaderColor ?>;
-    background-color: <?php echo $sectionHeaderBackground ?>;
-    padding-left: 10px;
-    line-height: 34px;
-    letter-spacing: 1px;
-    margin: 0;
-}
-.colHeader {
-    color: <?php echo $colHeaderColor ?>;
-    background-color: <?php echo $colHeaderBackground ?>;
+.treeMenuDefault {
     font-size: 11px;
-    line-height: 20px;
-    font-weight: normal;
-    padding-left: 10px;
-    letter-spacing: 0.5px;
-    margin: 2px 0 0 0;
 }
 
-/* /////////////// Article Manager /////////////// */
+/******************************* CONTENT : FORMS ******************************/
 
-.forApproval {
+fieldset {
+    width: 80%;
+    margin: 0 auto;
+    color: <?php echo $secondaryDarker ?>;
+    font-size: 1.1em;
     font-weight: bold;
-    color: <?php echo $forApproval ?>;
 }
-.approved {
-    font-weight: bold;
-    color: <?php echo $approved ?>;
+legend {
+    color: <?php echo $secondaryDarker ?>;
 }
-.published {
-    font-weight: bold;
-    color: <?php echo $published ?>;
-}
-.archived {
-    font-weight: bold;
-    color:  <?php echo $archived ?>;
-}
-
-/******************************************************************************/
-/*                                  LEGACY CSS                                */
-/*                                                                            */
-/* Note: I am removing elements from here as I replace them with new CSS      */
-/*       elements above.  Eventually, there shouldn't be any CSS left here.   */
-/******************************************************************************/
-
-/* /////////////// Table modifiers  /////////////// */
-
 .fieldName, .fieldNameWrap {
     background-color: <?php echo $tertiaryLight ?>;
     color: <?php echo $secondaryDarker ?>;
@@ -359,78 +343,9 @@ pre.codeExample {
     text-align: left;
     width: 65%;
 }
-.newsItem {
-    border: 1px solid <?php echo $tertiaryDark ?>;
-    margin: 0 auto;
-    padding: 0 10px 10px 10px;
-    background-color: <?php echo $errorTextLight ?>;
-}
-fieldset {
-    width: 80%;
-    margin: 0 auto;
-    color: <?php echo $secondaryDarker ?>;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-legend {
-    color: <?php echo $secondaryDarker ?>;
-}
-
-/* /////////////// Links  /////////////// */
-
-.linkCrumbsAlt1 {
-    text-decoration: none;
-    color: <?php echo $secondaryDarker ?>;
-    font-weight: normal;
-    letter-spacing: 0.5px;
-}
-.linkCrumbsAlt1:hover {
-    text-decoration: underline;
-    color: <?php echo $secondaryDarker ?>;
-}
-
-/* /////////////// Various /////////////// */
-
-.navigator {
-    color: <?php echo $navigatorColor ?>;
-    background-color: <?php echo $navigatorBackground ?>;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: right;
-    line-height: 18px;
-}
-.pinstripe table {
-    background-color: <?php echo $tertiaryLight ?>;
-    width: 90%;
-}
-.pinstripe td {
-    background-color: <?php echo $primaryTextLight ?>;
-}
-.pinstripe img {
-    padding: 10px;
-}
-.pinstripe button {
-    padding: 10px 0;
-}
 .noBorder {
     border: none;
     font-size: 10px;
-}
-ul.noindent {
-    margin-left: 5px;
-    padding-left: 5px;
-}
-ul.bullets li {
-    list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
-}
-.pager {
-    background-color: <?php echo $errorTextLight ?>;
-    white-space: nowrap;
-    text-align: center;
-    width: 90%;
-    margin: 0 auto;
-    padding: 2px 0;
-    border: 1px dashed <?php echo $errorDark ?>;
 }
 .narrowButton {
     text-align: center;
@@ -440,6 +355,12 @@ ul.bullets li {
     text-align: center;
     width: 13em;
 }
+.messageContent input {
+    width: 13em;
+}
+
+/***************************** CONTENT : MESSAGES *****************************/
+
 .errorContainer, .messageContainer {
     margin: 0 auto;
     width: 50%;
@@ -485,35 +406,15 @@ ul.bullets li {
 .messageContent div {
     padding: 5px;
 }
-.messageContent input {
-    width: 13em;
+
+/* /////////////// Lists /////////////// */
+
+ul.noindent {
+    margin-left: 5px;
+    padding-left: 5px;
 }
-#navPreview {
-    position: relative;
-    border: 1px dashed <?php echo $tertiary ?>;
-}
-#navPreview span {
-    z-index: 5;
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    font-size: 2em;
-    color: <?php echo $tertiary ?>;
-    text-transform: uppercase;
-}
-.bgnd {
-    background-color: <?php echo $secondaryLight ?>;
-    border: 1px solid <?php echo $tertiaryDark ?>;
-}
-.bgnd a, a.noDecoration {
-    text-decoration: none;
-}
-.bgnd a {
-    color: <?php echo $secondaryDarker ?>;
-    font-weight: normal;
-}
-.treeMenuDefault {
-    font-size: 11px;
+ul.bullets li {
+    list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
 }
 
 /* /////////////// Tooltips /////////////// */
@@ -542,4 +443,93 @@ ul.bullets li {
 }
 .tipOwner:hover .tipText {
     display: block;
+}
+
+/*************************** MODULE: NAVIGATION *******************************/
+
+#navPreview {
+    position: relative;
+    border: 1px dashed <?php echo $tertiary ?>;
+}
+#navPreview span {
+    z-index: 5;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-size: 2em;
+    color: <?php echo $tertiary ?>;
+    text-transform: uppercase;
+}
+
+/*************************** MODULE: PUBLISHER ********************************/
+
+.sectionHeader {
+    font-size: 1.3em;
+    font-weight: normal;
+    color: <?php echo $sectionHeaderColor ?>;
+    background-color: <?php echo $sectionHeaderBackground ?>;
+    padding-left: 10px;
+    line-height: 34px;
+    letter-spacing: 1px;
+    margin: 0;
+}
+.colHeader {
+    color: <?php echo $colHeaderColor ?>;
+    background-color: <?php echo $colHeaderBackground ?>;
+    font-size: 11px;
+    line-height: 20px;
+    font-weight: normal;
+    padding-left: 10px;
+    letter-spacing: 0.5px;
+    margin: 2px 0 0 0;
+}
+
+/* /////////////// Article Manager /////////////// */
+
+.forApproval {
+    font-weight: bold;
+    color: <?php echo $forApproval ?>;
+}
+.approved {
+    font-weight: bold;
+    color: <?php echo $approved ?>;
+}
+.published {
+    font-weight: bold;
+    color: <?php echo $published ?>;
+}
+.archived {
+    font-weight: bold;
+    color:  <?php echo $archived ?>;
+}
+
+/******************************* DEPRECATED ***********************************/
+
+.bgnd {
+    background-color: <?php echo $secondaryLight ?>;
+    border: 1px solid <?php echo $tertiaryDark ?>;
+}
+.bgnd a, a.noDecoration {
+    text-decoration: none;
+}
+.bgnd a {
+    color: <?php echo $secondaryDarker ?>;
+    font-weight: normal;
+}
+.moduleOverview {
+    width: 20.5em;
+    height: 8em;
+}
+.pinstripe table {
+    background-color: <?php echo $tertiaryLight ?>;
+    width: 90%;
+}
+.pinstripe td {
+    background-color: <?php echo $primaryTextLight ?>;
+}
+.pinstripe img {
+    padding: 10px;
+}
+.pinstripe button {
+    padding: 10px 0;
 }
