@@ -355,9 +355,6 @@ legend {
     text-align: center;
     width: 13em;
 }
-.messageContent input {
-    width: 13em;
-}
 
 /***************************** CONTENT : MESSAGES *****************************/
 
@@ -400,7 +397,6 @@ legend {
     background-color: <?php echo $primaryTextLight ?>;
     color: <?php echo $secondaryDarker ?>;
     border: 1px solid <?php echo $primary ?>;
-    border-top: none;
     text-align: center;
 }
 .messageContent div {

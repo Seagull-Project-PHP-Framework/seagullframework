@@ -23,7 +23,7 @@ class Default_Block_Sample2
     function getBlockContent()
     {
         $text = <<< HTML
-<p style="text-align: center;">
+<p class="alignCenter">
 <a href="http://seagull.phpkitchen.com/index.php/export/rss/">
     <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" align="absmiddle"/>
 </a>
