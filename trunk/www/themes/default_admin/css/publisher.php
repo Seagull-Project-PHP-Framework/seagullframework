@@ -36,7 +36,7 @@
     width: 200px;
 }
 #articleAddContent p label {
-    float: none;
+    width: 80px;
     text-align: left;
 }
 #articleAddContent p input {

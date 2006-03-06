@@ -66,6 +66,9 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     color: <?php echo $tertiaryDarkest ?>;
     text-decoration: none;
 }
+a.narrow, input.narrow {
+    width: 8em;
+}
 
 /*
 ======================Global layaout==========================*/
@@ -118,10 +121,10 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
 
 /*
 =========================Header===============================*/
-#header-left {
-    height: 50px;
+#header #left {
+    height: 60px;
     background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/bg_header_blue.gif') repeat-x;
-    border-bottom: 2px solid <?php echo $secondary ?>;
+    
 }
 #header h1, #header h1 a {
     float: left;
@@ -129,7 +132,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     padding: 0;
 }
 #header h1 {
-    height: 50px;
+    height: 60px;
     background: url('<?php echo $baseUrl ?>/images/logo.png') no-repeat 10px 50%;
     font-size: 2.4em;
 }
@@ -150,20 +153,20 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     font-size: 0.5em;
     font-weight: bold;
     letter-spacing: 0.2em;
-    color: #2d89bb;
+    color: <?php echo $primary ?>;
 }
-#header-right {
+#header #right {
     background-color: <?php echo $tertiary ?>;
     border-top: 1px solid <?php echo $borderLight ?>;
     border-bottom: 1px solid <?php echo $borderDark ?>;
     text-align: right;
 }
-#header-right .info {
+#header #right .info {
     height: 20px;
     line-height: 20px;
     padding: 0 10px;
 }
-#header-right img {
+#header #right img {
     vertical-align: middle;
 }
 
@@ -173,7 +176,7 @@ a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
     min-height: 300px;
     margin: 0 5px;
     padding-bottom: 3em;
-    background-color: <?php echo $tertiary ?>;
+    background-color: <?php echo $tertiaryDarker ?>;
     background-image: url('<?php echo $baseUrl ?>/images/backgrounds/bg_leftcol.jpg');
     background-position: top left;
     background-repeat: repeat-x;

@@ -184,7 +184,6 @@ class SectionMgr extends SGL_Manager
         $output->mode     = 'New section';
         $output->isAdd    = true;
         $this->_editDisplay($output);
-        $output->addOnLoadEvent("UriAliasHandler('add','auto')");
     }
 
     function _cmd_edit(&$input, &$output)
@@ -202,7 +201,6 @@ class SectionMgr extends SGL_Manager
 
         $output->section = $section;
         $this->_editDisplay($output);
-        $output->addOnLoadEvent("UriAliasHandler('edit','manual')");
     }
 
     function _cmd_insert(&$input, &$output)
@@ -301,6 +299,18 @@ class SectionMgr extends SGL_Manager
             $output->fallbackLang = SGL_Translation::getFallbackLangID();
         }
         $output->addOnLoadEvent("switchRowColorOnHover()");
+    }
+
+    function display(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  load UriAliasHandler depending on action
+        if ($output->action == ('add' || 'insert')) {
+            $output->addOnLoadEvent("UriAliasHandler('add','auto')");
+        } elseif ($output->action == ('edit' || 'update')) {
+            $output->addOnLoadEvent("UriAliasHandler('edit','manual')");
+        }
     }
 
     function _editDisplay(&$output)

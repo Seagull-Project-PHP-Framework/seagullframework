@@ -37,21 +37,46 @@
 #nav li.current a:hover {
     color: <?php echo $tertiaryLightest ?>;
 }
+
+/*
+-- Second level ------------------------------------------------------ */
 #nav li li a {
     font-weight: normal;
-    text-indent: 35px;
+    text-indent: 30px;
 }
 #nav li.current li a {
+    background: <?php echo $primaryLightest ?>;
     color: <?php echo $tertiaryDarkest ?>;
-    border-bottom: 1px solid <?php echo $borderDark ?>;
 }
 #nav li.current li a:hover {
+    background: <?php echo $primaryLight ?>;
     color: <?php echo $tertiaryLightest ?>;
 }
 #nav li.current li.current a {
-    background: <?php echo $tertiaryLightest ?>;
+    background: <?php echo $primaryLight ?>;
+    font-weight: bold;
     color: <?php echo $primary ?>;
 }
-#nav li.current li.current a:hover {
+
+/*
+-- Third level ------------------------------------------------------- */
+#nav li.current li ul {
+    display: none;
+}
+#nav li.current li.current ul {
+    display: block;
+    border-top: 1px solid <?php echo $borderLight ?>;
+    border-bottom: 1px solid <?php echo $borderDark ?>;
+}
+#nav li.current li.current li a {
+    padding-left: 10px;
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_empty.gif') 28px 50% no-repeat;
+    border: none;
+}
+#nav li.current li.current li.current a {
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 28px 50% no-repeat;
+}
+#nav li.current li.current li a:hover {
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 28px 50% no-repeat;
     color: <?php echo $primary ?>;
 }

@@ -54,9 +54,9 @@ function addFormValue(myElement, form)
             </p>
         {end:}
             <p>
-                <label for="section[title]">{translate(#Section Title#)} {fullNavLang}</label>
+                <label for="section[title]">{translate(#Section Title#)}</label>
                 <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
-                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" />
+                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" /><span class="currentLanguage">&nbsp;{fullNavLang}</span>
             </p>
             <p>
                 <label for="section[parent_id]">{translate(#Parent Section#)}</label>
