@@ -14,7 +14,7 @@
             {generateRadioPair(valueObj.name,valueObj.value):h}
         {end:}
         {if:isEqual(valueObj.type,#wysiwyg#)}
-            <textarea name="{valueObj.name}" id="frmBodyName" class="wysiwyg">{valueObj.value:h}</textarea>
+            <textarea flexy:ignore name="{valueObj.name}" id="frmBodyName" class="wysiwyg">{valueObj.value:h}</textarea>
         {end:}
         </p>
     {end:}

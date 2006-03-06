@@ -127,7 +127,7 @@ class SGL_DB
                         && !empty($conf['db']['socket']))
                 ? '(' . $conf['db']['socket'] . ')'
                 : '';
-            $protocol = isset($conf['db']['protocol']) 
+            $protocol = isset($conf['db']['protocol'])
                 ? $conf['db']['protocol'] . $socket
                 : '';
             $host = empty($conf['db']['socket']) ? '+' . $conf['db']['host'] : '';
