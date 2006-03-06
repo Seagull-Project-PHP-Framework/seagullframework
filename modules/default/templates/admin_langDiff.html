@@ -14,6 +14,7 @@
     <fieldset class="inside">
         <p>{translate(#The source translation has#)} {sourceElements} {translate(#elements#)}.<br />
             {translate(#The target translation has#)} {targetElements} {translate(#elements#)}.</p>
+        <p>{translate(#Please add#)} {currentLangName} {translate(#values for the following keys which appear to be missing from the#)} {currentModule} {translate(#module#)}:</p>
     </fieldset>
 
     <form name="translations" action="" method="post" flexy:ignore id="translations">
@@ -21,9 +22,7 @@
         <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
         <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
     
-        <fieldset class="inside">
-            <p>{translate(#Please add#)} {currentLangName} {translate(#values for the following keys which appear to be missing from the#)} {currentModule} {translate(#module#)}:</p>
-    
+        <fieldset class="noBorder">
             <table class="full">
                 <thead>
                     <tr>

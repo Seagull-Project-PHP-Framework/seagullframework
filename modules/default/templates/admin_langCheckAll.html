@@ -15,12 +15,12 @@
                 <select name="frmCurrentLang">{generateSelect(aLangs,currentLang):h}</select>
                 <input type="submit" class="sgl-button" name="submitted" value="{translate(#check all modules#)}" />
             </p>
-            <table class="full">
+            <table class="medium">
                 <thead>
                     <tr>
-                        <th width="30%" class="left">{translate(#Module Name#)}:</th>
-                        <th width="30%" class="left">{translate(#Status#)}:</th>
-                        <th width="40%" class="left">{translate(#Edit#)}:</th>
+                        <th width="30%" class="left">{translate(#Module Name#)}</th>
+                        <th width="30%" class="left">{translate(#Status#)}</th>
+                        <th width="40%" class="left">&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,11 +29,11 @@
                         <td class="left">{translate(v[status])}</td>
                         <td class="left">
                         {if:v[diff]}
-                            <input type="button" class="sgl-button" value="{translate(#update#)}" 
+                            <input type="button" class="sgl-button narrow" value="{translate(#update#)}" 
                                 onclick="javascript:document.location.href='{makeUrl(#verify#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
                         {end:}
                         {if:v[edit]}
-                            <input type="button" class="sgl-button" value="{translate(#edit#)}" 
+                            <input type="button" class="sgl-button narrow" value="{translate(#edit#)}" 
                                 onclick="javascript:document.location.href='{makeUrl(#edit#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
                         {end:}
                         {if:v[msg]}

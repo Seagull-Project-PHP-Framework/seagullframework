@@ -74,3 +74,21 @@
 #pearPackages tbody tr {
     line-height: normal;
 }
+
+/*
+====================Translation Manager=======================*/
+
+/*
+-- langCheckAll.html -----------------------------------------*/
+#translation_list table tr {
+    text-indent: 3px;
+}
+/*
+-- langEdit.html / langDiff.html -----------------------------*/
+#translations table {
+    padding: 0 0 5px;
+}
+#translations table tr {
+    text-indent: 3px;
+    line-height: normal;
+}
