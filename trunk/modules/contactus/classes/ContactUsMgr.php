@@ -222,7 +222,8 @@ class ContactUsMgr extends SGL_Manager
                 'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
                 'type'          => $oContact->enquiry_type,
                 'body'          => $oContact->user_comment,
-                'template'      => SGL_MOD_DIR . '/' . $moduleName . '/templates/email_contact_us.php',
+                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
+                    $moduleName . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();
