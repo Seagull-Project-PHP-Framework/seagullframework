@@ -77,9 +77,9 @@ class DA_Navigation extends SGL_Manager
                 'access_key'    => 'access_key',
                 'rel'           => 'rel'
             ),
-            'tableName'      => 'section',
+            'tableName'      => $this->conf['table']['section'],
             'lockTableName'  => 'table_lock',
-            'sequenceName'   => 'section');
+            'sequenceName'   => $this->conf['table']['section']);
         $this->nestedSet = &new SGL_NestedSet($this->_params);
 
         //  detect if trans2 support required
