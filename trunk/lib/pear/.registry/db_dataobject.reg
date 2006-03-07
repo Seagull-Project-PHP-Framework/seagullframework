@@ -1,17 +1,60 @@
-a:18:{s:8:"provides";a:15:{s:28:"class;DB_DataObject_Overload";a:3:{s:4:"type";s:5:"class";s:4:"name";s:22:"DB_DataObject_Overload";s:8:"explicit";b:1;}s:19:"class;DB_DataObject";a:4:{s:4:"type";s:5:"class";s:4:"name";s:13:"DB_DataObject";s:7:"extends";s:22:"DB_DataObject_Overload";s:8:"explicit";b:1;}s:27:"function;DB_DataObject::get";a:3:{s:4:"type";s:8:"function";s:4:"name";s:18:"DB_DataObject::get";s:8:"explicit";b:1;}s:24:"class;DB_DataObject_Cast";a:3:{s:4:"type";s:5:"class";s:4:"name";s:18:"DB_DataObject_Cast";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::blob";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::blob";s:8:"explicit";b:1;}s:35:"function;DB_DataObject_Cast::string";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"DB_DataObject_Cast::string";s:8:"explicit";b:1;}s:32:"function;DB_DataObject_Cast::sql";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject_Cast::sql";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::date";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::date";s:8:"explicit";b:1;}s:37:"function;DB_DataObject_Cast::dateTime";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"DB_DataObject_Cast::dateTime";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::time";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::time";s:8:"explicit";b:1;}s:37:"function;DB_DataObject_Cast::toString";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"DB_DataObject_Cast::toString";s:8:"explicit";b:1;}s:45:"function;DB_DataObject_Cast::toStringFromBlob";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"DB_DataObject_Cast::toStringFromBlob";s:8:"explicit";b:1;}s:29:"class;DB_DataObject_Generator";a:4:{s:4:"type";s:5:"class";s:4:"name";s:23:"DB_DataObject_Generator";s:7:"extends";s:13:"DB_DataObject";s:8:"explicit";b:1;}s:39:"function;DB_DataObject_Generator::start";a:3:{s:4:"type";s:8:"function";s:4:"name";s:30:"DB_DataObject_Generator::start";s:8:"explicit";b:1;}s:25:"class;DB_DataObject_Error";a:4:{s:4:"type";s:5:"class";s:4:"name";s:19:"DB_DataObject_Error";s:7:"extends";s:10:"PEAR_Error";s:8:"explicit";b:1;}}s:8:"filelist";a:7:{s:14:"DataObject.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"fa373f206c025f0234d7ff17250ab0c3";s:12:"replacements";a:1:{i:0;a:3:{s:4:"from";s:9:"@version@";s:2:"to";s:7:"version";s:4:"type";s:12:"package-info";}}s:12:"installed_as";s:54:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject.php";}s:19:"DataObject/Cast.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"e0b76d26843a4c29854b12e191ecffea";s:12:"installed_as";s:59:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Cast.php";}s:24:"DataObject/Generator.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"e64f60aa55506cf3533601f047cbf919";s:12:"installed_as";s:64:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Generator.php";}s:27:"DataObject/createTables.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"79b528f9746f4946d115f39a6f19edca";s:12:"installed_as";s:67:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/createTables.php";}s:20:"DataObject/Error.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"c2cf7df5af0f1954ccb8b759204fd0e1";s:12:"installed_as";s:60:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Error.php";}s:16:"docs/example.ini";a:4:{s:4:"role";s:3:"doc";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"87d5c9c927c556c166fca8da7ae4e257";s:12:"installed_as";s:53:"/usr/local/lib/php/doc/DB_DataObject/docs/example.ini";}s:38:"scripts/DB_DataObject_createTables.bat";a:4:{s:4:"role";s:6:"script";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"ef88826fadc5e821f0973e30a82ea877";s:12:"installed_as";s:56:"/usr/local/bin/DB/scripts/DB_DataObject_createTables.bat";}}s:10:"xsdversion";s:3:"1.0";s:15:"packagerversion";s:5:"1.4.2";s:7:"package";s:13:"DB_DataObject";s:7:"summary";s:51:"An SQL Builder, Object Interface to Database Tables";s:11:"description";s:359:"DataObject performs 2 tasks:
+a:18:{s:8:"provides";a:67:{s:28:"class;DB_DataObject_Overload";a:3:{s:4:"type";s:5:"class";s:4:"name";s:22:"DB_DataObject_Overload";s:8:"explicit";b:1;}s:19:"class;DB_DataObject";a:4:{s:4:"type";s:5:"class";s:4:"name";s:13:"DB_DataObject";s:7:"extends";s:22:"DB_DataObject_Overload";s:8:"explicit";b:1;}s:27:"function;DB_DataObject::get";a:3:{s:4:"type";s:8:"function";s:4:"name";s:18:"DB_DataObject::get";s:8:"explicit";b:1;}s:33:"function;DB_DataObject::staticGet";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject::staticGet";s:8:"explicit";b:1;}s:28:"function;DB_DataObject::find";a:3:{s:4:"type";s:8:"function";s:4:"name";s:19:"DB_DataObject::find";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::fetch";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::fetch";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::whereAdd";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::whereAdd";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::orderBy";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::orderBy";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::groupBy";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::groupBy";s:8:"explicit";b:1;}s:30:"function;DB_DataObject::having";a:3:{s:4:"type";s:8:"function";s:4:"name";s:21:"DB_DataObject::having";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::limit";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::limit";s:8:"explicit";b:1;}s:33:"function;DB_DataObject::selectAdd";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject::selectAdd";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::selectAs";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::selectAs";s:8:"explicit";b:1;}s:30:"function;DB_DataObject::insert";a:3:{s:4:"type";s:8:"function";s:4:"name";s:21:"DB_DataObject::insert";s:8:"explicit";b:1;}s:30:"function;DB_DataObject::update";a:3:{s:4:"type";s:8:"function";s:4:"name";s:21:"DB_DataObject::update";s:8:"explicit";b:1;}s:30:"function;DB_DataObject::delete";a:3:{s:4:"type";s:8:"function";s:4:"name";s:21:"DB_DataObject::delete";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::fetchRow";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::fetchRow";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::count";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::count";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::query";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::query";s:8:"explicit";b:1;}s:30:"function;DB_DataObject::escape";a:3:{s:4:"type";s:8:"function";s:4:"name";s:21:"DB_DataObject::escape";s:8:"explicit";b:1;}s:41:"function;DB_DataObject::databaseStructure";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"DB_DataObject::databaseStructure";s:8:"explicit";b:1;}s:33:"function;DB_DataObject::tableName";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject::tableName";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::database";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::database";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::table";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::table";s:8:"explicit";b:1;}s:28:"function;DB_DataObject::keys";a:3:{s:4:"type";s:8:"function";s:4:"name";s:19:"DB_DataObject::keys";s:8:"explicit";b:1;}s:35:"function;DB_DataObject::sequenceKey";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"DB_DataObject::sequenceKey";s:8:"explicit";b:1;}s:43:"function;DB_DataObject::staticAutoloadTable";a:3:{s:4:"type";s:8:"function";s:4:"name";s:34:"DB_DataObject::staticAutoloadTable";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::factory";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::factory";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::links";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::links";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::getLinks";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::getLinks";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::getLink";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::getLink";s:8:"explicit";b:1;}s:36:"function;DB_DataObject::getLinkArray";a:3:{s:4:"type";s:8:"function";s:4:"name";s:27:"DB_DataObject::getLinkArray";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::joinAdd";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::joinAdd";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::setFrom";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::setFrom";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::toArray";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::toArray";s:8:"explicit";b:1;}s:32:"function;DB_DataObject::validate";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject::validate";s:8:"explicit";b:1;}s:45:"function;DB_DataObject::getDatabaseConnection";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"DB_DataObject::getDatabaseConnection";s:8:"explicit";b:1;}s:41:"function;DB_DataObject::getDatabaseResult";a:3:{s:4:"type";s:8:"function";s:4:"name";s:32:"DB_DataObject::getDatabaseResult";s:8:"explicit";b:1;}s:33:"function;DB_DataObject::fromValue";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject::fromValue";s:8:"explicit";b:1;}s:31:"function;DB_DataObject::toValue";a:3:{s:4:"type";s:8:"function";s:4:"name";s:22:"DB_DataObject::toValue";s:8:"explicit";b:1;}s:29:"function;DB_DataObject::debug";a:3:{s:4:"type";s:8:"function";s:4:"name";s:20:"DB_DataObject::debug";s:8:"explicit";b:1;}s:34:"function;DB_DataObject::debugLevel";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"DB_DataObject::debugLevel";s:8:"explicit";b:1;}s:34:"function;DB_DataObject::raiseError";a:3:{s:4:"type";s:8:"function";s:4:"name";s:25:"DB_DataObject::raiseError";s:8:"explicit";b:1;}s:28:"function;DB_DataObject::free";a:3:{s:4:"type";s:8:"function";s:4:"name";s:19:"DB_DataObject::free";s:8:"explicit";b:1;}s:24:"class;DB_DataObject_Cast";a:3:{s:4:"type";s:5:"class";s:4:"name";s:18:"DB_DataObject_Cast";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::blob";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::blob";s:8:"explicit";b:1;}s:35:"function;DB_DataObject_Cast::string";a:3:{s:4:"type";s:8:"function";s:4:"name";s:26:"DB_DataObject_Cast::string";s:8:"explicit";b:1;}s:32:"function;DB_DataObject_Cast::sql";a:3:{s:4:"type";s:8:"function";s:4:"name";s:23:"DB_DataObject_Cast::sql";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::date";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::date";s:8:"explicit";b:1;}s:37:"function;DB_DataObject_Cast::dateTime";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"DB_DataObject_Cast::dateTime";s:8:"explicit";b:1;}s:33:"function;DB_DataObject_Cast::time";a:3:{s:4:"type";s:8:"function";s:4:"name";s:24:"DB_DataObject_Cast::time";s:8:"explicit";b:1;}s:37:"function;DB_DataObject_Cast::toString";a:3:{s:4:"type";s:8:"function";s:4:"name";s:28:"DB_DataObject_Cast::toString";s:8:"explicit";b:1;}s:45:"function;DB_DataObject_Cast::toStringFromBlob";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"DB_DataObject_Cast::toStringFromBlob";s:8:"explicit";b:1;}s:47:"function;DB_DataObject_Cast::toStringFromString";a:3:{s:4:"type";s:8:"function";s:4:"name";s:38:"DB_DataObject_Cast::toStringFromString";s:8:"explicit";b:1;}s:45:"function;DB_DataObject_Cast::toStringFromDate";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"DB_DataObject_Cast::toStringFromDate";s:8:"explicit";b:1;}s:49:"function;DB_DataObject_Cast::toStringFromDateTime";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"DB_DataObject_Cast::toStringFromDateTime";s:8:"explicit";b:1;}s:45:"function;DB_DataObject_Cast::toStringFromTime";a:3:{s:4:"type";s:8:"function";s:4:"name";s:36:"DB_DataObject_Cast::toStringFromTime";s:8:"explicit";b:1;}s:44:"function;DB_DataObject_Cast::toStringFromSql";a:3:{s:4:"type";s:8:"function";s:4:"name";s:35:"DB_DataObject_Cast::toStringFromSql";s:8:"explicit";b:1;}s:29:"class;DB_DataObject_Generator";a:4:{s:4:"type";s:5:"class";s:4:"name";s:23:"DB_DataObject_Generator";s:7:"extends";s:13:"DB_DataObject";s:8:"explicit";b:1;}s:39:"function;DB_DataObject_Generator::start";a:3:{s:4:"type";s:8:"function";s:4:"name";s:30:"DB_DataObject_Generator::start";s:8:"explicit";b:1;}s:53:"function;DB_DataObject_Generator::generateDefinitions";a:3:{s:4:"type";s:8:"function";s:4:"name";s:44:"DB_DataObject_Generator::generateDefinitions";s:8:"explicit";b:1;}s:49:"function;DB_DataObject_Generator::generateClasses";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"DB_DataObject_Generator::generateClasses";s:8:"explicit";b:1;}s:54:"function;DB_DataObject_Generator::derivedHookFunctions";a:3:{s:4:"type";s:8:"function";s:4:"name";s:45:"DB_DataObject_Generator::derivedHookFunctions";s:8:"explicit";b:1;}s:48:"function;DB_DataObject_Generator::derivedHookVar";a:3:{s:4:"type";s:8:"function";s:4:"name";s:39:"DB_DataObject_Generator::derivedHookVar";s:8:"explicit";b:1;}s:46:"function;DB_DataObject_Generator::getProxyFull";a:3:{s:4:"type";s:8:"function";s:4:"name";s:37:"DB_DataObject_Generator::getProxyFull";s:8:"explicit";b:1;}s:49:"function;DB_DataObject_Generator::fillTableSchema";a:3:{s:4:"type";s:8:"function";s:4:"name";s:40:"DB_DataObject_Generator::fillTableSchema";s:8:"explicit";b:1;}s:25:"class;DB_DataObject_Error";a:4:{s:4:"type";s:5:"class";s:4:"name";s:19:"DB_DataObject_Error";s:7:"extends";s:10:"PEAR_Error";s:8:"explicit";b:1;}}s:8:"filelist";a:7:{s:14:"DataObject.php";a:5:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"e991f850787491029435f94fa281a208";s:12:"replacements";a:1:{i:0;a:3:{s:4:"from";s:9:"@version@";s:2:"to";s:7:"version";s:4:"type";s:12:"package-info";}}s:12:"installed_as";s:54:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject.php";}s:19:"DataObject/Cast.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"40178b1484d30842a9ee92e6fe46dd2e";s:12:"installed_as";s:59:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Cast.php";}s:24:"DataObject/Generator.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"e3ce1e7da991eaac50b8ce92aa8d4a4a";s:12:"installed_as";s:64:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Generator.php";}s:27:"DataObject/createTables.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"ff8c9ccc1fc81319e31a68b21655a2f4";s:12:"installed_as";s:67:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/createTables.php";}s:20:"DataObject/Error.php";a:4:{s:4:"role";s:3:"php";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"78f91fc6fbea5e93224dbf22deff4b84";s:12:"installed_as";s:60:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject/Error.php";}s:16:"docs/example.ini";a:4:{s:4:"role";s:3:"doc";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"ed8c753c46a2da254d1d93bc7c8a0927";s:12:"installed_as";s:53:"/usr/local/lib/php/doc/DB_DataObject/docs/example.ini";}s:38:"scripts/DB_DataObject_createTables.bat";a:4:{s:4:"role";s:6:"script";s:14:"baseinstalldir";s:2:"DB";s:6:"md5sum";s:32:"ef88826fadc5e821f0973e30a82ea877";s:12:"installed_as";s:56:"/usr/local/bin/DB/scripts/DB_DataObject_createTables.bat";}}s:10:"xsdversion";s:3:"1.0";s:15:"packagerversion";s:5:"1.4.6";s:7:"package";s:13:"DB_DataObject";s:7:"summary";s:51:"An SQL Builder, Object Interface to Database Tables";s:11:"description";s:359:"DataObject performs 2 tasks:
   1. Builds SQL statements based on the objects vars and the builder methods.
   2. acts as a datastore for a table row.
   The core class is designed to be extended for each of your tables so that you put the
   data logic inside the data classes.
   included is a Generator to make your configuration files and your base classes.
  
-";s:11:"maintainers";a:1:{i:0;a:4:{s:6:"handle";s:6:"alan_k";s:4:"name";s:12:"Alan Knowles";s:5:"email";s:17:"alan@akbkhome.com";s:4:"role";s:4:"lead";}}s:7:"version";s:5:"1.8.2";s:12:"release_date";s:10:"2006-01-21";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:79:"Minor Bugfix release
+";s:11:"maintainers";a:1:{i:0;a:4:{s:6:"handle";s:6:"alan_k";s:4:"name";s:12:"Alan Knowles";s:5:"email";s:17:"alan@akbkhome.com";s:4:"role";s:4:"lead";}}s:7:"version";s:5:"1.8.4";s:12:"release_date";s:10:"2006-03-06";s:15:"release_license";s:11:"PHP License";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:664:"Minor Bugfix and Minor Feature addition release
+
+Bugs
+----
+#7006 - fix links due to removal of databaseStructure call in 1.8.3, added call
+        to connect();
+#7012 - joinAdd fixed due to checking of wrong variable when buidling query on 
+        mysql.
+             
+    
+Features
+--------
+      - Add support for defaults() generation in createTables/Generator,
+        when using the flag generator_add_defaults = yes or generator_no_ini = yes
+        a method defaults() is created in the table class, which contains
+        the default values for the table generated from the database.
+        Note: EXPERIMENTAL and only works with Mysql[i] at present.
+  
+";s:12:"release_deps";a:5:{i:1;a:3:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:3:"4.3";}i:2;a:4:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.7.0";s:4:"name";s:2:"DB";}i:3;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:8:"2.0.0RC1";s:8:"optional";s:3:"yes";s:4:"name";s:4:"MDB2";}i:4;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"0.1.1";s:8:"optional";s:3:"yes";s:4:"name";s:8:"Validate";}i:5;a:4:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.4.3";s:4:"name";s:4:"Date";}}s:9:"changelog";a:49:{i:0;a:4:{s:7:"version";s:5:"1.8.3";s:12:"release_date";s:10:"2006-03-03";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1103:"Minor Bugfix and Minor Feature addition release
+
+Bugs
+----
+      - Remove Warning if class_prefix is not set, and allow it not to be set.
+      - joinAdd() support for DB_DataObject::cast() objects (Daniel Braga)
+      - MDB2 fixes for undefined constants (bate)
+      - 
+#6772 - Support for FLOAT4 type in postgres
+#6953 - Changed memory allocation of stored column values for SQL return when
+        Fetching last item of an object. Fixing problem of missing columns on
+        Last fetch from Join being broken when used with toArray().
+#6928 - Defaulting to prefixing database name in joins for Mysql and Mysqli
+        backends, so multiple joins across multiple databases work.
+      
+    
+Features
+--------
+      - Add support for option 'generator_no_ini => true', which generates class 
+        files with schema defined inside the table(), keys() and sequenceKeys()
+        (based on work and suggestions by Didler Galland and Justin Patrin)
+      - SQL output for debugging now has line breaks to make it easier to read.
+      
+      - SelectAs uses quote itendifiers for target format.
+    
+";}i:1;a:4:{s:7:"version";s:5:"1.8.2";s:12:"release_date";s:10:"2004-01-21";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:81:"Minor Bugfix release
 
 Bugs
 ----
 #6543 - Generator broke due to MDB changes.
-  
-";s:12:"release_deps";a:5:{i:1;a:3:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:3:"4.3";}i:2;a:4:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.7.0";s:4:"name";s:2:"DB";}i:3;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:8:"2.0.0RC1";s:8:"optional";s:3:"yes";s:4:"name";s:4:"MDB2";}i:4;a:5:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"0.1.1";s:8:"optional";s:3:"yes";s:4:"name";s:8:"Validate";}i:5;a:4:{s:4:"type";s:3:"pkg";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.4.3";s:4:"name";s:4:"Date";}}s:9:"changelog";a:47:{i:0;a:4:{s:7:"version";s:5:"1.8.1";s:12:"release_date";s:10:"2004-01-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:441:"Bugs
+    
+";}i:2;a:4:{s:7:"version";s:5:"1.8.1";s:12:"release_date";s:10:"2006-01-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:441:"Bugs
 ----
 #6153 - dont call autoload on PHP5 - kludgy wrapper around class_exists()
 #6458 - clear staticGet cache when calling free()        
@@ -22,7 +65,7 @@ Changes/New Features
 * make createTables honour debug level in ini file.
 * Added support in generator, for MDB2 backend to generate the class files (bate)
     
-";}i:1;a:4:{s:7:"version";s:5:"1.8.0";s:12:"release_date";s:10:"2004-12-28";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2358:"Major Bug Fix & Feature release.
+";}i:3;a:4:{s:7:"version";s:5:"1.8.0";s:12:"release_date";s:10:"2005-12-28";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2358:"Major Bug Fix & Feature release.
 
 Bugs:
 
@@ -78,10 +121,10 @@ Other Changes
 * fix null detection on postgres, - patch by Alistair MacDonald
 * free result columns as well as results after fetching all rows.
     
-";}i:2;a:4:{s:7:"version";s:6:"1.7.15";s:12:"release_date";s:10:"2004-07-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:92:"Minor Bugfix release 
+";}i:4;a:4:{s:7:"version";s:6:"1.7.15";s:12:"release_date";s:10:"2005-07-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:92:"Minor Bugfix release 
 * fix bug #4760 - DB_DataObject_Cast blobs broke in last release
     
-";}i:3;a:4:{s:7:"version";s:6:"1.7.14";s:12:"release_date";s:10:"2004-06-25";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2034:"Bugfix release (Mostly)
+";}i:5;a:4:{s:7:"version";s:6:"1.7.14";s:12:"release_date";s:10:"2004-06-25";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2034:"Bugfix release (Mostly)
 Special thanks to Dan Rossi for the MDB Backend work on this release.
 
 Key changes:
@@ -124,24 +167,24 @@ Bugs Fixed.
   * fix bug #4182 - better string and blob support on mysql in cast
   * fix bug #4135 - boolean values borked in condition building..
     
-";}i:4;a:4:{s:7:"version";s:6:"1.7.13";s:12:"release_date";s:10:"2004-03-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:92:"Minor Bugfix release
+";}i:6;a:4:{s:7:"version";s:6:"1.7.13";s:12:"release_date";s:10:"2005-03-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:92:"Minor Bugfix release
 #3943 - postgres booleans broke again due to last fix for mysqli.
     
-";}i:5;a:4:{s:7:"version";s:6:"1.7.12";s:12:"release_date";s:10:"2004-03-23";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:156:"Daily Bugfix release. ;)
+";}i:7;a:4:{s:7:"version";s:6:"1.7.12";s:12:"release_date";s:10:"2004-03-23";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:156:"Daily Bugfix release. ;)
 #3898 - mysqli quote bug fixed. (Greg Beaver)
 #------ provisional support for mysql blobs in Cast object (Antony Jankelowitz)
     
-";}i:6;a:4:{s:7:"version";s:6:"1.7.11";s:12:"release_date";s:10:"2004-03-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:191:"Minor Bugfix release. 
+";}i:8;a:4:{s:7:"version";s:6:"1.7.11";s:12:"release_date";s:10:"2005-03-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:191:"Minor Bugfix release. 
 #3898 - fix count , which got broken by previous distinct argument changes
 #------ support $x IS NOT NULL using $obj->value = DB_DataObject_Cast::sql("NOT NULL");
     
-";}i:7;a:4:{s:7:"version";s:6:"1.7.10";s:12:"release_date";s:10:"2004-03-16";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:83:"Minor Bugfix release. 
+";}i:9;a:4:{s:7:"version";s:6:"1.7.10";s:12:"release_date";s:10:"2005-03-16";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:83:"Minor Bugfix release. 
 #3829 - joinAdd fix for database prefixing (yet again)
     
-";}i:8;a:4:{s:7:"version";s:5:"1.7.9";s:12:"release_date";s:10:"2004-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:121:"Minor Bugfix release. 
+";}i:10;a:4:{s:7:"version";s:5:"1.7.9";s:12:"release_date";s:10:"2005-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:121:"Minor Bugfix release. 
 #3764 - toValue(), and hence toArray() cast booleans to true|false. (previous fix was buggy)
     
-";}i:9;a:4:{s:7:"version";s:5:"1.7.8";s:12:"release_date";s:10:"2004-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:445:"Minor Bugfix release. 
+";}i:11;a:4:{s:7:"version";s:5:"1.7.8";s:12:"release_date";s:10:"2005-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:445:"Minor Bugfix release. 
 #3764 - toValue(), and hence toArray() cast booleans to true|false.
 #3763 - createTables.php defines NO_OVERLOAD to prevent warnings on PHP4.3.10.
 
@@ -150,14 +193,14 @@ Bugs Fixed.
 #3783 - count('distinct') builds the query distinct [primary_key], should help in some situations
         using joinAdd + group By etc.
     
-";}i:10;a:4:{s:7:"version";s:5:"1.7.7";s:12:"release_date";s:10:"2004-03-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:287:"Minor bug fix release - join add with table fixes broke for mysql with last release
+";}i:12;a:4:{s:7:"version";s:5:"1.7.7";s:12:"release_date";s:10:"2005-03-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:287:"Minor bug fix release - join add with table fixes broke for mysql with last release
   Bug Fixes:
   #---- - Joins incorrectly prefect database name for mysql/mysqli
   (Thanks to Mark Mitchenall for spotting this)
   #---- used wrong variable for checking prefixes.
   (Stephane Gully)
     
-";}i:11;a:4:{s:7:"version";s:5:"1.7.6";s:12:"release_date";s:10:"2004-03-05";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:355:"Nothing like a big release to create bugs..
+";}i:13;a:4:{s:7:"version";s:5:"1.7.6";s:12:"release_date";s:10:"2005-03-05";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:355:"Nothing like a big release to create bugs..
 
 Note: the last release also included method creation for setters and getters, 
   which got missed out from the changelog.
@@ -165,7 +208,7 @@ Bug Fixes:
   #3708 - Generator did not clear last files contents when generating new files.
   #3706 - Joins broke on everything except mysql (database prefix now only added to mysql)
     
-";}i:12;a:4:{s:7:"version";s:5:"1.7.5";s:12:"release_date";s:10:"2004-03-02";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1420:"A few releases where skipped, this should be the amalgamated upgrade!
+";}i:14;a:4:{s:7:"version";s:5:"1.7.5";s:12:"release_date";s:10:"2005-03-02";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1420:"A few releases where skipped, this should be the amalgamated upgrade!
 
 Note: php4.3.10 will exit with an error if you dont define NO_OVERLOAD, rather 
 than segfaulting..
@@ -196,7 +239,7 @@ Bug Fixes:
   
   #2267 - additional debugging information available at connect time
     
-";}i:13;a:4:{s:7:"version";s:5:"1.7.2";s:12:"release_date";s:10:"2004-08-28";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:566:"Minor bug fix / Minor feature addition release
+";}i:15;a:4:{s:7:"version";s:5:"1.7.2";s:12:"release_date";s:10:"2004-08-28";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:566:"Minor bug fix / Minor feature addition release
   
   
 Bug Fixes:
@@ -210,7 +253,7 @@ Features Added:
   #2086 - Support for buliding dataobjects for Views (use option build_view=1)
   #2240 - factory() called on a dataobject returns a new instance of that object.
     
-";}i:14;a:4:{s:7:"version";s:5:"1.7.1";s:12:"release_date";s:10:"2004-08-09";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:225:"Minor bug fix release
+";}i:16;a:4:{s:7:"version";s:5:"1.7.1";s:12:"release_date";s:10:"2004-08-09";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:225:"Minor bug fix release
   
   
 Bug Fixes:
@@ -218,7 +261,7 @@ Bug Fixes:
   #------ php4.2 compatibility should work as advertised in last realease
   #------ Generator didnt have DB loaded due to lazy load changes.
     
-";}i:15;a:4:{s:7:"version";s:5:"1.7.0";s:12:"release_date";s:10:"2004-06-03";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1624:"Major bug fix release, Minor features added.  
+";}i:17;a:4:{s:7:"version";s:5:"1.7.0";s:12:"release_date";s:10:"2004-06-03";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1624:"Major bug fix release, Minor features added.  
   
   
 Bug Fixes:
@@ -247,11 +290,11 @@ Changes:
   * include path is used to do file hunting if factory fails to find file.
   * DB is lazy loaded on connection.b
     
-";}i:16;a:4:{s:7:"version";s:5:"1.6.1";s:12:"release_date";s:10:"2004-06-03";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:64:"Minor Bug Fix
+";}i:18;a:4:{s:7:"version";s:5:"1.6.1";s:12:"release_date";s:10:"2004-06-03";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:64:"Minor Bug Fix
 
 * fixed count() breaks when countWhat used.
     
-";}i:17;a:4:{s:7:"version";s:5:"1.6.0";s:12:"release_date";s:10:"2004-04-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1829:"Minor Feature Release and many bug fixes..
+";}i:19;a:4:{s:7:"version";s:5:"1.6.0";s:12:"release_date";s:10:"2004-04-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1829:"Minor Feature Release and many bug fixes..
 
 * DB_DataObject_Error added to enable testing for dataobject errors
 * Date fixes - needs latest date package.
@@ -288,7 +331,7 @@ Changes:
 
 And probably a few more - as it's been quite a while since the last release..
     
-";}i:18;a:4:{s:7:"version";s:5:"1.5.3";s:12:"release_date";s:10:"2004-01-29";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:506:"Bug fix release.
+";}i:20;a:4:{s:7:"version";s:5:"1.5.3";s:12:"release_date";s:10:"2004-01-29";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:506:"Bug fix release.
 
 Changes:
   - fixed toValue()
@@ -302,7 +345,7 @@ Fixes
   them manually.
 * fix bug #620 - limit accepts floats and doubles, as long as they are really integers..
     
-";}i:19;a:4:{s:7:"version";s:5:"1.5.2";s:12:"release_date";s:10:"2004-01-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:969:"Bug fix release.
+";}i:21;a:4:{s:7:"version";s:5:"1.5.2";s:12:"release_date";s:10:"2004-01-24";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:969:"Bug fix release.
 
 Changes:
   - removed automatic strtotime() in setters and setFrom
@@ -320,7 +363,7 @@ so it can be used to test connections.
 * fix bug #603 to prevent clearing of queries after fetch, use the option keep_query_after_fetch = 1
 * fix bug #359 (again) - _link_loaded array should only contain links that where sucessfully loaded
     
-";}i:20;a:4:{s:7:"version";s:5:"1.5.1";s:12:"release_date";s:10:"2004-01-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:391:"Bug fix release.
+";}i:22;a:4:{s:7:"version";s:5:"1.5.1";s:12:"release_date";s:10:"2004-01-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:391:"Bug fix release.
 Fixes
 * fixed fromValue had problems with null and DataOBject_Cast objects
 * NOT NULL checking enabled in fromValue (eg. setters)
@@ -329,7 +372,7 @@ Fixes
   option sequence_{tablename} = {column}:{sequence_name}
 * Dependancy on Date added. (it is used by the setter/getters)
     
-";}i:21;a:4:{s:7:"version";s:3:"1.5";s:12:"release_date";s:10:"2004-01-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1565:"New Features / Fixes
+";}i:23;a:4:{s:7:"version";s:3:"1.5";s:12:"release_date";s:10:"2004-01-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1565:"New Features / Fixes
 * proxy and auto schema building
   - you can use dataobjects wihout running create tables.
   - schema is created on the fly if no schema file exists
@@ -360,8 +403,8 @@ Bug Fixes
 * fix bug #501 - autoload/factory  now uses full path (not require path)
 * fix bug #507 - sequences broken
     
-";}i:22;a:4:{s:7:"version";s:3:"1.4";s:12:"release_date";s:10:"2003-12-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1:"
-";}i:23;a:4:{s:7:"version";s:3:"1.3";s:12:"release_date";s:10:"2003-11-14";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2188:"New Features
+";}i:24;a:4:{s:7:"version";s:3:"1.4";s:12:"release_date";s:10:"2003-12-20";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1:"
+";}i:25;a:4:{s:7:"version";s:3:"1.3";s:12:"release_date";s:10:"2003-11-14";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:2188:"New Features
 - Inserts and updates do not use keys in the data creation part of the query
   (Markus Wolff)
 
@@ -414,7 +457,7 @@ Fixes:
   If you define DB_DATAOBJECT_NO_OVERLOAD to any value, then dataobjects will not be overloaded,
   This is usefull when working with ZendOptimizer, that may segfault with certain optimization levels
     
-";}i:24;a:4:{s:7:"version";s:3:"1.2";s:12:"release_date";s:10:"2003-08-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:581:"New Features:
+";}i:26;a:4:{s:7:"version";s:3:"1.2";s:12:"release_date";s:10:"2003-08-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:581:"New Features:
 - A Number of the private methods have been made Public,
   changes:
     - _get_table()  = table()
@@ -429,7 +472,7 @@ Fixes:
 - Generator is now more tollerant of editors that alter the spaces before
   the autocode markers ### (Andreas Ljunggren)
     
-";}i:25;a:4:{s:7:"version";s:3:"1.1";s:12:"release_date";s:10:"2003-08-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:328:"Bug Fixes
+";}i:27;a:4:{s:7:"version";s:3:"1.1";s:12:"release_date";s:10:"2003-08-07";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:328:"Bug Fixes
 - limit argument testing now accepts "10" (a string with an integer
 in it, as a valid argument) (Demian Turner)
 New Features
@@ -437,14 +480,14 @@ New Features
   multiple targets links of the  same table, eg. user->friend,
   user->parent both connect to the user table..  (Andy Crain)
     
-";}i:26;a:4:{s:7:"version";s:5:"1.0.2";s:12:"release_date";s:10:"2003-07-31";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:76:"Minor Bugfix Release
+";}i:28;a:4:{s:7:"version";s:5:"1.0.2";s:12:"release_date";s:10:"2003-07-31";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:76:"Minor Bugfix Release
 - Fix static Get call, case sensitivity properly.
     
-";}i:27;a:4:{s:7:"version";s:5:"1.0.1";s:12:"release_date";s:10:"2003-07-18";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:103:"Minor Bugfix Release
+";}i:29;a:4:{s:7:"version";s:5:"1.0.1";s:12:"release_date";s:10:"2003-07-18";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:103:"Minor Bugfix Release
 - Fix Select defaults back to * after an fetch
 - Fix Update with NULL values
     
-";}i:28;a:4:{s:7:"version";s:3:"1.0";s:12:"release_date";s:10:"2003-07-16";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1237:"- Gold 1.0 Release.. - final stable release in this series. Future versions
+";}i:30;a:4:{s:7:"version";s:3:"1.0";s:12:"release_date";s:10:"2003-07-16";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1237:"- Gold 1.0 Release.. - final stable release in this series. Future versions
   (eg. 1.1.*(dev)->1.2.*(release)) series will be generally API compatible,
   however is likely to use MDB rather than DB.
 - fix bug #23983 - argument checking on whereAdd, orderBy, limit and a few others
@@ -464,7 +507,7 @@ New Features
   be a little unstable especially with Zend Encoder. (Note: if DataObjects causes crashes
   , remove the overload code at the bottom of DataObjects.php)
     
-";}i:29;a:4:{s:7:"version";s:4:"0.19";s:12:"release_date";s:10:"2003-05-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1667:"- fix bug #23712 - deleting (and probably updating as well) an object while
+";}i:31;a:4:{s:7:"version";s:4:"0.19";s:12:"release_date";s:10:"2003-05-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:1667:"- fix bug #23712 - deleting (and probably updating as well) an object while
   being fetched. (Michael McCarthy for spotting this)
 - fix generator overwriting code when file was edited in a Windows editor
   (Robert Janeczek)
@@ -493,7 +536,7 @@ New Features
   true or 1 means that you can write a PEAR::error handler to catch the errors and
   display a nice it's not working message
     
-";}i:30;a:4:{s:7:"version";s:4:"0.18";s:12:"release_date";s:10:"2003-05-17";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:651:"- add table prefix to autobuilt queries (assist in ambigous querys for joins)
+";}i:32;a:4:{s:7:"version";s:4:"0.18";s:12:"release_date";s:10:"2003-05-17";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:651:"- add table prefix to autobuilt queries (assist in ambigous querys for joins)
   (Daniel Von Fange)
 - change update and delete to return the number of rows affected or false on failure
 - various code tidy ups - standards etc. (Arnaud Limbourg)
@@ -504,10 +547,10 @@ New Features
 - added dependancies on PHP4.3, DB 1.3 and Validate (although Validate is optional)
 - added table prefix to count query (Richard Wallace)
     
-";}i:31;a:4:{s:7:"version";s:4:"0.17";s:12:"release_date";s:10:"2003-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:111:"- Usual post feature bug fix release
+";}i:33;a:4:{s:7:"version";s:4:"0.17";s:12:"release_date";s:10:"2003-03-12";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:111:"- Usual post feature bug fix release
 - fix loading of links.ini for joinAdd, getLinks etc. (Geoff Hopson)
     
-";}i:32;a:4:{s:7:"version";s:4:"0.16";s:12:"release_date";s:10:"2003-03-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:758:"- replaced config storage  - should improve performance
+";}i:34;a:4:{s:7:"version";s:4:"0.16";s:12:"release_date";s:10:"2003-03-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:758:"- replaced config storage  - should improve performance
 - removed production option (not required due to improved config storage)
 - bugfix : added checks for is_array on ignore_sequence_keys (Hermen Heinen)
 - add toArray($format) which supports sprintf to enable easy integration with
@@ -519,27 +562,27 @@ New Features
   try this on databases that do not directly support limit queries. (Geoff Hopson)
   * I'm open on better ideas for this - probably wrapping the find() select call
     
-";}i:33;a:4:{s:7:"version";s:4:"0.15";s:12:"release_date";s:10:"2003-02-13";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:411:"- modified find(true), so that it calls fetch rather than fetchrow
+";}i:35;a:4:{s:7:"version";s:4:"0.15";s:12:"release_date";s:10:"2003-02-13";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:411:"- modified find(true), so that it calls fetch rather than fetchrow
   so that overriding fetch will affect get() calls.
   (probably depreciates fetchrow now .. shout if anyone is using it)
 - added escape method as a quasi quote wrapper into pear::DB - useful for
   building your own queries - eg. like requests.. (does not add quotes)
 - fixed bug with delete not using primary key if it was set. (Ian Eure)
     
-";}i:34;a:4:{s:7:"version";s:4:"0.14";s:12:"release_date";s:10:"2003-02-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:224:"- added get affected rows to update/insert/delete
+";}i:36;a:4:{s:7:"version";s:4:"0.14";s:12:"release_date";s:10:"2003-02-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:224:"- added get affected rows to update/insert/delete
   they will return false if no data is affected and set
   the Objects lastError value.
   Note: databases that do not support affectedRows(), will always
   return false.
     
-";}i:35;a:4:{s:7:"version";s:4:"0.13";s:12:"release_date";s:10:"2003-01-23";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:86:"- bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
+";}i:37;a:4:{s:7:"version";s:4:"0.13";s:12:"release_date";s:10:"2003-01-23";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:86:"- bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
     
-";}i:36;a:4:{s:7:"version";s:4:"0.12";s:12:"release_date";s:10:"2003-01-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:221:"- Usual post release bug fix.
+";}i:38;a:4:{s:7:"version";s:4:"0.12";s:12:"release_date";s:10:"2003-01-22";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:221:"- Usual post release bug fix.
 - fixes *.links.ini incorrectly using *.links (Damian Turner)
 - Adds the ability to get PEAR Connection and result objects
   getDatabaseConnection() and getDatabaseResult() (jason rust)
     
-";}i:37;a:4:{s:7:"version";s:4:"0.11";s:12:"release_date";s:10:"2003-01-21";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:482:"- changed connecition and result caching to use global private variable, rather
+";}i:39;a:4:{s:7:"version";s:4:"0.11";s:12:"release_date";s:10:"2003-01-21";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:482:"- changed connecition and result caching to use global private variable, rather
   than getStaticProperty
 - results objects are not stored on insert/update/delete (speed increase
   on large inserts can be as much as 10x faster)
@@ -549,14 +592,14 @@ New Features
 - new configuration option for whether to use insert id's and sequences.
 - Generator no creates boolean bit (mitchell perilstein)
     
-";}i:38;a:4:{s:7:"version";s:4:"0.10";s:12:"release_date";s:10:"2002-12-09";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:293:"- bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
+";}i:40;a:4:{s:7:"version";s:4:"0.10";s:12:"release_date";s:10:"2002-12-09";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:293:"- bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
 - change addslashes to PEAR::DB::quote()
 - generator now only replaces DB_DataObjects with extends variable if set,
   you can use generator_rewrite_class to set what is a valid replacement.
     
-";}i:39;a:4:{s:7:"version";s:3:"0.9";s:12:"release_date";s:10:"2002-12-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:51:"- bug fix release - dsn was not set correctly
+";}i:41;a:4:{s:7:"version";s:3:"0.9";s:12:"release_date";s:10:"2002-12-06";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:51:"- bug fix release - dsn was not set correctly
     
-";}i:40;a:4:{s:7:"version";s:3:"0.8";s:12:"release_date";s:10:"2002-09-21";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:841:"- changed to stable status as it appears to be pretty stable now.
+";}i:42;a:4:{s:7:"version";s:3:"0.8";s:12:"release_date";s:10:"2002-09-21";s:13:"release_state";s:6:"stable";s:13:"release_notes";s:841:"- changed to stable status as it appears to be pretty stable now.
 - update and insert now return FALSE on error conditions (Peter Gebauer)
   which can be checked using === FALSE, and the error obtained using $object->_lastError
 - delete will only use primary keys if they are set, otherwise it will use all object
@@ -568,19 +611,19 @@ New Features
 - experimental addJoin method (Stijn de Reede)
 - Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
     
-";}i:41;a:4:{s:7:"version";s:3:"0.6";s:12:"release_date";s:10:"2002-09-10";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:68:"- bug fix release on insert (broke due to compatibility fixes)
+";}i:43;a:4:{s:7:"version";s:3:"0.6";s:12:"release_date";s:10:"2002-09-10";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:68:"- bug fix release on insert (broke due to compatibility fixes)
     
-";}i:42;a:4:{s:7:"version";s:3:"0.5";s:12:"release_date";s:10:"2002-09-07";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:202:"- fixed database.links.ini file loading in wrong location (Jens Fischer)
+";}i:44;a:4:{s:7:"version";s:3:"0.5";s:12:"release_date";s:10:"2002-09-07";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:202:"- fixed database.links.ini file loading in wrong location (Jens Fischer)
 - fixed type on extends (Jens Fischer)
 - added __clone() support to pre- php5 classes
 - added multiple linked table support
     
-";}i:43;a:4:{s:7:"version";s:3:"0.4";s:12:"release_date";s:10:"2002-08-21";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:54:"- Bug fix release - createTables used wrong argv
+";}i:45;a:4:{s:7:"version";s:3:"0.4";s:12:"release_date";s:10:"2002-08-21";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:54:"- Bug fix release - createTables used wrong argv
     
-";}i:44;a:4:{s:7:"version";s:3:"0.3";s:12:"release_date";s:10:"2002-08-16";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:50:"- Fixed Globals requirement in createTables,
+";}i:46;a:4:{s:7:"version";s:3:"0.3";s:12:"release_date";s:10:"2002-08-16";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:50:"- Fixed Globals requirement in createTables,
     
-";}i:45;a:4:{s:7:"version";s:3:"0.2";s:12:"release_date";s:10:"2002-07-12";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:91:"Removed list method, First upload as pear package. - Documentation now in PEAR Manual
+";}i:47;a:4:{s:7:"version";s:3:"0.2";s:12:"release_date";s:10:"2002-07-12";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:91:"Removed list method, First upload as pear package. - Documentation now in PEAR Manual
     
-";}i:46;a:4:{s:7:"version";s:3:"0.1";s:12:"release_date";s:10:"2002-06-25";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:15:"PEARified
+";}i:48;a:4:{s:7:"version";s:3:"0.1";s:12:"release_date";s:10:"2002-06-25";s:13:"release_state";s:4:"beta";s:13:"release_notes";s:15:"PEARified
     
-";}}s:12:"_lastversion";s:5:"1.8.0";s:7:"dirtree";a:5:{s:39:"/var/www/html/seagull/trunk/lib/pear/DB";b:1;s:50:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject";b:1;s:41:"/usr/local/lib/php/doc/DB_DataObject/docs";b:1;s:25:"/usr/local/bin/DB/scripts";b:1;s:17:"/usr/local/bin/DB";b:1;}s:13:"_lastmodified";i:1137852239;}
+";}}s:12:"_lastversion";s:5:"1.8.2";s:7:"dirtree";a:5:{s:39:"/var/www/html/seagull/trunk/lib/pear/DB";b:1;s:50:"/var/www/html/seagull/trunk/lib/pear/DB/DataObject";b:1;s:41:"/usr/local/lib/php/doc/DB_DataObject/docs";b:1;s:25:"/usr/local/bin/DB/scripts";b:1;s:17:"/usr/local/bin/DB";b:1;}s:13:"_lastmodified";i:1141740425;}

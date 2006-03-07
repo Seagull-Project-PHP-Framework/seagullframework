@@ -13,9 +13,9 @@
  * @category   Database
  * @package    DB_DataObject
  * @author     Alan Knowles <alan@akbkhome.com>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Generator.php,v 1.107 2006/01/10 22:46:24 bate Exp $
+ * @version    CVS: $Id: Generator.php,v 1.113 2006/03/03 07:03:25 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
  
@@ -163,7 +163,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
     /**
      * Build a list of tables;
-     * Currently this is very Mysql Specific - ideas for more generic stiff welcome
+     * and store it in $this->tables and $this->_definitions[tablename];
      *
      * @access  private
      * @return  none
@@ -313,7 +313,10 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_connect();
         // dont generate a schema if location is not set
         // it's created on the fly!
-        if (!@$options['schema_location'] && @!$options["ini_{$this->_database}"] ) {
+        if (empty($options['schema_location']) && empty($options["ini_{$this->_database}"]) ) {
+            return;
+        }
+        if (!empty($options['generator_no_ini'])) { // built in ini files..
             return;
         }
         $base =  @$options['schema_location'];
@@ -399,6 +402,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'DOUBLE':
                 case 'DOUBLE PRECISION': // double precision (firebird)
                 case 'FLOAT':
+                case 'FLOAT4': // real (postgres)
                 case 'FLOAT8': // double precision (postgres)
                 case 'DECIMAL':
                 case 'MONEY':  // mssql and maybe others
@@ -638,7 +642,8 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "    /* the code below is auto generated do not remove the above tag */\n\n";
         // table
         $padding = (30 - strlen($this->table));
-        if ($padding < 2) $padding =2;
+        $padding  = ($padding < 2) ? 2 : $padding;
+        
         $p =  str_repeat(' ',$padding) ;
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
@@ -719,6 +724,20 @@ class DB_DataObject_Generator extends DB_DataObject
         //    $kk = strtoupper($k);
         //    $body .="    function getSets{$k}() { return {$v}; }\n";
         //}
+        
+        if (!empty($options['generator_no_ini'])) {
+            $def = $this->_generateDefinitionsTable();  // simplify this!?
+            $body .= $this->_generateTableFunction($def['table']);
+            $body .= $this->_generateKeysFunction($def['keys']);
+            $body .= $this->_generateSequenceKeyFunction($def);
+            $body .= $this->_generateDefaultsFunction($this->table, $def['table']);
+        }  else if (!empty($options['generator_add_defaults'])) {   
+            // I dont really like doing it this way (adding another option)
+            // but it helps on older projects.
+            $def = $this->_generateDefinitionsTable();  // simplify this!?
+            $body .= $this->_generateDefaultsFunction($this->table,$def['table']);
+             
+        }
         $body .= $this->derivedHookFunctions();
 
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
@@ -828,7 +847,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   object    Instance of class. or PEAR Error
     * @access   public
     */
-    function getProxyFull($database,$table) {
+    function getProxyFull($database,$table) 
+    {
         
         if ($err = $this->fillTableSchema($database,$table)) {
             return $err;
@@ -865,7 +885,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   none | PEAR::error()
     * @access   public
     */
-    function fillTableSchema($database,$table) {
+    function fillTableSchema($database,$table) 
+    {
         global $_DB_DATAOBJECT;
          // a little bit of sanity testing.
         if ((false !== strpos($database,"'")) || (false !== strpos($database,";"))) {   
@@ -916,7 +937,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   string
     * @access   public
     */
-    function _generateGetters($input) {
+    function _generateGetters($input) 
+    {
 
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $getters = '';
@@ -968,7 +990,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   string
     * @access   public
     */
-    function _generateSetters($input) {
+    function _generateSetters($input) 
+    {
 
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $setters = '';
@@ -1010,5 +1033,183 @@ class DB_DataObject_Generator extends DB_DataObject
 
         return $setters;
     }
-
+    /**
+    * Generate table Function - used when generator_no_ini is set.
+    *
+    * @param    array  table array.
+    * @return   string
+    * @access   public
+    */
+    function _generateTableFunction($def) 
+    {
+        $defines = explode(',','INT,STR,DATE,TIME,BOOL,TXT,BLOB,NOTNULL,MYSQLTIMESTAMP');
+    
+        $ret = "\n" .
+               "    function table()\n" .
+               "    {\n" .
+               "         return array(\n";
+        
+        foreach($def as $k=>$v) {
+            $str = '0';
+            foreach($defines as $dn) {
+                if ($v & constant('DB_DATAOBJECT_' . $dn)) {
+                    $str .= ' + DB_DATAOBJECT_' . $dn;
+                }
+            }
+            if (strlen($str) > 1) {
+                $str = substr($str,3); // strip the 0 +
+            }
+            // hopefully addslashes is good enough here!!!
+            $ret .= '             \''.addslashes($k).'\' => ' . $str . ",\n";
+        }
+        return $ret . "         );\n" .
+                      "    }\n";
+            
+    
+    
+    }
+    /**
+    * Generate keys Function - used generator_no_ini is set.
+    *
+    * @param    array  keys array.
+    * @return   string
+    * @access   public
+    */
+    function _generateKeysFunction($def) 
+    {
+         
+        $ret = "\n" .
+               "    function keys()\n" .
+               "    {\n" .
+               "         return array(";
+            
+        foreach($def as $k=>$type) {
+            // hopefully addslashes is good enough here!!!
+            $ret .= '\''.addslashes($k).'\', ';
+        }
+        $ret = preg_replace('#, $#', '', $ret);
+        return $ret . ");\n" .
+                      "    }\n";
+            
+    
+    
+    }
+    /**
+    * Generate sequenceKey Function - used generator_no_ini is set.
+    *
+    * @param    array  table and key definition.
+    * @return   string
+    * @access   public
+    */
+    function _generateSequenceKeyFunction($def)
+    {
+    
+        //print_r($def);
+        //DB_DataObject::debugLevel(5);
+        global $_DB_DATAOBJECT;
+        // set the objects keys
+        $obj = new DB_DataObject;
+        $obj->_table = $this->table;
+        $obj->_database = $this->_database;
+        $obj->_database_dsn_md5 =  $this->_database_dsn_md5;
+        
+        // if the key is not an integer - then it's not a sequence or native
+        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table] = $def['table'];
+        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table."__keys"] = $def['keys'];
+        $ar = $obj->sequenceKey();
+        //print_r($obj);
+     
+        $ret = "\n" .
+               "    function sequenceKey() // keyname, use native, native name\n" .
+               "    {\n" .
+               "         return array(";
+        foreach($ar as $v) {
+            switch (gettype($v)) {
+                case 'boolean':
+                    $ret .= ($v ? 'true' : 'false') . ', ';
+                    break;
+                    
+                case 'string':
+                    $ret .= "'" . $v . "', ";
+                    break;
+                    
+                default:    // eak
+                    $ret .= "null, ";
+        
+            }
+        }
+        $ret = preg_replace('#, $#', '', $ret);
+        return $ret . ");\n" .
+                      "    }\n";
+        
+    }
+    /**
+    * Generate defaults Function - used generator_add_defaults or generator_no_ini is set.
+    * Only supports mysql and mysqli ... welcome ideas for more..
+    * 
+    *
+    * @param    array  table and key definition.
+    * @return   string
+    * @access   public
+    */
+    function _generateDefaultsFunction($table,$defs)
+    {
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        if (!in_array($__DB->phptype, array('mysql','mysqli'))) {
+            return; // cant handle non-mysql introspection for defaults.
+        }
+        
+        $res = $__DB->getAll('DESCRIBE ' . $table,DB_FETCHMODE_ASSOC);
+        $defaults = array();
+        foreach($res as $ar) {
+            // this is initially very dumb... -> and it may mess up..
+            $type = $defs[$ar['Field']];
+            switch (true) {
+                
+                case ($type &  DB_DATAOBJECT_DATE): // not supported yet..
+                case ($type & DB_DATAOBJECT_TIME): // not supported yet..
+                case ($type & DB_DATAOBJECT_MYSQLTIMESTAMP): // not supported yet..
+                    break;
+                    
+                case ($type & DB_DATAOBJECT_BOOL): // not supported yet..
+                    $defaults[$ar['Field']] = (int)(boolean) $ar['Default'];
+                    break;
+                    
+                
+                case ($type & DB_DATAOBJECT_STR): // not supported yet..
+                    $defaults[$ar['Field']] =  "'" . addslashes($ar['Default']) . "'";
+                    break;
+                    
+                default:    // hopefully eveything else...  - numbers etc.
+                    if (!strlen($ar['Default'])) {
+                        continue;
+                    }
+                    $defaults[$ar['Field']] =   $ar['Default'];
+                    break;
+            
+            }
+        }
+        if (empty($defaults)) {
+            return;
+        }
+        
+        $ret = "\n" .
+               "    function defaults() // column default values \n" .
+               "    {\n" .
+               "         return array(\n";
+        foreach($defaults as $k=>$v) {
+            $ret .= '             \''.addslashes($k).'\' => ' . $v . ",\n";
+        }
+        return $ret . "         );\n" .
+                      "    }\n";
+         
+     
+    
+    
+    }
+    
+    
+     
+    
+    
 }

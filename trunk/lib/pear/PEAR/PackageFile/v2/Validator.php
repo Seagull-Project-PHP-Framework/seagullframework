@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.85 2006/02/08 01:21:47 cellog Exp $
+// $Id: Validator.php,v 1.86 2006/03/02 18:14:13 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -226,7 +226,7 @@ class PEAR_PackageFile_v2_Validator
         $this->_validateRelease();
         if (!$this->_stack->hasErrors()) {
             $chan = $this->_pf->_registry->getChannel($this->_pf->getChannel(), true);
-            if (!$chan) {
+            if (PEAR::isError($chan)) {
                 $this->_unknownChannel($this->_pf->getChannel());
             } else {
                 $valpack = $chan->getValidationPackage();
