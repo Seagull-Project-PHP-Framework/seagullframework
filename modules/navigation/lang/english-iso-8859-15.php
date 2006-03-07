@@ -62,6 +62,7 @@
 /*  MESSAGES    */
         'Sections reordered successfully' => 'Sections reordered successfully',
         'Section successfully added' => 'Section successfully added',
+        'Section successfully added but alias creation failed as there can be no duplicates' => 'Section successfully added but alias creation failed as there can be no duplicates',
         'The selected section(s) have successfully been deleted' => 'The selected section(s) have successfully been deleted',
         'Section details successfully updated' => 'Section details successfully updated',
         'A section may not be a parent to itself and therefore was not moved.' => 'A section may not be a parent to itself and therefore was not moved.',

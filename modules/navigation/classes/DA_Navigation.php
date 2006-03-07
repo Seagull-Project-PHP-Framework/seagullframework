@@ -50,6 +50,7 @@ class DA_Navigation extends SGL_Manager
 {
     var $_params  = array();
     var $_message = '';
+    var $_aUriAliases = array();
 
     /**
      * Constructor - set default resources.
@@ -82,6 +83,9 @@ class DA_Navigation extends SGL_Manager
             'sequenceName'   => $this->conf['table']['section']);
         $this->nestedSet = &new SGL_NestedSet($this->_params);
 
+        //  load Uri Aliases
+        $this->_aUriAliases = $this->getAllAliases();
+        
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = &SGL_Translation::singleton('admin');
@@ -328,10 +332,16 @@ class DA_Navigation extends SGL_Manager
         return $this->dbh->query($query);
     }
 
+    function isUriAliasDuplicated($aliasName) {
+        if (array_key_exists($aliasName, $this->_aUriAliases)) {
+            return SGL_ERROR_INVALIDREQUEST;
+        } else {
+            return false;
+        }
+    }
     function addUriAlias($id, $aliasName, $target)
     {
         $aliasName = $this->dbh->quoteSmart($aliasName);
-
         $query = "
             INSERT INTO {$this->conf['table']['uri_alias']}
             (uri_alias_id, uri_alias, section_id)
@@ -378,6 +388,12 @@ class DA_Navigation extends SGL_Manager
             //  for joins from the block_assignment table
             unset($sectionNodes[0]);
 
+            //  check for aliases
+            foreach ($sectionNodes as $k => $aValues) {
+                if (preg_match('/(uriAlias:)([0-9]+:)(.*)/', $aValues['resource_uri'], $aMatches)) {
+                    $sectionNodes[$k]['uri_alias'] = $this->getAliasBySectionId($k);
+                }
+            }
             $this->nestedSet->addImages($sectionNodes);
             return $sectionNodes;
         } else {
@@ -427,8 +443,16 @@ class DA_Navigation extends SGL_Manager
 
         //  prepare resource_uri string for alias format
         if (!empty($section['uri_alias'])) {
-            $nextAliasId = $this->dbh->nextId($this->conf['table']['uri_alias']);
-            $section['resource_uri'] = 'uriAlias:' . $nextAliasId .':' . $section['resource_uri'];
+            $aliasName = SGL_String::dirify($section['uri_alias']);
+            if (!$this->isUriAliasDuplicated($aliasName)) {
+                $aliasNextId = $this->dbh->nextId($this->conf['table']['uri_alias']);
+                $section['resource_uri'] = 'uriAlias:' . $aliasNextId .':' . $section['resource_uri'];
+                $msgType = SGL_MESSAGE_INFO;
+                $msgAdditional = '';
+            } else {
+                $msgType = SGL_MESSAGE_WARNING;
+                $msgAdditional = ' but alias creation failed as there can be no duplicates';
+            }
         }
 
         //  fetch next id
@@ -452,16 +476,13 @@ class DA_Navigation extends SGL_Manager
         }
         $this->_message = "Section successfully added";
 
-        //  deal with potential alias
-        if (!empty($section['uri_alias'])) {
-            $aliasName = SGL_String::dirify($section['uri_alias']);
+        //  deal with potential alias to add
+        if (isset($aliasNextId)) {
             $target = $nodeId;
-            $ok = $this->addUriAlias($nextAliasId, $aliasName, $target);
-            if (PEAR::isError($ok)) {
-                $this->_message .= ' but alias creation failed as there can be no duplicates';
-            }
+            $ok = $this->addUriAlias($aliasNextId, $aliasName, $target);
         }
-        return true;
+        $this->_message .= $msgAdditional;
+        return $msgType;
     }
 
     /**

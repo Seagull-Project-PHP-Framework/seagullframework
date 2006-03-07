@@ -23,8 +23,8 @@
                         <th width="3%">{translate(#ID#)}</th>
                         <th width="10%">{translate(#move#,#ucfirst#)}</th>
                         <th width="35%" class="left">{translate(#Title#)}</th>
-                        <th width="30%" class="left">{translate(#Resource URI#)}</th>
-                        <th width="10%">{translate(#Parent ID#)}</th>
+                        <th width="32%" class="left">{translate(#Resource URI#)}</th>
+                        <th width="8%">{translate(#Parent ID#)}</th>
                         <th width="4%">{translate(#Order#)}</th>
                         <th width="5%">{translate(#Status#)}</th>
                     </tr>
@@ -51,7 +51,7 @@
                         </td>
                         <td class="left">{foreach:section[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:}
                             <a flexy:if="fallbackLang" href="{makeUrl(#edit#,#section#,#navigation#,results,#frmSectionId|section_id||frmNavLang|fallbackLang#,key)}">{section[title]:h}</a>
-                            <a flexy:if="!fallbackLang" href="{makeUrl(#edit#,#section#,#navigation#,results,#frmSectionId|section_id#,key)}">{section[title]:h}</a></td>
+                            <a flexy:if="!fallbackLang" href="{makeUrl(#edit#,#section#,#navigation#,results,#frmSectionId|section_id#,key)}" title="{translate(#Alias#)} : {section[uri_alias]}">{section[title]:h}</a></td>
                         <td class="left">{summarise(section[resource_uri],#42#,#1#)}</td>
                         <td>{section[parent_id]}</td>
                         <td>{section[order_id]}</td>

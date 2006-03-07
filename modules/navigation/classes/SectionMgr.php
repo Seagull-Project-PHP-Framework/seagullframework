@@ -211,9 +211,9 @@ class SectionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-
-        if ($this->da->addSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, SGL_MESSAGE_INFO);
+        $msgType = $this->da->addSection($input->section);
+        if ($msgType) {
+            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }

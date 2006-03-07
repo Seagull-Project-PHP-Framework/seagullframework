@@ -92,6 +92,7 @@ $words['new style'] = 'nouveau style';
 $words['edit navigation template'] = 'éditer le template de navigation';
 $words['Sections reordered successfully'] = 'Les sections ont été réorganisées avec succès';
 $words['Section successfully added'] = 'La section a été ajoutée avec succès';
+$words['Section successfully added but alias creation failed as there can be no duplicates'] = 'La section a été ajoutée avec succès, mais cet alias existe déjà et n\'a donc pas été créé';
 $words['The selected section(s) have successfully been deleted'] = 'La (les) section(s) sélectionnée(s) a(ont) été supprimée(s) avec succès';
 $words['Section details successfully updated'] = 'Les détails de la section ont été mis à jour avec succès';
 $words['A section may not be a parent to itself and therefore was not moved.'] = 'Une section ne peut être son propre parent et n\'a par conséquent pas été déplacée.';
