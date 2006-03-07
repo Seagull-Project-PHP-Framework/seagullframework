@@ -115,7 +115,7 @@ class SGL_ErrorHandler
      *  o obeys @muffled errors,
      *  o error logged to selected target
      *  o context info presented for developer
-     *  o error data emailed to admin if theshold passed
+     *  o error data emailed to admin if threshold passed
      *
      * @access  public
      * @param   int     $errNo      PHP's error number
