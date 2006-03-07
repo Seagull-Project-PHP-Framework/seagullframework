@@ -631,7 +631,9 @@ div.close span {
 }
 
 /*
-=========================Messages=============================*/
+===========================Messages==============================*/
+
+/*-- Seagull Errors ---------------------------------------------*/
 .message {
     text-align: center;
     font-size: 0.9em;
@@ -662,6 +664,32 @@ div.close span {
 }
 .error, .required {
     color: <?php echo $errorMessage ?>;
+}
+
+/*-- PHP Errors by ErrorHandler.php -----------------------------*/
+
+
+/*-- PEAR Errors ------------------------------------------------*/
+.errorContainer {
+    text-align: left;
+}
+.errorContainer div{
+    width: 80%;
+    margin: 0;
+    border: none;
+}
+.errorContainer .errorHeader {
+    background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
+    text-align: center;
+    text-transform: uppercase ;
+    font-size: 1.2em;
+    font-weight: bold;
+    letter-spacing: 0.3em;
+    color: <?php echo $errorMessage ?>;
+    
+}
+.errorContainer .errorContent {
+
 }
 
 /*-- Errors in submitted forms ----------------------------------*/
