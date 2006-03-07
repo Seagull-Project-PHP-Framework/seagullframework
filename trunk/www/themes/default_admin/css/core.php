@@ -316,6 +316,7 @@ div.fieldsetlike { /*
 div.fieldsetlike h3 {
     margin-bottom: 0.5em;
     font-size: 1.2em;
+    color: <?php echo $tertiaryDark ?>;
 }
 /*
 ===================Forms default layout=======================*/
@@ -363,11 +364,10 @@ fieldset.options {
 form h3 {
     margin-bottom: 0.5em;
     font-size: 1.2em;
+    color: <?php echo $tertiaryDark ?>;
 }
 fieldset h3 {
-    margin-bottom: 0.5em;
     font-size: 1.1em;
-    color: <?php echo $tertiaryDarkest ?>;
 }
 fieldset p {
     line-height: 1.8;
