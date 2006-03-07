@@ -28,7 +28,7 @@ class FaqScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/login/');
         $this->setField('frmUsername', 'admin');
         $this->setField('frmPassword', 'admin');
-        $this->clickSubmit('Login');
+        $this->clickSubmitByName('submitted');
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
         $this->assertTitle('Seagull Framework :: FAQ Manager :: Browse');
