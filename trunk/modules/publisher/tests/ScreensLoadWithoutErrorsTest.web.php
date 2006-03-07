@@ -20,7 +20,7 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
 //        $this->assertTitle('Seagull Framework :: Content Reshuffle');
 //        $this->assertWantedPattern("/No article found for that ID/");
 
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/action/summary/');
         $this->assertTitle('Seagull Framework :: Article Browser');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
@@ -31,7 +31,7 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/login/');
         $this->setField('frmUsername', 'admin');
         $this->setField('frmPassword', 'admin');
-        $this->clickSubmit('Login');
+        $this->clickSubmitByName('submitted');
 
         //  publisher
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');

@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__). '/../classes/SimpleNav.php';
+require_once dirname(__FILE__). '/../classes/SimpleDriver.php';
 
 /**
  * Test suite.
@@ -8,11 +8,11 @@ require_once dirname(__FILE__). '/../classes/SimpleNav.php';
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: TestSimpleNav.php,v 1.1 2005/05/08 21:29:06 demian Exp $
  */  
-class TestSimpleNav extends UnitTestCase {
+class TestSimpleDriver extends UnitTestCase {
 
-    function TestSimpleNav()
+    function TestSimpleDriver()
     {
-        $this->UnitTestCase('SimpleNav Test');
+        $this->UnitTestCase('SimpleDriver Test');
     }
 
     function testReplacePlusesWithSpacesCallback()
