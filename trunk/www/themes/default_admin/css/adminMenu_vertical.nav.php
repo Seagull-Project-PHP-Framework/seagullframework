@@ -45,17 +45,14 @@
     text-indent: 30px;
 }
 #nav li.current li a {
-    background: <?php echo $primaryLightest ?>;
     color: <?php echo $tertiaryDarkest ?>;
 }
 #nav li.current li a:hover {
-    background: <?php echo $primaryLight ?>;
     color: <?php echo $tertiaryLightest ?>;
 }
 #nav li.current li.current a {
-    background: <?php echo $primaryLight ?>;
-    font-weight: bold;
     color: <?php echo $primary ?>;
+    background: <?php echo $tertiaryLightest ?>;
 }
 
 /*
@@ -69,14 +66,17 @@
     border-bottom: 1px solid <?php echo $borderDark ?>;
 }
 #nav li.current li.current li a {
-    padding-left: 10px;
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_empty.gif') 28px 50% no-repeat;
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_empty.gif') 32px 50% no-repeat;
     border: none;
+    height: 24px;
+    line-height: 24px;
+    text-indent: 45px;
+    font-size: 0.9em;
 }
 #nav li.current li.current li.current a {
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 28px 50% no-repeat;
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
 }
 #nav li.current li.current li a:hover {
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 28px 50% no-repeat;
+    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
     color: <?php echo $primary ?>;
 }
