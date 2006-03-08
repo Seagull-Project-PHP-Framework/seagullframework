@@ -330,11 +330,13 @@ class Block
             foreach ($this->sections as $section) {
 
                 // Insert a block_assignment record for each assigned sections
-                $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
-                $block_assignment->block_id = $this->block->block_id;
-                $block_assignment->section_id = $section->section_id;
-                $block_assignment->insert();
-                unset($block_assignment);
+                if (is_object($section)) {
+                    $block_assignment = DB_DataObject::factory($this->conf['table']['block_assignment']);
+                    $block_assignment->block_id = $this->block->block_id;
+                    $block_assignment->section_id = $section->section_id;
+                    $block_assignment->insert();
+                    unset($block_assignment);
+                }
             }
 
             // Delete all block roles records for this block
