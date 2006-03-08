@@ -15,7 +15,7 @@
     $tertiaryLight          = '#eeeeee'; // light gray
     $tertiaryMedium         = '#bcbcbc'; // medium gray
     $tertiaryDark           = '#999999'; // dark gray
-    $tertiaryDarker         = '#666666'; // darker gray
+    $tertiaryDarker         = '#3f3f3f'; // darker gray
 
     $blocksMarginTop        = '107px';
     $blocksWidthLeft        = '180px';
