@@ -1,12 +1,12 @@
 <?php
-$words['aSecurityQuestions'][0] = 'Name des Lieblingsfilms';
-$words['aSecurityQuestions'][1] = 'Name des Liebling-Song';
-$words['aSecurityQuestions'][2] = 'Name des Lieblings-Cocktails';
-$words['aSecurityQuestions'][3] = '';
-$words['aSecurityQuestions'][4] = 'Name des Lieblingstieres';
-$words['aSecurityQuestions'][5] = 'Wichtiges Datum';
-$words['aSecurityQuestions'][6] = 'Wichtiger Platz';
-$words['aSecurityQuestions'][7] = 'Mädchenname der Mutter';
+$words['aSecurityQuestions'][0] = '';
+$words['aSecurityQuestions'][1] = 'Name des Lieblingstieres';
+$words['aSecurityQuestions'][2] = 'Wichtiges Datum';
+$words['aSecurityQuestions'][3] = 'Wichtiger Platz';
+$words['aSecurityQuestions'][4] = 'Mädchenname der Mutter';
+$words['aSecurityQuestions'][5] = 'Name des Lieblingsfilms';
+$words['aSecurityQuestions'][6] = 'Name des Liebling-Songs';
+$words['aSecurityQuestions'][7] = 'Name des Lieblings-Cocktails';
 $words['Connections list for user'] = 'Verbindungsliste für Benutzer';
 $words['Connection list'] = 'Verbindungsliste';
 $words['Use the document manager to upload CSV files.'] = 'Benutzen Sie den Dokument-Manager um CSV-Dateien hochzuladen';
