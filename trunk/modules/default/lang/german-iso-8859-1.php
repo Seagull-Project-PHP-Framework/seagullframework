@@ -352,6 +352,7 @@ $defaultWords['please specify an option'] = 'Bitte geben Sie eine Option an';
 $defaultWords['please check at least one box'] = 'Bitte klicken Sie mindestens eine Kästchen an';
 $defaultWords['please enter module name'] = 'Bitte geben Sie einen Modulnamen an';
 $defaultWords['please enter manager name'] = 'Bitte geben Sie einen Managernamen an';
+$defaultWords['module already exists. Please choose another module name'] = 'Das Modul existiert bereits. Bitte geben Sie einen anderen Modulnamen an';
 $defaultWords['navigation'] = 'Navigation';
 $defaultWords['blocks'] = 'Blöcke';
 $defaultWords['categories'] = 'Kategorien';

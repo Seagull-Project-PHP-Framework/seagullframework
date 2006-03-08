@@ -80,10 +80,15 @@ class ModuleGenerationMgr extends SGL_Manager
             //  checks for creating modules
             if ($input->action == 'createModule') {
                 if (empty($input->createModule->moduleName)) {
-                    $aErrors['moduleName'] = SGL_Output::translate('please enter module name');
+                    $aErrors['moduleName'] = 'please enter module name';
                 }
                 if (empty($input->createModule->managerName)) {
-                    $aErrors['managerName'] = SGL_Output::translate('please enter manager name');
+                    $aErrors['managerName'] = 'please enter manager name';
+                }
+                //  check if a module with this name already exists
+                $aModules = SGL_Util::getAllModuleDirs(false);
+                if (in_array($input->createModule->moduleName, $aModules)) {
+                    $aErrors['moduleName'] = 'module already exists. Please choose another module name';
                 }
             }
         }
