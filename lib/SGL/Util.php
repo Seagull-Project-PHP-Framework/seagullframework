@@ -175,6 +175,14 @@ class SGL_Util
         return $ret;
     }
 
+    /**
+     * Returns an array of strings containing the installed (and registered) Modules
+     *
+     * @static
+     * @access  public
+     * @return  array
+     * @param   bool $onlyRegistered
+     */
 
     function getAllModuleDirs($onlyRegistered = true)
     {
@@ -342,9 +350,9 @@ class SGL_Util
         $aLangs = array();
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $keyId = ($langKeyType) 
-                ? SGL_Translation::transformLangID($id, $langKeyType) 
-                : $id; 
+            $keyId = ($langKeyType)
+                ? SGL_Translation::transformLangID($id, $langKeyType)
+                : $id;
             if (count($aSelected) && in_array($id, $aSelected)) {
                 $aSelectedLangs[$keyId] =  $langName . ' (' . $id . ')';
             } else {
