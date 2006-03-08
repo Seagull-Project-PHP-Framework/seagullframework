@@ -18,10 +18,11 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', @module
 # Dumping data for table `section`
 #
 
-INSERT INTO `section` VALUES (2, 'User menu', 'uriEmpty:', '-2', 2, 0, 2, 1, 6, 1, 1, 1, 0, '1', '');
+INSERT INTO `section` VALUES (0, 'root', 'uriEmpty:', '1', 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '');
+INSERT INTO `section` VALUES (2, 'User menu', 'uriEmpty:', '-2', 2, 0, 2, 1, 6, 1, 1, 1, 0, '', '');
 INSERT INTO `section` VALUES (4, 'Admin menu', 'uriEmpty:', '1', 4, 0, 4, 1, 50, 2, 1, 1, 0, '', '');
 INSERT INTO `section` VALUES (9, 'My Account', 'user/account', '2', 9, 2, 2, 4, 5, 2, 2, 1, 0, '', '');
-INSERT INTO `section` VALUES (6, 'Home', 'default/default', '-2', 6, 2, 2, 2, 3, 1, 2, 1, NULL, NULL, NULL);
+INSERT INTO `section` VALUES (6, 'Home', 'default/default', '-2', 6, 2, 2, 2, 3, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (51, 'Manage navigation', 'navigation/section', '1', 51, 23, 4, 17, 18, 1, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (13, 'General', 'default/module', '1', 13, 4, 4, 2, 15, 1, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (15, 'Configuration', 'default/config', '1', 15, 13, 4, 5, 6, 2, 3, 1, 0, '', '');
@@ -42,7 +43,8 @@ INSERT INTO `section` VALUES (43, 'Manage preferences', 'user/preference', '1', 
 INSERT INTO `section` VALUES (45, 'My Account', 'user/account', '1', 45, 4, 4, 42, 49, 6, 2, 1, 0, '', '');
 INSERT INTO `section` VALUES (47, 'View Profile', 'user/account/action/viewProfile', '1', 47, 45, 4, 45, 46, 2, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (49, 'Edit Preferences', 'user/userpreference', '1', 49, 45, 4, 47, 48, 3, 3, 1, 0, '', '');
-INSERT INTO `section` VALUES (53, 'Manage modules', 'default/module', '1', 53, 13, 4, 3, 4, 1, 3, 1, NULL, NULL, NULL);
+INSERT INTO `section` VALUES (53, 'Manage modules', 'default/module', '1', 53, 13, 4, 3, 4, 1, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (59, 'Manage blocks', 'block/block', '1', 59, 25, 4, 21, 22, 1, 3, 1, 0, '', '');
-INSERT INTO `section` VALUES (61, 'Summary', 'user/account', '1', 61, 45, 4, 43, 44, 1, 3, 1, NULL, NULL, NULL);
+INSERT INTO `section` VALUES (61, 'Summary', 'user/account', '1', 61, 45, 4, 43, 44, 1, 3, 1, 0, '', '');
 INSERT INTO `section` VALUES (63, 'PEAR packages', 'default/pear', '1', 63, 13, 4, 13, 14, 6, 3, 1, 0, '', '');
+INSERT INTO `section` VALUES (65, 'Administrator', 'uriNode:13', '1', 65, 2, 2, 6, 7, 3, 2, 1, 0, '', '');

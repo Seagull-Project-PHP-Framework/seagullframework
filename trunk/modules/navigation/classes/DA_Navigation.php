@@ -421,6 +421,7 @@ class DA_Navigation extends SGL_Manager
             $lang          = SGL_Translation::getLangID();
             $aTranslations = SGL_Translation::getTranslations('nav', $lang);
         }
+        unset($sectionNodesArray[0]);
         foreach ($sectionNodesArray as $k => $sectionNode) {
             if ($sectionNode['trans_id']
                     && array_key_exists($sectionNode['trans_id'], $aTranslations)) {
@@ -429,7 +430,6 @@ class DA_Navigation extends SGL_Manager
             $spacer = str_repeat('&nbsp;&nbsp;', $sectionNode['level_id']-1);
             $aSections[$sectionNode['section_id']] = $spacer . $sectionNode['title'];
         }
-        unset($aSections[0]);
         return $aSections;
     }
 
