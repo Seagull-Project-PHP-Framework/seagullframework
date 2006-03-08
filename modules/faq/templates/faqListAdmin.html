@@ -7,8 +7,8 @@
     <table class="wide">
         <tr>
             <td colspan="6">
-                <input type="button" value="{translate(#new faq#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#faq#)}'" /> 
-                <input type="button" value="{translate(#reorder#)}" onclick="javascript:document.location.href='{makeUrl(#reorder#,#faq#)}'" />
+                <input type="button" value="{translate(#new faq#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#adminfaq#)}'" />
+                <input type="button" value="{translate(#reorder#)}" onclick="javascript:document.location.href='{makeUrl(#reorder#,#adminfaq#)}'" />
             </td>
         </tr>
 
@@ -28,14 +28,14 @@
             <td align="center">{formatDate(valueObj.date_created)}</td>
             <td align="center">{valueObj.item_order}</td>
             <td align="center">
-                <a href="{makeUrl(#edit#,#faq#,##,results,#frmFaqId|faq_id#,key)}">
+                <a href="{makeUrl(#edit#,#adminfaq#,##,results,#frmFaqId|faq_id#,key)}">
                     <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
                 </a>
             </td>
         </tr>
 
         <tr>
-            <td colspan="6">{translate(#With selected faq(s)#)}: 
+            <td colspan="6">{translate(#With selected faq(s)#)}:
             <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('faq', 'faqs')" /></td>
         </tr>
     </table>
