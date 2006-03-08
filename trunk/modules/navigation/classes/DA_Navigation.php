@@ -212,7 +212,7 @@ class DA_Navigation extends SGL_Manager
                     $section['add_params'] = null;
                 }
                 //  deal with static articles
-                if ($section['is_static'] && $this->moduleIsRegistered('publisher')) {
+                if ($section['is_static'] && DA_Default::moduleIsRegistered('publisher')) {
                     if (isset($parsed['parsed_params'])) {
                         $section['staticArticleId'] = $parsed['parsed_params']['frmArticleID'];
                     }
