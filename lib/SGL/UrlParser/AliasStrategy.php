@@ -32,8 +32,8 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
-        //	The alias will always be the second uri part in the array
-        //	FIXME: needs to be more flexible
+        //    The alias will always be the second uri part in the array
+        //    FIXME: needs to be more flexible
         $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
         $ret = array();
         if (count($aUriParts) > $countUriParts) {
@@ -41,7 +41,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 
             //  If alias exists, update the alias in the uri with the specified resource
             if (array_key_exists($alias, $aUriAliases)) {
-                $key = $aUriAliases[$alias];
+                $key = $aUriAliases[$alias]->resource_uri;
 
                 // records stored in section table in following format:
                 // uriAlias:10:default/bug

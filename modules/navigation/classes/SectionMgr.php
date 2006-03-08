@@ -211,8 +211,7 @@ class SectionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        $msgType = $this->da->addSection($input->section);
-        if ($msgType) {
+        if ($msgType = $this->da->addSection($input->section)) {
             SGL::raiseMsg($this->da->getMessage(), true, $msgType);
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
@@ -227,8 +226,8 @@ class SectionMgr extends SGL_Manager
 
         $input->section['lang'] = $input->navLang;
 
-        if ($this->da->updateSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, SGL_MESSAGE_INFO);
+        if ($msgType = $this->da->updateSection($input->section)) {
+            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }
@@ -246,12 +245,13 @@ class SectionMgr extends SGL_Manager
             }
             SGL::raiseMsg('The selected section(s) have successfully been deleted',
                 true, SGL_MESSAGE_INFO);
+
+            //  clear cache so a new cache file is built reflecting changes
+            SGL_Cache::clear('nav');
         } else {
-            SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            SGL::raiseMsg('There is no section to delete',
+                true, SGL_MESSAGE_ERROR);
         }
-        //  clear cache so a new cache file is built reflecting changes
-        SGL_Cache::clear('nav');
     }
 
     function _cmd_reorder(&$input, &$output)

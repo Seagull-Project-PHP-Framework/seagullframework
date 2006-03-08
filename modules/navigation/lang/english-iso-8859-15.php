@@ -71,6 +71,7 @@
         'Current style successfully changed' => 'Current style successfully changed',
         'Style values successfully saved' => 'Style values successfully saved',
         'Section details updated, no data changed' => 'Section details updated, no data changed',
+        'There is no section to delete' => 'There is no section to delete',
 
 /*  CATEGORY MGR    */
         'Categories' => 'Categories',
