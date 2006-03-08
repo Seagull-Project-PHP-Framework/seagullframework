@@ -174,16 +174,6 @@ a:hover {
     color: <?php echo $secondaryDarker ?>;
     text-decoration: none;
 }
-.linkCrumbsAlt1 {
-    text-decoration: none;
-    color: <?php echo $secondaryDarker ?>;
-    font-weight: normal;
-    letter-spacing: 0.5px;
-}
-.linkCrumbsAlt1:hover {
-    text-decoration: underline;
-    color: <?php echo $secondaryDarker ?>;
-}
 
 /***************************** CONTENT : TABLES *******************************/
 
@@ -287,12 +277,6 @@ img {
     font-weight: bold;
     text-align: right;
     line-height: 18px;
-}
-.newsItem {
-    border: 1px solid <?php echo $tertiaryDark ?>;
-    margin: 0 auto;
-    padding: 0 10px 10px 10px;
-    background-color: <?php echo $errorTextLight ?>;
 }
 .pager {
     background-color: <?php echo $errorTextLight ?>;
@@ -441,64 +425,6 @@ ul.bullets li {
     display: block;
 }
 
-/*************************** MODULE: NAVIGATION *******************************/
-
-#navPreview {
-    position: relative;
-    border: 1px dashed <?php echo $tertiary ?>;
-}
-#navPreview span {
-    z-index: 5;
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    font-size: 2em;
-    color: <?php echo $tertiary ?>;
-    text-transform: uppercase;
-}
-
-/*************************** MODULE: PUBLISHER ********************************/
-
-.sectionHeader {
-    font-size: 1.3em;
-    font-weight: normal;
-    color: <?php echo $sectionHeaderColor ?>;
-    background-color: <?php echo $sectionHeaderBackground ?>;
-    padding-left: 10px;
-    line-height: 34px;
-    letter-spacing: 1px;
-    margin: 0;
-}
-.colHeader {
-    color: <?php echo $colHeaderColor ?>;
-    background-color: <?php echo $colHeaderBackground ?>;
-    font-size: 11px;
-    line-height: 20px;
-    font-weight: normal;
-    padding-left: 10px;
-    letter-spacing: 0.5px;
-    margin: 2px 0 0 0;
-}
-
-/* /////////////// Article Manager /////////////// */
-
-.forApproval {
-    font-weight: bold;
-    color: <?php echo $forApproval ?>;
-}
-.approved {
-    font-weight: bold;
-    color: <?php echo $approved ?>;
-}
-.published {
-    font-weight: bold;
-    color: <?php echo $published ?>;
-}
-.archived {
-    font-weight: bold;
-    color:  <?php echo $archived ?>;
-}
-
 /******************************* DEPRECATED ***********************************/
 
 .bgnd {
@@ -515,6 +441,12 @@ ul.bullets li {
 .moduleOverview {
     width: 20.5em;
     height: 8em;
+}
+.newsItem {
+    border: 1px solid <?php echo $tertiaryDark ?>;
+    margin: 0 auto;
+    padding: 0 10px 10px 10px;
+    background-color: <?php echo $errorTextLight ?>;
 }
 .pinstripe table {
     background-color: <?php echo $tertiaryLight ?>;
