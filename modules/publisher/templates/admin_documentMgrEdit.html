@@ -1,6 +1,6 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('editAsset')">{translate(#Save#)}</a>
+    <a class="action save" href="javascript:formSubmit('editAsset','submitted',1,1)">{translate(#Save#)}</a>
     <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
@@ -11,9 +11,6 @@
     <form method="post" name="editAsset" flexy:ignore id="editAsset">
         <h3>{translate(#Editing Asset#)} '{asset.name}'</h3>
         <fieldset class="inside">
-            <div class="floatRight">
-                <input class="sgl-button" type="submit" name="submit" value="{translate(#Save#)}" />
-            </div>
             <input type="hidden" name="action" value="update" />
             <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
             <input type="hidden" name="document[added_by]" value="{loggedOnUserID}" />
