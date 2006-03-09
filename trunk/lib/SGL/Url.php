@@ -305,16 +305,16 @@ class SGL_URL
                     break;
 
                 case 'query':
-                	if (isset($urlinfo['query']) && empty($this->querystring)) {
-						$this->querystring = $urlinfo['query'];
-                	}
-                	$ret = $this->parseQueryString($this->conf);
+                    if (isset($urlinfo['query']) && empty($this->querystring)) {
+                        $this->querystring = $urlinfo['query'];
+                    }
+                    $ret = $this->parseQueryString($this->conf);
 
-                	if (PEAR::isError($ret)) {
-                	    return $ret;
-                	} else {
+                    if (PEAR::isError($ret)) {
+                        return $ret;
+                    } else {
                         $this->aQueryData = $ret;
-                	}
+                    }
                     //  populate querystring property
                     $this->querystring =    $this->getModuleName() .'/'.
                                             $this->getManagerName() .'/'.
@@ -329,11 +329,11 @@ class SGL_URL
             if (!array_key_exists('query', $urlinfo)) {
                 $ret = $this->parseQueryString($this->conf);
 
-            	if (PEAR::isError($ret)) {
-            	    return $ret;
-            	} else {
+                if (PEAR::isError($ret)) {
+                    return $ret;
+                } else {
                     $this->aQueryData = $ret;
-            	}
+                }
             }
             return true;
         }
@@ -489,10 +489,10 @@ class SGL_URL
     {
         $aStratNames = array();
         foreach ($aStrats as $strategy) {
-        	$aStratNames[] = get_class($strategy);
+            $aStratNames[] = get_class($strategy);
         }
-		$fingerprint = implode('', $aStratNames);
-		return $fingerprint;
+        $fingerprint = implode('', $aStratNames);
+        return $fingerprint;
     }
 
     /**
@@ -513,11 +513,12 @@ class SGL_URL
                    . $this->getFrontScriptName();
 
         //  add a trailing slash if one is not present
-        $qs = $this->getQueryString();
-        if ($qs{0} != '/' && substr($retUrl, -1) != '/') {
-            $qs = '/'.$qs;
+        $qs  = $this->getQueryString();
+        $qs .= !empty($this->anchor) ? '#' . $this->anchor : '';
+        if (!empty($qs) && $qs{0} != '/' && substr($retUrl, -1) != '/') {
+            $qs = '/' . $qs . (!empty($this->anchor) ? '#' . $this->anchor : '');
         }
-        $retUrl .= $qs . (!empty($this->anchor) ? '#' . $this->anchor : '');
+        $retUrl .= $qs;
         return $retUrl;
     }
 
