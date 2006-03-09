@@ -92,6 +92,7 @@ class OrgPreferenceMgr extends PreferenceMgr
         $output->aThemes = $this->aThemes;
         $output->aTimeouts = $this->aTimeouts;
         $output->aResPerPage = $this->aResPerPage;
+        $output->orgName = $this->da->getOrgNameById($input->orgId);
         $output->prefs = $aPrefs;
     }
 

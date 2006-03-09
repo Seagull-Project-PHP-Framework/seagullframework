@@ -115,6 +115,10 @@ class UserImportMgr extends UserMgr
         }
 
         $output->aFiles = $this->_getCsvFiles();
+        //  if no .csv files, give this information to user
+        if (empty($output->aFiles)) {
+            $output->noCsvFile = true;
+        }
     }
 
     function _cmd_list(&$input, &$output)
@@ -142,7 +146,7 @@ class UserImportMgr extends UserMgr
             $input->user = $user;
 
             //  call parent _insert method
-            $this->_insert($input, $output);
+            parent::_cmd_insert($input, $output);
         }
     }
 
@@ -159,6 +163,17 @@ class UserImportMgr extends UserMgr
 
     function _getCsvFiles()
     {
+        //  first check if upload folder exists, if not create it
+        if (!is_writable(SGL_UPLOAD_DIR)) {
+            include_once 'System.php';
+            $success = System::mkDir(array(SGL_UPLOAD_DIR));
+            if (!$success) {
+                SGL::raiseError('The upload directory does not appear to be writable, please give the
+                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+                return false;
+            }
+        }
+
         //  get array of files in upload folder
         if (@$fh = opendir(SGL_UPLOAD_DIR)) {
             while (false !== ($file = readdir($fh))) {
@@ -208,7 +223,7 @@ class UserImportMgr extends UserMgr
             //  build user structure
             $aRecord['firstname'] = @$aFnMatches[0];
             $aRecord['lastname'] = $lastName;
-            $aRecord['email'] = $aLine[4];
+            $aRecord['email'] = $aLine[2];
             $aResults[] = $aRecord;
             unset($aRecord);
         }
