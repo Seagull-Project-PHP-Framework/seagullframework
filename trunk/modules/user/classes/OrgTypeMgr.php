@@ -136,7 +136,7 @@ class OrgTypeMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'orgTypeAdd.html';
+        $output->template = 'orgTypeEdit.html';
         $output->isEdit = true;
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
