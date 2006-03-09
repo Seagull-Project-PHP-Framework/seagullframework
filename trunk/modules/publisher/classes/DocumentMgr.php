@@ -124,16 +124,20 @@ class DocumentMgr extends FileMgr
             : $input->document->orig_name;
 
         //  if document has been uploaded
-        if ($input->assetFileName != '') {
-            $ext = end(explode('.', $input->assetFileName));
+        if ($input->assetFileArray) {
+            if ($input->assetFileName != '') {
+                $ext = end(explode('.', $input->assetFileName));
 
-            //  check uploaded file is of valid type
-            if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
-                $aErrors[] = SGL_String::translate('Error: Not a recognised file type');
-            }
-            //  ... and does not exist in uploads dir
-            if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
-                $aErrors[] = SGL_String::translate('Error: A file with this name already exists');
+                //  check uploaded file is of valid type
+                if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
+                    $aErrors[] = SGL_String::translate('Error: Not a recognised file type');
+                }
+                //  ... and does not exist in uploads dir
+                if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
+                    $aErrors[] = SGL_String::translate('Error: A file with this name already exists');
+                }
+            } else {
+                $aErrors[] = SGL_String::translate('You must select a file to upload');
             }
         }
 
