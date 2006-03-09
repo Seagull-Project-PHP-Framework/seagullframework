@@ -304,14 +304,16 @@ class UserMgr extends RegisterMgr
                 		{$this->conf['table']['organisation']} o,
                 		{$this->conf['table']['role']} r
                 WHERE   o.organisation_id = u.organisation_id
-                AND     r.role_id = u.role_id " .
-                $orderBy_query;
+                AND     r.role_id = u.role_id
+                AND     u.usr_id <> 0
+                $orderBy_query";
         } else {
             $query = "
                 SELECT  u.*, r.name AS role_name
                 FROM    {$this->conf['table']['user']} u, {$this->conf['table']['role']} r
-                WHERE   r.role_id = u.role_id " .
-                $orderBy_query;
+                WHERE   r.role_id = u.role_id
+                AND     u.usr_id <> 0
+                $orderBy_query";
         }
 
         $limit = $_SESSION['aPrefs']['resPerPage'];

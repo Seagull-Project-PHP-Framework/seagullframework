@@ -25,8 +25,8 @@
                                 <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('frmPrefManager', 'frmDelete[]', this.checked)" />
                             </span>
                         </th>
-                        <th width="5%">{translate(#ID#)}</th>
-                        <th width="22%" class="left">{translate(#Name#)}</th>
+                        <th width="5%"><a href="{makeUrl(#list#,#preference#,#user#,##,#frmSortBy|preference_id||frmSortOrder|sortOrder#)}">{translate(#ID#)}</a>{if:sort_preference_id}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                        <th width="22%" class="left"><a href="{makeUrl(#list#,#preference#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a>{if:sort_name}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                         <th width="70%" class="left">{translate(#Default value#)}</th>
                     </tr>
                 </thead>
