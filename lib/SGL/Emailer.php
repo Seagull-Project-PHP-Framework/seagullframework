@@ -139,7 +139,7 @@ class SGL_Emailer
             'head_charset' => $GLOBALS['_SGL']['CHARSET'],
         ));
         $headers = $mime->headers($this->headers);
-        #$headers = $this->cleanMailInjection($headers);
+        $headers = $this->cleanMailInjection($headers);
         $mail = & SGL_Emailer::factory();
         return $mail->send($this->options['toEmail'], $headers, $body);
     }
