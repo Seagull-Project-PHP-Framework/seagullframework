@@ -1,3 +1,5 @@
+
+
 .sectionHeader {
     font-size: 1.3em;
     font-weight: normal;
@@ -29,21 +31,8 @@
     color: <?php echo $secondaryDarker ?>;
 }
 
-/* /////////////// Article Manager /////////////// */
-
-.forApproval {
-    font-weight: bold;
-    color: <?php echo $forApproval ?>;
-}
-.approved {
-    font-weight: bold;
-    color: <?php echo $approved ?>;
-}
-.published {
-    font-weight: bold;
-    color: <?php echo $published ?>;
-}
-.archived {
-    font-weight: bold;
-    color:  <?php echo $archived ?>;
+/******************************* ARTICLE MANAGER ******************************/
+/* -- articleMgrAdd.html / articleMgrEdit.html ----*/
+#article #frmFieldName_title {
+    width: 70%;
 }

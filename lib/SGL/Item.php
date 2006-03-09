@@ -594,17 +594,17 @@ class SGL_Item
 
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' id='frmFieldName[$fieldName]' name='frmFieldName[]' value=\"$fieldValue\" />";
+            $formHTML = "<input type='text' id='frmFieldName_$fieldName' name='frmFieldName[]' value=\"$fieldValue\" />";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 1:     // field type = textarea paragraph
-            $formHTML = "<textarea id='frmFieldName[$fieldName]' name='frmFieldName[]'>$fieldValue</textarea>";
+            $formHTML = "<textarea id='frmFieldName_$fieldName' name='frmFieldName[]'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
         case 2:     // field type = html paragraph
-            $formHTML = "<textarea id='frmFieldName[$fieldName]' name='frmFieldName[]' class='wysiwyg'>$fieldValue</textarea>";
+            $formHTML = "<textarea id='frmFieldName_$fieldName' name='frmFieldName[]' class='wysiwyg'>$fieldValue</textarea>";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             $formHTML .= "<input type='hidden' name='frmDataItemType[$fieldID]' value='htmltextarea' />";
             break;

@@ -78,10 +78,9 @@ class ArticleMgr extends SGL_Manager
 
         if (SGL_Session::getUserType() == SGL_ADMIN) {
             $this->isAdmin = true;
-            $this->template = 'articleManager.html';
-        } else {
-            $this->template = 'publisher.html';
         }
+        $this->template = 'articleManager.html';
+
         $this->validated        = true;
         $input->masterTemplate  = $this->masterTemplate;
         $input->error           = array();
