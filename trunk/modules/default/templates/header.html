@@ -19,9 +19,13 @@
         var SGL_JS_SESSID="{sessID}";
         var SGL_JS_CURRURL="{currUrl}";
         var SGL_JS_THEME="{theme}";
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
     {scriptClose:h}
 
     {if:isAdmin()}
+    {scriptOpen:h}
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+    {scriptClose:h}
     <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
     {end:}
     <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>
