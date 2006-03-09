@@ -1,4 +1,7 @@
 <?php
+$words['There is no block to delete'] = 'Kein Block zu löschen';
+$words['Unassigned'] = 'Nicht zugeordnet';
+$words['Indicate renderer class from modules/navigation/classes/*Renderer.php'] = 'zu finden unter modules/navigation/classes/*Renderer.php';
 $words['Start rendering the tree from this node ID'] = 'Der Baum wird ab diesem Knotenpunkt gerendert';
 $words['Start rendered level'] = 'Rendern des Menus ab Ebene';
 $words['Nodes will be rendered starting from level 0 by default'] = 'Voreinstellung: Knoten werden ab Ebene 0 gerendert';
@@ -13,7 +16,6 @@ $words['If no, navigation menu will be recalculated every time'] = 'Falls nein w
 $words['Generate breadcrumbs objects'] = 'Brotkrümelobjekte erzeugen';
 $words['Tells navigation driver to generate bredcrumbs objects'] = 'Soll eine Brotkrümelnavigation erzeugt werden?';
 $words['Navigation Html renderer class'] = 'Klasse des Navigationsrenderers';
-$words['Indicate renderer class from modules/navigation/classes/*Nav.php'] = 'zu finden in modules/navigation/classes/*Nav.php';
 $words['Template name (optional)'] = 'Name des Templates (optional)';
 $words['For navigation renderer which requires template'] = 'Für Navigationen, die ein Template benötigen';
 $words['Block Parameters'] = 'Block Parameter';
