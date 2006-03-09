@@ -178,3 +178,45 @@ select#frmRolePerms {
 #frmUser p label {
     width: 170px;
 }
+
+/*
+====================Organisation Manager======================*/
+
+/*
+-- orgEdit.html ----------------------------------------------*/
+#frmOrgEdit p label {
+    width: 170px;
+}
+#frmOrgEdit .longText {
+    width: 240px;
+}
+
+/*
+===================OrgPreference Manager======================*/
+
+/*
+-- orgPrefEdit.html ------------------------------------------*/
+#frmPrefOrgEdit p label {
+    width: 170px;
+}
+
+/*
+======================OrgType Manager=========================*/
+
+/*
+-- orgTypeEdit.html ------------------------------------------*/
+#frmOrgTypeEdit p label {
+    width: 150px;
+}
+#frmOrgTypeEdit .longText {
+    width: 170px;
+}
+
+/*
+====================UserImport Manager========================*/
+
+/*
+-- userImport.html -------------------------------------------*/
+#frmUserImport p label {
+    width: 170px;
+}

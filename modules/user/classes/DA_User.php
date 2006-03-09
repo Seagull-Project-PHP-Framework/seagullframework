@@ -1050,6 +1050,23 @@ class DA_User extends SGL_Manager
         $aRoleOrgs = $this->dbh->getCol($query);
         return $aRoleOrgs;
     }
+/**
+     * Returns an organisation name by org id.
+     *
+     * @param integer $orgId
+     * @return string $orgName
+     */
+    function getOrgNameById($orgId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "  SELECT  name
+                    FROM    {$this->conf['table']['organisation']}
+                    WHERE   organisation_id = " . $orgId;
+
+        $orgName = $this->dbh->getOne($query);
+        return $orgName;
+    }
 
     /**
      * Returns a hash or organisation types.

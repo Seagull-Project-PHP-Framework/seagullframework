@@ -533,6 +533,9 @@ a.cancel {
 a.undo {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_undo.gif');
 }
+a.download {
+    background-image: url('<?php echo $baseUrl ?>/images/16/action_download.gif');
+}
 a.upload {
     background-image: url('<?php echo $baseUrl ?>/images/22/action_upload.gif');
 }
