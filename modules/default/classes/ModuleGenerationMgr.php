@@ -149,7 +149,7 @@ class ModuleGenerationMgr extends SGL_Manager
         $ok = $this->_addModule($modName, $mgrLongName);
 
         //  build methods
-        list($methods, $aActions) = $this->_buildMethods($input);
+        list($methods, $aActions, $aTemplates) = $this->_buildMethods($input);
         $output->methods = $methods;
         $output->aActionMapping = $aActions;
 
@@ -325,7 +325,7 @@ EOF;
                 }
             }
         }
-        return array($methods, $aActions);
+        return array($methods, $aActions, $aTemplates);
     }
 
     function _cmd_list(&$input, &$output)
