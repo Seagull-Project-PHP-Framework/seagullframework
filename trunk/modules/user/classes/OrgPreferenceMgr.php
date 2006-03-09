@@ -125,7 +125,31 @@ class OrgPreferenceMgr extends PreferenceMgr
             }
         }
         //  redirect on success
-        SGL::raiseMsg('org details successfully updated');
+        SGL::raiseMsg('org details successfully updated', true, SGL_MESSAGE_INFO);
+    }
+
+/**
+     * Specific redirect.
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     */
+    function _cmd_redirectToDefault(&$input, &$output)
+    {
+        //  must not logmessage here
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array(
+                    'moduleName' => 'user',
+                    'managerName' => 'org',
+                    )
+                );
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
     }
 }
 ?>
