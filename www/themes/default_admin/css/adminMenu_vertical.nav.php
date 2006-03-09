@@ -59,14 +59,14 @@
 -- Third level ------------------------------------------------------- */
 #nav li.current li ul {
     display: none;
-}
-#nav li.current li.current ul {
-    display: block;
     border-top: 1px solid <?php echo $borderLight ?>;
     border-bottom: 1px solid <?php echo $borderDark ?>;
 }
+#nav li.current li.current ul {
+    display: block;
+}
 #nav li.current li.current li a {
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_empty.gif') 32px 50% no-repeat;
+    background: <?php echo $tertiaryLight ?> url('<?php echo $baseUrl ?>/images/bullet_square_empty.gif') 32px 50% no-repeat;
     border: none;
     height: 24px;
     line-height: 24px;
@@ -74,9 +74,9 @@
     font-size: 0.9em;
 }
 #nav li.current li.current li.current a {
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
+    background: <?php echo $tertiaryLight ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
 }
 #nav li.current li.current li a:hover {
-    background: <?php echo $tertiaryLightest ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
+    background: <?php echo $tertiaryLight ?> url('<?php echo $baseUrl ?>/images/bullet_square_full.gif') 32px 50% no-repeat;
     color: <?php echo $primary ?>;
 }

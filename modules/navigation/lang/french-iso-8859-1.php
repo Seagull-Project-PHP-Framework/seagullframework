@@ -119,4 +119,5 @@ $words['Addon class name'] = 'Classe de l\'extension';
 $words['Choose class name'] = 'Choisir le classe';
 $words['External section URI'] = 'URI du lien externe';
 $words['Addon description'] = 'Description de l\'extension';
+$words['There is no section to delete'] = 'Il n\'y a aucune section à supprimer';
 ?>
