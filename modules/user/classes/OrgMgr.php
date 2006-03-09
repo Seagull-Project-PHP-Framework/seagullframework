@@ -158,7 +158,10 @@ class OrgMgr extends SGL_Manager
         if (is_array($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            $input->template = ($input->action == 'update') ? 'orgEdit.html' : 'orgAdd.html';
+            $input->template = 'orgEdit.html';
+            if ($input->action == 'insert') {
+                $input->isAdd = true;
+            }
 
             //  build org type combobox
             if ($this->conf['OrgMgr']['typeEnabled']) {
@@ -196,7 +199,8 @@ class OrgMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'orgAdd.html';
+        $output->isAdd = true;
+        $output->template = 'orgEdit.html';
         $output->pageTitle = $input->pageTitle . ' :: Add';
     }
 
@@ -204,6 +208,7 @@ class OrgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $output->pageTitle = $input->pageTitle . ' :: Add';
         if (!SGL::objectHasState($input->org)) {
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
@@ -229,7 +234,7 @@ class OrgMgr extends SGL_Manager
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
-            SGL::raiseMsg('organisation successfully added');
+            SGL::raiseMsg('organisation successfully added', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -253,6 +258,7 @@ class OrgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $output->pageTitle = $input->pageTitle . ' :: Edit';
         $nestedSet = new SGL_NestedSet($this->_params);
 
         //  datatype must be an array for NestedSet
@@ -290,7 +296,7 @@ class OrgMgr extends SGL_Manager
             $moveNode = $nestedSet->moveTree($aOrg['organisation_id'], $aOrg['parent_id'], 'SUB');
             $message = 'The organisation has successfully been updated';
         }
-        SGL::raiseMsg($message);
+        SGL::raiseMsg($message, true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_delete(&$input, &$output)
@@ -320,15 +326,15 @@ class OrgMgr extends SGL_Manager
                 	} else {
                 		$success = false;
                 		$orgName = $org['name'];
-                		SGL::raiseMsg(	"The selected organisation $orgName cannot be deleted because " .
-                						"there are users relating to it!");
+                		SGL::raiseMsg(	"The selected organisation cannot be deleted because " .
+                						"there are users relating to it");
                 	}
                 }
             }
 
 	        if ($success) {
 	        	//  redirect on success
-	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted');
+	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
 	        }
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
@@ -360,7 +366,7 @@ class OrgMgr extends SGL_Manager
             }
         }
         $output->results = $sectionNodes;
-        $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     /**

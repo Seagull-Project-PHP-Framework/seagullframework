@@ -98,7 +98,10 @@ class OrgTypeMgr extends SGL_Manager
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            $input->template = 'orgTypeAdd.html';
+            if ($input->action == 'update') {
+                $input->isEdit = true;
+            }
+            $input->template = 'orgTypeEdit.html';
             $this->validated = false;
         }
     }
@@ -106,7 +109,8 @@ class OrgTypeMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'orgTypeAdd.html';
+        $output->template = 'orgTypeEdit.html';
+        $output->pageTitle .= ' :: Add';
     }
 
     function _cmd_insert(&$input, &$output)
@@ -137,20 +141,21 @@ class OrgTypeMgr extends SGL_Manager
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
         $output->orgTypes = $orgType;
+        //echo'<pre>';die(print_r($output->orgTypes));
     }
 
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'orgTypeAdd.html';
+        $output->template = 'orgTypeEdit.html';
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
         $orgType->setFrom($input->orgTypes);
         $success = $orgType->update();
         if ($success) {
-            SGL::raiseMsg('Organisation type has been updated successfully');
+            SGL::raiseMsg('Organisation type has been updated successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseMsg('No data was updated');
+            SGL::raiseMsg('No data was updated', true, SGL_MESSAGE_WARNING);
         }
     }
 
@@ -175,7 +180,7 @@ class OrgTypeMgr extends SGL_Manager
             SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('Org type(s) deleted successfully');
+        SGL::raiseMsg('Org type(s) deleted successfully', true, SGL_MESSAGE_INFO);
     }
 }
 ?>
