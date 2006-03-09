@@ -45,6 +45,7 @@
                     'de-iso-8859-1'=> array('de([-_][[:alpha:]]{2})?|german', 'german-iso-8859-1', 'de'),
                     'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
                     'es-iso-8859-1'=> array('es([-_][[:alpha:]]{2})?|spanish', 'spanish-iso-8859-1', 'es'),
+                    'es-utf-8'=> array('es([-_][[:alpha:]]{2})?|spanish', 'spanish-utf-8', 'es'),
                     'fr-iso-8859-1'=> array('fr([-_][[:alpha:]]{2})?|french', 'french-iso-8859-1', 'fr'),
                     'fr-utf-8'     => array('fr([-_][[:alpha:]]{2})?|french', 'french-utf-8', 'fr'),
                     'it-iso-8859-1'=> array('it|italian', 'italian-iso-8859-1', 'it'),
