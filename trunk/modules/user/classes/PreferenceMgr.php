@@ -106,6 +106,11 @@ class PreferenceMgr extends SGL_Manager
         $input->pref            = (object) $req->get('pref');
         $input->aDelete         = $req->get('frmDelete');
         $input->totalItems      = $req->get('totalItems');
+        $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
+        $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
+        
+        // This will tell HTML_Flexy which key is used to sort data
+        $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
         if ($input->submitted) {
@@ -248,7 +253,20 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-        $query = "SELECT preference_id, name, default_value FROM {$this->conf['table']['preference']}";
+        
+        $allowedSortFields = array('preference_id','name');
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+        } else {
+            $orderBy_query = 'ORDER BY preference_id ASC ';
+        }
+        
+        $query = "
+            SELECT  preference_id, name, default_value 
+            FROM    {$this->conf['table']['preference']}
+            $orderBy_query";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
