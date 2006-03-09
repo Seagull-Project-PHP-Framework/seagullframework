@@ -99,12 +99,13 @@ class SGL_Emailer
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $includePath = $this->options['template'];
+        $template = array_pop(explode('/', $includePath));
         if (!is_readable($includePath)) {
 
             // try fallback with default template dir
             $req = &SGL_Request::singleton();
             $moduleName = $req->get('moduleName');
-            $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $file;
+            $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $template;
         }
         $ok = include $includePath;
 
@@ -138,7 +139,7 @@ class SGL_Emailer
             'head_charset' => $GLOBALS['_SGL']['CHARSET'],
         ));
         $headers = $mime->headers($this->headers);
-        $headers = $this->cleanMailInjection($headers);
+        #$headers = $this->cleanMailInjection($headers);
         $mail = & SGL_Emailer::factory();
         return $mail->send($this->options['toEmail'], $headers, $body);
     }
@@ -204,7 +205,7 @@ class SGL_Emailer
     */
     function cleanMailInjection($headers)
     {
-        $regex = "�(<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r|Content-Type:|bcc:|to:|cc:).*�i";
+        $regex = "#(<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r|Content-Type:|bcc:|to:|cc:).*#i";
         // strip all possible "additional" headers from the values
         if (is_array($headers)) {
             foreach ($headers as $key => $value) {
