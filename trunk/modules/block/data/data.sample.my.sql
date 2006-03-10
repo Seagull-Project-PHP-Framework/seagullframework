@@ -12,7 +12,7 @@ INSERT INTO `block` VALUES (7, 'Default_Block_Sample1', 'SourceForge Site', '', 
 INSERT INTO `block` VALUES (8, 'Default_Block_Sample2', 'Syndication', '', '', 3, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (9, 'Default_Block_Calendar', 'Calendar', '', '', 2, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (10, 'Publisher_Block_RecentHtmlArticles2', 'Recent articles', '', '', 3, 'Right', 0, 1, 'N;');
-INSERT INTO `block` VALUES (11, 'User_Block_OnlineUsers', 'Online', '', '', 6, 'Left', 1, 0, 'N;');
+INSERT INTO `block` VALUES (11, 'User_Block_OnlineUsers', 'Online', '', '', 6, 'Left', 0, 0, 'N;');
 
 --
 -- Dumping data for table `block_assignment`

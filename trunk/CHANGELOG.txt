@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.5.6        |
+| VERSION: 0.6.0RC1     |
 +-----------------------+
 BUGFIXES
 21-02-06    Fixed bug: PageMgr does not handle manager names with multiple uppercase
