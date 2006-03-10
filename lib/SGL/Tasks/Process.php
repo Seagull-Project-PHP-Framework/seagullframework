@@ -864,7 +864,7 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
         $action = $req->get('action');
 
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        $userRid = SGL_Session::getUserType();
+        $userRid = SGL_Session::getRoleId();
         $input->data->adminGuiAllowed = false;
         $adminGuiAllowed = $adminGuiRequested = false;
 
