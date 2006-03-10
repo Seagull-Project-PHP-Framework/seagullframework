@@ -41,11 +41,15 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 
             //  temp measure
             var prefix = document.getElementById('prefix');
-            prefix.disabled = true;
+            if (prefix != null) {
+                prefix.disabled = true;
+            }
 
             //  disable 'use existing data' by default
             var useExistingData = document.getElementById('useExistingData');
-            useExistingData.disabled = true;
+            if (useExistingData != null) {
+                useExistingData.disabled = true;
+            }
         }
 
         function toggleLangList(myCheckbox)
@@ -100,7 +104,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         }
     </script>
 </head>
-<body onLoad="javascript:disableLangList(true)">
+<body onLoad="javascript:disableLangList()">
 
 <div id="sgl">
 <!-- Logo and header -->
