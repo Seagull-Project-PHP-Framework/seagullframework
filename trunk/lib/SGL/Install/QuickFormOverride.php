@@ -104,7 +104,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         }
     </script>
 </head>
-<body onLoad="javascript:disableLangList()">
+<body onLoad="javascript:disableLangList()" id="content">
 
 <div id="sgl">
 <!-- Logo and header -->

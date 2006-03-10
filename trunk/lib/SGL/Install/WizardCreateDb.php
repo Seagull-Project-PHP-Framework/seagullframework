@@ -58,7 +58,7 @@ function canCreateDb()
         ? '(' . $aFormValues['socket'] . ')'
         : '';
 
-    $protocol = isset($aFormValues['dbProtocol']['protocol']) 
+    $protocol = isset($aFormValues['dbProtocol']['protocol'])
         ? $aFormValues['dbProtocol']['protocol'] . $socket
         : '';
     $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
@@ -120,6 +120,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'name' => 'seagull',
             'prefix' => 'not implemented yet',
+            'installAllModules' => true,
+            'insertSampleData' => true,
             ));
 
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
