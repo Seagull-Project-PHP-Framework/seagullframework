@@ -179,17 +179,17 @@ function addFormValue(myElement, form)
             {end:}
             {if:uriAliasAllowed}
             <p id="uriAliasEnableBox">
-                <label for="section[uri_alias_enable]">{translate(#Add an alias#)}?</label>
-                <input type="checkbox" name="section[uri_alias_enable]" id="section[uri_alias_enable]" flexy:raw="{uriAliasIsEnabled}" />
+                <label for="section_uriAliasEnable">{translate(#Add an alias#)}?</label>
+                <input type="checkbox" name="section[uri_alias_enable]" id="section_uriAliasEnable" flexy:raw="{uriAliasIsEnabled}" />
             </p>
-            <p id="uriAutoAliasBox">
-                <label for="section[uri_auto_alias]">{translate(#Automatic alias#)}?</label>
-                <input type="checkbox" name="section[uri_auto_alias]" id="section[uri_auto_alias]" flexy:raw="{uriAutoAlias}" />
-                <input type="text" class="longText hide" name="aliasInputText" id="aliasInputText" value="" />
+            <p id="uriAliasAutoModeBox">
+                <label for="section_UriAliasAutoMode">{translate(#Automatic alias#)}?</label>
+                <input type="checkbox" name="section[uri_alias_autoMode]" id="section_uriAliasAutoMode" flexy:raw="{uriAliasIsAutoMode}" />
+                <input type="text" class="longText" name="aliasInputText" id="aliasInputText" value="" />
             </p>
-            <p id="uriAliasBox">
-                <label id="test1" for="section[uri_alias]">{translate(#alias URI#,#ucfirst#)}</label>
-                <input type="hidden" name="section[uri_alias]" id="section[uri_alias]" value="{section[uri_alias]}" />
+            <p id="uriAliasDisplayBox">
+                <label>{translate(#alias URI#,#ucfirst#)}</label>
+                <input type="hidden" name="section[uri_alias]" id="section_uriAlias" value="{section[uri_alias]}" />
                 <span id="uriAliasDisplay">{section[uri_alias]}</span>
 
             </p>

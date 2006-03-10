@@ -105,6 +105,7 @@ class SectionMgr extends SGL_Manager
         $input->section     = $req->get('section');
         $input->section['is_enabled']       = (isset($input->section['is_enabled'])) ? 1 : 0;
         $input->section['uri_alias_enable'] = (isset($input->section['uri_alias_enable'])) ? 1 : 0;
+        $input->section['uri_alias_autoMode'] = (isset($input->section['uri_alias_autoMode'])) ? 1 : 0;
         $input->navLang     = $req->get('frmNavLang');
         $input->articleType = @$input->section['articleType'];
 
@@ -306,10 +307,10 @@ class SectionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  load UriAliasHandler depending on action
-        if ($output->action == ('add' || 'insert')) {
-            $output->addOnLoadEvent("UriAliasHandler('add','auto')");
-        } elseif ($output->action == ('edit' || 'update')) {
-            $output->addOnLoadEvent("UriAliasHandler('edit','manual')");
+        if ($output->action == 'add' || $output->action == 'insert') {
+            $output->addOnLoadEvent("UriAliasHandlerInit('add','auto')");
+        } elseif ($output->action == 'edit' || $output->action == 'update') {
+            $output->addOnLoadEvent("UriAliasHandlerInit('edit','manual')");
         }
     }
 
@@ -320,7 +321,7 @@ class SectionMgr extends SGL_Manager
         //  pre-check enabled box
         $output->sectionIsEnabled  = !empty($output->section['is_enabled']) ? 'checked="checked"' : '';
         $output->uriAliasIsEnabled = !empty($output->section['uri_alias_enable']) ? 'checked="checked"' : '';
-        $output->uriAutoAlias      = empty($output->section['uri_alias_enable']) ? 'checked="checked"' : '';
+        $output->uriAliasIsAutoMode = !empty($output->section['uri_alias_autoMode']) ? 'checked="checked"' : '';
 
         //  get array of section node objects
         $output->sectionNodesOptions[0] = SGL_String::translate('Top level (no parent)');
