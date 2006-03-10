@@ -47,13 +47,17 @@ CREATE TABLE user_session (
 /*==============================================================*/
 /* Table: module                                                 */
 /*==============================================================*/
-create table if not exists module (
-  module_id int(11) not null,
-  is_configurable smallint(1),
-  name varchar(255),
-  title varchar(255),
-  description text,
-  admin_uri varchar(255),
-  icon varchar(255),
-  primary key  (module_id)
+CREATE TABLE `module` (
+  `module_id` int(11) NOT NULL default '0',
+  `is_configurable` smallint(1) default NULL,
+  `name` varchar(255) default NULL,
+  `title` varchar(255) default NULL,
+  `description` text,
+  `admin_uri` varchar(255) default NULL,
+  `icon` varchar(255) default NULL,
+  `maintainers` text,
+  `version` varchar(8) default NULL,
+  `license` varchar(16) default NULL,
+  `state` varchar(8) default NULL,
+  PRIMARY KEY  (`module_id`)
 );

@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'newsletter', 'Newsletter', 'The ''Newsletter'' module is a simple mass mailer module that allows you to create an HTML formatted message or newsletter, and send it to all your registered users, or on a group by group basis, in a single click.', 'newsletter/list', 'newsletter.png');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'newsletter', 'Newsletter', 'The ''Newsletter'' module is a simple mass mailer module that allows you to create an HTML formatted message or newsletter, and send it to all your registered users, or on a group by group basis, in a single click.', 'newsletter/list', 'newsletter.png', '', NULL, NULL, NULL);
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
