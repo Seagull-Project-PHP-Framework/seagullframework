@@ -110,13 +110,11 @@ function exportSvnAndPackage()
     $SVN export --force $SVN_REPO_URL -r $REVISION_NUM $PROJECT_NAME
 
     # remove unwanted dirs
-    rm -f $PROJECT_NAME/etc/badBoyWebTests.bb
-    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
-    rm -f $PROJECT_NAME/etc/demoReload.sh
-    rm -f $PROJECT_NAME/etc/generatePackage.php
-    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
-    rm -f $PROJECT_NAME/etc/release.sh
-    rm -f $PROJECT_NAME/CHANGELOG-1.txt.gz
+#    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
+#    rm -f $PROJECT_NAME/etc/demoReload.sh
+#    rm -f $PROJECT_NAME/etc/generatePackage.php
+#    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
+#    rm -f $PROJECT_NAME/etc/release.sh
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
 
@@ -288,7 +286,7 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
@@ -297,13 +295,13 @@ cd /tmp
 
 exportSvnAndPackage
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
 generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
