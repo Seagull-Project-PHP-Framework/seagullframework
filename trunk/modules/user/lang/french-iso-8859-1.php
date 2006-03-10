@@ -360,4 +360,5 @@ $words['Organisation list'] = 'Liste des organisations';
 $words['New organisation'] = 'Nouvelle organisation';
 $words['Edit organisation'] = 'Editer l\'organisation';
 $words['The selected organisation cannot be deleted because there are users relating to it'] = 'L\'organisation %s n\'a pas pu être supprimée car des utilisateurs lui sont rattachés!';
+$words['You should first upload at least one csv file in your upload dir'] = 'Vous devriez d\'abord importer au moins un fichier csv dans votre répertoire de téléchargement';
 ?>
