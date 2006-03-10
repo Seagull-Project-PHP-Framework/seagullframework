@@ -1,0 +1,70 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmPrefOrgEdit','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#org#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="{makeUrl(##,#orgpreference#,#user#,##,#frmOrgId|orgId#)}" method="post" id="frmPrefOrgEdit" flexy:ignore>
+        <h3>{translate(#Preferences for org#)} {orgName}</h3>
+        <fieldset class="inside">
+            <input name="action" type="hidden" value="updateAll" />
+            <p>
+                <label class="tipOwner">{translate(#Theme#)}
+                    <span class="tipText">{translate(#Change what this site looks like#)}</span>
+                </label>
+                <select name="prefs[theme]">
+                    {generateSelect(aThemes,prefs[theme]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner">{translate(#Date format#)}
+                    <span class="tipText">{translate(#UK format is dd/mm/yyyy and US is mm/dd/yyyy#)}</span>
+                </label>
+                <select name="prefs[dateFormat]">
+                    {generateSelect(aDateFormats,prefs[dateFormat]):h}
+                </select>
+            </p>
+            <p>
+                <label>{translate(#Interface language#)}</label>
+                <select name="prefs[language]">
+                    {generateSelect(aLangs,prefs[language]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner">{translate(#Session timeout#)}
+                    <span class="tipText">{translate(#Session timeout tooltip#)}</span>
+                </label>
+                <select name="prefs[sessionTimeout]">
+                    {generateSelect(aTimeouts,prefs[sessionTimeout]):h}
+                </select>
+            </p>
+            <p>
+                <label>{translate(#Locale#)}</label>
+                {if:isWin()}
+                <input type="text" name="prefs[locale]" value="{prefs[locale]}">
+                {else:}
+                <select name="prefs[locale]">
+                    {generateSelect(aLocales,prefs[locale]):h}
+                </select>
+                {end:}
+            </p>
+            <p>
+                <label>{translate(#Timezone#)}</label>
+                <select name="prefs[timezone]">{generateSelect(aTimezones,prefs[timezone]):h}</select>
+            </p>
+            <p>
+                <label>{translate(#Results per page#)}</label>
+                <select name="prefs[resPerPage]">{generateSelect(aResPerPage,prefs[resPerPage]):h}</select>
+            </p>
+            <p>
+                <label>{translate(#Show execution times?#)}</label>
+                {generateRadioPair(#prefs[showExecutionTimes]#,prefs[showExecutionTimes]):h}
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
