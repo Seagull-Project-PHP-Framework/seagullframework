@@ -157,6 +157,11 @@ class LoginMgr extends SGL_Manager
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $output->username = 'admin';
+            $output->password = 'admin';
+        }
     }
 
     function _doLogin($username, $password)
