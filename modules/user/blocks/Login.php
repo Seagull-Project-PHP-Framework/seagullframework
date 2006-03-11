@@ -72,7 +72,7 @@ class User_Block_Login
     function getLoginScreen($output)
     {
 
-        if (isset($output->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+        if (isset($output->conf['tuples']['demoMode']) && $output->conf['tuples']['demoMode'] == true) {
             $username = 'admin';
             $password = 'admin';
         } else {
