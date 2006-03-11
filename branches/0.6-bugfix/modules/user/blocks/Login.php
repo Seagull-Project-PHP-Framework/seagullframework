@@ -71,13 +71,20 @@ class User_Block_Login
 
     function getLoginScreen()
     {
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $username = 'admin';
+            $password = 'admin';
+        } else {
+            $username = '';
+            $password = '';
+        }
         $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="loginBlock">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'
-                    <input name="frmUsername" size="15" value="" maxlength="36" type="text" />
+                    <input name="frmUsername" size="15" value="'.$username.'" maxlength="36" type="text" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Password').'
-                    <input name="frmPassword" size="15" maxlength="24" type="password" />
+                    <input name="frmPassword" value="'.$password.'" size="15" maxlength="24" type="password" />
                     <p class="alignCenter"><input name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
                     <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
                     <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>
