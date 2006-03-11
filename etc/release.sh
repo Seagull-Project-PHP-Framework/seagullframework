@@ -189,15 +189,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_files/web/
-}
-
-##############################
-# scp changelog to sgl site
-##############################
-function scpChangelogToSglSite()
-{
-    scp $PROJECT_NAME-$RELEASE_NAME/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull_files/web/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/web/
 }
 
 ##############################
@@ -286,26 +278,24 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvnAndPackage
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
-#scpApiDocsToSglSite
-
-#scpChangelogToSglSite
+scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 
