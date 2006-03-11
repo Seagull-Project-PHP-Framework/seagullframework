@@ -56,22 +56,23 @@ class User_Block_Login
         $this->username = isset($output->loggedOnUser) ? $output->loggedOnUser : '';
         $this->startTime = isset($output->loggedOnSince) ? $output->loggedOnSince : '';
 
-        return $this->getBlockContent();
+        return $this->getBlockContent($output);
     }
 
-    function getBlockContent()
+    function getBlockContent($output)
     {
         if ($this->uid == SGL_GUEST) {
-            return $this->getLoginScreen();
+            return $this->getLoginScreen($output);
         }
         else {
             return $this->getLogoutScreen();
         }
     }
 
-    function getLoginScreen()
+    function getLoginScreen($output)
     {
-        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+
+        if (isset($output->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
             $username = 'admin';
             $password = 'admin';
         } else {
