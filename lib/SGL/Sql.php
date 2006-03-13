@@ -94,7 +94,6 @@ class SGL_Sql
                 continue;
             }
 #END:FIXME
-
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableName($line);
                 $nextId = $dbh->nextId($tableName);
@@ -111,7 +110,6 @@ class SGL_Sql
             if (($conf['db']['type'] == 'oci8_SGL') || ($conf['db']['type'] == 'odbc')){
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
-
             // Execute the statement.
             $res = $dbh->query($sql);
 
@@ -131,9 +129,9 @@ class SGL_Sql
 
     function extractTableName($str)
     {
-        $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
+        $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
         preg_match($pattern, $str, $matches);
-        $tableName = $matches[2];
+        $tableName = $matches[3];
         return $tableName;
     }
 
