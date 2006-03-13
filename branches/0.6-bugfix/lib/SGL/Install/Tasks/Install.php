@@ -551,7 +551,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         } else {
             //  set installed languages
             $installedLangs = implode(',', str_replace('-', '_', array_keys($aLangOptions)));
-            
+
             $c->set('translation', array('installedLanguages' => $installedLangs));
             $ok = $c->save($configFile);
         }
