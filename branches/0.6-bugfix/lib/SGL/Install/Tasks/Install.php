@@ -633,12 +633,15 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         //  pass paths as arrays to avoid widows space parsing prob
         //  create cache dir
         $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
+        @chmod($cacheDir, 0666);
+
         if (!($cacheDir)) {
             SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating cache dir'));
         }
 
         //  create entities dir
         $entDir = System::mkDir(array(SGL_ENT_DIR));
+        @chmod($entDir, 0666);
         if (!($entDir)) {
             SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating entity dir'));
         }
@@ -683,6 +686,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         $generator->start();
         $out = ob_get_contents();
         ob_end_clean();
+#SGL::logMessage('out = ' . $out);
 
         if (PEAR::isError($out)) {
             SGL_Install_Common::errorPush(
