@@ -141,7 +141,6 @@
         'none' => 'none',
         'Section info' => 'Section info',
         'Optimisation' => 'Optimisation',
-        'Target' => 'Target',
         'Select roles to which you want to grant access' => 'Select roles to which you want to grant access',
         'Section Manager :: Add' => 'Section Manager :: Add',
  );
