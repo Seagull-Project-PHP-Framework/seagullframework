@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.6.0RC2     |
++-----------------------+
+BUGFIXES
+IMPROVEMENTS
+
++-----------------------+
 | VERSION: 0.6.0RC1     |
 +-----------------------+
 BUGFIXES
@@ -17,6 +23,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+08-03-06    Admin GUI complete (Julien Casanova)
 04-03-06    Renamed AppController to FrontController
 26-02-06    Added printf() method for templates, see
             http://trac.seagullproject.org/wiki/Howto/Templates/WorkingWithTemplates#UsingVariablesinLanguageStrings
