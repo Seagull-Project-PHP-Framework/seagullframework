@@ -4,7 +4,9 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
+
 IMPROVEMENTS
+14-03-06    Default theme now config driven
 
 +-----------------------+
 | VERSION: 0.6.0RC1     |
