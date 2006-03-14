@@ -8,82 +8,82 @@ require_once dirname(__FILE__). '/../classes/LoginMgr.php';
  * @package user
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: DA_UserTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
- */  
+ */
 class DA_UserTest extends UnitTestCase {
 
     function DA_UserTest()
     {
         $this->UnitTestCase('DA_User Test');
     }
-    
+
     function setup()
     {
         //  get DA_User object
         require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $this->da = & DA_User::singleton();   
+        $this->da = & DA_User::singleton();
     }
-    
-    
+
+
     //  //////////////////////////////////////////////////
     //  /////////////////   PERMS   //////////////////////
-    //  //////////////////////////////////////////////////    
-    
+    //  //////////////////////////////////////////////////
+
     function testAddMasterPerms()
     {
         $moduleId = 33;
-        
+
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $aPerms = array(
-        	$oPassword->create() => 'first description', 
+        	$oPassword->create() => 'first description',
         	$oPassword->create() => 'second description');
-		$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');        	
+		$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
         $ret = $this->da->addMasterPerms($aPerms, $moduleId);
         $this->assertTrue($ret);
 		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
 		$this->assertEqual($countPre + 2, $countPost);
     }
-    
+
     function testDeleteOrphanedPerms()
-    { 
+    {
     	$ret = $this->da->addMasterPerms(array('perm_name' => 'desc'), 87);
-    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission'); 		
-		$ret = $this->da->deleteOrphanedPerms(array(1 => 'perm_name^87'));	
-		$this->assertTrue($ret); 				
-		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');   	
-		$this->assertEqual($countPre - 1, $countPost);			
-		
+    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+		$ret = $this->da->deleteOrphanedPerms(array(1 => 'perm_name^87'));
+		$this->assertTrue($ret);
+		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+		$this->assertEqual($countPre - 1, $countPost);
+
     }
-    
+
     function testDeleteMasterPerms()
     {
-    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission'); 
+    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
     	$permName = $this->da->dbh->getOne('SELECT MAX(name) FROM permission');
     	$ret = $this->da->deleteMasterPerms(array($permName));
-        $this->assertTrue($ret);    	
+        $this->assertTrue($ret);
     	$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
     	$this->assertEqual($countPre - 1, $countPost);
     }
-    
+
     function testAddPermsByUserId()
     {
-    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission'); 
+    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
     	$aPerms = range(0, 42);
     	$ret = $this->da->addPermsByUserId($aPerms, 2);
-        $this->assertTrue($ret);    	
+        $this->assertTrue($ret);
     	$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
-    	$this->assertEqual($countPre + 43, $countPost);    	
+    	$this->assertEqual($countPre + 43, $countPost);
     }
-    
+
     function testGetPermsByUserId()
     {
     	$ret = $this->da->getPermsByUserId(1);
     	$this->assertEqual(array(), $ret); //	admin has no individual perms
     }
-    
+
     function testGetPermNamesByRoleId()
     {
-    	$ret = $this->da->getPermNamesByRoleId(2);	
+    	$ret = $this->da->getPermNamesByRoleId(2);
     	$expected = array (
 		  14 => 'bugmgr',
 		  13 => 'defaultmgr_list',
@@ -107,10 +107,10 @@ class DA_UserTest extends UnitTestCase {
 		  78 => 'userpreferencemgr_editAll',
 		  79 => 'userpreferencemgr_updateAll',
 		);
-    	
+
     	$this->assertEqual($ret, $expected);
     }
-    
+
     function testgetPermsByRoleId()
     {
     	$ret = $this->da->getPermsByRoleId();
@@ -125,50 +125,50 @@ class DA_UserTest extends UnitTestCase {
 		    7 => 58,
 		    8 => 59,
 		    9 => 74,
-		);	
-    	$this->assertEqual($ret, $expected);		
+		);
+    	$this->assertEqual($ret, $expected);
     }
-    
+
     function testGetPermsByModuleIdRetArray()
     {
     	$ret = $this->da->getPermsByModuleId(3, SGL_RET_ARRAY);
 		$expected = array (
-		  0 => 
+		  0 =>
 		  array (
 		    'permission_id' => '119',
 		    'name' => 'blockmgr',
 		    'module_name' => 'block',
 		    'module_id' => '3',
 		  ),
-		  1 => 
+		  1 =>
 		  array (
 		    'permission_id' => '120',
 		    'name' => 'blockmgr_add',
 		    'module_name' => 'block',
 		    'module_id' => '3',
 		  ),
-		  2 => 
+		  2 =>
 		  array (
 		    'permission_id' => '122',
 		    'name' => 'blockmgr_delete',
 		    'module_name' => 'block',
 		    'module_id' => '3',
 		  ),
-		  3 => 
+		  3 =>
 		  array (
 		    'permission_id' => '121',
 		    'name' => 'blockmgr_edit',
 		    'module_name' => 'block',
 		    'module_id' => '3',
 		  ),
-		  4 => 
+		  4 =>
 		  array (
 		    'permission_id' => '124',
 		    'name' => 'blockmgr_list',
 		    'module_name' => 'block',
 		    'module_id' => '3',
 		  ),
-		  5 => 
+		  5 =>
 		  array (
 		    'permission_id' => '123',
 		    'name' => 'blockmgr_reorder',
@@ -176,9 +176,9 @@ class DA_UserTest extends UnitTestCase {
 		    'module_id' => '3',
 		  ),
 		);
-    	$this->assertEqual($expected, $ret);    	
+    	$this->assertEqual($expected, $ret);
     }
-    
+
     function testGetPermsByModuleIdRetIdValue()
     {
     	$ret = $this->da->getPermsByModuleId(3);
@@ -190,70 +190,70 @@ class DA_UserTest extends UnitTestCase {
 		  124 => 'blockmgr_list',
 		  123 => 'blockmgr_reorder',
 		);
-    	$this->assertEqual($expected, $ret);    	
-    }    
-    
+    	$this->assertEqual($expected, $ret);
+    }
+
     function testDeletePermByUserIdAndPermId()
     {
-    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission'); 		
-		$ret = $this->da->deletePermByUserIdAndPermId(2, 42);	
-		$this->assertTrue($ret); 				
-		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');   	
-		$this->assertEqual($countPre - 1, $countPost);		    	
+    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+		$ret = $this->da->deletePermByUserIdAndPermId(2, 42);
+		$this->assertTrue($ret);
+		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+		$this->assertEqual($countPre - 1, $countPost);
     }
-        
+
     function testDeletePermsByUserId()
     {
-    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission'); 		
-		$ret = $this->da->deletePermsByUserId(2);	
-		$this->assertTrue($ret); 				
-		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');   	
-		$this->assertEqual($countPre - 42, $countPost);		    	
+    	$countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+		$ret = $this->da->deletePermsByUserId(2);
+		$this->assertTrue($ret);
+		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+		$this->assertEqual($countPre - 42, $countPost);
     }
-    
+
     function testGetRemainingPerms()
     {
         $aRolePerms = $this->da->getPermNamesByRoleId(2);
-        $aRemainingPerms = $this->da->getPermsNotInRole($aRolePerms);    
+        $aRemainingPerms = $this->da->getPermsNotInRole($aRolePerms);
 		$this->assertEqual(count($aRemainingPerms), 104);
     }
-    
+
     //  //////////////////////////////////////////////////
     //  /////////////////   PREFS   //////////////////////
-    //  //////////////////////////////////////////////////  
-    
+    //  //////////////////////////////////////////////////
+
     function testAddMasterPrefs()
     {
         $aPrefs = array('foo' => 'bar', 'baz' => 'fluux');
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');  
+        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
         $ret = $this->da->addMasterPrefs($aPrefs);
         $this->assertTrue($ret);
 		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
-		$this->assertEqual($countPre + 2, $countPost);        
+		$this->assertEqual($countPre + 2, $countPost);
     }
-    
+
     function testDeleteMasterPrefs()
     {
         $aPrefs = array('foo', 'baz');
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference'); 
+        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
         $ret = $this->da->deleteMasterPrefs($aPrefs);
         $this->assertTrue($ret);
 		$countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
-		$this->assertEqual($countPre - 2, $countPost);          
+		$this->assertEqual($countPre - 2, $countPost);
     }
 
     function testGetUserPrefsByOrgIdRetIdValue()
     {
     	//	no org data
-    }   
-    
+    }
+
     function testGetUserPrefsByOrgIdRetNameValue()
     {
-    	
+
     	//	no org data
     	#$ret = $this->da->getUserPrefsByOrgId();
-    	
-    }   
+
+    }
 
     function testGetPrefsByUserId()
     {
@@ -269,11 +269,43 @@ class DA_UserTest extends UnitTestCase {
 		  'locale' => 'en_GB',
 		);
 		$this->assertEqual($ret, $expected);
-    }   
-    
-    function testGetPrefsMapping()
+    }
+
+    function xtestGetPrefsMapping()
     {
-    	
+
+    }
+
+    function testGetMasterPrefsReturnByNameValue()
+    {
+    	$ret = $this->da->getMasterPrefs(SGL_RET_NAME_VALUE);
+        $expected = array (
+          'sessionTimeout' => '1800',
+          'timezone' => 'UTC',
+          'theme' => 'default',
+          'dateFormat' => 'UK',
+          'language' => 'en-iso-8859-15',
+          'resPerPage' => '10',
+          'showExecutionTimes' => '1',
+          'locale' => 'en_GB',
+        );
+        $this->assertEqual($ret, $expected);
+    }
+
+    function testGetMasterPrefsReturnByIdValue()
+    {
+    	$ret = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
+        $expected = array (
+          1 => '1800',
+          2 => 'UTC',
+          3 => 'default',
+          4 => 'UK',
+          5 => 'en-iso-8859-15',
+          6 => '10',
+          7 => '1',
+          8 => 'en_GB',
+        );
+        $this->assertEqual($ret, $expected);
     }
 }
 

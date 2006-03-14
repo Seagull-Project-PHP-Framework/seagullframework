@@ -707,7 +707,7 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         }
         $input->data->currUrl          = $_SERVER['PHP_SELF'];
         $input->data->currLang         = SGL::getCurrentLang();
-        $input->data->theme            = $this->resolveTheme();
+        $input->data->theme            = $_SESSION['aPrefs']['theme'];
         $input->data->charset          = $GLOBALS['_SGL']['CHARSET'];
         $input->data->webRoot          = SGL_BASE_URL;
         $input->data->imagesDir        = SGL_BASE_URL . '/themes/' . $input->data->theme . '/images';
@@ -722,16 +722,6 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         }
 
         $this->processRequest->process($input);
-    }
-
-    function resolveTheme()
-    {
-        $defaultTheme = $this->conf['site']['defaultTheme'];
-        $customTheme = $_SESSION['aPrefs']['theme'];
-        $theme = (SGL_Session::getRoleId() == SGL_GUEST)
-            ? $defaultTheme
-            : $customTheme;
-        return $theme;
     }
 }
 
