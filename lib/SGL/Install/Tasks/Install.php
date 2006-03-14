@@ -129,7 +129,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
 
     function getMinimumModuleList()
     {
-        return array('default', 'navigation', 'user');
+        return array('block', 'default', 'navigation', 'user');
     }
 
     function setup()
