@@ -147,7 +147,7 @@ class SGL_Config
 
     function merge($aConf)
     {
-        $this->aProps = SGL_Array::merge_replace($this->aProps, $aConf);
+        $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
     }
 
     function isEmpty()
