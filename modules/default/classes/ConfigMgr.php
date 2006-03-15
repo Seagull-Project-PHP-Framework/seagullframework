@@ -215,8 +215,9 @@ class ConfigMgr extends SGL_Manager
         if ($this->conf['translation']['container'] == 'db') {
             $output->aInstalledLangs = $this->trans->getLangs();
         } else {
-            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(), SGL_LANG_ID_TRANS2);
-        }      
+            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(),
+                SGL_LANG_ID_TRANS2);
+        }
 
         $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
 
@@ -234,13 +235,13 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
-            SGL::raiseMsg('Config settings cannot be modified in demo mode', false, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('Config settings cannot be modified in demo mode',
+                false, SGL_MESSAGE_WARNING);
             return false;
         }
-
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
-        $c->replace($input->conf);
+        $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
 
         //  write configuration to file
