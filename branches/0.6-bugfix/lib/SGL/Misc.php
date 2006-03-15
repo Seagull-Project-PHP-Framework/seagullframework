@@ -279,6 +279,10 @@ class SGL_Date
                 // Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
 
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+                // German date format
+                $output = $date->format('%d.%B.%Y %H:%M');
+
             } else {
                 //  else UK and US
                 $output = $date->format('%B %d, %Y %H:%M');
@@ -313,6 +317,8 @@ class SGL_Date
                 $output = $date->format('%d/%m/%Y');
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
                 $output = $date->format('%m.%d.%Y');
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+                $output = $date->format('%d.%m.%Y');
             } else {
                 //  else display ISO (international, unambiguous) format, YYYY-MM-DD
                 $output = $date->format('%Y-%m-%d');
@@ -340,6 +346,8 @@ class SGL_Date
             $dateFormat = '%d %B %Y, %H:%M';
         } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
             $dateFormat = '%B %d, %Y %H:%M';
+        } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+            $dateFormat = '%d.%B.%Y %H:%M';
         } else {
             //  else display ISO (international, unambiguous) format, YYYY-MM-DD
             $dateFormat = '%Y-%B-%d';

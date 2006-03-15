@@ -74,6 +74,7 @@ class PreferenceMgr extends SGL_Manager
             'US' => 'US',
             'FR' => 'FR',
             'BR' => 'BR',
+            'DE' => 'DE',
             );
         $this->aTimeouts = array(
             '900' => '15 mins',
