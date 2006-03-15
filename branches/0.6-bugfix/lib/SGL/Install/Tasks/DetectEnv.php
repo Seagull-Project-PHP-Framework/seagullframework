@@ -205,7 +205,6 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         'file_uploads' => array(SGL_RECOMMENDED => 1),
         'post_max_size' => array(SGL_RECOMMENDED => '10M'),
         'upload_max_filesize' => array(SGL_RECOMMENDED => '10M'),
-        'memory_limit' => array(SGL_RECOMMENDED => '16M'),
         );
 
     function run()
@@ -219,7 +218,10 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         $this->aData['file_uploads'] = ini_get2('file_uploads');
         $this->aData['post_max_size'] = ini_get('post_max_size');
         $this->aData['upload_max_filesize'] = ini_get('upload_max_filesize');
-        $this->aData['memory_limit'] = ini_get('memory_limit');
+        if (ini_get('memory_limit')) {
+            $this->aRequirements['memory_limit'] = array(SGL_RECOMMENDED => '16M');
+            $this->aData['memory_limit'] = ini_get('memory_limit');
+        }
     	return $this->render($this->aData);
     }
 }
