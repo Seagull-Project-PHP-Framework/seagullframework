@@ -40,6 +40,7 @@
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 require_once dirname(__FILE__) . '/ParamHandler.php';
+require_once dirname(__FILE__) . '/Misc.php';
 
 /**
  * Config file parsing and handling, acts as a registry for config data.
@@ -146,10 +147,7 @@ class SGL_Config
 
     function merge($aConf)
     {
-        $firstKey = key($aConf);
-        if (!array_key_exists($firstKey, $this->aProps)) {
-            $this->aProps = array_merge_recursive($this->aProps, $aConf);
-        }
+        $this->aProps = SGL_Array::merge_replace($this->aProps, $aConf);
     }
 
     function isEmpty()

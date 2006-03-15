@@ -4,7 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
-14-03-06    Improved query for listing users with a left join (mstahv)
+14-03-06    Fixed Config::merge behaviour (Miha Vrhovnik)
+14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
 14-03-06    Default theme now config driven

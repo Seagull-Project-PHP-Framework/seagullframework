@@ -175,6 +175,45 @@ class SGL_Array
         }
         return $ret;
     }
+
+    /**
+     * Merges two arrays and replace existing entrys.
+     *
+     * Merges two Array like the PHP Function array_merge_recursive.
+     * The main difference is that existing keys will be replaced with new values,
+     * not combined in a new sub array.
+     *
+     * Usage:
+     *        $newArray = array_merge_replace( $array, $newValues );
+     *
+     * @access puplic
+     * @param array $array First Array with 'replaceable' Values
+     * @param array $newValues Array which will be merged into first one
+     * @return array Resulting Array from replacing Process
+     */
+    function merge_replace($array, $newValues)
+    {
+        foreach ($newValues as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array[$key])) {
+                    $array[$key] = array();
+                }
+                $array[$key] = SGL_Array::merge_replace($array[$key], $value);
+            } else {
+                if (isset($array[$key]) && is_array($array[$key])) {
+                    $array[$key][0] = $value;
+                } else {
+                    if (isset($array) && !is_array($array)) {
+                        $temp = $array;
+                        $array = array();
+                        $array[0] = $temp;
+                    }
+                    $array[$key] = $value;
+                }
+            }
+        }
+        return $array;
+    }
 }
 
 /**
