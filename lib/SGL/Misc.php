@@ -184,21 +184,21 @@ class SGL_Array
      * not combined in a new sub array.
      *
      * Usage:
-     *        $newArray = array_merge_replace( $array, $newValues );
+     *        $newArray = SGL_Array::mergeReplace($array, $newValues);
      *
      * @access puplic
      * @param array $array First Array with 'replaceable' Values
      * @param array $newValues Array which will be merged into first one
      * @return array Resulting Array from replacing Process
      */
-    function merge_replace($array, $newValues)
+    function mergeReplace($array, $newValues)
     {
         foreach ($newValues as $key => $value) {
             if (is_array($value)) {
                 if (!isset($array[$key])) {
                     $array[$key] = array();
                 }
-                $array[$key] = SGL_Array::merge_replace($array[$key], $value);
+                $array[$key] = SGL_Array::mergeReplace($array[$key], $value);
             } else {
                 if (isset($array[$key]) && is_array($array[$key])) {
                     $array[$key][0] = $value;
