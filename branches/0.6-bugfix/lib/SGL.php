@@ -343,6 +343,9 @@ class SGL
          require_once $file;
 
          $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+         if (is_array($a)) {
+            asort($a);
+         }
          return $a;
      }
 
