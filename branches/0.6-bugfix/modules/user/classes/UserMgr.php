@@ -300,12 +300,11 @@ class UserMgr extends RegisterMgr
         if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    {$this->conf['table']['user']} u,
-                		{$this->conf['table']['organisation']} o,
-                		{$this->conf['table']['role']} r
-                WHERE   o.organisation_id = u.organisation_id
-                AND     r.role_id = u.role_id
-                AND     u.usr_id <> 0
+                FROM    {$this->conf['table']['user']} u
+                LEFT JOIN   {$this->conf['table']['organisation']} o
+                    ON u.organisation_id = o.organisation_id
+                JOIN {$this->conf['table']['role']} r
+                    ON r.role_id = u.role_id
                 $orderBy_query";
         } else {
             $query = "
