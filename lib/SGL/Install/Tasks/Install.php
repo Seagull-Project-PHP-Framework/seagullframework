@@ -67,19 +67,18 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
-        $enabled = isset($data['installAllModules']) ? true : false;
-        $c->set('site', array('blocksEnabled' => $enabled));
+        $c->set('site', array('blocksEnabled' => true));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
         $storeTransInDbClause = (array_key_exists('storeTranslationsInDB', $data)
-                                && $data['storeTranslationsInDB'] == 1)
+                && $data['storeTranslationsInDB'] == 1)
             ? $c->set('translation', array('container' => 'db'))
             : $c->set('translation', array('container' => 'file'));
 
         //  add missing translations to db
         $missingTransClause =  (array_key_exists('addMissingTranslationsToDB', $data)
-                                    && $data['addMissingTranslationsToDB'] == 1)
+                && $data['addMissingTranslationsToDB'] == 1)
             ? $c->set('translation', array('addMissingTrans' => true))
             : $c->set('translation', array('addMissingTrans' => false));
 
