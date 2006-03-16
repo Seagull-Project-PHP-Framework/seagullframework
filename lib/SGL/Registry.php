@@ -48,7 +48,7 @@
 class SGL_Registry
 {
     var $aProps = array();
-    
+
     function &singleton()
     {
         static $instance;
@@ -58,8 +58,8 @@ class SGL_Registry
         }
         return $instance;
     }
-    
-    function &get($key) 
+
+    function &get($key)
     {
         if (array_key_exists($key, $this->aProps)) {
             $ret =  $this->aProps[$key];
@@ -68,21 +68,21 @@ class SGL_Registry
         }
         return $ret;
     }
-    
-    function set($key, &$value) 
+
+    function set($key, &$value)
     {
         $this->aProps[$key] = &$value;
     }
-    
+
     function exists($key) {
         return array_key_exists($key, $this->aProps);
     }
-    
+
     function getRequest()
     {
         return $this->get('request');
     }
-    
+
     function setRequest($req)
     {
         #$reg = &SGL_RequestRegistry::singleton();
@@ -90,23 +90,33 @@ class SGL_Registry
         //  php 4 version of
         //  self::singleton()->set('request', $req);
     }
-    
+
     function getCurrentUrl()
     {
         return $this->get('currentUrl');
     }
-    
+
     function setCurrentUrl($url)
     {
         $this->set('currentUrl', $url);
     }
-    
+
+    function setFilters($aFilters)
+    {
+        $this->set('aFilters', $aFilters);
+    }
+
+    function getFilters()
+    {
+        return $this->get('aFilters');
+    }
+
     function getConfig()
     {
         $c = &SGL_Config::singleton();
         return $c->getAll();
     }
-    
+
     /**
      * Copies properties from source object to destination object.
      *
