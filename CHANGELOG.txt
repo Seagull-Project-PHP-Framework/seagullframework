@@ -8,6 +8,7 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+16-03-06    Added ability to implement custom filter chains
 14-03-06    Default theme now config driven
 
 +-----------------------+
