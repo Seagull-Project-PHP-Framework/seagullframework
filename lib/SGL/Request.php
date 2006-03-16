@@ -245,7 +245,12 @@ class SGL_Request
 
     function getManagerName()
     {
-        return $this->aProps['managerName'];
+        if (isset($this->aProps['managerName'])) {
+            $ret = $this->aProps['managerName'];
+        } else {
+            $ret = 'default';
+        }
+        return $ret;
     }
 
     function getUri()
