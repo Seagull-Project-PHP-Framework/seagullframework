@@ -62,7 +62,9 @@ class SGL_Request
     function init()
     {
         if ($this->isEmpty()) {
-            $res = (!SGL::runningFromCLI()) ? $this->initHttp() : $this->initCli();
+            $res = (!SGL::runningFromCLI())
+                ? $this->initHttp()
+                : $this->initCli();
         }
         return $res;
     }

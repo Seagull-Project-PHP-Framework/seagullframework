@@ -76,22 +76,44 @@ class SGL_FrontController
         }
         $input->setRequest($req);
 
-        $process =
-            new SGL_Process_Init(
-            new SGL_Process_SetupORM(
-			new SGL_Process_StripMagicQuotes(
-            new SGL_Process_DiscoverClientOs(
-            new SGL_Process_ResolveManager(
-            new SGL_Process_CreateSession(
-            new SGL_Process_SetupLangSupport(
-            new SGL_Process_SetupPerms(
-            new SGL_Process_AuthenticateRequest(
-            new SGL_Process_BuildHeaders(
-            new SGL_Process_SetupLocale(
-            new SGL_MainProcess()
-            )))))))))));
+        if (!SGL_FrontController::customFilterChain($input)) {
+            $process =
+                new SGL_Process_Init(
+                new SGL_Process_SetupORM(
+    			new SGL_Process_StripMagicQuotes(
+                new SGL_Process_DiscoverClientOs(
+                new SGL_Process_ResolveManager(
+                new SGL_Process_CreateSession(
+                new SGL_Process_SetupLangSupport(
+                new SGL_Process_SetupPerms(
+                new SGL_Process_AuthenticateRequest(
+                new SGL_Process_BuildHeaders(
+                new SGL_Process_SetupLocale(
+                new SGL_MainProcess()
+                )))))))))));
+            $process->process($input);
 
-        $process->process($input);
+        } else {
+            require_once dirname(__FILE__)  . '/FilterChain.php';
+            $chain = new SGL_FilterChain($input->getFilters());
+            $chain->doFilter($input);
+        }
+    }
+
+    function customFilterChain(&$input)
+    {
+        $conf = $input->getConfig();
+        $req = $input->getRequest();
+        $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
+            $req->getManagerName());
+        if (isset($conf[$mgr]['filterChain'])) {
+            $aFilters = explode(',', $conf[$mgr]['filterChain']);
+            $input->setFilters($aFilters);
+            $ret = true;
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
     function init()
