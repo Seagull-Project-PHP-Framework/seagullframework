@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FaqMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -41,7 +41,7 @@
 require_once 'DB/DataObject.php';
 
 /**
- * To allow users to contact site admins.
+ * Allow users to see FAQs.
  *
  * @package faq
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -55,71 +55,43 @@ class FaqMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'FAQ Manager';
-        $this->template     = 'faqList.html';
+        $this->pageTitle = 'FAQs';
+        $this->template  = 'faqList.html';
 
-        $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'reorder'   => array('reorder'),
-            'reorderUpdate' => array('reorderUpdate', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
-            'list'      => array('list'),
+        $this->_aActionsMapping = array(
+            'list' => array('list'),
         );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = array();
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->aDelete     = $req->get('frmDelete');
-        $input->faqId       = $req->get('frmFaqId');
-        $input->items       = $req->get('_items');
-        $input->submitted   = $req->get('submitted');
-        $input->faq         = (object)$req->get('faq');
-
-        if ($input->submitted) {
-            if (empty($input->faq->question)) {
-                $aErrors['question'] = 'Please fill in a question';
-            }
-            if (empty($input->faq->answer)) {
-                $aErrors['answer'] = 'Please fill in an answer';
-            }
-        }
-        //  if errors have occured
-        if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
-            $input->template = 'faqEdit.html';
-            $this->validated = false;
-        }
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
     }
 
 
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->pageTitle = 'FAQs';
+        
         $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();
-        $aFaqs = array();
+        $aFaqs  = array();
         if ($result > 0) {
             while ($faqList->fetch()) {
                 $faqList->question = $faqList->question;
-                $faqList->answer = nl2br($faqList->answer);
-                $aFaqs[] = clone($faqList);
+                $faqList->answer   = nl2br($faqList->answer);
+                $aFaqs[]           = clone($faqList);
             }
         }
         $output->results = $aFaqs;
     }
 }
+
 ?>
