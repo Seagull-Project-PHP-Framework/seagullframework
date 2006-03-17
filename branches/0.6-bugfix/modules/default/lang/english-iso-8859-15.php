@@ -471,5 +471,6 @@ $defaultWords['Please change file permissions before editing.'] = 'Please change
 $defaultWords['Please create it.'] = 'Please create it.';
 $defaultWords['Default theme'] = 'Default theme';
 $defaultWords['Additional Include Path'] = 'Additional Include Path';
+$defaultWords['Custom filter chain'] = 'Custom filter chain';
 
 ?>

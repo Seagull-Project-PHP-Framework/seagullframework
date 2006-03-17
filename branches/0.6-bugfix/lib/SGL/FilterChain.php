@@ -5,7 +5,7 @@ class SGL_FilterChain
 
     function SGL_FilterChain($aFilters)
     {
-        $this->aFilters = $aFilters;
+        $this->aFilters = array_map('trim', $aFilters);
     }
 
     function doFilter(&$input)
