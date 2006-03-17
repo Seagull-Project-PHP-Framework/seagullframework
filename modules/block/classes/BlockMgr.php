@@ -158,6 +158,9 @@ class BlockMgr extends SGL_Manager
         $output->mode      = 'New block';
         $output->template  = 'blockEdit.html';
         $output->isAdd     = true;
+        $output->block->roles    = SGL_ANY_ROLE;
+        $output->block->sections = SGL_ANY_SECTION;
+
         $this->_editDisplay($output);
     }
 
