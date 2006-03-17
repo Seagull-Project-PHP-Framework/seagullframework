@@ -110,6 +110,10 @@ class SGL_FrontController
             $aFilters = explode(',', $conf[$mgr]['filterChain']);
             $input->setFilters($aFilters);
             $ret = true;
+        } elseif (!empty($conf['site']['filterChain'])) {
+            $aFilters = explode(',', $conf['site']['filterChain']);
+            $input->setFilters($aFilters);
+            $ret = true;
         } else {
             $ret = false;
         }
