@@ -106,7 +106,7 @@ class SGL_FrontController
         $req = $input->getRequest();
         $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
             $req->getManagerName());
-        if (isset($conf[$mgr]['filterChain'])) {
+        if (!empty($conf[$mgr]['filterChain'])) {
             $aFilters = explode(',', $conf[$mgr]['filterChain']);
             $input->setFilters($aFilters);
             $ret = true;
