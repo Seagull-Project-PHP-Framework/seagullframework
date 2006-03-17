@@ -129,8 +129,6 @@ class SGL_FrontController
             : false;
         $c = &SGL_Config::singleton($autoLoad);
 
-
-
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
