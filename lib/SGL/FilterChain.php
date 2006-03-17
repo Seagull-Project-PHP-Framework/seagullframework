@@ -31,7 +31,7 @@ class SGL_FilterChain
     {
         foreach ($this->aFilters as $filter) {
             if (!class_exists('$filter')) {
-                $path = SGL_CORE_DIR . "/Tasks/$filter";
+                $path = preg_replace('/_/', '/', $className) . '.php';
                 require_once $path;
             }
         }
