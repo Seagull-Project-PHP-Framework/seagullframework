@@ -11,13 +11,12 @@ class SGL_FilterChain
     function doFilter(&$input)
     {
         $this->loadFilters();
-        $coreProcessor = $this->getCoreProcessor();
 
         $filters = '';
         $closeParens = '';
 
         $code = '$process = ';
-        foreach ($aFilters as $filter) {
+        foreach ($this->aFilters as $filter) {
             $filters .= "new $filter(\n";
             $closeParens .= ')';
         }
@@ -30,8 +29,8 @@ class SGL_FilterChain
     function loadFilters()
     {
         foreach ($this->aFilters as $filter) {
-            if (!class_exists('$filter')) {
-                $path = preg_replace('/_/', '/', $className) . '.php';
+            if (!class_exists($filter)) {
+                $path = trim(preg_replace('/_/', '/', $filter)) . '.php';
                 require_once $path;
             }
         }
