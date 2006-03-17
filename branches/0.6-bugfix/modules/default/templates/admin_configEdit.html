@@ -167,6 +167,10 @@ function toggleTransElements() {
                 <span class="error" flexy:if="error[webRoot]">{error[webRoot]}</span>
                 <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
             </p>
+            <p>
+                <label for="conf[path][additionalIncludePath]">{translate(#Additional Include Path#)}</label>
+                <input type="text" class="longText" name="conf[path][additionalIncludePath]" id="conf[path][additionalIncludePath]" value="{conf[path][additionalIncludePath]}" />
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="sessionOptions">

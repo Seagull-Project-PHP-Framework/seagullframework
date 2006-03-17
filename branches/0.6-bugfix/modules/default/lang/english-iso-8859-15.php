@@ -470,5 +470,6 @@ $defaultWords['does not exist.'] = 'does not exist.';
 $defaultWords['Please change file permissions before editing.'] = 'Please change file permissions before editing.';
 $defaultWords['Please create it.'] = 'Please create it.';
 $defaultWords['Default theme'] = 'Default theme';
+$defaultWords['Additional Include Path'] = 'Additional Include Path';
 
 ?>

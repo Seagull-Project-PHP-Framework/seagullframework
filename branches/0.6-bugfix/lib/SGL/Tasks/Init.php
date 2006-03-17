@@ -279,6 +279,12 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
             define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
             define('SGL_BASE_URL', $conf['site']['baseUrl']);
+
+            //  add additional search paths
+            if (!empty($conf['path']['additionalIncludePath'])) {
+                $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
+                    . $conf['path']['additionalIncludePath']);
+            }
         }
     }
 }
