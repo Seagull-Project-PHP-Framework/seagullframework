@@ -1,6 +1,8 @@
 <?php
-$defaultWords = array(
-'Manual Generator' => 'Manual Generator',
-'no results found' => 'no results found',
+$words = array(
+    'Manual Generator'  => 'Manual Generator',
+    'by'                => 'by',
+    'Table of Contents' => 'Table of Contents',
+    '%name Docs'        => '%name Docs'
 );
 ?>

@@ -8,7 +8,8 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
-17-03-06    Guestbook improvements (lakiboy)
+17-03-06    Guestbook, FAQ, Documentor and Export modules improved, updated Russian
+            translations (lakiboy)
 17-03-06    Removed CSS hacks (Riccardo Magliocchetti and mstahv)
 17-03-06    Additional include paths can now be added via Config
 16-03-06    Added ability to implement custom filter chains
