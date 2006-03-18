@@ -89,19 +89,17 @@
     header("Last-Modified: $srvModDate");
 
     // get browser family
-    if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
-        } else {
-            $ua = '';
-        }
+    $browserFamily = 'None';
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
     if (!empty($ua)) {
-        if (strstr($ua, 'MSIE')) {
-            $browserFamily = 'MSIE';
+        if (strstr($ua, 'Opera')) {
+            $browserFamily = 'Opera';
+        } else if (strstr($ua, 'MSIE')) {
+            $browserFamily = 'MSIE';      
         } else {
             $browserFamily = 'Gecko';
         }
-    } else {
-        $browserFamily = 'None';
     }
 
     //  get form context (submitted or not)

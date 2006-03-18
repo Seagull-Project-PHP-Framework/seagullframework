@@ -22,8 +22,9 @@ body {
 }
 #sgl #logo img {
     vertical-align: middle;
-    /* Workaround for Opera */
+    <?php if ($browserFamily == 'Opera') {?>
     vertical-align: text-middle;
+    <?php } ?>
 }
 #sgl #login {
     float: right;
@@ -99,7 +100,6 @@ body {
     width: auto;
     min-width: 20%;
     font-size: 0.9em;
-    /*z-index: 2;*/
     padding: 0 20px;
 }
 #sgl #content #options {
@@ -127,7 +127,6 @@ body {
 
 #sgl #footer {
     position: relative;
-    float: middle;
     clear: both;
     margin-bottom: 5px;
     padding-top: 10px;
@@ -206,7 +205,6 @@ img.blocksAvatar {
     top: -5px;
     float: right;
     padding-left: 5px;
-    align: left;
 }
 .navWidget {
     overflow: auto;
@@ -418,8 +416,9 @@ ul.bullets li {
 .tipOwner {
     position: relative;
     cursor: help;
-    /* IE :hover javascript workaround */
+    <?php if ($browserFamily == 'MSIE') {?>
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
+    <?php } ?>
 }
 .tipOwner .tipText {
     display: none;
@@ -433,9 +432,12 @@ ul.bullets li {
     text-align: center;
     width: 15em;
     padding: 2px 5px;
+    <?php if ($browserFamily == 'Gecko') {?>
     -moz-opacity: 0.85;
+    <?php } else if ($browserFamily == 'MSIE') {?>
     filter: alpha(opacity=85);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=85);
+    <?php } ?>
 }
 .tipOwner:hover .tipText {
     display: block;

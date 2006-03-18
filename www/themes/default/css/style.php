@@ -88,6 +88,20 @@
     $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
 
+    // get browser family
+    $browserFamily = 'None';
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
+    if (!empty($ua)) {
+        if (strstr($ua, 'Opera')) {
+            $browserFamily = 'Opera';
+        } else if (strstr($ua, 'MSIE')) {
+            $browserFamily = 'MSIE';      
+        } else {
+            $browserFamily = 'Gecko';
+        }
+    }
+
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);
     $aPath = explode('/', $path);
