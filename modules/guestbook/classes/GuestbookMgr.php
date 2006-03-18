@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | GuestbookMgr.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -38,11 +38,10 @@
 // +---------------------------------------------------------------------------+
 // $Id: GuestbookMgr.php,v 1.22 2005/01/21 00:26:16 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once 'DB/DataObject.php';
 
 /**
- * To allow users to contact site admins.
+ * Allows users to leave guestbook entries.
  *
  * @package guestbook
  * @author  Boris Kerbikov <boris@techdatasolutions.com>
@@ -69,24 +68,26 @@ class GuestbookMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = array();
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submitted   = $req->get('submitted');
-        $input->guestbook   = (object)$req->get('guestbook');
-        $input->from        = ($req->get('frmFrom')) ?
-                               $req->get('frmFrom') : 0;
-        $input->totalItems  = $req->get('totalItems');
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->submitted      = $req->get('submitted');
+        $input->guestbook      = (object)$req->get('guestbook');
 
         if ($input->submitted) {
+            require_once 'Validate.php';
+            $v = & new Validate();
+            
             if (empty($input->guestbook->name)) {
                 $aErrors['name'] = 'Please, specify your name';
             }
             if (empty($input->guestbook->email)) {
                 $aErrors['email'] = 'Please, specify your email';
+            } elseif (!$v->email($input->guestbook->email)) {
+                $aErrors['email'] = 'Your email is not correctly formatted';
             }
             if (empty($input->guestbook->message)) {
                 $aErrors['message'] = 'Please, fill in the message text';
@@ -95,9 +96,14 @@ class GuestbookMgr extends SGL_Manager
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
+            $input->error    = $aErrors;
             $input->template = 'guestbookAdd.html';
             $this->validated = false;
+            
+            // save currect title
+            if ('insert' == $input->action) {
+                $input->pageTitle .= ' :: Add';
+            }
         }
     }
 
@@ -148,7 +154,6 @@ class GuestbookMgr extends SGL_Manager
             'mode'      => 'Sliding',
             'delta'     => 3,
             'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
