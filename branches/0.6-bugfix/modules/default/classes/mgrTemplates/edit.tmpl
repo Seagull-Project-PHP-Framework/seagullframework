@@ -1,0 +1,9 @@
+        $output->template  = '%mgrName%Edit.html';
+        $output->pageTitle = '%MgrName% :: Edit';
+        $output->action    = 'update';
+        $output->wysiwyg   = true;
+
+        $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+        $%mgrName%->%mgrName%_id = $input->%mgrName%_id;
+        $%mgrName%->find(true);
+        $output->%mgrName% = $%mgrName%;

@@ -18,12 +18,14 @@
             </p>
 
             <p>
-                <label for="frmCreateModule[moduleName]">{translate(#Module Name#)}</label>
+                <label class="tipOwner" for="frmCreateModule[moduleName]">{translate(#Module Name#)}
+                <span class="tipText">{translate(#The module name must be identical to a table in the database.#)}</span></label>
                 <span class="error" flexy:if="error[moduleName]">{translate(error[moduleName])}</span>
                 <input type="text" name="frmCreateModule[moduleName]" id="frmCreateModule[moduleName]"  value="{createModule.moduleName}"/>
             </p>
             <p>
-                <label for="frmCreateModule[managerName]">{translate(#Manager Name#)}</label>
+                <label class="tipOwner" for="frmCreateModule[managerName]">{translate(#Manager Name#)}
+                <span class="tipText">{translate(#Common convention is to use a camel case version of the module name.#)}</span></label>
                 <span class="error" flexy:if="error[managerName]">{translate(error[managerName])}</span>
                 <input type="text" name="frmCreateModule[managerName]" id="frmCreateModule[managerName]"  value="{createModule.managerName}"/>
             </p>
@@ -45,6 +47,10 @@
             <p>
                 <label for="frmCreateModule[createTemplates]">{translate(#Create Templates#)}</label>
                 <input type="checkbox" name="frmCreateModule[createTemplates]" id="frmCreateModule[createTemplates]" value="1" checked="checked" />
+            </p>
+            <p>
+                <label for="frmCreateModule[createLangFiles]">{translate(#Create language files#)}</label>
+                <input type="checkbox" name="frmCreateModule[createLangFiles]" id="frmCreateModule[createLangFiles]" value="1" checked="checked" />
             </p>
             <p>
                 <label for="frmCreateModule[createIniFile]">{translate(#Create ini file#)}</label>
