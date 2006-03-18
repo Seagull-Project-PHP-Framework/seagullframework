@@ -1,10 +1,9 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
 <form name="contactUs" action="" method="post" enctype="multipart/form-data" flexy:ignore="">
-    <p>
     <input type="hidden" name="action" value="send" /> 
     <input type="hidden" name="token" value="{token}" />
-    </p>
-    <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <span flexy:if="msgGet()">{msgGet()}</span>
 
     <table class="wide">
         <tr>
