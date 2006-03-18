@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ContactUsMgr.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -68,14 +68,14 @@ class ContactUsMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = null;
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = null;
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submitted   = $req->get('submitted');
-        $input->contact     = (object)$req->get('contact');
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->submitted      = $req->get('submitted');
+        $input->contact        = (object)$req->get('contact');
 
         //  if enquiry_type var is in $_GET
         if ($req->get('enquiry_type')) {
@@ -153,11 +153,15 @@ class ContactUsMgr extends SGL_Manager
         //  2. If email sending is successfull:
         if ($bEmailSent) {
 
-            //  3. insert contact details in the contact table
-            $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
-            $contact->setFrom($input->contact);
-            $contact->contact_us_id = $this->dbh->nextId($this->conf['table']['contact_us']);
-            $contact->insert();
+            // and module config allows to log contacts
+            if ($this->conf['ContactUsMgr']['logContacts']) {
+
+                //  3. insert contact details in the contact table
+                $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
+                $contact->setFrom($input->contact);
+                $contact->contact_us_id = $this->dbh->nextId($this->conf['table']['contact_us']);
+                $contact->insert();
+            }
 
             //  4. redirect on success - inherited redirectToDefault method forwards user to default page
             SGL::raiseMsg('email submitted successfully');
@@ -213,16 +217,16 @@ class ContactUsMgr extends SGL_Manager
 
         $contacterName = $oContact->first_name . ' ' . $oContact->last_name;
         $options = array(
-                'toEmail'       => $this->conf['email']['info'],
-                'toRealName'    => 'Admin',
-                'fromEmail'     => "\"{$contacterName}\" <{$oContact->email}>",
-                'fromEmailAdress' => "{$oContact->email}",
-                'fromRealName'  => $contacterName,
-                'replyTo'       => $oContact->email,
-                'subject'       => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
-                'type'          => $oContact->enquiry_type,
-                'body'          => $oContact->user_comment,
-                'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
+                'toEmail'         => $this->conf['email']['info'],
+                'toRealName'      => 'Admin',
+                'fromEmail'       => "\"{$contacterName}\" <{$oContact->email}>",
+                'fromEmailAdress' => $oContact->email,
+                'fromRealName'    => $contacterName,
+                'replyTo'         => $oContact->email,
+                'subject'         => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
+                'type'            => $oContact->enquiry_type,
+                'body'            => $oContact->user_comment,
+                'template'        => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                     $moduleName . '/email_contact_us.php',
         );
         $message = & new SGL_Emailer($options);
