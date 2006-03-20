@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     $words = array(
 
 /* GUESTBOOK MGR */
