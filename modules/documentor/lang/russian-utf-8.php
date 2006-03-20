@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $words = array(
     'Manual Generator'  => '',
     'by'                => 'Автор',
