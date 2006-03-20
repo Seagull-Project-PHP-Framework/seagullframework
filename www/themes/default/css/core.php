@@ -126,9 +126,7 @@ body {
 /******************************* LAYOUT : FOOTER ******************************/
 
 #sgl #footer {
-    position: relative;
     clear: both;
-    margin-bottom: 5px;
     padding-top: 10px;
     font-size: 0.8em;
     text-align: center;
