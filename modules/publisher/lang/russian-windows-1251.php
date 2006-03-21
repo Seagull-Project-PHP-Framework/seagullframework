@@ -1,130 +1,159 @@
 <?php
-    $words = array(
-        'Publisher' => 'Публикатор',
+$words = array(
 
-/*  Resource Chooser */
-       'Categories' => 'Категории',
-       'Documents' => 'Файлы',
-       'Articles' => 'Статьи',
-       'Permissions' => 'Права доступа',
+/* Article MGR */
+    
+    // titles
+    'Article Manager'         => 'Управление статьями',
+    'Article Manager :: Add'  => 'Управление статьями :: добавление',
+    'Article Manager :: Edit' => 'Управление статьями :: редактирование',
+    'Article Browser'         => 'Просмотр статей',
+    
+    // list
+    'New Article'             => 'Добавить статью',
+    'Article filter'          => 'Фильтр',
+    'Article type'            => 'Тип статьи',
+    'Article list'            => 'Список статей',
+    'Article Name'            => 'Название',
+    'Date created'            => 'Дата создания',
+    'Start Date'              => 'Дата начала',
+    'Expiry Date'             => 'Дата окончания',
+    'Modif. By'               => 'Редактировано',
+    'approve'                 => 'утвердить',
+    'publish'                 => 'опубликовать',
+    'archive'                 => 'архивировать',
+    'For Approval'            => 'для утверждения',
+    'Being Edited'            => 'редактируется',
+    'Approved'                => 'утверждено',
+    'Published'               => 'опубликовано',
+    'Archived'                => 'архивировано',
+    'Deleted'                 => 'удалено',
+    'article'                 => 'статья',
+    
+    // add / edit
+    'Content'                 => 'Содержание',
+    'Editing options'         => 'Настройки',
+    'Author'                  => 'Автор',    
+    'No other text entered'   => 'Текст не введен',
+    'Flesch score'            => 'Flesch Score', // ???
+    'No expire'               => 'Не устаревает',
+        
+    // messages
+    'Article successfully added'                             => 'Статья успешно добавлена',
+    'Article successfully updated'                           => 'Статья успешно отредактирована',
+    'Article status has been successfully changed'           => 'Статус статьи успешно сменен',
+    'The selected article(s) have successfully been deleted' => 'Выбранные статьи успешно удалены',
 
-/*  ARTICLE MGR */
-        'Article Manager' => 'Менеджер статей',
-        'Current Category' => 'Текущая категория',
-        'Change Category' => 'Изменить категорию',
-        'article' => 'статья',
-        'Article Name' => 'Заголовок статьи',
-        'Start Date' => 'Начало',
-        'Start Date' => 'Начало',
-        'Expiry Date' => 'Окончание',
-        'Modif. By' => 'Изменена',
-        'Status' => 'Статус',
-        'preview' => 'предпросмотр',
-        'approve' => 'утвердить',
-        'publish' => 'опубликовать',
-        'archive' => 'в архив',
-        'For Approval' => 'На утверждение',
-        'Being Edited' => 'Редактируется',
-        'Approved' => 'Утверждена',
-        'Published' => 'Опубликована',
-        'Archived' => 'Архивная ',
-        'Deleted' => 'Удаленная',
-        'Editing Article' => 'Редактирование статьи',
-        'select a type to create a new article' => 'укажите тип новой статьи',
-        'With selected article(s)' => 'С выбранной статьей(ми)',
-        'Article successfully added' => 'Статья успешно добавлена',
-        'Article successfully updated' => 'Статья успешно обновлена',
-        'Article status has been successfully changed' => 'Статут статьи был успешно изменен',
-        'The selected article(s) have successfully been deleted' => 'Выбранная статья(и) была успешно удалена',
-        'asset' => 'актив', // ?
-        'No text entered' => 'Не введен текст',
-        'Current View Wysiwyg' => 'Current View Htmlers', // ?
-        'View Wysiwyg' => 'View Wysiwyg', // ?
-        'Current View Html' => 'Current View Html', // ?
-        'View Html' => 'View Html', // ?
-        'Select Font' => 'Выбрать Шрифт',
-        'Size' => 'Размер',
-        'article type' => 'тип статьи',
-        'whole DB' => 'все категории',
-        'this category' => 'эта категория',
-        'showing results for' => 'отображаются результаты для',
+    
+/* ArticleView MGR */
+    
+    // view / summary
+    'Current Category'        => 'Текущая категория',
+    'No lead article found'   => 'Основная статья не найдена',
+    'No articles found'       => 'Статей не найдено',
+    'No documents found'      => 'Документов не найдено',
+    'Related Articles'        => 'См. также (статьи)',
+    'Related Documents'       => 'См. также (документы)',
+    'contributed by'          => 'Автор', // perevod ne po soderzhaniju, a po smyslu
+    'full story'              => 'Полный текст', // perevod ne po soderzhaniju, a po smyslu
+    
+    
+/* Document MGR */
 
-/* ArticleBrowser */
-        'Article Browser' => 'Просмотр статей',
-        'Current Cateogry'  => 'Текущая категория',
-        'No lead article found'  => 'Не найдена основная статья',
-        'Related Articles' => 'Смотрите также статьи', // ?
-        'Related Documents' => 'Смотрите также файлы', // ?
-        'No articles found' => 'Статьи не найдены',
-        'No documents found' => 'Файлы не найдены',
+    // titles
+    'Document Manager'        => 'Управление файлами',
+    
+    // list
+    'New Asset'               => 'Добавить файл',
+    'Document filter'         => 'Фильтр',
+    'select a category'       => 'Выберите категорию',
+    'Document list'           => 'Список файлов',
+    'showing results for'     => 'Показывать', // perevod ne po soderzhaniju, a po smyslu
+    'Asset Name'              => 'Название',
+    'Size'                    => 'Размер',
+    'Type'                    => 'Тип',
+    'Date Added'              => 'Добавлено',
+    'Owner'                   => 'Добавил',
+    'Download'                => 'Скачать',
+    'Document type'           => 'Тип документа',
+    'asset'                   => 'файл',
+    'choose'                  => 'выбрать',
+    'whole DB'                => 'все категории',
+    'this category'           => 'текущая категория',
+    'preview'                 => 'просмотр',
+    
+    // add / edit
+    'Editing Asset'           => 'Редактирование файла',
+    'Locate'                  => 'Файл', // perevod ne po soderzhaniju, a po smyslu
+    'Mime Type'               => 'Mime тип',
+    'Upload'                  => 'Загрузить',
+    'Category'                => 'Категория',
+    'Change Category'         => 'Изменить категорию',
+    'Description'             => 'Описание',
+    
+    // messages
+    'The asset has successfully been added'       => 'Файл успешно добавлен',
+    'The asset has successfully been deleted'     => 'Выбранные файлы успешно удалены',
+    'The asset has successfully been updated'     => 'Файл успешно отредактирован',
+    
+    // validate
+    'You must select a file to upload'                   => 'Пожалуйста, укажите файл для загрузки',
+    'Error: Not a recognised file type'                  => 'Ошибка: неизвестный тип файла',
+    'Error: A file with this name already exists'        => 'Ошибка: файл с таким именем существует',
+    'There was an error attempting to download the file' => 'Ошибка при загрезке файла',
+    'The specified file does not appear to exist'        => 'Указанный файл не существует',
+    
+    // form alerts
+    'Please wait until upload is finished' => 'Пожалуйста, подождите пока файл не загрузится',
+    'Please select a file to upload'       => 'Пожалуйста, укажите файл для загрузки',
+    'Please wait while document uploads'   => 'Пожалуйста, подождите... файл загружается',
+    
 
-/* ArticleView  */
-        'No article found' => 'Статья не найдена',
+/* WikiScrape MGR */
+    
+    // titles
+    'WikiScrape Manager' => 'Управление WikiScrape',
+    
 
-/* Article Add & Edit  */
-        'Article type' => 'Тип статьи',
-        'Author' => 'Автор',
-        'Date created' => 'Дата создания',
-        'Flesch score' => 'Flesch Score', // ?
+/* ContentType MGR */
 
-/*  CATEGORY MGR    */
-        'Category ID' => 'ID категории',
-        'Current Category Name' => 'Имя текущей категории',
-        'New Category Name' => 'Имя новой категории',
-        'Category will be Added Under' => 'Категория будет добавлена в',
-        'Target Parent Category' => 'Выберите родительскую категорию',
-        'Add Category' => 'Добавить категорию',
-        'Edit Category' => 'Редактировать категорию',
-        'Move Category' => 'Изменить местоположение категории',
-        'Delete Category' => 'Удалить категорию',
-        'You are here' => 'Вы находитесь здесь',
-        'category' => 'категория',
-        'Category' => 'Категория',
-        'Please select a new parent category' => 'Пожалуйста укажите новую родительскую категорию',
-        'Please enter a value in the field before submitting' => 'Пожалуйста укажите значение в поле, перед тем как сохранять',
-        'The category has successfully been updated' => 'Категория была успешно обновлена',
-        'The category has successfully been moved' => 'Категория была успешно перемещена',
-        'The category has successfully been added' => 'Категория была успешно добавлена',
-        'The category has successfully been deleted' => 'Категория была успешно удалена',
-        'Root' => 'Корень',
+    //
+    // TODO: filter following messages (delete obsolete), 
+    //       cheeck ContentType templates, when they will be ready
+    //
 
-        /* Deleting a Category */
-        'Deleting a Category' => 'Удаление категории',
-        'Category to Delete' => 'Категория для удаления',
+    // titles
+    'Content Type Manager' => 'Content Type Manager',
 
-
-/*  DOCUMENT MGR    */
-        'Document Manager' => 'Менеджер файлов',
-        'Content Type' => 'Тип содержимого',
-        'New Article' => 'Новая статья',
-        'New Asset' => 'Новый файл',
-        'Asset Name' => 'Имя',
-        'Date Added' => 'Добавлен',
-        'Description' => 'Описание',
-        'Locate' => 'Расположен',
-        'Upload' => 'Загрузить',
-        'Original Name' => 'Оригинальное имя',
-        'Mime Type' => 'Mime-тип',
-        'Kb' => 'kB',
-        'Owner' => 'Владелец',
-        'Type' => 'Тип',
-        'no results found' => 'ничего не найдено',
-        'Download' => 'Скачать',
-        'View' => 'Просмотр',
-        'With selected document(s)' => 'С выбранным файлом(и)',
-        'Error: Not a recognised file type' => 'Ошибка: Не распознан тип файла',
-        'Error: A file with this name already exists' => 'Ошибка: Файл с этим именем уже существует',
-        'The asset has successfully been added' => 'Файл был успешно добавлен',
-        'The asset has successfully been updated' => 'Файл был успешно обновлен',
-        'The asset has successfully been deleted' => 'Файл(ы) был успешно удален',
-        'Please wait while document uploads' => 'Пожалйства подождите пока файл загружается на сервер',
-        'Please wait until upload is finished' => 'Пожалуйста подождите пока загрузка файла на сервер завершится',
-        'You must select a file to upload' => 'Вы не выбрали файл для загрузки на сервер',
-
-/*  PERMISSIONS */
-        'Group Name' => 'Название группы',
-        'Has Permissions' => 'имеет права доступа',
-        'Yes' => 'Да',
-        'No' => 'Нет',
-    );
+    // types
+    'Title'    => 'Заголовок',
+    'BodyHtml' => 'HTML текст',
+    'NewsHtml' => 'Текст',
+    
+    'select a type to create a new article' => 'укажите тип новой статьи',
+    'Current View Wysiwyg' => 'Current View Htmlers', // ?
+    'View Wysiwyg' => 'View Wysiwyg', // ?
+    'Current View Html' => 'Current View Html', // ?
+    'View Html' => 'View Html', // ?
+    'Select Font' => 'Выбрать Шрифт',
+    
+    'Content Type Manager' => 'Content Type Manager',
+    'Number of fields' => 'Number of fields',
+    'field' => 'field',
+    'New content type' => 'New content type',
+    'Give a name to this field and select its type' => 'Give a name to this field and select its type',
+    'Add Type' => 'Add Type',
+    'With selected content type(s)' => 'With selected content type(s)',
+    'content type has successfully been added' => 'content type has successfully been added',
+    'content type has successfully been deleted' => 'content type has successfully been deleted',        
+    'content type has successfully been updated' => 'content type has successfully been updated',
+    'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'=>'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:',
+    'What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'=>'What you see when you click the \'Articles\' tab in the front end is a document collection. Creating articles of type \'Html Article\' allows you to place your content in a hierarchy that you build using the \'Categories\' button above. This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the \'Related Articles\' box on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the \'Related Documents\' box.',
+    'However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the'=>'However, if you want to make standalone pages that will be linked to by their own tab, please use the \'Static Html Article\' type.  In order to create the navigation that will link to these static pages, please use the',
+    'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.'=>'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.',
+    'You can also set permissions on who can view the content using the Permissions button above.'=>'You can also set permissions on who can view the content using the \'Permissions\' button above.',
+    'more info'=>'more info',
+    'Contributed by' =>'Contributed by',
+    'Please select an article type' => 'Please select an article type',
+);
 ?>
