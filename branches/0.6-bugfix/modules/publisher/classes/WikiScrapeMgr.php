@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WikiScrapeMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -52,6 +52,7 @@ class WikiScrapeMgr extends SGL_Manager
     function WikiScrapeMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
 
         $this->pageTitle    = 'WikiScrape Manager';
         $this->template     = 'wikiScrapeList.html';
@@ -63,20 +64,13 @@ class WikiScrapeMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = array();
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->wikiUrl     = urldecode($req->get('url'));
-
-        //  if errors have occured
-        if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
-            $this->validated = false;
-        }
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->wikiUrl        = urldecode($req->get('url'));
     }
 
     function _cmd_list(&$input, &$output)

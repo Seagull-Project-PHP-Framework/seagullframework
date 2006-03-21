@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FileMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -56,9 +56,9 @@ class FileMgr extends SGL_Manager
 
         $this->pageTitle        = 'File Manager';
         $this->_aActionsMapping =  array(
-            'download'   => array('download'),
-            'downloadZipped'   => array('downloadZipped'),
-            'view'   => array('view'),
+            'download'       => array('download'),
+            'downloadZipped' => array('downloadZipped'),
+            'view'           => array('view'),
         );
     }
 

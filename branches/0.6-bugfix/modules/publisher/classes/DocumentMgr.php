@@ -130,14 +130,14 @@ class DocumentMgr extends FileMgr
 
                 //  check uploaded file is of valid type
                 if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
-                    $aErrors[] = SGL_String::translate('Error: Not a recognised file type');
+                    $aErrors[] = 'Error: Not a recognised file type';
                 }
                 //  ... and does not exist in uploads dir
                 if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
-                    $aErrors[] = SGL_String::translate('Error: A file with this name already exists');
+                    $aErrors[] = 'Error: A file with this name already exists';
                 }
             } else {
-                $aErrors[] = SGL_String::translate('You must select a file to upload');
+                $aErrors[] = 'You must select a file to upload';
             }
         }
 
