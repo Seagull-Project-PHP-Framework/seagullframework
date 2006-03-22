@@ -288,7 +288,7 @@ class SGL_URL
                                 $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
-                                $this->querystring = substr($this->url, $frontScriptEndIndex);
+                                $this->querystring = substr($value, $frontScriptEndIndex);
                             }
                         } else {
                             $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR
