@@ -778,7 +778,8 @@ class SGL_URL
     }
 
     /**
-     * Returns an array of all elements from the front controller script name onwards.
+     * Returns an array of all elements from the front controller script name onwards,
+     * including the frontScriptName.
      *
      * @access  public
      * @static
