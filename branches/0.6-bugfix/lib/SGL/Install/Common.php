@@ -121,7 +121,7 @@ class SGL_Install_Common
     <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
     <meta http-equiv="Content-Language" content="en" />
     <meta name="ROBOTS" content="ALL" />
-    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
@@ -149,6 +149,7 @@ HTML;
         $html = <<<HTML
     <div id="footer">
     Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
+    </div>
     </div>
 </body>
 </html>
