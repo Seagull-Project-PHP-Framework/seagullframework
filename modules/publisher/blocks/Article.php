@@ -62,7 +62,7 @@ class Publisher_Block_Article
 
         $blockOutput          = new SGL_Output();
         $blockOutput->theme   = $output->theme;
-        $blockOutput->isAdmin = $blockOutput->isAdmin();
+        $blockOutput->isAdmin = $output->isAdmin();
 
         //  set block params
         if (array_key_exists('articleId', $aParams)) {
