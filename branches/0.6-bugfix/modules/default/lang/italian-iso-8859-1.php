@@ -67,7 +67,6 @@ $defaultWords['Username'] = 'Nome utente';
 $defaultWords['Action'] = 'Azione';
 $defaultWords['Select'] = 'Selezione';
 $defaultWords['delete'] = 'elimina';
-$defaultWords['Edit'] = 'Modifica';
 $defaultWords['View'] = 'Mostra';
 $defaultWords['move up'] = 'sposta su';
 $defaultWords['move down'] = 'sposta giu`';
@@ -92,6 +91,7 @@ $defaultWords['reset'] = 'ripristina';
 $defaultWords['Save'] = 'Salva';
 $defaultWords['add'] = 'aggiungi';
 $defaultWords['edit'] = 'modifica';
+$defaultWords['Edit'] = 'Modifica';
 $defaultWords['move'] = 'sposta';
 $defaultWords['Manage'] = 'Gestisci';
 $defaultWords['Are you sure you want to delete this'] = 'Sei sicuro di voler cancellare questi';
@@ -393,7 +393,6 @@ $defaultWords['allow backend to display in separate GUI'] = 'Permetti di visuali
 $defaultWords['config options'] = 'Configurazione opzioni';
 $defaultWords['delete selected'] = 'cancella selezionati';
 $defaultWords['does not exist.'] = 'non esiste.';
-$defaultWords['edit'] = 'modifica';
 $defaultWords['is not writeable.'] = 'non hai permessi di scrittura.';
 $defaultWords['manage'] = 'Gestisci';
 $defaultWords['module already exists. Please choose another module name'] = 'il modulo esiste gia`. Per favore scegli un altro nome per il modulo';
@@ -422,5 +421,6 @@ $defaultWords['Words which system was unable to translate will be enclosed in ">
 $defaultWords['With selected record(s)'] = 'Con i record selezionati';
 $defaultWords['What format would you like your output URLs, Seagull Search Engine Friendly is the default'] = 'Il formato per le le URL di output: quello predefinito e` il Search Engine Friendly di Seagull';
 $defaultWords['This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8'] = 'Questa interrogazione e` usata per settare il set di caratteri di default per la connessione corrente (MySQL 4.1 o superiore). Per esempio: SET NAMES utf8';
+$defaultWords['Create CRUD actions'] = 'Crea azioni CRUD';
 
 ?>
