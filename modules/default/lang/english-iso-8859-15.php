@@ -472,5 +472,6 @@ $defaultWords['Please create it.'] = 'Please create it.';
 $defaultWords['Default theme'] = 'Default theme';
 $defaultWords['Additional Include Path'] = 'Additional Include Path';
 $defaultWords['Custom filter chain'] = 'Custom filter chain';
+$defaultWords['Create CRUD actions'] = 'Create CRUD Actions';
 
 ?>
