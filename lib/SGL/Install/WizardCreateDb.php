@@ -96,7 +96,7 @@ function canCreateDb()
     }
 
     //  attempt to create database
-    $ok = $dbh->query("CREATE DATABASE {$aFormValues['name']}");
+    $ok = $dbh->query("CREATE DATABASE `{$aFormValues['name']}`");
 
     if (PEAR::isError($ok)) {
         SGL_Install_Common::errorPush($ok);
