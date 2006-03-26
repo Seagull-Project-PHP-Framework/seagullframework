@@ -108,7 +108,7 @@ EOF;
 
     function testBuildFilterChain()
     {
-        $aFilters = array('Foo', 'Bar', 'Baz');
+        $aFilters = array('Foo1', 'Bar1', 'Baz');
         $code = '$process = ';
         foreach ($aFilters as $filter) {
             $filters .= "new $filter(\n";
