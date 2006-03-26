@@ -8,6 +8,8 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+26-03-06    Modified SGL_Inflector::caseFix() to return the original string if a
+            config key cannot be found to compare with, instead of false
 26-03-06    Added ability to load navigation data during the install, so devs can
             create navigation that corresponds with their custom modules
 20-03-06    Added Dutch translation (Peter Termaten)

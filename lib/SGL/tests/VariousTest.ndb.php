@@ -120,15 +120,15 @@ EOF;
 
     function testAutoLoad()
     {
-        $className = 'Foo_Bar_Baz';
+        $className = 'Foo1_Bar1_Baz';
         $searchPath = preg_replace('/_/', '/', $className) . '.php';
-        $expected = 'Foo/Bar/Baz.php';
+        $expected = 'Foo1/Bar1/Baz.php';
         $this->assertEqual($expected, $searchPath);
     }
 }
 
-class Foo{}
-class Bar{}
+class Foo1{}
+class Bar1{}
 class Baz{}
 
 ?>
