@@ -105,6 +105,19 @@ class SGL_DB
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if ($dbh && count($dbh->dsn)) {
+            $locatorDsn = $dbh->dsn;
+            $conf['db']['user'] = $locatorDsn['username'];
+            $conf['db']['pass'] = $locatorDsn['password'];
+            $conf['db']['protocol'] = $locatorDsn['protocol'];
+            $conf['db']['socket'] = $locatorDsn['socket'];
+            $conf['db']['host'] = $locatorDsn['hostspec'];
+            $conf['db']['port'] = $locatorDsn['port'];
+            $conf['db']['name'] = $locatorDsn['database'];
+        }
+
         //  override default mysql driver to allow for all sequence IDs to
         //  be kept in a single table
         $dbType = $conf['db']['type'];

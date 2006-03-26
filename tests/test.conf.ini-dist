@@ -24,9 +24,11 @@ initBridge          = /etc/sglBridge.php
 file1               = etc/sequence.my.sql
 file2               = modules/default/data/schema.my.sql
 file3               = modules/user/data/schema.my.sql
-file4               = modules/block/data/schema.my.sql
+file4               = modules/navigation/data/schema.my.sql
+file5               = modules/block/data/schema.my.sql
 
 [dataFiles]
 file1               = modules/default/data/data.default.my.sql
 file2               = modules/user/data/data.default.my.sql
-file3               = modules/block/data/data.default.my.sql
+file3               = modules/navigation/data/data.default.my.sql
+file4               = modules/block/data/data.default.my.sql

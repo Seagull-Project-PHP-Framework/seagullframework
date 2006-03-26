@@ -17,7 +17,7 @@ class DA_NavigationTest extends UnitTestCase {
 
     function setup()
     {
-        $this->da = & DA_Navigation::singleton();
+        $this->da = & DA_Navigation::singleton($forceNew = true);
     }
 
     function testAddSection()
@@ -67,8 +67,8 @@ class DA_NavigationTest extends UnitTestCase {
 
     }
 }
-define('SGL_NODE_ADMIN', 4);
-define('SGL_NODE_GROUP', 1);
+//define('SGL_NODE_ADMIN', 4);
+//define('SGL_NODE_GROUP', 1);
 
 /*
 builds
