@@ -31,7 +31,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Config.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -96,11 +96,6 @@ class SGL_Config
         } else {
             $this->aProps[$key] = $value;
         }
-    }
-
-    function add($key, $value)
-    {
-        array_push($this->aProps, $value);
     }
 
     function replace($aConf)
