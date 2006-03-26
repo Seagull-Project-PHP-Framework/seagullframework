@@ -20,12 +20,17 @@ class ConfigTest extends UnitTestCase {
         $this->c = &SGL_Config::singleton();
     }
 
+    function tearDown()
+    {
+        $this->c = null;
+    }
+
     function testLoadIniFile()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
         $ret = $this->c->load($file);
         $this->assertTrue(is_array($ret));
-        $this->assertEqual(count($ret), 15);
+        $this->assertEqual(count($ret), 14);
     }
 
     function testLoadPhpArrayFile()
@@ -33,7 +38,7 @@ class ConfigTest extends UnitTestCase {
         $file = dirname(__FILE__) . '/test.conf.php';
         $ret = $this->c->load($file);
         $this->assertTrue(is_array($ret));
-        $this->assertEqual(count($ret), 14);
+        $this->assertEqual(count($ret), 15);
     }
 
     function testWriteIniFile()
@@ -60,6 +65,9 @@ class ConfigTest extends UnitTestCase {
 
         $tmpFileName = tempnam('/tmp', 'test');
         $phpTmpFileName = $tmpFileName . '.php';
+
+        //  replace config keys with those loaded
+        $this->c->replace($ret);
         $ok = $this->c->save($phpTmpFileName);
         $this->assertTrue($ok);
         $this->assertTrue(is_file($phpTmpFileName));
@@ -88,16 +96,7 @@ class ConfigTest extends UnitTestCase {
         $conf = $this->c->load($file);
         $this->c->set('quux', array('foo' => 'bar'));
         $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
-        $this->assertEqual(array('foo' => 'bar'), $this->c->aProps['quux']);
-    }
-
-    function testAddConfigValue()
-    {
-        $file = dirname(__FILE__) . '/test.conf.ini';
-        $conf = $this->c->load($file);
-        $this->c->add('quux', array('foo' => 'bar'));
-        $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
-        $this->assertEqual(array('foo' => 'bar'), $this->c->aProps['quux']);
+        $this->assertEqual(array('foo' => 'bar'), $this->c->get('quux'));
     }
 }
 ?>
