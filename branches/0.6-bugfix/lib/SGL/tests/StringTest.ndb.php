@@ -74,9 +74,9 @@ class StringTest extends UnitTestCase {
         $aControl[] = 'Here is a sentence-like string.';
         $aControl[] = ' Here is a sentence-like string.';
         $aControl[] = ' *Here is a sentence-like string.';
-        $aExpected[] = 'here_is_a_sentencelike_string';
-        $aExpected[] = '_here_is_a_sentencelike_string';
-        $aExpected[] = '_here_is_a_sentencelike_string';
+        $aExpected[] = 'here_is_a_sentence-like_string';
+        $aExpected[] = '_here_is_a_sentence-like_string';
+        $aExpected[] = '_here_is_a_sentence-like_string';
         foreach ($aControl as $k => $control) {
             $ret = SGL_String::dirify($control);
             $this->assertEqual($aExpected[$k], $ret);
