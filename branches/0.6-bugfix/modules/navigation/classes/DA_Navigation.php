@@ -489,6 +489,40 @@ class DA_Navigation extends SGL_Manager
         return $msgType;
     }
 
+
+    /**
+     * For installer purposes, returns insert ID.
+     *
+     * @param array $section
+     */
+    function addSimpleSection(&$section)
+    {
+        $separator = '/';
+
+        //  strip extension and 'Mgr'
+        $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($section['manager']);
+        $actionPair = (!(empty($section['actionMapping'])) && ($section['actionMapping'] != 'none'))
+            ? 'action' . $separator . $section['actionMapping'] . $separator
+            : '';
+        $section['resource_uri'] =
+            $section['module'] . $separator .
+            $simplifiedMgrName . $separator .
+            $actionPair;
+
+        //  remove trailing slash/ampersand if one is present
+        if (substr($section['resource_uri'], -1) == $separator) {
+            $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
+        }
+        //  fetch next id
+        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']);
+
+        //  set translation id for nav title
+        $section['trans_id'] = $sectionNextId;
+        $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
+
+        return $nodeId;
+    }
+
     /**
      * Updates section.
      *
@@ -637,7 +671,7 @@ class DA_Navigation extends SGL_Manager
                 $section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
-            break;
+                break;
         }
 
         //  deal with additional params
