@@ -30,26 +30,5 @@ class UrlStrategyAliasTest extends UnitTestCase
     {
         unset($this->strategy, $this->obj);
     }
-
-    function testGetSimpleAlias()
-    {
-        $aUrlSegments = array (
-          0 => 'index.php',
-          1 => 'seagull-php-framework',
-        );
-        $obj = new SGL_Url();
-        $obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($obj, $this->conf);
-
-        //  assert expected keys present
-        $this->assertTrue(array_key_exists('moduleName', $ret));
-        $this->assertTrue(array_key_exists('managerName', $ret));
-        #$this->assertTrue(array_key_exists('action', $ret));
-
-        //  assert expected values present
-        $this->assertEqual($ret['moduleName'], 'default');
-        $this->assertEqual($ret['managerName'], 'default');
-        #$this->assertEqual($ret['action'], 'list');
-    }
 }
 ?>
