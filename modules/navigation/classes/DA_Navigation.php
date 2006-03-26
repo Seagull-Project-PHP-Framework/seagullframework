@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_Navigation.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -49,7 +49,6 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
 class DA_Navigation extends SGL_Manager
 {
     var $_params  = array();
-    var $_message = '';
     var $_aUriAliases = array();
 
     /**
@@ -444,8 +443,6 @@ class DA_Navigation extends SGL_Manager
     function addSection(&$section)
     {
         $this->prepareSection($section);
-        $msgAdditional = null;
-        $msgType       = SGL_MESSAGE_INFO;
 
         //  prepare resource_uri string for alias format
         if ($section['uri_alias_enable'] && !empty($section['uri_alias'])) {
@@ -453,9 +450,6 @@ class DA_Navigation extends SGL_Manager
             if (!$this->isUriAliasDuplicated($aliasName)) {
                 $aliasNextId = $this->dbh->nextId($this->conf['table']['uri_alias']);
                 $section['resource_uri'] = 'uriAlias:' . $aliasNextId .':' . $section['resource_uri'];
-            } else {
-                $msgType = SGL_MESSAGE_WARNING;
-                $msgAdditional = ' but alias creation failed as there can be no duplicates';
             }
         }
 
@@ -478,15 +472,13 @@ class DA_Navigation extends SGL_Manager
         } else { //  error
             return false;
         }
-        $this->_message = "Section successfully added";
 
         //  deal with potential alias to add
         if (isset($aliasNextId)) {
             $target = $nodeId;
             $ok = $this->addUriAlias($aliasNextId, $aliasName, $target);
         }
-        $this->_message .= $msgAdditional;
-        return $msgType;
+        return true;
     }
 
 
@@ -534,8 +526,6 @@ class DA_Navigation extends SGL_Manager
     function updateSection(&$section)
     {
         $this->prepareSection($section);
-        $msgAdditional = null;
-        $msgType       = SGL_MESSAGE_INFO;
 
         //  prepare resource_uri string for alias format
         if ($section['uri_alias_enable'] && !empty($section['uri_alias'])) {
@@ -549,9 +539,6 @@ class DA_Navigation extends SGL_Manager
                     $ok = $this->updateUriAlias($aliasName, $section['section_id']);
                 }
                 $section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$section['resource_uri'];
-            } else {
-                $msgType = SGL_MESSAGE_WARNING;
-                $msgAdditional = ' but alias creation failed as there can be no duplicates';
             }
         }
 
@@ -590,28 +577,23 @@ class DA_Navigation extends SGL_Manager
         switch ($section['parent_id']) {
         case $section['parent_id_original']:
             //  usual case, no change => do nothing
-            $this->_message = 'Section details successfully updated';
             break;
 
         case $section['section_id']:
             //  cannot be parent to self => display user error
-            $this->_message = 'Section details updated, no data changed';
             break;
 
         case 0:
             //  move the section, make it into a root node, just above its own root
             $thisNode = $this->nestedSet->getNode($section['section_id']);
             $moveNode = $this->nestedSet->moveTree($section['section_id'], $thisNode['root_id'], 'BE');
-            $this->_message = 'Section details successfully updated';
             break;
 
         default:
             //  move the section under the new parent
             $moveNode = $this->nestedSet->moveTree($section['section_id'], $section['parent_id'], 'SUB');
-            $this->_message = 'Section details successfully updated';
         }
-        $this->_message .= $msgAdditional;
-        return $msgType;
+        return true;
     }
 
     /**
@@ -703,18 +685,6 @@ class DA_Navigation extends SGL_Manager
             }
             $section['perms'] = implode(',', $aRoles);
         }
-    }
-
-    /**
-     * Returns message.
-     *
-     * @access  private
-     *
-     * @return  string
-     */
-    function getMessage()
-    {
-        return $this->_message;
     }
 }
 ?>
