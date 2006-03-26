@@ -194,15 +194,13 @@ class SGL_UpdateHtmlTask extends SGL_Task
     }
 }
 
-class SGL_Task_DefineTableAliases extends SGL_UpdateHtmlTask
+class SGL_Task_DefineTableAliases extends SGL_Task
 {
     function run($data)
     {
         $c = &SGL_Config::singleton();
 
         $aModuleList = SGL_Install_Common::getModuleList();
-//            ? SGL_Install_Common::getModuleList()
-//            : $this->getMinimumModuleList();
 
         foreach ($aModuleList as $module) {
             $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
@@ -455,6 +453,50 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {
                     $this->updateHtml($module . '_constraints', $this->noFile);
+                }
+            }
+        }
+    }
+}
+
+define('SGL_NODE_ADMIN', 4); // nested set parent_id
+define('SGL_NODE_GROUP', 1);
+
+class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
+{
+    var $groupId = null;
+    var $childId = null;
+
+    function run($data)
+    {
+        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+        $da = & DA_Navigation::singleton();
+        $aModuleList = (isset($data['installAllModules']))
+            ? SGL_Install_Common::getModuleList()
+            : $this->getMinimumModuleList();
+
+        foreach ($aModuleList as $module) {
+            $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
+            if (file_exists($navigationPath)) {
+                require_once $navigationPath;
+                foreach ($aSections as $aSection) {
+
+                    //  check if section is designated as child to last insert
+                    if ($aSection['parent_id'] == SGL_NODE_GROUP) {
+                        $aSection['parent_id'] = $this->groupId;
+                    } else {
+                        $aSection['parent_id'] = SGL_NODE_ADMIN;
+                    }
+                    $id = $da->addSimpleSection($aSection);
+                    if (!PEAR::isError($id)) {
+                        if ($aSection['parent_id'] == SGL_NODE_ADMIN) {
+                            $this->groupId = $id;
+                        } else {
+                            $this->childId = $id;
+                        }
+                    } else {
+                        SGL_Install_Common::errorPush(PEAR::raiseError($$idk));
+                    }
                 }
             }
         }

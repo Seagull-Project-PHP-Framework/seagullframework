@@ -147,7 +147,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         //  install all modules?
         $this->addElement('checkbox', 'installAllModules', 'Install all modules?',
-            'Yes (If box is not ticked, only 3 core modules will be installed)', 'id=installAllModules');
+            'Yes (If box is not ticked, only 4 core modules will be installed)', 'id=installAllModules');
 
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
