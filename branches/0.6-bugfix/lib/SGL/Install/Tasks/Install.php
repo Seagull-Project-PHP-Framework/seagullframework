@@ -261,7 +261,7 @@ class SGL_Task_CreateDatabase extends SGL_Task
 
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName = true);
         $dbh = & SGL_DB::singleton($dsn);
-        $query = "CREATE DATABASE {$this->conf['db']['name']}";
+        $query = "CREATE DATABASE `{$this->conf['db']['name']}`";
         $res = $dbh->query($query);
     }
 }
