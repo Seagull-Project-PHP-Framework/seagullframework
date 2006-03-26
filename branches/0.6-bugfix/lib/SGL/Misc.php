@@ -743,7 +743,7 @@ class SGL_Inflector
      * @static
      * @param    string     $str    Classname
      * @param    boolean    $force  Force the operation regardless of php version
-     * @return   mixed              Either correct case classname or false
+     * @return   mixed              Either correct case classname or original classname if no key found
      */
     function caseFix($str, $force = false)
     {
@@ -755,7 +755,7 @@ class SGL_Inflector
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
-        return ($isFound !== false) ? $aConfValues[$isFound] : false;
+        return ($isFound !== false) ? $aConfValues[$isFound] : $str;
     }
 }
 

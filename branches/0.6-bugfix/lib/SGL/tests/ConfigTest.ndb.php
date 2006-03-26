@@ -25,7 +25,7 @@ class ConfigTest extends UnitTestCase {
         $file = dirname(__FILE__) . '/test.conf.ini';
         $ret = $this->c->load($file);
         $this->assertTrue(is_array($ret));
-        $this->assertEqual(count($ret), 14);
+        $this->assertEqual(count($ret), 15);
     }
 
     function testLoadPhpArrayFile()
