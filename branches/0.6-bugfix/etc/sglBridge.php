@@ -16,17 +16,15 @@ class TestRunnerInit extends SGL_FrontController
         $c->set('debug', array('customErrorHandler' => false));
         $conf = $c->getAll();
 
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        $urlHandler = $conf['site']['outputUrlHandler'];
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
-
-        //  assign to registry
+        //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
-        $input->setRequest($req = SGL_Request::singleton());
+        $req = SGL_Request::singleton();
+
+        if (PEAR::isError($req)) {
+            //  stop with error page
+            SGL::displayStaticPage($req->getMessage());
+        }
+        $input->setRequest($req);
 
         $process =  new SGL_Process_Init(
                     new SGL_Process_DiscoverClientOs(

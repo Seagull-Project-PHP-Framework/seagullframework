@@ -99,12 +99,12 @@ class DA_Navigation extends SGL_Manager
      * @static
      * @return  DA_Navigation reference to DA_Navigation object
      */
-    function &singleton()
+    function &singleton($forceNew = false)
     {
         static $instance;
 
         // If the instance is not there, create one
-        if (!isset($instance)) {
+        if (!isset($instance) || $forceNew) {
             $instance = new DA_Navigation();
         }
         return $instance;

@@ -89,11 +89,22 @@ class SGL_NestedSet
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->dbh                =& SGL_DB::singleton();
+        $this->dbh                = $this->_getDb();
         $this->_params            = $params;
         $this->_tableName         = $params['tableName'];
         $this->_fieldsInternal    = array_flip($params['tableStructure']);
         $this->_fieldListExternal = $this->_tableName . '.' . implode(",$this->_tableName.",$this->_fieldsInternal);
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
     }
 
     function setImage($key, $value)
@@ -176,7 +187,7 @@ class SGL_NestedSet
                 if (DB::isError($result)) {
                     SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                     return;
-                }                
+                }
                 while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
                     $r[$row[$this->_fieldsInternal['id']]] = $row;
                 }
@@ -215,7 +226,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
@@ -254,7 +265,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = '';
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -293,7 +304,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)) {
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -401,7 +412,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -507,7 +518,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         return $result;
     }
 
@@ -562,8 +573,6 @@ class SGL_NestedSet
      * @return object DB_NestedSet_DB
      *
      * @author  Andy Crain <andy@newslogic.com>
-     * @version 1.0
-     * @since   PHP 4.0
      */
     function _getNestedSet()
     {
@@ -598,7 +607,7 @@ class SGL_NestedSet
     function createSubNode($id, $values)
     {
         $this->_cleanMemoryCache($id);
-        
+
         $ns = $this->_getNestedSet();
         return $ns->createSubNode($id, $values);
     }
@@ -606,7 +615,7 @@ class SGL_NestedSet
     function moveTree($id, $targetid, $pos, $copy = false)
     {
         $this->_cleanMemoryCache();
-        
+
         $ns = $this->_getNestedSet();
         return $ns->moveTree($id, $targetid, $pos, $copy);
     }
@@ -614,11 +623,11 @@ class SGL_NestedSet
     function deleteNode($id)
     {
         $this->_cleanMemoryCache($id);
-        
+
         $ns = $this->_getNestedSet();
         return $ns->deleteNode($id);
     }
-    
+
     /**
      * Clean nodes stored in memory
      * @param integer node id [optional]
