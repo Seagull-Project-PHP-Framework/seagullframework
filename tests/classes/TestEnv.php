@@ -40,6 +40,37 @@
 // +---------------------------------------------------------------------------+
 
 require_once SGL_CORE_DIR . '/Sql.php';
+
+class SGL_Task_SetupSimpleTestORM extends SGL_Task
+{
+    function run($conf = array())
+    {
+        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = array(
+            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
+            'schema_location'       => SGL_ENT_DIR,
+            'class_location'        => SGL_ENT_DIR,
+            'require_prefix'        => SGL_ENT_DIR . '/',
+            'class_prefix'          => 'DataObjects_',
+            'debug'                 => 0,
+            'production'            => 0,
+            'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema' => 1,
+        );
+        require_once 'DB/DataObject/Generator.php';
+
+        $generator = new DB_DataObject_Generator();
+        $generator->start();
+        $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
+
+        //  copy over links file
+        $target = SGL_ENT_DIR . '/' . $dsn['database'] . '.links.ini';
+        if (!file_exists($target)) {
+            @copy(SGL_PATH . '/etc/links.ini.dist', $target);
+        }
+    }
+}
+
 /**
  * A class for setting up and tearing down the testing environment.
  *
@@ -62,6 +93,9 @@ class STR_TestEnv
                 SGL_Sql::parseAndExecute(STR_PATH .'/'. $schemaFile);
             }
         }
+        //  ensure db_do environment setup correctly for simpletest
+        $dbdo = new SGL_Task_SetupSimpleTestORM();
+        $dbdo->run();
     }
 
     /**

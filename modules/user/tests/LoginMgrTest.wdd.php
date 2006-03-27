@@ -44,11 +44,13 @@ class TestLoginMgr extends UnitTestCase {
         $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
-        $userMgr->_insert($oInput, $oOutput);
+        $userMgr->_cmd_insert($oInput, $oOutput);
 
         //  test login with new user details
         $loginMgr = new LoginMgr();
-        $this->assertTrue($res = $loginMgr->_doLogin($username, $passwd));
+        $res = $loginMgr->_doLogin($username, $passwd);
+        $this->assertTrue(is_array($res));
+        $this->assertTrue(count($res));
     }
 }
 ?>

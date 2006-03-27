@@ -61,7 +61,7 @@ class TestUserMgr extends UnitTestCase {
             $oInput->user = $oUser;
 
             $userMgr = new UserMgr();
-            $userMgr->_insert($oInput, $oOutput);
+            $userMgr->_cmd_insert($oInput, $oOutput);
 
             // get final count of user records
             unset($oInput, $oOutput, $userMgr);
@@ -262,7 +262,7 @@ class TestUserMgr extends UnitTestCase {
         $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
-        $userMgr->_insert($oInput, $oOutput);
+        $userMgr->_cmd_insert($oInput, $oOutput);
 
         // test for uniqueness again
         $this->assertFalse($this->da->isUniqueUsername($username));
@@ -301,7 +301,7 @@ class TestUserMgr extends UnitTestCase {
         $oInput->user = $oUser;
 
         $userMgr = new UserMgr();
-        $userMgr->_insert($oInput, $oOutput);
+        $userMgr->_cmd_insert($oInput, $oOutput);
 
         // test for uniqueness again
         $this->assertFalse($this->da->isUniqueEmail($email));

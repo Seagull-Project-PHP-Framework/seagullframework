@@ -220,7 +220,7 @@ class SGL_Session
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             $oldSessionId = session_id();
-            session_regenerate_id();
+            @session_regenerate_id();
 
             if ($conf['session']['handler'] == 'file') {
 
@@ -378,7 +378,7 @@ class SGL_Session
             return $_SESSION['username'];
         } else {
             return false;
-        }        
+        }
     }
 
     /**

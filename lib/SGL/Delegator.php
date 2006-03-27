@@ -49,7 +49,6 @@ class SGL_Delegator
     function __call($methodName, $parameters)
     {
         $delegated = false;
-
         foreach ($this->aDelegates as $delegate) {
             $class   = new ReflectionClass($delegate);
             $methods = $class->getMethods();
@@ -62,16 +61,6 @@ class SGL_Delegator
                         array($delegate, $method->getName()), $parameters);
                }
             }
-//            if (!$delegated) {
-//                $tmp = debug_backtrace();
-//                $step = array_pop($tmp);
-//                SGL::raiseError(
-//                        'Fatal error: Call to undefined method '
-//                        .$step['function'].'() in '
-//                        .$step['file'].' on line '
-//                        .$step['line'].'.',
-//                        SGL_ERROR_NOMETHOD);
-//            }
         }
     }
 
