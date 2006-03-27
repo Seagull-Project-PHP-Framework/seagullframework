@@ -76,7 +76,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (SGL_Session::getUserType() == SGL_ADMIN) {
+        if (SGL_Session::getRoleId() == SGL_ADMIN) {
             $this->isAdmin = true;
         }
         $this->template = 'articleManager.html';
@@ -409,7 +409,7 @@ class ArticleMgr extends SGL_Manager
         //  rebuild item data
         foreach ($aResult['data'] as $key => $aValues) {
             if ($aValues['username'] != SGL_Session::getUsername()
-                && SGL_Session::getUserType() != SGL_ADMIN) {
+                && SGL_Session::getRoleId() != SGL_ADMIN) {
                 //  remove articles that don't belong to the current user
                 unset($aResult['data'][$key]);
             } else {

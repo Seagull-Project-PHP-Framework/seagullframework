@@ -106,7 +106,7 @@ class ContactMgr extends SGL_Manager
 
     function _cmd_insert(&$input, &$output)
     {
-        if (SGL_Session::getUserType() != SGL_ADMIN) {
+        if (SGL_Session::getRoleId() != SGL_ADMIN) {
             SGL_DB::setConnection();
             $savedUser = DB_DataObject::factory($this->conf['table']['contact']);
 

@@ -697,7 +697,7 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  setup login stats
-        if (SGL_Session::getUserType() > SGL_GUEST) {
+        if (SGL_Session::getRoleId() > SGL_GUEST) {
             $input->data->loggedOnUser = $_SESSION['username'];
             $input->data->loggedOnUserID = SGL_Session::getUid();
             $input->data->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);

@@ -274,7 +274,7 @@ class SGL_Manager
     {
         $req = $input->getRequest();
         $mgr = $req->get('managerName');
-        $userRid = SGL_Session::getUserType();
+        $userRid = SGL_Session::getRoleId();
         
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                && $this->conf[$mgrName]['adminGuiAllowed']
