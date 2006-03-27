@@ -321,33 +321,6 @@ class SGL_Session
     }
 
     /**
-     * Determines current user type.
-     *
-     *      - guest (not logged in)
-     *      - member
-     *      - admin
-     *
-     * @access  public
-     * @static
-     * @return  int  $currentUserType
-     */
-    function getUserType()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $currentRoleId = @$_SESSION['rid'];
-
-        if ($currentRoleId == SGL_GUEST) {
-            $currentUserType = SGL_GUEST;
-        } elseif ($currentRoleId == SGL_ADMIN) {
-            $currentUserType = SGL_ADMIN;
-        } else {
-            $currentUserType = SGL_MEMBER;
-        }
-        return $currentUserType;
-    }
-
-    /**
      * Returns the current user's id.
      *
      * @access  public

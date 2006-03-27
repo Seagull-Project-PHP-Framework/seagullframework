@@ -115,7 +115,7 @@ class BugMgr extends SGL_Manager
 
     function _cmd_list(&$input, &$output)
     {
-        if (SGL_Session::getUserType() != SGL_GUEST) {
+        if (SGL_Session::getRoleId() != SGL_GUEST) {
             $user = $this->getCurrentUserInfo();
             $bug = new stdClass();
             $bug->reporter_first_name = $user->first_name;

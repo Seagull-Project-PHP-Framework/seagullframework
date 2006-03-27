@@ -231,7 +231,7 @@ class InstantMessageMgr extends SGL_Manager
             $tmpUser->get($recipientID);
 
             // All users except admin types have to obey privacy settings
-            if (SGL_Session::getUserType() != SGL_ADMIN) {
+            if (SGL_Session::getRoleId() != SGL_ADMIN) {
                 if (SGL_PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
                     // Silently skip those who wish to be left alone.
                     $counter++;
@@ -377,7 +377,7 @@ class InstantMessageMgr extends SGL_Manager
                 continue;
             }
 
-            if (SGL_Session::getUserType() != SGL_ADMIN) {
+            if (SGL_Session::getRoleId() != SGL_ADMIN) {
                 if (SGL_PRIVATE_MAIL && (!$tmpUser->is_acct_active || !$tmpUser->is_email_public)) {
                     // Skip users who chose to be anonymous or have inactive
                     // accounts

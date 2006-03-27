@@ -110,7 +110,7 @@ class DocumentMgr extends FileMgr
         $input->assetFileSize         = $input->assetFileArray['size'];
 
         //  determine user type
-        $input->isAdmin = (SGL_Session::getUserType() == SGL_ADMIN)
+        $input->isAdmin = (SGL_Session::getRoleId() == SGL_ADMIN)
             ? true
             : false;
 

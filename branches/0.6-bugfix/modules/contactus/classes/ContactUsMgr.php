@@ -190,7 +190,7 @@ class ContactUsMgr extends SGL_Manager
 
         //  check user auth level
         $contact = DB_DataObject::factory($this->conf['table']['contact_us']);
-        if (SGL_Session::getUserType() != SGL_GUEST) {
+        if (SGL_Session::getRoleId() != SGL_GUEST) {
 
             //  instantiate new User entity
             $user = DB_DataObject::factory($this->conf['table']['user']);
