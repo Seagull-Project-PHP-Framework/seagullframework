@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | TestEnv.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -59,6 +59,7 @@ class SGL_Task_SetupSimpleTestORM extends SGL_Task
         );
         require_once 'DB/DataObject/Generator.php';
 
+#FIXME:  add logic so entities aren't regenned on every request
         $generator = new DB_DataObject_Generator();
         $generator->start();
         $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
