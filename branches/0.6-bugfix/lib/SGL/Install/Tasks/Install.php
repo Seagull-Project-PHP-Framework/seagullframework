@@ -459,6 +459,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
     }
 }
 
+define('SGL_NODE_USER',  2); // nested set parent_id
 define('SGL_NODE_ADMIN', 4); // nested set parent_id
 define('SGL_NODE_GROUP', 1);
 
