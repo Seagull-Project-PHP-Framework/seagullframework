@@ -61,5 +61,18 @@ $aSections = array(
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
         ),
+
+// example of user navigation
+//    array (
+//      'title'           => 'My Navigation Tab Name',
+//      'parent_id'       => SGL_NODE_USER,
+//      'uriType'         => 'dynamic',
+//      'module'          => 'foomodule',
+//      'manager'         => 'FooMgr.php',
+//      'actionMapping'   => '',
+//      'add_params'      => '',
+//      'is_enabled'      => 1,
+//      'perms'           => SGL_GUEST,
+//        ),
     );
 ?>
