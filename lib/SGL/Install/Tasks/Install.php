@@ -485,9 +485,7 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                     //  check if section is designated as child to last insert
                     if ($aSection['parent_id'] == SGL_NODE_GROUP) {
                         $aSection['parent_id'] = $this->groupId;
-                    } /*else {
-                        $aSection['parent_id'] = SGL_NODE_ADMIN;
-                    }*/
+                    }
                     $id = $da->addSimpleSection($aSection);
                     if (!PEAR::isError($id)) {
                         if ($aSection['parent_id'] == SGL_NODE_ADMIN
