@@ -69,6 +69,13 @@ class SGL_Translation
      */
     function &singleton($type = 'translation')
     {
+        static $instance;
+        
+        // If the instance exists, return one
+        if (isset($instance[$type])) {
+            return $instance[$type];
+        }
+        
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -111,20 +118,21 @@ class SGL_Translation
 
         case 'admin':
             require_once 'Translation2/Admin.php';
-            $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2_Admin::factory($driver, $dsn, $params);
             break;
 
         case 'translation':
         default:
             require_once 'Translation2.php';
-            $oTranslation = &Translation2::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2::factory($driver, $dsn, $params);
         }
         //  switch phptype to mysql when using mysql_SGL otherwise the langs table
         //  and index's will not be created.
         if ($dsn['phptype'] == 'mysql_SGL') {
-            $oTranslation->storage->db->phptype = 'mysql';
+            $instance[$type]->storage->db->phptype = 'mysql';
         }
-        return $oTranslation;
+       
+        return $instance[$type];
     }
 
 
