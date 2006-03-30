@@ -21,7 +21,7 @@
     'Please, specify your name'             => 'Пожалуйста, укажите имя',
     'Please, specify your email'            => 'Пожалуйста, укажите адрес эл. почты',
     'Please, fill in the message text'      => 'Пожалуйста, укажите текст сообщения',
-    'Your email is not correctly formatted' => 'Адрес эл. почты не корректен',
+    /*'Your email is not correctly formatted' => 'Адрес эл. почты не корректен',*/
     
     // Messages
     'new guestbook entry saved successfully' => 'Сообщение успешно сохранено'
