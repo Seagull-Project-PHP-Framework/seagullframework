@@ -104,6 +104,13 @@ class BugMgr extends SGL_Manager
             if (empty($input->bug->comment)) {
                 $aErrors['comment'] = 'You must fill in your comment';
             }
+            // check for mail header injection
+            $input->bug->reporter_first_name =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_first_name);
+            $input->bug->reporter_last_name =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_last_name);
+            $input->bug->reporter_email =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_email);
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {

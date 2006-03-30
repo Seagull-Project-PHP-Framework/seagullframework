@@ -143,6 +143,12 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->security_answer)) {
                 $aErrors['security_answer'] = 'You must provide a security answer';
             }
+            // check for mail header injection
+            require_once SGL_CORE_DIR . '/Emailer.php';
+            $input->user->email =
+                SGL_Emailer::cleanMailInjection($input->user->email);
+            $input->user->username =
+                SGL_Emailer::cleanMailInjection($input->user->username);
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {
