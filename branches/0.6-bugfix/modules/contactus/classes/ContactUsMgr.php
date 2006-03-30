@@ -120,7 +120,6 @@ class ContactUsMgr extends SGL_Manager
             $input->contact->first_name = SGL_Emailer::cleanMailInjection($input->contact->first_name);
             $input->contact->last_name  = SGL_Emailer::cleanMailInjection($input->contact->last_name);
             $input->contact->email      = SGL_Emailer::cleanMailInjection($input->contact->email);
-
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {
