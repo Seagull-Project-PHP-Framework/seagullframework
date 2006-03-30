@@ -31,7 +31,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FrontController.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -78,7 +78,7 @@ class SGL_FrontController
 
         $output = &new SGL_Output();
 
-        if (!SGL_FrontController::customFilterChain($input, $output)) {
+        if (!SGL_FrontController::customFilterChain($input)) {
             $process =
                 new SGL_Process_Init(
                 new SGL_Process_SetupORM(
