@@ -68,7 +68,7 @@ class SGL_FrontController
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $req = SGL_Request::singleton();
+        $req   = SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
@@ -76,11 +76,13 @@ class SGL_FrontController
         }
         $input->setRequest($req);
 
-        if (!SGL_FrontController::customFilterChain($input)) {
+        $output = &new SGL_Output();
+
+        if (!SGL_FrontController::customFilterChain($input, $output)) {
             $process =
                 new SGL_Process_Init(
                 new SGL_Process_SetupORM(
-    			new SGL_Process_StripMagicQuotes(
+                new SGL_Process_StripMagicQuotes(
                 new SGL_Process_DiscoverClientOs(
                 new SGL_Process_ResolveManager(
                 new SGL_Process_CreateSession(
@@ -91,13 +93,22 @@ class SGL_FrontController
                 new SGL_Process_SetupLocale(
                 new SGL_MainProcess()
                 )))))))))));
-            $process->process($input);
+            $process->process($input, $output);
 
         } else {
             require_once dirname(__FILE__)  . '/FilterChain.php';
             $chain = new SGL_FilterChain($input->getFilters());
-            $chain->doFilter($input);
+            $chain->doFilter($input, $output);
         }
+
+        $c    = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        if ($conf['site']['outputBuffering']) {
+            ob_end_flush();
+        }
+
+        echo $output->data;
+
     }
 
     function customFilterChain(&$input)
@@ -160,16 +171,15 @@ class SGL_FrontController
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $req = $input->getRequest();
-        $mgr = $input->get('manager');
+        $req  = $input->getRequest();
+        $mgr  = $input->get('manager');
         $conf = $mgr->conf;
         $mgr->validate($req, $input);
 
-        $output = & new SGL_Output();
         $input->aggregate($output);
 
         //  process data if valid
@@ -185,21 +195,18 @@ class SGL_MainProcess extends SGL_ProcessRequest
 
         //  build view
         $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
-        $rendererFile = $templateEngine.'Strategy.php';
+        $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
+        $rendererFile   = $templateEngine . 'Strategy.php';
 
-        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
-        	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
+        if (is_file(SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile)) {
+            require_once SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile;
         } else {
-        	PEAR::raiseError('Could not find renderer',
-        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+            PEAR::raiseError('Could not find renderer',
+                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
         }
-        $viewType = (SGL::runningFromCLI()) ? 'SGL_CliView' : 'SGL_HtmlView';
-        $view = new $viewType($output, new $rendererClass());
-        echo $view->render();
-        if ($conf['site']['outputBuffering']) {
-            ob_end_flush();
-        }
+        $viewType     = (SGL::runningFromCLI()) ? 'SGL_CliView' : 'SGL_HtmlView';
+        $view         = new $viewType($output, new $rendererClass());
+        $output->data = $view->render();
     }
 }
 
@@ -214,7 +221,7 @@ class SGL_HtmlView extends SGL_View
      */
     function SGL_HtmlView(&$data, $outputRendererStrategy)
     {
-    	parent::SGL_View($data, $outputRendererStrategy);
+        parent::SGL_View($data, $outputRendererStrategy);
     }
 
     function postProcess(/*SGL_View*/ &$view)
@@ -243,7 +250,7 @@ class SGL_CliView extends SGL_View
      */
     function SGL_CliView(&$data, $outputRendererStrategy)
     {
-    	parent::SGL_View($data, $outputRendererStrategy);
+        parent::SGL_View($data, $outputRendererStrategy);
     }
 
     function postProcess(/*SGL_View*/ &$view)
@@ -275,17 +282,17 @@ class SGL_HtmlSimpleView extends SGL_View
             $templateEngine = $conf['site']['templateEngine'];
         }
         $templateEngine = ucfirst($templateEngine);
-        $rendererClass  = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
+        $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
         $rendererFile   = $templateEngine.'Strategy.php';
 
-        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
-            require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
+        if (is_file(SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile)) {
+            require_once SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile;
         } else {
             PEAR::raiseError('Could not find renderer',
             SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
         }
 
-    	parent::SGL_View($data, new $rendererClass);
+        parent::SGL_View($data, new $rendererClass);
     }
 }
 ?>

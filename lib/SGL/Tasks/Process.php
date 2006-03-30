@@ -47,7 +47,7 @@
  */
 class SGL_Process_Init extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
@@ -60,13 +60,13 @@ class SGL_Process_Init extends SGL_DecorateProcess
             ob_start();
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
 class SGL_Process_SetupORM extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
@@ -81,7 +81,7 @@ class SGL_Process_SetupORM extends SGL_DecorateProcess
             'generator_strip_schema' => 1,
         );
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -93,7 +93,7 @@ class SGL_Process_SetupORM extends SGL_DecorateProcess
  */
 class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -118,7 +118,7 @@ class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
             }
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -130,7 +130,7 @@ class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
  */
 class SGL_Process_DetectDebug extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -142,7 +142,7 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
             SGL_Session::set('debug', $debug);
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -154,7 +154,7 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
  */
 class SGL_Process_SetupLocale extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -189,7 +189,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
             $setlocale = & SGL_Locale::singleton($locale);
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, &$output);
     }
 }
 
@@ -203,7 +203,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
  */
 class SGL_Process_BuildHeaders extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -235,7 +235,7 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
             header('X-Powered-By: Seagull http://seagull.phpkitchen.com');
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, &$output);
     }
 }
 
@@ -252,7 +252,7 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
  */
 class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -291,7 +291,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
             //  no authentication required
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -303,7 +303,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
  */
 class SGL_Process_SetupPerms extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -327,7 +327,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
             SGL::raiseError('there was a problem initialising perms', SGL_ERROR_NODATA);
         }
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -342,7 +342,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
  */
 class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR .'/Translation.php';
@@ -391,7 +391,7 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
         array_shift($aTmp);
         $GLOBALS['_SGL']['CHARSET'] = join('-', $aTmp);
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -403,12 +403,12 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
  */
 class SGL_Process_CreateSession extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $input->set('session', new SGL_Session());
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -420,7 +420,7 @@ class SGL_Process_CreateSession extends SGL_DecorateProcess
  */
 class SGL_Process_ResolveManager extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -490,7 +490,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
                 SGL::raiseError("specified manager, '$managerName', could not be found, default loaded");
             }
         }
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 
     /**
@@ -506,7 +506,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     function ensureModuleConfigLoaded($moduleName)
     {
         if (!defined('SGL_MODULE_CONFIG_LOADED')
-        		|| $this->conf['localConfig']['moduleName'] != $moduleName) {
+                || $this->conf['localConfig']['moduleName'] != $moduleName) {
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 
@@ -631,15 +631,15 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
 
 class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $req = $input->getRequest();
-		SGL_String::dispelMagicQuotes($req->aProps);
-		$input->setRequest($req);
+        SGL_String::dispelMagicQuotes($req->aProps);
+        $input->setRequest($req);
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -651,7 +651,7 @@ class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
  */
 class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -676,11 +676,11 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
                 define('SGL_CLIENT_OS', 'Other');
             }
         } else {
-			if (!defined('SGL_CLIENT_OS')) {
-            	define('SGL_CLIENT_OS', 'None');
-			}
+            if (!defined('SGL_CLIENT_OS')) {
+                define('SGL_CLIENT_OS', 'None');
+            }
         }
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -715,7 +715,7 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
         $input->data->sessID           = SID;
         $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $input->data->scriptClose      = "\n//--> </script>\n";
-		$input->data->conf = $this->conf;
+        $input->data->conf = $this->conf;
 
         if (isset($input->data->submitted) && $input->data->submitted) {
             $input->data->addOnLoadEvent("formErrorCheck()");
@@ -737,36 +737,36 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-		// set the default WYSIWYG editor
-		if (isset($input->data->wysiwyg) && $input->data->wysiwyg == true) {
+        // set the default WYSIWYG editor
+        if (isset($input->data->wysiwyg) && $input->data->wysiwyg == true) {
 
             // you can preset this var in your code
-			if (!isset($input->data->wysiwygEditor)) {
-				$input->data->wysiwygEditor = isset($this->conf['site']['wysiwygEditor'])
-				    ? $this->conf['site']['wysiwygEditor']
+            if (!isset($input->data->wysiwygEditor)) {
+                $input->data->wysiwygEditor = isset($this->conf['site']['wysiwygEditor'])
+                    ? $this->conf['site']['wysiwygEditor']
                     : 'fck';
-			}
+            }
 
-			switch ($input->data->wysiwygEditor) {
+            switch ($input->data->wysiwygEditor) {
 
             case 'fck':
-            	$input->data->wysiwyg_fck = true;
-            	$input->data->addOnLoadEvent('fck_init()');
-            	break;
+                $input->data->wysiwyg_fck = true;
+                $input->data->addOnLoadEvent('fck_init()');
+                break;
             case 'xinha':
-            	$input->data->wysiwyg_xinha = true;
-            	$input->data->addOnLoadEvent('xinha_init()');
-            	break;
+                $input->data->wysiwyg_xinha = true;
+                $input->data->addOnLoadEvent('xinha_init()');
+                break;
             case 'htmlarea':
-            	$input->data->wysiwyg_htmlarea = true;
-            	$input->data->addOnLoadEvent('HTMLArea.init()');
-            	break;
+                $input->data->wysiwyg_htmlarea = true;
+                $input->data->addOnLoadEvent('HTMLArea.init()');
+                break;
             case 'tinyfck':
                 $input->data->wysiwyg_tinyfck = true;
                 //note: tinymce doesn't need an onLoad event to initialise
                 break;
-			}
-		}
+            }
+        }
         //  get all html onLoad events
         $input->data->onLoad = $input->data->getAllOnLoadEvents();
 

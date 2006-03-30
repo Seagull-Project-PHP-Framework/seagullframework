@@ -8,7 +8,7 @@ class SGL_FilterChain
         $this->aFilters = array_map('trim', $aFilters);
     }
 
-    function doFilter(&$input)
+    function doFilter(&$input, &$output)
     {
         $this->loadFilters();
 
@@ -23,7 +23,7 @@ class SGL_FilterChain
         $code = $filters . $closeParens;
         eval("\$process = $code;");
 
-        $process->process($input);
+        $process->process($input, $output);
     }
 
     function loadFilters()
