@@ -329,7 +329,7 @@ class SGL_Category
              		: array();
 
         foreach ($aRoles as $roleId => $roleName) {
-            $tmp['category_id'] = $roleId;
+            $tmp['role_id'] = $roleId;
             $tmp['name'] = $roleName;
             $tmp['isAllowed'] = (!in_array($roleId, $aPerms)) ? 1 : 0;
             $perms[] = (object)$tmp;
