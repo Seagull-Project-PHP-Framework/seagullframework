@@ -6,6 +6,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'gallery2mgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'gallery2mgr_cmd_list', '', @moduleId);
 
 #member role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'gallerymgr_cmd_list';
+SELECT @permissionId := permission_id FROM permission WHERE name = 'gallery2mgr_cmd_list';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 
