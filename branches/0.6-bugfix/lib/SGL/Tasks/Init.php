@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -279,6 +279,9 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
             define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
             define('SGL_BASE_URL', $conf['site']['baseUrl']);
+
+            $char = ($conf['db']['type'] == 'pgsql') ? '"' : '`';
+            define('SGL_DB_QUOTE', $char);
 
             //  add additional search paths
             if (!empty($conf['path']['additionalIncludePath'])) {

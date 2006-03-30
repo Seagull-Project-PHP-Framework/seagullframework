@@ -1,5 +1,5 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Schema for /modules/publisher
+-- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Schema for /publisher
 
 BEGIN;
 
@@ -20,6 +20,12 @@ create table document
    num_times_downloaded INT4                 null,
    constraint PK_DOCUMENT primary key (document_id)
 );
+
+-- ==============================================================
+--  Sequence: document_seq
+-- ==============================================================
+
+create sequence document_seq;
 
 -- ==============================================================
 --  Index: document_document_type_fk                             
@@ -47,6 +53,12 @@ create table document_type
    constraint PK_DOCUMENT_TYPE primary key (document_type_id)
 );
 
+-- ==============================================================
+--  Sequence: document_type_seq
+-- ==============================================================
+
+create sequence document_type_seq;
+
 
 -- ==============================================================
 --  Table: item                                                  
@@ -63,8 +75,15 @@ create table item
    start_date           TIMESTAMP            null,
    expiry_date          TIMESTAMP            null,
    status               INT2                 null,
+   hits                 INT4,
    constraint PK_ITEM primary key (item_id)
 );
+
+-- ==============================================================
+--  Sequence: item_seq
+-- ==============================================================
+
+create sequence item_seq;
 
 -- ==============================================================
 --  Index: item_item_type_fk                                     
@@ -91,8 +110,15 @@ create table item_addition
    item_id              INT4                 not null,
    item_type_mapping_id INT4                 not null,
    addition             TEXT                 null,
+   trans_id             INT4                 default '0',
    constraint PK_ITEM_ADDITION primary key (item_addition_id)
 );
+
+-- ==============================================================
+--  Sequence: item_addition_seq
+-- ==============================================================
+
+create sequence item_addition_seq;
 
 -- ==============================================================
 --  Index: item_item_addition_fk                                 
@@ -121,6 +147,12 @@ create table item_type
 );
 
 -- ==============================================================
+--  Sequence: item_type_seq
+-- ==============================================================
+
+create sequence item_type_seq;
+
+-- ==============================================================
 --  Table: item_type_mapping                                     
 -- ==============================================================
 create table item_type_mapping 
@@ -131,6 +163,12 @@ create table item_type_mapping
    field_type           INT2                 null,
    constraint PK_ITEM_TYPE_MAPPING primary key (item_type_mapping_id)
 );
+
+-- ==============================================================
+--  Sequence: item_type_mapping_seq
+-- ==============================================================
+
+create sequence item_type_mapping_seq;
 
 -- ==============================================================
 --  Index: item_type_item_type_mapping_fk                        
@@ -155,6 +193,12 @@ create table category (
   level_id         INT4            default NULL,
   constraint PK_category PRIMARY KEY (category_id)
 );
+
+-- ==============================================================
+--  Sequence: category_seq
+-- ==============================================================
+
+create sequence category_seq;
 
 -- ==============================================================
 --  Index: root_id                                               
