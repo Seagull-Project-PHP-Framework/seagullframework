@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | HtmlSavant2RendererStrategy.php                                           |
 // +---------------------------------------------------------------------------+
@@ -51,12 +51,12 @@ class SGL_Savant2 extends Savant2
     function SGL_Savant2($theme = 'default', $moduleName = 'default')
     {
         $options = array(
-	    'template_path' => SGL_THEME_DIR . '/savant/default/default' . PATH_SEPARATOR .
+            'template_path' => SGL_THEME_DIR . '/savant/default/default' . PATH_SEPARATOR .
                                SGL_THEME_DIR . '/savant/' . $theme . '/default' . PATH_SEPARATOR .
                                SGL_THEME_DIR . '/savant/default/' . $moduleName. PATH_SEPARATOR .
-	                       SGL_THEME_DIR . '/savant/' . $theme . '/' . $moduleName,
+                               SGL_THEME_DIR . '/savant/' . $theme . '/' . $moduleName,
             'resource_path' => SGL_MOD_DIR . '/' . $moduleName . '/classes',
-	    );
+        );
 
         $this->Savant2($options);
     }
@@ -102,8 +102,8 @@ class SGL_HtmlRenderer_Savant2Strategy extends SGL_OutputRendererStrategy
 
         //  prepare Savant2 object
         $moduleName = isset($view->data->moduleName)
-	    ? $view->data->moduleName
-	    : 'default';
+            ? $view->data->moduleName
+            : 'default';
         $savant2 = &SGL_Savant2::singleton($view->data->theme, $moduleName);
 
         //  suppress error notices in templates
@@ -113,9 +113,6 @@ class SGL_HtmlRenderer_Savant2Strategy extends SGL_OutputRendererStrategy
         $data = $savant2->fetch($view->data->masterTemplate);
 
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
-
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
 
         return $data;
     }

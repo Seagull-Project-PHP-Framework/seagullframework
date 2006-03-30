@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | HtmlSmartyRendererStrategy.php                                            |
 // +---------------------------------------------------------------------------+
@@ -90,25 +90,21 @@ class SGL_Smarty extends Smarty
      */
     function locate_template($resource_type, $resource_name, &$template_source,
         &$template_timestamp, &$smarty_obj)
-	{
-		if (!is_readable($resource_name))
-		{
-			//  parse module_name
-			list($module_name, $template_name) = split('/', $resource_name);
-			$arr = array('default', $template_name);
-			$new_resource_name = $smarty_obj->template_dir . '/' . join('/', $arr);
-			if (file_exists($new_resource_name))
-			{
-				$template_source = file_get_contents($new_resource_name);
-				$template_timestamp = filemtime($new_resource_name);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+    {
+        if (!is_readable($resource_name)) {
+            //  parse module_name
+            list($module_name, $template_name) = split('/', $resource_name);
+            $arr = array('default', $template_name);
+            $new_resource_name = $smarty_obj->template_dir . '/' . join('/', $arr);
+            if (file_exists($new_resource_name)) {
+                $template_source = file_get_contents($new_resource_name);
+                $template_timestamp = filemtime($new_resource_name);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     /**
      * Returns a singleton Smarty instance.
@@ -153,20 +149,18 @@ class SGL_HtmlRenderer_SmartyStrategy extends SGL_OutputRendererStrategy
         //  prepare smarty object
         $smarty = &SGL_Smarty::singleton();
 
-        //	Initially I thought we needed to register our data as an object
-        //	it turns out we do not need to this.  Assigning it like a
-        //	traditional Smarty variable works just fine and even allows
-        //	for the calling of methods
+        //    Initially I thought we needed to register our data as an object
+        //    it turns out we do not need to this.  Assigning it like a
+        //    traditional Smarty variable works just fine and even allows
+        //    for the calling of methods
         $smarty->assign('result', $view->data);
 
-        //	Need to build this string because Smarty doesn't look for templates
-        // 	in multiple dirs the way Flexy does
+        //    Need to build this string because Smarty doesn't look for templates
+        //     in multiple dirs the way Flexy does
         $moduleName = $view->data->moduleName;
         $masterTemplateName = $moduleName.'/'.$view->data->masterTemplate;
         $data = $smarty->fetch($masterTemplateName);
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
 
         return $data;
     }

@@ -37,15 +37,12 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
         //  2nd arg to Flexy::bufferedOutputObject()
         $elements = (   isset($view->data->flexyElements)
                   && is_array($view->data->flexyElements))
-                ? $view->data->flexyElements
-                : array();
+            ? $view->data->flexyElements
+            : array();
 
         $data = $flexy->bufferedOutputObject($view->data, $elements);
 
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
-
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
 
         return $data;
     }
