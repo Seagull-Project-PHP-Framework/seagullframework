@@ -17,7 +17,7 @@
                 <label class="tipOwner">{translate(#userfile#)}
                     <span class="tipText">{translate(#Use the document manager to upload CSV files.#)}</span>
                 </label>
-                <span class="error" flexy:if="error[csvFile]">{error[csvFile]}</span>
+                <span class="error" flexy:if="error[csvFile]">{translate(error[csvFile])}</span>
                 {if:noCsvFile}
                 <span class="error">{translate(#You should first upload at least one csv file in your upload dir#)}</span>
                 {else:}
@@ -25,13 +25,13 @@
                 {end:}
             </p>
             <p>
-                <label class="tipOwner">{translate(#organisation#)}
+                <label class="tipOwner">{translate(#organisation#,#ucfirst#)}
                     <span class="tipText">{translate(#Import users into selected organisation.#)}</span>
                 </label>
                 <select name="frmOrgId">{generateSelect(aOrgs,organisation):h}</select>
             </p>
             <p>
-                <label class="tipOwner">{translate(#role#)}
+                <label class="tipOwner">{translate(#role#,#ucfirst#)}
                     <span class="tipText">{translate(#User will be assigned to selected role.#)}</span>
                 </label>
                 <select name="frmRoleId">{generateSelect(aRoles,role):h}</select>

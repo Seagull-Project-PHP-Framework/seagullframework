@@ -75,7 +75,7 @@
                                 onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
                         </td>
                         <td flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
-                        <td ><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">list</a></td>
+                        <td ><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#list#)}</a></td>
                     </tr>
                     <tr flexy:if="!aPagedData[data]">
                         <td colspan="10">{translate(#No users found#)}</td>
