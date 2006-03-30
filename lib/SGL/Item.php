@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Item.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -968,14 +968,15 @@ class SGL_Item
             'curPageSpanPost'       => '</span>',
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
         if ($this->conf['translation']['container'] == 'db') {
             foreach ($aPagedData['data'] as $k => $aValues) {
-                $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getLangID()))
-                    ? $translation
-                    : $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getFallbackLangID());
+                if (($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getLangID()))
+                ||  ($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getFallbackLangID())))
+                {
+                    $aPagedData['data'][$k]['addition'] = $title;
+                }
             }
         }
         return $aPagedData;
