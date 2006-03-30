@@ -8,7 +8,7 @@ BEGIN;
 -- Table: newsletter                                            
 -- ==============================================================
 
-CREATE TABLE newsletter (
+create table newsletter (
   newsletter_id  int4          NOT NULL default '0',
   list           varchar(32)   NOT NULL default '',
   name           varchar(128)  NOT NULL default '',
@@ -20,5 +20,11 @@ CREATE TABLE newsletter (
   last_updated   timestamp     NOT NULL default '1970-01-01 00:00:00',
   constraint pk_newsletter PRIMARY KEY  (newsletter_id)
 ) ; 
+
+-- ==============================================================
+--  Sequence: newsletter_seq
+-- ==============================================================
+
+create sequence newsletter_seq;
 
 COMMIT;

@@ -50,6 +50,9 @@ function canCreateDb()
     //  postgres however does not support logins with no db name
     if ($dbName == '' && ($aFormValues['dbType']['type'] == 'pgsql')) {
         $dbName = '/template1';
+        $dbQuote = '"';
+    } else {
+        $dbQuote = '`';
     }
 
     $socket = (isset($aFormValues['dbProtocol']['protocol'])
@@ -96,7 +99,7 @@ function canCreateDb()
     }
 
     //  attempt to create database
-    $ok = $dbh->query("CREATE DATABASE `{$aFormValues['name']}`");
+    $ok = $dbh->query('CREATE DATABASE '. $dbQuote . $aFormValues['name'] . $dbQuote);
 
     if (PEAR::isError($ok)) {
         SGL_Install_Common::errorPush($ok);
@@ -114,7 +117,6 @@ class WizardCreateDb extends HTML_QuickForm_Page
     function buildForm()
     {
         require_once SGL_CORE_DIR .'/Translation.php';
-
         $this->_formBuilt = true;
 
         $this->setDefaults(array(
