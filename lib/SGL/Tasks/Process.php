@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Process.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -189,7 +189,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
             $setlocale = & SGL_Locale::singleton($locale);
         }
 
-        $this->processRequest->process($input, &$output);
+        $this->processRequest->process($input, $output);
     }
 }
 
@@ -235,7 +235,7 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
             header('X-Powered-By: Seagull http://seagull.phpkitchen.com');
         }
 
-        $this->processRequest->process($input, &$output);
+        $this->processRequest->process($input, $output);
     }
 }
 
