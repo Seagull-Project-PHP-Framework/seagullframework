@@ -25,6 +25,7 @@ class TestRunnerInit extends SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
+        $output = &new SGL_Output();
 
         $process =  new SGL_Process_Init(
                     new SGL_Process_DiscoverClientOs(
@@ -35,13 +36,13 @@ class TestRunnerInit extends SGL_FrontController
                     new SGL_Void()
                    ))))));
 
-        $process->process($input);
+        $process->process($input, $output);
     }
 }
 
 class SGL_Process_SetupTestDb extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         $conf = $GLOBALS['_STR']['CONF'];
 
@@ -62,13 +63,13 @@ class SGL_Process_SetupTestDb extends SGL_DecorateProcess
         $result = $dbh->query($query);
         $query = 'CREATE DATABASE ' . $conf['database']['name'];
         $result = $dbh->query($query);
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
 class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         $locator = &SGL_ServiceLocator::singleton();
         //  in case
@@ -76,20 +77,20 @@ class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
         $dbh =& STR_DB::singleton();
         $locator->register('DB', $dbh);
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
 class SGL_Process_MinimalSession extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         session_start();
         $_SESSION['uid'] = 1;
         $_SESSION['rid'] = 1;
         $_SESSION['aPrefs'] = array();
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 

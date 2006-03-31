@@ -69,7 +69,7 @@ class TestUserMgr extends UnitTestCase {
             $finalCountUser = $this->dbh->getOne('SELECT COUNT(*) FROM usr');
 
             //  test user record inserted
-            $this->assertTrue($initialCountUser + 1 == $finalCountUser);
+            $this->assertEqual($initialCountUser + 1, $finalCountUser);
 
             //  test perms inserted
             //  get final count of user_permission records added
@@ -81,7 +81,7 @@ class TestUserMgr extends UnitTestCase {
 
             //  get count of perms required for given role
             $requireNumPerms = count($this->da->getPermsByRoleId($roleId));
-            $this->assertTrue($requireNumPerms == $permsAdded);
+            $this->assertEqual($requireNumPerms, $permsAdded);
 
             //  unset all vars for next round
             unset($doUser, $doUsrPerms, $oOrg, $oUser);
