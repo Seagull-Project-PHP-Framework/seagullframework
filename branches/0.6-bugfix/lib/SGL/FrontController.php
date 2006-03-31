@@ -75,7 +75,6 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-
         $output = &new SGL_Output();
 
         if (!SGL_FrontController::customFilterChain($input)) {
