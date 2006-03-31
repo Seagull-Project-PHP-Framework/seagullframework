@@ -33,5 +33,5 @@ INSERT INTO `block_assignment` VALUES ({SGL_NEXT_ID}, 0);
 
 -- admin menu
 INSERT INTO `block_role` VALUES ({SGL_NEXT_ID}, 1);
--- guest menu
-INSERT INTO `block_role` VALUES ({SGL_NEXT_ID}, 0);
+-- user menu
+INSERT INTO `block_role` VALUES ({SGL_NEXT_ID}, -2);
