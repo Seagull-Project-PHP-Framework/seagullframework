@@ -54,7 +54,7 @@
                     'pt-iso-8859-1'=> array('pt([-_][[:alpha:]]{2})?|portuguese', 'portuguese-iso-8859-1', 'pt'),
                     'pl-iso-8859-2'=> array('pl|polish', 'polish-iso-8859-2', 'pl'),
                     'ru-windows-1251' => array('ru|russian', 'russian-windows-1251', 'ru'),
-                    'ru-utf8'      => array('ru|russian', 'russian-utf-8', 'ru'),
+                    'ru-utf-8'      => array('ru|russian', 'russian-utf-8', 'ru'),
                     'sv-iso-8859-1'=> array('sv|swedish', 'swedish-iso-8859-1', 'sv'),
                     'tr-iso-8859-9'=> array('tr|turkish', 'turkish-iso-8859-9', 'tr'),
                     'tr-utf-8'     => array('tr|turkish', 'turkish-utf-8', 'tr'),
