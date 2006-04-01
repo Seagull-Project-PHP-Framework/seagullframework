@@ -41,10 +41,10 @@
 
 require_once STR_PATH . '/tests/classes/FileScanner.php';
 require_once STR_PATH . '/tests/classes/TestEnv.php';
-require_once 'Pearified/Testing/SimpleTest/unit_tester.php';
-require_once 'Pearified/Testing/SimpleTest/mock_objects.php';
-require_once 'Pearified/Testing/SimpleTest/reporter.php';
-require_once 'Pearified/Testing/SimpleTest/web_tester.php';
+require_once 'SimpleTest/unit_tester.php';
+require_once 'SimpleTest/mock_objects.php';
+require_once 'SimpleTest/reporter.php';
+require_once 'SimpleTest/web_tester.php';
 
 error_reporting(E_ALL ^ E_NOTICE);
 
