@@ -31,7 +31,7 @@ class FaqScreensLoadWithoutErrorsTest extends WebTestCase
         $this->clickSubmitByName('submitted');
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
-        $this->assertTitle('Seagull Framework :: FAQ Manager :: Browse');
+        $this->assertTitle('Seagull Framework :: FAQs');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }
