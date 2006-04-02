@@ -105,9 +105,7 @@ class SGL_FrontController
         if ($conf['site']['outputBuffering']) {
             ob_end_flush();
         }
-
         echo $output->data;
-
     }
 
     function customFilterChain(&$input)
