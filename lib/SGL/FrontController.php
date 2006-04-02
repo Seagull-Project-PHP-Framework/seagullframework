@@ -186,7 +186,6 @@ class SGL_MainProcess extends SGL_ProcessRequest
                 SGL::displayStaticPage($ok->getMessage());
             }
         }
-
         $mgr->display($output);
 
         //  build view
