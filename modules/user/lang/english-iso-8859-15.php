@@ -6,7 +6,7 @@ $words = array(
     // title
     'My Account'                   => 'My Account',
     'My Profile :: Edit'           => 'My Profile :: edit',
-    
+
     // summary form (admin template)
     'Role'                         => 'Role',
     'Date Registered'              => 'Date Registered',
@@ -21,7 +21,7 @@ $words = array(
     'edit preferences'             => 'edit preferences',
     'view profile'                 => 'view profile',
     'No results found for that ID' => 'No results found for that ID',
-    
+
     // profile form (admin template)
     'Personal Details'        => 'Personal Details',
     'Username'                => 'Username',
@@ -41,7 +41,7 @@ $words = array(
     // + user template
     'Company'                 => 'Company',
     'edit these values'       => 'Edit these values',
-    
+
     // edit form
     'edit user'          => 'edit user',
     'Confirm Password'   => 'Confirm Password',
@@ -64,7 +64,7 @@ $words = array(
 
     // messages
     'profile successfully updated' => 'Your profile details have been successfully updated',
-    
+
     // validate
     'You must enter a username'             => 'You must enter a username',
     'username min length'                   => 'Your username must be alphanumeric with at least 5 characters and no spaces',
@@ -72,7 +72,7 @@ $words = array(
     'You must enter at least address 1'     => 'You must enter at least address 1',
     'You must enter your city'              => 'You must enter your city',
     'You must enter your state/province'    => 'You must enter your state/province',
-    
+
     'Please enter a company name'           => 'Please enter a company name',
     'You must enter your ZIP/Postal Code'   => 'You must enter your ZIP/Postal Code',
     'You must enter your country'           => 'You must enter your country',
@@ -81,13 +81,13 @@ $words = array(
     'You must choose a security question'   => 'You must choose a security question',
     'Please enter a telephone number'       => 'Please enter a telephone number',
     'You must provide a security answer'    => 'You must provide an answer for your security question',
-    
+
 
 /* Register MRG */
 
     // title
     'Register' => 'Register',
-    
+
     // validation
     'You must enter a password'                                    => 'You must enter a password',
     'Please confirm password'                                      => 'Please confirm password',
@@ -95,23 +95,23 @@ $words = array(
     'Passwords are not the same'                                   => 'Passwords are not the same',
     'This email already exist in the DB, please choose another'    => 'This email already exist in the DB, please choose another',
     'This username already exist in the DB, please choose another' => 'This username already exist in the DB, please choose another',
-    
+
     // messages
     'user successfully registered' => 'You have successfully been registered. Please check your email for confirmation of your password',
-    
+
     // XXX mail templates here
-    
-    
+
+
 /* Password MRG */
 
     // titles
     'Retrieve password' => 'Retrieve password',
-    
+
     // list
     'Enter the email address you registered with' => 'Enter the email address you registered with',
     'retrieve' => 'retrieve',
-    
-    
+
+
 /* UserPassword */
 
     // titles
@@ -122,27 +122,27 @@ $words = array(
     'New password'       => 'New password',
     'Confirm'            => 'Confirm',
     'Notify me by email' => 'Notify me by email',
-    
+
     // messages
     'Password updated successfully' => 'Password updated successfully',
-    
+
     // validation
     'You must enter your original password'                 => 'You must enter your original password',
     'You must enter a new password'                         => 'You must enter a new password',
     'You have entered your original password incorrectly'   => 'You have entered your original password incorrectly',
-    
-    
+
+
 /* Login MRG */
 
     // title
     'Login' => 'Login',
-    
+
     // form
     'Authorisation Required' => 'Authorisation Required',
-    
+
     // validation
     'username/password not recognized' => 'Your username/password combination has not been recognized, please try again',
-    
+
     // XXX: other messages are defined in default lang file for now :/
 
 
@@ -150,7 +150,7 @@ $words = array(
 
     // title
     'User Preferences' => 'User Preferences',
-    
+
     // form (admin template)
     'Theme'                                        => 'Theme',
     'Change what this site looks like'             => 'Change what this site looks like',
@@ -165,16 +165,16 @@ $words = array(
     'Show execution times?'                        => 'Show execution times?',
     // + user template
     'General'                                      => 'General',
-    
+
     // messages
     'details successfully updated' => 'User details have been successfully updated',
-    
+
 
 /* Profile MGR */
 
     // titile
     'User Profile' => 'User Profile',
-    
+
     // form
     'Real Name'                => 'Real Name',
     'Lives in'                 => 'Lives in',
@@ -184,7 +184,7 @@ $words = array(
     'Total Articles'           => 'Total Articles',
     'Total Comments'           => 'Total Comments',
     'coming soon ...'          => 'coming soon ...',
-    
+
      // messaging
     'back to contacts' => 'back to contacts',
     'Message'          => 'Message',
@@ -197,14 +197,14 @@ $words = array(
 
     // title
     'Organisation Preferences' => 'Organisation Preferences',
-    
+
     // form
     'Preferences for org' => 'Preferences for organisation',
-    
+
     // messages
     'org details successfully updated' => 'Organisation details have been successfully updated',
-    
-    
+
+
 /* OrgType MGR */
 
     // titles
@@ -218,21 +218,21 @@ $words = array(
     'Add organisation type'     => 'Add organisation type',
     'organisation type'         => 'organisation type',
     'Be Careful!'               => 'Be Careful!',
-    
+
     // form
     'New organisation'          => 'New organisation',
     'Edit organisation'         => 'Edit organisation',
-   
+
     // validation
     'You must enter an organisation type name' => 'You must enter an organisation type name',
-    
+
     // messages
     'No data was updated'                             => 'No data was updated',
     'Org type(s) deleted successfully'                => 'Org type(s) deleted successfully',
     'Organisation type saved successfully'            => 'Organisation type saved successfully',
     'Organisation type has been updated successfully' => 'Organisation type has been updated successfully',
-    
-    
+
+
 /* Org MGR */
 
     // title
@@ -246,7 +246,7 @@ $words = array(
     'Website'              => 'Website',
     'change'               => 'change',
     'organisation'         => 'organisation',
-        
+
     // form
     'New organisation'     => 'New organisation',
     'Edit organisation'    => 'Edit organisation',
@@ -254,18 +254,18 @@ $words = array(
     'Description'          => 'Description',
     'Parent Org'           => 'Parent organisation',
     'Default Role'         => 'Default Role',
-    
+
     // validation
     'You must enter an organisation name' => 'You must enter an organisation name',
-    
+
     // messages
     'organisation successfully added'                                                     => 'The organisation has successfully been added',
     'The selected organisation(s) have successfully been deleted'                         => 'The selected organisation(s) have successfully been deleted',
     'The selected organisation cannot be deleted because there are users relating to it'  => 'The selected organisation %s cannot be deleted because there are users relating to it!',
     'The organisation has successfully been updated'                                      => 'The organisation has successfully been updated',
     'The organisation has successfully been updated, no data changed'                     => 'The organisation has successfully been updated, no data changed',
-    
-    
+
+
 /* Preference MGR */
 
     // titles
@@ -273,24 +273,24 @@ $words = array(
     'Preference Manager :: Browse' => 'Preference Manager :: Browse',
     'Preference Manager :: Add'    => 'Preference Manager :: Add',
     'Preference Manager :: Edit'   => 'Preference Manager :: Edit',
-    
+
     // list
     'Default value' => 'Default value',
     'preference'    => 'preference',
-    
+
     // form
     'New preference'     => 'New preference',
     'Editing preference' => 'Editing preference',
-    
+
     // validation
     'You must enter a default value'   => 'You must enter a default value',
     'You must enter a preference name' => 'You must enter a preference name',
-    
+
     // messages
     'pref successfully deleted' => 'The preference was successfully deleted',
     'pref successfully updated' => 'The preference was successfully updated',
     'pref successfully added'   => 'The preference was successfully added',
-    
+
 
 /* Permission MGR */
 
@@ -301,7 +301,7 @@ $words = array(
     'Permission Manager :: Edit'            => 'Permission Manager :: Edit',
     'Permission Manager :: Detect & Add'    => 'Permission Manager :: Detect & Add',
     'Permission Manager :: Detect Orphaned' => 'Permission Manager :: Detect Orphaned',
-    
+
     // list
     'New permission'           => 'New permission',
     'Editing permission'       => 'Editing permission',
@@ -310,10 +310,10 @@ $words = array(
     'filter by module'         => 'filter by module',
     'all'                      => 'all',
     'permission'               => 'permission',
-    
+
     // add / edit form
     'Module'                   => 'Module',
-    
+
     // detect perms / remove orphaned
     'Detected Perms'             => 'Detected Perms',
     'Detected Orphaned Perms'    => 'Detected Orphaned Perms',
@@ -322,7 +322,7 @@ $words = array(
 
     // validation
     'You must enter a permission name' => 'You must enter a permission name',
-    
+
     // messages
     'perm already defined'                      => 'Permisssion is already defined',
     'perm successfully added'                   => 'The permission has successfully been added',
@@ -330,7 +330,7 @@ $words = array(
     'perm successfully deleted'                 => 'The permission(s) have successfully been deleted',
     'perm successfully updated'                 => 'The permission(s) have successfully been updated',
     'perm successfully deleted'                 => 'The permission(s) have successfully been deleted',
-    
+
 
 /* Role MGR */
 
@@ -340,23 +340,23 @@ $words = array(
     'Role Manager :: Add'         => 'Role Manager :: Add',
     'Role Manager :: Edit'        => 'Role Manager :: Edit',
     'Role Manager :: Permissions' => 'Role Manager :: Permissions',
-    
+
     // list
     'New Role'   => 'New Role',
     'duplicate'  => 'duplicate',
     'role'       => 'role',
     'permission' => 'permission',
-    
+
     // add / edit / perms assignment
     'Editing role'                        => 'Editing role',
     'Changing permission assignments for' => 'Changing permission assignments for',
     'Remaining permissions'               => 'Remaining permissions',
     'Selected permissions for'            => 'Selected permissions for',
     'remove'                              => 'remove',
-    
+
     // validation
     'You must enter a role name' => 'You must enter a role name',
-    
+
     // messages
     'role successfully added'                                                             => 'The role has successfully been added',
     'role successfully updated'                                                           => 'The role has successfully been updated',
@@ -364,43 +364,43 @@ $words = array(
     'role successfully deleted but please note, admin/unassigned roles cannot be deleted' => 'The role has successfully been deleted but please note, admin/unassigned roles cannot be deleted',
     'role successfully duplicated'                                                        => 'The role has successfully been duplicated',
     'role assignments successfully updated'                                               => 'The role assignments have successfully been updated',
-    
-    
+
+
 /* UserSearch MGR */
 
     // titles
     'User Manager :: Search' => 'User Manager :: Search',
-    
+
     // list
     'Search Criteria' => 'Search Criteria',
     'Role name'       => 'Role name',
     'User ID'         => 'User ID',
     'Organisation'    => 'Organisation',
     'Register Date'   => 'Register Date',
-    
+
     // validation
     'You must select a valid date' => 'You must select a valid date',
     'You must select a date'       => 'You must select a date',
-    
-    
+
+
 /* UserImport MGR */
 
     // titles
     'User Import Manager' => 'User Import Manager',
-    
+
     // list
     'userfile'                                                         => 'Input file',
     'Use the document manager to upload CSV files.'                    => 'Use the document manager to upload CSV files.',
     'Import users into selected organisation.'                         => 'Import users into selected organisation.',
     'User will be assigned to selected role.'                          => 'User will be assigned to selected role.',
     'You should first upload at least one csv file in your upload dir' => 'You should first upload at least one csv file in your upload dir',
-    
+
     // validation
     'Please select a file.'              => 'Please select a file.',
     'Please select the organisation'     => 'Please select the organisation',
     'Please select the role'             => 'Please select the role',
-    
-    
+
+
 /* User MGR */
 
     // titles
@@ -412,7 +412,7 @@ $words = array(
     'User Manager :: Add'              => 'User Manager :: Add',
     'User Manager :: Reset password'   => 'User Manager :: Reset password',
     'User Manager :: Change status'    => 'User Manager :: Change status',
-    
+
     // list
     'New User'             => 'New User',
     'Search'               => 'Search',
@@ -430,17 +430,17 @@ $words = array(
     'add missing perms'    => 'add missing perms',
     'remove extra perms'   => 'remove extra perms',
     'complete sync'        => 'complete sync',
-    
+
     // add / edit
     'add user'             => 'add user',
     'check if active'      => 'check if active',
-    
+
     // login data
     'Connection list'      => 'Connection list',
     'Login Time'           => 'Login Time',
     'Remote IP'            => 'Remote IP',
     'Are you sure?'        => 'Are you sure?',
-    
+
     // status change
     'Disable Now'          => 'Disable Now',
     'Enable Now'           => 'Enable Now',
@@ -451,16 +451,16 @@ $words = array(
     'Enable user'          => 'Enable user',
     'Disable user'         => 'Disable user',
     'Notify user'          => 'Notify user',
-    
+
     // reset
     'Reset password now'                   => 'Reset password now',
     'Resetting password for'               => 'Resetting password for',
     'Reset password info'                  => 'Remember, if you\'re resetting the password for the admin user, make sure you correctly specify the email address the new password will go to (hit "edit" for the admin user), and that your system is correctly setup to send and receive email.',
-    
+
     // change permissions
     'for user id'            => 'for user id',
     'Select a module'        => 'Select a module',
-    
+
     // messages
     'user successfully added'              => 'The user has been successfully added',
     'Deleted successfully'                 => 'Selected records successfully deleted',
@@ -468,11 +468,12 @@ $words = array(
     'user successfully deleted'            => 'The selected users(s) have been successfully deleted',
     'The user has been successfully added' => 'The user has been successfully added',
 
-    
+
 /**
- * Mail templates    
+ * Mail templates
  */
     'Thanks for registering with'            => 'Thanks for registering with',
+    'username'                               => 'username',
     'Dear'                                   => 'Dear',
     'You are being sent this email because your new account status is now' => 'You are being sent this email because your new account status is now',
     'Click'                                  => 'Click',
@@ -489,7 +490,7 @@ $words = array(
     'New Registration at'                    => 'New Registration at',
     'The following user has just registered' => 'The following user has just registered',
     'to enable the new users account'        => 'to enable the new user\'s account',
-    
+
     // not found anywhere, but I suppose, that somewhere it is used
     'There was a problem with your session, please login again'      => 'There was a problem with your session which may have timed out, please login again',
     'Only logged on users have access to this area, please register' => 'Only logged on users have access to this area, please register',
