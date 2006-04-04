@@ -546,18 +546,20 @@ class UserMgr extends RegisterMgr
 
         $results = $this->syncUsersToRole($input->aDelete, $input->roleSync, $input->roleSyncMode);
 
-        //  could eventually display a list of failed/succeeded user ids--just summarize for now
+        //  could eventually display a list of failed/succeeded user ids--just
+        //  summarize for now
         $results = array_count_values($results);
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
         if ($succeeded && !$failed) {
-            $errorType == SGL_MESSAGE_INFO;
+            $errorType = SGL_MESSAGE_INFO;
         } elseif (!$succeeded && $failed) {
-            $errorType == SGL_MESSAGE_ERROR;
+            $errorType = SGL_MESSAGE_ERROR;
         } else {
-            $errorType == SGL_MESSAGE_WARNING;
+            $errorType = SGL_MESSAGE_WARNING;
         }
-        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false, $errorType);
+        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.",
+            false, $errorType);
     }
 
     function _sendStatusNotification($oUser, $isEnabled)
