@@ -279,7 +279,7 @@ class RegisterMgr extends SGL_Manager
                     'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                         $moduleName . '/email_registration_admin.php',
                     'username'      => $oUser->username,
-                    'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
+                    'activationUrl'      => 'http://seagullproject.org/register/',
             );
             $notification = & new SGL_Emailer($options);
             $notification->prepare();
