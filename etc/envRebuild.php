@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | envRebuild.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -65,25 +65,23 @@ class RebuildController extends SGL_FrontController
             'a valid config file, ie, using the web installer',
                 SGL_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE);
         }
-
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        $urlHandler = $conf['site']['outputUrlHandler'];
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
-
-        //  assign to registry
+        //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
-        $input->setRequest($req = SGL_Request::singleton());
+        $req   = SGL_Request::singleton();
+
+        if (PEAR::isError($req)) {
+            //  stop with error page
+            SGL::displayStaticPage($req->getMessage());
+        }
+        $input->setRequest($req);
+        $output = &new SGL_Output();
 
         $process =  new SGL_Process_Init(
                     new SGL_Process_MinimalSession(
                     new SGL_Rebuild()
                    ));
 
-        $process->process($input);
+            $process->process($input, $output);
     }
 }
 
