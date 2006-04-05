@@ -1,0 +1,17 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>asynchronic document write - helper iframe</title>
+</head>
+<body>
+<div id="async_src">
+<a href="https://sourceforge.net/projects/seagull/"><img src="http://sourceforge.net/sflogo.php?group_id=92482&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</div>
+<!-- put a reference to the containig DOM fragment in the top frame -->
+<script type="text/javascript">
+top._asyncDom = document.getElementById("async_src");
+</script>
+</body>
+</html>

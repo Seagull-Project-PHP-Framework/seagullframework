@@ -8,7 +8,7 @@ INSERT INTO `block` VALUES (3, 'Navigation_Block_CategoryNav', 'Categories', '',
 INSERT INTO `block` VALUES (4, 'User_Block_Login', 'Login', '', '', 5, 'Left', 1, 0, 'N;');
 INSERT INTO `block` VALUES (5, 'Default_Block_SampleRight1', 'Sample Right Block', '', '', 5, 'Right', 1, 1, 'N;');
 INSERT INTO `block` VALUES (6, 'Publisher_Block_SiteNews', 'Site News', '', '', 1, 'Left', 1, 1, 'N;');
-INSERT INTO `block` VALUES (7, 'Default_Block_Sample1', 'SourceForge Site', '', '', 4, 'Left', 0, 1, 'N;');
+INSERT INTO `block` VALUES (7, 'Default_Block_Sample1', 'SourceForge Site', '', '', 4, 'Left', 1, 1, 'N;');
 INSERT INTO `block` VALUES (8, 'Default_Block_Sample2', 'Syndication', '', '', 3, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (9, 'Default_Block_Calendar', 'Calendar', '', '', 2, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (10, 'Publisher_Block_RecentHtmlArticles2', 'Recent articles', '', '', 3, 'Right', 0, 1, 'N;');
