@@ -260,9 +260,6 @@ class RegisterMgr extends SGL_Manager
                 'username'      => $oUser->username,
                 'password'      => $oUser->passwdClear,
         );
-        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
-            $options['Cc'] = $this->conf['email']['admin'];
-        }
 
         $message = & new SGL_Emailer($options);
         $message->prepare();
@@ -279,7 +276,7 @@ class RegisterMgr extends SGL_Manager
                     'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                         $moduleName . '/email_registration_admin.php',
                     'username'      => $oUser->username,
-                    'activationUrl'      => 'http://seagullproject.org/register/',
+                    'activationUrl'      => 'http://seagullproject.org/user/',
             );
             $notification = & new SGL_Emailer($options);
             $notification->prepare();
