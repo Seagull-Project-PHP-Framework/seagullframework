@@ -67,21 +67,6 @@ class SGL_Output
         return SGL_String::translate($key, $filter, $aParams);
     }
 
-    function get($key)
-    {
-        if (isset($this->aProps[$key])) {
-            $ret = $this->aProps[$key];
-        } else {
-            $ret = null;
-        }
-        return $ret;
-    }
-
-    function set($key, $value)
-    {
-        $this->aProps[$key] = $value;
-    }
-
     /**
      * Generates options for an HTML select object.
      *
