@@ -320,8 +320,8 @@ $words['The group membership has successfully been modified'] = '群組成員已
 $words['The selected group(s) have successfully been deleted'] = '完成群組刪除';
 $words['The group has successfully been added'] = '完成群組新增';
 $words['aSecurityQuestions'][0] = '';
-$words['aSecurityQuestions'][0] = '最喜歡的寵物';
-$words['aSecurityQuestions'][0] = '值得紀念的日期 (dd/mm/yyyy)';
-$words['aSecurityQuestions'][0] = '難忘的地方';
-$words['aSecurityQuestions'][0] = '媽媽的姓名';
+$words['aSecurityQuestions'][1] = '最喜歡的寵物';
+$words['aSecurityQuestions'][2] = '值得紀念的日期 (dd/mm/yyyy)';
+$words['aSecurityQuestions'][3] = '難忘的地方';
+$words['aSecurityQuestions'][4] = '媽媽的姓名';
 ?>
