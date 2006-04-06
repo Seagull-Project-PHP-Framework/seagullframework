@@ -77,11 +77,14 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
+        $this->addElement('password',  'adminPassword2', 'Retype admin password: ');
         $this->addElement('text',  'adminRealName', 'Real name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
 
         $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
         $this->addRule('adminPassword', 'Please specify the admin\'s password', 'required');
+        $this->addRule('adminPassword2', 'Please confirm the admin\'s password', 'required');
+        $this->addRule(array('adminPassword2', 'adminPassword'), 'Admin\'s passwords don\'t match', 'compare');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
 
