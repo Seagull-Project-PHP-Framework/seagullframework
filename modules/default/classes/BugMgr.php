@@ -61,7 +61,6 @@ class BugMgr extends SGL_Manager
         );
 
         $this->_clientInfo = $this->getClientInfo();
-        $this->_serverInfo = $this->getServerInfo();
 
         $this->aSeverityTypes = array(
             'not categorized' => 'not categorized',
@@ -152,23 +151,6 @@ class BugMgr extends SGL_Manager
         $output->aSeverityTypes = $this->aSeverityTypes;
     }
 
-    function getServerInfo()
-    {
-        $aServerInfo = array();
-        //  get db info
-        $lastQuery = $this->dbh->last_query;
-        $aServerInfo['lastSql'] = isset($this->dbh->last_query) ?
-            $this->dbh->last_query : null;
-        $aServerInfo['phpSapi'] = php_sapi_name();
-        $aServerInfo['phpOs'] = PHP_OS;
-        $aServerInfo['dbType'] = $this->conf['db']['type'];
-        $aServerInfo['phpVersion'] = PHP_VERSION;
-        $aServerInfo['serverPort'] = $_SERVER['SERVER_PORT'];
-        $aServerInfo['serverSoftware'] = $_SERVER['SERVER_SOFTWARE'];
-        $aServerInfo['sglVersion'] = SGL_SEAGULL_VERSION;
-        return $aServerInfo;
-    }
-
 
     function getClientInfo()
     {
@@ -191,12 +173,12 @@ class BugMgr extends SGL_Manager
 
     function buildEnvironmentReport()
     {
-        $html = '';
-        $data = array_merge($this->_clientInfo, $this->_serverInfo);
-        foreach ($data as $k => $v) {
-            $html .= "[$k] => $v \n";
-        }
-        return $html;
+        $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+        $aEnvData['client_info'] = $this->_clientInfo;
+        $lastQuery = $this->dbh->last_query;
+        $aEnvData['db_info']['lastSql'] = isset($this->dbh->last_query) ?
+            $this->dbh->last_query : null;
+        return print_r($aEnvData, 1);
     }
 
     function _sendEmail($oData, $moduleName)

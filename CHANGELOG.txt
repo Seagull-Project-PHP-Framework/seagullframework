@@ -8,6 +8,7 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+06-05-06    Added MySQL version detection, added more info to bug reporter
 26-03-06    Modified SGL_Inflector::caseFix() to return the original string if a
             config key cannot be found to compare with, instead of false
 26-03-06    Added ability to load navigation data during the install, so devs can
