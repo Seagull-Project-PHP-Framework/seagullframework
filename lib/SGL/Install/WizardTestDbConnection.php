@@ -81,6 +81,9 @@ function canConnectToDbServer()
             'dbDriver' => $dbh->phptype,
             'version' => isset($mysqlVersion) ? $mysqlVersion : '',
             );
+        if (true) {
+            $_SESSION['mysql5_detected'] = true;
+        }
         $serialized = serialize($aEnvData);
         @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;

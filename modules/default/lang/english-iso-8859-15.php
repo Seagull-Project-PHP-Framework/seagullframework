@@ -473,5 +473,6 @@ $defaultWords['Default theme'] = 'Default theme';
 $defaultWords['Additional Include Path'] = 'Additional Include Path';
 $defaultWords['Custom filter chain'] = 'Custom filter chain';
 $defaultWords['Create CRUD actions'] = 'Create CRUD Actions';
+$defaultWords['Broadcast message'] = 'Broadcast message';
 
 ?>
