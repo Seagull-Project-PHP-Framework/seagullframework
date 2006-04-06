@@ -265,7 +265,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
         if ($session->getRoleId() > SGL_GUEST
-                || isset( $this->conf[$mgrName]['requiresAuth'])
+                && isset( $this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
