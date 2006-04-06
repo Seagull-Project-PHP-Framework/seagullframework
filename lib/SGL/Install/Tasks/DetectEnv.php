@@ -132,6 +132,7 @@ class SGL_EnvSummaryTask extends SGL_Task
 class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 {
     var $title = 'Available Modules';
+    var $key = 'loaded_modules';
     var $aRequirements = array(
         'apc' => array(SGL_RECOMMENDED => 1),
         'curl' => array(SGL_RECOMMENDED => 1),
@@ -168,6 +169,7 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
 {
     var $title = 'PHP Environment';
+    var $key = 'php_environment';
     var $mandatory = true;
     var $aRequirements = array(
         'phpVersion' => array(SGL_REQUIRED => '>4.3.0'),
@@ -195,6 +197,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
 class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
 {
     var $title = 'php.ini Settings';
+    var $key = 'php.ini_settings';
     var $aRequirements = array(
         'safe_mode' => array(SGL_RECOMMENDED => 0),
         'register_globals' => array(SGL_RECOMMENDED => 0),
@@ -229,6 +232,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
 class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
 {
     var $title = 'Filesystem info';
+    var $key = 'filesystem_info';
     var $mandatory = true;
 
     var $aRequirements = array(
@@ -254,6 +258,7 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
 class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
 {
     var $title = 'PEAR Environment';
+    var $key = 'pear_environment';
     var $mandatory = true;
 
     var $aRequirements = array(
@@ -268,9 +273,6 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
 
     function run()
     {
-        //  determine if it's a PEAR install
-        #$isPearInstall = @include_once 'PEAR.php';
-
         if (defined('SGL_PEAR_INSTALLED')) {
             $this->aData['pearFolderExists'] = true;
             $this->aData['pearLibIsLoadable'] = true;

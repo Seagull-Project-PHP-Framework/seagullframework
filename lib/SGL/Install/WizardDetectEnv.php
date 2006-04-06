@@ -43,8 +43,13 @@ function environmentOk()
     if (SGL_Install_Common::errorsExist()) {
         return false;
     } else {
-        //  store output for later processing
-        $serialized = serialize($GLOBALS['_SGL']['runner']);
+        // cleanup data for storage
+        $oTask = $GLOBALS['_SGL']['runner'];
+        $aSummary = array();
+        foreach ($oTask->aTasks as $oTask) {
+            $aSummary[$oTask->key] = $oTask->aData;
+        }
+        $serialized = serialize($aSummary);
         @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
