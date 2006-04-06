@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Registry.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -133,6 +133,10 @@ class SGL_Registry
             foreach ($aObjAttrs as $objAttrName => $objAttrValue) {
                 $dest->$objAttrName = $objAttrValue;
             }
+            foreach ($dest->aProps as $k => $obj) {
+                $dest->$k = $obj;
+            }
+            unset($dest->aProps);
         }
     }
 }

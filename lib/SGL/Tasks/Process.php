@@ -207,9 +207,10 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $this->processRequest->process($input, $output);
+
         //  don't send headers according to config
-        $mgr = $input->get('manager');
-        $currentMgr = SGL_Inflector::caseFix(get_class($mgr));
+        $currentMgr = SGL_Inflector::caseFix(get_class($output->manager));
         if (!isset($this->conf[$currentMgr]['setHeaders'])
                 || $this->conf[$currentMgr]['setHeaders'] == true) {
 
@@ -234,8 +235,6 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
             header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
             header('X-Powered-By: Seagull http://seagull.phpkitchen.com');
         }
-
-        $this->processRequest->process($input, $output);
     }
 }
 
@@ -277,7 +276,6 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
 
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
-
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
         if ($session->getRoleId() > SGL_GUEST
                 && isset( $this->conf[$mgrName]['requiresAuth'])
@@ -707,36 +705,36 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
  */
 class SGL_Process_BuildOutputData extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $this->processRequest->process($input, $output);
+
         //  setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
-            $input->data->loggedOnUser = $_SESSION['username'];
-            $input->data->loggedOnUserID = SGL_Session::getUid();
-            $input->data->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);
-            $input->data->loggedOnDate = strftime("%B %d", $_SESSION['startTime']);
-            $input->data->remoteIp = $_SERVER['REMOTE_ADDR'];
-            $input->data->isMember = true;
+            $output->loggedOnUser = $_SESSION['username'];
+            $output->loggedOnUserID = SGL_Session::getUid();
+            $output->loggedOnSince = strftime("%H:%M:%S", $_SESSION['startTime']);
+            $output->loggedOnDate = strftime("%B %d", $_SESSION['startTime']);
+            $output->remoteIp = $_SERVER['REMOTE_ADDR'];
+            $output->isMember = true;
         }
-        $input->data->currUrl          = $_SERVER['PHP_SELF'];
-        $input->data->currLang         = SGL::getCurrentLang();
-        $input->data->theme            = $_SESSION['aPrefs']['theme'];
-        $input->data->charset          = $GLOBALS['_SGL']['CHARSET'];
-        $input->data->webRoot          = SGL_BASE_URL;
-        $input->data->imagesDir        = SGL_BASE_URL . '/themes/' . $input->data->theme . '/images';
-        $input->data->versionAPI       = SGL_SEAGULL_VERSION;
-        $input->data->sessID           = SID;
-        $input->data->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
-        $input->data->scriptClose      = "\n//--> </script>\n";
-        $input->data->conf = $this->conf;
+        $output->currUrl          = $_SERVER['PHP_SELF'];
+        $output->currLang         = SGL::getCurrentLang();
+        $output->theme            = $_SESSION['aPrefs']['theme'];
+        $output->charset          = $GLOBALS['_SGL']['CHARSET'];
+        $output->webRoot          = SGL_BASE_URL;
+        $output->imagesDir        = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
+        $output->versionAPI       = SGL_SEAGULL_VERSION;
+        $output->sessID           = SID;
+        $output->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
+        $output->scriptClose      = "\n//--> </script>\n";
+        $output->conf = $this->conf;
 
-        if (isset($input->data->submitted) && $input->data->submitted) {
-            $input->data->addOnLoadEvent("formErrorCheck()");
+        if (isset($output->submitted) && $output->submitted) {
+            $output->addOnLoadEvent("formErrorCheck()");
         }
-
-        $this->processRequest->process($input);
     }
 }
 
@@ -748,44 +746,44 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
  */
 class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $this->processRequest->process($input, $output);
+
         // set the default WYSIWYG editor
-        if (isset($input->data->wysiwyg) && $input->data->wysiwyg == true) {
+        if (isset($output->wysiwyg) && $output->wysiwyg == true && !SGL::runningFromCLI()) {
 
             // you can preset this var in your code
-            if (!isset($input->data->wysiwygEditor)) {
-                $input->data->wysiwygEditor = isset($this->conf['site']['wysiwygEditor'])
+            if (!isset($output->wysiwygEditor)) {
+                $output->wysiwygEditor = isset($this->conf['site']['wysiwygEditor'])
                     ? $this->conf['site']['wysiwygEditor']
                     : 'fck';
             }
 
-            switch ($input->data->wysiwygEditor) {
+            switch ($output->wysiwygEditor) {
 
             case 'fck':
-                $input->data->wysiwyg_fck = true;
-                $input->data->addOnLoadEvent('fck_init()');
+                $output->wysiwyg_fck = true;
+                $output->addOnLoadEvent('fck_init()');
                 break;
             case 'xinha':
-                $input->data->wysiwyg_xinha = true;
-                $input->data->addOnLoadEvent('xinha_init()');
+                $output->wysiwyg_xinha = true;
+                $output->addOnLoadEvent('xinha_init()');
                 break;
             case 'htmlarea':
-                $input->data->wysiwyg_htmlarea = true;
-                $input->data->addOnLoadEvent('HTMLArea.init()');
+                $output->wysiwyg_htmlarea = true;
+                $output->addOnLoadEvent('HTMLArea.init()');
                 break;
             case 'tinyfck':
-                $input->data->wysiwyg_tinyfck = true;
-                //note: tinymce doesn't need an onLoad event to initialise
+                $output->wysiwyg_tinyfck = true;
+                // note: tinymce doesn't need an onLoad event to initialise
                 break;
             }
         }
         //  get all html onLoad events
-        $input->data->onLoad = $input->data->getAllOnLoadEvents();
-
-        $this->processRequest->process($input);
+        $output->onLoad = $output->getAllOnLoadEvents();
     }
 }
 
@@ -797,26 +795,26 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
  */
 class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->processRequest->process($input, $output);
 
         //  get performance info
         if (!empty($_SESSION['aPrefs']['showExecutionTimes'])
                 && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
 
             //  prepare query count
-            $input->data->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
+            $output->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
 
             //  and execution time
-            $input->data->executionTime = getSystemTime() - @SGL_START_TIME;
+            $output->executionTime = getSystemTime() - @SGL_START_TIME;
         }
         //  send memory consumption to output
         if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
-            $input->data->memoryUsage = number_format(memory_get_usage());
+            $output->memoryUsage = number_format(memory_get_usage());
         }
-
-        $this->processRequest->process($input);
     }
 }
 
@@ -828,9 +826,11 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
  */
 class SGL_Process_SetupNavigation extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->processRequest->process($input, $output);
 
         if ($this->conf['navigation']['enabled']) {
 
@@ -840,25 +840,24 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
             if (is_file($navDrvFile)) {
                 require_once $navDrvFile;
             } else {
-                SGL::raiseError('specified navigation driver does not exist', SGL_ERROR_NOFILE);
+                SGL::raiseError('specified navigation driver does not exist',
+                    SGL_ERROR_NOFILE);
             }
             if (!class_exists($navDriver)) {
                 SGL::raiseError('problem with navigation driver object', SGL_ERROR_NOCLASS);
             }
-            $nav = & new $navDriver($input->data);
+            $nav = & new $navDriver($output);
 
             //  render navigation menu
             $navRenderer = $this->conf['navigation']['renderer'];
             $aRes        = $nav->render($navRenderer);
             if (!PEAR::isError($aRes)) {
                 list($sectionId, $html)  = $aRes;
-                $input->data->sectionId  = $sectionId;
-                $input->data->navigation = $html;
-                $input->data->currentSectionName = $nav->getCurrentSectionName();
+                $output->sectionId  = $sectionId;
+                $output->navigation = $html;
+                $output->currentSectionName = $nav->getCurrentSectionName();
             }
         }
-
-        $this->processRequest->process($input);
     }
 }
 
@@ -870,49 +869,46 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
  */
 class SGL_Process_SetupGui extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $mgr = $input->data->get('manager');
-        $req = &SGL_Request::singleton();
-        $action = $req->get('action');
+        $this->processRequest->process($input, $output);
 
-        $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        $userRid = SGL_Session::getRoleId();
-        $input->data->adminGuiAllowed = false;
-        $adminGuiAllowed = $adminGuiRequested = false;
+        if (!SGL::runningFromCLI()) {
+            $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
+            $userRid = SGL_Session::getRoleId();
+            $adminGuiAllowed = $adminGuiRequested = false;
 
-        //  setup which GUI to load depending on user and manager
-        $input->data->adminGuiAllowed = false;
+            //  setup which GUI to load depending on user and manager
+            $output->adminGuiAllowed = false;
 
-        // first check if userRID allows to switch to adminGUI
-        if ($userRid == SGL_ADMIN) {
-            $adminGuiAllowed = true;
-        }
+            // first check if userRID allows to switch to adminGUI
+            if ($userRid == SGL_ADMIN) {
+                $adminGuiAllowed = true;
+            }
 
-        // then check if manager requires to switch to adminGUI
-        if (isset($this->conf[$mgrName]['adminGuiAllowed'])
-            && $this->conf[$mgrName]['adminGuiAllowed']) {
-            $adminGuiRequested = true;
+            // then check if manager requires to switch to adminGUI
+            if (isset($this->conf[$mgrName]['adminGuiAllowed'])
+                && $this->conf[$mgrName]['adminGuiAllowed']) {
+                $adminGuiRequested = true;
 
-            // exception
-            // 1. allows to preview articles with default theme
-            if ($mgrName == 'ArticleMgr' && $action == 'view') {
-                $adminGuiRequested = false;
+                // exception
+                // 1. allows to preview articles with default theme
+                if ($mgrName == 'ArticleMgr' && $output->action == 'view') {
+                    $adminGuiRequested = false;
+                }
+            }
+
+            if ($adminGuiAllowed && $adminGuiRequested) {
+
+                // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
+                $output->adminGuiAllowed = true;
+                $output->theme = $this->conf['site']['adminGuiTheme'];
+                $output->masterTemplate = 'admin_master.html';
+                $output->template = 'admin_' . $output->template;
             }
         }
-
-        if ($adminGuiAllowed && $adminGuiRequested) {
-
-            // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
-            $input->data->adminGuiAllowed = true;
-            $input->data->theme = $this->conf['site']['adminGuiTheme'];
-            $input->data->masterTemplate = 'admin_master.html';
-            $input->data->template = 'admin_' . $input->data->template;
-        }
-
-        $this->processRequest->process($input);
     }
 }
 
@@ -922,28 +918,53 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupBlocks extends SGL_ProcessRequest
+class SGL_Process_SetupBlocks extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $this->processRequest->process($input, $output);
 
         //  load blocks
-        if ($conf['site']['blocksEnabled'] && $conf['navigation']['enabled']) {
+        if ($this->conf['site']['blocksEnabled']
+                && $this->conf['navigation']['enabled']
+                && !SGL::runningFromCli()) {
             require_once SGL_CORE_DIR . '/BlockLoader.php';
-            $input->data->sectionId = empty($input->data->sectionId)
+            $output->sectionId = empty($output->sectionId)
                 ? 0
-                : $input->data->sectionId;
-            $blockLoader = & new SGL_BlockLoader($input->data->sectionId);
-            $aBlocks = $blockLoader->render($input->data);
+                : $output->sectionId;
+            $blockLoader = & new SGL_BlockLoader($output->sectionId);
+            $aBlocks = $blockLoader->render($output);
             foreach ($aBlocks as $key => $value) {
                 $blocksName = 'blocks'.$key;
-                $input->data->$blocksName = $value;
+                $output->$blocksName = $value;
             }
         }
+    }
+}
+
+class SGL_Process_BuildView extends SGL_DecorateProcess
+{
+    function process(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->processRequest->process($input, $output);
+
+        //  build view
+        $templateEngine = ucfirst($this->conf['site']['templateEngine']);
+        $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
+        $rendererFile   = $templateEngine . 'Strategy.php';
+
+        if (is_file(SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile)) {
+            require_once SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile;
+        } else {
+            PEAR::raiseError('Could not find renderer',
+                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
+        }
+        $view = new SGL_View($output, new $rendererClass());
+        $output->data = $view->render();
     }
 }
 
