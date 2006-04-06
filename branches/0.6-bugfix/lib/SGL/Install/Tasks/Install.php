@@ -90,6 +90,16 @@ class SGL_Task_CreateConfig extends SGL_Task
         if (preg_match("/cgi/i", php_sapi_name())) {
             $c->set('site', array('frontScriptName' => 'index.php?'));
         }
+
+        //  warn for mysql5 probs
+        if (isset($_SESSION['mysql5_detected'])) {
+            $msg = 'MySQL 5 has been detected, there is currently a serious bug '.
+                    'affecting DB_DataObject with version 5 and above of MySQL. To '.
+                    'delete this message login as admin, go to Configuration and delete '.
+                    'the entry for \'broadcast message\'.';
+            $c->set('site', array('alert' => $msg));
+        }
+
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);

@@ -89,8 +89,9 @@ class SGL_FrontController
                 new SGL_Process_AuthenticateRequest(
                 new SGL_Process_BuildHeaders(
                 new SGL_Process_SetupLocale(
+                new SGL_Process_SetSystemAlert(
                 new SGL_MainProcess()
-                )))))))))));
+                ))))))))))));
             $process->process($input, $output);
 
         } else {

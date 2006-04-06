@@ -239,6 +239,21 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
     }
 }
 
+class SGL_Process_SetSystemAlert  extends SGL_DecorateProcess
+{
+    function process(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->processRequest->process($input, $output);
+
+        if (isset($this->conf['site']['alert'])) {
+            SGL_Session::set('message', $this->conf['site']['alert']);
+            SGL_Session::set('messageType', SGL_MESSAGE_INFO);
+        }
+    }
+}
+
 /**
  * Initiates session check.
  *
