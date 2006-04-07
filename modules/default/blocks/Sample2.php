@@ -11,10 +11,6 @@ class Default_Block_Sample2
 {
     var $webRoot = SGL_BASE_URL;
 
-    function SampleBlock2()
-    {
-    }
-
     function init()
     {
         return $this->getBlockContent();

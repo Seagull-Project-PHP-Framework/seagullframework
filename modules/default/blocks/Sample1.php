@@ -17,10 +17,14 @@ class Default_Block_Sample1
     {
         $baseUrl = SGL_BASE_URL;
         $text = <<< HTML
+<div class="alignCenter">
 <iframe width="1" height="1" marginwidth="0" marginheight="0"
         hspace="0" vspace="0" id="async_frame" style="float:left;" frameborder="0" scrolling="no"
         src="{$baseUrl}/iframe.html" onload="async_load();">.</iframe>
 <div id="async_demo">&#xA0;</div>
+<img src="{$baseUrl}/images/seagull.png">
+<img src="{$baseUrl}/images/sgl-framework.png">
+</div>
 HTML;
         return $text;
     }
