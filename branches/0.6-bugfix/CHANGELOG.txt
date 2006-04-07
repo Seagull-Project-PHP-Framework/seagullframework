@@ -9,6 +9,8 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+07-04-06    Code for Delegate class simplified to work with installations where PHP
+            is compiled with --disable-reflection (jbpros)
 06-04-06    Improved pre and post-process workflow
 06-04-06    Added the ability to create a broadcast message that will appear on
             every screen, eg, "Maintenance planned at 22.00 GMT"
