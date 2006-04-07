@@ -125,6 +125,18 @@ EOF;
         $expected = 'Foo1/Bar1/Baz.php';
         $this->assertEqual($expected, $searchPath);
     }
+
+    function testDbVersionParsing()
+    {
+        $version = '4.1.16';
+        $this->assertFalse(version_compare($version, '5', '>='));
+
+        $version = '4.0.24_Debian-10sarge1-log';
+        $this->assertFalse(version_compare($version, '5', '>='));
+
+        $version = '5.0.1';
+        $this->assertTrue(version_compare($version, '5', '>='));
+    }
 }
 
 class Foo1{}
