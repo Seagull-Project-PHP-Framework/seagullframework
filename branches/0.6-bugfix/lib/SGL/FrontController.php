@@ -76,6 +76,7 @@ class SGL_FrontController
         $input->setRequest($req);
         $output = &new SGL_Output();
 
+        // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
                 //  pre-process (order: top down)

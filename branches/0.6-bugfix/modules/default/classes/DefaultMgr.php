@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DefaultMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -44,7 +44,6 @@
  * @package default
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.12 $
- * @since   PHP 4.1
  */
 class DefaultMgr extends SGL_Manager
 {
@@ -57,7 +56,6 @@ class DefaultMgr extends SGL_Manager
         $this->template     = 'home.html';
 
         $this->_aActionsMapping =  array(
-//            'showNews'   => array('showNews'),
             'list'   => array('list'),
         );
     }
@@ -70,16 +68,7 @@ class DefaultMgr extends SGL_Manager
         $input->template    = $this->template;
         $input->pageTitle   = $this->pageTitle;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->javascriptSrc   = array('TreeMenu.js');
-//        $input->newsID      = $req->get('frmNewsID');
     }
-
-//    function _showNews(&$input, &$output)
-//    {
-//        require_once SGL_CORE_DIR . '/Item.php';
-//        $item = & new SGL_Item($input->newsID);
-//        $output->preview = $item->preview();
-//    }
 
     function _cmd_list(&$input, &$output)
     {
