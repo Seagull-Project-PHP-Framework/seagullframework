@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SiteNews.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -107,9 +107,11 @@ INTRO;
         $newItems = '<ul class="noindent">';
         if (is_array($aNewsItems) && count($aNewsItems)) {
             foreach ($aNewsItems as $key => $obj) {
-                $newItems   .= '<li> <a href="'
-                            . SGL_Url::makeLink('showNews', 'default', 'default', array(), "frmNewsID|$obj->item_id") . '">'
-                            . $obj->addition . "</a></li>\n";
+                $newItems
+                    .= '<li> <a href="'
+                    . SGL_Url::makeLink('view', 'articleview', 'publisher', array(),
+                        "frmArticleID|$obj->item_id") . '">'
+                    . $obj->addition . "</a></li>\n";
             }
             $newItems   .= "</ul>";
             return $newItems;

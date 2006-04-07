@@ -22,9 +22,9 @@ INSERT INTO `block` VALUES (11, 'User_Block_OnlineUsers', 'Online', '', '', 6, '
 #INSERT INTO `block_assignment` VALUES (2, 0);
 INSERT INTO `block_assignment` VALUES (3, 0);
 INSERT INTO `block_assignment` VALUES (4, 0);
-INSERT INTO `block_assignment` VALUES (5, 6);
-INSERT INTO `block_assignment` VALUES (6, 6);
-INSERT INTO `block_assignment` VALUES (7, 6);
+INSERT INTO `block_assignment` VALUES (5, 0);
+INSERT INTO `block_assignment` VALUES (6, 0);
+INSERT INTO `block_assignment` VALUES (7, 0);
 INSERT INTO `block_assignment` VALUES (8, 6);
 INSERT INTO `block_assignment` VALUES (9, 6);
 INSERT INTO `block_assignment` VALUES (10, 6);
