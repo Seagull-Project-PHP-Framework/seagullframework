@@ -68,6 +68,18 @@ class SGL
     }
 
     /**
+     * Returns current encoding, ie, utf-8.
+     *
+     * @access  public
+     * @static
+     * @return string   charset codepage
+     */
+    function getCurrentCharset()
+    {
+        return $GLOBALS['_SGL']['CHARSET'];
+    }
+
+    /**
      * Log a message to the global Seagull log backend.
      *
      * Note that the method can be safely called by simply omitting the deprecated
