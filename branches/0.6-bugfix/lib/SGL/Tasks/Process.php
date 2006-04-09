@@ -953,17 +953,8 @@ class SGL_Process_BuildView extends SGL_DecorateProcess
         $this->processRequest->process($input, $output);
 
         //  build view
-        $templateEngine = ucfirst($this->conf['site']['templateEngine']);
-        $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
-        $rendererFile   = $templateEngine . 'Strategy.php';
-
-        if (is_file(SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile)) {
-            require_once SGL_LIB_DIR . '/SGL/HtmlRenderer/' . $rendererFile;
-        } else {
-            PEAR::raiseError('Could not find renderer',
-                SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
-        $view = new SGL_View($output, new $rendererClass());
+        $templateEngine = isset($output->templateEngine) ? $output->templateEngine : null;
+        $view = new SGL_HtmlSimpleView($output, $templateEngine);
         $output->data = $view->render();
     }
 }
