@@ -155,9 +155,6 @@ EOD;
     $pkg->setPhpDep('4.3.0');
     $pkg->setPearinstallerDep('1.4.6');
 
-    // Require custom file role for our web installation
-    $pkg->addPackageDepWithChannel('required', 'Role_Web', 'pearified.com', '1.1.0');
-
     // Create the current release and add it to the package definition
     $pkg->addRelease();
 
