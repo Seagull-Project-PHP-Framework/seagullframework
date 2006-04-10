@@ -133,7 +133,7 @@ class xSGL_Task_BuildNavigation extends SGL_Task
 
 #        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
         $da = & DA_Navigation::singleton();
-//        $aModuleList = SGL_Install_Common::getModuleList();
+//        $aModuleList = SGL_Util::getAllModuleDirs($onlyRegistered = true);
 
         #foreach ($aModuleList as $module) {
         #    $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';

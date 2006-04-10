@@ -102,10 +102,13 @@ class SGL_Rebuild extends SGL_ProcessRequest
             'adminPassword' => 'admin',
             'adminRealName' => 'Demo Admin',
             'adminEmail' => 'demian@phpkitchen.com',
+            'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'serverName' => $_SERVER['argv'][1],
             );
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_DropDatabase());
         $runner->addTask(new SGL_Task_CreateDatabase());
