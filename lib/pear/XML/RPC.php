@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: RPC.php,v 1.88 2005/10/15 20:29:43 danielc Exp $
+ * @version    CVS: $Id: RPC.php,v 1.91 2006/04/06 01:40:07 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -546,7 +546,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -591,7 +591,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -1013,7 +1013,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1104,7 +1104,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1142,6 +1142,21 @@ class XML_RPC_Message extends XML_RPC_Base
      * @var string
      */
     var $payload = '';
+
+    /**
+     * Should extra line breaks be removed from the payload?
+     * @since Property available since Release 1.4.6
+     * @var boolean
+     */
+    var $remove_extra_lines = true;
+
+    /**
+     * The XML response from the remote server
+     * @since Property available since Release 1.4.6
+     * @var string
+     */
+    var $response_payload = '';
+
 
     /**
      * @return void
@@ -1187,6 +1202,11 @@ class XML_RPC_Message extends XML_RPC_Base
     }
 
     /**
+     * Fills the XML_RPC_Message::$payload property
+     *
+     * Part of the process makes sure all line endings are in DOS format
+     * (CRLF), which is probably required by specifications.
+     *
      * @return void
      *
      * @uses XML_RPC_Message::xml_header(), XML_RPC_Message::xml_footer()
@@ -1202,7 +1222,11 @@ class XML_RPC_Message extends XML_RPC_Base
         }
         $this->payload .= "</params>\n";
         $this->payload .= $this->xml_footer();
-        $this->payload = ereg_replace("[\r\n]+", "\r\n", $this->payload);
+        if ($this->remove_extra_lines) {
+            $this->payload = ereg_replace("[\r\n]+", "\r\n", $this->payload);
+        } else {
+            $this->payload = ereg_replace("\r\n|\n|\r|\n\r", "\r\n", $this->payload);
+        }
     }
 
     /**
@@ -1389,6 +1413,7 @@ class XML_RPC_Message extends XML_RPC_Base
          * thanks to Luca Mariano <luca.mariano@email.it>
          */
         $data = substr($data, 0, strpos($data, "</methodResponse>") + 17);
+        $this->response_payload = $data;
 
         if (!xml_parse($parser_resource, $data, sizeof($data))) {
             // thanks to Peter Kocks <peter.kocks@baygate.com>
@@ -1450,7 +1475,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.4.5
+ * @version    Release: 1.4.6
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base
