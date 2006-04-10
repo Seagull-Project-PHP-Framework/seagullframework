@@ -136,11 +136,6 @@ class SGL_UpdateHtmlTask extends SGL_Task
         flush();
     }
 
-    function getMinimumModuleList()
-    {
-        return array('block', 'default', 'navigation', 'user');
-    }
-
     function setup()
     {
         $c = &SGL_Config::singleton();
@@ -209,10 +204,7 @@ class SGL_Task_DefineTableAliases extends SGL_Task
     function run($data)
     {
         $c = &SGL_Config::singleton();
-
-        $aModuleList = SGL_Install_Common::getModuleList();
-
-        foreach ($aModuleList as $module) {
+        foreach ($data['aModuleList'] as $module) {
             $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
             if (file_exists($tableAliasIniPath)) {
                 $aData = parse_ini_file($tableAliasIniPath);
@@ -221,12 +213,13 @@ class SGL_Task_DefineTableAliases extends SGL_Task
                 }
             }
         }
-
         //  save
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $configFile = (SGL::runningFromCli())
+            ? SGL_VAR_DIR . '/' . $data['serverName']. '.conf.php'
+            : SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
     }
 }
@@ -316,11 +309,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 echo $out;
             }
 
-            $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install_Common::getModuleList()
-                : $this->getMinimumModuleList();
-
-            foreach ($aModuleList as $module) {
+            foreach ($data['aModuleList'] as $module) {
                 $out = '<tr>
                             <td class="title">' . ucfirst($module) . '</td>
                             <td id="' . $module . '_schema" class="alignCenter"></td>
@@ -352,7 +341,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             }
 
             //  Load each module's schema, if there is a sql file in /data
-            foreach ($aModuleList as $module) {
+            foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
 
                 //  Load the module's schema
@@ -388,11 +377,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  Go back and load each module's default data, if there is a sql file in /data
-            $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install_Common::getModuleList()
-                : $this->getMinimumModuleList();
-
-            foreach ($aModuleList as $module) {
+            foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
 
                 //  Load the module's data
@@ -419,11 +404,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  Go back and load each module's default data, if there is a sql file in /data
-            $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install_Common::getModuleList()
-                : $this->getMinimumModuleList();
-
-            foreach ($aModuleList as $module) {
+            foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
 
                 //  Load the module's data
@@ -451,11 +432,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  Go back and load module foreign keys/constraints, if any
-            $aModuleList = (isset($data['installAllModules']))
-                ? SGL_Install_Common::getModuleList()
-                : $this->getMinimumModuleList();
-
-            foreach ($aModuleList as $module) {
+            foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
                 if (file_exists($modulePath . $this->filename4)) {
                     $result = SGL_Sql::parseAndExecute($modulePath . $this->filename4, 0);
@@ -482,11 +459,8 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
     {
         require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
         $da = & DA_Navigation::singleton();
-        $aModuleList = (isset($data['installAllModules']))
-            ? SGL_Install_Common::getModuleList()
-            : $this->getMinimumModuleList();
 
-        foreach ($aModuleList as $module) {
+        foreach ($data['aModuleList'] as $module) {
             $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
             if (file_exists($navigationPath)) {
                 require_once $navigationPath;
@@ -560,11 +534,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 $result = $trans->addLang($langData);
 
                 //  iterate through modules
-                $aModuleList = (isset($data['installAllModules']))
-                    ? SGL_Install_Common::getModuleList()
-                    : $this->getMinimumModuleList();
-
-                foreach ($aModuleList as $module) {
+                foreach ($data['aModuleList'] as $module) {
                     $statusText = 'loading languages - '. $module .' ('. str_replace('_','-', $langID) .')';
                     $this->updateHtml('status', $statusText);
 

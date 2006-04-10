@@ -39,11 +39,6 @@
 
 require_once dirname(__FILE__)  . '/../Misc.php';
 
-if (!isset($GLOBALS['_SGL'])) {
-    $GLOBALS['_SGL'] = array();
-    $_SESSION['ERRORS'] = array();
-}
-
 /**
  * Provides various static methods required for install routine.
  *
@@ -52,6 +47,12 @@ class SGL_Install_Common
 {
     function errorPush($error)
     {
+        if (!isset($GLOBALS['_SGL'])) {
+            $GLOBALS['_SGL'] = array();
+        }
+        if (!isset($_SESSION['ERRORS'])) {
+            $_SESSION['ERRORS'] = array();
+        }
         array_push($_SESSION['ERRORS'], $error);
     }
 
@@ -212,6 +213,11 @@ HTML;
        }
        sort($fileList);
        return $fileList;
+    }
+
+    function getMinimumModuleList()
+    {
+        return array('block', 'default', 'navigation', 'user');
     }
 }
 

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -189,6 +189,7 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
+        require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
         $da = & DA_Default::singleton();
 
         //  match all folders except CVS
