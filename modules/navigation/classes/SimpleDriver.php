@@ -216,7 +216,8 @@ class SimpleDriver
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
         $this->da        = &DA_Navigation::singleton();
-        $this->req       = &SGL_Request::singleton();
+        $this->input     = &SGL_Registry::singleton();
+        $this->req       = $this->input->getRequest();
         $this->output    = &$outputData;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
@@ -392,7 +393,7 @@ class SimpleDriver
 
             // if no exact matches search inexact matches
             if (!$this->_currentSectionId && !$this->_staticId) {
-                $this->_searchInExactMatches($aSectionNodes);
+                $this->_searchInexactMatches($aSectionNodes);
             }
         }
         return $aSectionNodes;
@@ -474,7 +475,7 @@ class SimpleDriver
             if (preg_match('/^uriNode:([0-9]+)$/', $section->resource_uri, $aUri)) {
                 $linkedSection = (object)$this->da->getRawSectionById($aUri[1]);
                 $section->dontMatch = true;
-                if ($linkedSection &&
+                if (!empty($linkedSection->is_enabled) &&
                     (in_array($this->_rid, explode(',', $linkedSection->perms)))) {
                     $section->resource_uri = $linkedSection->resource_uri;
                 } else {
@@ -570,11 +571,11 @@ class SimpleDriver
      * @param   array $aSectionNodes
      * @return  void
      */
-    function _searchInExactMatches(&$aSectionNodes)
+    function _searchInexactMatches(&$aSectionNodes)
     {
         foreach ($aSectionNodes as $key => $section) {
             if (!empty($section->children)) {
-                $this->_searchInExactMatches($section->children);
+                $this->_searchInexactMatches($section->children);
 
                 //  if children node is current mark parent node
                 foreach ($section->children as $section2) {
