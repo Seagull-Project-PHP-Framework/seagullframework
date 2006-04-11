@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | RegisterMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -41,6 +41,7 @@
 require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_CORE_DIR . '/Observer.php';
 require_once 'Validate.php';
 require_once 'DB/DataObject.php';
 
@@ -198,7 +199,7 @@ class RegisterMgr extends SGL_Manager
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+/*
         if (!SGL::objectHasState($input->user)) {
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
@@ -240,6 +241,76 @@ class RegisterMgr extends SGL_Manager
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
+        }
+*/
+
+        $addUser = new User_AddUser($input, $output);
+        $addUser->attach(new SendEmailConfirmation());
+        $addUser->attach(new AuthenticateUser());
+        $addUser->run();
+    }
+}
+
+class User_AddUser extends SGL_Observable
+{
+    function User_AddUser(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!SGL::objectHasState($this->input->user)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+        //  get default values for new users
+        $this->conf = $this->input->getConfig();
+        $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
+        $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
+
+        $da = & DA_User::singleton();
+        $oUser = $da->getUserById();
+        $oUser->setFrom($this->input->user);
+        $oUser->passwdClear = $this->input->user->passwd;
+        $oUser->passwd = md5($this->input->user->passwd);
+
+        if ($this->conf['RegisterMgr']['autoEnable']) {
+            $oUser->is_acct_active = 1;
+        }
+        $oUser->role_id = $defaultRoleId;
+        $oUser->organisation_id = $defaultOrgId;
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
+        $success = $da->addUser($oUser);
+
+        //  make user object available to observers
+        $this->oUser = $oUser;
+
+        if ($success) {
+            //  invoke observers
+            $this->notify();
+            SGL::raiseMsg('user successfully registered');
+        } else {
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
+    }
+}
+
+class SendEmailConfirmation extends SGL_Observer
+{
+    function update($observable)
+    {
+        //  send email confirmation according to config
+        $this->conf = $observable->conf;
+        if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
+            $bEmailSent = $this->_sendEmail($observable->oUser, $observable->input->moduleName);
+            if (!$bEmailSent) {
+                return SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
+            }
         }
     }
 
@@ -284,6 +355,21 @@ class RegisterMgr extends SGL_Manager
         }
         //  check error stack
         return (SGL_Error::count()) ? false : true;
+    }
+}
+
+class AuthenticateUser extends SGL_Observer
+{
+    function update($observable)
+    {
+        //  authenticate user according to settings
+        $this->conf = $observable->conf;
+        if ($this->conf['RegisterMgr']['autoLogin']) {
+            $observable->input->username = $observable->input->user->username;
+            $observable->input->password = $observable->input->user->passwd;
+            $oLogin = new LoginMgr();
+            $oLogin->_cmd_login($observable->input, $observable->output);
+        }
     }
 }
 ?>
