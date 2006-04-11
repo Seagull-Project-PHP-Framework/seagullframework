@@ -843,6 +843,9 @@ class SGL_Item
 
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
+        if (PEAR::isError($aResult)) {
+            return $aResult;
+        }
         $aArticleList = $aResult['data'];
 
         //  get most recent article, if array is non-empty,
@@ -914,8 +917,8 @@ class SGL_Item
         }
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
+            return SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  if published flag set, only return published articles
         $isPublishedClause = ($bPublished)?
