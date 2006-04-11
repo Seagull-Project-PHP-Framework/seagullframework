@@ -245,8 +245,11 @@ class RegisterMgr extends SGL_Manager
 */
 
         $addUser = new User_AddUser($input, $output);
-        $addUser->attach(new SendEmailConfirmation());
-        $addUser->attach(new AuthenticateUser());
+        $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            require_once SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            $addUser->attach(new $observer());
+        }
         $addUser->run();
     }
 }
@@ -296,79 +299,6 @@ class User_AddUser extends SGL_Observable
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
-        }
-    }
-}
-
-class SendEmailConfirmation extends SGL_Observer
-{
-    function update($observable)
-    {
-        //  send email confirmation according to config
-        $this->conf = $observable->conf;
-        if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
-            $bEmailSent = $this->_sendEmail($observable->oUser, $observable->input->moduleName);
-            if (!$bEmailSent) {
-                return SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
-            }
-        }
-    }
-
-    function _sendEmail($oUser, $moduleName)
-    {
-        require_once SGL_CORE_DIR . '/Emailer.php';
-
-        $realName = $oUser->first_name . ' ' . $oUser->last_name;
-        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
-        $options = array(
-                'toEmail'       => $oUser->email,
-                'toRealName'    => $recipientName,
-                'fromEmail'     => $this->conf['email']['admin'],
-                'replyTo'       => $this->conf['email']['admin'],
-                'subject'       => 'Thanks for registering at ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $moduleName . '/email_registration_thanks.php',
-                'username'      => $oUser->username,
-                'password'      => $oUser->passwdClear,
-        );
-
-        $message = & new SGL_Emailer($options);
-        $message->prepare();
-        $message->send();
-
-        //  conf to admin
-        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
-            $options = array(
-                    'toEmail'       => $this->conf['email']['admin'],
-                    'toRealName'    => 'Admin',
-                    'fromEmail'     => $this->conf['email']['admin'],
-                    'replyTo'       => $this->conf['email']['admin'],
-                    'subject'       => 'New Registration at ' . $this->conf['site']['name'],
-                    'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                        $moduleName . '/email_registration_admin.php',
-                    'username'      => $oUser->username,
-                    'activationUrl'      => 'http://seagullproject.org/user/',
-            );
-            $notification = & new SGL_Emailer($options);
-            $notification->prepare();
-            $notification->send();
-        }
-        //  check error stack
-        return (SGL_Error::count()) ? false : true;
-    }
-}
-
-class AuthenticateUser extends SGL_Observer
-{
-    function update($observable)
-    {
-        //  authenticate user according to settings
-        $this->conf = $observable->conf;
-        if ($this->conf['RegisterMgr']['autoLogin']) {
-            $observable->input->username = $observable->input->user->username;
-            $observable->input->password = $observable->input->user->passwd;
-            $oLogin = new LoginMgr();
-            $oLogin->_cmd_login($observable->input, $observable->output);
         }
     }
 }
