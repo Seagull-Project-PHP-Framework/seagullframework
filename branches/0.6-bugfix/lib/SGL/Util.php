@@ -128,7 +128,10 @@ class SGL_Util
     function getStyleFiles($curStyle = false)
     {
         $aFiles = array();
-        $theme = $_SESSION['aPrefs']['theme'];
+
+        $c = &SGL_Config::singleton();
+        $theme = $c->get(array('site' => 'defaultTheme'));
+
         //  get array of files in /www/css/
         if ($fh = @opendir(SGL_THEME_DIR . "/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {

@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
+12-04-06    List of stylesheets now correctly drawn from configured default theme,
+            not session.
 12-04-06    Made instructions clearer for adding default module and manager
 07-04-06    Link to new items corrected (alphasock@disona.net)
 14-03-06    Fixed Config::merge behaviour (Miha Vrhovnik)
