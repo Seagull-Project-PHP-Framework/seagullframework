@@ -177,14 +177,14 @@ class PasswordMgr extends SGL_Manager
         require_once SGL_CORE_DIR . '/Emailer.php';
 
         $options = array(
-                'toEmail'   => $oUser->email,
-                'fromEmail' => $this->conf['email']['admin'],
-                'replyTo'   => $this->conf['email']['admin'],
-                'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
-                    . '/user/email_forgot.php',
-                'username'  => $oUser->username,
-                'password'  => $passwd,
+            'toEmail'   => $oUser->email,
+            'fromEmail' => $this->conf['email']['admin'],
+            'replyTo'   => $this->conf['email']['admin'],
+            'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
+            'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                . '/user/email_forgot.php',
+            'username'  => $oUser->username,
+            'password'  => $passwd,
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();

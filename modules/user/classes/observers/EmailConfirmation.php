@@ -1,5 +1,5 @@
 <?php
-class SendEmailConfirmation extends SGL_Observer
+class EmailConfirmation extends SGL_Observer
 {
     function update($observable)
     {

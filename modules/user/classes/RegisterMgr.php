@@ -199,56 +199,15 @@ class RegisterMgr extends SGL_Manager
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-/*
-        if (!SGL::objectHasState($input->user)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
-
-        //  get default values for new users
-        $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
-        $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
-
-        $oUser = $this->da->getUserById();
-        $oUser->setFrom($input->user);
-        $oUser->passwdClear = $input->user->passwd;
-        $oUser->passwd = md5($input->user->passwd);
-        if ($this->conf['RegisterMgr']['autoEnable']) {
-            $oUser->is_acct_active = 1;
-        }
-        $oUser->role_id = $defaultRoleId;
-        $oUser->organisation_id = $defaultOrgId;
-        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
-        $success = $this->da->addUser($oUser);
-
-        if ($success) {
-            //  send email confirmation according to config
-            if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
-                $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
-                if (!$bEmailSent) {
-                    SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
-                }
-            }
-            //  authenticate user according to settings
-            if ($this->conf['RegisterMgr']['autoLogin']) {
-                $input->username = $input->user->username;
-                $input->password = $input->user->passwd;
-                $oLogin = new LoginMgr();
-                $oLogin->_cmd_login($input, $output);
-            } else {
-               SGL::raiseMsg('user successfully registered');
-            }
-        } else {
-            SGL::raiseError('There was a problem inserting the record',
-                SGL_ERROR_NOAFFECTEDROWS);
-        }
-*/
 
         $addUser = new User_AddUser($input, $output);
         $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);
         foreach ($aObservers as $observer) {
-            require_once SGL_MOD_DIR . "/user/classes/observers/$observer.php";
-            $addUser->attach(new $observer());
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $addUser->attach(new $observer());
+            }
         }
         $addUser->run();
     }
