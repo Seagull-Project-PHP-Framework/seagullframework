@@ -60,9 +60,11 @@ class Publisher_Block_Article
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blockOutput          = new SGL_Output();
-        $blockOutput->theme   = $output->theme;
-        $blockOutput->isAdmin = $output->isAdmin();
+        $blockOutput            = new SGL_Output();
+        $blockOutput->theme     = $output->theme;
+        $blockOutput->isAdmin   = $output->isAdmin();
+        $blockOutput->imagesDir = $output->imagesDir;
+        $blockOutput->redir     = isset($output->redir) ? $output->redir : '';
 
         //  set block params
         if (array_key_exists('articleId', $aParams)) {
