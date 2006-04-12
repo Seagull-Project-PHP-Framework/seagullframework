@@ -109,7 +109,7 @@ class UserPasswordMgr extends PasswordMgr
             }
             //  if errors have occured
             if (is_array($aErrors) && count($aErrors)) {
-                SGL::raiseMsg('Please fill in the indicated fields');
+                SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_ERROR);
                 $input->error = $aErrors;
                 $this->validated = false;
             }
@@ -169,7 +169,7 @@ class User_UpdateUserPassword extends SGL_Observable
         $this->conf = $this->input->getConfig();
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_Session::getUid());
-        $oUser->passwd = md5($input->password);
+        $oUser->passwd = md5($this->input->password);
         $success = $oUser->update();
 
         //  make user object available to observers
@@ -178,7 +178,7 @@ class User_UpdateUserPassword extends SGL_Observable
         if ($success) {
             //  invoke observers
             $this->notify();
-            SGL::raiseMsg('Password updated successfully');
+            SGL::raiseMsg('Password updated successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }
