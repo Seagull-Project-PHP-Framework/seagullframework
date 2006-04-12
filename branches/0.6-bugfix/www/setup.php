@@ -165,7 +165,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $query = 'SELECT COUNT(*) FROM module';
         $res = $dbh->getOne($query);
 
-        if (!PEAR::isError($res) && $res > 1) {
+        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
         } elseif (isset($data['installAllModules'])) {
             $data['aModuleList'] =  SGL_Install_Common::getModuleList();
