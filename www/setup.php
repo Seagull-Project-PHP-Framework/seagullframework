@@ -159,9 +159,19 @@ class ActionProcess extends HTML_QuickForm_Action
     function perform(&$page, $actionName)
     {
         $data = $page->controller->exportValues();
-        $data['aModuleList'] =  (isset($data['installAllModules']))
-            ? SGL_Install_Common::getModuleList()
-            : SGL_Install_Common::getMinimumModuleList();
+
+        //  is this a rebuild?
+        $dbh = & SGL_DB::singleton();
+        $query = 'SELECT COUNT(*) FROM module';
+        $res = $dbh->getAll($query);
+
+        if (!PEAR::isError($res) && count($res)) {
+            $data['aModuleList'] = SGL_Install_Common::getModuleList();
+        } elseif (isset($data['installAllModules'])) {
+            $data['aModuleList'] =  SGL_Install_Common::getModuleList();
+        } else {
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+        }
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
