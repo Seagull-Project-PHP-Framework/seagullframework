@@ -62,6 +62,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->_aActionsMapping =  array(
             'dbgen'     => array('dbgen'),
             'rebuildSequences' => array('rebuildSequences'),
+            'rebuildSeagull' => array('rebuildSeagull'),
             'clearCache' => array('clearCache'),
             'checkLatestVersion' => array('checkLatestVersion', 'redirectToDefault'),
             'list'      => array('list'),
@@ -142,6 +143,54 @@ class MaintenanceMgr extends SGL_Manager
             return $res;
         } else {
             SGL::raiseMsg('Sequences rebuilt successfully', true, SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _cmd_rebuildSeagull(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
+
+        $data = array(
+            'createTables' => 1,
+            'insertSampleData' => 1,
+            'installAllModules' => 1,
+            'adminUserName' => 'admin',
+            'adminPassword' => 'admin',
+            'adminRealName' => 'Demo Admin',
+            'adminEmail' => 'demian@phpkitchen.com',
+            'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'serverName' =>  SGL_SERVER_NAME,
+            );
+
+        define('SGL_ADMIN_REBUILD', 1);
+        $runner = new SGL_TaskRunner();
+        $runner->addData($data);
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_DropDatabase());
+        $runner->addTask(new SGL_Task_CreateDatabase());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
+        $runner->addTask(new SGL_Task_CreateFileSystem());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new SGL_Task_CreateAdminUser());
+        $runner->addTask(new SGL_Task_InstallerCleanup());
+
+        set_time_limit(120);
+        $ok = $runner->main();
+
+        if (PEAR::isError($ok)) {
+            return $res;
+        } else {
+            SGL::raiseMsg('Environment rebuilt successfully', false, SGL_MESSAGE_INFO);
         }
     }
 
