@@ -12,6 +12,7 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+13-04-06    Module generator improved
 11-04-06    Implemented observer support, example in RegisterMgr::_cmd_insert()
 07-04-06    Code for Delegate class simplified to work with installations where PHP
             is compiled with --disable-reflection (jbpros)

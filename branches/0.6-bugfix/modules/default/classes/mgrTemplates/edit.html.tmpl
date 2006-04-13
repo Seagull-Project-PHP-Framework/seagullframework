@@ -1,6 +1,6 @@
 <form method="post" flexy:ignore>
 <input type="hidden" name="action" value="{action}" />
-<input type="hidden" name="%moduleName%_id" value="{%moduleName%.%moduleName%_id}" />
+<input type="hidden" name="%mgrName%_id" value="{%mgrName%.%mgrName%_id}" />
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <span flexy:if="msgGet()">{msgGet()}</span>
 
@@ -21,7 +21,7 @@
                         <div class="error" flexy:if="error[field]">
                             {translate(error[field])}
                         </div>
-                        <input class="full" type="text" name="%moduleName%[field]" value="{%moduleName%.field}" /></input>
+                        <input class="full" type="text" name="%mgrName%[field]" value="{%mgrName%.field}" /></input>
                     </td>
                 </tr -->
 
@@ -32,7 +32,7 @@
                         <div class="error" flexy:if="error[field1]">
                             {translate(error[field1])}
                         </div>
-                        <textarea cols="80" rows="7" id="%moduleName%[field1]" name="%moduleName%[field1]" class="wysiwyg" >{%moduleName%.field1:h}</textarea>
+                        <textarea cols="80" rows="7" id="%mgrName%[field1]" name="%mgrName%[field1]" class="wysiwyg" >{%mgrName%.field1:h}</textarea>
                     </td>
                 </tr -->
 
@@ -48,8 +48,8 @@
                 <!--tr>
                     <th align="left">{translate(#Venue#)}: </th>
                     <td>
-                        <select name="%moduleName%[field2]" >
-                            {generateSelect(aValues,%moduleName%.current_item):h}
+                        <select name="%mgrName%[field2]" >
+                            {generateSelect(aValues,%mgrName%.current_item):h}
                         </select>
                     </td>
                 </tr-->
@@ -57,7 +57,7 @@
                     <td colspan="2" align="center">
                         <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
                         <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}"
-                            onClick="document.location.href='{makeUrl(##,#%moduleName%#,#list#):h}'" />
+                            onClick="document.location.href='{makeUrl(#list#,#%mgrName%#,#%moduleName%#):h}'" />
                     </td>
                 </tr>
             </table>

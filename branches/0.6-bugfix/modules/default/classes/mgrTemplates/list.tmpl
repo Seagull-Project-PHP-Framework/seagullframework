@@ -4,8 +4,7 @@
         $query = "  SELECT
                          %field_list%
                     FROM {$this->conf['table']['%mgrName%']}
-                    WHERE 1
-                    ORDER BY 1";
+                    ";
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
