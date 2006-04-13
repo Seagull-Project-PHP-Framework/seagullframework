@@ -477,3 +477,140 @@ ul.bullets li {
 .pinstripe button {
     padding: 10px 0;
 }
+
+
+
+#dataGrid TABLE TR{
+     border: <?php echo $borderLight ?>;
+     color:black;
+     font-size: <?php echo $fontSmall ?>;
+/*
+    word-wrap: break-word;
+     word-break: break-all;
+*/
+}
+#dataGrid TD{
+     vertical-align: bottom;
+}
+
+/* PK first row is table header nav */
+#dataGrid TR.br_n{
+/*background: <?php echo $dataGridBackground  ?>;*/
+
+}
+#dataGrid TABLE TR:first-child *{
+vertical-align:bottom;
+}
+
+/* dataGrid headers*/
+TR.br_h{
+text-align:center;
+background: <?php echo $tertiary ?> !important;
+/*
+     word-wrap: normal;
+     word-break: normal;
+*/
+}
+/* checkboxes in headers for crappy IE */
+#dataGrid TABLE TR.br_h TD INPUT.cbx{
+background: <?php echo $tertiary ?>;
+border:0;
+}
+/* sorted column header */
+#dataGrid TABLE TR.br_h TD.br_sorted{
+background: <?php echo $dataGridSelectedRow ?>;
+}
+
+/* filter row*/
+TR.br_f TD{
+    white-space:nowrap;
+    text-align: center;
+    /*display:none;*/
+    border-bottom: 3px solid #8888aa;
+    bborder:2px solid red;
+}
+#dataGrid TR.br_f INPUT{
+background:white;
+    font-size:9px;
+    height:14px;
+    margin:0px;
+    width:90%;
+}
+#dataGrid TR.br_f INPUT:hover{
+background:white;
+cursor:text;
+}
+#dataGrid TR.br_f table.cal{
+cell-spacing:0; padding:0;
+border-collapse:collapse;
+margin:0; border:1px solid #aaaaaa;
+/*
+border-left:1px solid #aaaaaa;
+border-right:1px solid #aaaaaa;
+*/
+background: <?php echo $dialogLight ?>;
+vertical-align:middle;
+align:right;
+}
+#dataGrid TR.br_f table.cal TR,
+#dataGrid TR.br_f table.cal TR TD{
+border:0;
+align:right;
+vertical-align:middle;
+}
+#dataGrid TR.br_f table.cal INPUT{
+width:20px;
+height:12px;
+text-align:right;
+vertical-align:middle;
+margin:0;
+}
+
+#dataGrid TABLE A:link, #dataGrid TABLE A:visited{
+    color: <?php echo $dataGridLinkColor ?>;
+    text-decoration: none;
+}
+#dataGrid TABLE A:hover, #dataGrid TABLE A:active{
+    text-decoration: underline;
+     cursor: pointer;
+}
+
+/* PK class for checkboxes in crappy IE */
+#dataGrid TABLE TR TD INPUT.cbx{
+    border: 0px;
+    background: <?php echo $dataGridBackground ?>;
+}
+DIV.dialog INPUT.cbx, DIV.dialog2 INPUT.cbx  {
+    border: 0px; margin:0px;
+    background: <?php echo $dialogDefault ?>;
+}
+
+/*
+#dataGrid TABLE TD:first-child{
+ddisplay:none;
+}
+*/
+/* PK hide cbx for selected row ([type=checkbox] doesn't work in IE) */
+
+/*
+#dataGrid TABLE INPUT[type="checkbox"]{
+   display:none;
+}
+*/
+
+/* cell with bubble-description */
+TD.tips{
+    text-align:left;
+    vertical-align:bottom;
+}
+
+
+/* PK: class for dataGrid row & dataGrid-selected row (classes are applied in dataGrid.js) */
+.dataGrid_row,
+.dataGrid_row .cbx {
+    background: <?php echo $dataGridRow ?>;
+}
+.dataGrid_selected_row,
+.dataGrid_selected_row .cbx {
+    background: <?php echo $dataGridSelectedRow ?>;
+}
