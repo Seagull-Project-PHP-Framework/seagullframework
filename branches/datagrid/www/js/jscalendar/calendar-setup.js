@@ -110,8 +110,15 @@ Calendar.setup = function (params) {
 			if (typeof p.inputField.onchange == "function")
 				p.inputField.onchange();
 		}
-		if (update && p.displayArea)
+		if (update && p.displayArea) {
 			p.displayArea.innerHTML = cal.date.print(p.daFormat);
+            if (p.onClose == null) {
+                for (var i=0; i<document.forms.length; i++) {
+                    if (document.forms[i].id = 'dataGrid')
+                        document.forms[i].submit();
+                }
+            }
+        }
 		if (update && typeof p.onUpdate == "function")
 			p.onUpdate(cal);
 		if (update && p.flat) {
