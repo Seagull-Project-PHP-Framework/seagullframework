@@ -337,6 +337,23 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Check Now' => 'Check Now',
         'Your current version is up to date' => 'Your current version is up to date',
         'remote interface problem' => 'There was a problem querying the remote interface',
+	
+/*   VARICO: SGL_DataGrid*/
+	'Total rows' => 'Total rows',
+	'Total Pages' => 'Total Pages',
+	'Per Page' => 'Per Page',
+	'From' => 'From',
+	'To' => 'To',
+	'PAGE SUMMARY' => 'PAGE SUMMARY',
+	'TOTAL SUMMARY' => 'TOTAL SUMMARY',
+	'select all rows' => 'select all rows',
+	'deselect all rows' => 'deselect all rows',
+	'Export current page to Excel' => 'Export current page to Excel',
+	'Export current page to Word' => 'Export current page to Word',
+	'Export total pages to Excel' => 'Export total  pages to Excel',
+	'Export total pages to Word' => 'Export total pages to Word',
+	'reset filters' => 'reset filters',
+	'Print dataGrid' => 'Print',
     );
 
 $defaultWords['Maintenance'] = 'Maintenance';
