@@ -119,7 +119,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
 {
     function updateHtml($id, $displayHtml)
     {
-        if (SGL::runningFromCli()) {
+        if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
 
@@ -275,7 +275,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
         SGL_Install_Common::printHeader('Building Database');
 
-        if (!SGL::runningFromCli()) {
+        if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
             echo '<span class="title">Status: </span><span id="status"></span>
             <div id="progress_bar">
                 <img src="' . SGL_BASE_URL . '/themes/default/images/progress_bar.gif" border="0" width="150" height="13">
@@ -305,7 +305,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             $out .=        '<th class="alignCenter">Add Constraints</th>
                         </tr>';
 
-            if (!SGL::runningFromCli()) {
+            if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
                 echo $out;
             }
 
@@ -322,12 +322,12 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 $out .= '<td id="' . $module . '_constraints" class="alignCenter"></td>
                      </tr>';
 
-                if (!SGL::runningFromCli()) {
+                if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
                     echo $out;
                 }
             }
 
-            if (!SGL::runningFromCli()) {
+            if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
                 echo '</table>';
                 flush();
             }

@@ -110,7 +110,7 @@ class SGL_Install_Common
      */
     function printHeader($title = '')
     {
-        if (SGL::runningFromCli()) {
+        if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
         SGL_URL::ensureWebrootSet();
@@ -144,7 +144,7 @@ HTML;
 
     function printFooter()
     {
-        if (SGL::runningFromCli()) {
+        if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
         $html = <<<HTML

@@ -104,6 +104,9 @@ class SGL_DB
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
+        if (!count($conf)) {
+            return false;
+        }
 
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');

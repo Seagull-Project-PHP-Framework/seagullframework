@@ -162,12 +162,15 @@ class ActionProcess extends HTML_QuickForm_Action
 
         //  is this a rebuild?
         $dbh = & SGL_DB::singleton();
-        $query = 'SELECT COUNT(*) FROM module';
-        $res = $dbh->getOne($query);
+        $res = false;
+        if (!PEAR::isError($dbh)) {
+            $query = 'SELECT COUNT(*) FROM module';
+            $res = $dbh->getOne($query);
+        }
 
         if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
-        } elseif (isset($data['installAllModules'])) {
+        } elseif (isset($data['installAllModules']) || PEAR::isError($dbh)) { // CLI or new install
             $data['aModuleList'] =  SGL_Install_Common::getModuleList();
         } else {
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
