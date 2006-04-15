@@ -76,6 +76,14 @@ class SGL_Sql
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
+        $isMysql323 = false;
+        if ($conf['db']['type'] == 'mysql_SGL' || $conf['db']['type'] == 'mysql') {
+            $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+            if (ereg('3.23', $aEnvData['db_info']['version'])) {
+                $isMysql323 = true;
+            }
+        }
+
         // Iterate through each line in the file.
         while (!feof($fp)) {
 
@@ -99,15 +107,14 @@ class SGL_Sql
                 $nextId = $dbh->nextId($tableName);
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
-
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
                 continue;
             }
 
-            // replace ; for MaxDB and Oracle
-            if (($conf['db']['type'] == 'oci8_SGL') || ($conf['db']['type'] == 'odbc')){
+            // strip semi-colons for MaxDB, Oracle and mysql 3.23
+            if ($conf['db']['type'] == 'oci8_SGL' || $conf['db']['type'] == 'odbc' || $isMysql323) {
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
             // Execute the statement.

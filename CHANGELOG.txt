@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
+15-05-06    At long last, thanks to matt from IRC, Seagull will install properly
+            on MySQL 3.23
 12-04-06    List of stylesheets now correctly drawn from configured default theme,
             not session.
 12-04-06    Made instructions clearer for adding default module and manager
