@@ -31,7 +31,11 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
         require_once 'HTML/Template/Flexy.php';
         $flexy = $this->initEngine($view->data);
 
-        $ok = $flexy->compile($view->data->masterTemplate);
+        $masterTemplate = isset($view->data->masterTemplate)
+            ? $view->data->masterTemplate
+            : $view->data->manager->masterTemplate;
+
+        $ok = $flexy->compile($masterTemplate);
 
         //  if some Flexy 'elements' exist in the output object, send them as
         //  2nd arg to Flexy::bufferedOutputObject()
