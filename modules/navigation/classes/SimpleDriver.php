@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SimpleDriver.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -213,11 +213,9 @@ class SimpleDriver
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $this->conf      = $c->getAll();
+        $this->conf      = $outputData->conf;
         $this->da        = &DA_Navigation::singleton();
-        $this->input     = &SGL_Registry::singleton();
-        $this->req       = $this->input->getRequest();
+        $this->req       = $outputData->request;
         $this->output    = &$outputData;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
@@ -261,8 +259,7 @@ class SimpleDriver
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
-        $reg     = &SGL_Registry::singleton();
-        $url     = $reg->getCurrentUrl();
+        $url     = $this->output->currentUrl;
         $cache   = &SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
@@ -681,10 +678,13 @@ class SimpleDriver
     function getCurrentSectionName()
     {
         if ($this->_currentTitle) {
-            return $this->_currentTitle;
+            $ret = $this->_currentTitle;
+        } elseif (isset($this->output->pageTitle)) {
+            $ret = $this->output->pageTitle;
         } else {
-            return $this->output->pageTitle;
+            $ret = $this->output->manager->pageTitle;
         }
+        return $ret;
     }
 
     /**

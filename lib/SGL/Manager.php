@@ -70,7 +70,7 @@ class SGL_Manager
      * @access  public
      * @var     string
      */
-    var $pageTitle = '';
+    var $pageTitle = 'default';
 
     /**
      * Flag indicated is Page validation passed.
@@ -79,14 +79,6 @@ class SGL_Manager
      * @var     boolean
      */
     var $validated = false;
-
-    /**
-     * Current module name.
-     *
-     * @access  public
-     * @var     string
-     */
-    var $module = '';
 
     /**
      * Sortby flag, used in child classes.
@@ -275,7 +267,7 @@ class SGL_Manager
         $req = $input->getRequest();
         $mgr = $req->get('managerName');
         $userRid = SGL_Session::getRoleId();
-        
+
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                && $this->conf[$mgrName]['adminGuiAllowed']
                && $userRid == SGL_ADMIN) {
