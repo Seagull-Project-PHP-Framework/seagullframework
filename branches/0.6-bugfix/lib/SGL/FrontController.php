@@ -67,7 +67,7 @@ class SGL_FrontController
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $req   = &SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
