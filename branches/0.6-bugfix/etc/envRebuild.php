@@ -47,7 +47,7 @@
 
 //  setup seagull environment
 require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
-require_once dirname(__FILE__)  . '/../lib/SGL/Install/Tasks/Install.php';
+require_once dirname(__FILE__)  . '/../lib/SGL/Tasks/Install.php';
 
 class RebuildController extends SGL_FrontController
 {

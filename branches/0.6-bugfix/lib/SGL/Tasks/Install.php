@@ -1,6 +1,6 @@
 <?php
-require_once dirname(__FILE__) . '/../../Task.php';
-require_once dirname(__FILE__) . '/../../Install/Common.php';
+require_once dirname(__FILE__) . '/../Task.php';
+require_once dirname(__FILE__) . '/../Install/Common.php';
 
 class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
