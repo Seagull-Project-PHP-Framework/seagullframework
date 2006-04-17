@@ -46,6 +46,9 @@ function hasAgreed()
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardLicenseAgreement extends HTML_QuickForm_Page
 {
     function buildForm()
@@ -56,16 +59,16 @@ class WizardLicenseAgreement extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'license' => $licenseTxt,
             ));
-                    
+
         $this->addElement('header',     null, 'Seagull License Agreement: page 1 of 5');
         $this->addElement('textarea',   'license', null, array('rows' => 15, 'cols' => 80));
-        
+
         $radio[] = &$this->createElement('radio', 'agree',     '', "I accept the terms of the license agreement", 'yes');
         $radio[] = &$this->createElement('radio', 'agree',     '', "I do not accept the terms of the license agreement", 'no');
         $this->addGroup($radio, 'agree', null, '<br />');
         $this->addGroupRule('agree', 'You must agree with the License terms in order to install and use this product', 'required');
-        
-        $this->registerRule('hasAgreed','function','hasAgreed'); 
+
+        $this->registerRule('hasAgreed','function','hasAgreed');
         $this->addRule('agree', 'You must agree with the License terms in order to install and use this product', 'hasAgreed');
 
         $this->addElement('submit',   $this->getButtonName('next'), 'Next >>');

@@ -41,7 +41,7 @@ require_once dirname(__FILE__)  . '/../Misc.php';
 
 /**
  * Provides various static methods required for install routine.
- *
+ * @package Install
  */
 class SGL_Install_Common
 {

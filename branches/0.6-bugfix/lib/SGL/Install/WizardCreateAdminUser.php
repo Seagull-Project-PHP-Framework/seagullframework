@@ -49,6 +49,9 @@ function webRootExists()
     return file_exists($aFormValues['webRoot']);
 }
 
+/**
+ * @package Install
+ */
 class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()

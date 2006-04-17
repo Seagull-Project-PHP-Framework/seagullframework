@@ -2,7 +2,12 @@
 
 require_once 'HTML/QuickForm/Action/Display.php';
 
-//  subclass the default 'display' handler to customize the output
+
+/**
+ * Subclass the default 'display' handler to customize the output
+ *
+ * @package Install
+ */
 class ActionDisplay extends HTML_QuickForm_Action_Display
 {
     function perform(&$page, $actionName)
