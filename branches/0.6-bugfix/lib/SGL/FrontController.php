@@ -80,27 +80,27 @@ class SGL_FrontController
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
                 //  pre-process (order: top down)
-                new SGL_Process_Init(
-                new SGL_Process_SetupORM(
-                new SGL_Process_StripMagicQuotes(
-                new SGL_Process_DiscoverClientOs(
-                new SGL_Process_ResolveManager(
-                new SGL_Process_CreateSession(
-                new SGL_Process_SetupLangSupport(
-                new SGL_Process_SetupPerms(
-                new SGL_Process_AuthenticateRequest(
-                new SGL_Process_SetupLocale(
+                new SGL_Task_Init(
+                new SGL_Task_SetupORM(
+                new SGL_Task_StripMagicQuotes(
+                new SGL_Task_DiscoverClientOs(
+                new SGL_Task_ResolveManager(
+                new SGL_Task_CreateSession(
+                new SGL_Task_SetupLangSupport(
+                new SGL_Task_SetupPerms(
+                new SGL_Task_AuthenticateRequest(
+                new SGL_Task_SetupLocale(
 
                 //  post-process (order: bottom up)
-                new SGL_Process_BuildHeaders(
-                new SGL_Process_SetSystemAlert(
-                new SGL_Process_BuildView(
-                new SGL_Process_SetupBlocks(
-                new SGL_Process_SetupNavigation(
-                new SGL_Process_SetupGui(
-                new SGL_Process_GetPerformanceInfo(
-                new SGL_Process_SetupWysiwyg(
-                new SGL_Process_BuildOutputData(
+                new SGL_Task_BuildHeaders(
+                new SGL_Task_SetSystemAlert(
+                new SGL_Task_BuildView(
+                new SGL_Task_SetupBlocks(
+                new SGL_Task_SetupNavigation(
+                new SGL_Task_SetupGui(
+                new SGL_Task_GetPerformanceInfo(
+                new SGL_Task_SetupWysiwyg(
+                new SGL_Task_BuildOutputData(
 
                 //  target
                 new SGL_MainProcess()
