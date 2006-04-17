@@ -100,7 +100,7 @@ class MaintenanceMgr extends SGL_Manager
     //  regenerate dataobject entity files
     function _cmd_dbgen(&$input, &$output)
     {
-        require_once SGL_CORE_DIR . '/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
         $res = SGL_Task_CreateDataObjectEntities::run();
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
         SGL::logMessage($res, PEAR_LOG_DEBUG);
@@ -137,7 +137,7 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
         $res = SGL_Task_SyncSequences::run();
         if (PEAR::isError($res)) {
             return $res;
@@ -150,7 +150,7 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
 
         $data = array(
             'createTables' => 1,

@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../Tasks/DetectEnv.php';
+require_once dirname(__FILE__) . '/../Task/DetectEnv.php';
 
 /**
  * Test suite.

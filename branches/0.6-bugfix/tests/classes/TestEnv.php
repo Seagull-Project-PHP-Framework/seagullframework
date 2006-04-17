@@ -198,7 +198,7 @@ class STR_TestEnv
 
             //  if we're testing a sgl install, update sequences after loading data
             if (isset($GLOBALS['_SGL'])) {
-                require_once SGL_CORE_DIR . '/Tasks/Install.php';
+                require_once SGL_CORE_DIR . '/Task/Install.php';
                 SGL_Task_SyncSequences::run();
             }
         }
