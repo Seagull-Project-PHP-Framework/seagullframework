@@ -112,6 +112,9 @@ function canCreateDb()
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardCreateDb extends HTML_QuickForm_Page
 {
     function buildForm()

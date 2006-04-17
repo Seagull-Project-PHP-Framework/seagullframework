@@ -55,6 +55,9 @@ function environmentOk()
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardDetectEnv extends HTML_QuickForm_Page
 {
     function buildForm()

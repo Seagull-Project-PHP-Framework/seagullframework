@@ -42,7 +42,7 @@
  * Basic app process tasks: enables profiling, custom error handler, logging
  * and output buffering.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_Init extends SGL_DecorateProcess
@@ -64,6 +64,9 @@ class SGL_Task_Init extends SGL_DecorateProcess
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupORM extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
@@ -88,7 +91,7 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
 /**
  * Block blacklisted users by IP.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
@@ -125,7 +128,7 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
 /**
  * Handle a debug session.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_DetectDebug extends SGL_DecorateProcess
@@ -149,7 +152,7 @@ class SGL_Task_DetectDebug extends SGL_DecorateProcess
 /**
  * Sets the current locale.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_SetupLocale extends SGL_DecorateProcess
@@ -198,7 +201,7 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
  *
  * Alternatively, headers can be suppressed if specified in module's config.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_BuildHeaders extends SGL_DecorateProcess
@@ -238,6 +241,9 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
@@ -261,7 +267,7 @@ class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
  *      o if yes, session is checked for validity and expiration
  *      o if it's valid and not expired, the session is deemed valid.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
@@ -311,7 +317,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 /**
  * Loads global set of application perms from filesystem cache.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_SetupPerms extends SGL_DecorateProcess
@@ -348,10 +354,9 @@ class SGL_Task_SetupPerms extends SGL_DecorateProcess
  * Detects if language flag exists in $_GET, loads relevant
  * language translation file.
  *
- * @access  private
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
- * @package SGL
+ * @package Task
  */
 class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
 {
@@ -390,7 +395,6 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         if ($moduleName != 'default') {
             $words = SGL_Translation::getTranslations($moduleName, $langID);
         }
-
         //  if current module is not the default module
         if (isset($words)) {
             $GLOBALS['_SGL']['TRANSLATION'] = array_merge($defaultWords, $words);
@@ -411,7 +415,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
 /**
  * Starts the session.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_CreateSession extends SGL_DecorateProcess
@@ -428,7 +432,7 @@ class SGL_Task_CreateSession extends SGL_DecorateProcess
 /**
  * Resolves request params into Manager model object.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_ResolveManager extends SGL_DecorateProcess
@@ -463,7 +467,6 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                     SGL::raiseError('could not locate module\'s config file',
                         SGL_ERROR_NOFILE);
                 }
-
                 //  get manager name if $managerName not correct attempt to load default
                 //  manager w/$moduleName
                 $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
@@ -530,11 +533,9 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                     $ret = $aModuleConfig;
                 } else {
                     $this->c->merge($aModuleConfig);
-
                     //  remove first failed conf loading error in
                     //  SGL_UrlParser_SefStrategy::parseQueryString()
                     SGL_Error::shift();
-
                     //  reset conf keys
                     unset($this->conf);
                     $this->conf = $this->c->getAll();
@@ -568,7 +569,6 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                 SGL_ERROR_NOFILE);
             return false;
         }
-
         $mgrName = SGL_Inflector::caseFix(
             SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
@@ -642,6 +642,9 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
@@ -659,7 +662,7 @@ class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
 /**
  * Set client OS constant based on user agent.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
@@ -673,7 +676,6 @@ class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
         } else {
             $ua = '';
         }
-
         if (!empty($ua) and !defined('SGL_CLIENT_OS')) {
             if (strstr($ua, 'Win')) {
                 define('SGL_CLIENT_OS', 'Win');
@@ -700,7 +702,7 @@ class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
 /**
  * Assign output vars for template.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_BuildOutputData extends SGL_DecorateProcess
@@ -710,7 +712,6 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $this->processRequest->process($input, $output);
-
         //  setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
             $output->loggedOnUser = $_SESSION['username'];
@@ -741,7 +742,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
 /**
  * Sets up wysiwyg params.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
@@ -761,7 +762,6 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
                     ? $this->conf['site']['wysiwygEditor']
                     : 'fck';
             }
-
             switch ($output->wysiwygEditor) {
 
             case 'fck':
@@ -790,7 +790,7 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
 /**
  * Collects performance data.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
@@ -800,7 +800,6 @@ class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $this->processRequest->process($input, $output);
-
         //  get performance info
         if (!empty($_SESSION['aPrefs']['showExecutionTimes'])
                 && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
@@ -821,7 +820,7 @@ class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
 /**
  * Builds navigation menus.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_SetupNavigation extends SGL_DecorateProcess
@@ -864,8 +863,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 /**
  * Setup which Graphical User Interface to use.
  *
- * @package SGL
- * @author
+ * @package Task
  */
 class SGL_Task_SetupGui extends SGL_DecorateProcess
 {
@@ -887,7 +885,6 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
             if ($userRid == SGL_ADMIN) {
                 $adminGuiAllowed = true;
             }
-
             // then check if manager requires to switch to adminGUI
             if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                 && $this->conf[$mgrName]['adminGuiAllowed']) {
@@ -899,7 +896,6 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                     $adminGuiRequested = false;
                 }
             }
-
             if ($adminGuiAllowed && $adminGuiRequested) {
 
                 // if adminGUI is allowed then change theme TODO : put the logical stuff in another class/method
@@ -915,7 +911,7 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
 /**
  * Initialises block loading.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Task_SetupBlocks extends SGL_DecorateProcess
@@ -944,6 +940,9 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_BuildView extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
@@ -962,7 +961,7 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
 /**
  * A void object.
  *
- * @package SGL
+ * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Void extends SGL_ProcessRequest

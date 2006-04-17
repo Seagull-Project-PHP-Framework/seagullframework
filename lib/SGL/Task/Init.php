@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | Init.php                                                                 |
+// | Init.php                                                                  |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -41,11 +41,13 @@
 /**
  * Basic init tasks: sets up paths, contstants, include_path, etc.
  *
- * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 require_once dirname(__FILE__) . '/../Task.php';
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupPaths extends SGL_Task
 {
     /**
@@ -125,6 +127,9 @@ class SGL_Task_SetupPaths extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupConstantsStart extends SGL_Task
 {
     function run($conf)
@@ -238,6 +243,9 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
     function run($conf)
@@ -291,6 +299,9 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupPearErrorCallback extends SGL_Task
 {
     function run($conf)
@@ -327,6 +338,9 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
     function process(&$input)
@@ -350,6 +364,8 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
  * Routine to discover the base url of the installation.
  *
  * Only gets invoked if user deletes URL in config, or if we're setting up.
+ *
+ * @package Task
  */
 class SGL_Task_SetBaseUrl extends SGL_Task
 {
@@ -365,6 +381,9 @@ class SGL_Task_SetBaseUrl extends SGL_Task
 }
 
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetGlobals extends SGL_Task
 {
     function run($data)
@@ -387,6 +406,9 @@ class SGL_Task_SetGlobals extends SGL_Task
 //                    "<code>'chmod -R 777 seagull/var'</code>");
 //			}
 
+/**
+ * @package Task
+ */
 class SGL_Task_ModifyIniSettings extends SGL_Task
 {
     function run($conf)
@@ -400,6 +422,9 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_RegisterTrustedIPs extends SGL_Task
 {
     function run($data)
@@ -411,6 +436,9 @@ class SGL_Task_RegisterTrustedIPs extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_EnsureBC extends SGL_Task
 {
     function run($data)
@@ -453,6 +481,7 @@ class SGL_Task_EnsureBC extends SGL_Task
  * Abstract request processor.
  *
  * @abstract
+ * @package SGL
  *
  */
 class SGL_ProcessRequest
@@ -464,6 +493,7 @@ class SGL_ProcessRequest
  * Decorator.
  *
  * @abstract
+ * @package SGL
  */
 class SGL_DecorateProcess extends SGL_ProcessRequest
 {
@@ -481,6 +511,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
  * Abstract renderer strategy
  *
  * @abstract
+ * @package SGL
  */
 class SGL_OutputRendererStrategy
 {
@@ -502,7 +533,7 @@ class SGL_OutputRendererStrategy
  * Container for output data and renderer strategy.
  *
  * @abstract
- *
+ * @package SGL
  */
 class SGL_View
 {
@@ -553,6 +584,11 @@ class SGL_View
     }
 }
 
+/**
+ * Wrapper for simple HTML views.
+ *
+ * @package SGL
+ */
 class SGL_HtmlSimpleView extends SGL_View
 {
     /**

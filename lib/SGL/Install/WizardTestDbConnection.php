@@ -90,6 +90,9 @@ function canConnectToDbServer()
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardTestDbConnection extends HTML_QuickForm_Page
 {
     function buildForm()

@@ -1,7 +1,47 @@
 <?php
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | Copyright (c) 2006, Demian Turner                                         |
+// | All rights reserved.                                                      |
+// |                                                                           |
+// | Redistribution and use in source and binary forms, with or without        |
+// | modification, are permitted provided that the following conditions        |
+// | are met:                                                                  |
+// |                                                                           |
+// | o Redistributions of source code must retain the above copyright          |
+// |   notice, this list of conditions and the following disclaimer.           |
+// | o Redistributions in binary form must reproduce the above copyright       |
+// |   notice, this list of conditions and the following disclaimer in the     |
+// |   documentation and/or other materials provided with the distribution.    |
+// | o The names of the authors may not be used to endorse or promote          |
+// |   products derived from this software without specific prior written      |
+// |   permission.                                                             |
+// |                                                                           |
+// | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       |
+// | "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         |
+// | LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR     |
+// | A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+// | OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,     |
+// | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT          |
+// | LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,     |
+// | DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY     |
+// | THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
+// | (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE     |
+// | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+// | Seagull 0.6                                                               |
+// +---------------------------------------------------------------------------+
+// | Install.php                                                               |
+// +---------------------------------------------------------------------------+
+// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// +---------------------------------------------------------------------------+
 require_once dirname(__FILE__) . '/../Task.php';
 require_once dirname(__FILE__) . '/../Install/Common.php';
 
+/**
+ * @package Task
+ */
 class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
     function run($data = array())
@@ -26,6 +66,9 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateConfig extends SGL_Task
 {
     function run($data)
@@ -115,6 +158,9 @@ class SGL_Task_CreateConfig extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_UpdateHtmlTask extends SGL_Task
 {
     function updateHtml($id, $displayHtml)
@@ -199,6 +245,9 @@ class SGL_UpdateHtmlTask extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_DefineTableAliases extends SGL_Task
 {
     function run($data)
@@ -224,6 +273,9 @@ class SGL_Task_DefineTableAliases extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_DisableForeignKeyChecks extends SGL_Task
 {
     function run($data)
@@ -240,6 +292,9 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_DropDatabase extends SGL_Task
 {
     function run($data)
@@ -253,6 +308,9 @@ class SGL_Task_DropDatabase extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateDatabase extends SGL_Task
 {
     function run($data)
@@ -267,6 +325,9 @@ class SGL_Task_CreateDatabase extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -366,6 +427,9 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -393,6 +457,9 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -420,7 +487,9 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
     }
 }
 
-
+/**
+ * @package Task
+ */
 class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -450,6 +519,9 @@ define('SGL_NODE_USER',  2); // nested set parent_id
 define('SGL_NODE_ADMIN', 4); // nested set parent_id
 define('SGL_NODE_GROUP', 1);
 
+/**
+ * @package Task
+ */
 class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
 {
     var $groupId = null;
@@ -487,6 +559,9 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -579,6 +654,9 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_EnableForeignKeyChecks extends SGL_Task
 {
     function run($data)
@@ -595,7 +673,9 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
     }
 }
 
-//  some more tests would be helpful
+/**
+ * @package Task
+ */
 class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -645,6 +725,9 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateFileSystem extends SGL_Task
 {
     function run($data)
@@ -679,7 +762,9 @@ class SGL_Task_CreateFileSystem extends SGL_Task
     }
 }
 
-
+/**
+ * @package Task
+ */
 class SGL_Task_CreateDataObjectEntities extends SGL_Task
 {
     function run($data = null)
@@ -707,7 +792,6 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         $generator->start();
         $out = ob_get_contents();
         ob_end_clean();
-#SGL::logMessage('out = ' . $out);
 
         if (PEAR::isError($out)) {
             SGL_Install_Common::errorPush(
@@ -722,6 +806,9 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SyncSequences extends SGL_Task
 {
     /**
@@ -908,6 +995,9 @@ class SGL_Task_SyncSequences extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateAdminUser extends SGL_Task
 {
     function run($data)
@@ -937,6 +1027,9 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_InstallerCleanup extends SGL_Task
 {
     function run($data)
