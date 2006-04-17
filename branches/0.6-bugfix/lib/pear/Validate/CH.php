@@ -13,7 +13,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2005 Hans-Peter Oeri <hp@oeri.ch>                      |
+// | Copyright (c) 2006 Hans-Peter Oeri <hp@oeri.ch>                      |
 // +----------------------------------------------------------------------+
 //
 // $Id: CH.php,v 1.3 2004/10/25 06:39:24 cvsroot Exp $
