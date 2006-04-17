@@ -117,7 +117,7 @@ class ModuleGenerationMgr extends SGL_Manager
 
         // rebuild dataobject so that a DO class exists for new table
         if (isset($input->createModule->createCRUD)) {
-            require_once SGL_CORE_DIR . '/Tasks/Install.php';
+            require_once SGL_CORE_DIR . '/Task/Install.php';
             $res = SGL_Task_CreateDataObjectEntities::run();
 
             // check if table exists

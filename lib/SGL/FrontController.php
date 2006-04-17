@@ -44,8 +44,8 @@ require_once dirname(__FILE__)  . '/Request.php';
 require_once dirname(__FILE__)  . '/Misc.php';
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Config.php';
-require_once dirname(__FILE__)  . '/Tasks/Init.php';
-require_once dirname(__FILE__)  . '/Tasks/Process.php';
+require_once dirname(__FILE__)  . '/Task/Init.php';
+require_once dirname(__FILE__)  . '/Task/Process.php';
 
 /**
  * Application controller.
