@@ -45,7 +45,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_Init extends SGL_DecorateProcess
+class SGL_Task_Init extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -64,7 +64,7 @@ class SGL_Process_Init extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_SetupORM extends SGL_DecorateProcess
+class SGL_Task_SetupORM extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -91,7 +91,7 @@ class SGL_Process_SetupORM extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
+class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -128,7 +128,7 @@ class SGL_Process_DetectBlackListing extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DetectDebug extends SGL_DecorateProcess
+class SGL_Task_DetectDebug extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -152,7 +152,7 @@ class SGL_Process_DetectDebug extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupLocale extends SGL_DecorateProcess
+class SGL_Task_SetupLocale extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -201,7 +201,7 @@ class SGL_Process_SetupLocale extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_BuildHeaders extends SGL_DecorateProcess
+class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -238,7 +238,7 @@ class SGL_Process_BuildHeaders extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_SetSystemAlert  extends SGL_DecorateProcess
+class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -264,7 +264,7 @@ class SGL_Process_SetSystemAlert  extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
+class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -314,7 +314,7 @@ class SGL_Process_AuthenticateRequest extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupPerms extends SGL_DecorateProcess
+class SGL_Task_SetupPerms extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -353,7 +353,7 @@ class SGL_Process_SetupPerms extends SGL_DecorateProcess
  * @author  Alexander J. Tarachanowicz II <ajt@localhype.net>
  * @package SGL
  */
-class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
+class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -414,7 +414,7 @@ class SGL_Process_SetupLangSupport extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_CreateSession extends SGL_DecorateProcess
+class SGL_Task_CreateSession extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -431,7 +431,7 @@ class SGL_Process_CreateSession extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_ResolveManager extends SGL_DecorateProcess
+class SGL_Task_ResolveManager extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -642,7 +642,7 @@ class SGL_Process_ResolveManager extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
+class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -662,7 +662,7 @@ class SGL_Process_StripMagicQuotes extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
+class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -703,7 +703,7 @@ class SGL_Process_DiscoverClientOs extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_BuildOutputData extends SGL_DecorateProcess
+class SGL_Task_BuildOutputData extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -744,7 +744,7 @@ class SGL_Process_BuildOutputData extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
+class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -793,7 +793,7 @@ class SGL_Process_SetupWysiwyg extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
+class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -824,7 +824,7 @@ class SGL_Process_GetPerformanceInfo extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupNavigation extends SGL_DecorateProcess
+class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -867,7 +867,7 @@ class SGL_Process_SetupNavigation extends SGL_DecorateProcess
  * @package SGL
  * @author
  */
-class SGL_Process_SetupGui extends SGL_DecorateProcess
+class SGL_Task_SetupGui extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -918,7 +918,7 @@ class SGL_Process_SetupGui extends SGL_DecorateProcess
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Process_SetupBlocks extends SGL_DecorateProcess
+class SGL_Task_SetupBlocks extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -944,7 +944,7 @@ class SGL_Process_SetupBlocks extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_BuildView extends SGL_DecorateProcess
+class SGL_Task_BuildView extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

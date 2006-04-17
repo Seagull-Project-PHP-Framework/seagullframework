@@ -27,12 +27,12 @@ class TestRunnerInit extends SGL_FrontController
         $input->setRequest($req);
         $output = &new SGL_Output();
 
-        $process =  new SGL_Process_Init(
-                    new SGL_Process_DiscoverClientOs(
-                    new SGL_Process_SetupTestDb(
-                    new SGL_Process_SetupTestDbResource(
-                    new SGL_Process_MinimalSession(
-                    new SGL_Process_SetupLangSupport(
+        $process =  new SGL_Task_Init(
+                    new SGL_Task_DiscoverClientOs(
+                    new SGL_Task_SetupTestDb(
+                    new SGL_Task_SetupTestDbResource(
+                    new SGL_Task_MinimalSession(
+                    new SGL_Task_SetupLangSupport(
                     new SGL_Void()
                    ))))));
 
@@ -40,7 +40,7 @@ class TestRunnerInit extends SGL_FrontController
     }
 }
 
-class SGL_Process_SetupTestDb extends SGL_DecorateProcess
+class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -67,7 +67,7 @@ class SGL_Process_SetupTestDb extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
+class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -81,7 +81,7 @@ class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
     }
 }
 
-class SGL_Process_MinimalSession extends SGL_DecorateProcess
+class SGL_Task_MinimalSession extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
