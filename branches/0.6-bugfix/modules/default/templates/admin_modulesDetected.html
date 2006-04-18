@@ -10,18 +10,16 @@
         <div class="message">{msgGet()}</div>
     </div>
 
-    <form method="post" name="module" id="module" flexy:ignore>
+    <form method="post" name="module" id="module">
+
         <fieldset class="hide">
             <input type="hidden" name="action" value="{action}" />
             <input type="hidden" name="submitted" id="submitted" value="1" />
-            {if:moduleId}
-            <input type="hidden" name="frmModuleId" value="{moduleId}" />
-            {end:}
         </fieldset>
 
-        {foreach:aModules,k,module}
-            <flexy:include src="moduleEditForm.html" />
-        {end:}
+    {foreach:aModules,k,module}
+        <flexy:include src="moduleEditForm.html" />
+    {end:}
 
     </form>
 
