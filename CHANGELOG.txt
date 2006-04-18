@@ -14,6 +14,7 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+18-04-06    Added ability to detect new modules
 17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
 13-04-06    Added ability to rebuild Seagull environment for privileged users
 13-04-06    Module generator improved
