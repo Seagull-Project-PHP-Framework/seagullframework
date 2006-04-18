@@ -148,7 +148,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $ok = $c->save($configFile);
 
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
         //  store site language for post-install task
         $_SESSION['install_language'] = $data['siteLanguage'];
@@ -600,7 +600,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
             $ok = $c->save($configFile);
             if (PEAR::isError($ok)) {
-                SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+                SGL_Install_Common::errorPush($ok);
             }
 
             //  interate through languages adding to langs table
@@ -987,14 +987,14 @@ class SGL_Task_SyncSequences extends SGL_Task
                     if (!$success) {
                         $dbh->rollback();
                         $dbh->autoCommit(true);
-                        SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed '));
+                        SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed'));
                     }
                 }
             }
             $success = $dbh->commit();
             $dbh->autoCommit(true);
             if (!$success) {
-                SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed '));
+                SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed'));
             }
             break;
 
@@ -1031,7 +1031,7 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             $success = $da->addUser($oUser);
 
             if (PEAR::isError($success)) {
-                SGL_Install_Common::errorPush(PEAR::raiseError($success));
+                SGL_Install_Common::errorPush($success);
             }
         }
     }
@@ -1059,14 +1059,14 @@ PHP;
             : 'en-iso-8859-15';
         $ok = $da->updateMasterPrefs(array('language' => $lang));
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
         //  update lang in admin prefs
         $aMapping = $da->getPrefsMapping();
         $langPrefId = $aMapping['language'];
         $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
         //  update tz in default prefs
         $tz = isset($_SESSION['install_timezone'])
@@ -1074,13 +1074,13 @@ PHP;
             : 'UTC';
         $ok = $da->updateMasterPrefs(array('timezone' => $tz));
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
         //  update tz in admin prefs
         $tzPrefId = $aMapping['timezone'];
         $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
         if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError($ok));
+            SGL_Install_Common::errorPush($ok);
         }
     }
 }
