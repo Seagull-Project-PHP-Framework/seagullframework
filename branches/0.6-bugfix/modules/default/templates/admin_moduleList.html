@@ -43,7 +43,11 @@
                         <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
                     </td>
                     <td class="left desc">{aValue[description]}</td>
-                    <td><a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {aValue[title]}"><img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" /></a></td>
+                    <td>
+                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}" title="{translate(#disable#)} {aValue[title]}">
+                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
+                        </a>
+                    </td>
                 </tr>
             {else:}
                 <tr>
