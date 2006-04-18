@@ -250,22 +250,14 @@ class ModuleMgr extends SGL_Manager
         $output->template = 'moduleList.html';
 
         foreach ($input->module as $module) {
-            $ok = false;
             if (isset($module->register)) {
                 $oModule = $this->da->getModuleById();
                 $oModule->setFrom($module);
-
                 $ok = $this->da->addModule($oModule);
             }
         }
-        if ($ok === true) {
-            SGL::raiseMsg('Module successfully added to the manager.', true, SGL_MESSAGE_INFO);
-        } elseif ($ok === false) {
-            SGL::raiseMsg('No data changed.', false, SGL_MESSAGE_INFO);
-        } else {
-            SGL::raiseError('There was a problem inserting the record',
-                SGL_ERROR_NOAFFECTEDROWS);
-        }
+        SGL::raiseMsg('Module successfully added to the manager.', true,
+            SGL_MESSAGE_INFO);
     }
 
     function _cmd_edit(&$input, &$output)
@@ -303,10 +295,11 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $rm = DB_DataObject::factory($this->conf['table']['module']);
-        $rm->get($input->module->module_id);
+        $rm->get($input->moduleId);
         $rm->delete();
 
-        SGL::raiseMsg('module successfully removed');
+        SGL::raiseMsg('module successfully unregistered', false,
+            SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
