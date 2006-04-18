@@ -303,8 +303,11 @@ class SGL_Task_DropDatabase extends SGL_Task
         $this->conf = $c->getAll();
 
         $dbh = & SGL_DB::singleton();
-        $query = "DROP DATABASE {$this->conf['db']['name']}";
+        $query = 'DROP DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
         $res = $dbh->query($query);
+        if (PEAR::isError($res)) {
+            SGL_Install_Common::errorPush($res);
+        }
     }
 }
 
@@ -322,6 +325,9 @@ class SGL_Task_CreateDatabase extends SGL_Task
         $dbh = & SGL_DB::singleton($dsn);
         $query = 'CREATE DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
         $res = $dbh->query($query);
+        if (PEAR::isError($res)) {
+            SGL_Install_Common::errorPush($res);
+        }
     }
 }
 
@@ -417,11 +423,15 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
             //  catch 'table already exists' error
             if (DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
-                $this->updateHtml('status', 'Tables already exist');
-                $body = 'It appears that the schema already exists.  Click <a href=\\"index.php\\">here</a> to return to the configuration screen and choose \\"Only set DB connection details\\".';
-                $this->updateHtml('additionalInfo', $body);
-                $this->updateHtml('progress_bar', '');
-                exit;
+                if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
+                    die('Tables already exist, DB error');
+                } else {
+                    $this->updateHtml('status', 'Tables already exist');
+                    $body = 'It appears that the schema already exists.  Click <a href=\\"index.php\\">here</a> to return to the configuration screen and choose \\"Only set DB connection details\\".';
+                    $this->updateHtml('additionalInfo', $body);
+                    $this->updateHtml('progress_bar', '');
+                    exit;
+                }
             }
         }
     }
@@ -551,7 +561,7 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                             $this->childId = $id;
                         }
                     } else {
-                        SGL_Install_Common::errorPush(PEAR::raiseError($$idk));
+                        SGL_Install_Common::errorPush($id);
                     }
                 }
             }
