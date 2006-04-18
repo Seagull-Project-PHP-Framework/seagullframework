@@ -4,10 +4,10 @@
 
 #INSERT INTO `block` VALUES (1, 'Navigation_Block_Navigation', 'Admin menu', '', '', 1, 'AdminNav', 1, 1, 'a:9:{s:15:"startParentNode";s:1:"4";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
 #INSERT INTO `block` VALUES (2, 'Navigation_Block_Navigation', 'User menu', '', '', 1, 'UserNav', 1, 1, 'a:9:{s:15:"startParentNode";s:1:"2";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
-INSERT INTO `block` VALUES (3, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 1, 1, 'N;');
+INSERT INTO `block` VALUES (3, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 0, 1, 'N;');
 INSERT INTO `block` VALUES (4, 'User_Block_Login', 'Login', '', '', 5, 'Left', 1, 0, 'N;');
 INSERT INTO `block` VALUES (5, 'Default_Block_SampleRight1', 'Sample Right Block', '', '', 5, 'Right', 1, 1, 'N;');
-INSERT INTO `block` VALUES (6, 'Publisher_Block_SiteNews', 'Site News', '', '', 1, 'Left', 1, 1, 'N;');
+INSERT INTO `block` VALUES (6, 'Publisher_Block_SiteNews', 'Site News', '', '', 1, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (7, 'Default_Block_Sample1', 'Community', '', '', 4, 'Left', 1, 1, 'N;');
 INSERT INTO `block` VALUES (8, 'Default_Block_Sample2', 'Syndication', '', '', 3, 'Left', 0, 1, 'N;');
 INSERT INTO `block` VALUES (9, 'Default_Block_Calendar', 'Calendar', '', '', 2, 'Left', 0, 1, 'N;');
