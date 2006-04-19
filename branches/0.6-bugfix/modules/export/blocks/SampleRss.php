@@ -2,15 +2,16 @@
 /**
  * A block to dislay an RSS feed.
  *
- * @package block
+ * @package export
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 
 require_once "XML/RSS.php";
+define('SGL_RSS_ITEMS_TO_SHOW', 5);
 
 class Export_Block_SampleRss
 {
-    var $rssSource = 'http://rss.gmane.org/messages/excerpts/gmane.comp.php.seagull.general';
+    var $rssSource = 'http://seagullproject.org/export/rss/';
 
     function init()
     {
@@ -23,7 +24,7 @@ class Export_Block_SampleRss
         $conf = $c->getAll();
 
         $cache = & SGL_Cache::singleton();
-        if ($data = $cache->get('mailingListRss', 'blocks')) {
+        if ($data = $cache->get('sglSiteRss', 'blocks')) {
             $html = unserialize($data);
             SGL::logMessage('rss from cache', PEAR_LOG_DEBUG);
         } else {
@@ -35,12 +36,12 @@ class Export_Block_SampleRss
             foreach ($rss->getItems() as $item) {
                 $html .= "<li><a href=\"" . $item['link'] . "\">" . $item['title'] . "</a></li>\n";
                 $x ++;
-                if ($x > 9) {
+                if ($x > SGL_RSS_ITEMS_TO_SHOW) {
                     break;
                 }
             }
             $html .= "</ul>\n";
-            $cache->save(serialize($html), 'mailingListRss', 'blocks');
+            $cache->save(serialize($html), 'sglSiteRss', 'blocks');
             SGL::logMessage('rss from remote', PEAR_LOG_DEBUG);
         }
         return $html;

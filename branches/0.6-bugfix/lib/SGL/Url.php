@@ -205,7 +205,7 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $this->url)) {
 
-            //FIXME: get rid of this
+            // FIXME: get rid of this
             if (is_a($this->aStrategies[0], 'SGL_UrlParser_SimpleStrategy')) {
                 $this->aQueryData = $this->parseQueryString($this->conf);
                 return;
@@ -244,9 +244,13 @@ class SGL_URL
             $this->anchor      = '';
         }
 
-        // Parse the url and store the various parts
+        // Parse the URI and store the various parts
         if (!is_null($this->url)) {
-            $urlinfo = parse_url($this->url);
+            //  if we have a relative URI, enforce FQDN as required by parse_url
+            $target = (preg_match('/^[a-z0-9]+:\/\//i', $this->url))
+                ? $this->url
+                : $this->toString();
+            $urlinfo = parse_url($target);
 
             //  if a ? is present in frontScriptName, it gets stripped by calling $_SERVER['PHP_SELF']
             //  and needs to be re-added
@@ -337,7 +341,7 @@ class SGL_URL
             }
             return true;
         }
-        return SGL::raiseError('no uri data', SGL_ERROR_NODATA);
+        return SGL::raiseError('no URI data', SGL_ERROR_NODATA);
     }
 
 
