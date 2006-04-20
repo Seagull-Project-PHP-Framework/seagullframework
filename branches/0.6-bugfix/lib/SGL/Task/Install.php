@@ -807,7 +807,6 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
             SGL_Install_Common::errorPush(
                 PEAR::raiseError('generating DB_DataObject entities failed'));
         }
-
         //  copy over links file
         $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
         if (!file_exists($target)) {
