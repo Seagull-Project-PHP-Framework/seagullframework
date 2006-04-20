@@ -4,9 +4,9 @@
 BEGIN;
 
 -- ==============================================================
---  Table: login                                                 
+--  Table: login
 -- ==============================================================
-create table login 
+create table login
 (
    login_id             INT4                 not null,
    usr_id               INT4                 null,
@@ -22,17 +22,17 @@ create table login
 create sequence login_seq;
 
 -- ==============================================================
---  Index: usr_login_fk                                          
+--  Index: usr_login_fk
 -- ==============================================================
-create  index usr_login_fk on login 
+create  index usr_login_fk on login
 (
    usr_id
 );
 
 -- ==============================================================
---  Table: preference                                            
+--  Table: preference
 -- ==============================================================
-create table preference 
+create table preference
 (
    preference_id        INT4                 not null,
    name                 VARCHAR(128)         null,
@@ -47,7 +47,7 @@ create table preference
 create sequence preference_seq;
 
 -- ==============================================================
---  Table: organization                                          
+--  Table: organization
 -- ==============================================================
 create table organisation (
    organisation_id int4 NOT NULL default 0,
@@ -85,7 +85,7 @@ create table organisation (
 create sequence organization_seq;
 
 -- ==============================================================
---  Table: organisation_type                                     
+--  Table: organisation_type
 -- ==============================================================
 create table organisation_type (
    organisation_type_id int4 NOT NULL default 0,
@@ -100,7 +100,7 @@ create table organisation_type (
 create sequence organization_type_seq;
 
 -- ==============================================================
---  Table: permission                                            
+--  Table: permission
 -- ==============================================================
 create table permission (
    permission_id int4 NOT NULL default 0,
@@ -121,10 +121,10 @@ create sequence permission_seq;
 -- ==============================================================
 create unique index perm_name ON permission (
    name
-); 
+);
 
 -- ==============================================================
---  Table: role                                                  
+--  Table: role
 -- ==============================================================
 create table role (
    role_id int NOT NULL default -1,
@@ -133,7 +133,7 @@ create table role (
    date_created timestamp default NULL,
    created_by int4 default NULL,
    last_updated timestamp default NULL,
-   updated_by int4 default NULL,	  
+   updated_by int4 default NULL,
    CONSTRAINT PK_ROLE_ID PRIMARY KEY (role_id)
 );
 
@@ -144,7 +144,7 @@ create table role (
 create sequence role_seq;
 
 -- ==============================================================
---  Table: role_permission                                       
+--  Table: role_permission
 -- ==============================================================
 create table role_permission (
    role_permission_id int4 NOT NULL default 0,
@@ -160,25 +160,25 @@ create table role_permission (
 create sequence role_permission_seq;
 
 -- ==============================================================
---  Index: permission_id                                         
+--  Index: permission_id
 -- ==============================================================
-create  index permission_id on role_permission 
+create  index permission_id on role_permission
 (
    permission_id
 );
 
 -- ==============================================================
---  Index: role_id                                               
+--  Index: role_id
 -- ==============================================================
-create  index role_id on role_permission 
+create  index role_id on role_permission
 (
    role_id
 );
 
 -- ==============================================================
---  Table: user_preference                                       
+--  Table: user_preference
 -- ==============================================================
-create table user_preference 
+create table user_preference
 (
    user_preference_id   INT4                 not null,
    usr_id               INT8                 not null default 0,
@@ -194,23 +194,23 @@ create table user_preference
 create sequence user_preference_seq;
 
 -- ==============================================================
---  Index: usr_user_preferences_fk                               
+--  Index: usr_user_preferences_fk
 -- ==============================================================
-create  index usr_user_preferences_fk on user_preference 
+create  index usr_user_preferences_fk on user_preference
 (
    usr_id
 );
 
 -- ==============================================================
---  Index: preference_user_preference_fk                          
+--  Index: preference_user_preference_fk
 -- ==============================================================
-create  index preference_user_preference_fk on user_preference 
+create  index preference_user_preference_fk on user_preference
 (
    preference_id
 );
 
 -- ==============================================================
---  Table: org_preference                                       
+--  Table: org_preference
 -- ==============================================================
 create table org_preference (
    org_preference_id   INT4                 not null,
@@ -227,23 +227,23 @@ create table org_preference (
 create sequence org_preference_seq;
 
 -- ==============================================================
---  Index: organisation_org_preference_fk                               
+--  Index: organisation_org_preference_fk
 -- ==============================================================
-create  index organisation_org_preference_fk on org_preference 
+create  index organisation_org_preference_fk on org_preference
 (
    organisation_id
 );
 
 -- ==============================================================
---  Index: preference_org_preference_fk                          
+--  Index: preference_org_preference_fk
 -- ==============================================================
-create  index preference_org_preference_fk on org_preference 
+create  index preference_org_preference_fk on org_preference
 (
    preference_id
 );
 
 -- ==============================================================
---  Table: usr                                                   
+--  Table: usr
 -- ==============================================================
 create table usr (
    usr_id               INT4                 not null,
@@ -283,16 +283,17 @@ create sequence usr_seq;
 -- ==============================================================
 --  Index: usr_email
 -- ==============================================================
-create unique index usr_email ON usr (
-   email
-); 
+/* we'll see if dbdo fixes this problem */
+-- create unique index usr_email ON usr (
+--    email
+-- );
 
 -- ==============================================================
 --  Index: usr_username
 -- ==============================================================
-create unique index usr_username ON usr (
-   username
-); 
+-- create unique index usr_username ON usr (
+--    username
+-- );
 
 -- ==============================================================
 --  Table: user_permission
@@ -313,7 +314,7 @@ create sequence user_permission_seq;
 -- ==============================================================
 --  Index: usr_id
 -- ==============================================================
-create index usr_id on user_permission 
+create index usr_id on user_permission
 (
    usr_id
 );
@@ -321,7 +322,7 @@ create index usr_id on user_permission
 -- ==============================================================
 --  Index: user_permission_id
 -- ==============================================================
-create index user_permission_id on user_permission 
+create index user_permission_id on user_permission
 (
    permission_id
 );
