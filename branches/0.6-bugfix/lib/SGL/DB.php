@@ -80,8 +80,9 @@ class SGL_DB
             $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
-                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                $err = PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                     SGL_ERROR_DBFAILURE, $fatal);
+                return $err;
             }
             if (!empty($conf['db']['postConnect'])) {
                 $conn->query($conf['db']['postConnect']);
