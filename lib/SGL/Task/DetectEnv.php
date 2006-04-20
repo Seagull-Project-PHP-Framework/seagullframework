@@ -42,6 +42,7 @@ define('EOL', "\n");
 define('SGL_NEUTRAL', 0);
 define('SGL_RECOMMENDED', 1);
 define('SGL_REQUIRED', 2);
+define('SGL_FORBIDDEN', 3);
 
 require_once dirname(__FILE__) . '/../Request.php';
 require_once dirname(__FILE__) . '/../Task.php';
@@ -137,6 +138,13 @@ class SGL_EnvSummaryTask extends SGL_Task
             } else {
                 $status = 'orange';
             }
+        } elseif ($depType == SGL_FORBIDDEN) {
+            if ($actual == $depValue) {
+                $status = 'green';
+            } else {
+                $status = 'red';
+                SGL_Install_Common::errorPush(PEAR::raiseError($error));
+            }
         } else {
             //  neutral, no colour tag
             return '';
@@ -176,7 +184,7 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $title = 'Available Modules';
     var $key = 'loaded_modules';
     var $aRequirements = array(
-        'apc' => array(SGL_RECOMMENDED => 1),
+        'apc' => array(SGL_FORBIDDEN => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
         'dom' => array(SGL_RECOMMENDED => 1),
         'domxml' => array(SGL_RECOMMENDED => 1),
@@ -197,12 +205,13 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $aErrors = array(
         'session' => 'You need the session extension to run Seagull',
         'pcre' => 'You need the pcre extension to run Seagull',
+        'apc' => 'Problems have been reported running apc, please disable to continue',
     );
 
     function run()
     {
     	foreach ($this->aRequirements as $m => $dep) {
-    		$this->aData[$m] = bool2int(extension_loaded($m));
+            $this->aData[$m] = bool2int(extension_loaded($m));
     	}
     	return $this->render($this->aData);
     }
