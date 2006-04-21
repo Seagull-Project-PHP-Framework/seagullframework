@@ -334,7 +334,7 @@ class SGL
       * If not, tries with the default file (English).
       * In either case, load it into the GLOBALS and return the array.
       *
-      * @param string $fileType 'states' or 'countries'
+      * @param string $fileType 'states' or 'countries' or 'counties'
       * @return array reference
       *
       * @author  Philippe Lhoste <PhiLho(a)GMX.net>
@@ -343,7 +343,7 @@ class SGL
      {
          SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-         if ($fileType != 'countries' && $fileType != 'states') {
+         if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
              SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
              return;
          }
