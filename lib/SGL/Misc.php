@@ -11,22 +11,26 @@ class SGL_Cache
      * by reference
      *
      * @access  public
+     * @param boolean $force    If true the $conf['cache']['enabled'] setting will
+     *                          be ignored and caching enabled
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &singleton($cacheEnabled = false)
+    function &singleton($force = false)
     {
         static $instance;
 
         // If the instance doesn't exist, create one
-        if (!isset($instance)) {
+        if (!isset($instance) || $force) {
             require_once 'Cache/Lite.php';
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
+
+            $isEnabled = ($force) ? true : $conf['cache']['enabled'];
             $options = array(
                 'cacheDir'  => SGL_TMP_DIR . '/',
                 'lifeTime'  => $conf['cache']['lifetime'],
-                'caching'   => $conf['cache']['enabled']);
+                'caching'   => $isEnabled);
             $instance = new Cache_Lite($options);
         }
         return $instance;
