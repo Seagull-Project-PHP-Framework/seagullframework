@@ -841,6 +841,9 @@ class SGL_Task_SyncSequences extends SGL_Task
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
+        //  postgres sequence routine creates errors, get initial count
+        $initialErrorCount = SGL_Error::count();
+
         $tables = null;
 
         switch ($dbh->phptype) {
@@ -868,7 +871,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                         break;
                     }
                 }
-                if ($primary_field <> '') {
+                if ($primary_field != '') {
                     $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
                     if (!is_null($maxId)) {
                     	$data[] = array($table, $maxId);
@@ -891,7 +894,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> $conf['table']['sequence']) {
+                if ($table != $conf['table']['sequence']) {
                     $info = $dbh->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -899,7 +902,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                             break;
                         }
                     }
-                    if ($primary_field <> '') {
+                    if ($primary_field != '') {
                         $data[] = array($table, $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE 1'));
                     } else {
@@ -916,7 +919,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
             foreach ($aTables as $table) {
                 $primary_field = '';
-                if ($table <> $conf['table']['sequence']) {
+                if ($table != $conf['table']['sequence']) {
                     $info = $dbh->tableInfo($table);
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
@@ -924,7 +927,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                             break;
                         }
                     }
-                    if ($primary_field <> '') {
+                    if ($primary_field != '') {
                         $data[] = array($table, $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') FROM ' . $table . ' WHERE true'));
                     }
@@ -964,7 +967,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                             break;
                         }
                     }
-                    if ($primary_field <> '') {
+                    if ($primary_field != '') {
                         $maxId = $dbh->getOne('SELECT MAX(' .
                             $primary_field . ') + 1 FROM ' . $table[1]);
                     } else {
@@ -1000,6 +1003,13 @@ class SGL_Task_SyncSequences extends SGL_Task
         default:
             SGL_Install_Common::errorPush(
                 PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
+        }
+        //  remove irrelevant errors
+        $finalErrorCount = SGL_Error::count();
+        if ($finalErrorCount > $initialErrorCount) {
+            for ($x = 0; $x <= $numErrors = $finalErrorCount - $initialErrorCount; $x++) {
+                SGL_Error::pop();
+            }
         }
     }
 }
