@@ -5,6 +5,8 @@ CHANGELOG
 +-----------------------+
 BUGFIXES
 21-05-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
+21-05-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
+            Postgres fixed, unique indexes removed from usr table
 15-05-06    At long last, thanks to matt from IRC, Seagull will install properly
             on MySQL 3.23
 12-04-06    List of stylesheets now correctly drawn from configured default theme,
