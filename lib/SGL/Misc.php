@@ -61,12 +61,32 @@ class SGL_Error
         return count($GLOBALS['_SGL']['ERRORS']);
     }
 
+    /**
+     * Pushes an error onto stack.
+     *
+     * @param PEAR_Error $oError
+     * @return integer   Returns the new number of elements in the array.
+     */
     function push($oError)
     {
-        $GLOBALS['_SGL']['ERRORS'][] = $oError;
-        return true;
+        return array_push($GLOBALS['_SGL']['ERRORS'], $oError);
     }
 
+    /**
+     * Pops last error off stack.
+     *
+     * @return PEAR_Error
+     */
+    function pop()
+    {
+        return array_pop($GLOBALS['_SGL']['ERRORS']);
+    }
+
+    /**
+     * Remove first error off stack.
+     *
+     * @return unknown
+     */
     function shift()
     {
         return array_shift($GLOBALS['_SGL']['ERRORS']);

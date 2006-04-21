@@ -150,6 +150,11 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!preg_match("/mysql/", $this->dbh->phptype)) {
+            SGL::raiseMsg('This operation is currently only supported for MySQL',
+                false, SGL_MESSAGE_INFO);
+            return false;
+        }
         require_once SGL_CORE_DIR . '/Task/Install.php';
 
         $data = array(
