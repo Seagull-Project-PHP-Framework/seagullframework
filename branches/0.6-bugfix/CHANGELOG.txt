@@ -15,6 +15,8 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
+21-05-06    Added ability to force cache usage, overriding perferences, ie:
+                $cache = & SGL_Cache::singleton($force = true);
 18-04-06    Added ability to detect new modules
 17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
 13-04-06    Added ability to rebuild Seagull environment for privileged users

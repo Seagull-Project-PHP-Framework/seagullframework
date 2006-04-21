@@ -57,7 +57,9 @@ class SGL_ParamHandler
     function &singleton($source)
     {
         static $instances;
-        if (!isset($instances)) $instances = array();
+        if (!isset($instances)) {
+            $instances = array();
+        }
 
         $signature = md5($source);
         if (!isset($instances[$signature])) {

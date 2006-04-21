@@ -145,7 +145,7 @@ class LoginMgr extends SGL_Manager
     function _cmd_logout(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_Cache::clear('blocks');
+
         SGL_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out');
 

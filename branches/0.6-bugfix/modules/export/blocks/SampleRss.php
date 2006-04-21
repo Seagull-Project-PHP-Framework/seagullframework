@@ -26,7 +26,7 @@ class Export_Block_SampleRss
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $cache = & SGL_Cache::singleton();
+        $cache = & SGL_Cache::singleton($force = true);
         if ($data = $cache->get('sglSiteRss', 'blocks')) {
             $html = unserialize($data);
             SGL::logMessage('rss from cache', PEAR_LOG_DEBUG);
