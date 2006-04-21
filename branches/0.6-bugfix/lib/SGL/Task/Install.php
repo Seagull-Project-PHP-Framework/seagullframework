@@ -798,6 +798,10 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
 
         require_once 'DB/DataObject/Generator.php';
         ob_start();
+        // remove original dbdo keys file as it is unable to update  an existing file
+        $keysFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.ini';
+        unlink($keysFile);
+
         $generator = new DB_DataObject_Generator();
         $generator->start();
         $out = ob_get_contents();

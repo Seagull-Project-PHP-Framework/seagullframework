@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
+21-05-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
+            dataobjects', now file removal forces update
 21-05-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
 21-05-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
             Postgres fixed, unique indexes removed from usr table
