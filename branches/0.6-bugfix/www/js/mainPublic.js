@@ -79,6 +79,17 @@ function confirmSubmit(item, formName)
         return false;
 }
 
+function confirmDelete(item, formName)
+{
+    var evalFormName = eval('document.' + formName)
+    var flag = false
+    var agree = confirm("Are you sure you want to delete this " + item + "?");
+    if (agree)
+        return true;
+    else
+        return false;
+}
+
 function confirmSave(formName)
 {
     var evalFormName = eval('document.' + formName)
