@@ -85,10 +85,10 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-session_start();
 require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
 SGL_FrontController::init();
+session_start();
 
 //  reroute to front controller
 if (isset($_GET['start'])) {

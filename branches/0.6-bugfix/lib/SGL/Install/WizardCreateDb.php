@@ -161,7 +161,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         //  store translation in db
         $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
-            'Yes (Select this for multi-lingual content)',
+            'Yes (This option allows for multi-lingual articles in addition to interface translations)',
                 array('id' => 'storeTranslationsInDB', 'onClick' => 'javascript:toggleLangList()'));
 
         //  load available languages
@@ -177,8 +177,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
 
         //  submit
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $prevnext[] =& $this->createElement('submit', $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit', $this->getButtonName('next'), 'Next >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }
