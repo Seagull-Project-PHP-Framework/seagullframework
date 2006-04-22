@@ -592,23 +592,23 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             //  fetch available languages
             $availableLanguages = & $GLOBALS['_SGL']['LANGUAGE'];
 
-            //  add languaged to inifile container
+            //  add languages to config
             $this->installedLanguages = $data['installLangs'];
-
-            $c->set('translation', array('installedLanguages' => implode(',',
-                str_replace('-', '_', $data['installLangs']))));
-
+            $langString = (is_array($data['installLangs']))
+                ? implode(',', str_replace('-', '_', $data['installLangs']))
+                : '';
+            $c->set('translation', array('installedLanguages' => $langString));
             $ok = $c->save($configFile);
             if (PEAR::isError($ok)) {
                 SGL_Install_Common::errorPush($ok);
             }
 
-            //  interate through languages adding to langs table
-            foreach ($data['installLangs'] as $aKey => $aLang) {
+            //  iterate through languages adding to langs table
+            foreach ($data['installLangs'] as $aLang) {
                 $globalLangFile = $availableLanguages[$aLang][1] .'.php';
                 $langID = str_replace('-', '_', $aLang);
-                $encoding       = substr($aLang, strpos('-', $aLang));
-                $langData       = array(
+                $encoding = substr($aLang, strpos('-', $aLang));
+                $langData  = array(
                     'lang_id' => $langID,
                     'table_name' => $this->conf['table']['translation'] .'_'. $langID,
                     'meta' => '',
@@ -656,7 +656,9 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             }
         } else {
             //  set installed languages
-            $installedLangs = implode(',', str_replace('-', '_', array_keys($aLangOptions)));
+            $installedLangs = (is_array($aLangOptions))
+                ? implode(',', str_replace('-', '_', array_keys($aLangOptions)))
+                : '';
 
             $c->set('translation', array('installedLanguages' => $installedLangs));
             $ok = $c->save($configFile);
