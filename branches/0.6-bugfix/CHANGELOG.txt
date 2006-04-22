@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
+22-05-06    Fixed problem where selecting 'store langs in DB' during install, but
+            then selecting none from list resulted in a fatal error (Heinrich Stoellinger)
 21-05-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
             dataobjects', now file removal forces update
 21-05-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
