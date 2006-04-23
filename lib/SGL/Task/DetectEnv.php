@@ -309,7 +309,7 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
     var $aErrors = array(
         'installRoot' => '',
         'varDirExists' => 'It appears you do not have a "var" folder, please create a folder with this name in the root of your Seagull install',
-        'varDirIsWritable' => "Your \"var\" dir is not writable by the webserver, please chmod %e to 0777",
+        'varDirIsWritable' => "Your \"var\" dir is not writable by the webserver, to make it writable type the following at the command line: chmod 777 %e",
     );
 
     function run()
