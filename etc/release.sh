@@ -257,7 +257,6 @@ function buildMinimalPearPackage()
     $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
-
 }
 
 ##############################
@@ -277,13 +276,13 @@ cd /tmp
 
 exportSvnAndPackage
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
