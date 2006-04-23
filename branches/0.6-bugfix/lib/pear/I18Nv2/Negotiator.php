@@ -15,7 +15,7 @@
 // |            Michael Wallner <mike@iworks.at>                          |
 // +----------------------------------------------------------------------+
 //
-// $Id: Negotiator.php,v 1.9 2004/12/06 15:12:56 mike Exp $
+// $Id: Negotiator.php,v 1.11 2005/11/28 15:33:22 mike Exp $
 
 /**
  * I18Nv2::Negotiator
@@ -30,7 +30,7 @@
  * @author      Naoki Shima <murahachibu@php.net>
  * @author      Wolfram Kriesing <wk@visionp.de>
  * @author      Michael Wallner <mike@php.net>
- * @version     $Revision: 1.9 $
+ * @version     $Revision: 1.11 $
  * @access      public
  * @package     I18Nv2
  */
@@ -304,9 +304,9 @@ class I18Nv2_Negotiator
             return $default;
         }
         if (!$needle) {
-            return array_shift($haystack);
+            return current($haystack);
         }
-        if ($result = array_shift(array_intersect($haystack, $needle))) {
+        if ($result = current($a = array_intersect($haystack, $needle))) {
             return $result;
         }
         return $default;

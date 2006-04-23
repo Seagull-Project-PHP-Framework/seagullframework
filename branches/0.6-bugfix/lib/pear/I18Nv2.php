@@ -11,22 +11,22 @@
 // | Copyright (c) 2004 Michael Wallner <mike@iworks.at>                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: I18Nv2.php,v 1.29 2005/02/21 13:44:04 mike Exp $
+// $Id: I18Nv2.php,v 1.36 2006/03/08 13:07:18 mike Exp $
 
 /**
  * I18Nv2
- *
+ * 
  * @package     I18Nv2
  * @category    Internationalization
  */
 
 define('I18Nv2_WIN', defined('OS_WINDOWS') ? OS_WINDOWS : (strToUpper(substr(PHP_OS, 0,3)) === 'WIN'));
 
-/**
+/** 
  * I18Nv2 - Internationalization v2
  *
  * @author      Michael Wallner <mike@php.net>
- * @version     $Revision: 1.29 $
+ * @version     $Revision: 1.36 $
  * @package     I18Nv2
  * @access      public
  * @static
@@ -35,12 +35,12 @@ class I18Nv2
 {
     /**
      * Set Locale
-     *
+     * 
      * Example:
      * <code>
      * I18Nv2::setLocale('en_GB');
      * </code>
-     *
+     * 
      * @static
      * @access  public
      * @return  mixed   &type.string; used locale or false on failure
@@ -49,19 +49,17 @@ class I18Nv2
      */
     function setLocale($locale = null, $cat = LC_ALL)
     {
-        static $triedFallbacks;
-
         if (!strlen($locale)) {
             return setLocale($cat, null);
         }
-
+        
         $locales = I18Nv2::getStaticProperty('locales');
-
+        
         // get complete standard locale code (en => en_US)
         if (isset($locales[$locale])) {
             $locale = $locales[$locale];
         }
-
+        
         // get Win32 locale code (en_US => enu)
         if (I18Nv2_WIN) {
             $windows   = I18Nv2::getStaticProperty('windows');
@@ -70,27 +68,26 @@ class I18Nv2
             $setlocale = $locale;
         }
 
-        if (!isset($triedFallbacks[$locale])) {
-            $triedFallbacks[$locale] = false;
-        }
-
         $syslocale = setLocale($cat, $setlocale);
-
-        // if the locale is not recognized by the system, check if there
+        
+        // if the locale is not recognized by the system, check if there 
         // is a fallback locale and try that, otherwise return false
         if (!$syslocale) {
-            if (!$triedFallbacks[$locale]) {
-                $triedFallbacks[$locale] = $setlocale;
-                $fallbacks = I18Nv2::getStaticProperty('fallbacks');
-                if (isset($fallbacks[$locale])) {
-                    return I18Nv2::setLocale($fallbacks[$locale], $cat);
+            $fallbacks = &I18Nv2::getStaticProperty('fallbacks');
+            if (isset($fallbacks[$locale])) {
+                // avoid endless recursion with circular fallbacks
+                $trylocale = $fallbacks[$locale];
+                unset($fallbacks[$locale]);
+                if ($retlocale = I18Nv2::setLocale($trylocale, $cat)) {
+                    $fallbacks[$locale] = $trylocale;
+                    return $retlocale;
                 }
             }
             return false;
         }
-
+        
         $language = substr($locale, 0,2);
-
+        
         if (I18Nv2_WIN) {
             @putEnv('LANG='     . $language);
             @putEnv('LANGUAGE=' . $language);
@@ -98,27 +95,27 @@ class I18Nv2
             @putEnv('LANG='     . $locale);
             @putEnv('LANGUAGE=' . $locale);
         }
-
+        
         // unshift locale stack
         $last = &I18Nv2::getStaticProperty('last');
-        array_unshift($last,
+        array_unshift($last, 
             array(
-                0           => $locale,
-                1           => $language,
+                0           => $locale, 
+                1           => $language, 
                 2           => $syslocale,
                 'locale'    => $locale,
                 'language'  => $language,
                 'syslocale' => $syslocale,
             )
         );
-
+        
         // fetch locale specific information
         $info = &I18Nv2::getStaticProperty('info');
         $info = localeConv();
-
+        
         return $syslocale;
     }
-
+    
     /**
      * Get current/prior Locale
      *
@@ -142,18 +139,18 @@ class I18Nv2
         }
         return $last[$prior][$part];
     }
-
+    
     /**
      * Get several locale specific information
-     *
+     * 
      * @see     http://www.php.net/localeconv
-     *
+     * 
      * <code>
      * $locale = I18Nv2::setLocale('en_US');
      * $dollar = I18Nv2::getInfo('currency_symbol');
      * $point  = I18Nv2::getInfo('decimal_point');
      * </code>
-     *
+     * 
      * @static
      * @access  public
      * @return  mixed
@@ -164,7 +161,7 @@ class I18Nv2
         $info = &I18Nv2::getStaticProperty('info');
         return isset($part, $info[$part]) ? $info[$part] : $info;
     }
-
+    
     /**
      * Create a Locale object
      *
@@ -177,10 +174,10 @@ class I18Nv2
     function &createLocale($locale = null, $paranoid = false)
     {
         require_once 'I18Nv2/Locale.php';
-        $obj = new I18Nv2_Locale($locale);
+        $obj = &new I18Nv2_Locale($locale, $paranoid);
         return $obj;
     }
-
+    
     /**
      * Create a Negotiator object
      *
@@ -194,75 +191,82 @@ class I18Nv2
     function &createNegotiator($defLang = 'en', $defEnc = 'iso-8859-1', $defCtry = '')
     {
         require_once 'I18Nv2/Negotiator.php';
-        return new I18Nv2_Negotiator($defLang, $defEnc, $defCtry);
+        $obj = &new I18Nv2_Negotiator($defLang, $defEnc, $defCtry);
+        return $obj;
     }
-
+    
     /**
      * Automatically transform output between encodings
      *
-     * This method utilizes ob_iconv_handler(), so you should call it at the
-     * beginning of your script (prior to output).  If any output buffering has
-     * been started before, the contents will be fetched with ob_get_contents()
-     * and the buffers will be destroyed by ob_end_clean().
-     *
+     * This method utilizes ob_iconv_handler(), so you should call it at the 
+     * beginning of your script (prior to output).  If any output buffering has 
+     * been started before, the contents will be fetched with ob_get_contents() 
+     * and the buffers will be destroyed by ob_end_clean() if $refetchOB is set
+     * to true.
+     * 
      * <code>
      * require_once('I18Nv2.php');
      * I18Nv2::autoConv('CP1252');
      * print('...'); // some iso-8859-1 stuff gets converted to Windows-1252
      * // ...
      * </code>
-     *
+     * 
      * @static
      * @access  public
-     * @return  mixed   Returns &true; on success or
+     * @return  mixed   Returns &true; on success or 
      *                  <classname>PEAR_Error</classname> on failure.
      * @param   string  $oe             desired output encoding
      * @param   string  $ie             internal encoding
      * @param   bool    $decodeRequest  whether to decode request variables
      *                                  ($_GET and $_POST) from $oe to $ie
+     * @param   bool    $refetchOB      whether contents of already active 
+     *                                  output buffers should be fetched, the
+     *                                  output buffer handlers destroyed and
+     *                                  the fetched data be passed through
+     *                                  ob_iconvhandler
      */
-    function autoConv($oe = 'UTF-8', $ie = 'ISO-8859-1', $decodeRequest = true)
+    function autoConv($oe = 'UTF-8', $ie = 'ISO-8859-1', $decodeRequest = true, $refetchOB = true)
     {
         if (!strcasecmp($oe, $ie)) {
             return true;
         }
-
+        
         if (!extension_loaded('iconv')) {
             require_once 'PEAR.php';
             if (!PEAR::loadExtension('iconv')) {
                 return PEAR::raiseError('Error: ext/iconv is not available');
             }
         }
-
+        
         iconv_set_encoding('internal_encoding', $ie);
         iconv_set_encoding('output_encoding', $oe);
         iconv_set_encoding('input_encoding', $oe);
-
+        
         $buffer = '';
-        if ($level = ob_get_level()) {
+        if ($refetchOB && $level = ob_get_level()) {
             while ($level--) {
                 $buffer .= ob_get_contents();
                 ob_end_clean();
             }
         }
-
+        
         if (!ob_start('ob_iconv_handler')) {
             require_once 'PEAR.php';
             return PEAR::raiseError('Couldn\'t start output buffering');
         }
         echo $buffer;
-
+        
         if ($decodeRequest) {
             I18Nv2::recursiveIconv($_GET, $oe, $ie);
             I18Nv2::recursiveIconv($_POST, $oe, $ie);
         }
-
+        
         return true;
     }
-
+    
     /**
      * Recursive Iconv
-     *
+     * 
      * @static
      * @access  public
      * @return  void
@@ -276,14 +280,14 @@ class I18Nv2
             if (is_array($val)) {
                 I18Nv2::recursiveIconv($value[$key], $from, $to);
             } else {
-                $value[$key] = iconv($from, $to, $val);
+                $value[$key] = iconv($from, $to .'//TRANSLIT', $val);
             }
         }
     }
-
+    
     /**
      * Traverse locales to languages
-     *
+     * 
      * Returns en-US, de-DE from en_US and de_DE
      *
      * @static
@@ -295,7 +299,7 @@ class I18Nv2
     {
         return array_map(array('I18Nv2','l2l'), (array) $locales);
     }
-
+    
     /**
      * Traverse languages to locales
      *
@@ -310,7 +314,7 @@ class I18Nv2
     {
         return array_map(array('I18Nv2','l2l'), (array) $languages);
     }
-
+    
     /**
      * Locale to language or language to locale
      *
@@ -323,10 +327,10 @@ class I18Nv2
     {
         return strtr($localeOrLanguage, '-_', '_-');
     }
-
+    
     /**
      * Split locale code
-     *
+     * 
      * Splits locale codes into its language and country part
      *
      * @static
@@ -339,7 +343,7 @@ class I18Nv2
         @list($l, $c) = preg_split('/[_-]/', $locale, 2, PREG_SPLIT_NO_EMPTY);
         return array($l, $c);
     }
-
+    
     /**
      * Get language code of locale
      *
@@ -350,9 +354,9 @@ class I18Nv2
      */
     function languageOf($locale)
     {
-        return array_shift(I18Nv2::splitLocale($locale));
+        return current($a = I18Nv2::splitLocale($locale));
     }
-
+    
     /**
      * Get country code of locale
      *
@@ -363,12 +367,12 @@ class I18Nv2
      */
     function countryOf($locale)
     {
-        return array_pop(I18Nv2::splitLocale($locale));
+        return end($a = I18Nv2::splitLocale($locale));
     }
-
+    
     /**
      * Get access to static property
-     *
+     * 
      * @static
      * @access  public
      * @return  mixed   Returns a reference to a static property
@@ -379,7 +383,7 @@ class I18Nv2
         static $properties;
         return $properties[$property];
     }
-
+    
     /**
      * This one gets called automatically
      *
@@ -394,7 +398,7 @@ class I18Nv2
         // initialize the locale stack
         $last = &I18Nv2::getStaticProperty('last');
         $last = array();
-
+        
         // map of "fully qualified locale" codes
         $locales = &I18Nv2::getStaticProperty('locales');
         $locales = array(
@@ -419,14 +423,14 @@ class I18Nv2
             'ru' => 'ru_RU',
             'cs' => 'cs_CZ',
         );
-
+        
         // define locale fallbacks
         $fallbacks = &I18Nv2::getStaticProperty('fallbacks');
         $fallbacks = array(
             'no_NO' => 'nb_NO',
             'nb_NO' => 'no_NO',
         );
-
+        
         // include Win32 locale codes
         if (I18Nv2_WIN) {
             include_once 'I18Nv2/Locale/Windows.php';
