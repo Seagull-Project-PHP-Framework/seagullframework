@@ -192,7 +192,6 @@ class SGL_Manager
                 if (is_array($ok) && count($ok)) {
 
                     list($className, $methodName) = $ok;
-                    SGL::raiseMsg('you do not have perms');
                     SGL::logMessage('Unauthorised user '.SGL_Session::getUid() .' attempted to access ' .
                         $className . '::' .$methodName, PEAR_LOG_WARNING);
 
@@ -205,10 +204,14 @@ class SGL_Manager
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                    //  get default params for logout page
-                    $aParams = $this->getDefaultPageParams();
-                    SGL_HTTP::redirect($aParams);
-
+                   // redirect to login page
+                    $url       = $input->getCurrentUrl();
+                    $redir     = $url->toString();
+                    $loginPage = array( 'moduleName'    => 'user',
+                                        'managerName'   => 'login',
+                                        'redir'         => urlencode($redir));
+                    SGL::raiseMsg('authorization required');
+                    SGL_HTTP::redirect($loginPage);
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);
