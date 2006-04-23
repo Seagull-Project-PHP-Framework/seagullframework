@@ -101,19 +101,17 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if ($this->conf['site']['banIpEnabled']) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
 
-            if (!empty($conf['site']['allowList'])) {
-                $allowList = explode( ' ', $conf['site']['allowList']);
+            if (!empty($this->conf['site']['allowList'])) {
+                $allowList = explode( ' ', $this->conf['site']['allowList']);
                 if ( !in_array( $_SERVER['REMOTE_ADDR'], $allowList)) {
                     $msg = SGL_String::translate('You have been banned');
                     SGL::raiseError($msg, SGL_ERROR_BANNEDUSER, PEAR_ERROR_DIE);
                 }
             }
 
-            if (!empty($conf['site']['denyList'])) {
-                $denyList = explode( ' ', $conf['site']['denyList']);
+            if (!empty($this->conf['site']['denyList'])) {
+                $denyList = explode( ' ', $this->conf['site']['denyList']);
                 if ( in_array( $_SERVER['REMOTE_ADDR'], $denyList)) {
                     $msg = SGL_String::translate('You have been banned');
                     SGL::raiseError($msg, SGL_ERROR_BANNEDUSER, PEAR_ERROR_DIE);
