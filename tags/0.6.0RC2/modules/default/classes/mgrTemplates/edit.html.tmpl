@@ -1,0 +1,67 @@
+<form method="post" flexy:ignore>
+<input type="hidden" name="action" value="{action}" />
+<input type="hidden" name="%mgrName%_id" value="{%mgrName%.%mgrName%_id}" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<table class="wide">
+    <tr>
+        <td align="center">
+            <table>
+                <tr>
+                    <td>
+                        {translate(#Please modify this view to fit the attributes in your table.#)}
+                    </td>
+                </tr>
+                <!-- sample for simple text field -->
+                <!-- replace all occurences of 'field' with an actual fielname from the table -->
+                <!-- tr>
+                    <th align="left">{translate(#field#)}: </th>
+                    <td>
+                        <div class="error" flexy:if="error[field]">
+                            {translate(error[field])}
+                        </div>
+                        <input class="full" type="text" name="%mgrName%[field]" value="{%mgrName%.field}" /></input>
+                    </td>
+                </tr -->
+
+                <!-- sample for wysiwyg text area -->
+                <!-- tr>
+                    <th align="left">{translate(#field1#)}: </th>
+                    <td>
+                        <div class="error" flexy:if="error[field1]">
+                            {translate(error[field1])}
+                        </div>
+                        <textarea cols="80" rows="7" id="%mgrName%[field1]" name="%mgrName%[field1]" class="wysiwyg" >{%mgrName%.field1:h}</textarea>
+                    </td>
+                </tr -->
+
+                <!-- sample for date field -->
+                <!--tr>
+                    <th align="left">{translate(#Date#)}: </th>
+                    <td>
+                    {dateSelector:h}
+                    </td>
+                </tr-->
+
+                <!-- sample for select field -->
+                <!--tr>
+                    <th align="left">{translate(#Venue#)}: </th>
+                    <td>
+                        <select name="%mgrName%[field2]" >
+                            {generateSelect(aValues,%mgrName%.current_item):h}
+                        </select>
+                    </td>
+                </tr-->
+                <tr>
+                    <td colspan="2" align="center">
+                        <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
+                        <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}"
+                            onClick="document.location.href='{makeUrl(#list#,#%mgrName%#,#%moduleName%#):h}'" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</form>

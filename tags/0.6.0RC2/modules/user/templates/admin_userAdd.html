@@ -1,0 +1,160 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmUserAdd','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#user#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmUserAdd" flexy:ignore id="frmUserAdd">
+        <fieldset class="hide">
+            {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+                {if:redir}
+                <input type="hidden" name="redir" value="{redir}" />
+                {end:}
+            {else:}
+            <input type="hidden" name="action" value="update" />
+            {end:}
+            <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
+            <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
+            <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
+        </fieldset>
+
+        <h3 flexy:if="isAdd">{translate(#add user#,#ucfirst#)}</h3>
+        <h3 flexy:if="!isAdd">{translate(#edit user#,#ucfirst#)} "{user.username}"</h3>
+        <fieldset class="inside" id="userDetails">
+            <h3>{translate(#Personal Details#)}</h3>
+            <p>
+                <label for="user[username]"><span class="required">*</span> {translate(#Username#)}</label>
+                <span class="error" flexy:if="error[username]">{translate(error[username])}</span>
+                <input type="text" name="user[username]" id="user[username]" value="{user.username}" />
+            </p>
+            <p>
+                <label for="user[first_name]">{translate(#First Name#)}</label>
+                <input type="text" name="user[first_name]" id="user[first_name]" value="{user.first_name}" />
+            </p>
+            <p>
+                <label for="user[last_name]">{translate(#Last Name#)}</label>
+                <input type="text" name="user[last_name]" id="user[last_name]" value="{user.last_name}" />
+            </p>
+            {if:isAdd}
+            <p>
+                <label for="user[passwd]"><span class="required">*</span> {translate(#Password#)}</label>
+                <span class="error" flexy:if="error[passwd]">{translate(error[passwd])}</span>
+                <input type="password" name="user[passwd]" id="user[passwd]" value="{user.passwd}" />
+            </p>
+            <p>
+                <label for="user[password_confirm]"><span class="required">*</span> {translate(#Confirm Password#)}</label>
+                <span class="error" flexy:if="error[password_confirm]">{translate(error[password_confirm])}</span>
+                <input type="password" name="user[password_confirm]" id="user[password_confirm]" value="{user.password_confirm}" />
+            </p>
+            {end:}
+            {if:isAdmin()}
+                {if:conf[OrgMgr][enabled]}
+            <p>
+                <label for="user[organisation_id]">{translate(#Organisation name#)}</label>
+                <select name="user[organisation_id]" id="user[organisation_id]">
+                    {generateSelect(aOrgs,user.organisation_id):h}
+                </select>
+            </p>    
+                {end:}
+            {end:}
+        </fieldset>
+
+        <fieldset class="inside" id="userContact">
+            <h3>{translate(#Contact#)}</h3>
+            <p>
+                <label for="user[email]"><span class="required">*</span> {translate(#Email#)}</label>
+                <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+                <input type="text" class="longText" name="user[email]" id="user[email]" value="{user.email}" />
+            </p>
+            <p>
+                <label for="user[telephone]">{translate(#Telephone#)}</label>
+                <input type="text" name="user[telephone]" id="user[telephone]" value="{user.telephone}" />
+            </p>
+            <p>
+                <label for="user[mobile]">{translate(#Mobile#)}</label>
+                <input type="text" name="user[mobile]" id="user[mobile]" value="{user.mobile}" />
+            </p>
+            {if:isAdmin()}
+            <p>
+                <label for="user[is_acct_active]">{translate(#Is Active?#)}</label>
+                <input type="checkbox" name="user[is_acct_active]" id="user[is_acct_active]" flexy:raw="{isAcctActive}" value="1" /> {translate(#check if active#)}
+            </p>
+            {end:}
+        </fieldset>
+
+        <fieldset class="inside">
+            <h3>{translate(#Location#)}</h3>
+            <p>
+                <label for="user[addr_1]"><span class="required">*</span> {translate(#Address 1#)}</label>
+                <span class="error" flexy:if="error[addr_1]">{translate(error[addr_1])}</span>
+                <input type="text" class="longText" name="user[addr_1]" id="user[addr_1]" value="{user.addr_1}" />
+            </p>
+            <p>
+                <label for="user[addr_2]">{translate(#Address 2#)}</label>
+                <input type="text" class="longText" name="user[addr_2]" id="user[addr_2]" value="{user.addr_2}" />
+            </p>
+            <p>
+                <label for="user[addr_3]">{translate(#Address 3#)}</label>
+                <input type="text" class="longText" name="user[addr_3]" id="user[addr_3]" value="{user.addr_3}" />
+            </p>
+            <p>
+                <label for="user[city]"><span class="required">*</span> {translate(#City#)}</label>
+                <span class="error" flexy:if="error[city]">{translate(error[city])}</span>
+                <input type="text" class="longText" name="user[city]" id="user[city]" value="{user.city}" />
+            </p>
+            <p>
+                <label for="user[region]">{translate(#County/State/Province#)}</label>
+                <select name="user[region]" id="user[region]">
+                    {generateSelect(states,user.region):h}
+                </select>
+            </p>
+            <p>
+                <label for="user[post_code]"><span class="required">*</span> {translate(#ZIP/Postal Code#)}</label>
+                <span class="error" flexy:if="error[post_code]">{translate(error[post_code])}</span>
+                <input type="text" name="user[post_code]" id="user[post_code]" value="{user.post_code}" />
+            </p>
+            <p>
+                <label for="user[country]"><span class="required">*</span> {translate(#Country#)}</label>
+                <span class="error" flexy:if="error[country]">{translate(error[country])}</span>
+                <select name="user[country]" id="user[country]">
+                    {generateSelect(countries,user.country):h}
+                </select>
+            </p>
+        </fieldset>
+        
+        <fieldset class="inside">
+            <h3>{translate(#Security#)}</h3>
+            <p>
+                <label for="user[security_question]"><span class="required">*</span> {translate(#Security question#)}</label>
+                <span class="error" flexy:if="error[security_question]">{translate(error[security_question])}</span>
+                <select name="user[security_question]" id="user[security_question]">
+                    {generateSelect(aSecurityQuestions,user.security_question):h}
+                </select>
+            </p>
+            <p>
+                <label for="user[security_answer]"><span class="required">*</span> {translate(#Answer#)}</label>
+                <span class="error" flexy:if="error[security_answer]">{translate(error[security_answer])}</span>
+                <input type="text" class="longText" name="user[security_answer]" id="user[security_answer]" value="{user.security_answer}" />
+            </p>
+            {if:isAdmin()}
+                {if:!isEqual(user.usr_id,#1#)}
+            <p>
+                <label for="user[role_id]">{translate(#Role#)}</label>
+                <select name="user[role_id]" id="user[role_id]">
+                    {generateSelect(aRoles,user.role_id):h}
+                </select>
+            </p>
+                {end:}
+            {end:}
+        </fieldset>
+        <p class="helpRequire">
+            <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
+        </p>
+    </form>
+    <div class="spacer"></div>
+</div>

@@ -1,0 +1,20 @@
+    {foreach:aParams,valueObj}
+        <p>
+        {if:valueObj.description}
+            <label for="{valueObj.name}" class="tipOwner">{translate(valueObj.label)}
+                <span class="tipText">{translate(valueObj.description)}</span>
+            </label>
+        {else:}
+            <label for="{valueObj.name}">{translate(valueObj.label)}</label>
+        {end:}
+        {if:isEqual(valueObj.type,#text#)}
+            <input type="text" name="{valueObj.name}" id="{valueObj.name}" value="{valueObj.value}" />
+        {end:}
+        {if:isEqual(valueObj.type,#yesno#)}
+            {generateRadioPair(valueObj.name,valueObj.value):h}
+        {end:}
+        {if:isEqual(valueObj.type,#wysiwyg#)}
+            <textarea flexy:ignore name="{valueObj.name}" id="frmBodyName" class="wysiwyg">{valueObj.value:h}</textarea>
+        {end:}
+        </p>
+    {end:}

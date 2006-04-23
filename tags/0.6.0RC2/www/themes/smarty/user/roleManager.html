@@ -1,0 +1,58 @@
+{include file="user/userModuleSubNav.html"}
+
+<form name="roles" method="post">
+<input type="hidden" name="action" value="delete" />
+<h1 class="pageTitle">{$result->translate($result->pageTitle)}</h1>
+{if $result->msgGet()}<span>{$result->msgGet()}</span>{/if}
+
+{if $result->pager}{include file="pager.html"}{/if}
+
+<table class="wide">
+    <tr>
+        <td colspan="5">
+    <input type="button" value="{$result->translate('add role')}" 
+        onClick="javascript:document.location.href='{$result->makeUrl('add','role','user')}'" />
+</td>
+    </tr>
+    <tr>
+        <th>{$result->translate('Select')}</th>
+        <th><a class="header" href="{$result->makeUrl('list','role','user','','frmSortBy|role_id||frmSortOrder|sortOrder')}">{$result->translate('Role ID')}</a></th>
+        <th><a class="header" href="{$result->makeUrl('list','role','user','','frmSortBy|name||frmSortOrder|sortOrder')}">{$result->translate('Name')}</a></th>
+        <th>{$result->translate('Description')}</th>
+        <th>{$result->translate('Edit')}</th>
+        <th>{$result->translate('Permissions')}</th>
+        <th>{$result->translate('Role')}</th>
+    </tr>
+    {foreach from=$result->aPagedData.data key=key item=aValue}
+    <tr class="{$result->switchRowClass()}">
+        <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{$aValue.role_id}" /></td>
+        <td>{$aValue.role_id}</td>
+        <td>{$aValue.name}</td>
+        <td>{$aValue.description}</td>
+        <td align="center"><a href="{$result->makeUrl('edit','role','user',aPagedData[data],'frmRoleID|role_id',key)}">
+            <img src="{$result->webRoot}/themes/{$result->theme}/images/edit.gif" alt="{$result->translate('edit')}" /></a>
+        </td>
+        {if $result->isAdminOrUnassigned($aValue.role_id)}<td align="center">&nbsp;</td>{/if}
+        {if !$result->isAdminOrUnassigned($aValue.role_id)}
+        <td align="center">
+        <input type="button" name="frmReset" value="{$result->translate('change')}"
+            onClick="javascript:document.location.href='{$result->makeUrl('editPerms','role','user',$result->aPagedData.data,'frmRoleID|role_id',key)}'" />
+        </td>
+        {/if}
+        {if $result->isAdminOrUnassigned($aValue.role_id)}<td align="center">&nbsp;</td>{/if}
+        {if !$result->isAdminOrUnassigned($aValue.role_id)}
+        <td align="center">
+        <input type="button" name="frmReset" value="{$result->translate('duplicate')}"
+            onClick="javascript:document.location.href='{$result->makeUrl('duplicate','role','user',$result->aPagedData.data,'frmRoleID|role_id',key)}'" />
+        </td>
+        {/if}
+    </tr>
+    {/foreach}
+    <tr>
+        <td colspan="5">
+            {$result->translate('With selected user(s)')} : 
+        <input type="submit" name="delete" value="{$result->translate('delete')}" onClick="return confirmSubmit('{$result->translate('role')}', 'roles')" />
+        </td>
+    </tr>
+</table>
+</form>

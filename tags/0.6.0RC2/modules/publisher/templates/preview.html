@@ -1,0 +1,19 @@
+<!-- If not a static article display option blocks -->
+{if:staticArticle}
+    <div id="staticArticle">
+        {if:leadArticle} 
+            {t:articleOutput}
+        {else:}
+            {translate(#No lead article found#)}<br /><br /><br /><br /> 
+        {end:}
+    
+    </div>
+{else:}
+    <div id="leadArticle">
+        {if:leadArticle} 
+            {t:articleOutput}
+        {else:}
+            {translate(#No lead article found#)}<br /><br /><br /><br /> 
+        {end:}
+    </div>
+{end:}
