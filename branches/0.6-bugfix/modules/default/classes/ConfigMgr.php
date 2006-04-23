@@ -91,6 +91,15 @@ class ConfigMgr extends SGL_Manager
             2 => 'word beginning',
             3 => 'word fragment',
             );
+        $this->aDbDoDebugLevels = array(
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            );
+
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $navDir = SGL_MOD_DIR . '/navigation/classes';
         $this->aNavDrivers   = SGL_Util::getAllClassesFromFolder($navDir, '.*Driver');
@@ -210,6 +219,7 @@ class ConfigMgr extends SGL_Manager
         $output->aUrlHandlers       = $this->aUrlHandlers;
         $output->aTemplateEngines       = $this->aTemplateEngines;
         $output->aTranslationContainers = $this->aTranslationContainers;
+        $output->aDbDoDebugLevels = $this->aDbDoDebugLevels;
 
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
