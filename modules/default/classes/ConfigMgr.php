@@ -132,6 +132,7 @@ class ConfigMgr extends SGL_Manager
         $input->aDelete     = $req->get('frmDelete');
         $input->submitted   = $req->get('submitted');
         $input->conf        = $req->get('conf');
+        $input->displayTab  = 'generalSiteOptions';
 
         $aErrors = array();
         if ($input->submitted) {
@@ -157,6 +158,7 @@ class ConfigMgr extends SGL_Manager
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
+                $input->displayTab = 'mtaOptions';
             }
 
             switch ($input->conf['mta']['backend']) {
@@ -165,9 +167,11 @@ class ConfigMgr extends SGL_Manager
                 if (empty($input->conf['mta']['sendmailPath']) ||
                     !is_file($input->conf['mta']['sendmailPath'])) {
                     $aErrors['sendmailPath'] = 'Please enter a valid path to Sendmail';
+                    $input->displayTab = 'mtaOptions';
                 }
                 if (empty($input->conf['mta']['sendmailArgs'])) {
                     $aErrors['sendmailArgs'] = 'Please enter valid Sendmail arguments';
+                    $input->displayTab = 'mtaOptions';
                 }
                 break;
 
@@ -175,9 +179,11 @@ class ConfigMgr extends SGL_Manager
                 if ($input->conf['mta']['smtpAuth'] == 1) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
                         $aErrors['smtpUsername'] = 'Please enter a valid Username';
+                        $input->displayTab = 'mtaOptions';
                     }
                     if (empty($input->conf['mta']['smtpPassword'])) {
                         $aErrors['smtpPassword'] = 'Please enter a valid Password';
+                        $input->displayTab = 'mtaOptions';
                     }
                 }
                 break;
@@ -186,10 +192,12 @@ class ConfigMgr extends SGL_Manager
             if (  !empty($input->conf['session']['singleUser'])
                 && empty($input->conf['session']['extended'])) {
                     $aErrors['singleUser'] = 'Single session per user requires extended session';
+                    $input->displayTab = 'sessionOptions';
             }
             if (   !empty($input->conf['session']['extended'])
                 && $input->conf['session']['handler'] != 'database') {
                     $aErrors['extendedSession'] = 'Extended session requires database session handling';
+                    $input->displayTab = 'sessionOptions';
             }
         }
         //  if errors have occured
@@ -229,7 +237,7 @@ class ConfigMgr extends SGL_Manager
                 SGL_LANG_ID_TRANS2);
         }
 
-        $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
+        $output->addOnLoadEvent("showSelectedOptions('configuration','$output->displayTab')");
 
         //  disable translation options depending on the selected translation container.
         $output->addOnLoadEvent("toggleTransElements()");
