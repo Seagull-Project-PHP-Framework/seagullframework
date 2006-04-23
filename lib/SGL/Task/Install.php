@@ -288,6 +288,9 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
             $dbh = & SGL_DB::singleton();
             $query = 'SET FOREIGN_KEY_CHECKS=0;';
             $res = $dbh->query($query);
+            if (PEAR::isError($res)) {
+                SGL_Install_Common::errorPush($res);
+            }
         }
     }
 }
