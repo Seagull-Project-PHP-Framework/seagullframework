@@ -73,8 +73,8 @@ DETAILED INSTRUCTIONS
 
 4.  Once you launch Seagull by requesting http://<seagull-domain>/index.php in
     a web browser, an installer routine will create the schema and populate the
-    database with the required default data.  Currently MySQL, PostgreSQL, Oracle
-    MaxDB and DB2 schemas are provided.
+    database with the required default data.  Currently MySQL, PostgreSQL and Oracle
+    schemas are provided.
 
     If you have any problems during the install routine, delete the config file
     created by the system in the var directory, and the file called
@@ -86,19 +86,15 @@ DETAILED INSTRUCTIONS
     - trying to import data when the default data already exists
 
 5.  Login by clicking the login link in the top right corner and entering the
-    relevant admin credentials you specified in the installer.
+    relevant admin credentials you specified during installation.  Using the
+    admin section you can begin to put Seagull to work.
 
-    You can change the admin password by:
 
-    - logging in as admin
-    - select the 'My Account' tab, then 'view profile', then 'edit' and change the admin email address
-    - select 'change password' and enter the current and new passwords
+See the project homepage for more info: http://seagullproject.org/ or check
+out the wiki for Seagull resources/info: http://trac.seagullproject.org/
 
-See the project homepage for more info: http://seagull.phpkitchen.com or check
-out the wiki for Seagull resources/info: http://trac.seagullproject.org
+To become familiar with Seagull try some of the tutorials:
 
-To create your first site this this tutorial:
-
-http://trac.seagullproject.org/wiki/Tutorials/CreatingASimpleSite
+http://trac.seagullproject.org/wiki/WikiStart#Tutorials
 
 Thanks for using Seagull!
