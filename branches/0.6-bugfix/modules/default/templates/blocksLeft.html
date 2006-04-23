@@ -1,7 +1,9 @@
 <div id="leftSidebar">
 
 <div id="nav" flexy:if="isVerticalNav(conf[navigation][stylesheet])">
-    {navigation:h}
+    {foreach:blocksUserNav,key,valueObj}
+        {valueObj.content:h}
+    {end:}
 </div>
 
 {foreach:blocksLeft,key,valueObj}
