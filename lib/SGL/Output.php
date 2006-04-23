@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -65,21 +65,6 @@ class SGL_Output
     function translate($key, $filter = false, $aParams = array())
     {
         return SGL_String::translate($key, $filter, $aParams);
-    }
-
-    function get($key)
-    {
-        if (isset($this->aProps[$key])) {
-            $ret = $this->aProps[$key];
-        } else {
-            $ret = null;
-        }
-        return $ret;
-    }
-
-    function set($key, $value)
-    {
-        $this->aProps[$key] = $value;
     }
 
     /**

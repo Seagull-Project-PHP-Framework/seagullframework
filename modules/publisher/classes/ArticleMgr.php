@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ArticleMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -76,7 +76,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (SGL_Session::getUserType() == SGL_ADMIN) {
+        if (SGL_Session::getRoleId() == SGL_ADMIN) {
             $this->isAdmin = true;
         }
         $this->template = 'articleManager.html';
@@ -409,7 +409,7 @@ class ArticleMgr extends SGL_Manager
         //  rebuild item data
         foreach ($aResult['data'] as $key => $aValues) {
             if ($aValues['username'] != SGL_Session::getUsername()
-                && SGL_Session::getUserType() != SGL_ADMIN) {
+                && SGL_Session::getRoleId() != SGL_ADMIN) {
                 //  remove articles that don't belong to the current user
                 unset($aResult['data'][$key]);
             } else {

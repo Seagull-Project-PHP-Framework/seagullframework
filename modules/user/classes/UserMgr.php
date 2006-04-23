@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UserMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -300,12 +300,11 @@ class UserMgr extends RegisterMgr
         if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
-                FROM    {$this->conf['table']['user']} u,
-                		{$this->conf['table']['organisation']} o,
-                		{$this->conf['table']['role']} r
-                WHERE   o.organisation_id = u.organisation_id
-                AND     r.role_id = u.role_id
-                AND     u.usr_id <> 0
+                FROM    {$this->conf['table']['user']} u
+                LEFT JOIN   {$this->conf['table']['organisation']} o
+                    ON u.organisation_id = o.organisation_id
+                JOIN {$this->conf['table']['role']} r
+                    ON r.role_id = u.role_id
                 $orderBy_query";
         } else {
             $query = "
@@ -547,18 +546,20 @@ class UserMgr extends RegisterMgr
 
         $results = $this->syncUsersToRole($input->aDelete, $input->roleSync, $input->roleSyncMode);
 
-        //  could eventually display a list of failed/succeeded user ids--just summarize for now
+        //  could eventually display a list of failed/succeeded user ids--just
+        //  summarize for now
         $results = array_count_values($results);
         $succeeded = array_key_exists(1, $results) ? $results[1] : 0;
         $failed = array_key_exists(0, $results) ? $results[0] : 0;
         if ($succeeded && !$failed) {
-            $errorType == SGL_MESSAGE_INFO;
+            $errorType = SGL_MESSAGE_INFO;
         } elseif (!$succeeded && $failed) {
-            $errorType == SGL_MESSAGE_ERROR;
+            $errorType = SGL_MESSAGE_ERROR;
         } else {
-            $errorType == SGL_MESSAGE_WARNING;
+            $errorType = SGL_MESSAGE_WARNING;
         }
-        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.", false, $errorType);
+        SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.",
+            false, $errorType);
     }
 
     function _sendStatusNotification($oUser, $isEnabled)

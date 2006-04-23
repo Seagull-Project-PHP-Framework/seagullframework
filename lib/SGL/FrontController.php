@@ -2,7 +2,7 @@
 
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -31,22 +31,21 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | FrontController.php                                                         |
+// | FrontController.php                                                       |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
+// $Id: FrontController.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 require_once dirname(__FILE__)  . '/Registry.php';
 require_once dirname(__FILE__)  . '/Request.php';
 require_once dirname(__FILE__)  . '/Misc.php';
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Config.php';
-require_once dirname(__FILE__)  . '/Tasks/Init.php';
-require_once dirname(__FILE__)  . '/Tasks/Process.php';
-require_once dirname(__FILE__)  . '/TaskRunner.php';
+require_once dirname(__FILE__)  . '/Task/Init.php';
+require_once dirname(__FILE__)  . '/Task/Process.php';
 
 /**
  * Application controller.
@@ -68,30 +67,75 @@ class SGL_FrontController
         }
         //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $req = SGL_Request::singleton();
+        $req   = &SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
+        $output = &new SGL_Output();
 
-        $process =
-            new SGL_Process_Init(
-            new SGL_Process_SetupORM(
-			new SGL_Process_StripMagicQuotes(
-            new SGL_Process_DiscoverClientOs(
-            new SGL_Process_ResolveManager(
-            new SGL_Process_CreateSession(
-            new SGL_Process_SetupLangSupport(
-            new SGL_Process_SetupPerms(
-            new SGL_Process_AuthenticateRequest(
-            new SGL_Process_BuildHeaders(
-            new SGL_Process_SetupLocale(
-            new SGL_MainProcess()
-            )))))))))));
+        // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
+        if (!SGL_FrontController::customFilterChain($input)) {
+            $process =
+                //  pre-process (order: top down)
+                new SGL_Task_Init(
+                new SGL_Task_SetupORM(
+                new SGL_Task_StripMagicQuotes(
+                new SGL_Task_DiscoverClientOs(
+                new SGL_Task_ResolveManager(
+                new SGL_Task_CreateSession(
+                new SGL_Task_SetupLangSupport(
+                new SGL_Task_SetupPerms(
+                new SGL_Task_AuthenticateRequest(
+                new SGL_Task_SetupLocale(
 
-        $process->process($input);
+                //  post-process (order: bottom up)
+                new SGL_Task_BuildHeaders(
+                new SGL_Task_SetSystemAlert(
+                new SGL_Task_BuildView(
+                new SGL_Task_SetupBlocks(
+                new SGL_Task_SetupNavigation(
+                new SGL_Task_SetupGui(
+                new SGL_Task_GetPerformanceInfo(
+                new SGL_Task_SetupWysiwyg(
+                new SGL_Task_BuildOutputData(
+
+                //  target
+                new SGL_MainProcess()
+                )))))))))))))))))));
+            $process->process($input, $output);
+
+        } else {
+            require_once dirname(__FILE__)  . '/FilterChain.php';
+            $chain = new SGL_FilterChain($input->getFilters());
+            $chain->doFilter($input, $output);
+        }
+        if ($output->conf['site']['outputBuffering']) {
+            ob_end_flush();
+        }
+        echo $output->data;
+    }
+
+    function customFilterChain(&$input)
+    {
+        $conf = $input->getConfig();
+        $req = $input->getRequest();
+        $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
+            $req->getManagerName());
+        if (!empty($conf[$mgr]['filterChain'])) {
+            $aFilters = explode(',', $conf[$mgr]['filterChain']);
+            $input->setFilters($aFilters);
+            $ret = true;
+        } elseif (!empty($conf['site']['filterChain'])) {
+            $aFilters = explode(',', $conf['site']['filterChain']);
+            $input->setFilters($aFilters);
+            $ret = true;
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
     function init()
@@ -102,8 +146,6 @@ class SGL_FrontController
             ? true
             : false;
         $c = &SGL_Config::singleton($autoLoad);
-
-
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
@@ -136,16 +178,15 @@ class SGL_FrontController
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $req = $input->getRequest();
-        $mgr = $input->get('manager');
+        $req  = $input->getRequest();
+        $mgr  = $input->get('manager');
         $conf = $mgr->conf;
         $mgr->validate($req, $input);
 
-        $output = & new SGL_Output();
         $input->aggregate($output);
 
         //  process data if valid
@@ -156,112 +197,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
                 SGL::displayStaticPage($ok->getMessage());
             }
         }
-
         $mgr->display($output);
-
-        //  build view
-        $templateEngine = ucfirst($conf['site']['templateEngine']);
-        $rendererClass = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
-        $rendererFile = $templateEngine.'Strategy.php';
-
-        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
-        	require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
-        } else {
-        	PEAR::raiseError('Could not find renderer',
-        		SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
-        $viewType = (SGL::runningFromCLI()) ? 'SGL_CliView' : 'SGL_HtmlView';
-        $view = new $viewType($output, new $rendererClass());
-        echo $view->render();
-        if ($conf['site']['outputBuffering']) {
-            ob_end_flush();
-        }
-    }
-}
-
-class SGL_HtmlView extends SGL_View
-{
-    /**
-     * Html specific implementation of view object.
-     *
-     * @param SGL_Output $data
-     * @param SGL_OutputRendererStrategy $outputRendererStrategy
-     * @return SGL_HtmlView
-     */
-    function SGL_HtmlView(&$data, $outputRendererStrategy)
-    {
-    	parent::SGL_View($data, $outputRendererStrategy);
-    }
-
-    function postProcess(/*SGL_View*/ &$view)
-    {
-        $process =
-            new SGL_Process_BuildOutputData(
-            new SGL_Process_SetupWysiwyg(
-            new SGL_Process_GetPerformanceInfo(
-            new SGL_Process_SetupGui(
-            new SGL_Process_SetupNavigation(
-            new SGL_Process_SetupBlocks()
-            )))));
-
-        $process->process($view);
-    }
-}
-
-class SGL_CliView extends SGL_View
-{
-    /**
-     * Html specific implementation of view object.
-     *
-     * @param SGL_Output $data
-     * @param SGL_OutputRendererStrategy $outputRendererStrategy
-     * @return SGL_HtmlView
-     */
-    function SGL_CliView(&$data, $outputRendererStrategy)
-    {
-    	parent::SGL_View($data, $outputRendererStrategy);
-    }
-
-    function postProcess(/*SGL_View*/ &$view)
-    {
-        $process =
-            new SGL_Process_BuildOutputData(
-            new SGL_Process_GetPerformanceInfo(
-            new SGL_Void()
-            ));
-
-        $process->process($view);
-    }
-}
-
-class SGL_HtmlSimpleView extends SGL_View
-{
-    /**
-     * HTML renderer decorator
-     *
-     * @param SGL_Output $data
-     * @return string   Rendered output data
-     */
-    function SGL_HtmlSimpleView(&$data, $templateEngine = null)
-    {
-        //  prepare renderer class
-        if (!$templateEngine) {
-            $c    = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $templateEngine = $conf['site']['templateEngine'];
-        }
-        $templateEngine = ucfirst($templateEngine);
-        $rendererClass  = 'SGL_HtmlRenderer_'.$templateEngine.'Strategy';
-        $rendererFile   = $templateEngine.'Strategy.php';
-
-        if (is_file(SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile)) {
-            require_once SGL_LIB_DIR .'/SGL/HtmlRenderer/'. $rendererFile;
-        } else {
-            PEAR::raiseError('Could not find renderer',
-            SGL_ERROR_NOFILE, PEAR_ERROR_DIE);
-        }
-
-    	parent::SGL_View($data, new $rendererClass);
     }
 }
 ?>

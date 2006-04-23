@@ -19,18 +19,21 @@ class UrlTest2 extends UnitTestCase {
     {
         $qs = 'http://localhost/seagull/branches/0.4-bugfix/www/index.php/user/login/foo/bar/';
         $this->url = new SGL_Url($qs, true, new SGL_UrlParser_SefStrategy());
+        $err = $this->url->init();
+        if (PEAR::isError($err)) {
+            return $err;
+        }
     }
 
     function testGetRequestData()
     {
-        #print '<pre>'; print_r($this->url);
-        $aCompare = array(
+        $aExpected = array(
             'foo' => 'bar',
             'moduleName' => 'user',
             'managerName' => 'login',
             );
         $aData = $this->url->getQueryData();
-        $this->assertEqual($aData, $aCompare);
+        $this->assertEqual($aData, $aExpected);
     }
 
     function testToString()

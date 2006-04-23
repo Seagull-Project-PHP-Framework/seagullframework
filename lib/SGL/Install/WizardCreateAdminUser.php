@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardCreateAdminUser.php                                                 |
 // +---------------------------------------------------------------------------+
@@ -49,6 +49,9 @@ function webRootExists()
     return file_exists($aFormValues['webRoot']);
 }
 
+/**
+ * @package Install
+ */
 class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
@@ -77,11 +80,14 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
+        $this->addElement('password',  'adminPassword2', 'Retype admin password: ');
         $this->addElement('text',  'adminRealName', 'Real name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
 
         $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
         $this->addRule('adminPassword', 'Please specify the admin\'s password', 'required');
+        $this->addRule('adminPassword2', 'Please confirm the admin\'s password', 'required');
+        $this->addRule(array('adminPassword2', 'adminPassword'), 'Admin\'s passwords don\'t match', 'compare');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
 

@@ -2,7 +2,7 @@
 
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -31,7 +31,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Config.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -40,6 +40,7 @@
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 require_once dirname(__FILE__) . '/ParamHandler.php';
+require_once dirname(__FILE__) . '/Misc.php';
 
 /**
  * Config file parsing and handling, acts as a registry for config data.
@@ -97,11 +98,6 @@ class SGL_Config
         }
     }
 
-    function add($key, $value)
-    {
-        array_push($this->aProps, $value);
-    }
-
     function replace($aConf)
     {
         $this->aProps = $aConf;
@@ -146,10 +142,7 @@ class SGL_Config
 
     function merge($aConf)
     {
-        $firstKey = key($aConf);
-        if (!array_key_exists($firstKey, $this->aProps)) {
-            $this->aProps = array_merge_recursive($this->aProps, $aConf);
-        }
+        $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
     }
 
     function isEmpty()

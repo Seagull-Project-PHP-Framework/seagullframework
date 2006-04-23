@@ -1,38 +1,49 @@
 <?php
     $words = array(
-/*  FAQ */
-        'FAQs' => 'ЧАВОсы',
-        'FAQ Manager' => 'ЧАВО Менеджер',
-        'FAQ Manager :: Browse' => 'ЧАВО Менеджер :: Просмотр',
-        'Please fill in a question' => 'Пожалуйста заполните вопрос',
-        'Please fill in an answer' => 'Пожалуйста заполните ответ',
-        'Question' => 'Вопрос',
-        'Answer'   => 'Ответ',
 
-        'FAQ ID'   => 'ЧАВО ID',
-        'Date created' => 'Дата создания',
+/*  FAQ MGR */
 
-        //list
-        'Questions' => 'Вопросы',
-        'Answers' => 'Ответы',
-        'Q' => 'В',
-        'A' => 'О',
+        // titles
+        'FAQ Manager' => 'Управление FAQ',
+        'FAQs'        => 'FAQ',
+        
+        // modes
+        'FAQ Manager :: Browse'    => 'Управление FAQ :: просмотр',
+        'FAQ Manager :: Reorder'   => 'Управление FAQ :: порядок',
+        'FAQ Manager :: Add'       => 'Управление FAQ :: добавление',
+        'FAQ Manager :: Edit'      => 'Управление FAQ :: редактирование',
+        
+        // admin list
+        'new faq'                  => 'Добавить FAQ',
+        'reorder'                  => 'Упорядочить',
 
-        'No FAQs found' => 'ЧАВОсы не найдены',
+        'FAQ'                      => 'FAQ',
+        'Date created'             => 'Создан',
+        'Order'                    => 'Порядок',
+        'With selected faq(s)'     => 'С выбранными FAQ',
+        
+        // list
+        'Questions'     => 'Вопросы',
+        'Answers'       => 'Ответы',
+        'Q'             => 'В',
+        'A'             => 'О',
+        'No FAQs found' => 'FAQ не найдены',
+        
+        // add / edit
+        'Question'      => 'Вопрос',
+        'Answer'        => 'Ответ',
+        
+        // reorder
+        'reorder instruction'         => 'Чтобы изменить порядок, выберите элемент списка, после чего щелкните на кнопках "вверх" или "вниз" для перемещения выбранного элемента в заданном направлении.',
 
-        //admin list
-
-        'new faq'  => 'новый элемент',
-        'reorder'  => 'изменить порядок',
-        'id'       => 'id',
-        'FAQ'      => 'ЧАВО',
-        'Order'    => 'Порядок',
-        'With selected faq(s)' => 'С выбранным элементом(ами)',
-
-        //reorder
-
-        'reorder instruction' =>'Изменяйте порядок отображения посредством выбора элемента и нажатия \'вверх\' или \'вниз\'. Не забудьте сохранить после изменений.',
-
-
+        // validate
+        'Please fill in a question'   => 'Пожалуйста, укажите вопрос',
+        'Please fill in an answer'    => 'Пожалуйста, укажите ответ',
+        
+        // messages
+        'faq updated successfully'    => 'FAQ успешно отредактирован',
+        'faqs reordered successfully' => 'FAQ успешно упорядочены',
+        'faq saved successfully'      => 'FAQ успешно сохранен',
+        'faq deleted successfully'    => 'Выбранные FAQ успешно удалены',
     );
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ContactMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -106,7 +106,7 @@ class ContactMgr extends SGL_Manager
 
     function _cmd_insert(&$input, &$output)
     {
-        if (SGL_Session::getUserType() != SGL_ADMIN) {
+        if (SGL_Session::getRoleId() != SGL_ADMIN) {
             SGL_DB::setConnection();
             $savedUser = DB_DataObject::factory($this->conf['table']['contact']);
 

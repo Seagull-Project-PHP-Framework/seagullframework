@@ -79,7 +79,7 @@
                 <span class="error" flexy:if="error[city]">{translate(error[city])}</span>
                 <input type="text" name="org[city]" id="org[city]" value="{org.city}" />
             <p>
-                <label for="org[region]">{translate(#State/Province#)}</label>
+                <label for="org[region]">{translate(#County/State/Province#)}</label>
                 <select name="org[region]">
                     {generateSelect(states,org.region):h}
                 </select>

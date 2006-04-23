@@ -5,14 +5,9 @@
  * @package block
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.1 $
- * @since   PHP 4.1
  */
 class Default_Block_Sample1
 {
-    function SampleBlock1()
-    {
-    }
-
     function init()
     {
         return $this->getBlockContent();
@@ -20,10 +15,16 @@ class Default_Block_Sample1
 
     function getBlockContent()
     {
+        $baseUrl = SGL_BASE_URL;
         $text = <<< HTML
-<p class="alignCenter"
-<a href="https://sourceforge.net/projects/seagull/"><img src="http://sourceforge.net/sflogo.php?group_id=92482&amp;type=1" width="88" height="31" alt="SourceForge.net Logo" /></a>
-</p>
+<div class="alignCenter">
+<iframe width="1" height="1" marginwidth="0" marginheight="0"
+        hspace="0" vspace="0" id="async_frame" style="float:left;" frameborder="0" scrolling="no"
+        src="{$baseUrl}/iframe.html" onload="async_load();">.</iframe>
+<div id="async_demo">&#xA0;</div>
+<img src="{$baseUrl}/images/seagull.png">
+<img src="{$baseUrl}/images/sgl-framework.png">
+</div>
 HTML;
         return $text;
     }

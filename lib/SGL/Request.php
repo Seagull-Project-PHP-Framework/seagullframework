@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Request.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -62,7 +62,9 @@ class SGL_Request
     function init()
     {
         if ($this->isEmpty()) {
-            $res = (!SGL::runningFromCLI()) ? $this->initHttp() : $this->initCli();
+            $res = (!SGL::runningFromCLI())
+                ? $this->initHttp()
+                : $this->initCli();
         }
         return $res;
     }
@@ -243,7 +245,12 @@ class SGL_Request
 
     function getManagerName()
     {
-        return $this->aProps['managerName'];
+        if (isset($this->aProps['managerName'])) {
+            $ret = $this->aProps['managerName'];
+        } else {
+            $ret = 'default';
+        }
+        return $ret;
     }
 
     function getUri()

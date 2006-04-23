@@ -105,5 +105,42 @@ EOF;
         $foo->bar = 1;
         $this->assertTrue(SGL::objectHasState($foo));
     }
+
+    function testBuildFilterChain()
+    {
+        $aFilters = array('Foo1', 'Bar1', 'Baz');
+        $code = '$process = ';
+        foreach ($aFilters as $filter) {
+            $filters .= "new $filter(\n";
+            $closeParens .= ')';
+        }
+        $code = $filters . $closeParens;
+        eval("\$process = $code;");
+    }
+
+    function testAutoLoad()
+    {
+        $className = 'Foo1_Bar1_Baz';
+        $searchPath = preg_replace('/_/', '/', $className) . '.php';
+        $expected = 'Foo1/Bar1/Baz.php';
+        $this->assertEqual($expected, $searchPath);
+    }
+
+    function testDbVersionParsing()
+    {
+        $version = '4.1.16';
+        $this->assertFalse(version_compare($version, '5', '>='));
+
+        $version = '4.0.24_Debian-10sarge1-log';
+        $this->assertFalse(version_compare($version, '5', '>='));
+
+        $version = '5.0.1';
+        $this->assertTrue(version_compare($version, '5', '>='));
+    }
 }
+
+class Foo1{}
+class Bar1{}
+class Baz{}
+
 ?>

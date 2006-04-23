@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Delegator.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -48,30 +48,23 @@ class SGL_Delegator
 
     function __call($methodName, $parameters)
     {
-        $delegated = false;
-
+//        $delegated = false;
         foreach ($this->aDelegates as $delegate) {
-            $class   = new ReflectionClass($delegate);
-            $methods = $class->getMethods();
-
-            foreach ($methods as $method) {
-               if ($methodName == $method->getName()) {
-                    $delegated = true;
-
-                    return call_user_func_array(
-                        array($delegate, $method->getName()), $parameters);
-               }
-            }
-//            if (!$delegated) {
-//                $tmp = debug_backtrace();
-//                $step = array_pop($tmp);
-//                SGL::raiseError(
-//                        'Fatal error: Call to undefined method '
-//                        .$step['function'].'() in '
-//                        .$step['file'].' on line '
-//                        .$step['line'].'.',
-//                        SGL_ERROR_NOMETHOD);
+//            $class   = new ReflectionClass($delegate);
+//            $methods = $class->getMethods();
+//
+//            foreach ($methods as $method) {
+//               if ($methodName == $method->getName()) {
+//                    $delegated = true;
+//
+//                    return call_user_func_array(
+//                        array($delegate, $method->getName()), $parameters);
+//               }
 //            }
+            if (is_callable(array($delegate, $methodName))) {
+                return call_user_func_array(
+                    array($delegate, $methodName), $parameters);
+            }
         }
     }
 

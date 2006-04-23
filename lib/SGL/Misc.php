@@ -11,22 +11,26 @@ class SGL_Cache
      * by reference
      *
      * @access  public
+     * @param boolean $force    If true the $conf['cache']['enabled'] setting will
+     *                          be ignored and caching enabled
      * @static
      * @return  mixed reference to Cache_Lite object
      */
-    function &singleton($cacheEnabled = false)
+    function &singleton($force = false)
     {
         static $instance;
 
         // If the instance doesn't exist, create one
-        if (!isset($instance)) {
+        if (!isset($instance) || $force) {
             require_once 'Cache/Lite.php';
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
+
+            $isEnabled = ($force) ? true : $conf['cache']['enabled'];
             $options = array(
                 'cacheDir'  => SGL_TMP_DIR . '/',
                 'lifeTime'  => $conf['cache']['lifetime'],
-                'caching'   => $conf['cache']['enabled']);
+                'caching'   => $isEnabled);
             $instance = new Cache_Lite($options);
         }
         return $instance;
@@ -61,12 +65,32 @@ class SGL_Error
         return count($GLOBALS['_SGL']['ERRORS']);
     }
 
+    /**
+     * Pushes an error onto stack.
+     *
+     * @param PEAR_Error $oError
+     * @return integer   Returns the new number of elements in the array.
+     */
     function push($oError)
     {
-        $GLOBALS['_SGL']['ERRORS'][] = $oError;
-        return true;
+        return array_push($GLOBALS['_SGL']['ERRORS'], $oError);
     }
 
+    /**
+     * Pops last error off stack.
+     *
+     * @return PEAR_Error
+     */
+    function pop()
+    {
+        return array_pop($GLOBALS['_SGL']['ERRORS']);
+    }
+
+    /**
+     * Remove first error off stack.
+     *
+     * @return unknown
+     */
     function shift()
     {
         return array_shift($GLOBALS['_SGL']['ERRORS']);
@@ -175,6 +199,45 @@ class SGL_Array
         }
         return $ret;
     }
+
+    /**
+     * Merges two arrays and replace existing entrys.
+     *
+     * Merges two Array like the PHP Function array_merge_recursive.
+     * The main difference is that existing keys will be replaced with new values,
+     * not combined in a new sub array.
+     *
+     * Usage:
+     *        $newArray = SGL_Array::mergeReplace($array, $newValues);
+     *
+     * @access puplic
+     * @param array $array First Array with 'replaceable' Values
+     * @param array $newValues Array which will be merged into first one
+     * @return array Resulting Array from replacing Process
+     */
+    function mergeReplace($array, $newValues)
+    {
+        foreach ($newValues as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array[$key])) {
+                    $array[$key] = array();
+                }
+                $array[$key] = SGL_Array::mergeReplace($array[$key], $value);
+            } else {
+                if (isset($array[$key]) && is_array($array[$key])) {
+                    $array[$key][0] = $value;
+                } else {
+                    if (isset($array) && !is_array($array)) {
+                        $temp = $array;
+                        $array = array();
+                        $array[0] = $temp;
+                    }
+                    $array[$key] = $value;
+                }
+            }
+        }
+        return $array;
+    }
 }
 
 /**
@@ -279,6 +342,10 @@ class SGL_Date
                 // Brazilian date format
                 $output = $date->format('%d de %B de %Y %H:%M');
 
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+                // German date format
+                $output = $date->format('%d.%B.%Y %H:%M');
+
             } else {
                 //  else UK and US
                 $output = $date->format('%B %d, %Y %H:%M');
@@ -313,6 +380,8 @@ class SGL_Date
                 $output = $date->format('%d/%m/%Y');
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
                 $output = $date->format('%m.%d.%Y');
+            } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+                $output = $date->format('%d.%m.%Y');
             } else {
                 //  else display ISO (international, unambiguous) format, YYYY-MM-DD
                 $output = $date->format('%Y-%m-%d');
@@ -340,6 +409,8 @@ class SGL_Date
             $dateFormat = '%d %B %Y, %H:%M';
         } elseif ($_SESSION['aPrefs']['dateFormat'] == 'US') {
             $dateFormat = '%B %d, %Y %H:%M';
+        } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
+            $dateFormat = '%d.%B.%Y %H:%M';
         } else {
             //  else display ISO (international, unambiguous) format, YYYY-MM-DD
             $dateFormat = '%Y-%B-%d';
@@ -696,7 +767,7 @@ class SGL_Inflector
      * @static
      * @param    string     $str    Classname
      * @param    boolean    $force  Force the operation regardless of php version
-     * @return   mixed              Either correct case classname or false
+     * @return   mixed              Either correct case classname or original classname if no key found
      */
     function caseFix($str, $force = false)
     {
@@ -708,7 +779,7 @@ class SGL_Inflector
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
-        return ($isFound !== false) ? $aConfValues[$isFound] : false;
+        return ($isFound !== false) ? $aConfValues[$isFound] : $str;
     }
 }
 

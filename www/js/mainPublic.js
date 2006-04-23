@@ -79,6 +79,17 @@ function confirmSubmit(item, formName)
         return false;
 }
 
+function confirmDelete(item, formName)
+{
+    var evalFormName = eval('document.' + formName)
+    var flag = false
+    var agree = confirm("Are you sure you want to delete this " + item + "?");
+    if (agree)
+        return true;
+    else
+        return false;
+}
+
 function confirmSave(formName)
 {
     var evalFormName = eval('document.' + formName)
@@ -211,5 +222,28 @@ function time_select_reset(prefix, changeBack) {
         if (changeBack == true) {
             setActive('frmExpiryDate');
         }
+    }
+}
+
+function async_load() {
+    var node;
+    try {
+    	// variable _asyncDom is set from JavaScript in the iframe
+        // node = top._asyncDom.cloneNode(true); // kills Safari 1.2.4
+        node = top._asyncDom;
+        // try to remove the first script element, the one that
+        // executed all document.writes().
+        node.removeChild(node.getElementsByTagName("script")[0]);
+    } catch (e) {
+        // alert(e);
+    }
+    try {
+    	// insert DOM fragment at a DIV with id "async_demo" on current page
+        document.getElementById("async_demo").appendChild(node);
+    } catch (e) {
+        try {
+        	// fallback for some non DOM compliant browsers
+            document.getElementById("async_demo").innerHTML = node.innerHTML;
+        } catch (e1) {};
     }
 }

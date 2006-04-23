@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SectionMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -212,10 +212,10 @@ class SectionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        if ($msgType = $this->da->addSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
+        if ($this->da->addSection($input->section)) {
+            SGL::raiseMsg('Section successfully added', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseMsg('There was a problem inserting the record', true, SGL_MESSAGE_ERROR);
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
@@ -227,10 +227,10 @@ class SectionMgr extends SGL_Manager
 
         $input->section['lang'] = $input->navLang;
 
-        if ($msgType = $this->da->updateSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
+        if ($this->da->updateSection($input->section)) {
+            SGL::raiseMsg('Section details successfully updated', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseMsg('There was a problem updating the record', true, SGL_MESSAGE_ERROR);
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');

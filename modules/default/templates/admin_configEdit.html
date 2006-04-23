@@ -113,13 +113,13 @@ function toggleTransElements() {
             </p>
             <p>
                 <label class="tipOwner" for="conf[site][defaultModule]">{translate(#Default module#)}
-                <span class="tipText">{translate(#This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)#)}</span>
+                <span class="tipText">{translate(#This is the module that will be loaded if none are specified, ie, when you call index.php#)}</span>
                 </label>
                 <input type="text" name="conf[site][defaultModule]" id="conf[site][defaultModule]" value="{conf[site][defaultModule]}" />
             </p>
             <p>
                 <label class="tipOwner" for="conf[site][defaultManager]">{translate(#Default manager#)}
-                <span class="tipText">{translate(#This is the manager class that will be loaded if none are specified (FC only)#)}</span>
+                <span class="tipText">{translate(#This is the manager class that will be loaded if none are specified#)}</span>
                 </label>
                 <input type="text" name="conf[site][defaultManager]" id="conf[site][defaultManager]" value="{conf[site][defaultManager]}" />
             </p>
@@ -151,6 +151,18 @@ function toggleTransElements() {
                 <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
                 <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
             </p>
+            <p>
+                <label for="conf[site][defaultTheme]">{translate(#Default theme#)}</label>
+                <input type="text" name="conf[site][defaultTheme]" id="conf[site][defaultTheme]" value="{conf[site][defaultTheme]}" />
+            </p>
+            <p>
+                <label for="conf[site][filterChain]">{translate(#Custom filter chain#)}</label>
+                <input type="text" name="conf[site][filterChain]" id="conf[site][filterChain]" value="{conf[site][filterChain]}" />
+            </p>
+            <p>
+                <label for="conf[site][alert]">{translate(#Broadcast message#)}</label>
+                <input type="text" class="longText" name="conf[site][alert]" id="conf[site][alert]" value="{conf[site][alert]}" />
+            </p>
 
             <h3>{translate(#Paths#)}</h3>
             <p>
@@ -162,6 +174,10 @@ function toggleTransElements() {
                 <label for="conf[path][webRoot]">{translate(#Web Root#)}</label>
                 <span class="error" flexy:if="error[webRoot]">{error[webRoot]}</span>
                 <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
+            </p>
+            <p>
+                <label for="conf[path][additionalIncludePath]">{translate(#Additional Include Path#)}</label>
+                <input type="text" class="longText" name="conf[path][additionalIncludePath]" id="conf[path][additionalIncludePath]" value="{conf[path][additionalIncludePath]}" />
             </p>
         </fieldset>
 
@@ -292,6 +308,12 @@ function toggleTransElements() {
                 <span class="tipText">{translate(#Words which system was unable to translate will be enclosed in "> <" marks#)}</span>
                 </label>
                 {generateRadioPair(#conf[debug][showUntranslated]#,conf[debug][showUntranslated]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][dataObject]">{translate(#DataObject debug level#)}</label>
+                <select name="conf[debug][dataObject]" id="conf[debug][dataObject]">
+                    {generateSelect(aDbDoDebugLevels,conf[debug][dataObject]):h}
+                </select>
             </p>
         </fieldset>
 

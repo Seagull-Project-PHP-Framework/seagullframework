@@ -196,13 +196,14 @@ CREATE TABLE if not exists usr (
   PRIMARY KEY  (usr_id)
 ) TYPE=InnoDB;
 
-CREATE UNIQUE INDEX usr_email ON usr (
-   email
-);
-
-CREATE UNIQUE INDEX usr_username ON usr (
-   username
-);
+/* we'll see if dbdo fixes this problem */
+-- CREATE UNIQUE INDEX usr_email ON usr (
+--    email
+-- );
+--
+-- CREATE UNIQUE INDEX usr_username ON usr (
+--    username
+-- );
 
 /*==============================================================*/
 /* Table: user_permission                                       */

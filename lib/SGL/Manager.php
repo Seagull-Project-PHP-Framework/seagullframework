@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Manager.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -70,7 +70,7 @@ class SGL_Manager
      * @access  public
      * @var     string
      */
-    var $pageTitle = '';
+    var $pageTitle = 'default';
 
     /**
      * Flag indicated is Page validation passed.
@@ -79,14 +79,6 @@ class SGL_Manager
      * @var     boolean
      */
     var $validated = false;
-
-    /**
-     * Current module name.
-     *
-     * @access  public
-     * @var     string
-     */
-    var $module = '';
 
     /**
      * Sortby flag, used in child classes.
@@ -200,7 +192,6 @@ class SGL_Manager
                 if (is_array($ok) && count($ok)) {
 
                     list($className, $methodName) = $ok;
-                    SGL::raiseMsg('you do not have perms');
                     SGL::logMessage('Unauthorised user '.SGL_Session::getUid() .' attempted to access ' .
                         $className . '::' .$methodName, PEAR_LOG_WARNING);
 
@@ -213,10 +204,14 @@ class SGL_Manager
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                    //  get default params for logout page
-                    $aParams = $this->getDefaultPageParams();
-                    SGL_HTTP::redirect($aParams);
-
+                   // redirect to login page
+                    $url       = $input->getCurrentUrl();
+                    $redir     = $url->toString();
+                    $loginPage = array( 'moduleName'    => 'user',
+                                        'managerName'   => 'login',
+                                        'redir'         => urlencode($redir));
+                    SGL::raiseMsg('authorization required');
+                    SGL_HTTP::redirect($loginPage);
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);
@@ -274,8 +269,8 @@ class SGL_Manager
     {
         $req = $input->getRequest();
         $mgr = $req->get('managerName');
-        $userRid = SGL_Session::getUserType();
-        
+        $userRid = SGL_Session::getRoleId();
+
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                && $this->conf[$mgrName]['adminGuiAllowed']
                && $userRid == SGL_ADMIN) {

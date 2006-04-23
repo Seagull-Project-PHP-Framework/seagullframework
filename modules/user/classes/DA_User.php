@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_User.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -635,6 +635,12 @@ class DA_User extends SGL_Manager
             SELECT  $term, default_value
             FROM    {$this->conf['table']['preference']}";
         $aRes = $this->dbh->getAssoc($query);
+
+        //  set default theme from config
+        $key = ($type == SGL_RET_NAME_VALUE) ? 'theme' : 3;
+        $c = &SGL_Config::singleton();
+        $defaultTheme = $c->get(array('site' => 'defaultTheme'));
+        $aRes[$key] = $defaultTheme;
 
         return $aRes;
     }

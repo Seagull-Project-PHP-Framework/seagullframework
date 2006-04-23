@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginBlock.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -56,28 +56,36 @@ class User_Block_Login
         $this->username = isset($output->loggedOnUser) ? $output->loggedOnUser : '';
         $this->startTime = isset($output->loggedOnSince) ? $output->loggedOnSince : '';
 
-        return $this->getBlockContent();
+        return $this->getBlockContent($output);
     }
 
-    function getBlockContent()
+    function getBlockContent($output)
     {
         if ($this->uid == SGL_GUEST) {
-            return $this->getLoginScreen();
+            return $this->getLoginScreen($output);
         }
         else {
             return $this->getLogoutScreen();
         }
     }
 
-    function getLoginScreen()
+    function getLoginScreen($output)
     {
+
+        if (isset($output->conf['tuples']['demoMode']) && $output->conf['tuples']['demoMode'] == true) {
+            $username = 'admin';
+            $password = 'admin';
+        } else {
+            $username = '';
+            $password = '';
+        }
         $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="loginBlock">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'
-                    <input name="frmUsername" size="15" value="" maxlength="36" type="text" />
+                    <input name="frmUsername" size="15" value="'.$username.'" maxlength="36" type="text" />
                     <span class="error">*&nbsp;</span>'.SGL_String::translate('Password').'
-                    <input name="frmPassword" size="15" maxlength="24" type="password" />
+                    <input name="frmPassword" value="'.$password.'" size="15" maxlength="24" type="password" />
                     <p class="alignCenter"><input name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
                     <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
                     <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>

@@ -21,6 +21,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = '';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -36,6 +37,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = '/';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         $this->assertTrue(!array_key_exists('module', $ret));
@@ -48,6 +50,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = 'faq';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -63,6 +66,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = 'user/account';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         //  assert expected keys present
@@ -78,6 +82,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = 'contactus/contactus/action/list/enquiry_type/Hosting info';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         $this->assertTrue(is_array($ret));
@@ -96,6 +101,7 @@ class UrlStrategySimpleTest extends UnitTestCase
     {
         $qs = 'contactus/contactus/action/list/enquiry_type/Get+a+quote';
         $url = new SGL_Url($qs, true, new SGL_UrlParser_SimpleStrategy());
+        $url->init();
         $ret = $url->getQueryData();
 
         $this->assertTrue(is_array($ret));

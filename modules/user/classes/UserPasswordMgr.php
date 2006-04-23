@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UserPasswordMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 // $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/PasswordMgr.php';
-
+require_once SGL_CORE_DIR . '/Observer.php';
 
 /**
  * Manages passwords.
@@ -109,7 +109,7 @@ class UserPasswordMgr extends PasswordMgr
             }
             //  if errors have occured
             if (is_array($aErrors) && count($aErrors)) {
-                SGL::raiseMsg('Please fill in the indicated fields');
+                SGL::raiseMsg('Please fill in the indicated fields', true, SGL_MESSAGE_ERROR);
                 $input->error = $aErrors;
                 $this->validated = false;
             }
@@ -132,19 +132,16 @@ class UserPasswordMgr extends PasswordMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $oUser = DB_DataObject::factory($this->conf['table']['user']);
-        $oUser->get(SGL_Session::getUid());
-        $oUser->passwd = md5($input->password);
-        $success = $oUser->update();
-        if ($input->passwdResetNotify) {
-            $this->sendPassword($oUser, $input->password, $input->moduleName);
+        $updateUserPasswd = new User_UpdateUserPassword($input, $output);
+        $aObservers = explode(',', $this->conf['UserPasswordMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $updateUserPasswd->attach(new $observer());
+            }
         }
-
-        if ($success) {
-            SGL::raiseMsg('Password updated successfully');
-        } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
-        }
+        $updateUserPasswd->run();
     }
 
     function _isOriginalPassword($passwd)
@@ -153,6 +150,37 @@ class UserPasswordMgr extends PasswordMgr
             $oUser = DB_DataObject::factory($this->conf['table']['user']);
             $oUser->get(SGL_Session::getUid());
             return md5($passwd) == $oUser->passwd;
+        }
+    }
+}
+
+class User_UpdateUserPassword extends SGL_Observable
+{
+    function User_UpdateUserPassword(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->conf = $this->input->getConfig();
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser->get(SGL_Session::getUid());
+        $oUser->passwd = md5($this->input->password);
+        $success = $oUser->update();
+
+        //  make user object available to observers
+        $this->oUser = $oUser;
+
+        if ($success) {
+            //  invoke observers
+            $this->notify();
+            SGL::raiseMsg('Password updated successfully', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 }

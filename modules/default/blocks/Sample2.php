@@ -11,10 +11,6 @@ class Default_Block_Sample2
 {
     var $webRoot = SGL_BASE_URL;
 
-    function SampleBlock2()
-    {
-    }
-
     function init()
     {
         return $this->getBlockContent();
@@ -24,7 +20,7 @@ class Default_Block_Sample2
     {
         $text = <<< HTML
 <p class="alignCenter">
-<a href="http://seagull.phpkitchen.com/index.php/export/rss/">
+<a href="http://seagullproject.org/export/rss/">
     <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" align="absmiddle"/>
 </a>
 </p>

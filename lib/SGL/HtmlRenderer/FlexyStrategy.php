@@ -22,7 +22,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
     function render(/*SGL_View*/ &$view)
     {
         //  invoke html view specific post-process tasks
-        $view->postProcess($view);
+        #$view->postProcess($view);
 
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
@@ -31,22 +31,22 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
         require_once 'HTML/Template/Flexy.php';
         $flexy = $this->initEngine($view->data);
 
-        $ok = $flexy->compile($view->data->masterTemplate);
+        $masterTemplate = isset($view->data->masterTemplate)
+            ? $view->data->masterTemplate
+            : $view->data->manager->masterTemplate;
+
+        $ok = $flexy->compile($masterTemplate);
 
         //  if some Flexy 'elements' exist in the output object, send them as
         //  2nd arg to Flexy::bufferedOutputObject()
         $elements = (   isset($view->data->flexyElements)
                   && is_array($view->data->flexyElements))
-                ? $view->data->flexyElements
-                : array();
+            ? $view->data->flexyElements
+            : array();
 
         $data = $flexy->bufferedOutputObject($view->data, $elements);
 
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
-
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
         return $data;
     }
 
@@ -70,8 +70,8 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
                                    SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
 
                                    // the default template dir from the default theme
-                                   SGL_MOD_DIR . '/'. $data->moduleName . '/templates/' . PATH_SEPARATOR .
-                                   SGL_MOD_DIR . '/default/templates/',
+                                   SGL_MOD_DIR . '/'. $data->moduleName . '/templates' . PATH_SEPARATOR .
+                                   SGL_MOD_DIR . '/default/templates',
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
             'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $data->theme,

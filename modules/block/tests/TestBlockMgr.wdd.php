@@ -7,16 +7,10 @@ class BlockMgrTest extends UnitTestCase
     {
         $this->UnitTestCase('BlockMgr Tests');
     }
-    
+
     function setup()
     {
-        $this->blockMgr = new BlockMgr();   
-    }
-    
-    function testIsHtmlBlock()
-    {
-        // SiteNews block is not html
-        $this->assertFalse($this->blockMgr->isHtmlBlock(1));
+        $this->blockMgr = new BlockMgr();
     }
 }
 ?>

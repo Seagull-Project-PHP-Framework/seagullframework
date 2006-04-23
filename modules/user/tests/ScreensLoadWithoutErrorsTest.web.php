@@ -10,28 +10,34 @@ class UserScreensLoadWithoutErrorsTest extends WebTestCase
 
     function testAdminScreens()
     {
+        $this->addHeader('User-agent: foo-bar');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/login/');
+        $this->setField('frmUsername', 'admin');
+        $this->setField('frmPassword', 'admin');
+        $this->clickSubmitByName('submitted');
+
         //  my account
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/account/');
         $this->assertTitle('Seagull Framework :: My Account');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/account/action/viewProfile/');
-        $this->assertTitle('Seagull Framework :: My Account');
+        $this->assertTitle('Seagull Framework :: My Profile');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/account/action/edit/');
-        $this->assertTitle('Seagull Framework :: My Account');
+        $this->assertTitle('Seagull Framework :: My Profile :: edit');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/account/action/edit/');
-        $this->assertTitle('Seagull Framework :: My Account');
+        $this->assertTitle('Seagull Framework :: My Profile :: edit');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/userpreference/');
         $this->assertTitle('Seagull Framework :: User Preferences');
         $this->assertNoUnwantedPattern("/errorContent/");
 
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/password/action/edit/');
+        $this->get($this->conf['site']['baseUrl'] . '/index.php/user/userpassword/action/edit/');
         $this->assertTitle('Seagull Framework :: Change Password');
         $this->assertNoUnwantedPattern("/errorContent/");
 
@@ -66,7 +72,7 @@ class UserScreensLoadWithoutErrorsTest extends WebTestCase
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/orgtype/action/list/');
-        $this->assertTitle('Seagull Framework :: OrgType Manager');
+        $this->assertTitle('Seagull Framework :: Organisation Type Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/role/action/list/');

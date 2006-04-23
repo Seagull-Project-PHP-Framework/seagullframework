@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -62,6 +62,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->_aActionsMapping =  array(
             'dbgen'     => array('dbgen'),
             'rebuildSequences' => array('rebuildSequences'),
+            'rebuildSeagull' => array('rebuildSeagull'),
             'clearCache' => array('clearCache'),
             'checkLatestVersion' => array('checkLatestVersion', 'redirectToDefault'),
             'list'      => array('list'),
@@ -99,7 +100,7 @@ class MaintenanceMgr extends SGL_Manager
     //  regenerate dataobject entity files
     function _cmd_dbgen(&$input, &$output)
     {
-        require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
         $res = SGL_Task_CreateDataObjectEntities::run();
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
         SGL::logMessage($res, PEAR_LOG_DEBUG);
@@ -136,12 +137,65 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
         $res = SGL_Task_SyncSequences::run();
         if (PEAR::isError($res)) {
             return $res;
         } else {
             SGL::raiseMsg('Sequences rebuilt successfully', true, SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _cmd_rebuildSeagull(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!preg_match("/mysql/", $this->dbh->phptype)) {
+            SGL::raiseMsg('This operation is currently only supported for MySQL',
+                false, SGL_MESSAGE_INFO);
+            return false;
+        }
+        require_once SGL_CORE_DIR . '/Task/Install.php';
+
+        $data = array(
+            'createTables' => 1,
+            'insertSampleData' => 1,
+            'installAllModules' => 1,
+            'adminUserName' => 'admin',
+            'adminPassword' => 'admin',
+            'adminRealName' => 'Demo Admin',
+            'adminEmail' => 'demian@phpkitchen.com',
+            'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'serverName' =>  SGL_SERVER_NAME,
+            );
+
+        define('SGL_ADMIN_REBUILD', 1);
+        $runner = new SGL_TaskRunner();
+        $runner->addData($data);
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_DropDatabase());
+        $runner->addTask(new SGL_Task_CreateDatabase());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
+        $runner->addTask(new SGL_Task_CreateFileSystem());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new SGL_Task_CreateAdminUser());
+        $runner->addTask(new SGL_Task_InstallerCleanup());
+
+        set_time_limit(120);
+        $ok = $runner->main();
+
+        if (PEAR::isError($ok)) {
+            return $res;
+        } else {
+            SGL::raiseMsg('Environment rebuilt successfully', false, SGL_MESSAGE_INFO);
         }
     }
 

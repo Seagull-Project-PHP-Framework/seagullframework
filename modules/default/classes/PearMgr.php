@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PearMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -63,8 +63,8 @@ class PearMgr extends SGL_Manager
             'doRequest'   => array('doRequest'),
         );
         $this->aChannels = array(
-            'pear.php.net'          => 'PEAR',
             'pear.phpkitchen.com'   => 'Seagull',
+            'pear.php.net'          => 'PEAR',
             'pearified.com'         => 'Pearified',
         );
     }

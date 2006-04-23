@@ -53,5 +53,18 @@
             </div>
         </fieldset>
     </form>
+
+    <form name="rebuildSeagull" method="post" id="rebuildSeagull" flexy:ignore>
+        <h3>{translate(#Rebuild Seagull#)}</h3>
+        <fieldset class="inside">
+            <p class="center">
+                WARNING: This will drop your database and create your Seagull environment from
+                discovered data files.  It will only work correctly if your current database user
+                has full privileges, ie to drop and create databases.<br />
+                <input type="hidden" name="action" value="rebuildSeagull" />
+                <input type="submit" class="sgl-button"name="submit" value="{translate(#Rebuild Seagull#)}" />
+            </p>
+        </fieldset>
+    </form>
     <div class="spacer"></div>
 </div>

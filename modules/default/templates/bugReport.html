@@ -60,22 +60,22 @@ function enableField()
             <td>
                 <div class="error" flexy:if="error[description]">
                     {translate(error[description])}
-                </div>            
+                </div>
                 <input type="text" name="bug[description]" value="{bug.description}" size="61" />
 
             </td>
         </tr>
-        
+
         <tr>
             <td class="fieldName">Comment:</td>
             <td>
                 <div class="error" flexy:if="error[comment]">
                     {translate(error[comment])}
-                </div>            
+                </div>
                 <textarea name="bug[comment]" cols="60" rows="5">{bug.comment}</textarea>
             </td>
         </tr>
-        
+
         <tr>
             <td class="fieldName">Your environment:</td>
             <td>
@@ -88,7 +88,7 @@ function enableField()
         <tr>
             <td colspan="2">
                 <input type="submit" name="submitted" class="wideButton" value="{translate(#Send it#)}" />
-                [bugs sent to bugs@phpkitchen.com]
+                [bugs sent to bugs@seagullproject.org]
             </td>
         </tr>
     </table>

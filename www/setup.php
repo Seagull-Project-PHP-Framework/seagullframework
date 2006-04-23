@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -85,10 +85,11 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-session_start();
 require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
 SGL_FrontController::init();
+session_start();
+$_SESSION['ERRORS'] = array();
 
 //  reroute to front controller
 if (isset($_GET['start'])) {
@@ -151,14 +152,35 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 
 //  load tasks
-require_once SGL_PATH . '/lib/SGL/Install/Tasks/DetectEnv.php';
-require_once SGL_PATH . '/lib/SGL/Install/Tasks/Install.php';
+require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
 class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
         $data = $page->controller->exportValues();
+
+        //  is this a rebuild?
+        $dbh = & SGL_DB::singleton();
+        $res = false;
+        if (!PEAR::isError($dbh)) {
+            $query = 'SELECT COUNT(*) FROM module';
+            $res = $dbh->getOne($query);
+        }
+
+        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
+            $data['aModuleList'] = SGL_Install_Common::getModuleList();
+        } elseif (isset($data['installAllModules'])) { // CLI
+            $data['aModuleList'] = SGL_Install_Common::getModuleList();
+            SGL_Error::pop();
+        } elseif (!isset($data['installAllModules']) || PEAR::isError($dbh)) { // a new install
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop();
+        } else {
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop();
+        }
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
@@ -168,14 +190,15 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_LoadSampleData());
-        $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_LoadTranslations());
-        $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_CreateAdminUser());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
         set_time_limit(120);

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Item.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -843,6 +843,9 @@ class SGL_Item
 
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
+        if (PEAR::isError($aResult)) {
+            return $aResult;
+        }
         $aArticleList = $aResult['data'];
 
         //  get most recent article, if array is non-empty,
@@ -914,8 +917,8 @@ class SGL_Item
         }
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
+            return SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  if published flag set, only return published articles
         $isPublishedClause = ($bPublished)?
@@ -968,14 +971,15 @@ class SGL_Item
             'curPageSpanPost'       => '</span>',
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
         if ($this->conf['translation']['container'] == 'db') {
             foreach ($aPagedData['data'] as $k => $aValues) {
-                $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getLangID()))
-                    ? $translation
-                    : $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getFallbackLangID());
+                if (($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getLangID()))
+                ||  ($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getFallbackLangID())))
+                {
+                    $aPagedData['data'][$k]['addition'] = $title;
+                }
             }
         }
         return $aPagedData;

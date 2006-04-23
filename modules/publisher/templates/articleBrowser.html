@@ -19,8 +19,8 @@
         <p>[<a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}" title="{aValue[title]}">{translate(#full story#)} "{aValue[title]}"</a>]
         {if:isAdmin()}
             <a href="{makeUrl(#edit#,#article#,#publisher#,articleList,#frmArticleID|item_id#,key)}" />
-                [{translate(#edit#)}]
-            </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
+                [{translate(#Edit#)}]
+            </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#Edit#)}" />
         {end:}</p>
         <hr />
     {end:}

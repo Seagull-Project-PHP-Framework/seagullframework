@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Session.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -220,7 +220,7 @@ class SGL_Session
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             $oldSessionId = session_id();
-            session_regenerate_id();
+            @session_regenerate_id();
 
             if ($conf['session']['handler'] == 'file') {
 
@@ -321,33 +321,6 @@ class SGL_Session
     }
 
     /**
-     * Determines current user type.
-     *
-     *      - guest (not logged in)
-     *      - member
-     *      - admin
-     *
-     * @access  public
-     * @static
-     * @return  int  $currentUserType
-     */
-    function getUserType()
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $currentRoleId = @$_SESSION['rid'];
-
-        if ($currentRoleId == SGL_GUEST) {
-            $currentUserType = SGL_GUEST;
-        } elseif ($currentRoleId == SGL_ADMIN) {
-            $currentUserType = SGL_ADMIN;
-        } else {
-            $currentUserType = SGL_MEMBER;
-        }
-        return $currentUserType;
-    }
-
-    /**
      * Returns the current user's id.
      *
      * @access  public
@@ -378,7 +351,7 @@ class SGL_Session
             return $_SESSION['username'];
         } else {
             return false;
-        }        
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardTestDbConnection.php                                                |
 // +---------------------------------------------------------------------------+
@@ -47,7 +47,7 @@ function canConnectToDbServer()
         ? '(' . $aFormValues['socket'] . ')'
         : '';
 
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) 
+	$protocol = isset($aFormValues['dbProtocol']['protocol'])
         ? $aFormValues['dbProtocol']['protocol'] . $socket
         : '';
     $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
@@ -72,10 +72,24 @@ function canConnectToDbServer()
         SGL_Install_Common::errorPush($dbh);
         return false;
     } else {
+        //  detect and store DB info
+        if (preg_match("/mysql/", $dbh->phptype)) {
+            $mysqlVersion = mysql_get_server_info();
+        }
+        $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+        $aEnvData['db_info'] = array(
+            'dbDriver' => $dbh->phptype,
+            'version' => isset($mysqlVersion) ? $mysqlVersion : '',
+            );
+        $serialized = serialize($aEnvData);
+        @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardTestDbConnection extends HTML_QuickForm_Page
 {
     function buildForm()
@@ -83,7 +97,7 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $this->_formBuilt = true;
         $this->addElement('header', null, 'Test DB Connection: page 3 of 5');
 
-        //  FIXME: use detect.php info to supply sensible defaults
+        //  FIXME: use env.php info to supply sensible defaults
         $this->setDefaults(array(
             'host' => 'localhost',
             'dbProtocol'  => array('protocol' => 'unix'),
@@ -97,7 +111,6 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
         $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
 #        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
-#        $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
 #        $radio[] = &$this->createElement('radio', 'type',     '', "db2", 'db2_SGL');
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');

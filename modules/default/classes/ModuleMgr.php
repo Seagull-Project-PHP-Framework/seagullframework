@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ModuleMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -64,6 +64,7 @@ class ModuleMgr extends SGL_Manager
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
+            'detect'    => array('detect'),
             'insert'    => array('insert', 'redirectToDefault'),
             'edit'      => array('edit'),
             'update'    => array('update', 'redirectToDefault'),
@@ -94,8 +95,15 @@ class ModuleMgr extends SGL_Manager
         }
         $input->aDelete         = $req->get('frmDelete');
         $input->moduleId        = $req->get('frmModuleId');
-        $input->module          = (object)$req->get('module');
-        $input->module->is_configurable = (isset($input->module->is_configurable)) ? 1 : 0;
+        $aModules               = $req->get('module');
+
+        if (count($aModules)) {
+            foreach ($aModules as $k => $module) {
+                $input->module[$k] = (object)$module;
+                $input->module[$k]->is_configurable = (isset($input->module[$k]->is_configurable)) ? 1 : 0;
+            }
+        }
+
         $input->submitted       = $req->get('submitted');
 
         //  validate fields
@@ -108,20 +116,25 @@ class ModuleMgr extends SGL_Manager
                 'icon' => 'Please, specify the name of the icon-file'
             );
             foreach ($aFields as $field => $errorMsg) {
-                if (empty($input->module->$field)) {
-                    $aErrors[$field] = $errorMsg;
+                for ($x = 0; $x < count($input->module); $x++) {
+                    if (empty($input->module[$x]->$field)) {
+                        $aErrors[$x][$field] = $errorMsg;
+                        $aErrors[$field] = $errorMsg;
+                    }
                 }
             }
         }
-
         //  if errors have occured
-        if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
-            $input->template = 'moduleEdit.html';
-            $input->isConfigurable = ($input->module->is_configurable) ? 'checked' : '';
-            $this->validated = false;
-        }
+//        if (isset($aErrors) && count($aErrors)) {
+//            SGL::raiseMsg('Please fill in the indicated fields');
+//            $input->error = $aErrors;
+//            $input->template = 'moduleEdit.html';
+//            $input->aModules = $input->module;
+//            for ($x = 0; $x < count($input->module); $x++) {
+//                $input->isConfigurable = ($input->module[$x]->is_configurable) ? 'checked' : '';
+//            }
+//            $this->validated = false;
+//        }
     }
 
     function display(&$output)
@@ -160,7 +173,6 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $aModules = $this->da->getAllModules();
-
         if (!PEAR::isError($aModules)) {
 
             //  ensure modules installed with pear packager are in db
@@ -190,6 +202,30 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
+    function _cmd_detect(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $aAllModules = SGL_Util::getAllModuleDirs($onlyRegistered = false);
+        $aRegisteredModules = SGL_Util::getAllModuleDirs();
+        $aDiff = array_diff($aAllModules, $aRegisteredModules);
+
+        $aModules = array();
+        foreach ($aDiff as $modulename) {
+            $module = new stdClass();
+            $module->name = $modulename;
+            $module->description = 'your description here ...';
+            $module->icon = "48/module_default.png";
+            $aModules[] = $module;
+        }
+
+        $output->pageTitle = 'Module Manager :: Discovered';
+        $output->action = 'insert';
+        $output->mode = 'detect';
+        $output->aModules = $aModules;
+        $output->template  = 'modulesDetected.html';
+    }
+
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -197,29 +233,31 @@ class ModuleMgr extends SGL_Manager
         $output->pageTitle = 'Module Manager :: Add';
         $output->action = 'insert';
         $output->template  = 'moduleEdit.html';
+
+        $module = new stdClass();
+        $module->icon = "48/module_default.png";
+        $output->aModules = array($module);
     }
 
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->module)) {
+        if (!(count($input->module) || SGL::objectHasState($input->module[0]))) {
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
         $output->template = 'moduleList.html';
-        #$newEntry = DB_DataObject::factory($this->conf['table']['module']);
-        $oModule = $this->da->getModuleById();
-        $oModule->setFrom($input->module);
-        #$oModule->module_id = $this->dbh->nextId($this->conf['table']['module']);
 
-        $ok = $this->da->addModule($oModule);
-        if ($ok) {
-            SGL::raiseMsg('Module successfully added to the manager.', true, SGL_MESSAGE_INFO);
-        } else {
-            SGL::raiseError('There was a problem inserting the record',
-                SGL_ERROR_NOAFFECTEDROWS);
+        foreach ($input->module as $module) {
+            if (isset($module->register)) {
+                $oModule = $this->da->getModuleById();
+                $oModule->setFrom($module);
+                $ok = $this->da->addModule($oModule);
+            }
         }
+        SGL::raiseMsg('Module successfully added to the manager.', true,
+            SGL_MESSAGE_INFO);
     }
 
     function _cmd_edit(&$input, &$output)
@@ -231,7 +269,7 @@ class ModuleMgr extends SGL_Manager
         $output->template  = 'moduleEdit.html';
         $oModule = DB_DataObject::factory($this->conf['table']['module']);
         $oModule->get($input->moduleId);
-        $output->module = $oModule;
+        $output->aModules = array($oModule);
         $output->isConfigurable = ($oModule->is_configurable) ? ' checked' : '';
     }
 
@@ -240,11 +278,11 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
         $newEntry = DB_DataObject::factory($this->conf['table']['module']);
-        $newEntry->get($input->module->module_id);
-        $newEntry->setFrom($input->module);
+        $newEntry->get($input->moduleId);
+        $newEntry->setFrom($input->module[0]);
         $success = $newEntry->update();
 
-        if ($success) {
+        if ($success !== false) {
             SGL::raiseMsg('module successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
@@ -257,10 +295,11 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $rm = DB_DataObject::factory($this->conf['table']['module']);
-        $rm->get($input->module->module_id);
+        $rm->get($input->moduleId);
         $rm->delete();
 
-        SGL::raiseMsg('module successfully removed');
+        SGL::raiseMsg('module successfully unregistered', false,
+            SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)

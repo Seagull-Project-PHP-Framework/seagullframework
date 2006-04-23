@@ -40,8 +40,8 @@ if (!function_exists('file_get_contents')) {
 /**
  * @nodep Gtk
  */
-if ('/var/www/html/seagull/trunk/lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', '/var/www/html/seagull/trunk/lib/pear');
+if ('/var/www/html/seagull/branches/0.6-bugfix/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/var/www/html/seagull/branches/0.6-bugfix/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
@@ -58,7 +58,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.8";
+$pear_package_version = "1.4.9";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';

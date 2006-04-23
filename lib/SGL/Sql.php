@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Sql.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -76,6 +76,14 @@ class SGL_Sql
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
+        $isMysql323 = false;
+        if ($conf['db']['type'] == 'mysql_SGL' || $conf['db']['type'] == 'mysql') {
+            $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+            if (ereg('3.23', $aEnvData['db_info']['version'])) {
+                $isMysql323 = true;
+            }
+        }
+
         // Iterate through each line in the file.
         while (!feof($fp)) {
 
@@ -94,24 +102,21 @@ class SGL_Sql
                 continue;
             }
 #END:FIXME
-
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableName($line);
                 $nextId = $dbh->nextId($tableName);
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
-
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
                 continue;
             }
 
-            // replace ; for MaxDB and Oracle
-            if (($conf['db']['type'] == 'oci8_SGL') || ($conf['db']['type'] == 'odbc')){
+            // strip semi-colons for MaxDB, Oracle and mysql 3.23
+            if ($conf['db']['type'] == 'oci8_SGL' || $conf['db']['type'] == 'odbc' || $isMysql323) {
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
-
             // Execute the statement.
             $res = $dbh->query($sql);
 
@@ -131,9 +136,9 @@ class SGL_Sql
 
     function extractTableName($str)
     {
-        $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
+        $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
         preg_match($pattern, $str, $matches);
-        $tableName = $matches[2];
+        $tableName = $matches[3];
         return $tableName;
     }
 

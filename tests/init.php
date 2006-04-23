@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | init.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -119,6 +119,7 @@ function parseIniFile()
         if (!copy(STR_PATH . '/tests/test.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini.php')) {
             die('ERROR WHEN COPYING CONFIG FILE TO ' . STR_TMP_DIR . '/test.conf.ini.php');
         }
+        @chmod(STR_TMP_DIR . '/test.conf.ini.php', 0666);
         define('TEST_ENVIRONMENT_NO_CONFIG', true);
         $ret = parse_ini_file($configPath . '/test.conf.ini.php', true);
     }

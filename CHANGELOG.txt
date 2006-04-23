@@ -1,11 +1,53 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.7.0        |
+| VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
-IMPROVEMENTS
+22-04-06    Fixed problem where selecting 'store langs in DB' during install, but
+            then selecting none from list resulted in a fatal error (Heinrich Stoellinger)
+21-04-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
+            dataobjects', now file removal forces update
+21-04-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
+21-04-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
+            Postgres fixed, unique indexes removed from usr table
+15-04-06    At long last, thanks to matt from IRC, Seagull will install properly
+            on MySQL 3.23
+12-04-06    List of stylesheets now correctly drawn from configured default theme,
+            not session.
+12-04-06    Made instructions clearer for adding default module and manager
+07-04-06    Link to news items corrected (alphasock@disona.net)
+14-03-06    Fixed Config::merge behaviour (Miha Vrhovnik)
+14-03-06    Fixed query for listing users with a left join (mstahv)
 
+IMPROVEMENTS
+22-04-06    Added ability to control DB_DataObject debug level from Config
+21-04-06    Added ability to force cache usage, overriding perferences, ie:
+                $cache = & SGL_Cache::singleton($force = true);
+18-04-06    Added ability to detect new modules
+17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
+13-04-06    Added ability to rebuild Seagull environment for privileged users
+13-04-06    Module generator improved
+11-04-06    Implemented observer support, example in RegisterMgr::_cmd_insert()
+07-04-06    Code for Delegate class simplified to work with installations where PHP
+            is compiled with --disable-reflection (jbpros)
+06-04-06    Improved pre and post-process workflow
+06-04-06    Added the ability to create a broadcast message that will appear on
+            every screen, eg, "Maintenance planned at 22.00 GMT"
+06-04-06    Added MySQL version detection, added more info to bug reporter
+26-03-06    Modified SGL_Inflector::caseFix() to return the original string if a
+            config key cannot be found to compare with, instead of false
+26-03-06    Added ability to load navigation data during the install, so devs can
+            create navigation that corresponds with their custom modules
+20-03-06    Added Dutch translation (Peter Termaten)
+20-03-06    Russian translations updated and enhanced (Dmitry Lakachauskis)
+17-03-06    Improvements to module generator, CRUD added (Gerald Fischer)
+17-03-06    Guestbook, FAQ, Documentor and Export modules improved, updated Russian
+            translations (lakiboy)
+17-03-06    Removed CSS hacks (Riccardo Magliocchetti and mstahv)
+17-03-06    Additional include paths can now be added via Config
+16-03-06    Added ability to implement custom filter chains
+14-03-06    Default theme now config driven
 
 +-----------------------+
 | VERSION: 0.6.0RC1     |
@@ -24,6 +66,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+08-03-06    Admin GUI complete (Julien Casanova)
 04-03-06    Renamed AppController to FrontController
 26-02-06    Added printf() method for templates, see
             http://trac.seagullproject.org/wiki/Howto/Templates/WorkingWithTemplates#UsingVariablesinLanguageStrings
@@ -39,7 +82,7 @@ IMPROVEMENTS
             ties allocated to 'default' module
 20-02-06    Moved all default templates within modules
 17-02-06    Factored out module builder code into its own manager, ModuleGenerationMgr
-17-02-06    CLI installer added, see seagull/var/demoRebuild.php
+17-02-06    CLI installer added, see seagull/var/envRebuild.php
 17-02-06    Added ability to edit modules' config files through GUI
             (Eric Persson)
 16-02-06    Moved session options to their own config group

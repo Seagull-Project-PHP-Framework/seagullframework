@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DB.php                                                                    |
 // +---------------------------------------------------------------------------+
@@ -80,8 +80,13 @@ class SGL_DB
             $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
-                return PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                $msg = 'Cannot connect to DB, check your credentials, exiting ...';
+                if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+                    $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be able to run the setup again.';
+                }
+                $err = PEAR::raiseError($msg,
                     SGL_ERROR_DBFAILURE, $fatal);
+                return $err;
             }
             if (!empty($conf['db']['postConnect'])) {
                 $conn->query($conf['db']['postConnect']);
@@ -104,6 +109,22 @@ class SGL_DB
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
+        if (!count($conf)) {
+            return false;
+        }
+
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if ($dbh && count($dbh->dsn)) {
+            $locatorDsn = $dbh->dsn;
+            $conf['db']['user'] = $locatorDsn['username'];
+            $conf['db']['pass'] = $locatorDsn['password'];
+            $conf['db']['protocol'] = $locatorDsn['protocol'];
+            $conf['db']['socket'] = $locatorDsn['socket'];
+            $conf['db']['host'] = $locatorDsn['hostspec'];
+            $conf['db']['port'] = $locatorDsn['port'];
+            $conf['db']['name'] = $locatorDsn['database'];
+        }
 
         //  override default mysql driver to allow for all sequence IDs to
         //  be kept in a single table
@@ -265,6 +286,91 @@ class SGL_DB
             );
         }
         return $page;
+    }
+}
+
+/**
+ * ServiceLocator.
+ *
+ * @package    SGL
+ * @author     Luis Correa d'Almeida <luis@awarez.net>
+ * @author     Andrew Hill <andrew@awarez.net>
+ */
+
+/**
+  * A class that allows services to be globally registered, so that they
+  * can be accessed by any class that needs them. Also allows Mock Objects
+  * to be easily used as replacements for classes during testing.
+  */
+class SGL_ServiceLocator
+{
+    var $aServices = array();
+
+    /**
+     * A method to return a singleton handle to the service locator class.
+     */
+    function &singleton()
+    {
+        static $instance;
+        if (!$instance) {
+            $class = __CLASS__;
+            $instance = new $class();
+        }
+        return $instance;
+    }
+
+    /**
+     * A method to register a service with the service locator class.
+     *
+     * @param string $serviceName The name of the service being registered.
+     * @param mixed $oService The object (service) being registered.
+     * @return boolean Always returns true.
+     */
+    function register($serviceName, &$oService)
+    {
+        $this->aServices[$serviceName] = &$oService;
+        return true;
+    }
+
+    /**
+     * A method to remove a registered service from the service locator class.
+     *
+     * @param string $serviceName The name of the service being de-registered.
+     */
+    function remove($serviceName)
+    {
+        unset($this->aServices[$serviceName]);
+    }
+
+    /**
+     * A method to return a registered service.
+     *
+     * @param string $serviceName The name of the service required.
+     * @return mixed Either the service object requested, or false if the
+     *               requested service was not registered.
+     */
+    function &get($serviceName)
+    {
+        if (isset($this->aServices[$serviceName])) {
+            $ret = $this->aServices[$serviceName];
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    /**
+     * A method to return a registered service.
+     *
+     * @param string $serviceName The name of the service required.
+     * @return mixed Either the service object requested, or false if the
+     *               requested service was not registered.
+     * @static
+     */
+    function &staticGet($serviceName)
+    {
+        $oServiceLocator = &SGL_ServiceLocator::singleton();
+        return $oServiceLocator->get($serviceName);
     }
 }
 ?>

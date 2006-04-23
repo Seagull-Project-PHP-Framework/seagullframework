@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginMgr.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -145,7 +145,7 @@ class LoginMgr extends SGL_Manager
     function _cmd_logout(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_Cache::clear('blocks');
+
         SGL_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out');
 
@@ -157,6 +157,11 @@ class LoginMgr extends SGL_Manager
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $output->username = 'admin';
+            $output->password = 'admin';
+        }
     }
 
     function _doLogin($username, $password)

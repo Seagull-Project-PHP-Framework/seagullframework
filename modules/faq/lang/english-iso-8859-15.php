@@ -11,7 +11,6 @@
         'Please fill in an answer' => 'Please fill in an answer',
         'Question' => 'Question',
         'Answer'   => 'Answer',
-        'FAQ ID'   => 'FAQ ID',
         'Date created' => 'Date created',
 /*  list */
         'Questions' => 'Questions',
@@ -22,7 +21,6 @@
 /*  admin list */
         'new faq'  => 'new faq',
         'reorder'  => 'reorder',
-        'id'       => 'id',
         'FAQ'      => 'FAQ',
         'Order'    => 'Order',
         'With selected faq(s)' => 'With selected faq(s)',

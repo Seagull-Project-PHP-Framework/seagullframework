@@ -124,7 +124,7 @@ a.narrow, input.narrow {
 #header #left {
     height: 60px;
     background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/bg_header_blue.gif') repeat-x;
-    
+
 }
 #header h1, #header h1 a {
     float: left;
@@ -689,7 +689,7 @@ div.close span {
     font-weight: bold;
     letter-spacing: 0.3em;
     color: <?php echo $errorMessage ?>;
-    
+
 }
 .errorContainer .errorContent {
 
@@ -712,7 +712,7 @@ p.errorBlock input, p.errorBlock select {
     border: 1px solid <?php echo $errorMessage ?>;
 }
 <?php
-    if ($isFormSubmitted) { ?>
+    if (!empty($isFormSubmitted)) { ?>
 .required {
     display: none;
 }

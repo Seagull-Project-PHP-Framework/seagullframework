@@ -16,6 +16,12 @@ create table contact
 );
 
 -- ==============================================================
+--  Sequence: contact_seq
+-- ==============================================================
+
+create sequence contact_seq;
+
+-- ==============================================================
 --  Index: usr_contact_fk                                        
 -- ==============================================================
 create  index usr_contact_fk on contact 
@@ -39,6 +45,12 @@ create table instant_message
    read_status          INT2                 null,
    constraint PK_INSTANT_MESSAGE primary key (instant_message_id)
 );
+
+-- ==============================================================
+--  Sequence: instant_message_seq
+-- ==============================================================
+
+create sequence instant_message_seq;
 
 -- ==============================================================
 --  Index: usr_instant_from_fk                                   

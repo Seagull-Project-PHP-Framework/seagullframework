@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PermissionMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -461,7 +461,8 @@ class PermissionMgr extends SGL_Manager
     }
 
    /**
-    * Scans class files and retrieves an array of class and method perms using the aAllowedActions property
+    * Scans class files of registered modules and retrieves an array of class
+    * and method perms using the aAllowedActions property
     *
     * @author  Jacob Hanson <jacdx@jacobhanson.com>
     * @copyright Jacob Hanson 2004
@@ -483,9 +484,19 @@ class PermissionMgr extends SGL_Manager
 
         $permsFound = array();
 
+
         //  scan
         require_once  'System.php';
-        $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
+
+        $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
+        $aFindArgs = array(SGL_MOD_DIR, '-maxdepth', 3);
+
+        //only scan in registered modules
+        foreach ($aRegisteredModules as $module) {
+            $aFindArgs[] = '-name';
+            $aFindArgs[] = $module .'/classes/*php';
+        }
+        $files = System::find($aFindArgs);
 
         foreach ($files as $k => $v) {
             //  only process files in 'classes' directories
