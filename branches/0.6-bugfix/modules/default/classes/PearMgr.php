@@ -63,8 +63,8 @@ class PearMgr extends SGL_Manager
             'doRequest'   => array('doRequest'),
         );
         $this->aChannels = array(
-            'pear.php.net'          => 'PEAR',
             'pear.phpkitchen.com'   => 'Seagull',
+            'pear.php.net'          => 'PEAR',
             'pearified.com'         => 'Pearified',
         );
     }
