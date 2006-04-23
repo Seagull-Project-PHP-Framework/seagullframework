@@ -75,9 +75,6 @@ function canConnectToDbServer()
         //  detect and store DB info
         if (preg_match("/mysql/", $dbh->phptype)) {
             $mysqlVersion = mysql_get_server_info();
-            if (version_compare($mysqlVersion, '5', '>=')) {
-                $_SESSION['mysql5_detected'] = true;
-            }
         }
         $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
         $aEnvData['db_info'] = array(
