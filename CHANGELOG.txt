@@ -4,14 +4,14 @@ CHANGELOG
 | VERSION: 0.6.0RC2     |
 +-----------------------+
 BUGFIXES
-22-05-06    Fixed problem where selecting 'store langs in DB' during install, but
+22-04-06    Fixed problem where selecting 'store langs in DB' during install, but
             then selecting none from list resulted in a fatal error (Heinrich Stoellinger)
-21-05-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
+21-04-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
             dataobjects', now file removal forces update
-21-05-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
-21-05-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
+21-04-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
+21-04-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
             Postgres fixed, unique indexes removed from usr table
-15-05-06    At long last, thanks to matt from IRC, Seagull will install properly
+15-04-06    At long last, thanks to matt from IRC, Seagull will install properly
             on MySQL 3.23
 12-04-06    List of stylesheets now correctly drawn from configured default theme,
             not session.
@@ -21,7 +21,8 @@ BUGFIXES
 14-03-06    Fixed query for listing users with a left join (mstahv)
 
 IMPROVEMENTS
-21-05-06    Added ability to force cache usage, overriding perferences, ie:
+22-04-06    Added ability to control DB_DataObject debug level from Config
+21-04-06    Added ability to force cache usage, overriding perferences, ie:
                 $cache = & SGL_Cache::singleton($force = true);
 18-04-06    Added ability to detect new modules
 17-04-06    All tasks consolidated in  lib/SGL/Tasks directory

@@ -309,6 +309,12 @@ function toggleTransElements() {
                 </label>
                 {generateRadioPair(#conf[debug][showUntranslated]#,conf[debug][showUntranslated]):h}
             </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][dataObject]">{translate(#DataObject debug level#)}</label>
+                <select name="conf[debug][dataObject]" id="conf[debug][dataObject]">
+                    {generateSelect(aDbDoDebugLevels,conf[debug][dataObject]):h}
+                </select>
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="cachingOptions">

@@ -78,7 +78,7 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
             'class_location'        => SGL_ENT_DIR,
             'require_prefix'        => SGL_ENT_DIR . '/',
             'class_prefix'          => 'DataObjects_',
-            'debug'                 => 0,
+            'debug'                 => $this->conf['debug']['dataObject'],
             'production'            => 0,
             'ignore_sequence_keys'  => 'ALL',
             'generator_strip_schema' => 1,
