@@ -188,11 +188,11 @@ class BugMgr extends SGL_Manager
         $report = new BugReport($oData);
 
         $options = array(
-            'toEmail'       => 'bugs@phpkitchen.com',
+            'toEmail'       => 'bugs@seagullproject.org',
             'toRealName'    => 'Seagull Maintainer',
             'fromEmail'     => $report->getEmail(),
             'fromRealName'  => $report->getName(),
-            'replyTo'       => 'seagull@phpkitchen.com',
+            'replyTo'       => 'seagull@seagullproject.org',
             'subject'       => '[Seagull Bug report]',
             'body'          => $report->toString(),
             'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
