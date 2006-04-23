@@ -111,7 +111,6 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
         $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
 #        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
-#        $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
 #        $radio[] = &$this->createElement('radio', 'type',     '', "db2", 'db2_SGL');
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
