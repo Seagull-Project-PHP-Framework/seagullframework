@@ -89,6 +89,7 @@ require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
 SGL_FrontController::init();
 session_start();
+$_SESSION['ERRORS'] = array();
 
 //  reroute to front controller
 if (isset($_GET['start'])) {

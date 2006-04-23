@@ -80,7 +80,11 @@ class SGL_DB
             $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
-                $err = PEAR::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                $msg = 'Cannot connect to DB, check your credentials, exiting ...';
+                if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+                    $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be able to run the setup again.';
+                }
+                $err = PEAR::raiseError($msg,
                     SGL_ERROR_DBFAILURE, $fatal);
                 return $err;
             }

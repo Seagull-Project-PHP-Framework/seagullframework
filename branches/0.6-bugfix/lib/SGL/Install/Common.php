@@ -50,9 +50,6 @@ class SGL_Install_Common
         if (!isset($GLOBALS['_SGL'])) {
             $GLOBALS['_SGL'] = array();
         }
-        if (!isset($_SESSION['ERRORS'])) {
-            $_SESSION['ERRORS'] = array();
-        }
         array_push($_SESSION['ERRORS'], $error);
     }
 
