@@ -27,7 +27,7 @@ FTP_REMOTE_DIR=incoming
 REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
-SVN_REPO_LEAF_FOLDER_NAME=branches
+SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
