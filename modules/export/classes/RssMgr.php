@@ -157,7 +157,8 @@ class RssMgr extends SGL_Manager
             // Set the pubDate to the release date of the newest item
             $this->feed->pubdate = $this->feed->items[0]["pubdate"];
         }
-        header("Content-Type: text/xml");
+        //  set content type for header generation
+        $output->contentType = 'text/xml';
         $output->feed = $this->feed;
     }
 
