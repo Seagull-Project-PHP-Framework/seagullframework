@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+24-04-06    Modified RSS export to use custom filter chain
 22-04-06    Japanese translation added (Dozo Yousan)
 
 +-----------------------+
