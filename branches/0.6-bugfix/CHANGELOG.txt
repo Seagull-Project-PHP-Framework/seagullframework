@@ -4,7 +4,9 @@ CHANGELOG
 | VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
+
 IMPROVEMENTS
+22-04-06    Japanese translation added (Dozo Yousan)
 
 +-----------------------+
 | VERSION: 0.6.0RC2     |
