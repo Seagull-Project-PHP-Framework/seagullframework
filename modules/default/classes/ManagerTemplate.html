@@ -69,9 +69,9 @@ class {t.ManagerName}Mgr extends SGL_Manager
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->{t.managerName} = (object)$req->get('{t.managerName}');
-        $input->{t.managerName}_id = $req->get('frm{t.ManagerName}ID');
+        $input->{t.managerName}Id = $req->get('frm{t.ManagerName}ID');
 
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
