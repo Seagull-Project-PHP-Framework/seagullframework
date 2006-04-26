@@ -149,9 +149,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_CACHE_DIR',                 SGL_VAR_DIR . '/cache');
         define('SGL_UPLOAD_DIR',                SGL_VAR_DIR . '/uploads');
         define('SGL_LIB_DIR',                   SGL_APP_ROOT . '/lib');
-        define('SGL_MOD_DIR',                   SGL_APP_ROOT . '/modules');
         define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
-        define('SGL_BLK_DIR',                   SGL_MOD_DIR . '/block/classes/blocks');
         define('SGL_DAT_DIR',                   SGL_APP_ROOT . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_APP_ROOT . '/lib/SGL');
 
@@ -259,6 +257,11 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
         }
 
         define('SGL_THEME_DIR', SGL_WEB_ROOT . '/themes');
+        if (!empty($conf['path']['moduleDirOverride'])) {
+            define('SGL_MOD_DIR', SGL_APP_ROOT . '/' . $conf['path']['moduleDirOverride']);
+        } else {
+            define('SGL_MOD_DIR', SGL_APP_ROOT . '/modules');
+        }
 
         //  include Log.php if logging enabled
         if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
