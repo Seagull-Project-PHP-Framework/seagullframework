@@ -335,6 +335,9 @@ fieldset {
 fieldset.options h3 {
     visibility: hidden;
 }
+fieldset.options h3.show {
+    visibility: visible;
+}
 select, input, textarea {
     font-size: 1.1em;
     z-index: 1;
