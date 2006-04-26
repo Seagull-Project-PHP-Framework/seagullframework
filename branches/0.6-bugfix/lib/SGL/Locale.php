@@ -76,6 +76,7 @@ class SGL_Locale
 
                 $uid = SGL_Session::getUid();
                 if ($uid && isset($langCode)) {
+                    require_once 'I18Nv2/Negotiator.php';
                     $dbh = &SGL_DB::singleton();
                     $c = &SGL_Config::singleton();
                     $conf = $c->getAll();
@@ -84,7 +85,6 @@ class SGL_Locale
                     $country = strtoupper($country);
 
                     if (!$country) {
-                        require_once 'I18Nv2/Negotiator.php';
                         $neg = &new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
