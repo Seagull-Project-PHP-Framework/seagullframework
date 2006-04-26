@@ -107,6 +107,7 @@ $words['Target'] = 'Cible';
 $words['Add an alias'] = 'Ajouter un alias ';
 $words['Automatic alias'] = 'Alias automatique';
 $words['Select roles to which you want to grant access'] = 'Sélectionnez les rôles auxquels vous autorisez l\'accès';
+$words['Alias'] = 'Alias';
 $words['alias URI'] = 'URI de l\'alias';
 $words['static article title'] = 'Titre de l\'article';
 $words['Access Key'] = 'Touche d\'accès';

@@ -180,7 +180,6 @@ class SectionMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->pageTitle = $this->pageTitle .' :: Add';
         $output->template = 'sectionEdit.html';
         $output->mode     = 'New section';
         $output->isAdd    = true;
