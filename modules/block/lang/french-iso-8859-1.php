@@ -40,6 +40,11 @@ $words['Block description'] = 'Description';
 $words['Block title tooltip'] = 'Saisir le titre qui sera affiché en en-tête du bloc';
 $words['Block class name tooltip'] = 'Le nom de la classe du bloc à utiliser';
 $words['Template name'] = 'Nom du template';
+// Errors
+$words['Please select a class name'] = 'Veuillez sélectionner un type de bloc';
+$words['Please fill in a title'] = 'Veuillez saisir le nom qui sera affiché';
+$words['Please select a section(s)'] = 'Veuillez assigner ce bloc à au moins une section (ou toutes)';
+$words['Please select a role(s)'] = 'Veuillez assigner ce bloc à au moins un rôle (ou tous)';
 
 // Navigation Block
 $words['Start root node'] = 'Noeud de départ';
@@ -70,4 +75,7 @@ $words['Breadcrumbs will be rendered with this template'] = 'Le fil d\'Ariane se
 $words['Static Html article'] = 'Article "Static Html"';
 $words['Set id of static Html article'] = 'Choisir l\'ID de l\'article à afficher';
 $words['Article will be rendered with this template'] = 'L\'article sera affiché avec ce template';
+
+// Html Block
+$words['Html text'] = 'Texte au format Html';
 ?>
