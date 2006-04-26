@@ -48,7 +48,7 @@
 /*
 -- configEdit.html -------------------------------------------*/
 #configuration p label {
-    width: 35%;
+    width: 250px;
 }
 #configuration input.longText, #configuration textarea.longText{
     width: 58%;
@@ -58,6 +58,9 @@
 }
 #configuration span.tipText {
     width: 142%;
+}
+#configuration h3.show {
+    margin-left: 270px;
 }
 
 /*
