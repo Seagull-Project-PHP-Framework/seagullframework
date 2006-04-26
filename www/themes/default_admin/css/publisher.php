@@ -39,7 +39,7 @@
     width: 80px;
     text-align: left;
 }
-#articleAddContent p input {
+#articleAddContent p input.longText {
     width: 80%;
 }
 #articleAddContent span.tipText {
