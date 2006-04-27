@@ -63,14 +63,14 @@ class Page1WizMgr extends SGL_Wizard
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::validate($req, $input);
 
-        $this->validated    = true;
-        $input->error       = null;
-        $input->pageTitle   = 'Page 1';
-        $input->template    = 'contact1.html';
-        $input->masterTemplate = 'masterBlank.html';
-        $input->action      = $req->get('action');
-        $input->aDelete     = $req->get('frmDelete');
-        $input->contact     = (object)$req->get('contact');
+        $this->validated        = true;
+        $input->error           = null;
+        $input->pageTitle       = 'Page 1';
+        $input->template        = 'contact1.html';
+        $input->masterTemplate  = $this->masterTemplate;
+        $input->action          = $req->get('action');
+        $input->aDelete         = $req->get('frmDelete');
+        $input->contact         = (object)$req->get('contact');
 
         $aErrors = array();
         if ($this->submit) {

@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+27-04-06    Wizard functionality reinstated (Steven Stremciuc)
 26-04-06    Added ability to customise location of the modules directory
 24-04-06    Modified RSS export to use custom filter chain
 22-04-06    Japanese translation added (Dozo Yousan)
