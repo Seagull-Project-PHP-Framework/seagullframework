@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: WizardMgr.php,v 1.1 2005/04/04 10:41:09 demian Exp $
 
+require_once SGL_CORE_DIR . '/Wizard.php';
+
 /**
  *
  * Initialisation of wizard
@@ -62,13 +64,13 @@ class WizardMgr extends SGL_Manager
 
         // initialize wizard pages
         SGL_Session::set('wiz_sequence', array());
-        SGL_Controller::addPage(array('managerName' => 'Page1Wiz'));
-        SGL_Controller::addPage(array('managerName' => 'Page2Wiz'));
+        SGL_Wizard::addPage(array('managerName' => 'Page1Wiz'));
+        SGL_Wizard::addPage(array('managerName' => 'Page2Wiz'));
     }
 
     function process(&$input, &$output)
     {
-        SGL_Controller::startWizard();
+        SGL_Wizard::startWizard();
     }
 }
 ?>
