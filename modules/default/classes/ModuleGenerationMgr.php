@@ -85,10 +85,13 @@ class ModuleGenerationMgr extends SGL_Manager
                 if (empty($input->createModule->managerName)) {
                     $aErrors['managerName'] = 'please enter manager name';
                 }
-                //  check if a module with this name already exists
-                $aModules = SGL_Util::getAllModuleDirs(false);
-                if (in_array($input->createModule->moduleName, $aModules)) {
-                    $aErrors['moduleName'] = 'module already exists. Please choose another module name';
+                //  if module exists, check if manager exists
+                if ($this->da->moduleIsRegistered($input->createModule->moduleName)) {
+                    $aManagers = SGL_Util::getAllManagersPerModule(SGL_MOD_DIR .'/'.
+                        $input->createModule->moduleName);
+                    if (in_array($input->createModule->managerName, $aManagers)) {
+                        $aErrors['managerName'] = 'manager already exists. Please choose another manager name';
+                    }
                 }
                 //  check if writable
                 if (!is_writable(SGL_MOD_DIR)) {
@@ -152,23 +155,25 @@ class ModuleGenerationMgr extends SGL_Manager
         $templatePrefix = strtolower($firstLetter).$restOfWord;
         $output->templatePrefix = $templatePrefix;
 
-        //  set author details
-        require_once 'DB/DataObject.php';
-        $user = DB_DataObject::factory($this->conf['table']['user']);
-        $user->get(SGL_Session::getUid());
-        $output->authorName = $user->first_name . ' ' . $user->last_name;
-        $output->authorEmail = $user->email;
+        if (!$this->da->moduleIsRegistered($modName)) {
+            //  set author details
+            require_once 'DB/DataObject.php';
+            $user = DB_DataObject::factory($this->conf['table']['user']);
+            $user->get(SGL_Session::getUid());
+            $output->authorName = $user->first_name . ' ' . $user->last_name;
+            $output->authorEmail = $user->email;
 
-        //  insert module in module table if it's not there
-        $ok = $this->_addModule($modName, $mgrLongName);
+            //  insert module in module table if it's not there
+            $ok = $this->_addModule($modName, $mgrLongName);
 
-        //  get details of class to generate, at least field list for now.
-        if (isset($input->createModule->createCRUD)) {
-            $model = DB_DataObject::factory($mgrName);
-            $modelFields = $model->table();
-            $output->modelFields = $modelFields;
-        } else {
-           $output->modelFields = array('foo', 'bar');
+            //  get details of class to generate, at least field list for now.
+            if (isset($input->createModule->createCRUD)) {
+                $model = DB_DataObject::factory($mgrName);
+                $modelFields = $model->table();
+                $output->modelFields = $modelFields;
+            } else {
+               $output->modelFields = array('foo', 'bar');
+            }
         }
 
         // add table to conf.php if it doesn't exist
@@ -200,21 +205,32 @@ class ModuleGenerationMgr extends SGL_Manager
 
         //  write new manager to appropriate module
         $targetMgrName = $aDirectories['classes'] . '/' . $output->ManagerName . 'Mgr.php';
-        $success = file_put_contents($targetMgrName, $mgrTemplate);
-
-        //  attempt to get apache user to set 'other' bit as writable, so
-        //  you can edit this file
-        @chmod($targetMgrName, 0666);
-
-        if (isset($input->createModule->createIniFile)){
-            $ok = $this->_createModuleConfig($aDirectories, $mgrLongName);
+        if (file_exists($targetMgrName)) {
+            return SGL::raiseError('A manager with that name already exists');
+        } else {
+            if (is_writable($aDirectories['classes'])) {
+                $success = file_put_contents($targetMgrName, $mgrTemplate);
+                //  attempt to get apache user to set 'other' bit as writable, so
+                //  you can edit this file
+                @chmod($targetMgrName, 0666);
+            } else {
+                return SGL::raiseError('module\'s classes directory not writable');
+            }
+        }
+        //  create module config
+        if (isset($input->createModule->createIniFile)) {
+            if (!is_file(SGL_MOD_DIR . '/' . $output->moduleName .'/conf.ini')) {
+                $ok = $this->_createModuleConfig($aDirectories, $mgrLongName);
+            }
         }
         //  create language files
-        if (isset($input->createModule->createLangFiles)){
-            $ok = $this->_createLangFiles($aDirectories, $output);
+        if (isset($input->createModule->createLangFiles)) {
+            if (!is_file(SGL_MOD_DIR . '/' . $output->moduleName .'/lang/english-iso-8859-15.php')) {
+                $ok = $this->_createLangFiles($aDirectories, $output);
+            }
         }
         //  create templates
-        if (isset($input->createModule->createTemplates)){
+        if (isset($input->createModule->createTemplates)) {
             $ok = $this->_createTemplates($aDirectories, $aTemplates, $output);
         }
 
@@ -276,8 +292,10 @@ class ModuleGenerationMgr extends SGL_Manager
                     $fileTemplate = str_replace(array_keys($replace), array_values($replace), $fileTemplate);
                 }
             }
-            $success = file_put_contents($fileName, $fileTemplate);
-            @chmod($fileName, 0666);
+            if (!is_file($fileName)) {
+                $success = file_put_contents($fileName, $fileTemplate);
+                @chmod($fileName, 0666);
+            }
         }
     }
 
@@ -322,11 +340,13 @@ class ModuleGenerationMgr extends SGL_Manager
             require_once 'System.php';
 
             foreach ($aDirectories as $directory){
-                //  pass path as array to avoid widows space parsing prob
-                $success = System::mkDir(array('-p', $directory));
-                //  attempt to get apache user to set 'other' bit as writable, so
-                //  you can edit this file
-                @chmod($directory, 0777);
+                //  pass path as array to avoid windows space parsing prob
+                if (!file_exists($directory)) {
+                    $success = System::mkDir(array('-p', $directory));
+                    //  attempt to get apache user to set 'other' bit as writable, so
+                    //  you can edit this file
+                    @chmod($directory, 0777);
+                }
             }
         } else {
             SGL::raiseError('The modules directory does not appear to be writable, please give the
@@ -370,6 +390,8 @@ class ModuleGenerationMgr extends SGL_Manager
             'list'  => array("'list'      => array('list'),", $output->managerName.'List.html'),
             'delete'=> array("'delete'    => array('delete', 'redirectToDefault'),"),
         );
+        $aActions = array();
+        $aTemplates = array();
         foreach ($aPossibleMethods as $method => $mapping) {
            //  if checked add to aMethods array
             if (isset($input->createModule->$method)) {

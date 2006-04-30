@@ -1,4 +1,4 @@
-CHANGELOG
+svbCHANGELOG
 =========
 +-----------------------+
 | VERSION: 0.6.0RC3     |
@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+30-04-06    Module generator can now add additional managers per module
 27-04-06    Wizard functionality reinstated (Steven Stremciuc)
 26-04-06    Added ability to customise location of the modules directory
 24-04-06    Modified RSS export to use custom filter chain

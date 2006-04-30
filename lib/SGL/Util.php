@@ -207,7 +207,7 @@ class SGL_Util
         return $ret;
     }
 
-    function getAllFilesPerModule($moduleDir)
+    function getAllManagersPerModule($moduleDir)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -228,7 +228,7 @@ class SGL_Util
     {
         $managerFileName = basename($mgr);
         $moduleDir = dirname(dirname($mgr));
-        $files = SGL_Util::getAllFilesPerModule($moduleDir);
+        $files = SGL_Util::getAllManagersPerModule($moduleDir);
 
         //  remap 'ContactUsMgr.php => ContactUsMgr' hash to array
         foreach ($files as $k => $file) {
