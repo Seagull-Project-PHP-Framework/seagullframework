@@ -360,7 +360,7 @@ class SectionMgr extends SGL_Manager
             $currentModule = isset($output->section['module'])
                 ? $output->section['module']
                 : key($output->aModules);
-            $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
+            $output->aManagers = SGL_Util::getAllManagersPerModule(SGL_MOD_DIR .'/'. $currentModule);
             $currentMgr = (isset($output->section['manager'])
                         && isset($output->aManagers[$output->section['manager']]))
                 ? $output->section['manager']
