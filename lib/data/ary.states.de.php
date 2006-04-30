@@ -31,7 +31,7 @@
         'NE'=>'Nebraska',
         'NV'=>'Nevada',
         'NH'=>'New Hampshire',
-        'NJ'=>'New Jersy',
+        'NJ'=>'New Jersey',
         'NM'=>'New Mexico',
         'NY'=>'New York',
         'NC'=>'North Carolina',
@@ -49,7 +49,7 @@
         'VT'=>'Vermont',
         'VA'=>'Virginia',
         'WA'=>'Washington',
-        'WV'=>'West Viginia',
+        'WV'=>'West Virginia',
         'WI'=>'Wisconsin',
         'WY'=>'Wyoming'
     );
