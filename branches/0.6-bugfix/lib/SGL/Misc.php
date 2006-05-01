@@ -311,7 +311,7 @@ class SGL_Date
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_scalar($sDate)) {
-            include_once 'Date.php';
+            require_once 'Date.php';
             $date = & new Date($sDate);
             $aDate =      array('day'    => $date->getDay(),
                                 'month'  => $date->getMonth(),
@@ -419,32 +419,6 @@ class SGL_Date
     }
 
     /**
-     * Generates a select of month values.
-     *
-     * @access  public
-     * @param   string  $selected
-     * @return  string  $month_options  select month options
-     * @see     showDateSelector()
-     */
-    function getMonthFormOptions($selected = '')
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aMonths = SGL_String::translate('aMonths', false, true);
-        $monthOptions = '';
-        if (empty($selected) && $selected != null) {
-            $selected = date('m',time());
-        }
-        foreach ($aMonths as $k => $v) {
-            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k + 1) . '" ';
-            if ($k + 1 == $selected) {
-                $monthOptions .= 'selected="selected"';
-            }
-            $monthOptions .= '>' . $v . '</option>';
-        }
-        return $monthOptions;
-    }
-
-    /**
      * Generates a select of day values.
      *
      * @access  public
@@ -455,20 +429,43 @@ class SGL_Date
     function getDayFormOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $day_options = '';
         for ($i = 1; $i <= 31; $i++) {
-            if ($i < 10) {
-                $dval = '0' . $i;
-            } else {
-                $dval = $i;
-            }
-            $day_options .= "\n<option value=\"" . $dval . '" ';
+            $day_options .= "\n<option value=\"" . sprintf('%02d', $i) . '" ';
             if ($i == $selected) {
                 $day_options .= 'selected="selected"';
             }
-            $day_options .= '>' . $dval . '</option>';
+            $day_options .= '>' . sprintf('%02d', $i) . '</option>';
         }
         return $day_options;
+    }
+
+    /**
+     * Generates a select of month values.
+     *
+     * @access  public
+     * @param   string  $selected
+     * @return  string  $monthOptions  select month options
+     * @see     showDateSelector()
+     */
+    function getMonthFormOptions($selected = '')
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $aMonths = SGL_String::translate('aMonths', false);
+        $monthOptions = '';
+        if (empty($selected) && $selected != null) {
+            $selected = date('m', time());
+        }
+        foreach ($aMonths as $k => $v) {
+            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            if ($k == $selected) {
+                $monthOptions .= 'selected="selected"';
+            }
+            $monthOptions .= '>' . $v . '</option>';
+        }
+        return $monthOptions;
     }
 
     /**
@@ -481,35 +478,31 @@ class SGL_Date
      * @return  string  $year_options   select year options
      * @see     showDateSelector()
      */
-    function getYearFormOptions($selected = '', $asc = true, $number = 5)
+    function getYearFormOptions($selected = '', $asc = true, $totalYears = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $year_options = '';
-        $cur_year = date('Y',time());
-        $start_year = $cur_year;
-        if (!empty($selected)) {
-            if ($selected < $cur_year) {
-                $start_year = $selected;
-            }
-        }
+
+        $yearOptions = '';
+        $curYear = date('Y', time());
+        $startYear = $curYear;
         if ($asc) {
-             for ($i = $start_year; $i <= $start_year+$number; $i++) {
-                 $year_options .= "\n<option value=\"" . $i . '" ';
+             for ($i = $startYear; $i <= $startYear + $totalYears; $i++) {
+                 $yearOptions .= "\n<option value=\"" . $i . '" ';
                  if ($i == $selected) {
-                     $year_options .= 'selected="selected"';
+                     $yearOptions .= 'selected="selected"';
                  }
-                 $year_options .= '>' . $i . '</option>';
+                 $yearOptions .= '>' . $i . '</option>';
              }
         } else {
-             for ($i = $start_year+1; $i >= $start_year-($number-1); $i--) {
-                 $year_options .= "\n<option value=\"" . $i . '" ';
+             for ($i = $startYear; $i >= $startYear - ($totalYears - 1); $i--) {
+                 $yearOptions .= "\n<option value=\"" . $i . '" ';
                  if ($i == $selected) {
-                     $year_options .= 'selected="selected"';
+                     $yearOptions .= 'selected="selected"';
                  }
-                 $year_options .= '>' . $i . '</option>';
+                 $yearOptions .= '>' . $i . '</option>';
              }
         }
-        return $year_options;
+        return $yearOptions;
     }
 
     /**
@@ -528,7 +521,7 @@ class SGL_Date
         for ($i = 0; $i <= 23; $i++) {
             $hval = sprintf("%02d",  $i);
             $hour_options .= "\n<option value=\"" . $hval . '" ';
-            if ($selected == $i && $selected!="" ) {
+            if ($selected == $i && $selected !='' ) {
                 $hour_options .= 'selected="selected"';
             }
             $hour_options .= '>' . $hval . '</option>';
@@ -547,19 +540,15 @@ class SGL_Date
     function getMinSecOptions($selected = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $minute_options = '';
 
         for ($i = 0; $i <= 59; $i++) {
-            if ($i < 10) {
-                $mval = '0' . $i;
-            } else {
-                $mval = $i;
-            }
-            $minute_options .= "\n<option value=\"" . $mval . '" ';
-            if ($selected == $i && $selected!="" ) {
+            $minute_options .= "\n<option value=\"" . sprintf("%02d",  $i) . '" ';
+            if ($selected == $i && $selected !="" ) {
                 $minute_options .= 'selected="selected"';
             }
-            $minute_options .= '>' . $mval . '</option>';
+            $minute_options .= '>' . sprintf("%02d",  $i) . '</option>';
         }
         return $minute_options;
     }
@@ -586,31 +575,38 @@ class SGL_Date
      *
      * @access  public
      * @param   array   $aDate
-     * @param   string  $sFormName  name of form
+     * @param   string  $elementName name of the html element
      * @param   boolean $bShowTime  toggle to display HH:MM:SS
      * @param   bool    $asc
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
 */
-    function showDateSelector($aDate, $sFormName, $bShowTime = true, $asc = true, $years = 5)
+    function showDateSelector($aDate, $elementName, $bShowTime = true, $asc = true, $years = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $html = '';
-        $month_html = "\n<select name='" . $sFormName . "[month]' id='".$sFormName."_month' >" . SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
-        $day_html = "\n<select name='" . $sFormName . "[day]' id='".$sFormName."_day'>" . SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
+        $month_html = "\n<select name='" . $elementName . "[month]' id='".$elementName."_month' >" .
+            SGL_Date::getMonthFormOptions($aDate['month']) . '</select> / ';
+        $day_html = "\n<select name='" . $elementName . "[day]' id='".$elementName."_day'>" .
+            SGL_Date::getDayFormOptions($aDate['day']) . '</select> / ';
         if ($_SESSION['aPrefs']['dateFormat'] == 'US') {
             $html .= $month_html . $day_html;
         } else {
             $html .= $day_html . $month_html;
         }
-        $html .= "\n<select name='" . $sFormName . "[year]' id='".$sFormName."_year'>" . SGL_Date::getYearFormOptions($aDate['year'], $asc, $years) . '</select>';
+        $html .= "\n<select name='" . $elementName . "[year]' id='".$elementName."_year'>" .
+            SGL_Date::getYearFormOptions($aDate['year'], $asc, $years) . '</select>';
         if ($bShowTime) {
             $html .= '&nbsp;&nbsp; ';
             $html .= SGL_String::translate('at time');
             $html .= ' &nbsp;&nbsp;';
-            $html .= "\n<select name='" . $sFormName . "[hour]'  id='".$sFormName."_hour'>" . SGL_Date::getHourFormOptions($aDate['hour']) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[minute]' id='".$sFormName."_minute'>" . SGL_Date::getMinSecOptions($aDate['minute']) . '</select> : ';
-            $html .= "\n<select name='" . $sFormName . "[second]' id='".$sFormName."_second'>" . SGL_Date::getMinSecOptions($aDate['second']) . '</select>';
+            $html .= "\n<select name='" . $elementName . "[hour]'  id='".$elementName."_hour'>" .
+                SGL_Date::getHourFormOptions($aDate['hour']) . '</select> : ';
+            $html .= "\n<select name='" . $elementName . "[minute]' id='".$elementName."_minute'>" .
+                SGL_Date::getMinSecOptions($aDate['minute']) . '</select> : ';
+            $html .= "\n<select name='" . $elementName . "[second]' id='".$elementName."_second'>" .
+                SGL_Date::getMinSecOptions($aDate['second']) . '</select>';
         }
         return $html;
     }

@@ -718,7 +718,6 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
                 $statusText = 'DB setup succeeded';
                 $statusText .= ', schema creation skipped';
                 $this->updateHtml('status', $statusText);
-
                 $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>';
             }
         }

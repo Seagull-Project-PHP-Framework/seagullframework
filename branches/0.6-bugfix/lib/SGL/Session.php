@@ -288,7 +288,7 @@ class SGL_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            if (mktime() -$lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
+            if (mktime() - $lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
                 $_SESSION['lastRefreshed'] = mktime();
             }
             return false;
