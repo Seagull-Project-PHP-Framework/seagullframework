@@ -469,6 +469,10 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                 //  manager w/$moduleName
                 $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
                 $retMgrName = $this->getManagerName($managerName, $mgrPath);
+                if ($retMgrName === false) {
+                    SGL::raiseError("Specified manager '$managerName' could not be found, ".
+                        "default loaded, pls ensure full manager name is present in module's conf.ini");
+                }
                 $managerName = ($retMgrName)
                     ? $retMgrName
                     : $this->getManagerName($moduleName, $mgrPath);
