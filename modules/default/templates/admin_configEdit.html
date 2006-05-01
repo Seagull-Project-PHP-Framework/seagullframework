@@ -183,6 +183,11 @@ function toggleTransElements() {
                 <label for="conf[path][moduleDirOverride]">{translate(#Module Directory Override#)}</label>
                 <input type="text" class="longText" name="conf[path][moduleDirOverride]" id="conf[path][moduleDirOverride]" value="{conf[path][moduleDirOverride]}" />
             </p>
+            <p>
+                <label class="tipOwner" for="conf[path][uploadDirOverride]">{translate(#Upload Directory Override#)}
+                <span class="tipText">provide path from sgl root, including initial slash and omitting final slash, eg: "/path/to/dir"</span></label>
+                <input type="text" class="longText" name="conf[path][uploadDirOverride]" id="conf[path][uploadDirOverride]" value="{conf[path][uploadDirOverride]}" />
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="sessionOptions">

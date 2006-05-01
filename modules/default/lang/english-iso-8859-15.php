@@ -482,5 +482,6 @@ $defaultWords['Please choose a simple, single word'] = 'Please choose a simple, 
 $defaultWords['Please give the webserver write permissions to the modules directory'] = 'Please give the webserver write permissions to the modules directory';
 $defaultWords['The manager, which can be'] = 'The manager, which can be one of several per module, is the controller object, so if you want it to deliver pizzas call it PizzaMgr.';
 $defaultWords['Module Directory Override'] = 'Module Directory Override';
+$defaultWords['Upload Directory Override'] = 'Upload Directory Override';
 
 ?>
