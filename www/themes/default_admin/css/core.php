@@ -28,13 +28,16 @@ ul {
 p {
     margin-bottom: 0.5em;
 }
-a {
+a, a:visited {
     color: <?php echo $linkColor ?>;
     text-decoration: <?php echo $linkDecoration ?>;
 }
 a:hover {
     color: <?php echo $linkHoverColor ?>;
     text-decoration: <?php echo $linkHoverDecoration ?>;
+}
+a:focus {
+    outline: none;
 }
 img {
     border: none;
@@ -46,23 +49,17 @@ a.sgl-button, input.sgl-button {
     margin: 0;
     padding: 2px 4px;
     background: url('<?php echo $baseUrl ?>/images/backgrounds/bg_buttons_blue.gif') 0 50% repeat-x;
-    border: none;
-    border-style: solid;
-    border-width: 2px;
-    border-color: <?php echo $primaryLightest ?> <?php echo $primary ?> <?php echo $primary ?> <?php echo $primaryLightest ?>;
+    border: 1px outset;
     color: <?php echo $tertiaryDarkest ?>;
     font-size: 1em;
-    text-transform: capitalize;
 }
 input.sgl-button[disabled], input.sgl-button[disabled]:hover {
     background: <?php echo $tertiary ?>;
-    border-width: 2px;
-    border-color: <?php echo $tertiary ?> <?php echo $tertiaryDarkest ?> <?php echo $tertiaryDarkest ?> <?php echo $tertiary ?>;
+    border: 1px inset;
     color: <?php echo $tertiaryDarkest ?>;
 }
 a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
-    border-width: 2px;
-    border-color: <?php echo $primary ?> <?php echo $primaryLightest ?> <?php echo $primaryLightest ?> <?php echo $primary ?>;
+    border: 1px inset;
     color: <?php echo $tertiaryDarkest ?>;
     text-decoration: none;
 }
