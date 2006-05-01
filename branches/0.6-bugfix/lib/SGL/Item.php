@@ -147,6 +147,9 @@ class SGL_Item
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = & SGL_Translation::singleton('admin');
+            if (is_null($language)) {
+                $language = SGL_Translation::getFallbackLangID();
+            }
         }
 
         if ($itemID >= 0) {
@@ -727,7 +730,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id 
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm
@@ -739,7 +742,9 @@ class SGL_Item
         $result = $this->dbh->query($query);
 
         while (list($fieldID, $fieldName, $fieldValue, $trans_id) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            if ($this->conf['translation']['container'] == 'db') {
+            if ($this->conf['translation']['container'] == 'db'
+                && !empty($trans_id))
+            {
                 $fieldValue = $this->trans->get($trans_id, 'content', $this->languageID);
             }
             $html[$fieldName] = $fieldValue;
