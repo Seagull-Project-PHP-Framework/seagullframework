@@ -69,6 +69,23 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_InstallerSetup extends SGL_Task
+{
+    function run($data)
+    {
+        if (array_key_exists('storeTranslationsInDB', $data) 
+            && $data['storeTranslationsInDB'] == 1)
+        {
+            set_time_limit(60*(count($data['installLangs'])));            
+        } else {
+            set_time_limit(120);
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_CreateConfig extends SGL_Task
 {
     function run($data)

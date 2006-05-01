@@ -184,6 +184,7 @@ class ActionProcess extends HTML_QuickForm_Action
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_InstallerSetup());
         $runner->addTask(new SGL_Task_CreateConfig());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
@@ -201,7 +202,6 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
-        set_time_limit(120);
         $ok = $runner->main();
     }
 }
