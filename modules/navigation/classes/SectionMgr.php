@@ -160,6 +160,10 @@ class SectionMgr extends SGL_Manager
                     }
                 }
             }
+            if (isset($input->section['staticArticleId'])
+                && $input->section['staticArticleId'] == 0) {
+                $aErrors['staticArticleId'] = 'You must select a valid article';
+            }
         } elseif (!empty($input->section['edit'])) {
             unset($input->aParams);
             $this->validated = false;

@@ -45,6 +45,7 @@
         'No expire' => 'No expire',
         'select a category' => 'select a category',
         'choose' => 'choose',
+        'close' => 'close',
         
 /* ArticleViewMgr */
         'Article Browser' => 'Article Browser',
