@@ -120,6 +120,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_CreateAdminUser());
