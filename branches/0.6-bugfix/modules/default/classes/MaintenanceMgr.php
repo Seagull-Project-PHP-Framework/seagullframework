@@ -157,6 +157,11 @@ class MaintenanceMgr extends SGL_Manager
         }
         require_once SGL_CORE_DIR . '/Task/Install.php';
 
+        //  retrieve Install password
+        $ok = file_get_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php');
+        preg_match('/#(.*)\s\n/', $ok, $aMatch);
+        $installPassword = $aMatch[1];
+
         $data = array(
             'createTables' => 1,
             'insertSampleData' => 1,
@@ -167,6 +172,7 @@ class MaintenanceMgr extends SGL_Manager
             'adminEmail' => 'demian@phpkitchen.com',
             'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
             'serverName' =>  SGL_SERVER_NAME,
+            'installPassword' => $installPassword,
             );
 
         define('SGL_ADMIN_REBUILD', 1);
