@@ -137,6 +137,12 @@ EOF;
         $version = '5.0.1';
         $this->assertTrue(version_compare($version, '5', '>='));
     }
+
+    function testIsImage()
+    {
+        $mimeType = 'image/x-png';
+        $this->assertTrue(preg_match("/^image/", $mimeType));
+    }
 }
 
 class Foo1{}
