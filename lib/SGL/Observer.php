@@ -13,7 +13,7 @@ class SGL_Observable
         $this->aObservers[] = $observer;
     }
 
-    function detach()
+    function detach($observer)
     {
         $this->aObservers = array_diff($this->aObservers, array($observer));
     }
