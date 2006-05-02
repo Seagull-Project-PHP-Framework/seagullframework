@@ -125,7 +125,7 @@ function hideCombox(comboxId)
                 <span>{queryRange:h}<a class="catSelect" href="javascript: void(0)" title="{translate(#select a category#)}" onclick="javascript:showCategoryBlock(event)">{translate(#choose#)}</a></span>
                 <div id="categoryNav">
                     <div class="close">
-                        <span onclick="hideCategoryBlock()">close</span>
+                        <span onclick="hideCategoryBlock()">{translate(#close#)}</span>
                     </div>
                 {foreach:blocksAdminCategory,key,valueObj}
                     {valueObj.content:h}

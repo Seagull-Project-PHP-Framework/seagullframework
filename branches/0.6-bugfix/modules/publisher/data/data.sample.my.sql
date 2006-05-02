@@ -15,7 +15,6 @@ INSERT INTO `item_addition` VALUES (2, 1, 8, '<p>Test out dynamic language switc
 # Dumping data for table `category`
 #
 
-INSERT INTO category VALUES (1,'PublisherRoot',NULL,0,1,1,4,1,1);
 INSERT INTO category VALUES (2,'example',NULL,1,1,2,3,1,2);
 INSERT INTO category VALUES (3,'OtherRoot',NULL,0,3,1,2,1,1);
 INSERT INTO category VALUES (4,'Shop',NULL,0,4,1,16,2,1);

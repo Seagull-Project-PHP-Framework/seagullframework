@@ -95,7 +95,9 @@ function addFormValue(myElement, form)
             {if:staticSelected}
             <p>
                 <label for="section[staticArticleId]">{translate(#static article title#,#ucfirst#)}</label>
+                <span class="error" flexy:if="error[staticArticleId]">{translate(error[staticArticleId])}</span>
                 <select size="1" name="section[staticArticleId]" id="section[staticArticleId]">
+                    <option value="0">{translate(#Select a content#)}</option>
                     {generateSelect(aStaticArticles,section[staticArticleId],currentLang):h}
                 </select>
             </p>

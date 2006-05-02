@@ -3,7 +3,6 @@
 #
 
 
-INSERT INTO `block` VALUES (3, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 0, 1, 'N;');
 INSERT INTO `block` VALUES (4, 'User_Block_Login', 'Login', '', '', 5, 'Right', 1, 0, 'N;');
 INSERT INTO `block` VALUES (5, 'Default_Block_SampleRight1', 'Sample Right Block', '', '', 5, 'Right', 0, 0, 'N;');
 INSERT INTO `block` VALUES (6, 'Publisher_Block_SiteNews', 'Site News', '', '', 4, 'Left', 0, 1, 'N;');
@@ -20,8 +19,6 @@ INSERT INTO `block` VALUES (14, 'Publisher_Block_Html', 'Donate', '', '', 1, 'Le
 -- Dumping data for table `block_assignment`
 --
 
-
-INSERT INTO `block_assignment` VALUES (3, 0);
 INSERT INTO `block_assignment` VALUES (4, 0);
 INSERT INTO `block_assignment` VALUES (5, 0);
 INSERT INTO `block_assignment` VALUES (6, 0);
@@ -39,8 +36,6 @@ INSERT INTO `block_assignment` VALUES (14, 0);
 -- Dumping data for table `block_role`
 --
 
-
-INSERT INTO `block_role` VALUES (3, 1);
 INSERT INTO `block_role` VALUES (4, -2);
 INSERT INTO `block_role` VALUES (5, -2);
 INSERT INTO `block_role` VALUES (6, -2);
