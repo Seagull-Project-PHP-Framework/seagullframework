@@ -73,10 +73,10 @@ class SGL_Task_InstallerSetup extends SGL_Task
 {
     function run($data)
     {
-        if (array_key_exists('storeTranslationsInDB', $data) 
+        if (array_key_exists('storeTranslationsInDB', $data)
             && $data['storeTranslationsInDB'] == 1)
         {
-            set_time_limit(60*(count($data['installLangs'])));            
+            set_time_limit(60*(count($data['installLangs'])));
         } else {
             set_time_limit(120);
         }
@@ -824,9 +824,38 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
                 PEAR::raiseError('generating DB_DataObject entities failed'));
         }
         //  copy over links file
-        $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-        if (!file_exists($target)) {
-            @copy(SGL_PATH . '/etc/links.ini.dist', $target);
+//        $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
+//        if (!file_exists($target)) {
+//            @copy(SGL_PATH . '/etc/links.ini.dist', $target);
+//        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
+{
+    function run($data = null)
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        // remove original dbdo links file
+        $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
+        unlink($linksFile);
+
+        $linkData = '';
+        foreach ($data['aModuleList'] as $module) {
+            $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
+            if (is_file($linksPath)) {
+                $linkData .= file_get_contents($linksPath);
+                $linkData .= "\n\n";
+            }
+        }
+        if (!empty($linkData)) {
+            $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
+            $ok = file_put_contents($target, $linkData);
         }
     }
 }

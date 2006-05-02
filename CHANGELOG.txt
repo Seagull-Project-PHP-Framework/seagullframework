@@ -7,6 +7,8 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+01-05-06    Install and rebuild process will now build the correct fk links file
+            for DB_DataObject
 01-05-06    You can now customise the location of the upload directory
 30-04-06    HTML date widget cleanup
 30-04-06    Module generator can now add additional managers per module
