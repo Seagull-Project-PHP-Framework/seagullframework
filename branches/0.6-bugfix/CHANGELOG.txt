@@ -4,6 +4,7 @@ svbCHANGELOG
 | VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
+01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
 01-05-06    You can now customise the location of the upload directory
