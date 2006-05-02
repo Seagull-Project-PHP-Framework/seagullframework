@@ -7,7 +7,7 @@ class EmailPassword extends SGL_Observer
     {
         // email password according to form
         if ($observable->input->passwdResetNotify) {
-            $bEmailSent = PasswordMgr::sendPassword($observeable->oUser, $observable->input->password, $observable->input->moduleName);
+            $bEmailSent = PasswordMgr::sendPassword($observeable->oUser, $observable->input->password);
             if (!$bEmailSent) {
                 return SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
             }
