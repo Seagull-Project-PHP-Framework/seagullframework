@@ -19,5 +19,6 @@ class AutoServer extends HTML_AJAX_Server
 }
 
 $server = new AutoServer();
+$server->clientJsLocation = SGL_WEB_ROOT . '/js/html_ajax/';
 $server->handleRequest();
 ?>
