@@ -49,16 +49,6 @@ class SGL_Request
 {
     var $aProps;
 
-    /**
-     * Sets up a request object.
-     *
-     * @return SGL_Request
-     */
-    function SGL_Request()
-    {
-
-    }
-
     function init()
     {
         if ($this->isEmpty()) {
