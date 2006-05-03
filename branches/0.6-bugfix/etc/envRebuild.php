@@ -76,18 +76,18 @@ class RebuildController extends SGL_FrontController
         $input->setRequest($req);
         $output = &new SGL_Output();
 
-        $process =  new SGL_Process_Init(
-                    new SGL_Process_MinimalSession(
+        $process =  new SGL_Task_Init(
+                    new SGL_Task_MinimalSession(
                     new SGL_Rebuild()
                    ));
 
-            $process->process($input, $output);
+        $process->process($input, $output);
     }
 }
 
 class SGL_Rebuild extends SGL_ProcessRequest
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         if (!SGL::runningFromCli()) {
             SGL::raiseError('This script can only be run from command line',
@@ -103,7 +103,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
             'adminRealName' => 'Demo Admin',
             'adminEmail' => 'demian@phpkitchen.com',
             'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
-            'serverName' => $_SERVER['argv'][1],
+            'serverName' => isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'localhost',
             );
 
         $runner = new SGL_TaskRunner();
@@ -131,15 +131,15 @@ class SGL_Rebuild extends SGL_ProcessRequest
     }
 }
 
-class SGL_Process_MinimalSession extends SGL_DecorateProcess
+class SGL_Task_MinimalSession extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         session_start();
         $_SESSION['uid'] = 1;
         $_SESSION['aPrefs'] = array();
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
