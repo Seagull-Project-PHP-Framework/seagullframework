@@ -3,6 +3,7 @@
         ''  =>'',
         'Outside US'=>'Outside US',
         'AL'=>'Alabama',
+        'AK'=>'Alaska',
         'AZ'=>'Arizona',
         'AR'=>'Arkansas',
         'CA'=>'California',
