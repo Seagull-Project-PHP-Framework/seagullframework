@@ -40,7 +40,8 @@
 /*
     * rebuilds a Seagull install from commandline.
     * Expects to find localhost.conf.php in var dir
-    * build a config you're happy with, make a copy called localhost.conf.php
+    * build a config you're happy with, make a copy called localhost.conf.php or
+      symlink localhost.conf.php to the original.
 
     Usage: $ php etc/envRebuild.php
 */
