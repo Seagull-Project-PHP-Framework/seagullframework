@@ -186,19 +186,21 @@ class DA_Navigation extends SGL_Manager
             } else {
                 $section['uriType'] = ($section['is_static']) ? 'static' : 'dynamic';
 
-                //  parse url details
+                //  parse uri details
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                $c = &SGL_Config::singleton();
-                $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
-                $c->merge($moduleConf);
-                $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
-                if ($className) {
-                    $section['manager'] = $className . '.php';
-                } else {
-                    SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
+                if ($parsed['module'] == 'publisher' && DA_Default::moduleIsRegistered('publisher')) {
+                    $c = &SGL_Config::singleton();
+                    $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
+                    $c->merge($moduleConf);
+                    $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                    if ($className) {
+                        $section['manager'] = $className . '.php';
+                    } else {
+                        SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
+                    }
                 }
 
                 //  represent additional params as string

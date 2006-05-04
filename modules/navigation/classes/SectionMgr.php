@@ -361,6 +361,7 @@ class SectionMgr extends SGL_Manager
 
             //  build dynamic section choosers
             $output->aModules = SGL_Util::getAllModuleDirs();
+            reset($output->aModules);
             $currentModule = isset($output->section['module'])
                 ? $output->section['module']
                 : key($output->aModules);
