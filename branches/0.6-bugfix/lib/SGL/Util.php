@@ -231,6 +231,7 @@ class SGL_Util
         $files = SGL_Util::getAllManagersPerModule($moduleDir);
 
         //  remap 'ContactUsMgr.php => ContactUsMgr' hash to array
+        $fileNames = array();
         foreach ($files as $k => $file) {
             $fileNames[] = $k;
         }
