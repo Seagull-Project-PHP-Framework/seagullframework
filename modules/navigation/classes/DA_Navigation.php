@@ -191,7 +191,7 @@ class DA_Navigation extends SGL_Manager
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                if ($parsed['module'] == 'publisher' && DA_Default::moduleIsRegistered('publisher')) {
+                if (DA_Default::moduleIsRegistered($parsed['module'])) {
                     $c = &SGL_Config::singleton();
                     $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
                     $c->merge($moduleConf);
