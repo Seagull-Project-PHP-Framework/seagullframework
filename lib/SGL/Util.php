@@ -179,8 +179,18 @@ class SGL_Util
     }
 
     /**
-     * Returns an array of strings containing the installed (and registered) Modules
+     * Returns an hash of strings containing the installed (and registered) Modules
      *
+        Array
+        (
+            [block] => block
+            [cms] => cms
+            [default] => default
+            [event] => event
+            [export] => export
+            [navigation] => navigation
+            [user] => user
+        )
      * @static
      * @access  public
      * @return  array
