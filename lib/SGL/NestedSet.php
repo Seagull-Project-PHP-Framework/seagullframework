@@ -273,6 +273,12 @@ class SGL_NestedSet
         return $r;
     }
 
+    function getParent($id)
+    {
+        $ns = $this->_getNestedSet();
+        return $ns->getParent($id);
+    }
+
     /**
      * For any node, fetches child nodes (nodes with same rootid, with level = parent
      * level + 1, with l between parent's l and r).
