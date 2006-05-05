@@ -495,6 +495,11 @@ class SGL_String
         return $formated;
     }
 
+    function toValidFileName($origName)
+    {
+        return SGL_String::dirify($origName);
+    }
+
     //  from http://kalsey.com/2004/07/dirify_in_php/
     function dirify($s)
     {
