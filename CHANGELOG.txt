@@ -4,6 +4,8 @@ svbCHANGELOG
 | VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
+05-05-06    CLI invocation fixed, see
+            http://trac.seagullproject.org/wiki/Howto/WorkingWithCliOrHttpRequests
 04-05-06    Fixed bug where array internal pointer was not set for module list,
             caused SectionMgr to fail to list modules
 03-05-06    Fixed cmdline installer, envRebuild.php

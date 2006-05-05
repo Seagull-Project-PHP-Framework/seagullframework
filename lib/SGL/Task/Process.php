@@ -833,7 +833,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 
         $this->processRequest->process($input, $output);
 
-        if ($this->conf['navigation']['enabled']) {
+        if ($this->conf['navigation']['enabled'] && !SGL::runningFromCli()) {
 
             //  prepare navigation driver
             $navDriver    = $this->conf['navigation']['driver'];
