@@ -180,12 +180,12 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => $oUser->usr_id,
                 'rid'               => $oUser->role_id,
-                'oid'               => $oUser->organisation_id,
+                'oid'               => !empty($oUser->organisation_id) ? $oUser->organisation_id : 0,
                 'username'          => $oUser->username,
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
-                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id),
+                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id),
                 'aPerms'            => ($oUser->role_id == SGL_ADMIN)
                     ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
@@ -364,7 +364,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION && isset($_SESSION['rid']))) {
+        if (count($_SESSION) && isset($_SESSION['rid'])) {
             return $_SESSION['rid'];
         } else {
             return false;

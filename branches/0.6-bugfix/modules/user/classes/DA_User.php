@@ -587,14 +587,14 @@ class DA_User extends SGL_Manager
 
         if (!PEAR::isError($aRes) && count($aRes)) {
             return $aRes;
-        } elseif (!DB::isError($aRes)) {
+        } elseif (!PEAR::isError($aRes)) {
 
             //  return default prefs if none exist for given user id
             if ($uid != 0) { // uid of 0 is the anonymous/public user
                 return $this->getPrefsByUserId();
             } else {
                 $aRes = $this->getMasterPrefs();
-                if (DB::isError($aRes) || !count($aRes)) {
+                if (PEAR::isError($aRes) || !count($aRes)) {
                     SGL::raiseError('No default prefs have been set!',
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 } else {
