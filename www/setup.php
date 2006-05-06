@@ -63,7 +63,7 @@ module setup
 - choose modules and permissions must be created and set at install time
 - attempt to
     - uncompress
-    - move to correct locatin
+    - move to correct location
     - apply user perms
     - apply prefs
     - add module's db tables to Config
@@ -136,12 +136,6 @@ require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Action/Next.php';
 require_once 'HTML/QuickForm/Action/Back.php';
 require_once 'HTML/QuickForm/Action/Display.php';
-
-require_once 'DB.php';
-
-//  load SGL libs
-require_once SGL_PATH . '/lib/SGL/DB.php';
-require_once SGL_PATH . '/lib/SGL/Config.php';
 
 //  load wizard screens and qf overrides
 require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
