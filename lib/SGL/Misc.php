@@ -453,7 +453,7 @@ class SGL_Date
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $aMonths = SGL_String::translate('aMonths', false);
+        $aMonths = SGL_String::translate('aMonths');
         $monthOptions = '';
         if (empty($selected) && $selected != null) {
             $selected = date('m', time());
