@@ -361,12 +361,9 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
     function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_CORE_DIR .'/Translation.php';
 
         $req = $input->getRequest();
         $lang = $req->get('lang');
-
-        require_once SGL_DAT_DIR . '/ary.languages.php';
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
         //  if lang var passed in request

@@ -112,7 +112,6 @@ class SGL_URL
     * @var array
     */
     var $querystring;
-
     var $aQueryData;
     var $frontScriptName;
     var $aStrategies = array();

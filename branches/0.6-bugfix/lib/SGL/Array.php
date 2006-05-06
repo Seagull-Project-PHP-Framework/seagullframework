@@ -1,5 +1,4 @@
 <?php
-
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | Copyright (c) 2006, Demian Turner                                         |
@@ -33,118 +32,95 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | Config.php                                                                |
+// | Array.php                                                                 |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 /**
- * Config file parsing and handling, acts as a registry for config data.
+ * Provides array manipulation methods.
  *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.5 $
  */
-class SGL_Config
+class SGL_Array
 {
-    var $aProps = array();
-    var $fileName;
-
-    function SGL_Config($autoLoad = true)
+    /**
+     * Strips 'empty' elements from supplied array.
+     *
+     * 'Empty' can be a null, empty string, false or empty array.
+     *
+     * @param array $elem
+     * @return array
+     */
+    function removeBlanks($elem)
     {
-        if ($this->isEmpty() && $autoLoad) {
-            $configFile = SGL_VAR_DIR  . '/'
-                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
-            $conf = $this->load($configFile);
-            $this->fileName = $configFile;
-            $this->replace($conf);
-        }
-    }
-
-    function &singleton($autoLoad = true)
-    {
-        static $instance;
-        if (!isset($instance)) {
-            $class = __CLASS__;
-            $instance = new $class($autoLoad);
-        }
-        return $instance;
-    }
-
-    function get($key)
-    {
-        if (is_array($key)) {
-            $key1 = key($key);
-            $key2 = $key[$key1];
-            return $this->aProps[$key1][$key2];
+        if (is_array($elem)) {
+            $clean = array_filter($elem);
         } else {
-            return $this->aProps[$key];
+            SGL::raiseError('array argument expected, got '.gettype($elem),
+                SGL_ERROR_INVALIDARGS);
         }
-    }
-
-    function set($key, $value)
-    {
-        if (isset($this->aProps[$key])
-                && is_array($this->aProps[$key])
-                && is_array($value)) {
-            $key2 = key($value);
-            $this->aProps[$key][$key2] = $value[$key2];
-        } else {
-            $this->aProps[$key] = $value;
-        }
-    }
-
-    function replace($aConf)
-    {
-        $this->aProps = $aConf;
+        return $clean;
     }
 
     /**
-     * Return an array of all Config properties.
+     * Returns an array with imploded keys.
      *
-     * @return array
+     * @param string $glue
+     * @param array $hash
+     * @param string $valwrap
+     * @return string
      */
-    function getAll()
+    function implodeWithKeys($glue, $hash, $valwrap='')
     {
-        return $this->aProps;
-    }
-
-    function getFileName()
-    {
-        return $this->fileName;
-    }
-
-    function load($file)
-    {
-        $ph = &SGL_ParamHandler::singleton($file);
-        $data = $ph->read();
-        if ($data !== false) {
-            return $data;
+        if (is_array($hash) && count($hash)) {
+            foreach ($hash as $key => $value) {
+                $aResult[] = $key.$glue.$valwrap.$value.$valwrap;
+            }
+            $ret = implode($glue, $aResult);
         } else {
-            if (defined('SGL_INITIALISED')) {
-                return SGL::raiseError('Problem reading config file',
-                    SGL_ERROR_INVALIDFILEPERMS);
+            $ret = '';
+        }
+        return $ret;
+    }
+
+    /**
+     * Merges two arrays and replace existing entrys.
+     *
+     * Merges two Array like the PHP Function array_merge_recursive.
+     * The main difference is that existing keys will be replaced with new values,
+     * not combined in a new sub array.
+     *
+     * Usage:
+     *        $newArray = SGL_Array::mergeReplace($array, $newValues);
+     *
+     * @access puplic
+     * @param array $array First Array with 'replaceable' Values
+     * @param array $newValues Array which will be merged into first one
+     * @return array Resulting Array from replacing Process
+     */
+    function mergeReplace($array, $newValues)
+    {
+        foreach ($newValues as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array[$key])) {
+                    $array[$key] = array();
+                }
+                $array[$key] = SGL_Array::mergeReplace($array[$key], $value);
             } else {
-                SGL::displayStaticPage('No global config file could be found');
+                if (isset($array[$key]) && is_array($array[$key])) {
+                    $array[$key][0] = $value;
+                } else {
+                    if (isset($array) && !is_array($array)) {
+                        $temp = $array;
+                        $array = array();
+                        $array[0] = $temp;
+                    }
+                    $array[$key] = $value;
+                }
             }
         }
-    }
-
-    function save($file)
-    {
-        $ph = &SGL_ParamHandler::singleton($file);
-        return $ph->write($this->aProps);
-    }
-
-    function merge($aConf)
-    {
-        $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
-    }
-
-    function isEmpty()
-    {
-        return count($this->aProps) ? false : true;
+        return $array;
     }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../Misc.php';
+require_once dirname(__FILE__) . '/../Array.php';
 
 /**
  * Test suite.

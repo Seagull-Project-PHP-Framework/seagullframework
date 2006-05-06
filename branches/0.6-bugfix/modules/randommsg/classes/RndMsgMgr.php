@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: RndMsgMgr.php,v 1.19 2005/01/23 13:47:24 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -123,7 +122,7 @@ class RndMsgMgr extends SGL_Manager
             $input->error    = $aErrors;
             $input->template = 'rndMsgAdd.html';
             $this->validated = false;
-            
+
             // fix page title
             if ('insert' == $input->action) {
                 $input->pageTitle = 'RndMsg Manager :: Add';

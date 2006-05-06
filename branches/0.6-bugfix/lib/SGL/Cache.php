@@ -1,5 +1,4 @@
 <?php
-
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | Copyright (c) 2006, Demian Turner                                         |
@@ -33,118 +32,67 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | Config.php                                                                |
+// | Cache.php                                                                 |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 /**
- * Config file parsing and handling, acts as a registry for config data.
+ * A wrapper for PEAR's Cache_Lite.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.5 $
  */
-class SGL_Config
+class SGL_Cache
 {
-    var $aProps = array();
-    var $fileName;
-
-    function SGL_Config($autoLoad = true)
-    {
-        if ($this->isEmpty() && $autoLoad) {
-            $configFile = SGL_VAR_DIR  . '/'
-                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
-            $conf = $this->load($configFile);
-            $this->fileName = $configFile;
-            $this->replace($conf);
-        }
-    }
-
-    function &singleton($autoLoad = true)
+    /**
+     * Returns a singleton Cache_Lite instance.
+     *
+     * example usage:
+     * $cache = & SGL_Cache::singleton();
+     * warning: in order to work correctly, the cache
+     * singleton must be instantiated statically and
+     * by reference
+     *
+     * @access  public
+     * @param boolean $force    If true the $conf['cache']['enabled'] setting will
+     *                          be ignored and caching enabled
+     * @static
+     * @return  mixed reference to Cache_Lite object
+     */
+    function &singleton($force = false)
     {
         static $instance;
-        if (!isset($instance)) {
-            $class = __CLASS__;
-            $instance = new $class($autoLoad);
+
+        // If the instance doesn't exist, create one
+        if (!isset($instance) || $force) {
+            require_once 'Cache/Lite.php';
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+
+            $isEnabled = ($force) ? true : $conf['cache']['enabled'];
+            $options = array(
+                'cacheDir'  => SGL_TMP_DIR . '/',
+                'lifeTime'  => $conf['cache']['lifetime'],
+                'caching'   => $isEnabled);
+            $instance = new Cache_Lite($options);
         }
         return $instance;
     }
 
-    function get($key)
-    {
-        if (is_array($key)) {
-            $key1 = key($key);
-            $key2 = $key[$key1];
-            return $this->aProps[$key1][$key2];
-        } else {
-            return $this->aProps[$key];
-        }
-    }
-
-    function set($key, $value)
-    {
-        if (isset($this->aProps[$key])
-                && is_array($this->aProps[$key])
-                && is_array($value)) {
-            $key2 = key($value);
-            $this->aProps[$key][$key2] = $value[$key2];
-        } else {
-            $this->aProps[$key] = $value;
-        }
-    }
-
-    function replace($aConf)
-    {
-        $this->aProps = $aConf;
-    }
-
     /**
-     * Return an array of all Config properties.
+     * Clear cache directory of a specific module's cache files. A simple wrapper to
+     * PEAR::Cache_Lite's clean() method.
      *
-     * @return array
+     * @access public
+     * @param  string $group name of the cache group (e.g. nav, blocks, etc.)
+     * @return boolean true on success
+     * @author  Andy Crain <apcrain@fuse.net>
      */
-    function getAll()
-    {
-        return $this->aProps;
-    }
-
-    function getFileName()
-    {
-        return $this->fileName;
-    }
-
-    function load($file)
-    {
-        $ph = &SGL_ParamHandler::singleton($file);
-        $data = $ph->read();
-        if ($data !== false) {
-            return $data;
-        } else {
-            if (defined('SGL_INITIALISED')) {
-                return SGL::raiseError('Problem reading config file',
-                    SGL_ERROR_INVALIDFILEPERMS);
-            } else {
-                SGL::displayStaticPage('No global config file could be found');
-            }
-        }
-    }
-
-    function save($file)
-    {
-        $ph = &SGL_ParamHandler::singleton($file);
-        return $ph->write($this->aProps);
-    }
-
-    function merge($aConf)
-    {
-        $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
-    }
-
-    function isEmpty()
-    {
-        return count($this->aProps) ? false : true;
-    }
+     function clear($group = false)
+     {
+        $cache = & SGL_Cache::singleton();
+        return $cache->clean($group);
+     }
 }
 ?>

@@ -1,5 +1,4 @@
 <?php
-
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | Copyright (c) 2006, Demian Turner                                         |
@@ -160,25 +159,43 @@ class SGL_FrontController
 
     function loadRequiredFiles()
     {
-        require_once dirname(__FILE__)  . '/Url.php';
-        require_once dirname(__FILE__)  . '/UrlParser/SefStrategy.php';
-        require_once dirname(__FILE__)  . '/Manager.php';
-        require_once dirname(__FILE__)  . '/Output.php';
-        require_once dirname(__FILE__)  . '/String.php';
-        require_once dirname(__FILE__)  . '/Task/Process.php';
-        require_once dirname(__FILE__)  . '/Session.php';
-        require_once dirname(__FILE__)  . '/Util.php';
-        require_once dirname(__FILE__)  . '/Task/Process.php';
-        require_once dirname(__FILE__)  . '/Config.php';
-        require_once dirname(__FILE__)  . '/Registry.php';
-        require_once dirname(__FILE__)  . '/Request.php';
-        require_once dirname(__FILE__)  . '/Misc.php';
-        require_once dirname(__FILE__)  . '/DB.php';
-        require_once 'PEAR.php';
+        $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
+        if (is_file($cachedLibs)) {
+            require_once $cachedLibs;
+        } else {
+            $coreLibs = dirname(__FILE__);
+            $aRequiredFiles = array(
+                $coreLibs  . '/Url.php',
+                $coreLibs  . '/UrlParser/SefStrategy.php',
+                $coreLibs  . '/HTTP.php',
+                $coreLibs  . '/Manager.php',
+                $coreLibs  . '/Output.php',
+                $coreLibs  . '/String.php',
+                $coreLibs  . '/Task/Process.php',
+                $coreLibs  . '/Session.php',
+                $coreLibs  . '/Util.php',
+                $coreLibs  . '/Config.php',
+                $coreLibs  . '/ParamHandler.php',
+                $coreLibs  . '/Registry.php',
+                $coreLibs  . '/Request.php',
+                $coreLibs  . '/Inflector.php',
+                $coreLibs  . '/Date.php',
+                $coreLibs  . '/Array.php',
+                $coreLibs  . '/Error.php',
+                $coreLibs  . '/Cache.php',
+                $coreLibs  . '/DB.php',
+                $coreLibs  . '/Translation.php',
+                $coreLibs  . '/../data/ary.languages.php',
+            );
+            $fileCache = '';
+            foreach ($aRequiredFiles as $file) {
+                require_once $file;
+                $fileCache .= file_get_contents($file);
+                $fileCache .= "\n";
+            }
+            $ok = file_put_contents($cachedLibs, $fileCache);
+        }
         require_once 'DB.php';
-//        $aRequiredFiles = array(
-//
-//        );
     }
 
     function setupMinimumEnv()
