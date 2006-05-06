@@ -39,9 +39,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
-require_once dirname(__FILE__)  . '/SGL/DB.php';
-require_once dirname(__FILE__)  . '/SGL/String.php';
-
 /**
  * Provides a set of static utility methods used by most modules.
  *

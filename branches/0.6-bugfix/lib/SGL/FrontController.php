@@ -39,13 +39,9 @@
 // +---------------------------------------------------------------------------+
 // $Id: FrontController.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
-require_once dirname(__FILE__)  . '/Registry.php';
-require_once dirname(__FILE__)  . '/Request.php';
-require_once dirname(__FILE__)  . '/Misc.php';
 require_once dirname(__FILE__)  . '/../SGL.php';
-require_once dirname(__FILE__)  . '/Config.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
-require_once dirname(__FILE__)  . '/Task/Process.php';
+
 
 /**
  * Application controller.
@@ -141,6 +137,7 @@ class SGL_FrontController
     function init()
     {
         SGL_FrontController::setupMinimumEnv();
+        SGL_FrontController::loadRequiredFiles();
 
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
@@ -159,6 +156,29 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
         define('SGL_INITIALISED', true);
+    }
+
+    function loadRequiredFiles()
+    {
+        require_once dirname(__FILE__)  . '/Url.php';
+        require_once dirname(__FILE__)  . '/UrlParser/SefStrategy.php';
+        require_once dirname(__FILE__)  . '/Manager.php';
+        require_once dirname(__FILE__)  . '/Output.php';
+        require_once dirname(__FILE__)  . '/String.php';
+        require_once dirname(__FILE__)  . '/Task/Process.php';
+        require_once dirname(__FILE__)  . '/Session.php';
+        require_once dirname(__FILE__)  . '/Util.php';
+        require_once dirname(__FILE__)  . '/Task/Process.php';
+        require_once dirname(__FILE__)  . '/Config.php';
+        require_once dirname(__FILE__)  . '/Registry.php';
+        require_once dirname(__FILE__)  . '/Request.php';
+        require_once dirname(__FILE__)  . '/Misc.php';
+        require_once dirname(__FILE__)  . '/DB.php';
+        require_once 'PEAR.php';
+        require_once 'DB.php';
+//        $aRequiredFiles = array(
+//
+//        );
     }
 
     function setupMinimumEnv()

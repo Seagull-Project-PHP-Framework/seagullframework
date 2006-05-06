@@ -67,7 +67,7 @@ class SGL_Task_SetupPaths extends SGL_Task
             define('SGL_PATH', '@PHP-DIR@/Seagull');
             define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
         } else {
-            define('SGL_PATH', dirname(dirname(dirname((dirname(__FILE__))))));
+            define('SGL_PATH', dirname(dirname(dirname(dirname(__FILE__)))));
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         }
 
@@ -85,8 +85,6 @@ class SGL_Task_SetupPaths extends SGL_Task
                 with safe mode enabled.');
             }
         }
-        require_once 'PEAR.php';
-        require_once 'DB.php';
     }
 
     /**
@@ -213,8 +211,8 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_WORD',                      2);
 
         //  define language id types
-        define('SGL_LANG_ID_SGL',          1);
-        define('SGL_LANG_ID_TRANS2',       2);
+        define('SGL_LANG_ID_SGL',               1);
+        define('SGL_LANG_ID_TRANS2',            2);
 
         //  various
         define('SGL_ANY_SECTION', 				0);
@@ -227,16 +225,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
 
         //  to overcome overload problem
-        define('DB_DATAOBJECT_NO_OVERLOAD', true);
-
-        require_once dirname(__FILE__)  . '/../Url.php';
-        require_once dirname(__FILE__)  . '/../UrlParser/SefStrategy.php';
-        require_once dirname(__FILE__)  . '/../Manager.php';
-        require_once dirname(__FILE__)  . '/../Output.php';
-        require_once dirname(__FILE__)  . '/../String.php';
-        require_once dirname(__FILE__)  . '/../Task/Process.php';
-        require_once dirname(__FILE__)  . '/../Session.php';
-        require_once dirname(__FILE__)  . '/../Util.php';
+        define('DB_DATAOBJECT_NO_OVERLOAD',     true);
     }
 }
 
