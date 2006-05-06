@@ -6,7 +6,6 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 
-require_once "XML/RSS.php";
 define('SGL_RSS_ITEMS_TO_SHOW', 5);
 
 class Export_Block_SampleRss
@@ -31,6 +30,7 @@ class Export_Block_SampleRss
             $html = unserialize($data);
             SGL::logMessage('rss from cache', PEAR_LOG_DEBUG);
         } else {
+            require_once "XML/RSS.php";
             $rss =& new XML_RSS($this->rssSource);
             $rss->parse();
 
