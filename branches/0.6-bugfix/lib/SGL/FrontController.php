@@ -188,9 +188,21 @@ class SGL_FrontController
                 $coreLibs  . '/../data/ary.languages.php',
             );
             $fileCache = '';
+
+            if (!defined('T_ML_COMMENT')) {
+               define('T_ML_COMMENT', T_COMMENT);
+            } else {
+               define('T_DOC_COMMENT', T_ML_COMMENT);
+            }
+
             foreach ($aRequiredFiles as $file) {
                 require_once $file;
-                $fileCache .= file_get_contents($file);
+                // 270kb vs 104kb
+                if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
+                    $fileCache .= php_strip_whitespace($file);
+                } else {
+                    $fileCache .= file_get_contents($file);
+                }
                 $fileCache .= "\n";
             }
             $ok = file_put_contents($cachedLibs, $fileCache);
