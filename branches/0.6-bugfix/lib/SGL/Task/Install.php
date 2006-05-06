@@ -1068,7 +1068,6 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            require_once SGL_CORE_DIR . '/String.php';
             $da = & DA_User::singleton();
             $oUser = $da->getUserById();
 
