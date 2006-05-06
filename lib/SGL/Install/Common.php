@@ -37,8 +37,6 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
-require_once dirname(__FILE__)  . '/../Misc.php';
-
 /**
  * Provides various static methods required for install routine.
  * @package Install

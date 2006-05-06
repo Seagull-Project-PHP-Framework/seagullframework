@@ -115,7 +115,6 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         //  set lang
         $aInstalledLanguages =  @$_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
-        require_once SGL_DAT_DIR . '/ary.languages.php';
         if (count($aInstalledLanguages)) {
 
             //  return only selected langs

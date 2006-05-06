@@ -592,7 +592,6 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         $aLangOptions = SGL_Util::getLangsDescriptionMap();
 
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
-            require_once SGL_CORE_DIR .'/Translation.php';
             $trans = & SGL_Translation::singleton('admin');
 
             $this->setup();

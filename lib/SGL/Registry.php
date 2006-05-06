@@ -140,3 +140,4 @@ class SGL_Registry
         }
     }
 }
+?>

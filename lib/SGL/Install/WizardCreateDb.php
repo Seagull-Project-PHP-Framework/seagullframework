@@ -119,7 +119,6 @@ class WizardCreateDb extends HTML_QuickForm_Page
 {
     function buildForm()
     {
-        require_once SGL_CORE_DIR .'/Translation.php';
         $this->_formBuilt = true;
 
         $this->setDefaults(array(

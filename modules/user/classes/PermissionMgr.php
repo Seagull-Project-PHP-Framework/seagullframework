@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: PermissionMgr.php,v 1.58 2005/05/28 13:46:30 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';

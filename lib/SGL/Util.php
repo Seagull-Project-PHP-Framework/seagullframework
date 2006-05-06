@@ -359,7 +359,6 @@ class SGL_Util
      */
     function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
     {
-        require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         $aLangs = array();
@@ -377,8 +376,8 @@ class SGL_Util
 
         //  if $aSelectedLangs has elements return it.
         $aLangs = (isset ($aSelectedLangs) && !empty($aSelectedLangs))
-                    ? $aSelectedLangs
-                    : $aLangs;
+            ? $aSelectedLangs
+            : $aLangs;
 
         return $aLangs;
     }

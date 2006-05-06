@@ -76,7 +76,6 @@ class SGL_Request
     {
         static $instance;
 
-        // If the instance is not there, create one
         if (!isset($instance)) {
             $instance = new SGL_Request();
             $err = $instance->init();
@@ -106,9 +105,9 @@ class SGL_Request
             $url = unserialize($data);
             SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once dirname(__FILE__) . '/UrlParser/SimpleStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/AliasStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/ClassicStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
 
             $aStrats = array(
                 new SGL_UrlParser_ClassicStrategy(),

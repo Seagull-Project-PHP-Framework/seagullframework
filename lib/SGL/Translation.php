@@ -70,12 +70,12 @@ class SGL_Translation
     function &singleton($type = 'translation')
     {
         static $instance;
-        
+
         // If the instance exists, return one
         if (isset($instance[$type])) {
             return $instance[$type];
         }
-        
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -131,13 +131,13 @@ class SGL_Translation
         if ($dsn['phptype'] == 'mysql_SGL') {
             $instance[$type]->storage->db->phptype = 'mysql';
         }
-       
+
         return $instance[$type];
     }
 
 
     /**
-     * Returns an dictionary of translated strings.
+     * Returns a dictionary of translated strings.
      *
      * @static
      * @param string $module

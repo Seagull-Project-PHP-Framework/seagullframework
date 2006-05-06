@@ -39,8 +39,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
-
 /**
  * Manages packages from the PEAR channel.
  *

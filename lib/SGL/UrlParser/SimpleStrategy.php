@@ -6,7 +6,6 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-require_once SGL_CORE_DIR . '/Url.php';
 
 /**
  * Concrete simple url parser strategy.
