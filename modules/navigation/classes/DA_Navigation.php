@@ -49,7 +49,6 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
 class DA_Navigation extends SGL_Manager
 {
     var $_params  = array();
-    var $_aUriAliases = array();
 
     /**
      * Constructor - set default resources.
@@ -83,9 +82,6 @@ class DA_Navigation extends SGL_Manager
 
         $this->nestedSet = &new SGL_NestedSet($this->_params);
 
-        //  load Uri Aliases
-        $this->_aUriAliases = $this->getAllAliases();
-
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = &SGL_Translation::singleton('admin');
@@ -115,23 +111,23 @@ class DA_Navigation extends SGL_Manager
      *
      * @access  public
      *
-     * @param   int $sectionId  Parent section id
+     * @param   int $parentId  Parent section id
      * @return  array
      */
-   function getSectionsFromParent($sectionId = 0)
+   function getSectionsByParentId($parentId = 0)
     {
         $query = "
             SELECT * FROM {$this->conf['table']['section']}
-            WHERE parent_id = " . $sectionId . '
+            WHERE parent_id = " . $parentId . '
             ORDER BY order_id';
 
-        $result = $this->dbh->query($query);
-        if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
+        $result = $this->dbh->getAll($query);
+        if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
                 please delete the config file from the var directory and try the install again',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-        if (DB::isError($result)) {
+        if (PEAR::isError($result)) {
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
@@ -286,7 +282,6 @@ class DA_Navigation extends SGL_Manager
             if ($this->conf['translation']['container'] == 'db') {
                 $this->trans->remove($section['trans_id'], 'nav');
             }
-
             //  remove section
             $this->nestedSet->deleteNode($sectionId);
 
@@ -334,14 +329,20 @@ class DA_Navigation extends SGL_Manager
         return $this->dbh->query($query);
     }
 
-    function isUriAliasDuplicated($aliasName, $sectionId = null) {
-        $sectionId2 = @$this->_aUriAliases[$aliasName]->section_id;
-        if ((!$sectionId && $sectionId2)
-            || ($sectionId2 && $sectionId && $sectionId2 != $sectionId)) {
-            return SGL_ERROR_INVALIDREQUEST;
+    function isUriAliasDuplicated($aliasName, $sectionId = null)
+    {
+        //  load URI aliases
+        $aUriAliases = $this->getAllAliases();
+        $sectionId2 = isset($aUriAliases[$aliasName])
+            ? (integer)$aUriAliases[$aliasName]->section_id
+            : false;
+        if ((is_null($sectionId) && is_int($sectionId2)) ||
+            (is_int($sectionId2) && is_int($sectionId) && $sectionId2 != $sectionId)) {
+            $ret = true;
         } else {
-            return false;
+            $ret = false;
         }
+        return $ret;
     }
 
     function addUriAlias($id, $aliasName, $target)
@@ -349,11 +350,25 @@ class DA_Navigation extends SGL_Manager
         $aliasName = $this->dbh->quoteSmart($aliasName);
         $query = "
             INSERT INTO {$this->conf['table']['uri_alias']}
-            (uri_alias_id, uri_alias, section_id)
+                (uri_alias_id, uri_alias, section_id)
             VALUES($id, $aliasName, $target)";
         return $this->dbh->query($query);
     }
 
+    /*
+    Returns following data structure:
+
+    Array
+    (
+        [my_alias] => stdClass Object
+            (
+                [uri_alias] => my_alias
+                [resource_uri] => block/block
+                [section_id] => 69
+            )
+
+    )
+    */
     function getAllAliases()
     {
         $query = "
@@ -370,7 +385,6 @@ class DA_Navigation extends SGL_Manager
      * Returns all sections.
      *
      * @access  public
-     *
      * @return  array
      */
     function getSectionTree()

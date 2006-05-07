@@ -28,7 +28,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
      */
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        $aUriAliases = $this->da->_aUriAliases;
+        $aUriAliases = $this->da->getAllAliases();
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
         //    The alias will always be the second uri part in the array

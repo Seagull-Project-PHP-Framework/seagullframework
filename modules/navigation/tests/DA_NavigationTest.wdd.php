@@ -36,6 +36,45 @@ class DA_NavigationTest extends UnitTestCase {
         $ok = $this->da->addSimpleSection($section);
     }
 
+    function testGetAllAliases()
+    {
+        $aSection = array(
+              'title' => 'test section',
+              'parent_id' => SGL_NODE_ADMIN,
+              'uriType' => 'dynamic',
+              'module' => 'block',
+              'manager' => 'BlockMgr.php',
+              'actionMapping' => '', // eg: edit
+              'add_params' => '',    // eg: frmArticleID/23
+              'is_enabled' => 1,
+              'perms' => SGL_ADMIN,  // role id, eg: 1 for admin
+                );
+        $sectionId = $this->da->addSimpleSection($aSection);
+        $id = $this->da->dbh->nextId('uri_alias');
+        $this->assertTrue($this->da->addUriAlias($id, 'my_alias', $sectionId));
+        $ret = $this->da->getAllAliases();
+        $this->assertTrue(is_array($ret));
+        $this->assertTrue(count($ret));
+    }
+
+    function testIsUriAliasDuplicated()
+    {
+        /* data from previous method
+        Array
+        (
+            [my_alias] => stdClass Object
+                (
+                    [uri_alias] => my_alias
+                    [resource_uri] => block/block
+                    [section_id] => 69
+                )
+
+        )*/
+
+        $this->assertTrue($this->da->isUriAliasDuplicated('my_alias', $sectionId = null));
+        $this->assertTrue($this->da->isUriAliasDuplicated('my_alias', $sectionId = 32));//non-existant id
+    }
+
     function xtestAddingSectionsWithSubs()
     {
         $aSections = array(

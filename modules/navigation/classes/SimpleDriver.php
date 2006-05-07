@@ -219,6 +219,7 @@ class SimpleDriver
         $this->output    = &$outputData;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
+        $this->querystring = $this->req->getUri();
 
         // set default driver params from configuration
         foreach ($this->conf['navigation'] as $key => $value) {
@@ -294,7 +295,7 @@ class SimpleDriver
                     $this->_aTranslations = &$aTranslations;
                 }
 
-                $aSectionNodes    = $this->getSectionsByRoleId($this->_startParentNode);
+                $aSectionNodes    = $this->getSectionsById($this->_startParentNode);
                 $aAllSectionNodes = $aSectionNodes;
                 $aAllCurrentPages = $this->_aAllCurrentPages;
                 $startParentNode  = $this->_startParentNode;
@@ -377,15 +378,13 @@ class SimpleDriver
      * @param   int $sectionId
      * @return  array of DataObjects_Section objects
      */
-    function getSectionsByRoleId($sectionId = 0)
+    function getSectionsById($sectionId = 0)
     {
-        $this->querystring = $this->req->getUri();
-
         // get navigation tree
-        $aSectionNodes = $this->_getSections($sectionId);
+        $aSectionNodes = $this->_getSectionsById($sectionId);
 
         // search exact matching checking
-        if ($aSectionNodes) {
+        if (is_array($aSectionNodes) && count($aSectionNodes)) {
             $this->_searchExactMatches($aSectionNodes);
 
             // if no exact matches search inexact matches
@@ -404,28 +403,26 @@ class SimpleDriver
      * @param   int $sectionId
      * @return  array of DataObjects_Section objects
      */
-    function _getSections($sectionId = 0)
+    function _getSectionsById($sectionId = 0)
     {
         $aSectionNodes = array();
 
         //  get nodes from parent node
-        $result = $this->da->getSectionsFromParent($sectionId);
+        $aNodes = $this->da->getSectionsByParentId($sectionId);
 
         //  process with each node
-        while ($result->fetchInto($sectionNode)) {
+        foreach ($aNodes as $sectionNode) {
 
             //  check permissions
             $aPerms = explode(',', $sectionNode->perms);
             if (!in_array($this->_rid, $aPerms) && !in_array(SGL_ANY_ROLE, $aPerms)) {
                 continue;
             }
-
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             $sectionNode->children = false;
             if ($sectionNode->right_id - $sectionNode->left_id > 1) {
-                $sectionNode->children = $this->_getSections($sectionNode->section_id);
+                $sectionNode->children = $this->_getSectionsById($sectionNode->section_id);
             }
-
             //  check add-on
             $aSections   = array();
             if (preg_match('/^uriAddon:([^:]*):(.*)/', $sectionNode->resource_uri, $aUri)) {
