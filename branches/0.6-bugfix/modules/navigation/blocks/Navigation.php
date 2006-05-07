@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.6.5                                                             |
+// | Seagull 0.6.0                                                             |
 // +---------------------------------------------------------------------------+
 // | Navigation.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -57,24 +57,34 @@ class Navigation_Block_Navigation
 
         //  prepare navigation driver
         $navDriver = $output->conf['navigation']['driver'];
-        $nav       = & new $navDriver($output);
+        $navDrvFile   = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
+        if (is_file($navDrvFile)) {
+            require_once $navDrvFile;
+        } else {
+            SGL::raiseError('specified navigation driver does not exist',
+                SGL_ERROR_NOFILE);
+        }
+        if (!class_exists($navDriver)) {
+            SGL::raiseError('problem with navigation driver object',
+                SGL_ERROR_NOCLASS);
+        }
+        $nav = & new $navDriver($output);
 
         //  set default params
         $aDefaultParams = array(
-                'startParentNode' => 0,
-                'startLevel'      => 0,
-                'levelsToRender'  => 0,
-                'collapsed'       => 0,
-                'showAlways'      => 0,
-                'cacheEnabled'    => 1,
-                'breadcrumbs'     => 0,
+            'startParentNode' => 0,
+            'startLevel'      => 0,
+            'levelsToRender'  => 0,
+            'collapsed'       => 0,
+            'showAlways'      => 0,
+            'cacheEnabled'    => 1,
+            'breadcrumbs'     => 0,
         );
 
         //  set custom params
         foreach ($aParams as $key => $value) {
             $aDefaultParams[$key] = $value;
         }
-
         //  set new navigation driver params
         $nav->setParams($aDefaultParams);
 

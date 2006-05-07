@@ -1,4 +1,5 @@
 <?php
+define('SGL_CACHE_LIBS', false);
 
 //  start timer
 define('SGL_START_TIME', getSystemTime());

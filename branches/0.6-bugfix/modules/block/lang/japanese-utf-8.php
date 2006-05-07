@@ -32,7 +32,6 @@
         'Block successfully added' => 'ブロックが追加されました。',
         'Block details successfully updated' => 'ブロック情報は更新されました。',
         'The selected block(s) have successfully been deleted' => '選択されたブロックは削除されました。',
-        'There was a problem, block did not validate' => '問題が発生しました。このブロックは有効なブロックではありません。',
         'There is no block to delete' => '削除するブロックがありません。',
 
         // Errors
@@ -43,13 +42,11 @@
 
         // Misc
         'Block' => 'ブロック',
-        'Reorder instructions' => '<b>上へ</b>と<b>下へ</b>をクリックして、選択したアイテムの表示の順番を入れ替えることが出来ます。<br />最後に<b>保存</b>をクリックして、内容を保存してください。',
         'Left column' => '左のカラム',
         'Right column' => '右のカラム',
         'No section' => 'セクションはありません',
         'All sections' => '全てのセクション',
         'Unassigned' => '割り当てなし',
-        'With selected block(s)'=>'選択されたブロックについて',
         'Can view' => '閲覧可能',
         'All roles' => '全てのロール',
         'Block list' => 'ブロック一覧',

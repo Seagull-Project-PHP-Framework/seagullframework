@@ -1,7 +1,5 @@
 <?php
     $words = array(
-        'Publisher' => 'パブリッシュ',
-
 /*  ARTICLE MGR */
         'Article Manager' => '記事管理',
         'Article Manager :: Add' => '記事管理 :: 新規作成',
@@ -15,7 +13,6 @@
         'Start Date' => '表示開始日',
         'Expiry Date' => '表示終了日',
         'Modif. By' => '更新者',
-        'Status' => 'ステータス',
         'preview' => 'プレビュー',
         'approve' => '承認',
         'publish' => '公開',
@@ -26,27 +23,28 @@
         'Published' => '公開済み',
         'Archived' => 'アーカイブ済み ',
         'Deleted' => '削除済み',
-        'Editing Article' => '記事の編集',
         'select a type to create a new article' => '新しい記事のタイプを選択してください',
-        'With selected article(s)' => '選択された記事について',
         'Article successfully added' => '記事が作成されました',
         'Article successfully updated' => '記事は更新されました',
         'Article status has been successfully changed' => '記事のステータスは更新されました',
         'The selected article(s) have successfully been deleted' => '選択された記事は削除されました',
         'asset' => 'アセット',
-        'No text entered' => 'テキストが入力されていません',
+        'No other text entered' => 'その他のテキストが入力されていません',
         'Current View Wysiwyg' => '現在のWYSIWYGビュー',
         'View Wysiwyg' => 'WYSIWYGビュー',
         'Current View Html' => '現在のHTMLビュー',
         'View Html' => 'HTMLビュー',
         'Select Font' => 'フォントの選択',
         'Size' => 'サイズ',
-        'article type' => '記事タイプ',
         'whole DB' => '全てのカテゴリ',
         'this category' => 'このカテゴリ',
         'showing results for' => '表示条件',
         'Article list' => '記事一覧',
         'Article filter' => '記事検索',
+        'Editing options' => '編集オプション',
+        'No expire' => '終了期限なし',
+        'select a category' => 'カテゴリーを選択',
+        'choose' => '選択',
         
 /* ArticleViewMgr */
         'Article Browser' => '記事ブラウザ',
@@ -57,7 +55,6 @@
         'No documents found' => 'ファイルはありません',
         
 /* ArticleView  */      
-        'No article found' => '記事はありません',
         
 /* Article Add & Edit  */     
         'Article type' => '記事のタイプ',
@@ -70,26 +67,20 @@
         'Document Manager' => 'ファイル管理',
         'Document list' => 'ファイルリスト',
         'Document filter' => 'ファイル検索',
-        'Content Type' => 'Content Type',
         'New Asset' => '新規ファイル',
+        'Editing Asset' => 'ファイル情報の編集',
         'Asset Name' => '名前',
         'Date Added' => '登録日',
         'Description' => '説明',
         'Category' => 'カテゴリ',
         'Locate' => '場所',
         'Upload' => 'アップロード',
-        'Original Name' => '元の名前',
         'Mime Type' => 'MIMEタイプ',
-        'Kb' => 'kB',
         'Owner' => '所有者',
         'Type' => 'タイプ',
         'Document type' => 'ファイルタイプ',
-        'no results found' => '一件もありません',
         'Download' => 'ダウンロード',
-        'View' => '見る',
-        'Editing Asset' => 'ファイル情報の編集',
         'New Asset' => '新規ファイル',
-        'With selected document(s)' => '選択されたファイルについて',
         'Error: Not a recognised file type' => 'エラー：許可されないファイルタイプです',
         'Error: A file with this name already exists' => 'エラー：この名前のファイルはすでに存在します',
         'The asset has successfully been added' => 'ファイルが登録されました',
@@ -100,6 +91,7 @@
         'You must select a file to upload' => 'アップロードするファイルを指定してください',
         'There was an error attempting to download the file' => 'ファイルのダウンロード中にエラーが発生しました',
         'The specified file does not appear to exist' => '指定されたファイルは存在しないようです',
+        'Please select a file to upload' => 'アップロードするファイルを指定してください',
         
 /*  CONTENT TYPE MGR */
         'Content Type Manager' => 'Content Type Manager',
@@ -115,14 +107,17 @@
         'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'=>'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:',
         'What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'=>'What you see when you click the \'Articles\' tab in the front end is a document collection. Creating articles of type \'Html Article\' allows you to place your content in a hierarchy that you build using the \'Categories\' button above. This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the \'Related Articles\' box on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the \'Related Documents\' box.',
         'However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the'=>'However, if you want to make standalone pages that will be linked to by their own tab, please use the \'Static Html Article\' type.  In order to create the navigation that will link to these static pages, please use the',
-        'Navigation module'=>'Navigation module',
         'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.'=>'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.',
         'You can also set permissions on who can view the content using the Permissions button above.'=>'You can also set permissions on who can view the content using the \'Permissions\' button above.',
         'more info'=>'more info',
-        'With selected document(s)' => 'With selected document(s)',
         'Contributed by' =>'Contributed by',
         'contributed by' =>'contributed by',
         'full story'=> 'Continue reading',
+        
+        // types
+        'Title'    => 'タイトル',
+        'BodyHtml' => 'HTMLテキスト',
+        'NewsHtml' => 'News HTML',
 
 /* WIKISCRAPE MGR */
         'WikiScrape Manager' => 'WikiScrape Manager',

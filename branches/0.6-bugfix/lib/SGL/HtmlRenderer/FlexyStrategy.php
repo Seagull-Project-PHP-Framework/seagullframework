@@ -21,9 +21,6 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      */
     function render(/*SGL_View*/ &$view)
     {
-        //  invoke html view specific post-process tasks
-        #$view->postProcess($view);
-
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
 
@@ -43,7 +40,6 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
                   && is_array($view->data->flexyElements))
             ? $view->data->flexyElements
             : array();
-
         $data = $flexy->bufferedOutputObject($view->data, $elements);
 
         SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);

@@ -925,7 +925,6 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
         if ($this->conf['site']['blocksEnabled']
                 && $this->conf['navigation']['enabled']
                 && !SGL::runningFromCli()) {
-            require_once SGL_CORE_DIR . '/BlockLoader.php';
             $output->sectionId = empty($output->sectionId)
                 ? 0
                 : $output->sectionId;

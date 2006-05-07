@@ -183,6 +183,7 @@ class SGL_FrontController
                 $coreLibs  . '/Error.php',
                 $coreLibs  . '/Cache.php',
                 $coreLibs  . '/DB.php',
+                $coreLibs  . '/BlockLoader.php',
                 $coreLibs  . '/Translation.php',
                 $coreLibs  . '/../data/ary.languages.php',
             );

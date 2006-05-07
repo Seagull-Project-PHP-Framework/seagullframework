@@ -1,6 +1,8 @@
 <?php
-$defaultWords = array(
-'Manual Generator' => 'マニュアル ジェネレータ',
-'no results found' => '一件もありません',
+$words = array(
+    'Manual Generator'  => 'マニュアル ジェネレータ',
+    'by'                => 'by',
+    'Table of Contents' => '目次',
+    '%name Docs'        => '%name Docs'
 );
 ?>

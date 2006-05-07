@@ -1,368 +1,497 @@
 <?php
-$words['Retrieve password'] = 'パスワード再発行';
-$words['Enter the email address you registered with'] = '登録済みのメールアドレスを入力してください';
-$words['retrieve'] = '再取得';
-$words['You must enter a username'] = 'ユーザー名を入力してください';
-$words['You must enter a password'] = 'パスワードを入力してください';
-$words['There was a problem with your session, please login again'] = 'セッションがタイムアウトしました。再度ログインしてください';
-$words['Only logged on users have access to this area, please register'] = 'このページはログインユーザー以外アクセスできません。まず登録を行ってください。';
-$words['username/password not recognized'] = '入力されたユーザー名とパスワードは認証できませんでした。ご確認のうえ再度お試しください。';
-$words['User Manager'] = 'ユーザー管理';
-$words['User Manager :: Browse'] = 'ユーザー管理 :: 閲覧';
-$words['User Manager :: Edit'] = 'ユーザー管理 :: 編集';
-$words['User Manager :: Edit permissions'] = 'ユーザー管理 :: 権限変更';
-$words['User Manager :: Add'] = 'ユーザー管理 :: 追加';
-$words['User Manager :: Reset password'] = 'ユーザー管理 :: パスワードリセット';
-$words['User Manager :: Search'] = 'ユーザー管理 :: 検索';
-$words['User Manager :: Change status'] = 'ユーザー管理 :: ステータス変更';
-$words['My Profile :: Edit'] = 'マイプロフィール :: 編集';
-$words['Change Password'] = 'パスワード変更';
-$words['User ID'] = 'ユーザーID';
-$words['Confirm Password'] = 'パスワード確認';
-$words['First Name'] = '名';
-$words['Last Name'] = '姓';
-$words['Dealer'] = 'Dealer';
-$words['Company'] = '会社名';
-$words['Position'] = '役職';
-$words['Mobile'] = '携帯電話';
-$words['Account active'] = 'アクティブなアカウント';
-$words['You must enter an email'] = 'メールアドレスを入力してください';
-$words['Your email address in not of the correct format'] = 'メールアドレスが正しく入力されていません';
-$words['Your passwords do not match'] = 'パスワードが一致しません';
-$words['add user'] = '新規ユーザーを追加';
-$words['add group'] = '新規グループを追加';
-$words['add organisation'] = '新規の会社（組織）を追加';
-$words['asset type'] = 'ファイルタイプ';
-$words['Select'] = '選択';
-$words['Status'] = '状態';
-$words['Active'] = '有効';
-$words['Disabled'] = '無効';
-$words['check if active'] = '有効化する';
-$words['users'] = 'ユーザー';
-$words['New User'] = '新規ユーザー';
-$words['Full Name'] = 'フルネーム';
-$words['Password updated successfully'] = 'パスワードが更新されました';
-$words['With selected user(s)'] = '選択されたユーザーについて';
-$words['return to profile edit'] = 'プロフィールの編集に戻る';
-$words['Change password'] = 'パスワード変更';
-$words['Original password'] = '元のパスワード';
-$words['New password'] = '新しいパスワード';
-$words['Confirm'] = 'パスワード確認';
-$words['Notify me by email'] = '変更をメールで送信';
-$words['Resetting password for'] = '次のユーザーのパスワードをリセット:';
-$words['Notify user'] = 'ユーザーに通知する';
-$words['My Account'] = 'マイアカウント';
-$words['My Profile'] = 'マイプロフィール';
-$words['Preference Manager :: Browse'] = '環境設定管理 :: ブラウズ';
-$words['Preference Manager :: Edit'] = '環境設定管理 :: 編集';
-$words['Preference Manager :: Add'] = '環境設定管理 :: 追加';
-$words['prefs'] = '環境設定';
-$words['add preference'] = '環境設定項目の追加';
-$words['preference'] = '環境設定';
-$words['Pref ID'] = '環境設定ID';
-$words['Name'] = '名前';
-$words['Default value'] = 'デフォルト値';
-$words['With selected pref(s)'] = '選択された環境設定について';
-$words['Details'] = '詳細';
-$words['pref successfully added'] = '環境設定項目が追加されました';
-$words['pref successfully updated'] = '環境設定項目が更新されました';
-$words['You must enter a preference name'] = '環境設定の項目名を入力してください';
-$words['You must enter a default value'] = 'デフォルト値を入力してください';
-$words['pref successfully deleted'] = '環境設定項目を削除しました';
-$words['Group Membership'] = 'ユーザーグループ';
-$words['Date Registered'] = '登録日';
-$words['Last Login'] = '最終ログイン日';
-$words['Current IP Address'] = '接続元ＩＰアドレス';
-$words['view profile'] = 'プロフィール確認';
-$words['edit preferences'] = '環境設定の変更';
-$words['No results found'] = '見つかりません';
-$words['No results found for that ID'] = 'このIDのレコードが見つかりません';
-$words['edit these values'] = '編集';
-$words['County/State/Province'] = '国名/州名';
-$words['General'] = '一般';
-$words['Theme'] = 'テーマ';
-$words['Change what this site looks like'] = 'サイトの見た目を変更';
-$words['Date format'] = '日付表示フォーマット';
-$words['UK format is dd/mm/yyyy and US is mm/dd/yyyy'] = 'UKフォーマットはdd/mm/yyyy、USフォーマットはmm/dd/yyyy';
-$words['Interface language'] = '言語';
-$words['Session timeout'] = 'セッション存続時間';
-$words['Session timeout tooltip'] = 'セキュリティを重視する場合、ブラウザを閉じたときにセッションが終了するのが好ましいです。必要に応じて、セッションの最大存続時間を設定してください。';
-$words['Locale'] = 'ロケール';
-$words['Timezone'] = 'タイムゾーン';
-$words['Locale tooltip'] = '入力できる項目の詳細はについては、PHPのマニュアルを参照してください。: http://www.php.net/manual/ja/function.setlocale.php';
-$words['Character set'] = '文字セット';
-$words['Character set tooltip'] = 'Western Europeanの文字セットで正しく表示できない場合、ここで文字セットを入力してください。Seagullではまだマルチバイト文字列をサポートしていません';
-$words['Results per page'] = '一ページあたりの結果表示数';
-$words['Show execution times?'] = '処理時間を表示しますか？';
-$words['Preferences'] = '環境設定';
-$words['User Preferences'] = 'ユーザー環境設定';
-$words['Organisation Preferences'] = '会社（組織）環境設定';
-$words['Register'] = 'ユーザー登録';
-$words['Personal Details'] = 'ユーザー情報';
-$words['Company Name'] = '会社名';
-$words['Location'] = '住所';
-$words['Address 1'] = '住所 1';
-$words['Address 2'] = '住所 2';
-$words['Address 3'] = '住所 3';
-$words['City'] = '都市';
-$words['State/Province'] = '州';
-$words['ZIP/Postal Code'] = '郵便番号';
-$words['Country'] = '国';
-$words['Contact'] = '連絡先';
-$words['Telephone'] = '電話番号';
-$words['Fax'] = 'ＦＡＸ';
-$words['Security'] = 'パスワードを忘れたときの質問';
-$words['Security question'] = '質問事項';
-$words['Answer'] = '答え';
-$words['Is Active?'] = '有効ですか？';
-$words[' check if active'] = ' 有効化する';
-$words['Reset password now'] = 'パスワードをリセットする';
-$words['aSecurityQuestions'][0] = '-- 質問事項 --';
-$words['aSecurityQuestions'][1] = '好きなペットの名前は？';
-$words['aSecurityQuestions'][2] = '忘れられない日は？ (dd/mm/yyyy)';
-$words['aSecurityQuestions'][3] = '忘れられない場所は？';
-$words['aSecurityQuestions'][4] = 'お母さんの旧姓は？';
-$words['aSecurityQuestions'][5] = '好きな映画の名前は？';
-$words['aSecurityQuestions'][6] = '好きな歌の名前は？';
-$words['aSecurityQuestions'][7] = '好きなカクテルの名前は？';
-$words['return to browse'] = '前のページへ戻る';
-$words['back to Account'] = 'アカウント情報へ戻る';
-$words['change password'] = 'パスワード変更';
-$words['This email already exist in the DB, please choose another'] = 'すでに登録済みのメールアドレスです';
-$words['This username already exist in the DB, please choose another'] = 'すでに登録済みのユーザー名です';
-$words['Your email is not correctly formatted'] = 'メールアドレスは正しく入力してください';
-$words['You must enter your email'] = 'メールアドレスを入力してください';
-$words['You must enter a new password'] = '新しいパスワードを入力してください';
-$words['You must enter your original password'] = '元のパスワードを入力してください';
-$words['Password must be between 5 to 10 characters'] = 'パスワードは5〜10文字の半角英数字で入力してください';
-$words['Passwords are not the same'] = '異なるパスワードです';
-$words['You have entered your original password incorrectly'] = '元のパスワードが正しくありません';
-$words['Please confirm password'] = 'パスワード確認を入力してください';
-$words['username min length'] = 'ユーザー名は5文字以上の半角英数字で入力してください';
-$words['You must enter your first name'] = '氏名(名)を入力してください';
-$words['You must enter your last name'] = '氏名(姓)を入力してください';
-$words['You must enter your company name'] = '会社名を入力してください';
-$words['You must enter at least address 1'] = '住所1を入力してください';
-$words['You must enter your city'] = '都道府県名を入力してください';
-$words['You must enter your state/province'] = '州を選択してください';
-$words['You must enter your ZIP/Postal Code'] = '郵便番号を入力してください';
-$words['You must enter your country'] = '国名を選択してください';
-$words['You must enter your telephone number'] = '電話番号を入力してください';
-$words['You must choose a security question'] = '質問事項を選択してください';
-$words['You must provide a security answer'] = '質問事項に対する答えを入力してください';
-$words['Thanks for registering with'] = '仮登録メール :';
-$words['Dear'] = '登録者名:';
-$words['You are being sent this email because you just registered, your logon details are as follows'] = '仮登録の完了メールです。下記登録内容をご確認ください。';
-$words['Your registration is being reviewed'] = '登録が承認されるまでお待ちください。';
-$words['Your username is'] = 'ユーザー名';
-$words['Your password is'] = 'パスワード';
-$words['New Registration at'] = '新規登録:';
-$words['The following user has just registered'] = '下記ユーザーが新規登録をいたしました。';
-$words['to enable the new users account'] = 'をクリックしてユーザーアカウントを有効にしてください';
-$words['username'] = 'ユーザー名';
-$words['Click'] = '';
-$words['here'] = 'ここをクリック';
-$words['to logon to the'] = 'してログインしてください。';
-$words['site now'] = '';
-$words['Password Reminder'] = 'パスワードリマインダー';
-$words['You are being sent this email because'] = 'パスワードリマインダーによってリクエストされたメールです。';
-$words['Your new password is'] = '新しいパスワード';
-$words['Group Manager'] = 'グループ管理';
-$words['Group Manager :: Browse'] = 'グループ管理 :: ブラウズ';
-$words['Group Manager :: Edit'] = 'グループ管理 :: 編集';
-$words['Group Manager :: New Group'] = 'グループ管理 :: 新規グループの作成';
-$words['Organisation Manager'] = '会社（組織）管理';
-$words['Organisation Manager :: Browse'] = '会社（組織）管理 :: ブラウズ';
-$words['Organisation Manager :: Edit'] = '会社（組織）管理 :: 編集';
-$words['Organisation Manager :: New Organisation'] = '会社（組織）管理 :: 新しい会社（組織）の作成';
-$words['Organisation list'] = '会社（組織）リスト';
-$words['New organisation'] = '新しい会社（組織）の作成';
-$words['Edit organisation'] = '会社（組織）の編集';
-$words['groups'] = 'グループ';
-$words['Group'] = 'グループ';
-$words['Organisation'] = '会社（組織）';
-$words['organisation'] = '会社（組織）';
-$words['organisations'] = '会社（組織）';
-$words['Org ID'] = '会社（組織） ID';
-$words['Org Name'] = '会社（組織）名';
-$words['You must enter an organisation name'] = '会社（組織）名を入力してください';
-$words['organisation successfully added'] = '会社（組織）情報が作成されました';
-$words['The organisation has successfully been updated'] = '会社（組織）情報は更新されました';
-$words['The organisation has successfully been updated, no data changed'] = '会社（組織）情報は更新されました（データの変更なし）';
-$words['The selected organisation(s) have successfully been deleted'] = '選択された会社（組織）情報は削除されました';
-$words['The selected organisation cannot be deleted because there are users relating to it'] = '選択された会社（組織） %s は削除できません。この会社（組織）に関連付けられたユーザーがいます。';
-$words['Group ID'] = 'グループID';
-$words['Group Name'] = 'グループ名';
-$words['Add'] = '追加';
-$words['Current Category'] = '現在のカテゴリ';
-$words['Manage'] = '管理';
-$words['You must enter a group name'] = 'グループ名を入力してください';
-$words['The group has successfully been updated'] = 'グループ情報は更新されました';
-$words['The group membership has successfully been modified'] = 'ユーザーグループ情報は更新されました';
-$words['The selected group(s) have successfully been deleted'] = '選択されたグループ情報は削除されました';
-$words['The group has successfully been added'] = 'グループが追加されました';
-$words['Description'] = '説明文';
-$words['Edit Group'] = 'グループの編集';
-$words['Change Group Assignments'] = 'グループ割り当ての変更';
-$words['With selected group(s)'] = '選択されたグループについて';
-$words['Group Description'] = 'グループの説明文';
-$words['Members'] = 'メンバー';
-$words['Changing Group Assignments for'] = 'グループの割り当てを変更する:';
-$words['others'] = 'その他';
-$words['add >>'] = '追加する >>';
-$words['Editing Details for Group'] = 'グループ情報を編集する';
-$words['User Profile'] = 'ユーザープロフィール';
-$words['back to contacts'] = '連絡先リストへ戻る';
-$words['none given'] = '指定なし';
-$words['Real Name'] = '本名';
-$words['Lives in'] = '住んでいる場所';
-$words['Member Since'] = '入会時期';
-$words['first login in progress'] = 'ログインセッション中';
-$words['Posting Stats for User'] = 'ユーザー書き込み状況:';
-$words['Total Articles'] = 'トータル記事数';
-$words['Total Comments'] = 'トータルコメント数';
-$words['coming soon ...'] = 'coming soon ...';
-$words['Message'] = 'メッセージ';
-$words['send message'] = 'メッセージを送る';
-$words['Contacts'] = '連絡先';
-$words['add to contacts'] = '連絡先に追加する';
-$words['details successfully updated'] = 'ユーザー情報は更新されました';
-$words['org details successfully updated'] = '会社（組織）情報は更新されました';
-$words['user successfully deleted'] = '選択されたユーザー情報は削除されました';
-$words['user successfully added'] = 'ユーザーが追加されました';
-$words['user successfully registered'] = '仮登録が完了しました。登録内容をメールで送りましたのでご確認ください。';
-$words['group successfully updated'] = 'グループ情報は更新されました';
-$words['group assign successfully updated'] = 'グループの割り当てが変更されました';
-$words['profile successfully updated'] = 'プロフィール情報は更新されました';
-$words['Authorisation Required'] = '認証情報の入力';
-$words['search'] = '検索';
-$words['import users'] = 'ユーザー情報のインポート';
-$words['sync perms with role'] = 'ロールの権限と同期する';
-$words['add missing perms'] = '存在しない権限情報を追加';
-$words['remove extra perms'] = '余分な権限情報を削除';
-$words['complete sync'] = '完全同期';
-$words['(each users current)'] = '(ユーザーごとの現在のロール)';
-$words['Register Date'] = '登録日';
-$words['Search'] = '検索';
-$words['Search Criteria'] = '検索条件';
-$words['manage organisation types'] = '会社（組織）の種別を管理';
-$words['list organisations'] = '会社（組織）をリスト';
-$words['clear search'] = '検索条件をクリア';
-$words['Role'] = 'ロール';
-$words['role'] = 'ロール';
-$words['add role'] = '新規ロールの作成';
-$words['Role Manager'] = 'ロール管理';
-$words['Role Manager :: Browse'] = 'ロール管理 :: ブラウズ';
-$words['Role Manager :: Add'] = 'ロール管理 :: 新規作成';
-$words['Role Manager :: Edit'] = 'ロール管理 :: 編集';
-$words['Role Manager :: Permissions'] = 'ロール管理 :: 権限';
-$words['roles'] = 'ロール';
-$words['Role ID'] = 'ロールID';
-$words['You must enter a role name'] = 'ロール名を入力してください';
-$words['role successfully duplicated'] = 'ロールをコピーしました';
-$words['role successfully added'] = 'ロール情報が追加されました';
-$words['role successfully updated'] = 'ロール情報は更新されました';
-$words['role successfully deleted'] = 'ロールは削除されました';
-$words['role successfully deleted but please note, admin/unassigned roles cannot be deleted'] = 'ロールは削除されました。ただし、adminもしくはunassignedのロールは削除できません。';
-$words['role assignments successfully updated'] = 'ロールの割り当ては更新されました';
-$words['You must enter a permission name'] = '権限名を入力してください';
-$words['perms'] = '権限';
-$words['Permission Manager :: Browse'] = '権限管理 :: ブラウズ';
-$words['Permission Manager :: Add'] = '権限管理 :: 新規作成';
-$words['Permission Manager :: Edit'] = '権限管理 :: 編集';
-$words['Permission Manager :: Detect & Add'] = '権限管理 :: 検出＆追加';
-$words['Perm ID'] = '権限ID';
-$words['permission'] = '権限';
-$words['perm successfully added'] = '権限情報が追加されました';
-$words['perm successfully updated'] = '権限情報は更新されました';
-$words['perm successfully deleted'] = '権限情報は削除されました';
-$words['add permission'] = '新規権限の追加';
-$words['perm(s) successfully added'] = '権限情報が追加されました';
-$words['detected perms description'] = 'このモジュールの中に次の権限情報が見つかりましたが、これらの権限情報はまだシステムに追加されていません';
-$words['detect & add permissions'] = '検出＆追加';
-$words['No perms were selected'] = '権限は見つかりません';
-$words['orphaned perms description'] = 'データベース上に、モジュールには使われていない次の権限情報があります。';
-$words['remove orphaned'] = '不要な情報の削除';
-$words['You must select a user to sync'] = '同期するユーザーを選択してください';
-$words['Are you sure you want to sync this user(s)?'] = '本当にこれらのユーザー情報を同期してもよいですか？';
-$words['User Import Manager'] = 'ユーザーインポート マネージャ';
-$words['userfile'] = '入力ファイル';
-$words['process file'] = 'ファイルを処理する';
-$words['OrgType Manager'] = '会社（組織）種別管理';
-$words['OrgType Manager :: Add'] = '会社（組織）種別管理 :: 新規作成';
-$words['OrgType Manager :: Edit'] = '会社（組織）種別管理 :: 編集';
-$words['Organisation Type list'] = '会社（組織）種別 リスト';
-$words['Add organisation type'] = '新しい会社（組織）種別の追加';
-$words['Org Type ID'] = '会社（組織）種別ID';
-$words['organisation type'] = '会社（組織）種別';
-$words['Org Type Name'] = '会社（組織）種別名';
-$words['Org type(s) deleted successfully'] = '会社（組織）種別は削除されました';
-$words['You must enter an organisation type name'] = '会社（組織）種別名を入力してください';
-$words['No data was updated'] = '一件も見つかりません';
-$words['Organisation type saved successfully'] = '会社（組織）種別情報は保存されました';
-$words['Organisation type has been updated successfully'] = '会社（組織）種別情報は更新されました';
-$words['user(s) found'] = 'ユーザーが見つかりました';
-$words['change'] = '変更';
-$words['Type'] = '種別';
-$words['Website'] = 'ウェブサイト';
-$words['Browse'] = 'ブラウズ';
-$words['With selected organisation(s)'] = '選択された会社（組織）について';
-$words['duplicate'] = 'コピーする';
-$words['all'] = '全て';
-$words['With selected permission(s)'] = '選択された権限について';
-$words['filter by module'] = 'モジュールで絞り込み';
-$words['Default Role'] = 'デフォルトのロール';
-$words['Organisation Manager :: Add'] = '会社（組織）管理 :: 新規作成';
-$words['Parent Org'] = '親会社（組織）';
-$words['Detected Perms'] = '権限情報の検出';
-$words['Detected Orphaned Perms'] = '不要な権限情報の検出';
-$words['Permission Manager :: Detect Orphaned'] = '権限管理 :: 不要な権限情報の検出';
-$words['User Manager :: Login Data'] = 'ユーザー管理 :: ログインデータ';
-$words['Login Time'] = 'ログイン時間';
-$words['Remote IP'] = 'リモートIP';
-$words['Deleted successfully'] = '正常に削除されました';
-$words['Are you sure?'] = '本当によろしいですか?';
-$words['Logins'] = 'ログイン';
-$words['You are being sent this email because your new account status is now'] = 'あなたのアカウントのステータスが更新されたことをお知らせします。新しいステータス:';
-$words['active'] = '有効';
-$words['disabled'] = '無効';
-$words['Changing status for'] = 'ステータスの変更';
-$words['Current status is'] = '現在のステータス';
-$words['Disable Now'] = '無効にする';
-$words['Enable Now'] = '有効にする';
-$words['Status changed successfully'] = 'ステータスは更新されました';
-$words['Registration has been disabled'] = '登録は行えません';
-$words['New permission'] = '新規権限の作成';
-$words['Editing permission'] = '権限の編集';
-$words['New Role'] = '新規ロールの作成';
-$words['Editing role'] = 'ロールの編集';
-$words['Changing permission assignments for'] = '権限の割り当てを変更';
-$words['Role name'] = 'ロール名';
-$words['permissions'] = '権限';
-$words['Remaining permissions'] = '未指定の権限';
-$words['Selected permissions for'] = '設定済みの権限:';
-$words['New preference'] = '新しい環境設定';
-$words['Editing preference'] = '環境設定の編集';
-$words['Enable user'] = 'ユーザーを有効化';
-$words['Disable user'] = 'ユーザーを無効化';
-$words['Synchronise'] = '同期化';
-$words['Organisation name'] = '会社（組織）名';
-$words['edit user'] = 'ユーザーの編集';
-$words['Connections list for user'] = 'ユーザーの関係リスト:';
-$words['With selected record(s)'] = '選択されたレコードについて';
-$words['Permissions for user'] = 'このユーザーの権限:';
-$words['User list'] = 'ユーザーリスト';
-$words['No users found'] = 'ユーザーは見つかりません';
-$words['Reset password info'] = '管理ユーザーのパスワードを変更する場合、正しくメールの送受信が行えるように、（管理者ユーザーの編集画面にて）新しいパスワードが届くメールアドレスが正しく設定されていることを必ず確認してください。';
-$words['Change status'] = 'ステータスの変更';
-$words['Select a module'] = 'モジュールの選択';
-$words['for user id'] = 'ユーザーID:';
-$words['Connection list'] = '関係リスト';
-$words['Edit permissions'] = '権限の編集';
-$words['Import users'] = 'ユーザーのインポート';
-$words['list'] = 'リスト';
-$words['Use the document manager to upload CSV files.'] = 'ドキュメントマネージャでCSVファイルをアップロードしてください';
-$words['Import users into selected organisation.'] = '選択された会社（組織）にユーザーをインポートします';
-$words['User will be assigned to selected role.'] = 'ユーザーは選択されたロールに割り当てられます';
-$words['You should first upload at least one csv file in your upload dir'] = 'アップロード用ディレクトリに最低1つのCSVファイルをアップロードしてください';
+$words = array(
+
+/* Account MGR */
+
+    // title
+    'My Account'                   => 'マイアカウント',
+    'My Profile :: Edit'           => 'マイプロフィール :: 編集',
+
+    // summary form (admin template)
+    'Role'                         => 'ロール',
+    'Date Registered'              => '登録日',
+    'Last Login'                   => '最終ログイン日',
+    'first login in progress'      => 'ログインセッション中',
+    'Current IP Address'           => '接続元ＩＰアドレス',
+    'change password'              => 'パスワード変更',
+    // + user template
+    'My Profile'                   => 'マイプロフィール',
+    'Preferences'                  => '環境設定',
+    'Password'                     => 'パスワード',
+    'edit preferences'             => '環境設定の変更',
+    'view profile'                 => 'プロフィール確認',
+    'No results found for that ID' => 'このIDのレコードが見つかりません',
+
+    // profile form (admin template)
+    'Personal Details'        => 'ユーザー情報',
+    'Username'                => 'ユーザー名',
+    'First Name'              => '名',
+    'Last Name'               => '姓',
+    'Contact'                 => '連絡先',
+    'Location'                => '住所',
+    'Address 1'               => '住所 1',
+    'Address 2'               => '住所 2',
+    'Address 3'               => '住所 3',
+    'City'                    => '都市',
+    'Country'                 => '国',
+    'Telephone'               => '電話番号',
+    'Mobile'                  => '携帯電話番号',
+    'County/State/Province'   => '州',
+    'ZIP/Postal Code'         => '郵便番号',
+    // + user template
+    'Company'                 => '会社名',
+    'edit these values'       => '編集',
+
+    // edit form
+    'edit user'          => 'ユーザーの編集',
+    'Confirm Password'   => 'パスワード確認',
+    'Organisation name'  => '会社（組織）名',
+    'Is Active?'         => '有効ですか？',
+    'Security'           => 'パスワードを忘れたときの質問',
+    'Security question'  => '質問事項',
+    'Answer'             => '答え',
+
+    'aSecurityQuestions' => array(
+        0 => '-- 質問事項 --',
+        1 => '好きなペットの名前は？',
+        2 => '忘れられない日は？ (dd/mm/yyyy)',
+        3 => '忘れられない場所は？',
+        4 => 'お母さんの旧姓は？',
+        5 => '好きな映画の名前は？',
+        6 => '好きな歌の名前は？',
+        7 => '好きなカクテルの名前は？'
+    ),
+
+    // messages
+    'profile successfully updated' => 'プロフィール情報は更新されました',
+
+    // validate
+    'You must enter a username'             => 'ユーザー名を入力してください',
+    'username min length'                   => 'ユーザー名は5文字以上の半角英数字で入力してください',
+
+    'You must enter at least address 1'     => '住所1を入力してください',
+    'You must enter your city'              => '都道府県名を入力してください',
+    'You must enter your state/province'    => '州を選択してください',
+
+    'Please enter a company name'           => '会社名を入力してください',
+    'You must enter your ZIP/Postal Code'   => '郵便番号を入力してください',
+    'You must enter your country'           => '国名を選択してください',
+    'Your email is not correctly formatted' => 'メールアドレスは正しく入力してください',
+    'You must enter your email'             => 'メールアドレスを入力してください',
+    'You must choose a security question'   => '質問事項を選択してください',
+    'Please enter a telephone number'       => '電話番号を入力してください',
+    'You must provide a security answer'    => '質問事項に対する答えを入力してください',
+
+
+/* Register MRG */
+
+    // title
+    'Register' => 'ユーザー登録',
+
+    // validation
+    'You must enter a password'                                    => 'パスワードを入力してください',
+    'Please confirm password'                                      => 'パスワード確認を入力してください',
+    'Password must be between 5 to 10 characters'                  => 'パスワードは5〜10文字の半角英数字で入力してください',
+    'Passwords are not the same'                                   => '異なるパスワードです',
+    'This email already exist in the DB, please choose another'    => 'すでに登録済みのメールアドレスです',
+    'This username already exist in the DB, please choose another' => 'すでに登録済みのユーザー名です',
+
+    // messages
+    'user successfully registered' => '仮登録が完了しました。登録内容をメールで送りましたのでご確認ください。',
+
+    // XXX mail templates here
+
+
+/* Password MRG */
+
+    // titles
+    'Retrieve password' => 'パスワード再発行',
+
+    // list
+    'Enter the email address you registered with' => '登録済みのメールアドレスを入力してください',
+    'retrieve' => '再取得',
+
+
+/* UserPassword */
+
+    // titles
+    'Change Password' => 'パスワード変更',
+
+    // form
+    'Original password'  => '元のパスワード',
+    'New password'       => '新しいパスワード',
+    'Confirm'            => 'パスワード確認',
+    'Notify me by email' => '変更をメールで送信',
+
+    // messages
+    'Password updated successfully' => 'パスワードが更新されました',
+
+    // validation
+    'You must enter your original password'                 => '元のパスワードを入力してください',
+    'You must enter a new password'                         => '新しいパスワードを入力してください',
+    'You have entered your original password incorrectly'   => '元のパスワードが正しくありません',
+
+
+/* Login MRG */
+
+    // title
+    'Login' => 'ログイン',
+
+    // form
+    'Authorisation Required' => '認証情報の入力',
+
+    // validation
+    'username/password not recognized' => '入力されたユーザー名とパスワードは認証できませんでした。ご確認のうえ再度お試しください。',
+
+    // XXX: other messages are defined in default lang file for now :/
+
+
+/* UserPreference MGR */
+
+    // title
+    'User Preferences' => 'ユーザー環境設定',
+
+    // form (admin template)
+    'Theme'                                        => 'テーマ',
+    'Change what this site looks like'             => 'サイトの見た目を変更',
+    'Date format'                                  => '日付表示フォーマット',
+    'UK format is dd/mm/yyyy and US is mm/dd/yyyy' => 'UKフォーマットはdd/mm/yyyy、USフォーマットはmm/dd/yyyy',
+    'Interface language'                           => '言語',
+    'Session timeout'                              => 'セッション存続時間',
+    'Session timeout tooltip'                      => 'セキュリティを重視する場合、ブラウザを閉じたときにセッションが終了するのが好ましいです。必要に応じて、セッションの最大存続時間を設定してください。',
+    'Locale'                                       => 'ロケール',
+    'Timezone'                                     => 'タイムゾーン',
+    'Results per page'                             => '一ページあたりの結果表示数',
+    'Show execution times?'                        => '処理時間を表示しますか？',
+    // + user template
+    'General'                                      => '一般',
+
+    // messages
+    'details successfully updated' => 'ユーザー情報は更新されました',
+
+
+/* Profile MGR */
+
+    // titile
+    'User Profile' => 'ユーザープロフィール',
+
+    // form
+    'Real Name'                => '本名',
+    'Lives in'                 => '住んでいる場所',
+    'Member Since'             => '入会時期',
+    'none given'               => '指定なし',
+    'Posting Stats for User'   => 'ユーザー書き込み状況:',
+    'Total Articles'           => 'トータル記事数',
+    'Total Comments'           => 'トータルコメント数',
+    'coming soon ...'          => 'coming soon ...',
+
+     // messaging
+    'back to contacts' => '連絡先リストへ戻る',
+    'Message'          => 'メッセージ',
+    'send message'     => 'メッセージを送る',
+    'Contacts'         => '連絡先',
+    'add to contacts'  => '連絡先に追加する',
+
+
+/* OrgPreferences MGR */
+
+    // title
+    'Organisation Preferences' => '会社（組織）環境設定',
+
+    // form
+    'Preferences for org' => '会社（組織）用環境設定',
+
+    // messages
+    'org details successfully updated' => '会社（組織）情報は更新されました',
+
+
+/* OrgType MGR */
+
+    // titles
+    'OrgType Manager'           => '会社（組織）種別管理',
+    'OrgType Manager :: Browse' => '会社（組織）種別管理 :: ブラウズ',
+    'OrgType Manager :: Add'    => '会社（組織）種別管理 :: 新規作成',
+    'OrgType Manager :: Edit'   => '会社（組織）種別管理 :: 編',
+
+    // list
+    'Organisation Type list'    => '会社（組織）種別 リスト',
+    'Add organisation type'     => '新しい会社（組織）種別の追加',
+    'organisation type'         => '会社（組織）種別',
+    'Be Careful!'               => '注意！',
+
+    // form
+    'New organisation'          => '新しい会社（組織）の作成',
+    'Edit organisation'         => '会社（組織）の編集',
+
+    // validation
+    'You must enter an organisation type name' => '会社（組織）種別名を入力してください',
+
+    // messages
+    'No data was updated'                             => 'データは更新されませんでした',
+    'Org type(s) deleted successfully'                => '会社（組織）種別は削除されました',
+    'Organisation type saved successfully'            => '会社（組織）種別情報は保存されました',
+    'Organisation type has been updated successfully' => '会社（組織）種別情報は更新されました',
+
+
+/* Org MGR */
+
+    // title
+    'Organisation Manager'           => '会社（組織）管理',
+    'Organisation Manager :: Browse' => '会社（組織）管理 :: ブラウズ',
+    'Organisation Manager :: Add'    => '会社（組織）管理 :: 新規作成',
+    'Organisation Manager :: Edit'   => '会社（組織）管理 :: 編集',
+
+    // list
+    'Organisation list'    => '会社（組織）リスト',
+    'Website'              => 'ウェブサイト',
+    'change'               => '変更',
+    'organisation'         => '会社（組織）',
+
+    // form
+    'New organisation'     => '新しい会社（組織）の作成',
+    'Edit organisation'    => '会社（組織）の編集',
+    'Details'              => '詳細',
+    'Description'          => '説明文',
+    'Parent Org'           => '親会社（組織）',
+    'Default Role'         => 'デフォルトのロール',
+
+    // validation
+    'You must enter an organisation name' => '会社（組織）名を入力してください',
+
+    // messages
+    'organisation successfully added'                                                     => '会社（組織）情報が作成されました',
+    'The selected organisation(s) have successfully been deleted'                         => '選択された会社（組織）情報は削除されました',
+    'The selected organisation cannot be deleted because there are users relating to it'  => '選択された会社（組織） %s は削除できません。この会社（組織）に関連付けられたユーザーがいます。',
+    'The organisation has successfully been updated'                                      => '会社（組織）情報は更新されました',
+    'The organisation has successfully been updated, no data changed'                     => '会社（組織）情報は更新されました（データの変更なし）',
+
+
+/* Preference MGR */
+
+    // titles
+    'Preference Manager'           => '環境設定管理',
+    'Preference Manager :: Browse' => '環境設定管理 :: ブラウズ',
+    'Preference Manager :: Add'    => '環境設定管理 :: 追加',
+    'Preference Manager :: Edit'   => '環境設定管理 :: 編集',
+
+    // list
+    'Default value' => 'デフォルト値',
+    'preference'    => '環境設定',
+
+    // form
+    'New preference'     => '新しい環境設定',
+    'Editing preference' => '環境設定の編集',
+
+    // validation
+    'You must enter a default value'   => 'デフォルト値を入力してください',
+    'You must enter a preference name' => '環境設定の項目名を入力してください',
+
+    // messages
+    'pref successfully deleted' => '環境設定項目を削除しました',
+    'pref successfully updated' => '環境設定項目が更新されました',
+    'pref successfully added'   => '環境設定項目が追加されました',
+
+
+/* Permission MGR */
+
+    // titles
+    'Permission Manager'                    => '権限管理',
+    'Permission Manager :: Browse'          => '権限管理 :: ブラウズ',
+    'Permission Manager :: Add'             => '権限管理 :: 新規作成',
+    'Permission Manager :: Edit'            => '権限管理 :: 編集',
+    'Permission Manager :: Detect & Add'    => '権限管理 :: 検出＆追加',
+    'Permission Manager :: Detect Orphaned' => '権限管理 :: 不要な権限情報の検出',
+
+    // list
+    'New permission'           => '新規権限の作成',
+    'Editing permission'       => '権限の編集',
+    'detect & add permissions' => '検出＆追加',
+    'remove orphaned'          => '不要な情報の削除',
+    'filter by module'         => 'モジュールで絞り込み',
+    'all'                      => '全て',
+    'permission'               => '権限',
+
+    // add / edit form
+    'Module'                   => 'モジュール',
+
+    // detect perms / remove orphaned
+    'Detected Perms'             => '権限情報の検出',
+    'Detected Orphaned Perms'    => '不要な権限情報の検出',
+    'orphaned perms description' => 'データベース上に、モジュールには使われていない次の権限情報があります。',
+    'detected perms description' => 'このモジュールの中に次の権限情報が見つかりましたが、これらの権限情報はまだシステムに追加されていません',
+
+    // validation
+    'You must enter a permission name' => '権限名を入力してください',
+
+    // messages
+    'perm already defined'                      => '権限はすでに定義されています',
+    'perm successfully added'                   => '権限情報が追加されました',
+    'perm(s) successfully added'                => '権限情報が追加されました',
+    'perm successfully deleted'                 => '権限情報は削除されました',
+    'perm successfully updated'                 => '権限情報は更新されました',
+    'perm successfully deleted'                 => '権限情報は削除されました',
+
+/* Role MGR */
+
+    // titles
+    'Role Manager'                => 'ロール管理',
+    'Role Manager :: Browse'      => 'ロール管理 :: ブラウズ',
+    'Role Manager :: Add'         => 'ロール管理 :: 新規作成',
+    'Role Manager :: Edit'        => 'ロール管理 :: 編集',
+    'Role Manager :: Permissions' => 'ロール管理 :: 権限',
+
+    // list
+    'New Role'   => '新規ロールの作成',
+    'duplicate'  => 'コピーする',
+    'role'       => 'ロール',
+    'permission' => '権限',
+
+    // add / edit / perms assignment
+    'Editing role'                        => 'ロールの編集',
+    'Changing permission assignments for' => '権限の割り当てを変更',
+    'Remaining permissions'               => '未指定の権限',
+    'Selected permissions for'            => '設定済みの権限:',
+    'remove'                              => '削除',
+
+    // validation
+    'You must enter a role name' => 'ロール名を入力してください',
+
+    // messages
+    'role successfully added'                                                             => 'ロール情報が追加されました',
+    'role successfully updated'                                                           => 'ロール情報は更新されました',
+    'role successfully deleted'                                                           => 'ロールは削除されました',
+    'role successfully deleted but please note, admin/unassigned roles cannot be deleted' => 'ロールは削除されました。ただし、adminもしくはunassignedのロールは削除できません。',
+    'role successfully duplicated'                                                        => 'ロールをコピーしました',
+    'role assignments successfully updated'                                               => 'ロールの割り当ては更新されました',
+
+/* UserSearch MGR */
+
+    // titles
+    'User Manager :: Search' => 'ユーザー管理 :: 検索',
+
+    // list
+    'Search Criteria' => '検索条件',
+    'Role name'       => 'ロール名',
+    'User ID'         => 'ユーザーID',
+    'Organisation'    => '会社（組織）',
+    'Register Date'   => '登録日',
+
+    // validation
+    'You must select a valid date' => '正しい日付を入力してください',
+    'You must select a date'       => '日付を入力してください',
+
+
+/* UserImport MGR */
+
+    // titles
+    'User Import Manager' => 'ユーザーインポート マネージャ',
+
+    // list
+    'userfile'                                                         => '入力ファイル',
+    'Use the document manager to upload CSV files.'                    => 'ドキュメントマネージャでCSVファイルをアップロードしてください。',
+    'Import users into selected organisation.'                         => '選択された会社（組織）にユーザーをインポートします。',
+    'User will be assigned to selected role.'                          => 'ユーザーは選択されたロールに割り当てられます。',
+    'You should first upload at least one csv file in your upload dir' => 'アップロード用ディレクトリに最低1つのCSVファイルをアップロードしてください',
+
+    // validation
+    'Please select a file.'              => 'ファイルを指定してください。',
+    'Please select the organisation'     => '会社（組織）を選択してください。',
+    'Please select the role'             => 'ロールを選択してください。',
+
+
+/* User MGR */
+
+    // titles
+    'User Manager'                     => 'ユーザー管理',
+    'User Manager :: Browse'           => 'ユーザー管理 :: 閲覧',
+    'User Manager :: Login Data'       => 'ユーザー管理 :: ログインデータ',
+    'User Manager :: Edit'             => 'ユーザー管理 :: 編集',
+    'User Manager :: Edit permissions' => 'ユーザー管理 :: 権限変更',
+    'User Manager :: Add'              => 'ユーザー管理 :: 追加',
+    'User Manager :: Reset password'   => 'ユーザー管理 :: パスワードリセット',
+    'User Manager :: Change status'    => 'ユーザー管理 :: ステータス変更',
+
+    // list
+    'New User'             => '新規ユーザー',
+    'Search'               => '検索',
+    'Import users'         => 'ユーザー情報のインポート',
+    'User list'            => 'ユーザーリスト',
+    'user(s) found'        => 'ユーザーが見つかりました',
+    'clear search'         => '検索条件をクリア',
+    'Logins'               => 'ログイン',
+    'list'                 => 'リスト',
+    'Change status'        => 'ステータスの変更',
+    'No users found'       => 'ユーザーは見つかりません',
+    'Synchronise'          => '同期化',
+    '(each users current)' => '(ユーザーごとの現在のロール)',
+    'sync perms with role' => 'ロールの権限と同期する',
+    'add missing perms'    => '存在しない権限情報を追加',
+    'remove extra perms'   => '余分な権限情報を削除',
+    'complete sync'        => '完全同期',
+
+    // add / edit
+    'add user'             => '新規ユーザーを追加',
+    'check if active'      => '有効化する',
+
+    // login data
+    'Connection list'      => '関係リスト',
+    'Login Time'           => 'ログイン時間',
+    'Remote IP'            => 'リモートIP',
+    'Are you sure?'        => '本当によろしいですか？',
+
+    // status change
+    'Disable Now'          => '無効にする',
+    'Enable Now'           => '有効にする',
+    'active'               => '有効',
+    'disabled'             => '無効',
+    'Changing status for'  => 'ステータスの変更',
+    'Current status is'    => '現在のステータス',
+    'Enable user'          => 'ユーザーを有効化',
+    'Disable user'         => 'ユーザーを無効化',
+    'Notify user'          => 'ユーザーに通知する',
+
+    // reset
+    'Reset password now'                   => 'パスワードをリセットする',
+    'Resetting password for'               => '次のユーザーのパスワードをリセット:',
+    'Reset password info'                  => '管理ユーザーのパスワードを変更する場合、正しくメールの送受信が行えるように、（管理者ユーザーの編集画面にて）新しいパスワードが届くメールアドレスが正しく設定されていることを必ず確認してください。',
+
+    // change permissions
+    'for user id'            => 'ユーザーID:',
+    'Select a module'        => 'モジュールの選択',
+
+    // messages
+    'user successfully added'              => 'ユーザーが追加されました',
+    'Deleted successfully'                 => '正常に削除されました',
+    'Status changed successfully'          => 'ステータスは更新されました',
+    'user successfully deleted'            => '選択されたユーザー情報は削除されました',
+    'The user has been successfully added' => 'ユーザーは正常に追加されました',
+
+/**
+ * Mail templates
+ */
+    'Thanks for registering with'            => '仮登録メール :',
+    'username'                               => 'ユーザー名',
+    'Dear'                                   => '登録者名:',
+    'You are being sent this email because your new account status is now' => 'あなたのアカウントのステータスが更新されたことをお知らせします。新しいステータス:',
+    'Click'                                  => '',
+    'here'                                   => 'ここをクリック',
+    'to logon to the'                        => 'してログインしてください。',
+    'site now'                               => '',
+    'You are being sent this email because you just registered, your logon details are as follows' => '仮登録の完了メールです。下記登録内容をご確認ください。',
+    'Your username is'                       => 'ユーザー名',
+    'Your password is'                       => 'パスワード',
+    'Your registration is being reviewed'    => '登録が承認されるまでお待ちください。',
+    'Password Reminder'                      => 'パスワードリマインダー',
+    'You are being sent this email because'  => 'パスワードリマインダーによってリクエストされたメールです。',
+    'Your new password is'                   => '新しいパスワード',
+    'New Registration at'                    => '新規登録:',
+    'The following user has just registered' => '下記ユーザーが新規登録されました。',
+    'to enable the new users account'        => 'をクリックしてユーザーアカウントを有効にしてください',
+
+    // not found anywhere, but I suppose, that somewhere it is used
+    'There was a problem with your session, please login again'      => 'セッションがタイムアウトしました。再度ログインしてください',
+    'Only logged on users have access to this area, please register' => 'このページはログインユーザー以外アクセスできません。まず登録を行ってください。',
+    'Registration has been disabled'                                 => '登録は行えません',
+);
+
 ?>
