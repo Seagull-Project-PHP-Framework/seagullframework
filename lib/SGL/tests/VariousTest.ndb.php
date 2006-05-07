@@ -143,6 +143,16 @@ EOF;
         $mimeType = 'image/x-png';
         $this->assertTrue(preg_match("/^image/", $mimeType));
     }
+
+    function testApacheTypes()
+    {
+        $searchString = 'cgi';
+        $this->assertTrue(preg_match("/cgi|apache2filter/i", $searchString));
+        $searchString = 'apache2filter';
+        $this->assertTrue(preg_match("/cgi|apache2filter/i", $searchString));
+        $searchString = '';
+        $this->assertFalse(preg_match("/cgi|apache2filter/i", $searchString));
+    }
 }
 
 class Foo1{}
