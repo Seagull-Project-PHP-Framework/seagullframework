@@ -187,13 +187,6 @@ class SGL_FrontController
                 $coreLibs  . '/../data/ary.languages.php',
             );
             $fileCache = '';
-
-            if (!defined('T_ML_COMMENT')) {
-               define('T_ML_COMMENT', T_COMMENT);
-            } else {
-               define('T_DOC_COMMENT', T_ML_COMMENT);
-            }
-
             foreach ($aRequiredFiles as $file) {
                 require_once $file;
                 // 270kb vs 104kb
