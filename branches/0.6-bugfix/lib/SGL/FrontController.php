@@ -190,15 +190,20 @@ class SGL_FrontController
             $fileCache = '';
             foreach ($aRequiredFiles as $file) {
                 require_once $file;
-                // 270kb vs 104kb
-                if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
-                    $fileCache .= php_strip_whitespace($file);
-                } else {
-                    $fileCache .= file_get_contents($file);
+
+                if (SGL_CACHE_LIBS === true) {
+                    // 270kb vs 104kb
+                    if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
+                        $fileCache .= php_strip_whitespace($file);
+                    } else {
+                        $fileCache .= file_get_contents($file);
+                    }
+                    $fileCache .= "\n";
                 }
-                $fileCache .= "\n";
             }
-            $ok = file_put_contents($cachedLibs, $fileCache);
+            if (SGL_CACHE_LIBS === true) {
+                $ok = file_put_contents($cachedLibs, $fileCache);
+            }
         }
         require_once 'DB.php';
     }
