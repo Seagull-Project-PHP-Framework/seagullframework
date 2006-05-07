@@ -152,7 +152,6 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
-        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
         define('SGL_INITIALISED', true);
     }
@@ -215,6 +214,7 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
+        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
     }
 }
