@@ -147,7 +147,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('translation', array('fallbackLang' => $fallbackLang));
 
         //  auto-correct frontScriptName for CGI users
-        if (preg_match("/cgi/i", php_sapi_name())) {
+        if (preg_match("/cgi|apache2filter/i", php_sapi_name())) {
             $c->set('site', array('frontScriptName' => 'index.php?'));
         }
 
