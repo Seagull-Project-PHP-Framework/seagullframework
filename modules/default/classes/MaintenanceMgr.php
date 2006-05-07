@@ -158,9 +158,8 @@ class MaintenanceMgr extends SGL_Manager
         require_once SGL_CORE_DIR . '/Task/Install.php';
 
         //  retrieve Install password
-        $ok = file_get_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php');
-        preg_match('/#(.*)\s\n/', $ok, $aMatch);
-        $installPassword = $aMatch[1];
+        $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
+        $installPassword = trim(substr($aLines[1], 1));
 
         $data = array(
             'createTables' => 1,
