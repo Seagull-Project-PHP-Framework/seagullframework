@@ -40,7 +40,8 @@
 /**
  * User / Login Block.
  *
- * Shows login form if not logged in, user data (username and "session started at") if logged in
+ * Shows login form if not logged in, user data (username and "session started at")
+ * if logged in
  *
  * @package block
  * @author  Werner M. Krauss <werner.krauss@hallstatt.net>
@@ -63,8 +64,7 @@ class User_Block_Login
     {
         if ($this->uid == SGL_GUEST) {
             return $this->getLoginScreen($output);
-        }
-        else {
+        } else {
             return $this->getLogoutScreen();
         }
     }

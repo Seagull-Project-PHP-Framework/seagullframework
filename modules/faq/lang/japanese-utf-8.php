@@ -11,7 +11,6 @@
         'Please fill in an answer' => '回答を入力してください。',
         'Question' => '質問',
         'Answer'   => '回答',
-        'FAQ ID'   => 'FAQ ID',
         'Date created' => 'データが追加されました。',
 /*  list */
         'Questions' => '質問リスト',
@@ -22,7 +21,6 @@
 /*  admin list */
         'new faq'  => '新しいFAQ',
         'reorder'  => '並び替え',
-        'id'       => 'id',
         'FAQ'      => 'FAQ',
         'Order'    => '並び順',
         'With selected faq(s)' => '選択されたFAQで',
