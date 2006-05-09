@@ -320,6 +320,14 @@ class SGL_Session
         return $ret;
     }
 
+    function currentUserIsOwner($ownerId)
+    {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+        return $_SESSION['uid'] == $ownerId;
+    }
+
     /**
      * Returns the current user's id.
      *
