@@ -33,8 +33,8 @@
         'Seagull Framework' => 'Seagull Framework',
 
 /*  GENERAL MESSAGES    */
-        'insufficient rights' => 'You do not have sufficient privileges to view this area.',
-        'authorization required' => 'You need to login to use this feature.  Fill your username and password below.',
+        'authorisation failed' => 'You do not have sufficient privileges to view this area.',
+        'authentication required' => 'You need to login to use this feature.  Fill your username and password below.',
         'session timeout' => 'Your session has timed out, please login again',
         'You have been successfully logged out' => 'You have been successfully logged out',
         'password emailed out' => 'A new password has been emailed to the address you registered with',
