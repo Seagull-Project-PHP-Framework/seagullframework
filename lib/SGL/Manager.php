@@ -199,13 +199,28 @@ class SGL_Manager
                     $now = time();
                     SGL_Session::set('redirected', $now);
 
+                    //  if redirects happen less than 2 seconds apart, and there are greater
+                    //  than 2 of them, recursion is happening
                     if ($now - $lastRedirected < 2) {
+                        $redirectTimes = SGL_Session::get('redirectedTimes');
+                        $redirectTimes ++;
+                        SGL_Session::set('redirectedTimes', $redirectTimes);
+                    } else {
+                        SGL_Session::set('redirectedTimes', 0);
+                    }
+                    if (SGL_Session::get('redirectedTimes') > 2) {
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                   // redirect to default page
+                   // redirect to current screen
                     SGL::raiseMsg('authorisation failed');
-                    SGL_HTTP::redirect($this->getDefaultPageParams());
+                    $aHistory = SGL_Session::get('aRequestHistory');
+                    $aLastRequest = $aHistory[1];
+                    $previousScreen = array(
+                        'managerName'   => $aLastRequest['managerName'],
+                        'moduleName'    => $aLastRequest['moduleName'],
+                        );
+                    SGL_HTTP::redirect($previousScreen);
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);

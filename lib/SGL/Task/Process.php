@@ -278,6 +278,13 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         $session = $input->get('session');
         $timeout = $session->isTimedOut();
 
+        //  store request in session
+        $aRequestHistory = SGL_Session::get('aRequestHistory');
+        $req = $input->getRequest();
+        array_unshift($aRequestHistory, $req->getAll());
+        $aTruncated = array_slice($aRequestHistory, 0, 2);
+        SGL_Session::set('aRequestHistory', $aTruncated);
+
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
