@@ -362,7 +362,9 @@ class SGL_Output
     function getNoExpiryCheckbox($aDate,$sFormName)
     {
         $checked = ($aDate == null) ? 'checked' : '';
-        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.' /> '.SGL_Output::translate('No expire');
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName
+            .'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '
+            .$checked.' /> '.SGL_Output::translate('No expire');
     }
 
     /**
