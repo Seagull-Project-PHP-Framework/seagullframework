@@ -17,6 +17,8 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+09-05-06    Added request history to session, ability to return to a previously
+            requested page on authorisation failure
 06-05-06    Implemented a library cache for all files used on every request,
             loaded file count back near 20
 01-05-06    Install and rebuild process will now build the correct fk links file
