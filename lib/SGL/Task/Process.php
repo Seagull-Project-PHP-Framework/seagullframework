@@ -281,8 +281,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        if ($session->getRoleId() > SGL_GUEST
-                && isset( $this->conf[$mgrName]['requiresAuth'])
+        if (isset( $this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
@@ -296,7 +295,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
                                     'managerName'   => 'login',
                                     'redir'         => urlencode($redir));
                 if (!$session->isValid()) {
-                    SGL::raiseMsg('authorization required');
+                    SGL::raiseMsg('authentication required');
                     SGL_HTTP::redirect($loginPage);
                 } else {
                     $session->destroy();

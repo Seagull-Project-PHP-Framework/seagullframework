@@ -174,7 +174,7 @@ class SGL_Manager
                 'constructor - please add "parent::SGL_Manager();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
-        //  only implement auth check on demand
+        //  only implement authorisation check on demand
         if ( isset($this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
@@ -203,21 +203,15 @@ class SGL_Manager
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                   // redirect to login page
-                    $url       = $input->getCurrentUrl();
-                    $redir     = $url->toString();
-                    $loginPage = array( 'moduleName'    => 'user',
-                                        'managerName'   => 'login',
-                                        'redir'         => urlencode($redir));
-                    SGL::raiseMsg('authorization required');
-                    SGL_HTTP::redirect($loginPage);
+                   // redirect to default page
+                    SGL::raiseMsg('authorisation failed');
+                    SGL_HTTP::redirect($this->getDefaultPageParams());
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);
                 }
             }
         }
-
         //  all tests passed, execute relevant method
         foreach ($this->_aActionsMapping[$input->action] as $methodName) {
             $methodName = '_cmd_'.$methodName;
