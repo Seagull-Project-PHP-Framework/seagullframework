@@ -280,6 +280,9 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 
         //  store request in session
         $aRequestHistory = SGL_Session::get('aRequestHistory');
+        if (empty($aRequestHistory)) {
+            $aRequestHistory = array();
+        }
         $req = $input->getRequest();
         array_unshift($aRequestHistory, $req->getAll());
         $aTruncated = array_slice($aRequestHistory, 0, 2);
