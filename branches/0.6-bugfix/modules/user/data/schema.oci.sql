@@ -247,3 +247,16 @@ usr_id
 create index user_permission_id on user_permission (
 permission_id
 );
+
+create sequence login_seq;
+create sequence preference_seq;
+create sequence organization_seq;
+create sequence organization_type_seq;
+create sequence permission_seq;
+create sequence role_seq;
+create sequence role_permission_seq;
+create sequence user_preference_seq;
+create sequence org_preference_seq;
+create sequence usr_seq;
+create sequence user_permission_seq;
+

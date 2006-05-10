@@ -82,6 +82,7 @@ item_addition_id     NUMBER(10)                 not null,
 item_id              NUMBER(10)                 not null,
 item_type_mapping_id NUMBER(10)                 not null,
 addition             CLOB                 null,
+trans_id             NUMBER(10)                 default '0',
 constraint PK_ITEM_ADDITION primary key (item_addition_id)
 );
 
@@ -130,7 +131,7 @@ item_type_id
 -- Table: category                                       
 -- ==============================================================
 
-CREATE TABLE category (
+create table category (
   category_id NUMBER(10) 	NOT NULL,
   label VARCHAR(32) 		DEFAULT NULL,
   perms VARCHAR(32) 		DEFAULT NULL,
@@ -187,4 +188,9 @@ root_id,
 left_id,
 right_id
 );
+
+create sequence document_seq;
+create sequence document_type_seq;
+create sequence item_type_seq;
+create sequence item_type_mapping_seq;
 
