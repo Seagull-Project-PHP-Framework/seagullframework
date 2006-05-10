@@ -1,5 +1,5 @@
 <?php
-
+define('SGL_CACHE_LIBS', false);
 $rootDir = dirname(__FILE__) . '/..';
 require_once $rootDir .'/lib/SGL/FrontController.php';
 SGL_FrontController::init();
