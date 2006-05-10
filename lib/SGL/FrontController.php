@@ -159,7 +159,7 @@ class SGL_FrontController
     function loadRequiredFiles()
     {
         $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
-        if (is_file($cachedLibs && SGL_CACHE_LIBS)) {
+        if (is_file($cachedLibs) && SGL_CACHE_LIBS) {
             require_once $cachedLibs;
         } else {
             $coreLibs = dirname(__FILE__);
