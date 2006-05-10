@@ -373,10 +373,13 @@ class SGL_Output
      *
      * @access  public
      * @param   boolean $isBold
+     * @param   string  $pColor optional primary color, override default
+     * @param   string  $sColor optional secondary color, override default
      * @return  string  $curRowClass string representing class found in stylesheet
      */
 
-    function switchRowClass($isBold = false, $id = 'default')
+    function switchRowClass($isBold = false, $pColor = 'backDark',
+                            $sColor = 'backLight', $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -387,15 +390,14 @@ class SGL_Output
             $_id = $id;
         }
 
-        if ($curRowClass == 'backLight' && $isBold ) {
-            $curRowClass = 'backDark bold';
-        } elseif ($curRowClass == 'backLight') {
-            $curRowClass = 'backDark';
-        } elseif ($isBold) {
-            $curRowClass = 'backLight bold';
+        if (strpos($curRowClass, $sColor) === false) {
+            $curRowClass = $sColor;
         } else {
-            $curRowClass = 'backLight';
+            $curRowClass = $pColor;
         }
+
+	if ($isBold)
+            $curRowClass .= ' bold';
 
         return $curRowClass;
     }
