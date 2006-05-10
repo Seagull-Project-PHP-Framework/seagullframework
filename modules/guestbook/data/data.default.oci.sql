@@ -14,9 +14,9 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookmgr_add', '', (SELECT MA
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookmgr_insert', '', (SELECT MAX(module_id) FROM module));
 
 -- guest role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'guestbookmgr';
+--SELECT @permissionId := permission_id FROM permission WHERE name = 'guestbookmgr';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, (SELECT permission_id FROM permission WHERE name = 'guestbookmgr'));
 
 -- member role perms
-SELECT @permissionId := permission_id FROM permission WHERE name = 'guestbookmgr';
+--SELECT @permissionId := permission_id FROM permission WHERE name = 'guestbookmgr';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'guestbookmgr'));

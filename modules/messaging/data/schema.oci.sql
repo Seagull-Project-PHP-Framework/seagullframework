@@ -48,3 +48,6 @@ user_id_to
 create  index ust_instant_to_fk on instant_message (
 user_id_from
 );
+
+create sequence contact_seq;
+

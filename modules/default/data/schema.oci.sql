@@ -67,7 +67,7 @@ create  index user_session_username on user_session (
 -- ==============================================================
 --  Function: unix_timestamp
 -- ==============================================================
-CREATE FUNCTION unix_timestamp (datum IN VARCHAR2) RETURN NUMBER IS BEGIN RETURN ROUND((TO_DATE(datum) - TO_DATE('1970-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))*86400,0); END;;
+--CREATE FUNCTION unix_timestamp (datum IN VARCHAR2) RETURN NUMBER IS BEGIN RETURN ROUND((TO_DATE(datum) - TO_DATE('1970-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS'))*86400,0); END;
 
 
 -- ==============================================================
@@ -88,3 +88,10 @@ admin_uri         VARCHAR(255) null,
 icon              VARCHAR(255) null,
 constraint PK_MODULE primary key (module_id)
 );
+
+
+create sequence log_table_seq;
+create sequence table_lock_seq;
+create sequence session_seq;
+create sequence module_seq;
+

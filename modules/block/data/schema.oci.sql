@@ -53,3 +53,8 @@ create table block_role (
 	block_id 	NUMBER(10)	not null,
 	role_id		NUMBER(10)	not null
 );
+
+create sequence block_seq;
+create sequence block_assignment_seq;
+create sequence block_role_seq;
+
