@@ -2,7 +2,7 @@
             foreach ($input->aDelete as $index => $%mgrName%Id) {
                 $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
                 $%mgrName%->get($%mgrName%Id);
-                $%mgrName%>delete();
+                $%mgrName%->delete();
                 unset($%mgrName%);
             }
         } else {
