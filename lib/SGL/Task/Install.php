@@ -1089,6 +1089,35 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     }
 }
 
+class SGL_Task_CreateMemberUser extends SGL_Task
+{
+    function run($data)
+    {
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
+            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+            $da = & DA_User::singleton();
+            $oUser = $da->getUserById();
+
+            $oUser->username = 'member';
+            $oUser->first_name = 'Example';
+            $oUser->last_name = 'Member User';
+            $oUser->email = 'example@seagullproject.org';
+            $oUser->passwd = md5('password');
+            $oUser->organisation_id = 1;
+            $oUser->is_acct_active = 1;
+            $oUser->country = 'GB';
+            $oUser->role_id = 2;
+            $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
+            $oUser->created_by = $oUser->updated_by = SGL_ADMIN;
+            $success = $da->addUser($oUser);
+
+            if (PEAR::isError($success)) {
+                SGL_Install_Common::errorPush($success);
+            }
+        }
+    }
+}
+
 /**
  * @package Task
  */
