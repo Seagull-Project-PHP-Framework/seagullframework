@@ -212,15 +212,19 @@ class SGL_Manager
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                   // redirect to current screen
+                   // redirect to current or default screen
                     SGL::raiseMsg('authorisation failed');
                     $aHistory = SGL_Session::get('aRequestHistory');
-                    $aLastRequest = $aHistory[1];
-                    $previousScreen = array(
-                        'managerName'   => $aLastRequest['managerName'],
-                        'moduleName'    => $aLastRequest['moduleName'],
-                        );
-                    SGL_HTTP::redirect($previousScreen);
+                    $aLastRequest = isset($aHistory[1]) ? $aHistory[1] : false;
+                    if ($aLastRequest) {
+                        $aRedir = array(
+                            'managerName'   => $aLastRequest['managerName'],
+                            'moduleName'    => $aLastRequest['moduleName'],
+                            );
+                    } else {
+                        $aRedir = $this->getDefaultPageParams();
+                    }
+                    SGL_HTTP::redirect($aRedir);
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);
