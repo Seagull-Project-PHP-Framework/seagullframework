@@ -171,16 +171,27 @@ class PasswordMgr extends SGL_Manager
         return array($passwd, $oUser);
     }
 
+    /**
+     * Wrapper for emailing password.
+     *
+     * @static
+     * @param object $oUser
+     * @param string $passwd
+     * @return boolean
+     */
     function sendPassword($oUser, $passwd)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         $options = array(
             'toEmail'   => $oUser->email,
-            'fromEmail' => $this->conf['email']['admin'],
-            'replyTo'   => $this->conf['email']['admin'],
-            'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
+            'fromEmail' => $conf['email']['admin'],
+            'replyTo'   => $conf['email']['admin'],
+            'subject'   => 'Password reminder from ' . $conf['site']['name'],
             'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
                 . '/user/email_forgot.php',
             'username'  => $oUser->username,
