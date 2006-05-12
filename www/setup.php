@@ -75,7 +75,6 @@ module setup
 //  initialise
 
 //  set initial paths according to install type
-define('SGL_CACHE_LIBS', false);
 $pearTest = '@PHP-DIR@';
 if ($pearTest != '@' . 'PHP-DIR'. '@') {
     define('SGL_PEAR_INSTALLED', true);
@@ -85,6 +84,11 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $rootDir = dirname(__FILE__) . '/..';
     $varDir = dirname(__FILE__) . '/../var';
 }
+
+//  check for lib cache
+define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
+    ? true
+    : false);
 
 require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
