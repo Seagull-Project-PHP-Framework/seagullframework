@@ -22,13 +22,13 @@ function Tcalculator() {
 	this.TCRmntr = TCRmntr;
 	// preloading images
 	var a_img = [], i, j;
-	for (i = 0; i < 19; i ++) {
+/*	for (i = 0; i < 19; i ++) {
 		a_img[i] = [];
 		for (j = 0; j < 3; j ++) {
 			a_img[i][j] = new Image();
 			a_img[i][j].src = 'img/' + i + '_' + j + '.gif'
 		} 
-	}
+	}*/
 }
 
 function TCRisPoint(tmp,n) {
