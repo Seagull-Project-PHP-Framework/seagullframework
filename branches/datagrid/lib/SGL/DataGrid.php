@@ -1,12 +1,12 @@
 <?php
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//Varico ...na wszystko mamy program/one stop source for software
-//http://www.varico.com ... od 1989/since 1989
+//Varico ...one stop source for software
+//http://www.varico.com ... since 1989
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 // KK 26940 count of rows comes from aPrefs
-define ('SGL_DATAGRID_ALL_ROWS_IN_SELECT', 10000);	// KK 26938 standardy kodowania PEAR
+define ('SGL_DATAGRID_ALL_ROWS_IN_SELECT', 10000);
 
 require_once 'Column.php';
 
@@ -54,15 +54,15 @@ class SGL_DataGrid {
      * @access public
      * @return void
      **/
-    function SGL_DataGrid($Id = '0', $name = '', $emptyTitle = '', $defaultPerPage = 0)
-    {	// KK 26938 standardy kodowania PEAR
+    function SGL_DataGrid($Id = '0', $name = '', $emptyTitle = '', 
+        $defaultPerPage = 0)
+    {
         $this->dataGridID     = $Id;
         $this->emptyTitle     = $emptyTitle;
         $this->defaultPerPage = $defaultPerPage;
         if ($name) {
             $this->dataGridName = $name;
-        }
-        else {
+        } else {
             $this->dataGridName = 'dg' . $this->dataGridID . '_';
         }
     }
@@ -79,36 +79,84 @@ class SGL_DataGrid {
      * @param boolean $sumable - indicate if column may be summed per page
      * @param boolean $sumTotalable - indicate if column may be summed per total
      * @param boolean $avgable - indicate if column may be averaged per page
-     * @param boolean $avgTotalable - indicate if column may be averaged per total
+     * @param boolean $avgTotalable - indicate if column may be averaged per 
+                                      total
      * @param mixed $filterType - specify filter type
-     * @param array $valueTransformArray - for transform selected data from database
+     * @param array $valueTransformArray - for transform selected data from 
+                                            database
      * @access public
      * @return void
      **/
     function addColumn($params)
     {
-        /*TP it is not returned by reference because otherwise there is problem returning copy
-        * of variable $column (it return copy instead of reference and in PHP cannot be returned
-        * reference to object)
-        * */
+        /*TP it is not returned by reference because otherwise there is problem 
+        * returning copy of variable $column (it return copy instead of 
+        * reference and in PHP cannot be returned reference to object)
+        */
 
-	    if (isset($params['type'])) $type = $params['type']; else $type = 'id';
-	    if (isset($params['name'])) $name = $params['name']; else $name = '';
-	    if (isset($params['dbName'])) $dbName = $params['dbName']; else $dbName = '';
-	    if (isset($params['sortable'])) $sortable = $params['sortable']; else $sortable = false;
-	    if (isset($params['filterable'])) $filterable = $params['filterable']; else $filterable = false;
-	    if (isset($params['sumable'])) $sumable = $params['sumable']; else $sumable = false;
-	    if (isset($params['avgable'])) $avgable = $params['avgable']; else $avgable = false;
-	    if (isset($params['sumTotalable'])) $sumTotalable = $params['sumTotalable']; else $sumTotalable = false;
-	    if (isset($params['avgTotalable'])) $avgTotalable = $params['avgTotalable']; else $avgTotalable = false;
-	    if (isset($params['align'])) $align = $params['align']; else $align = '';
-	    if (isset($params['tooltip'])) $tooltip = $params['tooltip']; else $tooltip = array();
+	    if (isset($params['type'])) {
+            $type = $params['type']; 
+        } else {
+            $type = 'id';
+        }
+	    if (isset($params['name'])) {
+            $name = $params['name']; 
+        } else {
+            $name = '';
+        }
+	    if (isset($params['dbName'])) {
+            $dbName = $params['dbName']; 
+        } else {
+            $dbName = '';
+        }
+	    if (isset($params['sortable'])) {
+            $sortable = $params['sortable']; 
+        } else {
+            $sortable = false;
+        }
+	    if (isset($params['filterable'])) {
+            $filterable = $params['filterable']; 
+        } else {
+            $filterable = false;
+        }
+	    if (isset($params['sumable'])) {
+            $sumable = $params['sumable']; 
+        } else { 
+            $sumable = false;
+        }
+	    if (isset($params['avgable'])) {
+            $avgable = $params['avgable']; 
+        } else { 
+            $avgable = false;
+        }
+	    if (isset($params['sumTotalable'])) {
+            $sumTotalable = $params['sumTotalable']; 
+        } else {
+            $sumTotalable = false;
+        }
+	    if (isset($params['avgTotalable'])) {
+            $avgTotalable = $params['avgTotalable']; 
+        } else {
+            $avgTotalable = false;
+        }
+	    if (isset($params['align'])) {
+            $align = $params['align']; 
+        } else {
+            $align = '';
+        }
+	    if (isset($params['tooltip'])) {
+            $tooltip = $params['tooltip']; 
+        } else {
+            $tooltip = array();
+        }
 
-        $column = new SGL_DataGridColumn($type, $name, $dbName, $sortable, $filterable,
-                                      $sumable, $sumTotalable, $avgable, $avgTotalable, $align, $tooltip);
+        $column = new SGL_DataGridColumn($type, $name, $dbName, $sortable, 
+                                     $filterable, $sumable, $sumTotalable, 
+                                     $avgable, $avgTotalable, $align, $tooltip);
 
-        if ($type == 'id')
+        if ($type == 'id') {
             $this->hasIdColumn = true;
+        }
         $this->columns[] = $column;
 
         return $column;
@@ -117,31 +165,39 @@ class SGL_DataGrid {
 
     /**
      * DataGrid::filterValidate()
-     * Get filter value from form and if set put it into specified dataGrid field
-     * or put empty section if not set
+     * Get filter value from form and if set put it into specified dataGrid 
+     * field or put empty section if not set
      * @param object $column - one column from dataGrid
      * @param object $inReq - sgl_http_request object
      * @access public
      * @return void
      **/
-    function filterValidate(&$column, &$inReq, $useSession = false) {
+    function filterValidate(&$column, &$inReq, $useSession = false)
+    {
         $module = $inReq->get('moduleName');
         $manager = $inReq->get('managerName');
         $action = $inReq->get('action');
         if ($inReq->get('resetFilters_' . $this->dataGridID) == '') {
             $filterArray = SGL_Session::get('filterArray');
-	    if (isset($filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName]))
-                unset($filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName]);
+            if (isset($filterArray[$module . '_' . $manager . '_' . $action . 
+                    '_' . $this->dataGridID . '_' . $this->dataGridName])) {
+                    unset($filterArray[$module . '_' . $manager . '_' . 
+                          $action . '_' . $this->dataGridID . '_' . 
+                          $this->dataGridName]);
+            }
             SGL_Session::set('filterArray', $filterArray);
         }
         //for "_from" and "_to" date filters
-        if (($column->type == 'date') || ($column->type == 'integer') || ($column->type == 'real') || ($column->type == 'hour')) {
+        if (($column->type == 'date') || ($column->type == 'integer') || 
+            ($column->type == 'real') || ($column->type == 'hour')) {
             $columnTempFrom = $column->dbName . '__from__';
             $columnTempTo   = $column->dbName . '__to__';
 
             //set names for filter -GET variables
-            $filterSetNameFrom = $this->dataGridName . $column->dbName . '__from__';
-            $filterSetNameTo   = $this->dataGridName . $column->dbName . '__to__';
+            $filterSetNameFrom = $this->dataGridName . $column->dbName . 
+                                    '__from__';
+            $filterSetNameTo   = $this->dataGridName . $column->dbName . 
+                                    '__to__';
 
             //put filter -GET variables or empty section
             //into the specified dataGrid fields
@@ -149,32 +205,53 @@ class SGL_DataGrid {
             $s = str_replace('\%', '%', $s);
             if ($inReq->get($filterSetNameFrom)) {
                 $this->filters[$columnTempFrom] = str_replace('%', '\%', $s);
-                
+
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-                    $filters = $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempFrom];
-                    if ($filters)
+                    $filters = $filterArray[$module . '_' . $manager . '_' . 
+                                            $action . '_' . $this->dataGridID . 
+                                            '_' . $this->dataGridName . '_' . 
+                                            $columnTempFrom];
+                    if ($filters) {
                         $this->filters[$columnTempFrom] = $filters;
+                    }
                 } else {
                     $this->filters[$columnTempFrom] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempFrom] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTempFrom] = 
+                    str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             } elseif ($column->filter) {
                 $this->filters[$columnTempFrom] = "";
-                
+
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-                    $filters = isset($filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempFrom]) ? $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempFrom] : '';
-                    if ($filters)
+                    $filters = isset($filterArray[$module . '_' . $manager . 
+                                                  '_' . $action . '_' . 
+                                                  $this->dataGridID . '_' . 
+                                                  $this->dataGridName . '_' . 
+                                                  $columnTempFrom]) 
+                                ? $filterArray[$module . '_' . $manager . '_' . 
+                                               $action . '_' . 
+                                               $this->dataGridID . '_' . 
+                                               $this->dataGridName . '_' . 
+                                               $columnTempFrom] 
+                                : '';
+                    if ($filters) {
                         $this->filters[$columnTempFrom] = $filters;
+                    }
                 }
 
                 if (isset($_POST[$filterSetNameFrom])) {
                     $this->filters[$columnTempFrom] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempFrom] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTempFrom] = 
+                        str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             }
@@ -183,106 +260,158 @@ class SGL_DataGrid {
             $s = str_replace('\%', '%', $s);
             if ($inReq->get($filterSetNameTo)) {
                 $this->filters[$columnTempTo] = str_replace('%', '\%', $s);
-                
+
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-                    $filters = $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempTo];
+                    $filters = $filterArray[$module . '_' . $manager . '_' . 
+                                            $action . '_' . $this->dataGridID . 
+                                            '_' . $this->dataGridName . '_' . 
+                                            $columnTempTo];
                     if ($filters)
                         $this->filters[$columnTempTo] = $filters;
                 } else {
                     $this->filters[$columnTempTo] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempTo] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTempTo] = 
+                        str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             } elseif ($column->filter) {
                 $this->filters[$columnTempTo] = "";
-                    
+
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-                    $filters = isset($filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempTo]) ? $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempTo] : '';
-                    if ($filters)
+                    $filters = isset($filterArray[$module . '_' . $manager . 
+                                                  '_' . $action . '_' . 
+                                                  $this->dataGridID . '_' . 
+                                                  $this->dataGridName . '_' . 
+                                                  $columnTempTo]) 
+                                ? $filterArray[$module . '_' . $manager . '_' . 
+                                               $action . '_' . 
+                                               $this->dataGridID . '_' . 
+                                               $this->dataGridName . '_' . 
+                                               $columnTempTo] 
+                                : '';
+                    if ($filters) {
                         $this->filters[$columnTempTo] = $filters;
+                    }
                 }
 
                 if (isset($_POST[$filterSetNameTo])) {
                     $this->filters[$columnTempTo] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTempTo] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTempTo] = 
+                        str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             }
 
             if ($column->type == 'date') {
-                if ((!empty($this->filters[$columnTempFrom])) && (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempFrom])))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect date format')." !!</span>";
+                if ((!empty($this->filters[$columnTempFrom])) && 
+        (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempFrom])))) {
+                    $column->cError = "<span class='error'>" . 
+                                SGL_String::translate('incorrect date format') .
+                                " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempFrom])) {
-                    $this->filters[$columnTempFrom] = SGL_Output::formatDate2DB($this->filters[$columnTempFrom]);
+                    $this->filters[$columnTempFrom] = 
+                     SGL_Output::formatDate2DB($this->filters[$columnTempFrom]);
                 }
 
-                if ((!empty($this->filters[$columnTempTo])) && (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempTo])))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect date format')." !!</span>";
+                if ((!empty($this->filters[$columnTempTo])) && 
+        (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempTo])))) {
+                    $column->cError = "<span class='error'>" . 
+                                SGL_String::translate('incorrect date format') .
+                                " !!</span>";
                     $this->filterError  = true;
-                } elseif (!empty($this->filters[$columnTempTo])) {  // KK 26938 standardy kodowania PEAR
-                    $this->filters[$columnTempTo] = SGL_Output::formatDate2DB($this->filters[$columnTempTo]);
+                } elseif (!empty($this->filters[$columnTempTo])) {
+                    $this->filters[$columnTempTo] = 
+                       SGL_Output::formatDate2DB($this->filters[$columnTempTo]);
                 }
             }
-            
+
             if ($column->type == 'hour') {
-                if ((!empty($this->filters[$columnTempFrom])) && (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom])))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect date/time format')." !!</span>";
+                if ((!empty($this->filters[$columnTempFrom])) && 
+    (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom])))) {
+                    $column->cError = "<span class='error'>" . 
+                           SGL_String::translate('incorrect date/time format') .
+                           " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempFrom])) {
-                    $this->filters[$columnTempFrom] = SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom]);
+                    $this->filters[$columnTempFrom] = 
+                 SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom]);
                 }
 
-                if ((!empty($this->filters[$columnTempTo])) && (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempTo])))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect date/time format')." !!</span>";
+                if ((!empty($this->filters[$columnTempTo])) && 
+      (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempTo])))) {
+                    $column->cError = "<span class='error'>" . 
+                           SGL_String::translate('incorrect date/time format') .
+                           " !!</span>";
                     $this->filterError  = true;
-                } elseif (!empty($this->filters[$columnTempTo])) {  // KK 26938 standardy kodowania PEAR
-                    $this->filters[$columnTempTo] = SGL_Output::formatDateTime2DB($this->filters[$columnTempTo]);
+                } elseif (!empty($this->filters[$columnTempTo])) {
+                    $this->filters[$columnTempTo] = 
+                   SGL_Output::formatDateTime2DB($this->filters[$columnTempTo]);
                 }
-                //print_r($this->filters);
             }
 
             if (($column->type == 'integer') || ($column->type == 'real')) {
-                if ((!empty($this->filters[$columnTempFrom])) && (!is_numeric($this->filters[$columnTempFrom]))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect numeric format')." !!</span>";
+                if ((!empty($this->filters[$columnTempFrom])) && 
+                            (!is_numeric($this->filters[$columnTempFrom]))) {
+                    $column->cError = "<span class='error'>" . 
+                            SGL_String::translate('incorrect numeric format') .
+                            " !!</span>";
                     $this->filterError = true;
                 } elseif (!empty($this->filters[$columnTempFrom])) {
-                    $this->filters[$columnTempFrom] = $this->filters[$columnTempFrom];
+                    $this->filters[$columnTempFrom] = 
+                                                $this->filters[$columnTempFrom];
                 }
 
-                if ((!empty($this->filters[$columnTempTo])) && (!is_numeric($this->filters[$columnTempTo]))) {
-                    $column->cError = "<span class='error'>".SGL_String::translate('incorrect numeric format')." !!</span>";
+                if ((!empty($this->filters[$columnTempTo])) && 
+                                (!is_numeric($this->filters[$columnTempTo]))) {
+                    $column->cError = "<span class='error'>" . 
+                            SGL_String::translate('incorrect numeric format') .
+                            " !!</span>";
                     $this->filterError = true;
                 } elseif (!empty($this->filters[$columnTempTo])) {
-                    $this->filters[$columnTempTo] = $this->filters[$columnTempTo];
+                    $this->filters[$columnTempTo] = 
+                                                $this->filters[$columnTempTo];
                 }
             }
         } else { //for text and select filters
             $columnTemp = $column->dbName;
             //set names for filter -GET variables
             $filterSetName = $this->dataGridName . $column->dbName;
-              
+
             //put filter -GET variables or empty section
             //into the specified dataGrid fields
             // DK filter column value can not by array (hidden form elements
             $s = $inReq->get($filterSetName);
+
             $s = str_replace('\%', '%', $s);
-            if (($inReq->get($filterSetName)) && (!is_array($inReq->get($filterSetName)))) {
+            if (($inReq->get($filterSetName)) && 
+                                    (!is_array($inReq->get($filterSetName)))) {
                 $this->filters[$columnTemp] = str_replace('%', '\%', $s);
 
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-                    $filters = $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp];
-                    if ($filters)
+                    $filters = $filterArray[$module . '_' . $manager . '_' . 
+                                            $action . '_' . $this->dataGridID .
+                                            '_' . $this->dataGridName . '_' . 
+                                            $columnTemp];
+                    if ($filters) {
                         $this->filters[$columnTemp] = $filters;
+                    }
                 } else {
                     $this->filters[$columnTemp] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTemp] = 
+                        str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             } elseif ($column->filter) {
@@ -290,20 +419,32 @@ class SGL_DataGrid {
 
                 if ($useSession) {
                     $filterArray = SGL_Session::get('filterArray');
-		    //$filters = $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp];
-                    $filters = isset($filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp]) ? $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp] : '';
-                    if ($filters)
+                    $filters = isset($filterArray[$module . '_' . $manager .
+                                                  '_' . $action . '_' . 
+                                                  $this->dataGridID . '_' . 
+                                                  $this->dataGridName . '_' . 
+                                                  $columnTemp]) 
+                                ? $filterArray[$module . '_' . $manager . '_' . 
+                                               $action . '_' . 
+                                               $this->dataGridID . '_' . 
+                                               $this->dataGridName . '_' . 
+                                               $columnTemp] 
+                                : '';
+                    if ($filters) {
                         $this->filters[$columnTemp] = $filters;
+                    }
                 }
-                
+
                 if (isset($_POST[$filterSetName])) {
                     $this->filters[$columnTemp] = str_replace('%', '\%', $s);
                     $filterArray = SGL_Session::get('filterArray');
-                    $filterArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName . '_' . $columnTemp] = str_replace('%', '\%', $s);
+                    $filterArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                 $this->dataGridName . '_' . $columnTemp] = 
+                        str_replace('%', '\%', $s);
                     SGL_Session::set('filterArray', $filterArray);
                 }
             }
-            
         }
     }
 
@@ -326,18 +467,25 @@ class SGL_DataGrid {
         $sortSetName = $this->dataGridName . 'sort_' . $column->dbName;
         if ($inReq->get($sortSetName)) {
             $sortArray = SGL_Session::get('sortArray');
-	    if (isset($sortArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName]['column']))
-                unset($this->sorts[$sortArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName]['column']]);
+            if (isset($sortArray[$module . '_' . $manager . '_' . $action . 
+                                 '_' . $this->dataGridID . '_' . 
+                                $this->dataGridName]['column'])) {
+                    unset($this->sorts[$sortArray[$module . '_' . $manager . 
+                                                  '_' . $action . '_' . 
+                                                  $this->dataGridID . '_' . 
+                                               $this->dataGridName]['column']]);
+            }
             $this->sorts[$columnTemp] = $inReq->get($sortSetName);
-            $sortArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName] = array(
+            $sortArray[$module . '_' . $manager . '_' . $action . '_' . 
+                       $this->dataGridID . '_' . $this->dataGridName] = array(
                         'column' => $columnTemp,
                         'direction' => $inReq->get($sortSetName)
                        );
             SGL_Session::set('sortArray', $sortArray);
         } else {
-            if ($s = SGL_DataGrid::sortColumnFromInSession($columnTemp, $inReq)) {
-                $this->sorts[$s['column']] = $s['direction'];
-            }
+          if ($s = SGL_DataGrid::sortColumnFromInSession($columnTemp, $inReq)) {
+              $this->sorts[$s['column']] = $s['direction'];
+          }
         }
     }
 
@@ -353,18 +501,24 @@ class SGL_DataGrid {
         //set perPage, pageID and setID -GET names, check it,
         //and if they are set put theirs values into the dataGrid fileds
         $perPageSetName = $this->dataGridName . 'perPage';
-        if ($this->defaultPerPage>0)
-            $this->perPage = ($inReq->get($perPageSetName)) ? $inReq->get($perPageSetName) : $this->defaultPerPage;
-        else
-            $this->perPage = ($inReq->get($perPageSetName)) ? $inReq->get($perPageSetName) : $_SESSION['aPrefs']['resPerPage'];
-
+        if ($this->defaultPerPage>0) {
+            $this->perPage = ($inReq->get($perPageSetName)) 
+                                ? $inReq->get($perPageSetName) 
+                                : $this->defaultPerPage;
+        } else {
+            $this->perPage = ($inReq->get($perPageSetName)) 
+                                ? $inReq->get($perPageSetName) 
+                                : $_SESSION['aPrefs']['resPerPage'];
+        }
         if (!is_numeric($this->perPage)) {
             $this->perPage = 0;
         }
 
         //for specify witch page number display
         $setIDSetName = 'setID_' . $this->dataGridID;
-        $this->setID = ($inReq->get($setIDSetName)) ? $inReq->get($setIDSetName) : "";
+        $this->setID = ($inReq->get($setIDSetName)) 
+                            ? $inReq->get($setIDSetName) 
+                            : "";
         if ($inReq->get($setIDSetName)) {
             $_GET[$setIDSetName]  = "";
             $_POST[$setIDSetName] = "";
@@ -372,7 +526,9 @@ class SGL_DataGrid {
 
         //pager  ID for each dataGrid
         $pageIDSetName = 'pageID_' . $this->dataGridID;
-        $this->pageID = ($inReq->get($pageIDSetName)) ? $inReq->get($pageIDSetName) : 1;
+        $this->pageID = ($inReq->get($pageIDSetName)) 
+                            ? $inReq->get($pageIDSetName) 
+                            : 1;
     }
 
     /**
@@ -387,7 +543,9 @@ class SGL_DataGrid {
         //export to other documents like DOC, XLS
         //check what type of document dataGrid data should be exported to
         $exportSetName = $this->dataGridName . 'export';
-        $this->export = ($inReq->get($exportSetName)) ? $inReq->get($exportSetName) : "";
+        $this->export = ($inReq->get($exportSetName)) 
+                            ? $inReq->get($exportSetName) 
+                            : '';
     }
 
     /**
@@ -402,8 +560,9 @@ class SGL_DataGrid {
         $useSessionFilters = true;
         foreach($this->columns as $key => $column) {
             $filterSetName = $this->dataGridName . $column->dbName;
-            if (isset($_POST[$filterSetName]))
+            if (isset($_POST[$filterSetName])) {
                 $useSessionFilters = false;
+            }
         }
         //sorts and filters Form elements names are created by each
         //sortable or filterable dataGrid column
@@ -429,40 +588,15 @@ class SGL_DataGrid {
         if ($this->defaultPerPage > 0) {
             $this->perPageOptions[$this->defaultPerPage] = $this->defaultPerPage;
         }
-	    $this->perPageOptions[$_SESSION['aPrefs']['resPerPage']] = $_SESSION['aPrefs']['resPerPage']; // KK 26940
+	    $this->perPageOptions[$_SESSION['aPrefs']['resPerPage']] = 
+                                            $_SESSION['aPrefs']['resPerPage'];
         $this->perPageOptions[25] = 25;
         $this->perPageOptions[50] = 50;
         $this->perPageOptions[100] = 100;
         $this->perPageOptions[250] = 250;
-//        sort($this->perPageOptions);
-        $this->perPageOptions[SGL_DATAGRID_ALL_ROWS_IN_SELECT] = SGL_Output::translate('ALL');
 
-/*        $allRows = $dataSource->getNumberOfRows();
-        if (($allRows > 0) && ($allRows <= 25)) {
-            $this->perPageOptions[$allRows] = $allRows;
-        }
-        if (($allRows > 25) && ($allRows <= 50)) {
-            $this->perPageOptions[25] = 25;
-            $this->perPageOptions[$allRows] = $allRows;
-        }
-        if (($allRows > 50) && ($allRows <= 100)) {
-            $this->perPageOptions[25] = 25;
-            $this->perPageOptions[50] = 50;
-            $this->perPageOptions[$allRows] = $allRows;
-        }
-        if (($allRows > 100) && ($allRows <= 250)) {
-            $this->perPageOptions[25] = 25;
-            $this->perPageOptions[50] = 50;
-            $this->perPageOptions[100] = 100;
-            $this->perPageOptions[$allRows] = $allRows;
-        }
-        if ($allRows > 250) {
-            $this->perPageOptions[25]  = 25;
-            $this->perPageOptions[50]  = 50;
-            $this->perPageOptions[100] = 100;
-            $this->perPageOptions[250] = 250;
-            $this->perPageOptions[$allRows] = $allRows;
-        }*/
+        $this->perPageOptions[SGL_DATAGRID_ALL_ROWS_IN_SELECT] = 
+                                                  SGL_Output::translate('ALL');
     }
 
     /**
@@ -488,11 +622,13 @@ class SGL_DataGrid {
         $action = $inReq->get('action');
         $sortArray = SGL_Session::get('sortArray');
         if (!empty($sortArray)) {
-            foreach($sortArray as $key => $sort){
-                if (($module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName) == $key) {
+            foreach($sortArray as $key => $sort) {
+                if (($module . '_' . $manager . '_' . $action . '_' . 
+                     $this->dataGridID . '_' . $this->dataGridName) == $key) {
                     if (!empty($sort)) {
-                        if ($sort['column'] == $columnName)
+                        if ($sort['column'] == $columnName) {
                             return $sort;
+                        }
                     }
                 }
             }
@@ -507,7 +643,9 @@ class SGL_DataGrid {
         $action = $inReq->get('action');
         $sortArray = SGL_Session::get('sortArray');
         if (!empty($sortArray)) {
-            if (!empty($sortArray[$module . '_' . $manager . '_' . $action . '_' . $this->dataGridID . '_' . $this->dataGridName]))      {
+            if (!empty($sortArray[$module . '_' . $manager . '_' . $action . 
+                                  '_' . $this->dataGridID . '_' . 
+                                  $this->dataGridName])) {
                 return true;
             }
         }
@@ -518,8 +656,9 @@ class SGL_DataGrid {
     {
         $orderVariable = $inputReq->get($this->dataGridName . 'sort_' . $columnName);
         if (!isset($orderVariable)) {
-            if (!SGL_DataGrid::sortAnyColumnExistsInSession($inputReq))
+            if (!SGL_DataGrid::sortAnyColumnExistsInSession($inputReq)) {
                 $this->sorts[$columnName] = $sortType;
+            }
         }
     }
 
@@ -541,13 +680,15 @@ class SGL_DataGrid {
         } else {
             $dataSource->setFilter($this->filters);
         }
-        $this->allRows = $dataSource->getNumberOfAllRows();
+        //$this->allRows = $dataSource->getNumberOfAllRows();
 
-        $actualPage = $dataSource->getActualPage($this->setID, $this->perPage, $this->columns);
+        $actualPage = $dataSource->getActualPage($this->setID, $this->perPage, 
+                                                    $this->columns);
 
         //get data from given source
-        $this->allRows = count($dataSource->fill($this->dataGridID, $this->perPage, $actualPage));
-        $this->results = $dataSource->fill($this->dataGridID, $this->perPage, $actualPage);
+        $this->results = $dataSource->fill($this->dataGridID, $this->perPage, 
+                                           $actualPage);
+        $this->allRows = count($this->results);
         foreach ($this->columns as $keyColumn => $column) {
             //if transform array given in column
             if ((is_array($column->transform)) && (count($column->transform) > 0)) {
@@ -555,8 +696,9 @@ class SGL_DataGrid {
                     foreach ($column->transform as $keyTransform => $transform) {
                         if ($row[$column->dbName] == $keyTransform) {
 
-                            //replace actual value of current row in column selected from database
-                            //with given value in transform array
+                            // replace actual value of current row in column 
+                            // selected from database 
+                            // with given value in transform array
                             $this->results[$keyRow][$column->dbName] = $transform;
                         }
                     }
@@ -574,7 +716,6 @@ class SGL_DataGrid {
             $this->sums = $dataSource->getSummarysOfPage($this->columns);
         }
         $this->sumsTotal = $dataSource->getSummarysTotal($this->columns);
-//echo $dataSource->dataGridQuery.'<br>';
         //if selected - export current page or total data to specified document
 
         $trans = array(' ' => '_',
@@ -611,9 +752,8 @@ class SGL_DataGrid {
                        '[' => '_',
                        ']' => '_'
                        );
-       /* $fileName = strtr(SGL_String::translate($this->dataGridHeader)," ąĄćĆęĘłŁńŃśŚóÓżŻźŹ.,?:;=+<>|\/[]'",'_aAcCeElLnNsSoOzZzZ_______________');*/
-       //echo strpos(SGL_String::translate($this->dataGridHeader),'&#322;');
-       $fileName=strtr(SGL_String::translate($this->dataGridHeader),$trans);
+
+        $fileName=strtr(SGL_String::translate($this->dataGridHeader),$trans);
         $fileName = strtr($fileName,'"','_');
 
         if ($fileName == '') {
@@ -622,22 +762,18 @@ class SGL_DataGrid {
         $dataSource->columns = & $this->columns;
         switch($this->export) {
             case 'page_XLS':
-                // $fileName = $this->dataGridName . 'page_XLS.xls';
                 $dataSource->exportPageToExcel($fileName.'.xls');
                 break;
 
             case 'total_XLS':
-                //$fileName = $this->dataGridName . 'total_XLS.xls';
                 $dataSource->exportTotalToExcel($fileName.'.xls');
                 break;
 
             case 'page_DOC':
-                //$fileName = $this->dataGridName . 'page_DOC.doc';
                 $dataSource->exportPageToWord($fileName.'.doc');
                 break;
 
             case 'total_DOC':
-                //$fileName = $this->dataGridName . 'total_DOC.doc';
                 $dataSource->exportTotalToWord($fileName.'.doc');
                 break;
 
@@ -655,7 +791,6 @@ class SGL_DataGrid {
     {
         //set field name for current dataGrid
         $dataGrigSetName = $this->dataGridName;
-        //$this->perPageOptions = array_merge(array(2=>2),$this->perPageOptions);
 
         //put the data into specified dataGrid fields and then send them to given output
         foreach ($this->filters as $k=>$v) {
@@ -679,14 +814,14 @@ class SGL_DataGrid {
         $output->dataGridData->$dataGrigSetName->perPageOptions = $this->perPageOptions;
         $output->dataGridData->$dataGrigSetName->dataGridHeader = $this->dataGridHeader;
         $output->dataGridData->$dataGrigSetName->dataGridButton = $this->dataGridButton;
-        $output->dataGridData->$dataGrigSetName->dataGridButtonDelete = $this->dataGridButtonDelete;
+        $output->dataGridData->$dataGrigSetName->dataGridButtonDelete = 
+                                                    $this->dataGridButtonDelete;
         //PS 28517 hidden right column when display datagrid
         $output->masterTemplate    = $masterTemplate;
         //PS export dataGrid to print
 
-        $output->selfUrl = $GLOBALS['HTTP_SERVER_VARS']['REQUEST_URI'];
-        $output->selfUrlParam = $GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING'];
-        if(isset($GLOBALS['_REQUEST']['print']) && ($GLOBALS['_REQUEST']['print'] == 1)) {
+        $printRequest = $output->inputReq->get('print');
+        if (isset($printRequest) && ($printRequest == 1)) {
             $output->masterTemplate = 'blank.html';
             $output->print = true;
         }
@@ -694,39 +829,44 @@ class SGL_DataGrid {
         $output->path = SGL_BASE_URL;
         $output->dataGridData->$dataGrigSetName->emptyTitle= $this->emptyTitle;
         if ($this->dataGridDeleteMessage <> '') {
-            $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage = $this->dataGridDeleteMessage;
+            $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage = 
+                                                   $this->dataGridDeleteMessage;
         } else {
-            $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage = SGL_string::translate('Do you want to delete: ');
+            $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage = 
+                               SGL_string::translate('Do you want to delete: ');
         }
 
         $emptyFilters = true;
         foreach ($this->filters as $key=>$value) {
-            if ($value !== '')
+            if ($value !== '') {
                 $emptyFilters = false;
+            }
         }
 
         if ($emptyFilters) {
-            if ($this->allRows > 9)
+            if ($this->allRows > 9) {
                 $output->dataGridData->$dataGrigSetName->showFilters = true;
-            else
+            } else {
                 $output->dataGridData->$dataGrigSetName->showFilters = false;
+            }
         } else {
-
             $output->dataGridData->$dataGrigSetName->showFilters = true;
         }
 
         if (($this->allRows == 0) && ($this->emptyTitle != '')) {
             $output->dataGridData->$dataGrigSetName->showDataGrid = false;
-            if (!$emptyFilters)
+            if (!$emptyFilters) {
                 $output->dataGridData->$dataGrigSetName->showDataGrid = true;
+            }
         } else {
             $output->dataGridData->$dataGrigSetName->showDataGrid = true;
         }
 
         $showSummary = false;
         foreach ($this->columns as $column) {
-            if ($column->sumTot || $column->sum || $column->avg || $column->avgTot)
+            if ($column->sumTot || $column->sum || $column->avg || $column->avgTot) {
                 $showSummary = true;
+            }
         }
 
         $output->dataGridData->$dataGrigSetName->showSummary = $showSummary;

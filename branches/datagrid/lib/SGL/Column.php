@@ -45,9 +45,9 @@ class SGL_DataGridColumn {
      * @access public
      * @return void
      **/
-    function SGL_DataGridColumn($type, $name, $dbName, $sortable, $filterable,
-                           $sumable, $sumTotalable, $avgable, $avgTotalable, $align, $tooltip)
-    {	// KK 26938 poprawa standardu kodowania zgodnie z PEAR
+    function SGL_DataGridColumn($type, $name, $dbName, $sortable=false, $filterable=false,
+                           $sumable=false, $sumTotalable=false, $avgable=false, $avgTotalable=false, $align='', $tooltip='')
+    {
         $this->type          = $type;
         $this->name          = SGL_String::translate($name);
         $this->dbName        = $dbName;
@@ -97,11 +97,31 @@ class SGL_DataGridColumn {
      **/
     function addAction($params)
     {
-        if (isset($params['name'])) $object->name = $params['name']; else $object->name = '';
-        if (isset($params['img'])) $object->img = $params['img']; else $object->img = '';
-        if (isset($params['url'])) $object->url = $params['url']; else $object->url = '';
-        if (isset($params['tips'])) $object->tips = $params['tips']; else $object->tips = '';
-        if (isset($params['javaCode'])) $object->javaCode = $params['javaCode']; else $object->javaCode = '';
+        if (isset($params['name'])) {
+            $object->name = $params['name']; 
+        } else {
+            $object->name = '';
+        }
+        if (isset($params['img'])) {
+            $object->img = $params['img']; 
+        } else {
+            $object->img = '';
+        }
+        if (isset($params['url'])) {
+            $object->url = $params['url']; 
+        } else { 
+            $object->url = '';
+        }
+        if (isset($params['tips'])) {
+            $object->tips = $params['tips']; 
+        } else {
+            $object->tips = '';
+        }
+        if (isset($params['javaCode'])) {
+            $object->javaCode = $params['javaCode']; 
+        } else {
+            $object->javaCode = '';
+        }
         $this->actionData[] = $object;
     }
 

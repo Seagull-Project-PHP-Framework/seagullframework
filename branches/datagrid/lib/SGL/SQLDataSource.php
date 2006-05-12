@@ -1,7 +1,7 @@
 <?php
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//Varico ...na wszystko mamy program/one stop source for software
-//http://www.varico.com ... od 1989/since 1989
+//Varico ...one stop source for software
+//http://www.varico.com ... since 1989
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 include 'DataSource.php';
@@ -31,7 +31,7 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
      * @return void
      **/
     function SGL_DataGridSQLDataSource($query, $primaryKey = 'u_id')
-    {	// KK 26938 poprawa standardu kodowania zgodnie z PEAR
+    {
         $this->primaryKey = $primaryKey;
         $this->dataGridQuery = $query;
     }
@@ -48,8 +48,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         $this->sortByElement = "";
         $this->sortOrder = "";
         //find sort and sort order element
-        foreach($sortsArray as $key => $sort){
-            if ($sort != "") {
+        foreach($sortsArray as $key => $sort) {
+            if ($sort != '') {
                 $this->sortOrder = $sort;
                 $this->sortByElement = $key;
                 break;
@@ -68,7 +68,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
     /**
      * SGL_DataGridSQLDataSource::setFilter()
      * Set prepareFiltersArray for prepare function for SQL query
-     * @param array $filtersArray - given from dataGrid with filter values for each filterable column
+     * @param array $filtersArray - given from dataGrid with filter 
+                          values for each filterable column
      * @access public
      * @return void
      **/
@@ -93,7 +94,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                     $prepareAutomaticFilterArray[] = $filter;
                 } else {
                     if ($GLOBALS['_SGL']['CONF']['db']['type'] == 'pgsql') {
-                        //AM in postgres like is case sensitive (default), and ilike is insensitive
+                        //AM in postgres like is case sensitive (default), 
+                        // and ilike is insensitive
                         $this->automaticFilter .= $key . ' ilike ?';
                     } else {
                         $this->automaticFilter .= $key . ' like ?';
@@ -102,19 +104,6 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                     $prepareAutomaticFilterArray[] = '%' . $filter . '%';
                 }
             }
-            /*$search = "#" . $key . "#";
-            $pos = -1;
-            //find all positions of actual filter in SQL query statement
-            while($pos = strpos($subject, $search, $pos+1)) {
-                //for "_from" and "_to" date filters
-                if (strstr($key, '__from__') || strstr($key, '__to__')) {
-                    $positionsArray[$pos] = $filter;
-                }
-                //for normal text and select filters
-                else {
-                    $positionsArray[$pos] = "%" . $filter . "%";
-                }
-            }*/
         }
 
         if (isset($positionsArray)) {
@@ -138,19 +127,6 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
             }
             $this->prepareFiltersArray = $tempArray;
         }
-
-        /*//prepare SQL query statement
-        //replace all filters by "?" statement
-        $replace = "?";
-        $subject = $this->dataGridQuery;
-
-         AM remove possibility to set filter for each field
-        foreach($filtersArray as $key => $filter) {
-            $search = "#" . $key . "#";
-            $result = ereg_replace($search, $replace, $subject);
-            $subject = $result;
-        }*/
-        //$this->dataGridQuery = $result;
     }
 
     /**
@@ -187,7 +163,6 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         $countQuery = SGL_DataGridSQLDataSource::modifySelectQuerySetCount($this->dataGridQuery);
         $res = &$dbh->query($countQuery);
         $totalItems = 0;
-        //print_r($this->dataGridQuery);
         while ($res->fetchInto($row)) {
             $totalItems = $totalItems + $row->count;
         }
@@ -222,8 +197,11 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         foreach ($columnsArray as $keyArray => $column) {
             if ($column->sumTot) {
                 if (!(is_array($column->dbName))) {
-                    //$tempQuery =  FROM ($this->dataGridQuery) AS tmp";
-                    $tempQuery = "SELECT SUM($column->dbName) FROM (" . SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, "", $this->automaticFilter, $this->sortString) . ') as tmp';
+                    $tempQuery = "SELECT SUM($column->dbName) FROM (" . 
+                                    SGL_DataGridSQLDataSource::modifySelectQuery(
+                                        $this->dataGridQuery, "", $this->automaticFilter, 
+                                        $this->sortString) . 
+                                    ') as tmp';
                     $summaryTotal = $dbh->getOne($tempQuery, $this->prepareFiltersArray);
                     $summarys[$column->dbName] = number_format($summaryTotal, 2, '.', '');
                 }
@@ -231,8 +209,11 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
 
             if ($column->avgTot) {
                 if (!(is_array($column->dbName))) {
-                    //$tempQuery =  FROM ($this->dataGridQuery) AS tmp";
-                    $tempQuery = "SELECT AVG($column->dbName) FROM (" . SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, "", $this->automaticFilter, $this->sortString) . ') as tmp';
+                    $tempQuery = "SELECT AVG($column->dbName) FROM (" . 
+                                    SGL_DataGridSQLDataSource::modifySelectQuery(
+                                        $this->dataGridQuery, "", $this->automaticFilter, 
+                                        $this->sortString) . 
+                                    ') as tmp';
                     $summaryTotal = $dbh->getOne($tempQuery, $this->prepareFiltersArray);
                     $summarys[$column->dbName] = number_format($summaryTotal, 2, '.', '');
                 }
@@ -253,8 +234,6 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
      **/
     function getActualPage($setIDLoc, $perPageLoc, $columnsArray)
     {
-        //settype($setIDLoc,'int');
-
         $idSortElement = "";
         //search for column with "id" type
         foreach ($columnsArray as $keyColumn => $column) {
@@ -265,11 +244,16 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         }
 
         //when colum with "id" type exist
-        if (!isset($_GET['pageID_0']) && ($setIDLoc != "") && (is_numeric($setIDLoc)) && ($idSortElement != "")) {
+        if (!isset($_GET['pageID_0']) && ($setIDLoc != "") && (is_numeric($setIDLoc)) 
+                && ($idSortElement != "")) {
             $dbh = & SGL_DB::singleton();
-            $query = SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, '', $this->automaticFilter, $this->sortString);
+            $query = SGL_DataGridSQLDataSource::modifySelectQuery(
+                                   $this->dataGridQuery, '', $this->automaticFilter, 
+                                   $this->sortString);
             //count all rows from database
-            $tempQuery = SGL_DataGridSQLDataSource::modifySelectQuerySetCount($this->dataGridQuery, $this->automaticFilter, $this->sortString);
+            $tempQuery = SGL_DataGridSQLDataSource::modifySelectQuerySetCount(
+                                            $this->dataGridQuery, $this->automaticFilter, 
+                                            $this->sortString);
             $rowCount = $dbh->getOne($tempQuery, $this->prepareFiltersArray);
 
             if ($this->sortByElement == '') {
@@ -277,11 +261,11 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                 $tempDBValue = $setIDLoc;
             } else {
                 $tempDBName = $this->sortByElement;
-                //die($this->dataGridQuery);
 
-                //die('u_id = ' . $setIDLoc);
-                $tempQuery = SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, '', $this->primaryKey . ' = ' . $setIDLoc, $this->sortString);
-                $findDBValues = $dbh->getRow($tempQuery); //, $this->prepareFiltersArray);
+                $tempQuery = SGL_DataGridSQLDataSource::modifySelectQuery(
+                                            $this->dataGridQuery, '', $this->primaryKey . 
+                                            ' = ' . $setIDLoc, $this->sortString);
+                $findDBValues = $dbh->getRow($tempQuery); 
                 $tempDBValue = $findDBValues->$tempDBName;
 
             }
@@ -308,21 +292,16 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                         $tempDBValue = '';
                     }
 
-                    //if (gettype($setIDLoc)==='string')
-                    $cmpResult = $dbh->getOne('select CASE WHEN ? = ? THEN 0 ELSE -1 END', array($findDBValues->$tempDBName, $tempDBValue));
-                    /*else
-                        $cmpResult = ($findDBValues->$tempDBName == $tempDBValue) ? 0 : -1;*/
-
-                    //$cmpResult = strcmp($findDBValues->$tempDBName, $tempDBValue);
-                    //echo('<BR>' . $count . ' ' . $offset . ' ' . $findDBValues->$tempDBName . ':'. $tempDBValue . ':' . $cmpResult . '  id:' . $findDBValues->$idSortElement . ':' .$setIDLoc);
-                    //if there's only one order by column, then its type is "id"
+                    $cmpResult = $dbh->getOne('select CASE WHEN ? = ? THEN 0 ELSE -1 END', 
+                                            array($findDBValues->$tempDBName, $tempDBValue));
                     if ($tempDBName == $idSortElement) {
                         //compare actual selected from database order by column value
 
                         if ($findDBValues->$tempDBName == $tempDBValue) {
                             $findElement = $findDBValues->$tempDBName;
                             $valueFound = true;
-                        } elseif ($cmpResult == -1) { //increase or decrease offset if value wasn't found
+                        //increase or decrease offset if value wasn't found
+                        } elseif ($cmpResult == -1) { 
                             $offset += $count;
                         } else {
                             $offset -= $count;
@@ -330,18 +309,19 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                     } else {
                         //if there are two order by columns, and the second is "id" type
                         if ($findDBValues->$tempDBName == $tempDBValue) {
-                            //die($findDBValues->$tempDBName);
                             //if there's more then one row with the same order by column value
                             //find that with given id
                             if ($findDBValues->$idSortElement == $setIDLoc) {
                                 $findElement = $findDBValues->$tempDBName;
                                 $valueFound = true;
-                            } elseif  ($findDBValues->$idSortElement < $setIDLoc) { //increase or decrease offset if value wasn't found
+                            //increase or decrease offset if value wasn't found
+                            } elseif  ($findDBValues->$idSortElement < $setIDLoc) { 
                                 $offset += $count;
                             } else {
                                 $offset -= $count;
                             }
-                        } elseif ($cmpResult == -1) { //increase or decrease offset if value wasn't found
+                        //increase or decrease offset if value wasn't found
+                        } elseif ($cmpResult == -1) { 
                             $offset += $count;
                         } else {
                             $offset -= $count;
@@ -361,7 +341,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
     /**
      * SGL_DataGridSQLDataSource::fill()
      * Fill current page with data in dataGrid
-     * @param string $pageID - dataGrid id to different pages for more than one dataGrid in form
+     * @param string $pageID - dataGrid id to different pages for more than 
+                                one dataGrid in form
      * @param numeric $perPage - indicate howmany rows can be displayed on single page
      * @param numeric $actualPage - if given set page to display in dataGrid
      * @access public
@@ -381,9 +362,12 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
             'urlVar'    => 'pageID_' . $pageID,
             'itemData'  => $this->_itemsData
         );
-        $query = SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, '', $this->automaticFilter, $this->sortString);
+        $query = SGL_DataGridSQLDataSource::modifySelectQuery(
+                                $this->dataGridQuery, '', $this->automaticFilter, 
+                                $this->sortString);
         // query and page the slected data for current page
-        $this->_pagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions, false, DB_FETCHMODE_ASSOC,
+        $this->_pagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions, 
+                                                 false, DB_FETCHMODE_ASSOC, 
                                                  $this->prepareFiltersArray);
         return $this->_pagedData['data'];
     }
@@ -413,7 +397,9 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         $dbh = & SGL_DB::singleton();
 
         //select all data from database
-        $query = SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, '', $this->automaticFilter, $this->sortString);
+        $query = SGL_DataGridSQLDataSource::modifySelectQuery(
+                                    $this->dataGridQuery, '', $this->automaticFilter, 
+                                    $this->sortString);
         $res = & $dbh->query($query, $this->prepareFiltersArray);
         while ($res->fetchInto($row)) {
             $totalSQLData[] = $row;
@@ -447,7 +433,9 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         $totalSQLData = array();
         $dbh = & SGL_DB::singleton();
         //select all data from database
-        $query = SGL_DataGridSQLDataSource::modifySelectQuery($this->dataGridQuery, '', $this->automaticFilter, $this->sortString);
+        $query = SGL_DataGridSQLDataSource::modifySelectQuery(
+                            $this->dataGridQuery, '', $this->automaticFilter, 
+                            $this->sortString);
         $res = & $dbh->query($query, $this->prepareFiltersArray);
         while ($res->fetchInto($row)) {
             $totalSQLData[] = $row;
@@ -466,7 +454,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
      * @return  string  query after change
      * @uses    PEAR/SQL_Parser module
      */
-    function modifySelectQuery($query, $setSelect = '', $setFilter = '', $setOrderBy = '') {
+    function modifySelectQuery($query, $setSelect = '', $setFilter = '', $setOrderBy = '') 
+    {
         $selectQuery = array();
         $openBrackets = 0;
         $selectExpStart = 0;
@@ -490,7 +479,8 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                     break;
                 case 'as':
                     if ($openBrackets == 0 && $selectExpEnd == 0 && isset($columnStart)) {
-                        $columnText = substr($query, $columnStart, $sqlParser->lexer->tokPtr - $columnStart - $sqlParser->lexer->tokLen);
+                        $columnText = substr($query, $columnStart, 
+                           $sqlParser->lexer->tokPtr - $columnStart - $sqlParser->lexer->tokLen);
                         unset($columnStart);
                     }
                     break;
@@ -532,23 +522,24 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                     break;
             default:
                 if (!isset($sqlParser->token) || $sqlParser->token == 'union') {
-                    $elemSelectQuery['filter'] = SGL_DataGridSQLDataSource::parseFilter($setFilter, $columns);
+                    $elemSelectQuery['filter'] = SGL_DataGridSQLDataSource::parseFilter(
+                                                                         $setFilter, $columns);
                     $elemSelectQuery['selectStart'] = $selectStart;
                     $elemSelectQuery['selectExpStart'] = $selectExpStart;
                     $elemSelectQuery['selectExpEnd'] = $selectExpEnd;
                     $elemSelectQuery['selectExpLen'] = $selectExpEnd - $selectExpStart;
                     $elemSelectQuery['groupBy'] = $groupBy;
                     if (isset($sqlParser->token)) {
-                        $elemSelectQuery['selectEnd'] = $sqlParser->lexer->tokPtr - $sqlParser->lexer->tokLen;
-                    }
-                    else {
+                        $elemSelectQuery['selectEnd'] = 
+                                    $sqlParser->lexer->tokPtr - $sqlParser->lexer->tokLen;
+                    } else {
                         $elemSelectQuery['selectEnd'] = strlen($query);
                     }
-                    $elemSelectQuery['selectLen'] = $elemSelectQuery['selectEnd'] - $elemSelectQuery['selectStart'];
+                    $elemSelectQuery['selectLen'] = 
+                                $elemSelectQuery['selectEnd'] - $elemSelectQuery['selectStart'];
 
                     $selectQuery[] = $elemSelectQuery;
                     $selectStart = $sqlParser->lexer->tokPtr;
-            //        die($sqlParser->token);
                     $selectExpStart = 0;
                     $selectExpEnd = 0;
                     $columns = array();
@@ -556,7 +547,6 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
 
                 }
             }
-            //echo '<br>' . $sqlParser->token . ' ' . $sqlParser->lexer->tokStart . ' ' . $sqlParser->lexer->tokLen . ' ' . $sqlParser->lexer->tokPtr;
         }
         while (isset($sqlParser->token));
         $returnQuery = $query;
@@ -564,10 +554,16 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
             $elemSelectQuery = $selectQuery[$i];
             if ($setSelect != '') {
                 if ($elemSelectQuery['groupBy']) {
-                    $returnQuery = substr($returnQuery, 0, $elemSelectQuery['selectStart']) . ' SELECT ' . $setSelect . ' FROM (' . substr($returnQuery, $elemSelectQuery['selectStart'], $elemSelectQuery['selectLen']) . ') as temp ' . substr($returnQuery, $elemSelectQuery['selectEnd']);
-                }
-                else {
-                    $returnQuery = substr($returnQuery, 0, $elemSelectQuery['selectExpStart']) . ' ' . $setSelect . ' ' . substr($returnQuery, $elemSelectQuery['selectExpEnd']);
+                    $returnQuery = substr($returnQuery, 0, $elemSelectQuery['selectStart']) .
+                                         ' SELECT ' . $setSelect . ' FROM (' .
+                                          substr($returnQuery, $elemSelectQuery['selectStart'], 
+                                                    $elemSelectQuery['selectLen']) . 
+                                          ') as temp ' . 
+                                          substr($returnQuery, $elemSelectQuery['selectEnd']);
+                } else {
+                    $returnQuery = substr($returnQuery, 0, $elemSelectQuery['selectExpStart']) .
+                                         ' ' . $setSelect . ' ' . 
+                                         substr($returnQuery, $elemSelectQuery['selectExpEnd']);
                 }
             }
 
@@ -575,26 +571,26 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
             if (strpos($returnQuery, '#_FILTER#')) {
                 if ($setFilter == '') {
                     $returnQuery = str_replace('#_FILTER#', '1=1', $returnQuery);
-                }
-                elseif (count($changeFilter) == 0) {
+                } elseif (count($changeFilter) == 0) {
                     $returnQuery = str_replace('#_FILTER#', $setFilter, $returnQuery);
-                }
-                else {
-                    $posFilter = strpos($returnQuery, '#_FILTER#', $elemSelectQuery['selectStart']);
+                } else {
+                    $posFilter = strpos($returnQuery, '#_FILTER#', 
+                                            $elemSelectQuery['selectStart']);
                     if ($posFilter !== false) {
-                        usort($changeFilter, array("SGL_DB","_compareByPos"));
+                        usort($changeFilter, array("SGL_DataGridSQLDataSource","_compareByPos"));
                         $setFilterTemp = $setFilter;
                         foreach ($changeFilter as $filterElement) {
-                            $setFilterTemp = substr($setFilterTemp, 0, $filterElement['from']) . $filterElement['text'] . substr($setFilterTemp, $filterElement['len'] + $filterElement['from']);
+                            $setFilterTemp = substr($setFilterTemp, 0, $filterElement['from']) .
+                                                 $filterElement['text'] . 
+                                                 substr($setFilterTemp, $filterElement['len'] + 
+                                                    $filterElement['from']);
                         }
-                        $returnQuery = substr($returnQuery, 0, $posFilter) . $setFilterTemp . substr($returnQuery, $posFilter + strlen('#_FILTER#'));
+                        $returnQuery = substr($returnQuery, 0, $posFilter) . $setFilterTemp . 
+                                          substr($returnQuery, $posFilter + strlen('#_FILTER#'));
                     }
                 }
             }
 
-        }
-        if ($setFilter) {
-            //die($returnQuery);
         }
         if ($setOrderBy != '' || is_null($setOrderBy)) {
             if ($orderByStart > 0) {
@@ -619,34 +615,40 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
         return $returnQuery;
     }
 
-    function modifySelectQuerySetCount($query, $setFilter = '') {
-        if (!DB::isError(($queryCount = SGL_DataGridSQLDataSource::modifySelectQuery($query, 'count(*) as count', $setFilter, null)))) {
+    function modifySelectQuerySetCount($query, $setFilter = '') 
+    {
+        if (!DB::isError(($queryCount = SGL_DataGridSQLDataSource::modifySelectQuery($query, 
+                                                    'count(*) as count', $setFilter, null)))) {
             return $queryCount;
-        }
-        else {
+        } else {
             return 'SELECT sum(count) FROM (' . $queryCount . ') as temp';
         }
     }
 
-    //------------------------ VARICO changes - add possibility to parse sql
-    function _compareByPos($a, $b) {
+    function _compareByPos($a, $b) 
+    {
         if ($a['from'] == $b['from']) {
             return 0;
         }
         return ($a['from'] > $b['from']) ? -1 : 1;
     }
-    /** Helper function to make filter having aliases (in $setFilter) and to translate them into proper filter
-     * (ie when a column in select is a subselect we cannot use alias to filter but we have to insert whole subselect,
+    /** Helper function to make filter having aliases (in $setFilter) and to 
+     * translate them into proper filter
+     * (ie when a column in select is a subselect we cannot use alias to 
+     * filter but we have to insert whole subselect,
      * ie:
-     * main query: select (select name from person where id = parent) as name1, name from person;
+     * main query: select (select name from person where id = parent) as name1, 
+     * name from person;
      * $setFilter: name1 like ? and name like ?
-     * we have to make from it: (select name from person where id = parent) like ? and name like ?
+     * we have to make from it: (select name from person where id = parent) like ? 
+     * and name like ?
      * @param string $setFilter - filter string (ie name like ? and id = ?)
      * @param array  $columns - columns in select, to
      * @return array with information about filter
      * @uses    PEAR/SQL_Parser module
      */
-    function parseFilter($setFilter, &$columns) {
+    function parseFilter($setFilter, &$columns) 
+    {
         $changeFilter = array();
         if ($setFilter != '') {
             include_once 'SQL/Parser.php';
@@ -657,13 +659,18 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
                 switch ($sqlParser->token) {
                     case 'ident':
                         if (isset($columns[$sqlParser->lexer->tokText])) {
-                            $changeFilter[] = array('from' => $sqlParser->lexer->tokPtr - $sqlParser->lexer->tokLen, 'len' => $sqlParser->lexer->tokLen, 'text' => $columns[$sqlParser->lexer->tokText]);
+                            $changeFilter[] = array(
+                                                    'from' => $sqlParser->lexer->tokPtr - $sqlParser->lexer->tokLen, 
+                                                    'len' => $sqlParser->lexer->tokLen, 
+                                                    'text' => $columns[$sqlParser->lexer->tokText]
+                                                    );
                         }
                         break;
                 }
             }
             while (isset($sqlParser->token));
         }
+
         return $changeFilter;
     }
 }

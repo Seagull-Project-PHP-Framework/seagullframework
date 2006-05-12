@@ -43,7 +43,7 @@ class SGL_DataGridDataSource {
      * @access public
      * @return void
      **/
-    function _compareDataSource($a, $b)  // KK 26941 funkcja przeniesiona jako metoda klasy
+    function _compareDataSource($a, $b)
     {
         return strnatcasecmp($a[$this->_sortElement], $b[$this->_sortElement]);
     }
@@ -63,7 +63,7 @@ class SGL_DataGridDataSource {
         $sortOrder = "";
 
         //to find sort
-        foreach($sortsArray as $key => $sort){
+        foreach($sortsArray as $key => $sort) {
             if ($sort != "") {
                 $sortOrder = $sort;
                 $sortByElement = $key;
@@ -73,7 +73,7 @@ class SGL_DataGridDataSource {
         //if sort finded - sort data
         if ($sortByElement != "") {
             $_element = $sortByElement;
-	    $this->_sortElement = $_element;
+            $this->_sortElement = $_element;
             usort($this->_itemsData, array("SGL_DataGridDataSource","_compareDataSource"));
             //set sort order
             if ($sortOrder == 'DESC') {
@@ -86,7 +86,8 @@ class SGL_DataGridDataSource {
     /**
      * SGL_DataGridDataSource::setFilter()
      * Filter dataGrid data in _itemsData array
-     * @param array $filtersArray - given from dataGrid with filter values for each filterable column
+     * @param array $filtersArray - given from dataGrid with filter values 
+                    for each filterable column
      * @access public
      * @return void
      **/
@@ -109,12 +110,13 @@ class SGL_DataGridDataSource {
                              || $filter == "")) {
                                     $numberOfFitFilters++; //filter match
                         }
-                    } elseif (($filter == "")||(strstr(strtoupper($data[$keyFilter]), strtoupper($filter)))) {
+                    } elseif (($filter == "")||(strstr(strtoupper($data[$keyFilter]), 
+                                                            strtoupper($filter)))) {
                             $numberOfFitFilters++; //filter match
                     }
                 }
-
-                if ($numberOfFitFilters == $numberOfFilters) { //if all filters match in row
+                //if all filters match in row
+                if ($numberOfFitFilters == $numberOfFilters) { 
                     $newItemData[] = $data; //add this row to new data array
                 }
             }
@@ -170,8 +172,7 @@ class SGL_DataGridDataSource {
         } else {   //else function will export given data
             if (is_array($sumData)) {
                 $dataToSum = $sumData;
-            }
-            else {
+            } else {
                 $dataToSum = array();
             }
         }
@@ -189,26 +190,30 @@ class SGL_DataGridDataSource {
                         }
 
                         //set summary of actual column
-                        $summarys[$column->dbName] = number_format($summaryOfPage, 2, '.', '');
+                        $summarys[$column->dbName] = 
+                            number_format($summaryOfPage, 2, '.', '');
                     }
                 }
-		
-		if ($column->avgTot) {
+
+                if ($column->avgTot) {
                     if (!(is_array($column->dbName))) {
                         $summaryOfPage = 0;
-			$counter = 0;
+                        $counter = 0;
                         foreach ($dataToSum as $key => $data) {
-			    $counter++;
+                            $counter++;
                             //for each cell from row in actual column
                             //add its value to global sum for column
                             $summaryOfPage += $data[$column->dbName];
                         }
 
                         //set summary of actual column
-			if ($counter>0)
-                            $summarys[$column->dbName] = number_format(($summaryOfPage/$counter), 2, '.', '');
-			else
-			    $summarys[$column->dbName] = number_format($summaryOfPage, 2, '.', '');
+                        if ($counter>0) {
+                            $summarys[$column->dbName] = 
+                                number_format(($summaryOfPage/$counter), 2, '.', '');
+                        } else {
+                            $summarys[$column->dbName] = 
+                                number_format($summaryOfPage, 2, '.', '');
+                        }
                     }
                 }
             }
@@ -299,7 +304,8 @@ class SGL_DataGridDataSource {
         }
         return $this->_pagedData['data'];
     }
-    /** AM get column real name 28526
+
+    /**
      * SGL_DataGridDataSource::getColumnName($key)
      * @param string $key  - dbName for column
      * @access private
@@ -337,8 +343,7 @@ class SGL_DataGridDataSource {
         } else {     //else function will export given data
             if (is_array($exportData)) {
                 $dataToExport = $exportData;
-            }
-            else {
+            } else {
                 $dataToExport = array();
             }
         }
@@ -408,8 +413,7 @@ class SGL_DataGridDataSource {
         } else { //else function will export given data
             if (is_array($exportData)) {
                 $dataToExport = $exportData;
-            }
-            else {
+            } else {
                 $dataToExport = array();
             }
         }
@@ -470,8 +474,8 @@ class SGL_DataGridDataSource {
  * @return
 **/
 function _enc($text) {
-    $text = str_replace('&Oacute;', 'Ó', $text);
-    $text = str_replace('&oacute;', 'ó', $text);
+    $text = str_replace('&Oacute;', 'Ã“', $text);
+    $text = str_replace('&oacute;', 'Ã³', $text);
     return $text;
 }
 ?>
