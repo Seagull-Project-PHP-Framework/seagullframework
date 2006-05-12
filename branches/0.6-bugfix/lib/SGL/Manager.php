@@ -163,9 +163,16 @@ class SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $mgrName = SGL_Inflector::caseFix(get_class($this));
+        $defaultMgrLoaded = false;
+
+        if (SGL_Error::count()) {
+            $oLastError = SGL_Error::getLast();
+            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+                $defaultMgrLoaded = true;
+            }
 
         //  determine if action param from $_GET is valid
-        if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
+        } elseif (!(array_key_exists($input->action, $this->_aActionsMapping))) {
             return SGL::raiseError('The specified method, ' . $input->action .
                 ' does not exist', SGL_ERROR_NOMETHOD);
         }
@@ -231,10 +238,12 @@ class SGL_Manager
                 }
             }
         }
-        //  all tests passed, execute relevant method
-        foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-            $methodName = '_cmd_'.$methodName;
-            $this->{$methodName}($input, $output);
+        if (!$defaultMgrLoaded) {
+            //  all tests passed, execute relevant method
+            foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+                $methodName = '_cmd_'.$methodName;
+                $this->{$methodName}($input, $output);
+            }
         }
         return true;
     }

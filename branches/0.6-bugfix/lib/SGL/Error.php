@@ -86,6 +86,11 @@ class SGL_Error
         return array_shift($GLOBALS['_SGL']['ERRORS']);
     }
 
+    function getLast()
+    {
+        return end($GLOBALS['_SGL']['ERRORS']);
+    }
+
     function toString($oError)
     {
         $message = $oError->getMessage();

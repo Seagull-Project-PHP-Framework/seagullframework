@@ -159,7 +159,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_ERROR_NOMETHOD',            -105);  // no method exists
         define('SGL_ERROR_NOAFFECTEDROWS',      -106);  // no rows where affected by update/insert/delete
         define('SGL_ERROR_NOTSUPPORTED'  ,      -107);  // limit queries on unsuppored databases
-        define('SGL_ERROR_INVALIDCALL',         -108);  // overload getter/setter failure
+        define('SGL_ERROR_INVALIDCALL',         -108);
         define('SGL_ERROR_INVALIDAUTH',         -109);
         define('SGL_ERROR_EMAILFAILURE',        -110);
         define('SGL_ERROR_DBFAILURE',           -111);
