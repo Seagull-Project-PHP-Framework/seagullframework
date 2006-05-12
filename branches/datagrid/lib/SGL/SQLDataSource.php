@@ -280,7 +280,7 @@ class SGL_DataGridSQLDataSource extends SGL_DataGridDataSource {
             if ($count>1) {
                 while ((!$limitFound) && $count >= 0.5) {
                     $count = $count / 2;
-                    $tempFindingQuery = $dbh->modifyLimitQuery($query, round($offset), 1);
+                    $tempFindingQuery = $dbh->modifyLimitQuery($tempQuery, round($offset), 1);
 
                     $findDBValues = $dbh->getRow($tempFindingQuery, $this->prepareFiltersArray);
 
