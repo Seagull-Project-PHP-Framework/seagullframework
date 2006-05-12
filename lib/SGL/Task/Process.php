@@ -511,7 +511,8 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         if ($getDefaultMgr) {
             $ok = $this->getDefaultManager($input);
             if (!$homePageRequest || !$ok) {
-                SGL::raiseError("The specified manager could not be found, default loaded");
+                SGL::raiseError("The specified manager could not be found, default loaded",
+                    SGL_ERROR_INVALIDCALL);
             }
         }
         $this->processRequest->process($input, $output);
