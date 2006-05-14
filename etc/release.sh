@@ -121,8 +121,8 @@ function exportSvnAndPackage()
     rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
 
     #remove non-standard themes
-    rm -rf $PROJECT_NAME/www/themes/savant
-    rm -rf $PROJECT_NAME/www/themes/smarty
+    rm -rf $PROJECT_NAME/www/savant
+    rm -rf $PROJECT_NAME/www/smarty
 
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
