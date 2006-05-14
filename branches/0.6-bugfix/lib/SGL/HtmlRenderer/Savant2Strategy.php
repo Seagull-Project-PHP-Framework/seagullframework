@@ -51,10 +51,10 @@ class SGL_Savant2 extends Savant2
     function SGL_Savant2($theme = 'default', $moduleName = 'default')
     {
         $options = array(
-            'template_path' => SGL_THEME_DIR . '/savant/default/default' . PATH_SEPARATOR .
-                               SGL_THEME_DIR . '/savant/' . $theme . '/default' . PATH_SEPARATOR .
-                               SGL_THEME_DIR . '/savant/default/' . $moduleName. PATH_SEPARATOR .
-                               SGL_THEME_DIR . '/savant/' . $theme . '/' . $moduleName,
+            'template_path' => SGL_WEB_ROOT . '/savant/default/default' . PATH_SEPARATOR .
+                               SGL_WEB_ROOT . '/savant/' . $theme . '/default' . PATH_SEPARATOR .
+                               SGL_WEB_ROOT . '/savant/default/' . $moduleName. PATH_SEPARATOR .
+                               SGL_WEB_ROOT . '/savant/' . $theme . '/' . $moduleName,
             'resource_path' => SGL_MOD_DIR . '/' . $moduleName . '/classes',
         );
 
