@@ -60,12 +60,12 @@ class SGL_NestedSet
         'upArrowDead'   => 'images/16/move_up_dead.gif',
         'downArrow'     => 'images/16/move_down.gif',
         'downArrowDead' => 'images/16/move_down_dead.gif',
-        'folder'        => 'images/imagesAlt2/foldericon.png',
-        'file'          => 'images/imagesAlt2/file.png',
-        'blank'         => 'images/imagesAlt2/blank.png',
-        't'             => 'images/imagesAlt2/T.png',
-        'l'             => 'images/imagesAlt2/L.png',
-        'i'             => 'images/imagesAlt2/I.png');
+        'folder'        => 'images/treeNav/foldericon.png',
+        'file'          => 'images/treeNav/file.png',
+        'blank'         => 'images/treeNav/blank.png',
+        't'             => 'images/treeNav/T.png',
+        'l'             => 'images/treeNav/L.png',
+        'i'             => 'images/treeNav/I.png');
 
     var $_protectedFields = array('id', 'rootid', 'l', 'r', 'norder', 'level', 'parent');
 

@@ -389,7 +389,7 @@ class DA_Navigation extends SGL_Manager
      */
     function getSectionTree()
     {
-        $this->nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
+        $this->nestedSet->setImage('folder', 'images/treeNav/file.png');
         $sectionNodes = $this->nestedSet->getTree();
 
         //  fetch translations title
