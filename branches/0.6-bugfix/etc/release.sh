@@ -118,7 +118,11 @@ function exportSvnAndPackage()
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/lib/pear/Calendar
+    rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
 
+    #remove non-standard themes
+    rm -rf $PROJECT_NAME/www/themes/savant
+    rm -rf $PROJECT_NAME/www/themes/smarty
 
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME

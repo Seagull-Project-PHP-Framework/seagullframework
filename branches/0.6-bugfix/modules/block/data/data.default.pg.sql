@@ -5,7 +5,7 @@ BEGIN;
 
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'block', 'Blocks', 'Use the ''Blocks'' module to configure the contents of the blocks in the left and right hand columns.', 'block/block', '48/module_block.png', '', NULL, NULL, NULL);
 
--- 
+--
 -- perms
 --
 
@@ -24,13 +24,20 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_update', 'Permission
 
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'Admin menu', '', '', 1, 'AdminNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"4";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'User menu', '', '', 1, 'UserNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"2";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
-
+INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 1, 1, 'N;');
 --
 -- Dumping data for table block_assignment
 --
 
+-- admin menu
 INSERT INTO block_assignment VALUES ({SGL_NEXT_ID}, 0);
+-- user menu
 INSERT INTO block_assignment VALUES ({SGL_NEXT_ID}, 0);
+-- adminCategoryNav (assigned in Publishing/Articles/Categories/Files sections)
+INSERT INTO block_assignment VALUES (3, 67);
+INSERT INTO block_assignment VALUES (3, 69);
+INSERT INTO block_assignment VALUES (3, 71);
+INSERT INTO block_assignment VALUES (3, 73);
 
 --
 -- Dumping data for table block_role
@@ -38,7 +45,9 @@ INSERT INTO block_assignment VALUES ({SGL_NEXT_ID}, 0);
 
 -- admin menu
 INSERT INTO block_role VALUES ({SGL_NEXT_ID}, 1);
--- guest menu
-INSERT INTO block_role VALUES ({SGL_NEXT_ID}, 0);
+-- user menu
+INSERT INTO block_role VALUES ({SGL_NEXT_ID}, -2);
+-- adminCategoryNav
+INSERT INTO block_role VALUES ({SGL_NEXT_ID}, 1);
 
 COMMIT;
