@@ -132,6 +132,14 @@ class UserPasswordMgr extends PasswordMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  admin cannot change passwd in DEMO mode
+        if (isset($this->conf['tuples']['demoMode'])
+                && $this->conf['tuples']['demoMode'] == true
+                && SGL_Session::getUid() == SGL_ADMIN) {
+            SGL::raiseMsg('admin cannot change passwd in DEMO mode', false,
+                SGL_MESSAGE_ERROR);
+            return false;
+        }
         $updateUserPasswd = new User_UpdateUserPassword($input, $output);
         $aObservers = explode(',', $this->conf['UserPasswordMgr']['observers']);
         foreach ($aObservers as $observer) {
@@ -180,7 +188,8 @@ class User_UpdateUserPassword extends SGL_Observable
             $this->notify();
             SGL::raiseMsg('Password updated successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 }
