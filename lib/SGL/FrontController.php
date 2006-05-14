@@ -198,7 +198,6 @@ class SGL_FrontController
                     } else {
                         $fileCache .= file_get_contents($file);
                     }
-                    $fileCache .= "\n";
                 }
             }
             if (SGL_CACHE_LIBS === true) {
