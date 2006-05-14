@@ -390,11 +390,22 @@ function setCheckboxes(the_form, element_name, do_check)
     var elts_cnt  = (typeof(elts.length) != 'undefined')
                   ? elts.length
                   : 0;
+    //var applyToWholeForm =
+    //alert(element_name)
+
 
     if (elts_cnt) {
         for (var i = 0; i < elts_cnt; i++) {
             elts[i].checked = do_check;
         }
+    //  tick all checkboxes per form
+    } else if (element_name == false) {
+        var f = document.forms[the_form];
+        for (var c = 0; c < f.elements.length; c++)
+        if (f.elements[c].type == 'checkbox') {
+          f.elements[c].checked = do_check;
+        }
+
     } else {
         elts.checked        = do_check;
     }
@@ -406,13 +417,13 @@ function setCheckboxes(the_form, element_name, do_check)
  *
  * @param   string   the form name
  * @param   string   the element name
- * @param   boolean   the status of trigger checkbox
+ * @param   boolean   the status of triggered checkbox
  *
  * @return  void
  */
 function applyToAllCheckboxes(formName, elementName, isChecked)
 {
-    if(isChecked) {
+    if (isChecked) {
         setCheckboxes(formName, elementName, true)
     } else {
         setCheckboxes(formName, elementName, false)

@@ -101,9 +101,9 @@ class SGL_Request
         $cache = & SGL_Cache::singleton();
         $cacheId = md5($_SERVER['PHP_SELF']);
 
-        if ($data = $cache->get($cacheId, 'urls')) {
+        if ($data = $cache->get($cacheId, 'uri')) {
             $url = unserialize($data);
-            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
+            SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
             require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
             require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
@@ -121,8 +121,8 @@ class SGL_Request
                 return $err;
             }
             $data = serialize($url);
-            $cache->save($data, $cacheId, 'urls');
-            SGL::logMessage('url parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
+            $cache->save($data, $cacheId, 'uri');
+            SGL::logMessage('URI parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
         if (PEAR::isError($aQueryData)) {

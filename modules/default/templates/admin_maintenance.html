@@ -44,6 +44,12 @@
                 <input type="checkbox" name="frmCache[blocks]" value="1" />{translate(#blocks#,#ucfirst#)}
                 <input type="checkbox" name="frmCache[categorySelect]" value="1" />{translate(#categories#,#ucfirst#)}
                 <input type="checkbox" name="frmCache[perms]" value="1" />{translate(#permissions#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[pear]" value="1" />PEAR
+                <input type="checkbox" name="frmCache[uri]" value="1" />URI
+            </p>
+            <p class="center">
+                <input type="checkbox" name="checkAll" id="checkAll"
+                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />select all
             </p>
             <div class="center">
                 <p class="error" flexy:if="error[nothingChecked]">
