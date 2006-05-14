@@ -173,26 +173,23 @@ class SGL_Item
 
         //  get default fields
         $query = "
-            SELECT  u.username,
-                    i.created_by_id,
-                    i.updated_by_id,
-                    i.date_created,
-                    i.last_updated,
-                    i.start_date,
-                    i.expiry_date,
-                    i.item_type_id,
-                    it.item_type_name,
-                    i.category_id,
-                    i.status
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['user']} u,
-                    {$this->conf['table']['category']} c
-            WHERE   it.item_type_id = i.item_type_id
-            AND     i.created_by_id = u.usr_id
-            AND     i.item_id = $itemID
-            AND     i.category_id = c.category_id
-            AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
+            SELECT      u.username,
+                        i.created_by_id,
+                        i.updated_by_id,
+                        i.date_created,
+                        i.last_updated,
+                        i.start_date,
+                        i.expiry_date,
+                        i.item_type_id,
+                        it.item_type_name,
+                        i.category_id,
+                        i.status
+            FROM        {$this->conf['table']['item']} i
+            LEFT JOIN   {$this->conf['table']['item_type']} it ON i.item_type_id = it.item_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON i.created_by_id = u.usr_id
+            LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
+            WHERE       i.item_id = $itemID
+            AND         $roleId NOT IN (COALESCE(c.perms, '-1'))
                 ";
         $result = $this->dbh->query($query);
         if (!DB::isError($result)) {
@@ -937,30 +934,25 @@ class SGL_Item
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
         $query = "
-            SELECT  i.item_id,
-                    ia.addition,
-                    ia.trans_id,
-                    u.username,
-                    i.date_created,
-                    i.start_date,
-                    i.expiry_date,
-                    i.status
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['item_type_mapping']} itm,
-                    {$this->conf['table']['user']} u,
-                    {$this->conf['table']['category']} c
+            SELECT      i.item_id,
+                        ia.addition,
+                        ia.trans_id,
+                        u.username,
+                        i.date_created,
+                        i.start_date,
+                        i.expiry_date,
+                        i.status
+            FROM        {$this->conf['table']['item']} i
+            LEFT JOIN   {$this->conf['table']['item_addition']} ia ON i.item_id = ia.item_id
+            LEFT JOIN   {$this->conf['table']['item_type']} it ON i.item_type_id = it.item_type_id
+            LEFT JOIN   {$this->conf['table']['item_type_mapping']} itm ON it.item_type_id = itm.item_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON i.updated_by_id = u.usr_id
+            LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-            AND     i.updated_by_id = u.usr_id
-            AND     it.item_type_id  = itm.item_type_id
-            AND     i.item_id = ia.item_id
-            AND     i.item_type_id = it.item_type_id
             AND     itm.field_name = 'title'" .         /*  match item addition type, 'title'    */
             $typeWhereClause .                          //  match datatype
             $rangeWhereClause .
             $isPublishedClause . "
-            AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
             ORDER BY i.$orderBy DESC
             ";
