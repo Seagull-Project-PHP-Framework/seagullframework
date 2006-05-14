@@ -23,7 +23,8 @@ IMPROVEMENTS
 09-05-06    Added request history to session, ability to return to a previously
             requested page on authorisation failure
 06-05-06    Implemented a library cache for all files used on every request,
-            loaded file count back near 20
+            loaded file count back near 20.  To enabled place a file named 'ENABLE_LIBCACHE.txt'
+            in your seagull/var directory.  To update the cache, delete the file.
 01-05-06    Install and rebuild process will now build the correct fk links file
             for DB_DataObject
 01-05-06    You can now customise the location of the upload directory
