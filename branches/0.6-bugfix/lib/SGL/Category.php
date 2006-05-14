@@ -349,7 +349,7 @@ class SGL_Category
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
 
     	$nestedSet = new SGL_NestedSet($this->_params);
-    	$nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
+    	$nestedSet->setImage('folder', 'images/treeNav/file.png');
         $categoryTree = $nestedSet->getTree();
         $nestedSet->addImages($categoryTree);
 
