@@ -18,7 +18,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_update', 'Permission
 --
 
 INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'Admin menu', '', '', 1, 'AdminNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"4";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
-INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'User menu', '', '', 1, 'UserNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"2";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
+INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'User menu', '', '', 1, 'MainNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"2";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
 INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 1, 1, 'N;');
 --
 -- Dumping data for table `block_assignment`
