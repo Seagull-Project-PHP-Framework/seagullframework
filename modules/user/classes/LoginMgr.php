@@ -38,6 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: LoginMgr.php,v 1.34 2005/06/15 00:50:40 demian Exp $
 
+require_once SGL_CORE_DIR . '/Observer.php';
+
 /**
  * Handles user logins.
  *
@@ -107,7 +109,71 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($res = $this->_doLogin($input->username, $input->password)) {
+        $doLogin = new User_DoLogin($input, $output);
+        $aObservers = explode(',', $this->conf['LoginMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $doLogin->attach(new $observer());
+            }
+        }
+        $doLogin->run();
+    }
+
+    function _cmd_logout(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_Session::destroy();
+        SGL::raiseMsg('You have been successfully logged out');
+
+        //  get default params for logout page
+        $aParams = $this->getDefaultPageParams();
+        SGL_HTTP::redirect($aParams);
+    }
+
+    function _cmd_list(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $output->username = 'admin';
+            $output->password = 'admin';
+        }
+    }
+}
+
+class User_DoLogin extends SGL_Observable
+{
+    function User_DoLogin(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->conf = $this->input->getConfig();
+        $this->dbh = $this->_getDb();
+
+        if ($res = $this->_doLogin($this->input->username, $this->input->password)) {
+
+            //  invoke observers
+            $this->notify();
 
             // Get the user id from the current session
             $uid = SGL_Session::getUid();
@@ -139,28 +205,6 @@ class LoginMgr extends SGL_Manager
         } else {
             SGL::raiseMsg('username/password not recognized');
             SGL::logMessage('login failed', PEAR_LOG_NOTICE);
-        }
-    }
-
-    function _cmd_logout(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        SGL_Session::destroy();
-        SGL::raiseMsg('You have been successfully logged out');
-
-        //  get default params for logout page
-        $aParams = $this->getDefaultPageParams();
-        SGL_HTTP::redirect($aParams);
-    }
-
-    function _cmd_list(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
-            $output->username = 'admin';
-            $output->password = 'admin';
         }
     }
 
