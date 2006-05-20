@@ -18,7 +18,7 @@ class SyncUserToFud extends SGL_Observer
         $username = $dbh2->quoteSmart($observable->input->user->username);
         $email = $dbh2->quoteSmart($email);
         $query = "
-            INSERT INTO `fud26_users` (`id`, `login`, `alias`, `email`, theme`, `users_opt`)
+            INSERT INTO `fud26_users` (`id`, `login`, `alias`, `email`, `theme`, `users_opt`)
             VALUES ($userId, $username, $username, $email, 1, 4357110)";
         $ok = $dbh2->query($query);
         return $ok;
