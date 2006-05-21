@@ -1,0 +1,33 @@
+<div id="leftSidebar">
+
+<div id="nav" flexy:if="isVerticalNav(conf[navigation][stylesheet])">
+{if $result->isVerticalNav($result->conf.navigation.stylesheet)}
+    {$result->navigation}
+{/if}
+</div>
+
+{foreach:blocksLeft,key,valueObj}
+<div class="blockContainer">
+    {if:valueObj.title_class}
+    <div class="{valueObj.title_class}">
+        {valueObj.title}
+    </div>
+    {else:}
+    <div class="blockHeader">
+        {valueObj.title}
+    </div>
+    {end:} 
+
+    {if:valueObj.body_class}
+    <div class="{valueObj.body_class}">
+        {valueObj.content:h}
+    </div>
+    {else:}
+    <div class="blockContent">
+        {valueObj.content:h}
+    </div>
+    {end:}
+</div>
+{end:}
+
+</div>   

@@ -1,0 +1,33 @@
+<?php
+$words['Messages did not reach all recipients'] = '訊息無法發送給所有收件人';
+$words['Inbox'] = '收件匣';
+$words['In order to send an instant message, you must select recipients from the contacts tab'] = '要寄送即時訊息前需先指定收件人';
+$words['Sender'] = '寄件人';
+$words['Date'] = '日期';
+$words['Reply'] = '回覆';
+$words['No messages in inbox'] = '沒有訊息';
+$words['check for new messages'] = '檢查新訊息';
+$words['go to outbox'] = '寄件備份';
+$words['contacts'] = '通訊錄';
+$words['Full Name'] = '全名';
+$words['Contacts'] = '通訊錄';
+$words['Contact Manager'] = '通訊錄管理';
+$words['send message to selected user(s)'] = '寄送訊息到指定使用者';
+$words['go to inbox'] = '收件匣';
+$words['Sent Messages'] = '寄件備份';
+$words['No messages in outbox'] = '沒有訊息';
+$words['To'] = '收件人';
+$words['From'] = '寄件人';
+$words['cancel'] = '取消';
+$words['Read'] = '閱讀';
+$words['Compose Message'] = '新訊息';
+$words['Messages'] = '訊息';
+$words['contacts successfully deleted'] = '聯絡人已刪除完成';
+$words['contacts successfully added'] = '聯絡人已新增完成';
+$words['admin cannot save contacts'] = '系統管理者不能儲存聯絡人';
+$words['Message sent successfully'] = '訊息發送完成';
+$words['message deleted successfully'] = '訊息刪除完成';
+$words['Group'] = '群組';
+$words['Subject'] = '主題';
+$words['Message'] = '訊息';
+?>
