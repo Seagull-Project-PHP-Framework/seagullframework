@@ -25,13 +25,14 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-    <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <title>Seagull Framework :: Installation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
     <meta http-equiv="Content-Language" content="en" />
     <meta name="ROBOTS" content="ALL" />
     <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    <link rel="help" href="http://trac.seagullproject.org/" title="Seagull Documentation." />
     <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
 
     <script type="text/javascript">
@@ -51,7 +52,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             }
 
             //  toggle lang list disabled by default
-            toggleLangList();            
+            toggleLangList();
         }
 
         function toggleLangList(myCheckbox)
@@ -112,7 +113,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="$baseUrl" title="Home">
-        <img src="$baseUrl/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
     </a>
 </div>
 <p>&nbsp;</p>

@@ -11,20 +11,12 @@
                 <input type="button" onclick="javascript:document.location.href='{makeUrl(#add#,#%mgrName%#,#%moduleName%#)}'" value="{translate(#Add entry#)}" />
             </td>
         </tr>
-
         <tr>
-            <th>{translate(#Select#)}</th>
-            <th>{translate(#Field_1#)}</th>
-            <th>{translate(#Field_2#)}</th>
-            <th>{translate(#Field_n#)}</th>
-            <th></th>
+            %table_header%
         </tr>
 
         <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
-            <td align="center"><input type="checkbox" name="frmDelete[]" value="{aValue[%mgrName%_id]}" /></td>
-            <td nowrap>{aValue[field1]}</td>
-            <td nowrap>{aValue[field2]}</td>
-            <td nowrap>{aValue[fieldn]}</td>
+            %table_body%
             <td width="10%" nowrap>
             <a href="{makeUrl(#edit#,#%mgrName%#,#%moduleName%#,aPagedData[data],#frm%MgrName%ID|%mgrName%_id#,key)}" />
                 [{translate(#edit#)}]

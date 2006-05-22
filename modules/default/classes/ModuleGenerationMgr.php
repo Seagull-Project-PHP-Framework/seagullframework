@@ -185,8 +185,6 @@ class ModuleGenerationMgr extends SGL_Manager
             $c->set('table', array($output->managerName => $output->managerName));
             $ok = $c->save($configFile);
         }
-        // FIXME: and add to tableAliases
-
 
         //  build methods
         list($methods, $aActions, $aTemplates) = $this->_buildMethods($input, $output);
@@ -200,7 +198,6 @@ class ModuleGenerationMgr extends SGL_Manager
         $aDirectories['classes']    = $aDirectories['module'] . '/classes';
         $aDirectories['lang']       = $aDirectories['module'] . '/lang';
         $aDirectories['templates']  = $aDirectories['module'] . '/templates';
-
         $ok = $this->_createDirectories($aDirectories);
 
         //  write new manager to appropriate module
@@ -234,6 +231,25 @@ class ModuleGenerationMgr extends SGL_Manager
             $ok = $this->_createTemplates($aDirectories, $aTemplates, $output);
         }
 
+        // add to tableAliases
+        $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->managerName  . '/tableAliases.ini';
+        $addTable = true;
+
+        if (file_exists($tableAliasIniPath)) {
+            $aData = parse_ini_file($tableAliasIniPath);
+            foreach ($aData as $k => $v) {
+                if ($k == $output->managerName) {
+                    $addTable = false;
+                }
+            }
+        }
+        if ($addTable) {
+            //  append new entry
+            $h = fopen($tableAliasIniPath, 'w+');
+            fwrite($h, $output->managerName . ' = ' . $output->managerName);
+            fclose($h);
+        }
+
         $shortTags = ini_get('short_open_tag');
         $append = empty($shortTags)
            ? ' However, you currently need to set "short_open_tag" to On for the templates to generate correctly.'
@@ -241,11 +257,11 @@ class ModuleGenerationMgr extends SGL_Manager
 
         if (!$success) {
             SGL::raiseError('There was a problem creating the files',
-            SGL_ERROR_FILEUNWRITABLE);
+                SGL_ERROR_FILEUNWRITABLE);
         } else {
             SGL::raiseMsg('Files for the '.
               $modName .
-              ' module successfully created. Don\'t forget to modify the generated list and edit templates.' .
+              ' module successfully created. Don\'t forget to modify the generated list and edit templates. You can start using the module at ' . SGL_BASE_URL . '/' . $output->managerName .
               $append, false, SGL_MESSAGE_INFO);
         }
     }
@@ -276,17 +292,70 @@ class ModuleGenerationMgr extends SGL_Manager
            '%ModuleName%' => ucfirst($output->moduleName),
            '%mgrName%'    => $output->managerName,
            '%MgrName%'    => $output->ManagerName,
-           '%field_list%' => implode(', ', array_keys($output->modelFields)),
         );
 
+        // loop through all possible templates and see if they need to be generated
         foreach ($aTemplates as $template){
-            $fileName = $aDirectories['templates'].'/'.$template;
+            $fileName = $aDirectories['templates'] . '/' . $template;
+            $html = '';
+
             if (strpos($fileName,'Edit.html') !== false) {
+                foreach ($output->modelFields as $field => $type) {
+                    //  omit the table key and foreign keys
+                    if (substr($field, -3) != '_id') {
+                        $replace['%field%'] = $field;
+                        //  strip TIMESTAMP indicator if exists
+                        if ($type > DB_DATAOBJECT_MYSQLTIMESTAMP) {
+                            $type -= DB_DATAOBJECT_MYSQLTIMESTAMP;
+                        }
+                        //  strip NOT_NULL indicator if exists
+                        if ($type > DB_DATAOBJECT_NOTNULL) {
+                            $type -= DB_DATAOBJECT_NOTNULL;
+                        }
+                        switch (true) {
+                    	case ($type == DB_DATAOBJECT_BLOB + DB_DATAOBJECT_STR):
+                    	case ($type == DB_DATAOBJECT_TXT + DB_DATAOBJECT_STR):
+                    	    $templateName = 'text';
+                    	    break;
+                    	case ($type == DB_DATAOBJECT_BOOL):
+                    	case ($type == DB_DATAOBJECT_DATE):
+                    	case ($type == DB_DATAOBJECT_STR):
+                    	case ($type == DB_DATAOBJECT_INT):
+                            $templateName = 'string';
+                    		break;
+                    	default:
+                    	    $templateName = false;
+                        }
+                        if ($templateName) {
+                            $fieldTemplate = @file_get_contents(SGL_MOD_DIR .
+                                '/default/classes/mgrTemplates/' . $templateName . '.html.tmpl');
+                            $html .= str_replace(array_keys($replace), array_values($replace), $fieldTemplate);
+                        }
+                    }
+                }
+
+                $replace['%field_html%'] = $html;
                 $fileTemplate = @file_get_contents(SGL_MOD_DIR . '/default/classes/mgrTemplates/edit.html.tmpl');
                 if ($fileTemplate) {
                     $fileTemplate = str_replace(array_keys($replace), array_values($replace), $fileTemplate);
                 }
             } elseif (strpos($fileName,'List.html') !== false) {
+                $table_header = "";
+                $table_body = "";
+                foreach ($output->modelFields as $key => $value) {
+                    if (strpos($key,'_id') === false) {
+                        $table_header .= '<th>' . $key . '</th>';
+                        $table_body   .= '<td nowrap>{aValue[' . $key . ']}</td>';
+                    } else {
+                        $table_header .= '<th>&nbsp</th>';
+                        if ($key == $output->managerName . '_id') {
+                            $table_body .= '<td align="center"><input type="checkbox" name="frmDelete[]" value="{aValue[' . $output->managerName . '_id]}" /></td>';
+                        }
+                    }
+                }
+                $replace['%table_header%'] = $table_header;
+                $replace['%table_body%'] = $table_body;
+
                 $fileTemplate = @file_get_contents(SGL_MOD_DIR . '/default/classes/mgrTemplates/list.html.tmpl');
                 if ($fileTemplate) {
                     $fileTemplate = str_replace(array_keys($replace), array_values($replace), $fileTemplate);
@@ -383,7 +452,7 @@ class ModuleGenerationMgr extends SGL_Manager
     {
         //  array: methodName => array (aActionsmapping string, templateName)
         $aPossibleMethods = array(
-            'add'   => array("'add'       => array('add'),", $output->managerName.'Add.html'),
+            'add'   => array("'add'       => array('add'),", $output->managerName.'Edit.html'),
             'insert'=> array("'insert'    => array('insert', 'redirectToDefault'),"),
             'edit'  => array("'edit'      => array('edit'), ", $output->managerName.'Edit.html'),
             'update'=> array("'update'    => array('update', 'redirectToDefault'),"),
