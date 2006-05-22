@@ -35,15 +35,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
 
     <script type="text/javascript">
-        function disableLangList()
-        {
-            var foo = document.getElementById('installLangs');
-            var bar = document.getElementById('addMissingTranslationsToDB');
-            if (foo != null) {
-                foo.disabled = true;
-                bar.disabled = true;
-            }
 
+        function init()
+        {
             //  temp measure
             var prefix = document.getElementById('prefix');
             if (prefix != null) {
@@ -55,6 +49,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             if (useExistingData != null) {
                 useExistingData.disabled = true;
             }
+
+            //  toggle lang list disabled by default
+            toggleLangList();            
         }
 
         function toggleLangList(myCheckbox)
@@ -109,7 +106,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         }
     </script>
 </head>
-<body onLoad="javascript:disableLangList()" id="content">
+<body onLoad="javascript:init()" id="content">
 
 <div id="sgl">
 <!-- Logo and header -->
