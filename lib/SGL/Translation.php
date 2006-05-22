@@ -209,7 +209,7 @@ class SGL_Translation
 
             foreach ($aTrans as $key => $value) {
                 $string = array($langID => $value);
-                $result = $trans->add($key, $module, $string);
+                $result = $trans->add(stripslashes($key), $module, $string);
 
                 if (is_a($result, 'PEAR_Error')) {
                     return $result;
@@ -220,7 +220,10 @@ class SGL_Translation
         default:
             //  read translation data and get reference to root
             $c = new Config();
-            $root = & $c->parseConfig($aTrans, 'phparray');
+            foreach ($aTrans as $key => $value) {
+                $aTransStrip[stripslashes($key)] = $value;
+            }
+            $root = & $c->parseConfig($aTransStrip, 'phparray');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
