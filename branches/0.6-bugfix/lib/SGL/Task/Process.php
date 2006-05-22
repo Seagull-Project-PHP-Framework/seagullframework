@@ -741,10 +741,6 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $output->scriptClose      = "\n//--> </script>\n";
         $output->conf = $this->conf;
-
-        if (isset($output->submitted) && $output->submitted) {
-            $output->addOnLoadEvent("formErrorCheck()");
-        }
     }
 }
 
@@ -791,8 +787,6 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
                 break;
             }
         }
-        //  get all html onLoad events
-        $output->onLoad = $output->getAllOnLoadEvents();
     }
 }
 
@@ -912,6 +906,9 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                 $output->theme = $this->conf['site']['adminGuiTheme'];
                 $output->masterTemplate = 'admin_master.html';
                 $output->template = 'admin_' . $output->template;
+                if (isset($output->submitted) && $output->submitted) {
+                    $output->addOnLoadEvent("formErrorCheck()");
+                }
             }
         }
     }
@@ -958,6 +955,9 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $this->processRequest->process($input, $output);
+
+        //  get all html onLoad events
+        $output->onLoad = $output->getAllOnLoadEvents();
 
         //  build view
         $templateEngine = isset($output->templateEngine) ? $output->templateEngine : null;
