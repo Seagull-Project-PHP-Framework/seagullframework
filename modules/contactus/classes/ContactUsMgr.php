@@ -71,7 +71,7 @@ class ContactUsMgr extends SGL_Manager
         $this->validated       = true;
         $input->error          = null;
         $input->pageTitle      = $this->pageTitle;
-        $input->masterTemplate = $this->masterTemplate;
+        $input->masterTemplate = 'masterLeftCol.html';
         $input->template       = $this->template;
         $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
         $input->submitted      = $req->get('submitted');

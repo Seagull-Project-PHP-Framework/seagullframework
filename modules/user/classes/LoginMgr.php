@@ -126,7 +126,7 @@ class LoginMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         SGL_Session::destroy();
-        SGL::raiseMsg('You have been successfully logged out');
+        SGL::raiseMsg('You have been successfully logged out', true, SGL_MESSAGE_INFO);
 
         //  get default params for logout page
         $aParams = $this->getDefaultPageParams();
