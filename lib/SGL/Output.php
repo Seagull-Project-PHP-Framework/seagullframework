@@ -67,6 +67,30 @@ class SGL_Output
         return SGL_String::translate($key, $filter, $aParams);
     }
 
+    function getLangSwitcher($currUrl = '', $webRoot = '', $theme = '')
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aInstalledLangs = str_replace('_', '-', explode(',', $conf['translation']['installedLanguages']));
+        $imageDir = "$webRoot/themes/$theme/images/flags/";
+        $hasLangParam = preg_match('/lang=/', $currUrl);
+        $aLangs  = SGL_Util::getLangsDescriptionMap();
+        $langSwitcher  = '';
+
+        foreach ($aLangs as $k => $v) {
+            if (in_array($k, $aInstalledLangs)
+                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
+                $link = ($hasLangParam)
+                    ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
+                    : $currUrl . "?lang=$k";
+                preg_match('/(.+) \(.+\)/', $v, $matches);
+                $langSwitcher .= "<a class='langFlag' id='$k' href='$link'><img src='$imageDir$k.png' alt='$matches[1]' title='speak $matches[1] please'/></a>";
+            }
+        }
+
+        return $langSwitcher;
+    }
+
     /**
      * Generates options for an HTML select object.
      *

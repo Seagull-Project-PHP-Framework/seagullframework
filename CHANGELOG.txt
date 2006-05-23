@@ -17,6 +17,7 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+22-05-06    Added lang switcher to new theme (Julien Casanova)
 22-05-06    OCI schema and data now up to date (Ben)
 22-05-06    Added ability to call makeUrl() from JavaScript (Miha Vrhovnik), see
             http://trac.seagullproject.org/wiki/Howto/UriManagement#GeneratingURIsinJavaScript
