@@ -17,6 +17,8 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+22-05-06    Added ability to call makeUrl() from JavaScript (Miha Vrhovnik), see
+            http://trac.seagullproject.org/wiki/Howto/UriManagement#GeneratingURIsinJavaScript
 17-05-06    Refactored LoginMgr to support observers, implemented FUD forum login
             hook
 10-05-06    Some updates for gallery module, to ensure compatibility with Gallery 2.1
