@@ -1071,7 +1071,8 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             $oUser = $da->getUserById();
 
             $oUser->username = $data['adminUserName'];
-            $oUser->first_name = $data['adminRealName'];
+            $oUser->first_name = $data['adminFirstName'];
+            $oUser->last_name = $data['adminLastName'];
             $oUser->email = $data['adminEmail'];
             $oUser->passwd = md5($data['adminPassword']);
             $oUser->organisation_id = 1;

@@ -63,7 +63,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'frameworkVersion' => SGL_Install_Common::getFrameworkVersion(),
             'adminUserName' => 'admin',
-            'adminRealName' => 'Alouicious Bird',
+            'adminFirstName' => 'Alouicious',
+            'adminLastName' => 'Bird',
             'siteName'  => 'Seagull Framework',
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
@@ -81,7 +82,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
         $this->addElement('password',  'adminPassword2', 'Retype admin password: ');
-        $this->addElement('text',  'adminRealName', 'Real name: ');
+        $this->addElement('text',  'adminFirstName', 'First name: ');
+        $this->addElement('text',  'adminLastName', 'Last name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
 
         $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
