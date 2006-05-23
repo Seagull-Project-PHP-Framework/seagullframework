@@ -120,7 +120,7 @@ class RegisterMgr extends SGL_Manager
                     $aErrors['email'] = 'This email already exist in the DB, please choose another';
                 }
             }
-            //  end verify inserts
+            //  check for data in required fields
             if (empty($input->user->addr_1)) {
                 $aErrors['addr_1'] = 'You must enter at least address 1';
             }
@@ -144,6 +144,17 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->security_answer)) {
                 $aErrors['security_answer'] = 'You must provide a security answer';
             }
+            //  check for hacking
+            if ($_SERVER['REQUEST_METHOD'] != 'POST'
+                    || (SGL_Session::getUid() != SGL_ADMIN && isset($input->user->role_id))
+                    || (SGL_Session::getUid() != SGL_ADMIN && isset($input->user->is_acct_active))) {
+                SGL_Session::destroy();
+                SGL::raiseMsg('Your IP has been logged', false);
+                SGL::logMessage('Hack attempted by ' .$_SERVER['REMOTE_ADDR'], PEAR_LOG_CRIT);
+                $input->template = 'docBlank.html';
+                $this->validated = false;
+            }
+
             // check for mail header injection
             require_once SGL_CORE_DIR . '/Emailer.php';
             $input->user->email =
