@@ -36,7 +36,10 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
         $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
         $ret = array();
         if (count($aUriParts) > $countUriParts) {
-            $alias = $aUriParts[$countUriParts];
+            $alias = array_shift($aUriParts);
+            if ($countUriParts) {
+                $alias = array_shift($aUriParts);
+            }
 
             //  If alias exists, update the alias in the uri with the specified resource
             if (array_key_exists($alias, $aUriAliases)) {
@@ -55,7 +58,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
                     }
 
                     $tmp = new stdClass();
-                    $tmp->url = $aliasUri;
+                    $tmp->url = $aliasUri . '/' . implode('/', $aUriParts);
                     $ret = parent::parseQueryString($tmp, $conf);
                 }
             }
