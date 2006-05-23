@@ -141,7 +141,7 @@ class AdminFaqMgr extends FaqMgr
         $faq->item_order = $maxItemOrder + 1;
         $success = $faq->insert();
         if ($success) {
-            SGL::raiseMsg('faq saved successfully');
+            SGL::raiseMsg('faq saved successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);

@@ -132,7 +132,7 @@ class GuestbookMgr extends SGL_Manager
         $newEntry->date_created = SGL_Date::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
-            SGL::raiseMsg('new guestbook entry saved successfully');
+            SGL::raiseMsg('new guestbook entry saved successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
