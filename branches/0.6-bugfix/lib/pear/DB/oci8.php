@@ -254,7 +254,8 @@ class DB_oci8 extends DB_common
                                                        $dsn['hostspec']);
             } elseif ($dsn['username'] || $dsn['password']) {
                 $this->connection = @$connect_function($dsn['username'],
-                                                       $dsn['password']);
+                                                       $dsn['password'],
+                                                       $dsn['database']);
             }
         }
 
