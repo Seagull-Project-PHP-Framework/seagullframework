@@ -410,4 +410,5 @@ $defaultWords['Latest'] = 'Distante';
 $defaultWords['Install'] = 'Installer';
 $defaultWords['Uninstall'] = 'Désinstaller';
 $defaultWords['module already exists. Please choose another module name'] = 'Ce module existe déjà. Veuillez choisir un autre nom pour ce module';
+$defaultWords['Submit login'] = 'Se connecter';
 ?>

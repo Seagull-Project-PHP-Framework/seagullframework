@@ -83,5 +83,12 @@
         'Static Html article' => 'Static Html article',
         'Set id of static Html article' => 'Set id of static Html article',
         'Article will be rendered with this template' => 'Article will be rendered with this template',
+
+        // Html Block
+        'Html text' => 'Texte au format Html',
+
+        // Login2 Block
+        'Login template name' => 'Login template name',
+        'Logout template name' => 'Logout template name',
     );
 ?>

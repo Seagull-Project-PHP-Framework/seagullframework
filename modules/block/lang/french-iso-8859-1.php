@@ -78,4 +78,8 @@ $words['Article will be rendered with this template'] = 'L\'article sera affiché
 
 // Html Block
 $words['Html text'] = 'Texte au format Html';
+
+// Login2 Block
+$words['Login template name'] = 'Template de connexion';
+$words['Logout template name'] = 'Template de déconnexion';
 ?>
