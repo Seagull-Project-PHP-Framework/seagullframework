@@ -17,6 +17,12 @@ constraint PK_LOG_TABLE primary key (id)
 );
 
 -- ==============================================================
+--  Sequence: log_table_seq
+-- ==============================================================
+
+create sequence log_table_seq;
+
+-- ==============================================================
 --  Table: table_lock                                            
 -- ==============================================================
 create table table_lock (
@@ -27,7 +33,13 @@ constraint PK_TABLE_LOCK primary key (lockID, lockTable)
 );
 
 -- ==============================================================
---  Table: user_sessions
+--  Sequence: table_lock_seq
+-- ==============================================================
+
+create sequence table_lock_seq;
+
+-- ==============================================================
+--  Table: user_session
 -- ==============================================================
 CREATE TABLE user_session 
 (
@@ -39,6 +51,12 @@ CREATE TABLE user_session
   expiry        NUMBER(10) 	NOT NULL,
   constraint PK_SESSION primary key (session_id)
 );
+
+-- ==============================================================
+--  Sequence: user_session_seq
+-- ==============================================================
+
+create sequence user_session_seq;
 
 -- ==============================================================
 --  Index: user_session_last_updated                        
@@ -86,12 +104,12 @@ title             VARCHAR(255) null,
 description       CLOB         null,
 admin_uri         VARCHAR(255) null,
 icon              VARCHAR(255) null,
+maintainers       CLOB,
+version           VARCHAR(8)   null,
+license           VARCHAR(16)  null,
+state             VARCHAR(8)   null,
 constraint PK_MODULE primary key (module_id)
 );
 
-
-create sequence log_table_seq;
-create sequence table_lock_seq;
-create sequence session_seq;
 create sequence module_seq;
 

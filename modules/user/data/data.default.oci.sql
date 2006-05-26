@@ -1,115 +1,117 @@
+-- Constraints for /user
+
+-- Data dump for /modules/user
+
+
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user', 'Users and Security', 'The ''Users and Security'' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.', 'user/user', 'users.png', '', NULL, NULL, NULL);
+
+
 -- 
--- Dumping data for table module
---
+--  Dumping data for table permission
+-- 
 
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user', 'Users and Security', 'The ''Users and Security'' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.', 'user/user', 'users.png');
-
---
--- Permission table
---
-
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_duplicate', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_viewProfile', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_summary', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_login', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_retrieve', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_forgot', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'profilemgr_cmd_view', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_editPerms', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_updatePerms', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_requestPasswordReset', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_resetPassword', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_editPerms', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_updatePerms', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr_cmd_editAll', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr_cmd_updateAll', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_logout', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr_cmd_editAll', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr_cmd_updateAll', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_scanNew', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_insertNew', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_scanOrphaned', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_deleteOrphaned', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'profilemgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_insertImportedUsers', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_syncToRole', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr', '', (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_add', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_insert', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_edit', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_update', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_delete', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_list', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_requestChangeUserStatus', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_changeUserStatus', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_viewLogin', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_truncateLoginTbl', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr_cmd_add', NULL, (SELECT MAX(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr_cmd_search', NULL, (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_duplicate', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_viewProfile', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr_cmd_summary', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_login', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_delete', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_retrieve', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr_cmd_forgot', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpasswordmgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_delete', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_delete', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'profilemgr_cmd_view', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_delete', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_editPerms', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr_cmd_updatePerms', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_add', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_insert', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_edit', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_update', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_delete', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_requestPasswordReset', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_resetPassword', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_editPerms', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_updatePerms', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr_cmd_editAll', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr_cmd_updateAll', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'accountmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'loginmgr_cmd_logout', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr_cmd_editAll', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgpreferencemgr_cmd_updateAll', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'passwordmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_scanNew', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_insertNew', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_scanOrphaned', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'permissionmgr_cmd_deleteOrphaned', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'preferencemgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'profilemgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'registermgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rolemgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userimportmgr_cmd_insertImportedUsers', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_syncToRole', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'userpreferencemgr', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_add', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_insert', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_edit', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_update', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_delete', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'orgtypemgr_cmd_list', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_requestChangeUserStatus', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_changeUserStatus', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_viewLogin', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usermgr_cmd_truncateLoginTbl', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr_cmd_add', NULL, (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr_cmd_search', NULL, (SELECT max(module_id) FROM module));
 
 --
 -- Dumping data for table preference
 --
 
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'sessionTimeout', '1800');
-INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'timezone', 'Europe/London');
+INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'timezone', 'UTC');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'theme', 'default');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'dateFormat', 'UK');
-INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'language', 'de-iso-8859-15');
+INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'language', 'en-iso-8859-15');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'resPerPage', '10');
-INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'showExecutionTimes', '0');
+INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'showExecutionTimes', '1');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'locale', 'en_GB');
 
 --
@@ -170,14 +172,14 @@ INSERT INTO usr VALUES (0, 1, 0, 'nobody', '21232f297a57a5a743894a0e4a801fc3', '
 --
 
 -- sets default prefs
-INSERT INTO user_preference VALUES (1,0,1,'1800');
-INSERT INTO user_preference VALUES (2,0,2,'Europe/Berlin');
-INSERT INTO user_preference VALUES (3,0,3,'default');
-INSERT INTO user_preference VALUES (4,0,4,'UK');
-INSERT INTO user_preference VALUES (5,0,5,'de-iso-8859-1');
-INSERT INTO user_preference VALUES (6,0,6,'10');
-INSERT INTO user_preference VALUES (7,0,7,'0');
-INSERT INTO user_preference VALUES (8,0,8,'en_GB');
+--INSERT INTO user_preference VALUES (1,0,1,'1800');
+--INSERT INTO user_preference VALUES (2,0,2,'Europe/Berlin');
+--INSERT INTO user_preference VALUES (3,0,3,'default');
+--INSERT INTO user_preference VALUES (4,0,4,'UK');
+--INSERT INTO user_preference VALUES (5,0,5,'de-iso-8859-1');
+--INSERT INTO user_preference VALUES (6,0,6,'10');
+--INSERT INTO user_preference VALUES (7,0,7,'0');
+--INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 
 -- 
 -- Dumping data for table organisation
@@ -192,5 +194,5 @@ INSERT INTO user_preference VALUES (8,0,8,'en_GB');
 --
 
 --CREATE SEQUENCE organisation_seq START WITH 3;
-CREATE SEQUENCE role_seq START WITH 3;
-CREATE SEQUENCE user_preference_seq START WITH 9;
+--CREATE SEQUENCE role_seq START WITH 3;
+--CREATE SEQUENCE user_preference_seq START WITH 9;

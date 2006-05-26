@@ -21,6 +21,12 @@ constraint PK_DOCUMENT primary key (document_id)
 );
 
 -- ==============================================================
+--  Sequence: document_seq
+-- ==============================================================
+
+create sequence document_seq;
+
+-- ==============================================================
 --  Index: document_document_type_fk                             
 -- ==============================================================
 create  index document_document_type_fk on document (
@@ -44,6 +50,12 @@ constraint PK_DOCUMENT_TYPE primary key (document_type_id)
 );
 
 -- ==============================================================
+--  Sequence: document_type_seq
+-- ==============================================================
+
+create sequence document_type_seq;
+
+-- ==============================================================
 --  Table: item                                                  
 -- ==============================================================
 create table item (
@@ -57,8 +69,15 @@ last_updated         DATE            null,
 start_date           DATE            null,
 expiry_date          DATE            null,
 status               NUMBER(5)                 null,
+hits                 NUMBER(10),
 constraint PK_ITEM primary key (item_id)
 );
+
+-- ==============================================================
+--  Sequence: item_seq
+-- ==============================================================
+
+create sequence item_seq;
 
 -- ==============================================================
 --  Index: item_item_type_fk                                     
@@ -87,6 +106,12 @@ constraint PK_ITEM_ADDITION primary key (item_addition_id)
 );
 
 -- ==============================================================
+--  Sequence: item_addition_seq
+-- ==============================================================
+
+create sequence item_addition_seq;
+
+-- ==============================================================
 --  Index: item_item_addition_fk                                 
 -- ==============================================================
 create  index item_item_addition_fk on item_addition (
@@ -110,6 +135,12 @@ constraint PK_ITEM_TYPE primary key (item_type_id)
 );
 
 -- ==============================================================
+--  Sequence: item_type_seq
+-- ==============================================================
+
+create sequence item_type_seq;
+
+-- ==============================================================
 --  Table: item_type_mapping                                     
 -- ==============================================================
 create table item_type_mapping (
@@ -119,6 +150,12 @@ field_name           VARCHAR(64)          null,
 field_type           NUMBER(5)                 null,
 constraint PK_ITEM_TYPE_MAPPING primary key (item_type_mapping_id)
 );
+
+-- ==============================================================
+--  Sequence: item_type_mapping_seq
+-- ==============================================================
+
+create sequence item_type_mapping_seq;
 
 -- ==============================================================
 --  Index: item_type_item_type_mapping_fk                        
@@ -145,24 +182,16 @@ create table category (
 );
 
 -- ==============================================================
+--  Sequence: category_seq
+-- ==============================================================
+
+create sequence category_seq;
+
+-- ==============================================================
 --  Index: root_id                                               
 -- ==============================================================
 create  index AK_category_root_id on category (
 root_id
-);
-
--- ==============================================================
---  Index: left_id                                               
--- ==============================================================
-create  index AK_category_left_id on category (
-left_id
-);
-
--- ==============================================================
---  Index: ritgh_id                                              
--- ==============================================================
-create  index AK_category_right_id on category (
-right_id
 );
 
 -- ==============================================================
@@ -173,10 +202,17 @@ order_id
 );
 
 -- ==============================================================
---  Index: level_id                                              
+--  Index: left_id                                               
 -- ==============================================================
-create  index AK_category_level_id on category (
-level_id
+create  index AK_category_left_id on category (
+left_id
+);
+
+-- ==============================================================
+--  Index: right_id                                              
+-- ==============================================================
+create  index AK_category_right_id on category (
+right_id
 );
 
 -- ==============================================================
@@ -189,8 +225,19 @@ left_id,
 right_id
 );
 
-create sequence document_seq;
-create sequence document_type_seq;
-create sequence item_type_seq;
-create sequence item_type_mapping_seq;
+-- ==============================================================
+--  Index: level_id                                              
+-- ==============================================================
+create  index AK_category_level_id on category (
+level_id
+);
+
+-- ==============================================================
+--  Index: parent_id
+-- ==============================================================
+create index AK_category_key_parent_fk on category
+(
+    parent_id
+);
+
 
