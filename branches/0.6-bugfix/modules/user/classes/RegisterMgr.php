@@ -220,7 +220,8 @@ class RegisterMgr extends SGL_Manager
                 $addUser->attach(new $observer());
             }
         }
-        $addUser->run();
+        //  returns id for new user
+        $output->uid = $addUser->run();
     }
 }
 
@@ -265,11 +266,14 @@ class User_AddUser extends SGL_Observable
         if ($success) {
             //  invoke observers
             $this->notify();
+			$ret = $success;
             SGL::raiseMsg('user successfully registered', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
+			$ret = false;
         }
+        return $ret;
     }
 }
 ?>

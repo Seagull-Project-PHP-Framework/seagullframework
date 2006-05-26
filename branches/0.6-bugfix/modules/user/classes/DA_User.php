@@ -97,7 +97,8 @@ class DA_User extends SGL_Manager
         SGL_DB::setConnection();
         $this->dbh->autocommit();
 
-        $oUser->usr_id = $this->dbh->nextId($this->conf['table']['user']);
+        $userId = $this->dbh->nextId($this->conf['table']['user']);
+        $oUser->usr_id = $userId;
         $ok = $oUser->insert();
 
         if (!$ok) {
@@ -135,7 +136,7 @@ class DA_User extends SGL_Manager
 
         if ($ok && !SGL_Error::count()) {
             $this->dbh->commit();
-            return true;
+            return $userId;
         } else {
             $this->dbh->rollback();
             return PEAR::raiseError('Problem encountered adding user');
