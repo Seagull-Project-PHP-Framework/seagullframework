@@ -211,6 +211,11 @@ class RegisterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->user)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+
         $addUser = new User_AddUser($input, $output);
         $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);
         foreach ($aObservers as $observer) {
@@ -237,10 +242,6 @@ class User_AddUser extends SGL_Observable
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($this->input->user)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         //  get default values for new users
         $this->conf = $this->input->getConfig();
         $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];

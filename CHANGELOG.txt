@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
+26-05-06    Some error messages were being lost with incorrect redirects, now fixed.
 26-05-06    Export rss filter chain descriptor modified in php.ini to be compatible
             with php4
 09-05-06    Authentication and authorisation improved
