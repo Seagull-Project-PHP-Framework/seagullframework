@@ -439,7 +439,7 @@ class TranslationMgr extends SGL_Manager
 
         //  else display error with blank template
         } else {
-            $output->template = 'translationMgr.html';
+            $output->template = 'docBlank.html';
         }
     }
 
