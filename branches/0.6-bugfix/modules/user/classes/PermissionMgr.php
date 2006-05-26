@@ -85,6 +85,7 @@ class PermissionMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
@@ -105,12 +106,10 @@ class PermissionMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submitted) {
-            if ($input->action == 'insert' || $input->action == 'update') {
-                if (empty($input->perm->name)) {
-                    $this->validated = false;
-                    $aErrors['name'] = 'You must enter a permission name';
-                }
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+            if (empty($input->perm->name)) {
+                $this->validated = false;
+                $aErrors['name'] = 'You must enter a permission name';
             }
         }
         //  if errors have occured
@@ -122,7 +121,9 @@ class PermissionMgr extends SGL_Manager
                 ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
             $input->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
-            $input->currentModule = $input->perm->module_id;
+            if (!empty($input->perm->module_id)) {
+                $input->currentModule = $input->perm->module_id;
+            }
         }
     }
 
@@ -180,10 +181,6 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->perm)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
@@ -215,7 +212,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return false;
         }
         $input->template = 'permScan.html';
@@ -252,7 +249,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return;
         }
         $input->template = 'permScan.html';
@@ -273,6 +270,7 @@ class PermissionMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
@@ -287,6 +285,7 @@ class PermissionMgr extends SGL_Manager
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
@@ -314,7 +313,6 @@ class PermissionMgr extends SGL_Manager
             unset($oPerm);
         }
         //  deleting associated perms - taken care of by cascading deletes
-
         //  update perms superset cache
         SGL_Cache::clear('perms');
 

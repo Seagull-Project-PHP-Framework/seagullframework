@@ -68,6 +68,7 @@ class GuestbookMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated       = true;
         $input->error          = array();
         $input->pageTitle      = $this->pageTitle;
@@ -77,10 +78,10 @@ class GuestbookMgr extends SGL_Manager
         $input->submitted      = $req->get('submitted');
         $input->guestbook      = (object)$req->get('guestbook');
 
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             require_once 'Validate.php';
             $v = & new Validate();
-            
+
             if (empty($input->guestbook->name)) {
                 $aErrors['name'] = 'Please, specify your name';
             }
@@ -99,7 +100,7 @@ class GuestbookMgr extends SGL_Manager
             $input->error    = $aErrors;
             $input->template = 'guestbookAdd.html';
             $this->validated = false;
-            
+
             // save currect title
             if ('insert' == $input->action) {
                 $input->pageTitle .= ' :: Add';
@@ -121,10 +122,6 @@ class GuestbookMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->guestbook)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $newEntry = DB_DataObject::factory($this->conf['table']['guestbook']);
         $newEntry->setFrom($input->guestbook);

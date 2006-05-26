@@ -42,6 +42,7 @@ require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_CORE_DIR . '/Observer.php';
+require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Validate.php';
 require_once 'DB/DataObject.php';
 
@@ -89,14 +90,19 @@ class RegisterMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submitted && ($input->action == 'insert' || $input->action == 'update')) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             $v = & new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {
                 //  username must be at least 5 chars
-                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
+                if (!$v->string($input->user->username, array(
+                        'format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
                     $aErrors['username'] = 'username min length';
+                }
+                //  username must be unique
+                if ($input->action == 'insert' && !$this->da->isUniqueUsername($input->user->username)) {
+                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
                 }
             }
             //  only verify password and uniqueness of username/email on inserts
@@ -110,14 +116,6 @@ class RegisterMgr extends SGL_Manager
                     $aErrors['password_confirm'] = 'Please confirm password';
                 } elseif ($input->user->passwd != $input->user->password_confirm) {
                     $aErrors['password_confirm'] = 'Passwords are not the same';
-                }
-                //  username must be unique
-                if (!$this->da->isUniqueUsername($input->user->username)) {
-                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
-                }
-                //  email must be unique
-                if (!$this->da->isUniqueEmail($input->user->email)) {
-                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
                 }
             }
             //  check for data in required fields
@@ -137,6 +135,9 @@ class RegisterMgr extends SGL_Manager
                 $aErrors['email'] = 'You must enter your email';
             } elseif (!$v->email($input->user->email)) {
                 $aErrors['email'] = 'Your email is not correctly formatted';
+            //  email must be unique
+            } elseif ($input->action == 'insert' && !$this->da->isUniqueEmail($input->user->email)) {
+                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
             }
             if (empty($input->user->security_question)) {
                 $aErrors['security_question'] = 'You must choose a security question';
@@ -144,23 +145,29 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->security_answer)) {
                 $aErrors['security_answer'] = 'You must provide a security answer';
             }
-            //  check for hacking
-            if ($_SERVER['REQUEST_METHOD'] != 'POST'
-                    || (SGL_Session::getUid() != SGL_ADMIN && isset($input->user->role_id))
-                    || (SGL_Session::getUid() != SGL_ADMIN && isset($input->user->is_acct_active))) {
-                SGL_Session::destroy();
-                SGL::raiseMsg('Your IP has been logged', false);
-                SGL::logMessage('Hack attempted by ' .$_SERVER['REMOTE_ADDR'], PEAR_LOG_CRIT);
-                $input->template = 'docBlank.html';
-                $this->validated = false;
+            // check for mail header injection
+            if (!empty($input->user->email)) {
+                $input->user->email =
+                    SGL_Emailer::cleanMailInjection($input->user->email);
+                $input->user->username =
+                    SGL_Emailer::cleanMailInjection($input->user->username);
             }
 
-            // check for mail header injection
-            require_once SGL_CORE_DIR . '/Emailer.php';
-            $input->user->email =
-                SGL_Emailer::cleanMailInjection($input->user->email);
-            $input->user->username =
-                SGL_Emailer::cleanMailInjection($input->user->username);
+            //  check for hacks - only admin user can set certain attributes
+            if ((SGL_Session::getUid() != SGL_ADMIN
+                    && count(array_filter(array_flip($req->get('user')), array($this, 'containsDisallowedKeys'))))) {
+                $msg = 'Hack attempted by ' .$_SERVER['REMOTE_ADDR'] . ', IP logged';
+                if (SGL_Session::getRoleId() > SGL_GUEST) {
+                    $msg .= ', user id ' . SGL_Session::getUid();
+                }
+                SGL_Session::destroy();
+                SGL::raiseMsg($msg, false);
+                SGL::logMessage($msg, PEAR_LOG_CRIT);
+
+                $input->template = 'docBlank.html';
+                $this->validated = false;
+                return false;
+            }
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {
@@ -176,6 +183,12 @@ class RegisterMgr extends SGL_Manager
             $input->template = 'docBlank.html';
             $this->validated = false;
         }
+    }
+
+    function containsDisallowedKeys($var)
+    {
+        $disAllowedKeys = array('role_id', 'organisation_id', 'is_acct_active');
+        return in_array($var, $disAllowedKeys);
     }
 
     function display(&$output)
@@ -210,11 +223,6 @@ class RegisterMgr extends SGL_Manager
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (!SGL::objectHasState($input->user)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
 
         $addUser = new User_AddUser($input, $output);
         $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);

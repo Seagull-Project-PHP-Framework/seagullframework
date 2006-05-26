@@ -118,10 +118,10 @@ class UserMgr extends RegisterMgr
         if ($input->roleSync == 'null') {
             $input->roleSync = null;
         }
-        $input->roleSyncMode    = $req->get('roleSyncMode');
+        $input->roleSyncMode = $req->get('roleSyncMode');
 
         //  Pager's total items value (maintaining it saves a count(*) on each request)
-        $input->totalItems      = $req->get('totalItems');
+        $input->totalItems = $req->get('totalItems');
 
         if (!isset($aErrors)) {
             $aErrors = array();
@@ -189,10 +189,6 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->user)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         $oUser = $this->da->getUserById();
         $oUser->setFrom($input->user);
         $oUser->passwd = md5($input->user->passwd);
@@ -333,7 +329,6 @@ class UserMgr extends RegisterMgr
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
         $output->totalItems = $aPagedData['totalItems'];
-
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
@@ -380,14 +375,11 @@ class UserMgr extends RegisterMgr
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-
         $output->addOnLoadEvent("switchRowColorOnHover()");
-
     }
 
     function _cmd_truncateLoginTbl(&$input, &$output)
     {
-
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($input->aDelete)) {
@@ -424,7 +416,6 @@ class UserMgr extends RegisterMgr
         if ($input->changeStatusNotify && $success) {
             $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
         }
-        //  redirect on success
         if ($success) {
             SGL::raiseMsg('Status changed successfully', true, SGL_MESSAGE_INFO);
         } else {
@@ -485,7 +476,8 @@ class UserMgr extends RegisterMgr
             $hAllPerms = $this->da->getPermsByModuleId($moduleId);
             $output->aModules[$moduleId]['id'] = $moduleId;
             $output->aModules[$moduleId]['name'] = $moduleName;
-            $output->aModules[$moduleId]['perms'] = SGL_Output::generateCheckboxList($hAllPerms, $aUserPerms, 'frmPerms[]');
+            $output->aModules[$moduleId]['perms'] = SGL_Output::generateCheckboxList(
+                $hAllPerms, $aUserPerms, 'frmPerms[]');
             $output->aModulesList = $aModules;
         }
     }
@@ -495,9 +487,7 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'userPermsEdit.html';
-
         //  delete existing perms
-
         //  if we're dealing with a single view of all perms
         if (!$input->moduleId) {
             $this->dbh->autocommit();
@@ -570,15 +560,15 @@ class UserMgr extends RegisterMgr
         $realName = $oUser->first_name . ' ' . $oUser->last_name;
         $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
         $options = array(
-                'toEmail'   => $oUser->email,
-                'toRealName' => $recipientName,
-                'isEnabled' => $isEnabled,
-                'fromEmail' => $this->conf['email']['admin'],
-                'replyTo'   => $this->conf['email']['admin'],
-                'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
-                    . '/user/email_status_notification.php',
-                'username'  => $oUser->username,
+            'toEmail'   => $oUser->email,
+            'toRealName' => $recipientName,
+            'isEnabled' => $isEnabled,
+            'fromEmail' => $this->conf['email']['admin'],
+            'replyTo'   => $this->conf['email']['admin'],
+            'subject'   => 'Account Status Notification from ' . $this->conf['site']['name'],
+            'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                . '/user/email_status_notification.php',
+            'username'  => $oUser->username,
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();

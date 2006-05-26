@@ -84,28 +84,21 @@ class UserPasswordMgr extends PasswordMgr
         $aErrors = array();
 
         //  password update validation for AccountMgr
-        if ($input->submitted && ($input->action == 'edit') || ($input->action == 'update')) {
-            $v = & new Validate();
+        if ($input->submitted || ($input->action == 'update')) {
             if (empty($input->passwordOrig)) {
                 $aErrors['frmPasswordOrig'] = 'You must enter your original password';
-            } else {
-                if (!$this->_isOriginalPassword($input->passwordOrig)) {
-                    $aErrors['frmPasswordOrig'] = 'You have entered your original password incorrectly';
-                }
+            } elseif (!$this->_isOriginalPassword($input->passwordOrig)) {
+                $aErrors['frmPasswordOrig'] = 'You have entered your original password incorrectly';
             }
             if (empty($input->password)) {
                 $aErrors['frmPassword'] = 'You must enter a new password';
-            } else {
-                if (!$v->string($input->password, array('min_length' => 5, 'max_length' => 10 ))) {
-                    $aErrors['frmPassword'] = 'Password must be between 5 to 10 characters';
-                }
+            } elseif (!$v->string($input->password, array('min_length' => 5, 'max_length' => 10 ))) {
+                $aErrors['frmPassword'] = 'Password must be between 5 to 10 characters';
             }
             if (empty($input->passwordConfirm)) {
                 $aErrors['frmPasswordConfirm'] = 'Please confirm password';
-            } else {
-                if ($input->password != $input->passwordConfirm) {
-                    $aErrors['frmPasswordConfirm'] = 'Passwords are not the same';
-                }
+            } elseif ($input->password != $input->passwordConfirm) {
+                $aErrors['frmPasswordConfirm'] = 'Passwords are not the same';
             }
             //  if errors have occured
             if (is_array($aErrors) && count($aErrors)) {
