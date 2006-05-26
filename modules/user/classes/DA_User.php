@@ -139,7 +139,7 @@ class DA_User extends SGL_Manager
             return $userId;
         } else {
             $this->dbh->rollback();
-            return PEAR::raiseError('Problem encountered adding user');
+            return SGL_Error::getLast();
         }
     }
 
