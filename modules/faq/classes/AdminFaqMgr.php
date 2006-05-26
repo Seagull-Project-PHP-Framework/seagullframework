@@ -74,7 +74,7 @@ class AdminFaqMgr extends FaqMgr
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+print 'ere';
         parent::validate($req, $input);
         $input->aDelete   = $req->get('frmDelete');
         $input->faqId     = $req->get('frmFaqId');
@@ -82,7 +82,7 @@ class AdminFaqMgr extends FaqMgr
         $input->submitted = $req->get('submitted');
         $input->faq       = (object)$req->get('faq');
 
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             if (empty($input->faq->question)) {
                 $aErrors['question'] = 'Please fill in a question';
             }
@@ -119,12 +119,7 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->faq)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
-
         //  get new order number
         $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->selectAdd();
@@ -172,7 +167,7 @@ class AdminFaqMgr extends FaqMgr
         $faq->last_updated = SGL_Date::getTime(true);
         $success = $faq->update();
         if ($success) {
-            SGL::raiseMsg('faq updated successfully');
+            SGL::raiseMsg('faq updated successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem updating the record',
                 SGL_ERROR_NOAFFECTEDROWS);
@@ -190,11 +185,11 @@ class AdminFaqMgr extends FaqMgr
                 $faq->delete();
                 unset($faq);
             }
+            SGL::raiseMsg('faq deleted successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('faq deleted successfully');
     }
 
     function _cmd_reorder(&$input, &$output)
@@ -218,19 +213,24 @@ class AdminFaqMgr extends FaqMgr
     function _cmd_reorderUpdate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aNewOrder = explode(',', $input->items);
 
-        //  reorder elements
-        $pos = 1;
-        foreach ($aNewOrder as $faqId) {
-            $faq = DB_DataObject::factory($this->conf['table']['faq']);
-            $faq->get($faqId);
-            $faq->item_order = $pos;
-            $success = $faq->update();
-            unset($faq);
-            $pos++;
+        if (!empty($input->items)) {
+            $aNewOrder = explode(',', $input->items);
+            //  reorder elements
+            $pos = 1;
+            foreach ($aNewOrder as $faqId) {
+                $faq = DB_DataObject::factory($this->conf['table']['faq']);
+                $faq->get($faqId);
+                $faq->item_order = $pos;
+                $success = $faq->update();
+                unset($faq);
+                $pos++;
+            }
+            SGL::raiseMsg('faqs reordered successfully', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('faqs reordered successfully');
     }
 
     function _cmd_list(&$input, &$output)

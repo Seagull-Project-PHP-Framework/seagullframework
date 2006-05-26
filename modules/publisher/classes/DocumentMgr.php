@@ -296,6 +296,10 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->document)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->setFrom($input->document);
@@ -319,16 +323,21 @@ class DocumentMgr extends FileMgr
         $output->template = 'documentMgrEdit.html';
 
         //  delete physical file
-        foreach ($input->deleteArray as $index => $assetID) {
-            $document = DB_DataObject::factory($this->conf['table']['document']);
-            $document->get($assetID);
-            if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
-                @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+        if (is_array($input->deleteArray)) {
+            foreach ($input->deleteArray as $index => $assetID) {
+                $document = DB_DataObject::factory($this->conf['table']['document']);
+                $document->get($assetID);
+                if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
+                    @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+                }
+                $document->delete();
+                unset($document);
             }
-            $document->delete();
-            unset($document);
+            SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)

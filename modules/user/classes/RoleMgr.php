@@ -105,7 +105,7 @@ class RoleMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submitted && ($input->action =='insert' || $input->action =='update')) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             if (empty($input->role->name)) {
                 $this->validated = false;
                 $aErrors['name'] = 'You must enter a role name';
@@ -139,11 +139,6 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->role)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
-
         SGL_DB::setConnection();
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->setFrom($input->role);
@@ -174,6 +169,7 @@ class RoleMgr extends SGL_Manager
     function _cmd_update($input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
         $oRole->get($input->role->role_id);
         $oRole->setFrom($input->role);
@@ -192,23 +188,28 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        foreach ($input->aDelete as $index => $roleId) {
+        if (count($input->aDelete)) {
+            foreach ($input->aDelete as $roleId) {
 
-            //  disallow deletion of admin and unassigned role
-            $msg = 'role successfully deleted';
-            if ($roleId == SGL_ADMIN || $roleId == SGL_UNASSIGNED) {
-                $msg .= ' but please note, admin/unassigned roles cannot be deleted';
-                continue;
+                //  disallow deletion of admin and unassigned role
+                $msg = 'role successfully deleted';
+                if ($roleId == SGL_ADMIN || $roleId == SGL_UNASSIGNED) {
+                    $msg .= ' but please note, admin/unassigned roles cannot be deleted';
+                    continue;
+                }
+                $oRole = DB_DataObject::factory($this->conf['table']['role']);
+                $oRole->get($roleId);
+                $oRole->delete();
+                unset($oRole);
+
+                //  cleanup
+                $this->_deleteCleanup($roleId);
             }
-            $oRole = DB_DataObject::factory($this->conf['table']['role']);
-            $oRole->get($roleId);
-            $oRole->delete();
-            unset($oRole);
-
-            //  cleanup
-            $this->_deleteCleanup($roleId);
+            SGL::raiseMsg($msg, true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg($msg, true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
@@ -227,11 +228,11 @@ class RoleMgr extends SGL_Manager
             $orderBy_query = 'ORDER BY role_id ASC ';
         }
 
-        $query = "  SELECT
-                        role_id, name, description, date_created,
-                        created_by, last_updated, updated_by
-                    FROM {$this->conf['table']['role']} " .$orderBy_query;
-
+        $query = "
+            SELECT
+                role_id, name, description, date_created,
+                created_by, last_updated, updated_by
+            FROM {$this->conf['table']['role']} " .$orderBy_query;
         $limit = $_SESSION['aPrefs']['resPerPage'];
 
         $pagerOptions = array(
@@ -256,43 +257,52 @@ class RoleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get role name info
-        $name = $this->dbh->getOne("SELECT name FROM {$this->conf['table']['role']} WHERE role_id = " . $input->roleId);
-        $duplicateName = $name . ' (duplicate)';
-
-        //  insert new role duplicate, wrap in transaction
-        $this->dbh->autocommit();
-        $newRoleId = $this->dbh->nextId($this->conf['table']['role']);
-        $res1 = $this->dbh->query('
-            INSERT INTO ' . $this->conf['table']['role'] . "
-            (role_id, name, description)
-            VALUES ($newRoleId, '$duplicateName', 'please enter description')");
-
-        //  insert role perms
-        $aRolePerms = $this->da->getPermNamesByRoleId($input->roleId);
-        $isError = false;
-        if (count($aRolePerms)) {
-            foreach ($aRolePerms as $permId => $permName) {
-                $res2 = $this->dbh->query('
-                    INSERT INTO ' . $this->conf['table']['role_permission'] . "
-                    (role_permission_id, role_id, permission_id)
-                    VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) . ", $newRoleId, $permId)");
-            }
-            $isError = DB::isError($res2);
-        }
-        if (DB::isError($res1) || $isError) {
-            $this->dbh->rollback();
-            SGL::raiseError('There was a problem inserting the record',
-                SGL_ERROR_DBTRANSACTIONFAILURE);
+        if (is_null($input->roleId)) {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         } else {
-            $this->dbh->commit();
-            SGL::raiseMsg('role successfully duplicated', true, SGL_MESSAGE_INFO);
+            //  get role name info
+            $name = $this->dbh->getOne("
+                SELECT name FROM {$this->conf['table']['role']}
+                WHERE role_id = " . $input->roleId);
+            $duplicateName = $name . ' (duplicate)';
+
+            //  insert new role duplicate, wrap in transaction
+            $this->dbh->autocommit();
+            $newRoleId = $this->dbh->nextId($this->conf['table']['role']);
+            $res1 = $this->dbh->query('
+                INSERT INTO ' . $this->conf['table']['role'] . "
+                (role_id, name, description)
+                VALUES ($newRoleId, '$duplicateName', 'please enter description')");
+
+            //  insert role perms
+            $aRolePerms = $this->da->getPermNamesByRoleId($input->roleId);
+            $isError = false;
+            if (count($aRolePerms)) {
+                foreach ($aRolePerms as $permId => $permName) {
+                    $res2 = $this->dbh->query('
+                        INSERT INTO ' . $this->conf['table']['role_permission'] . "
+                        (role_permission_id, role_id, permission_id)
+                        VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) .
+                            ", $newRoleId, $permId)");
+                }
+                $isError = DB::isError($res2);
+            }
+            if (PEAR::isError($res1) || $isError) {
+                $this->dbh->rollback();
+                SGL::raiseError('There was a problem inserting the record',
+                    SGL_ERROR_DBTRANSACTIONFAILURE);
+            } else {
+                $this->dbh->commit();
+                SGL::raiseMsg('role successfully duplicated', true, SGL_MESSAGE_INFO);
+            }
         }
     }
 
     function _cmd_editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'roleEditPerms.html';
         $output->pageTitle = $this->pageTitle . ' :: Permissions';
         $oRole = DB_DataObject::factory($this->conf['table']['role']);
@@ -313,15 +323,24 @@ class RoleMgr extends SGL_Manager
     function _cmd_updatePerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPermsToAdd     = $this->_parsePermsString($input->permsToAdd);
-        $aPermsToRemove  = $this->_parsePermsString($input->permsToRemove);
-        if (is_array($aPermsToAdd) && count($aPermsToAdd)) {
-            $ret = $this->da->updateRolePermissionAssocs($aPermsToAdd, $input->roleId, SGL_ROLE_ADD);
+
+        if (!count($input->permsToAdd) || !count($input->permsToRemove)) {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+        } else {
+            $aPermsToAdd     = $this->_parsePermsString($input->permsToAdd);
+            $aPermsToRemove  = $this->_parsePermsString($input->permsToRemove);
+            if (is_array($aPermsToAdd) && count($aPermsToAdd)) {
+                $ret = $this->da->updateRolePermissionAssocs($aPermsToAdd,
+                    $input->roleId, SGL_ROLE_ADD);
+            }
+            if (is_array($aPermsToRemove) && count($aPermsToRemove)) {
+                $ret = $this->da->updateRolePermissionAssocs($aPermsToRemove,
+                    $input->roleId, SGL_ROLE_REMOVE);
+            }
+            SGL::raiseMsg('role assignments successfully updated', true,
+                SGL_MESSAGE_INFO);
         }
-        if (is_array($aPermsToRemove) && count($aPermsToRemove)) {
-            $ret = $this->da->updateRolePermissionAssocs($aPermsToRemove, $input->roleId, SGL_ROLE_REMOVE);
-        }
-        SGL::raiseMsg('role assignments successfully updated', true, SGL_MESSAGE_INFO);
     }
 
     /**

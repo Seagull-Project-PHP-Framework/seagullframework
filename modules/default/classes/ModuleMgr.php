@@ -107,23 +107,28 @@ class ModuleMgr extends SGL_Manager
 
         //  validate fields
         $aErrors = array();
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             $aFields = array(
                 'name' => 'Please, specify a name',
                 'title' => 'Please, specify a title',
                 'description' => 'Please, specify a description',
                 'icon' => 'Please, specify the name of the icon-file'
             );
-            foreach ($aFields as $field => $errorMsg) {
-                for ($x = 0; $x < count($input->module); $x++) {
-                    if (empty($input->module[$x]->$field)) {
-                        $aErrors[$x][$field] = $errorMsg;
-                        $aErrors[$field] = $errorMsg;
+            if (!empty($input->module)) {
+                foreach ($aFields as $field => $errorMsg) {
+                    for ($x = 0; $x < count($input->module); $x++) {
+                        if (empty($input->module[$x]->$field)) {
+                            $aErrors[$x][$field] = $errorMsg;
+                            $aErrors[$field] = $errorMsg;
+                        }
                     }
                 }
+            } else {
+                $aErrors['name'] = 'no module data supplied';
             }
         }
-        //  if errors have occured
+        //  if errors have occured -
+#commented out because multi-module validation not solved
 //        if (isset($aErrors) && count($aErrors)) {
 //            SGL::raiseMsg('Please fill in the indicated fields');
 //            $input->error = $aErrors;
@@ -242,10 +247,6 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!(count($input->module) || SGL::objectHasState($input->module[0]))) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         $output->template = 'moduleList.html';
 
         foreach ($input->module as $module) {

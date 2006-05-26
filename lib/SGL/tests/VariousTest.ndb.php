@@ -153,7 +153,67 @@ EOF;
         $searchString = '';
         $this->assertFalse(preg_match("/cgi|apache2filter/i", $searchString));
     }
+
+    function testArrayFilterForDisallowedMethods()
+    {
+        $test = array (
+          'username' => '',
+          'first_name' => 'Demian',
+          'last_name' => 'Turner',
+          'passwd' => '',
+          'password_confirm' => '',
+          'addr_1' => '39c Grange Park',
+          'addr_2' => '',
+          'addr_3' => '39c Grange Park',
+          'city' => 'Ealing',
+          'region' => '',
+          'post_code' => 'W5 3PP',
+          'country' => 'GB',
+          'email' => 'demian@phpkitchen.com',
+          'telephone' => '555555',
+          'mobile' => '',
+          'security_question' => '0',
+          'security_answer' => '',
+        );
+        // returns no count, no disallowed keys
+        $this->assertFalse(count(array_filter(array_flip($test), array($this, 'containsDisallowedKeys'))));
+
+        $test = array (
+          'username' => '',
+          'first_name' => 'Demian',
+          'last_name' => 'Turner',
+          'passwd' => '',
+          'password_confirm' => '',
+          'addr_1' => '39c Grange Park',
+          'addr_2' => '',
+          'addr_3' => '39c Grange Park',
+          'city' => 'Ealing',
+          'region' => '',
+          'post_code' => 'W5 3PP',
+          'country' => 'GB',
+          'email' => 'demian@phpkitchen.com',
+          'telephone' => '555555',
+          'mobile' => '',
+          'security_question' => '0',
+          'security_answer' => '',
+          'role_id' => '', // forbidden key
+        );
+        //  returns count, disallowed key present
+        $this->assertTrue(count(array_filter(array_flip($test), array($this, 'containsDisallowedKeys'))));
+
+        $test = array('non-existant' => 'foo');
+        $this->assertFalse(count(array_filter(array_flip($test), array($this, 'containsDisallowedKeys'))));
+    }
+
+    function containsDisallowedKeys($var)
+    {
+        $disAllowedKeys = array('role_id', 'organisation_id', 'is_acct_active');
+        $ret = in_array($var, $disAllowedKeys);
+        return $ret;
+    }
 }
+
+
 
 class Foo1{}
 class Bar1{}
