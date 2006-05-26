@@ -21,6 +21,11 @@ create table block
 );
 
 -- ==============================================================
+--  sequence block_seq
+-- ==============================================================
+create sequence block_seq;
+
+-- ==============================================================
 --  Table: block_assignment                                      
 -- ==============================================================
 create table block_assignment
@@ -29,6 +34,11 @@ create table block_assignment
 	section_id           NUMBER(10)                 not null,
 	constraint PK_BLOCK_ASSIGNMENT primary key (block_id, section_id)
 );
+
+-- ==============================================================
+--  sequence block_assignment_seq
+-- ==============================================================
+create sequence block_assignment_seq;
 
 -- ==============================================================
 --  Index: block_assignment_fk                                   
@@ -54,7 +64,9 @@ create table block_role (
 	role_id		NUMBER(10)	not null
 );
 
-create sequence block_seq;
-create sequence block_assignment_seq;
+-- ==============================================================
+--  sequence block_role_seq
+-- ==============================================================
 create sequence block_role_seq;
+
 

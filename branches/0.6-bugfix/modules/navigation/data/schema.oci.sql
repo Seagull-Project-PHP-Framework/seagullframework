@@ -25,38 +25,37 @@ create table section (
 );
 
 -- ==============================================================
+--  Sequence: section_seq
+-- ==============================================================
+
+create sequence section_seq;
+
+-- ==============================================================
 --  Index: root_id                                               
 -- ==============================================================
-create  index AK_section_root_id on section (
+create  index AK_section_key_root_id on section (
 	root_id
-);
-
--- ==============================================================
---  Index: left_id                                               
--- ==============================================================
-create  index AK_section_left_id on section (
-	left_id
-);
-
--- ==============================================================
---  Index: ritgh_id                                              
--- ==============================================================
-create  index AK_section_ritgh_id on section (
-	right_id
 );
 
 -- ==============================================================
 --  Index: order_id                                              
 -- ==============================================================
-create  index AK_section_order_id on section (
+create  index AK_section_key_order_id on section (
 	order_id
 );
 
 -- ==============================================================
---  Index: level_id                                              
+--  Index: left_id                                               
 -- ==============================================================
-create  index AK_section_level_id on section (
-	level_id
+create  index AK_section_key_left_id on section (
+	left_id
+);
+
+-- ==============================================================
+--  Index: right_id                                              
+-- ==============================================================
+create  index AK_section_key_right_id on section (
+	right_id
 );
 
 -- ==============================================================
@@ -67,6 +66,13 @@ create  index AK_section_id_root_l_r on section (
 	root_id,
 	left_id,
 	right_id
+);
+
+-- ==============================================================
+--  Index: level_id                                              
+-- ==============================================================
+create  index AK_section_key_level_id on section (
+	level_id
 );
 
 -- ==============================================================
@@ -91,7 +97,7 @@ create sequence uri_alias_seq;
 -- ==============================================================
 -- Index: uri_alias
 -- ==============================================================
-create index AK_uri_alias ON uri_alias (
+create index UK_uri_alias ON uri_alias (
     uri_alias
 );
 

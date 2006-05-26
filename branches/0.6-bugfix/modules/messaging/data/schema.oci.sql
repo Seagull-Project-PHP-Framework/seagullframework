@@ -14,6 +14,12 @@ constraint PK_CONTACT primary key (contact_id)
 );
 
 -- ==============================================================
+--  Sequence: contact_seq
+-- ==============================================================
+
+create sequence contact_seq;
+
+-- ==============================================================
 --  Index: usr_contact_fk                                        
 -- ==============================================================
 create  index usr_contact_fk on contact (
@@ -36,6 +42,12 @@ constraint PK_INSTANT_MESSAGE primary key (instant_message_id)
 );
 
 -- ==============================================================
+--  Sequence: instant_message_seq
+-- ==============================================================
+
+create sequence instant_message_seq;
+
+-- ==============================================================
 --  Index: usr_instant_from_fk                                   
 -- ==============================================================
 create  index usr_instant_from_fk on instant_message (
@@ -49,5 +61,5 @@ create  index ust_instant_to_fk on instant_message (
 user_id_from
 );
 
-create sequence contact_seq;
+
 

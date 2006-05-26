@@ -1,8 +1,13 @@
---
--- Dumping data for table item
---
+-- Data dump for /publisher
 
-INSERT INTO item VALUES (1, 2, 5, 1, 1, '2004-01-03 18:21:25', '2004-03-16 22:38:38', '2004-01-03 18:21:07', '2009-01-03 00:00:00', 4);
+--BEGIN;
+
+
+-- 
+--  Dumping data for table item
+-- 
+
+INSERT INTO item VALUES (1,2,5,1,1,'2004-01-03 18:21:25','2004-03-16 22:38:38','2004-01-03 18:21:07','2009-01-03 00:00:00',4,0);
 
 --
 -- Dumping data for table item_addition
@@ -15,7 +20,7 @@ INSERT INTO item_addition VALUES (2, 1, 8, '<p>Test out dynamic language switchi
 -- Dumping data for table category
 --
 
-INSERT INTO category VALUES (0,'HiddenRoot','',0,0,0,0,0,0);
+INSERT INTO category VALUES (0,'MainRoot',NULL,0,0,0,0,0,0);
 INSERT INTO category VALUES (1,'PublisherRoot',NULL,0,1,1,4,1,1);
 INSERT INTO category VALUES (2,'example',NULL,1,1,2,3,1,2);
 INSERT INTO category VALUES (3,'OtherRoot',NULL,0,3,1,2,1,1);
@@ -33,6 +38,6 @@ INSERT INTO category VALUES (15,'LCD',NULL,5,4,5,6,2,3);
 -- sequence must start on the first free record id
 --
 
-CREATE SEQUENCE item_seq START WITH 2;
-CREATE SEQUENCE item_addition_seq START WITH 3;
-CREATE SEQUENCE category_seq START WITH 16;
+-- CREATE SEQUENCE item_seq START WITH 2;
+-- CREATE SEQUENCE item_addition_seq START WITH 3;
+-- CREATE SEQUENCE category_seq START WITH 16;
