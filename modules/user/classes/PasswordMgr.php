@@ -155,7 +155,15 @@ class PasswordMgr extends SGL_Manager
     function _cmd_redirectToEdit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_HTTP::redirect(array('action' => 'edit'));
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array('action' => 'edit'));
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
     }
 
     function _resetPassword($userId)
