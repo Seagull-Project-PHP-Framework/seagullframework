@@ -17,6 +17,8 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+26-05-06    Implemented ability to do single sign on:
+            http://trac.seagullproject.org/wiki/Integration/SingleSignOn
 26-05-06    RegistrationMgr::_cmd_insert() now gets id for new user, can be used
             for more interesting thank you screen
 22-05-06    Params can now be passed after URI aliases (Andrey Podshivalov) for
