@@ -98,7 +98,7 @@ class UserPreferenceMgr extends PreferenceMgr
         $uid = SGL_Session::getUid();
         $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . $uid;
-        $this->dbh->query($query1);
+        $ok = $this->dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
@@ -116,7 +116,7 @@ class UserPreferenceMgr extends PreferenceMgr
                     '$prefValue'
             )";
             $res = $this->dbh->query($query2);
-            if (DB::isError($res)) {
+            if (PEAR::isError($res)) {
                 SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
