@@ -135,19 +135,12 @@ class PasswordMgr extends SGL_Manager
             list($passwd, $oUser) = $aRet;
             $bEmailSent = $this->sendPassword($oUser, $passwd);
             if ($bEmailSent) {
-                //  redirect
                 SGL::raiseMsg('password emailed out', true, SGL_MESSAGE_INFO);
-                $aParams = array(
-                    'moduleName'    => 'default',
-                    'managerName'   => 'default',
-                    );
-                SGL_HTTP::redirect($aParams);
             } else {
                 SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
             }
         //  credentials not recognised
         } else {
-            //  redirect
             SGL::raiseMsg('email not in system');
         }
     }
