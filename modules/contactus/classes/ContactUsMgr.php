@@ -163,7 +163,7 @@ class ContactUsMgr extends SGL_Manager
             }
 
             //  4. redirect on success - inherited redirectToDefault method forwards user to default page
-            SGL::raiseMsg('email submitted successfully');
+            SGL::raiseMsg('email submitted successfully', true, SGL_MESSAGE_INFO);
         }
 
         //  5. else if sending fails, raise error, this will be hidden
