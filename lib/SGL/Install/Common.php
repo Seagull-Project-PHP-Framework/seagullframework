@@ -123,7 +123,7 @@ class SGL_Install_Common
     <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
     <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
 </head>
 <body>
@@ -132,7 +132,7 @@ class SGL_Install_Common
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="$baseUrl" title="Home">
-        <img src="$baseUrl/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
     </a>
 </div>
 <h2>$title</h2>
@@ -147,7 +147,7 @@ HTML;
         }
         $html = <<<HTML
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
+    Powered by <a href="http://seagullproject.org/" title="Seagull framework homepage">Seagull PHP Framework</a>
     </div>
     </div>
 </body>
