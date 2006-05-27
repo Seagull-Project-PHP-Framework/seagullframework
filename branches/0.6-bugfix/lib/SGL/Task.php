@@ -101,8 +101,8 @@ class SGL_TaskRunner
     function main()
     {
         $ret = array();
-        foreach ($this->aTasks as $oTask) {
-            $ret[] = $oTask->run($this->data);
+        foreach ($this->aTasks as $k => $oTask) {
+            $ret[] = $this->aTasks[$k]->run($this->data);
         }
         return implode('', $ret);
     }
