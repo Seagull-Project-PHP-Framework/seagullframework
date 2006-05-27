@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header: /repository/pear/Log/Log/console.php,v 1.21 2005/09/06 05:46:41 jon Exp $
+ * $Header: /repository/pear/Log/Log/console.php,v 1.22 2006/01/11 07:56:37 jon Exp $
  *
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  * @package Log
  */
 
@@ -54,18 +54,6 @@ class Log_console extends Log
      * @access private
      */
     var $_timeFormat = '%b %d %H:%M:%S';
-
-    /**
-     * Hash that maps canonical format keys to position arguments for the
-     * "line format" string.
-     * @var array
-     * @access private
-     */
-    var $_formatMap = array('%{timestamp}'  => '%1$s',
-                            '%{ident}'      => '%2$s',
-                            '%{priority}'   => '%3$s',
-                            '%{message}'    => '%4$s',
-                            '%\{'           => '%%{');
 
     /**
      * Constructs a new Log_console object.
@@ -179,9 +167,9 @@ class Log_console extends Log
         $message = $this->_extractMessage($message);
 
         /* Build the string containing the complete log line. */
-        $line = sprintf($this->_lineFormat, strftime($this->_timeFormat),
-                $this->_ident, $this->priorityToString($priority),
-                $message) . "\n";
+        $line = $this->_format($this->_lineFormat,
+                               strftime($this->_timeFormat),
+                               $priority, $message) . "\n";
 
         /*
          * If buffering is enabled, append this line to the output buffer.
