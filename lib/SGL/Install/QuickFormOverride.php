@@ -123,7 +123,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 </table>
 </form>
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
+    Powered by <a href="http://seagullproject.org/" title="Seagull framework homepage">Seagull Framework</a>
     </div>
 </div>
 </body>
