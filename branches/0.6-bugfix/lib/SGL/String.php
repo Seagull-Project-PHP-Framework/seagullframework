@@ -101,29 +101,26 @@ class SGL_String
     /**
      * Defines the <CR><LF> value depending on the user OS.
      *
-     * From the phpMyAdmin common library
-     *
      * @return  string   the <CR><LF> value to use
      * @access  public
-     * @author  Marc Delisle <DelislMa@CollegeSherbrooke.qc.ca>
      */
     function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $crlf = "\n";
-
-        // Win case
-        if (SGL_CLIENT_OS == 'Win') {
-            $crlf = "\r\n";
-        }
-        // Mac case
-        elseif (SGL_CLIENT_OS == 'Mac') {
-            $crlf = "\r";
-        }
-        // Others
-        else {
-            $crlf = "\n";
+        if (defined(PHP_EOL)) {
+            $crlf = PHP_EOL;
+        } else {
+            // Win case
+            if (SGL_CLIENT_OS == 'Win') {
+                $crlf = "\r\n";
+            }
+            // Mac case
+            elseif (SGL_CLIENT_OS == 'Mac') {
+                $crlf = "\r";
+            } else {
+                $crlf = "\n";
+            }
         }
         return $crlf;
     }
