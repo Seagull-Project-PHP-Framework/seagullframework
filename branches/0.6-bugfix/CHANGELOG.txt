@@ -21,6 +21,7 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+27-05-06    Factored out recording of login to Login observer
 26-05-06    Update of OCI related schema/data (Marco)
 26-05-06    Implemented ability to do single sign on:
             http://trac.seagullproject.org/wiki/Integration/SingleSignOn

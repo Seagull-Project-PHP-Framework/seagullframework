@@ -189,7 +189,6 @@ class User_DoLogin extends SGL_Observable
                     SGL::raiseMsg('You have multiple sessions on this site!');
                 }
             }
-
             //  if redirect captured
             if (!empty($input->redir)) {
                 SGL_HTTP::redirect(urldecode($input->redir));
@@ -224,16 +223,6 @@ class User_DoLogin extends SGL_Observable
             $uid = $aResult['usr_id'];
             $rid = $aResult['role_id'];
 
-            //  record login in db for security
-            if (@$this->conf['LoginMgr']['recordLogin']) {
-                require_once 'DB/DataObject.php';
-                $login = DB_DataObject::factory($this->conf['table']['login']);
-                $login->login_id = $this->dbh->nextId('login');
-                $login->usr_id = $uid;
-                $login->date_time = SGL_Date::getTime(true);
-                $login->remote_ip = $_SERVER['REMOTE_ADDR'];
-                $login->insert();
-            }
             //  associate new session with authenticated user
             new SGL_Session($uid);
 
