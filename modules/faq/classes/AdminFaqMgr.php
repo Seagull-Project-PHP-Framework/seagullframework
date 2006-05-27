@@ -74,7 +74,7 @@ class AdminFaqMgr extends FaqMgr
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-print 'ere';
+
         parent::validate($req, $input);
         $input->aDelete   = $req->get('frmDelete');
         $input->faqId     = $req->get('frmFaqId');
