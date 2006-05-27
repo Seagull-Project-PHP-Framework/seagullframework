@@ -47,8 +47,13 @@ class TestLoginMgr extends UnitTestCase {
         $userMgr->_cmd_insert($oInput, $oOutput);
 
         //  test login with new user details
-        $loginMgr = new LoginMgr();
-        $res = $loginMgr->_doLogin($username, $passwd);
+        $oInput = new stdClass();
+        $oOutput = new stdClass();
+        $doLogin = new User_DoLogin($oInput, $oOutput);
+        $doLogin->dbh = $doLogin->_getDb();
+        $c = &SGL_Config::singleton();
+        $doLogin->conf = $c->getAll();
+        $res = $doLogin->_doLogin($username, $passwd);
         $this->assertTrue(is_array($res));
         $this->assertTrue(count($res));
     }
