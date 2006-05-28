@@ -10,6 +10,7 @@
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
+    {if:results}
     <form method="post" action="" id="organisations" flexy:ignore>
         <h3>{translate(#Organisation list#)}</h3>
         <fieldset class="noBorder">
@@ -56,5 +57,8 @@
             <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
         </fieldset>
     </form>
+    {else:}
+    {translate(#No organisations found#)}
+    {end:}
     <div class="spacer"></div>
 </div>

@@ -232,6 +232,7 @@ $words = array(
     'Org type(s) deleted successfully'                => 'Org type(s) deleted successfully',
     'Organisation type saved successfully'            => 'Organisation type saved successfully',
     'Organisation type has been updated successfully' => 'Organisation type has been updated successfully',
+    'No organisations found' => 'No organisations found',
 
 
 /* Org MGR */
