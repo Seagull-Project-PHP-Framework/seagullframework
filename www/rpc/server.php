@@ -93,7 +93,6 @@ function SGL_XML_RPC_getDispatchMap()
 function SGL_XML_RPC_getDispatchMap_cache()
 {
     require_once 'Cache/Lite/Function.php';
-
     $options = array(
         'cacheDir' => SGL_CACHE_DIR,
         'lifeTime' => 0
