@@ -221,6 +221,7 @@ $words = array(
 
     // form
     'New organisation'          => 'New organisation',
+    'New organisation type'     => 'New organisation type',
     'Edit organisation'         => 'Edit organisation',
 
     // validation

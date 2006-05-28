@@ -123,9 +123,10 @@ class OrgTypeMgr extends SGL_Manager
         $orgType->organisation_type_id = $this->dbh->nextId($this->conf['table']['organisation_type']);
         $success = $orgType->insert();
         if ($success) {
-            SGL::raiseMsg('Organisation type saved successfully');
+            SGL::raiseMsg('Organisation type saved successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 

@@ -1,6 +1,9 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
     <a class="action add" href="{makeUrl(#add#,#org#,#user#)}">{translate(#New organisation#)}</a>
+{if:conf[OrgMgr][typeEnabled]}
+    <a class="action add" href="{makeUrl(#add#,#orgtype#,#user#)}">{translate(#New organisation type#)}</a>
+{end:}
 </div>
 <div id="content">
     <div id="content-header">
@@ -10,7 +13,7 @@
     <form method="post" action="" id="organisations" flexy:ignore>
         <h3>{translate(#Organisation list#)}</h3>
         <fieldset class="noBorder">
-            <input type="hidden" name="action" value="delete" />    
+            <input type="hidden" name="action" value="delete" />
             <table class="full">
                 <thead>
                     <tr>
@@ -48,7 +51,7 @@
                             <a class="sgl-button" href="{makeUrl(#editAll#,#orgpreference#,#user#,results,#frmOrgId|organisation_id#,k)}">{translate(#change#)}</a>
                         </td>
                     </tr>
-                </tbody>  
+                </tbody>
             </table>
             <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
         </fieldset>

@@ -59,19 +59,23 @@ function addFormValue(myElement, form)
                 <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" /><span class="currentLanguage">&nbsp;{fullNavLang}</span>
             </p>
             <p>
-                <label for="section[parent_id]">{translate(#Parent Section#)}</label>
+                <label class="tipOwner" for="section[parent_id]">{translate(#Parent Section#)}
+                    <span class="tipText">{translate(#specify the section under which yours will be placed#)}</span>
+                </label>
                 <select name="section[parent_id]" id="section[parent_id]">
                     {generateSelect(sectionNodesOptions,section[parent_id]):h}
                 </select>
             </p>
             <p>
-                <label for="section[uriType]">{translate(#Target#)}</label>
+                <label class="tipOwner" for="section[uriType]">{translate(#Target#)}
+                    <span class="tipText">{translate(#select where your content is coming from#)}</span>
+                </label>
                 <select name="section[uriType]" id="section[uriType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="uriType">
                     <option value="static" flexy:raw="{staticSelected}">
-                        {translate(#static articles#)}
+                        {translate(#pre-existing static content#)}
                     </option>
                     <option value="dynamic" flexy:raw="{dynamicSelected}">
-                        {translate(#dynamic sections#)}
+                        {translate(#output from specified module#)}
                     </option>
                     {if:conf[SectionMgr][wikiScreenTypeEnabled]}
                     <option value="wiki" flexy:raw="{wikiSelected}">
@@ -218,7 +222,7 @@ function addFormValue(myElement, form)
         </fieldset>
         {if:!uriAddonSelected}
         <fieldset class="options" id="navigationOptimisation">
-            <h3>{translate(#Optimisation#)}</h3>
+            <h3>{translate(#Accessibility#)}</h3>
             <p>
                 <label class="tipOwner" for="section[access_key]">{translate(#Access Key#)}
                     <span class="tipText">{translate(#Any number, which can be pressed with the ALT-key to load the page.#)}</span>
