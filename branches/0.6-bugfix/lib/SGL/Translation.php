@@ -137,17 +137,17 @@ class SGL_Translation
 
     /**
      * Clear translation2 and GUI cache
-     * 
+     *
      * @static
      * @access  public
-     * 
+     *
      * @return  boolean     true on success/false on failure
      */
     function clearCache()
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-       
+
         if ('db' == $conf['translation']['container']) {
             //   clear Translation2 cache
             $trans = SGL_Translation::singleton('admin');
@@ -165,7 +165,7 @@ class SGL_Translation
      *
      * @static
      * @access  public
-     * 
+     *
      * @return boolean      true on success/false on failure
      */
     function clearGuiTranslationsCache()
@@ -181,7 +181,7 @@ class SGL_Translation
 
             $success = true;
             foreach ($aLangs as $group) {
-                $result = $cache->clear('translation_'. $group);
+                $result = SGL_Cache::clear('translation_'. $group);
                 $success = $success && $result;
             }
             return $success;
