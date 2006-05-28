@@ -464,13 +464,17 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                 SGL::logMessage('module "'.$moduleName.'"does not appear to be registered');
                 $getDefaultMgr = true;
             } else {
-                //  load module's config if not present
-                $ok = $this->ensureModuleConfigLoaded($moduleName);
+                //  load current module's config if not present
+                $conf = $this->c->ensureModuleConfigLoaded($moduleName);
 
-                if (PEAR::isError($ok)) {
+                if (PEAR::isError($conf)) {
                     SGL::raiseError('could not locate module\'s config file',
                         SGL_ERROR_NOFILE);
+                } else {
+                    //  set $this->conf to contain global and current module config.
+                    $this->conf = $conf;
                 }
+
                 //  get manager name if $managerName not correct attempt to load default
                 //  manager w/$moduleName
                 $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
@@ -519,48 +523,6 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
     }
 
     /**
-     * Ensures the module's config file was loaded.
-     *
-     * This is required when the homepage is set to custom mod/mgr/params,
-     * and the module config file loaded while initialising the request is
-     * not the file required for the custom invocation.
-     *
-     * @param string $moduleName
-     * @return mixed    true on success, PEAR_Error on failure
-     */
-    function ensureModuleConfigLoaded($moduleName)
-    {
-        if (!defined('SGL_MODULE_CONFIG_LOADED')
-                || $this->conf['localConfig']['moduleName'] != $moduleName) {
-            $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
-            $modConfigPath = realpath($path);
-
-            if ($modConfigPath) {
-                $aModuleConfig = $this->c->load($modConfigPath);
-
-                if (PEAR::isError($aModuleConfig)) {
-                    $ret = $aModuleConfig;
-                } else {
-                    $this->c->merge($aModuleConfig);
-                    //  remove first failed conf loading error in
-                    //  SGL_UrlParser_SefStrategy::parseQueryString()
-                    SGL_Error::shift();
-                    //  reset conf keys
-                    unset($this->conf);
-                    $this->conf = $this->c->getAll();
-                    $ret = true;
-                }
-            } else {
-                $ret = SGL::raiseError("Config file could not be found at '$path'",
-                    SGL_ERROR_NOFILE);
-            }
-        } else {
-            $ret = true;
-        }
-        return $ret;
-    }
-
-    /**
      * Loads the default manager per config settings or returns false on failure.
      *
      * @param SGL_Registry $input
@@ -571,13 +533,18 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         $defaultModule = $this->conf['site']['defaultModule'];
         $defaultMgr = $this->conf['site']['defaultManager'];
 
-        //  load module's config if not present
-        $ok = $this->ensureModuleConfigLoaded($defaultModule);
-        if (PEAR::isError($ok)) {
+        //  load default module's config if not present
+        $conf = $this->c->ensureModuleConfigLoaded($defaultModule);
+
+        if (PEAR::isError($conf)) {
             SGL::raiseError('could not locate module\'s config file',
                 SGL_ERROR_NOFILE);
             return false;
         }
+
+        //  set $this->conf to contain global and default module config.
+        $this->conf = $conf;
+
         $mgrName = SGL_Inflector::caseFix(
             SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
@@ -888,6 +855,24 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
             if ($userRid == SGL_ADMIN) {
                 $adminGuiAllowed = true;
             }
+
+            if (!isset($this->conf[$mgrName])) {
+                //  get current module
+                $req = &SGL_Request::singleton();
+                $moduleName = $req->getModuleName();
+
+                //  load current module's config if not present
+                $conf = $this->c->ensureModuleConfigLoaded($moduleName);
+
+                if (PEAR::isError($conf)) {
+                    SGL::raiseError('could not locate module\'s config file',
+                        SGL_ERROR_NOFILE);
+                }
+
+                //  set $this->conf to contain global and current module config.
+                $this->conf = $conf;
+            }
+
             // then check if manager requires to switch to adminGUI
             if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                 && $this->conf[$mgrName]['adminGuiAllowed']) {

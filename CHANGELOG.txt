@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
+28-05-06    Fixed a bug where if caching was enabled, a URI parser was not executed
+            which caused an error (AJ Tarachanowicz)
 28-05-06    Fixed paths for RPC server
 27-05-06    Fixed prob where environment data was not being saved correctly in PHP4
 27-05-06    Logging debug level set correctly by default
