@@ -227,6 +227,14 @@ class MaintenanceMgr extends SGL_Manager
                 SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
             }
         }
+        if (array_key_exists('translations', $input->cache)) {
+            if (SGL_Translation::clearCache() === false) {
+                SGL::raiseError('There was a problem deleting the files',
+                    SGL_ERROR_FILEUNWRITABLE);
+            } else {
+                SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
+            }
+        }
         if (count($input->cache) > 0) {
             $success = true;
             foreach ($input->cache as $group => $v) {
