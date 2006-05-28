@@ -39,17 +39,18 @@
         <fieldset class="inside">
             <p class="center">
                 <input type="hidden" name="action" value="clearCache" />
-                <input type="checkbox" name="frmCache[templates]" value="1" />{translate(#Templates#)}
-                <input type="checkbox" name="frmCache[nav]" value="1" />{translate(#navigation#,#ucfirst#)}
                 <input type="checkbox" name="frmCache[blocks]" value="1" />{translate(#blocks#,#ucfirst#)}
-                <input type="checkbox" name="frmCache[categorySelect]" value="1" />{translate(#categories#,#ucfirst#)}
-                <input type="checkbox" name="frmCache[perms]" value="1" />{translate(#permissions#,#ucfirst#)}
-                <input type="checkbox" name="frmCache[pear]" value="1" />PEAR
-                <input type="checkbox" name="frmCache[uri]" value="1" />URI
+                <input type="checkbox" name="frmCache[categorySelect]" value="1" />{translate(#Categories#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[nav]" value="1" />{translate(#navigation#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[pear]" value="1" /><acronym>PEAR</acronym>
+                <input type="checkbox" name="frmCache[perms]" value="1" />{translate(#Permissions#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[templates]" value="1" />{translate(#Templates#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[translations]" value="1" />{translate(#translations#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[uri]" value="1" /><acronym>URI</acronym>
             </p>
             <p class="center">
                 <input type="checkbox" name="checkAll" id="checkAll"
-                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />select all
+                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />{translate(#select all#,#ucfirst#)}
             </p>
             <div class="center">
                 <p class="error" flexy:if="error[nothingChecked]">

@@ -135,6 +135,58 @@ class SGL_Translation
         return $instance[$type];
     }
 
+    /**
+     * Clear translation2 and GUI cache
+     * 
+     * @static
+     * @access  public
+     * 
+     * @return  boolean     true on success/false on failure
+     */
+    function clearCache()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+       
+        if ('db' == $conf['translation']['container']) {
+            //   clear Translation2 cache
+            $trans = SGL_Translation::singleton('admin');
+            $trans->options['cacheOptions']['cacheDir'] = SGL_TMP_DIR .'/';
+            $trans->options['cacheOptions']['defaultGroup'] = 'translation';
+            return $trans->cleanCache();
+        } else {
+            //   clear file GUI cache
+            return SGL_Translation::clearGuiTranslationsCache();
+        }
+    }
+
+    /**
+     * Clear GUI Translations cache
+     *
+     * @static
+     * @access  public
+     * 
+     * @return boolean      true on success/false on failure
+     */
+    function clearGuiTranslationsCache()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
+
+        if (count($aLangs) > 0) {
+            $cache = & SGL_Cache::singleton();
+            $cache->setOption('cacheDir', SGL_TMP_DIR .'/');
+
+            $success = true;
+            foreach ($aLangs as $group) {
+                $result = $cache->clear('translation_'. $group);
+                $success = $success && $result;
+            }
+            return $success;
+        }
+    }
 
     /**
      * Returns a dictionary of translated strings.
@@ -282,6 +334,7 @@ class SGL_Translation
                     $translation = &$translation->getDecorator('CacheLiteFunction');
                     $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
                     $translation->setOption('lifeTime', $conf['cache']['lifetime']);
+                    $translation->setOption('defaultGroup', 'translation');
                 }
 
                 //  fetch translations

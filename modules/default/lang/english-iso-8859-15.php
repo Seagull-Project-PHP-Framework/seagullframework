@@ -484,4 +484,7 @@ $defaultWords['The manager, which can be'] = 'The manager, which can be one of s
 $defaultWords['Module Directory Override'] = 'Module Directory Override';
 $defaultWords['Upload Directory Override'] = 'Upload Directory Override';
 $defaultWords['Submit login'] = 'Submit login';
+$defaultWords['select all'] = 'select all';
+$defaultWords['templates'] = 'templates';
+$defaultWords['translations'] = 'translations';
 ?>
