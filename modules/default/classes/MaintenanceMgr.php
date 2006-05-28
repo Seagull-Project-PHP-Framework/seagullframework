@@ -214,17 +214,20 @@ class MaintenanceMgr extends SGL_Manager
         $msg = '';
         if (array_key_exists('templates', $input->cache)) {
             require_once 'System.php';
-            $theme = $_SESSION['aPrefs']['theme'];
-            $dir = SGL_CACHE_DIR . "/tmpl/$theme";
-            $aFiles = System::find(array($dir, "-name", "*"));
-
-            //  remove last element found which is the theme folder
-            array_pop($aFiles);
-            if (!@System::rm($aFiles)) {
-                SGL::raiseError('There was a problem deleting the files',
-                    SGL_ERROR_FILEUNWRITABLE);
-            } else {
-                SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
+            $tmplDir = SGL_CACHE_DIR . "/tmpl/";
+            $aDirs = System::find(array($tmplDir, "-maxdepth", 1));
+            //  exclude last element found which is the containing tmpl folder itself
+            array_pop($aDirs);
+            foreach ($aDirs as $dir) {
+                $aFiles = System::find(array($dir, "-name", "*"));
+                //  exclude last element found which is the theme folder
+                array_pop($aFiles);
+                if (!@System::rm($aFiles)) {
+                    SGL::raiseError('There was a problem deleting the files',
+                        SGL_ERROR_FILEUNWRITABLE);
+                } else {
+                    SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
+                }
             }
         }
         if (array_key_exists('translations', $input->cache)) {
