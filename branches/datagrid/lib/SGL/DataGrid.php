@@ -9,6 +9,7 @@
 define ('SGL_DATAGRID_ALL_ROWS_IN_SELECT', 10000);
 
 require_once 'Column.php';
+//require_once dirname(__FILE__) . '/../../docs/developer/examples/modules/tools/classes/Output.php';
 
 /**
  * SGL_DataGrid
@@ -312,49 +313,49 @@ class SGL_DataGrid {
 
             if ($column->type == 'date') {
                 if ((!empty($this->filters[$columnTempFrom])) && 
-        (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempFrom])))) {
+        (is_null(SGL_DataGrid::formatDate2DB($this->filters[$columnTempFrom])))) {
                     $column->cError = "<span class='error'>" . 
                                 SGL_String::translate('incorrect date format') .
                                 " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempFrom])) {
                     $this->filters[$columnTempFrom] = 
-                     SGL_Output::formatDate2DB($this->filters[$columnTempFrom]);
+                     SGL_DataGrid::formatDate2DB($this->filters[$columnTempFrom]);
                 }
 
                 if ((!empty($this->filters[$columnTempTo])) && 
-        (is_null(SGL_Output::formatDate2DB($this->filters[$columnTempTo])))) {
+        (is_null(SGL_DataGrid::formatDate2DB($this->filters[$columnTempTo])))) {
                     $column->cError = "<span class='error'>" . 
                                 SGL_String::translate('incorrect date format') .
                                 " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempTo])) {
                     $this->filters[$columnTempTo] = 
-                       SGL_Output::formatDate2DB($this->filters[$columnTempTo]);
+                       SGL_DataGrid::formatDate2DB($this->filters[$columnTempTo]);
                 }
             }
 
             if ($column->type == 'hour') {
                 if ((!empty($this->filters[$columnTempFrom])) && 
-    (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom])))) {
+    (is_null(SGL_DataGrid::formatDateTime2DB($this->filters[$columnTempFrom])))) {
                     $column->cError = "<span class='error'>" . 
                            SGL_String::translate('incorrect date/time format') .
                            " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempFrom])) {
                     $this->filters[$columnTempFrom] = 
-                 SGL_Output::formatDateTime2DB($this->filters[$columnTempFrom]);
+                 SGL_DataGrid::formatDateTime2DB($this->filters[$columnTempFrom]);
                 }
 
                 if ((!empty($this->filters[$columnTempTo])) && 
-      (is_null(SGL_Output::formatDateTime2DB($this->filters[$columnTempTo])))) {
+      (is_null(SGL_DataGrid::formatDateTime2DB($this->filters[$columnTempTo])))) {
                     $column->cError = "<span class='error'>" . 
                            SGL_String::translate('incorrect date/time format') .
                            " !!</span>";
                     $this->filterError  = true;
                 } elseif (!empty($this->filters[$columnTempTo])) {
                     $this->filters[$columnTempTo] = 
-                   SGL_Output::formatDateTime2DB($this->filters[$columnTempTo]);
+                   SGL_DataGrid::formatDateTime2DB($this->filters[$columnTempTo]);
                 }
             }
 
@@ -870,6 +871,70 @@ class SGL_DataGrid {
         }
 
         $output->dataGridData->$dataGrigSetName->showSummary = $showSummary;
+    }
+
+    /**
+     * Formats date for the current user
+     * @param   string  $sDate  Date in user or DB format  (YYYY-mm-dd or dd.mm.yyyy)
+     * @return  string  Date formatted for the DB format (YYYY-mm-dd)
+     *                   if date is not proper - return null
+     */
+    function formatDate2DB($sDate) 
+    {
+        //check if date is in correct format
+        if (preg_match("/([0-9]{4}-[0-9]{2}-[0-9]{2})$/", $sDate)) {
+            $aDate = explode("-", $sDate);
+            if (checkdate($aDate[1], $aDate[2], $aDate[0])) {
+                return date("Y-m-d", mktime (0, 0, 0, $aDate[1], $aDate[2], $aDate[0]));
+            }
+        } elseif (preg_match("/[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}/", $sDate)) {
+            $aDate = explode(".", $sDate);
+            if (checkdate($aDate[1], $aDate[0], $aDate[2])) {
+                    return date("Y-m-d", mktime (0, 0, 0, $aDate[1], $aDate[0], $aDate[2]));
+            }
+        } elseif (strcmp($sDate, "now()") == 0) {
+            return $sDate;
+        }
+        return null;
+    }
+
+    function makeValidLinks($links)
+    {
+        return str_replace("&nbsp;&nbsp;&nbsp;", "&nbsp;", $links);
+    }
+
+    /**
+     * Formats datetime for the current user
+     * @param   string  $sDateTime  Datetime in user or DB format
+     * (YYYY-mm-dd HH:mm:ss or dd.mm.yyyy HH:mm:ss or YYYY-mm-dd or dd.mm.yyyy)
+     * @return  string  Datetime formatted for the DB format (YYYY-mm-dd)
+     * or (YYYY-mm-dd HH:mm:ss) if hours set; if date is not proper - return null
+     */
+    function formatDateTime2DB($sDateTime) 
+    {
+        //check if date is in correct format
+        $sResult = null;
+        $aDateTime = explode(" ", $sDateTime);
+        $sDate = $aDateTime[0];
+        $sTime = $aDateTime[1];
+        if (preg_match("/[0-9]{4}-[0-9]{2}-[0-9]{2}/", $sDate)) {
+            $aDate = explode("-", $sDate);
+            if (checkdate($aDate[1], $aDate[2], $aDate[0])) {
+                $sResult = date("Y-m-d", mktime (0,0,0, $aDate[1], $aDate[2], $aDate[0]));
+            }
+        } elseif (preg_match("/[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{4}/", $sDate)) {
+            $aDate = explode(".", $sDate);
+
+            if (checkdate($aDate[1], $aDate[0], $aDate[2])) {
+                $sResult = date("Y-m-d", mktime (0,0,0, $aDate[1], $aDate[0], $aDate[2]));
+            }
+        } elseif (strcmp($sDate, "now()") == 0) {
+            $sResult = $sDate;
+        }
+        if ($sTime != "") {
+            $sResult .= " ".$sTime;
+        }
+        return $sResult;
     }
 }
 
