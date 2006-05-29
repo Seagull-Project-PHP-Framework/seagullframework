@@ -261,7 +261,9 @@ class ModuleGenerationMgr extends SGL_Manager
         } else {
             SGL::raiseMsg('Files for the '.
               $modName .
-              ' module successfully created. Don\'t forget to modify the generated list and edit templates. You can start using the module at ' . SGL_BASE_URL . '/' . $output->managerName .
+              ' module successfully created. Don\'t forget to modify the generated list and ' .
+              'edit templates. You can start using the module at ' . SGL_BASE_URL . '/' .
+              $this->conf['site']['frontScriptName'] .'/'. $modName .'/'.$output->managerName .
               $append, false, SGL_MESSAGE_INFO);
         }
     }
