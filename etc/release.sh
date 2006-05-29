@@ -119,6 +119,10 @@ function exportSvnAndPackage()
 #    rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/lib/pear/Calendar
     rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
+    rm -rf $PROJECT_NAME/www/js/html_ajax
+    rm -rf $PROJECT_NAME/www/savant
+    rm -rf $PROJECT_NAME/www/smarty
+    rm -rf $PROJECT_NAME/lib/pear/Image
 
     #remove non-standard themes
     rm -rf $PROJECT_NAME/www/savant
