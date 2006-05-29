@@ -190,8 +190,8 @@ class User_DoLogin extends SGL_Observable
                 }
             }
             //  if redirect captured
-            if (!empty($input->redir)) {
-                SGL_HTTP::redirect(urldecode($input->redir));
+            if (!empty($this->input->redir)) {
+                SGL_HTTP::redirect(urldecode($this->input->redir));
             }
             $type = ($res['role_id'] == SGL_ADMIN) ? 'logonAdminGoto' : 'logonUserGoto';
             list($mod, $mgr) = split('\^', $this->conf['LoginMgr'][$type]);

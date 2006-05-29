@@ -169,7 +169,6 @@ class SGL_URL
         $this->path        = '';
         $this->aQueryData = array();
         $this->anchor      = '';
-
         //  get default config
         if (is_null($conf)) {
             $c = &SGL_Config::singleton();
@@ -240,7 +239,17 @@ class SGL_URL
                                         ? $_SERVER['SERVER_PORT']
                                         : $this->getStandardPort($this->protocol));
             $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
-            $this->anchor      = '';
+#FIXME: $_SERVER['PHP_SELF'] != $this->path when redir is appended, needs to be cleaned up
+# refactor removal of frontScriptName with routine use in switch below
+//            if (isset($this->path{0}) && $this->path{0} == '/') {
+//                if ($this->frontScriptName != false) {
+//                    $frontScriptStartIndex = strpos($this->path, $this->frontScriptName);
+//                    $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+//                    if ($frontScriptStartIndex) {
+//                        $this->path = substr($this->path, 0, $frontScriptStartIndex);
+//                    }
+//                }
+//            }
         }
 
         // Parse the URI and store the various parts
@@ -512,8 +521,13 @@ class SGL_URL
                    . $this->getHostName() . ($this->port == $this->getStandardPort($this->protocol)
                         ? ''
                         : ':' . $this->port)
-                   . $this->getPath()
-                   . $this->getFrontScriptName();
+                   . $this->getPath();
+    if ($this->frontScriptName != false) {
+        if (!preg_match("/$this->frontScriptName/", $retUrl)) {
+            $retUrl .= $this->getFrontScriptName();
+        }
+    }
+    $this->getFrontScriptName();
 
         //  add a trailing slash if one is not present
         $qs  = $this->getQueryString();
