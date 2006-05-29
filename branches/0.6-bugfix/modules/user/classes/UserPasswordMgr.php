@@ -85,6 +85,7 @@ class UserPasswordMgr extends PasswordMgr
 
         //  password update validation for AccountMgr
         if ($input->submitted || ($input->action == 'update')) {
+            $v = & new Validate();
             if (empty($input->passwordOrig)) {
                 $aErrors['frmPasswordOrig'] = 'You must enter your original password';
             } elseif (!$this->_isOriginalPassword($input->passwordOrig)) {
