@@ -232,7 +232,7 @@ class ModuleGenerationMgr extends SGL_Manager
         }
 
         // add to tableAliases
-        $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->managerName  . '/tableAliases.ini';
+        $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->moduleName  . '/tableAliases.ini';
         $addTable = true;
 
         if (file_exists($tableAliasIniPath)) {
@@ -248,6 +248,7 @@ class ModuleGenerationMgr extends SGL_Manager
             $h = fopen($tableAliasIniPath, 'w+');
             fwrite($h, $output->managerName . ' = ' . $output->managerName);
             fclose($h);
+            @chmod($tableAliasIniPath, 0666);
         }
 
         $shortTags = ini_get('short_open_tag');
@@ -259,11 +260,12 @@ class ModuleGenerationMgr extends SGL_Manager
             SGL::raiseError('There was a problem creating the files',
                 SGL_ERROR_FILEUNWRITABLE);
         } else {
+            $uri = SGL_BASE_URL . '/' .$this->conf['site']['frontScriptName'] .'/'.
+                $modName .'/'.$output->managerName.'/';
             SGL::raiseMsg('Files for the '.
               $modName .
-              ' module successfully created. Don\'t forget to modify the generated list and ' .
-              'edit templates. You can start using the module at ' . SGL_BASE_URL . '/' .
-              $this->conf['site']['frontScriptName'] .'/'. $modName .'/'.$output->managerName .
+              ' module successfully created. Don\'t forget to modify the generated list and' .
+              " edit templates. You can start using the module at <a href='$uri'>$uri</a>" .
               $append, false, SGL_MESSAGE_INFO);
         }
     }
@@ -400,7 +402,8 @@ class ModuleGenerationMgr extends SGL_Manager
         //  create conf.ini
         $confIniName    = $aDirectories['module'] . '/conf.ini';
         $confTemplate   = '['.$mgrLongName.']' . "\n";
-        $confTemplate   .= 'requiresAuth    = false';
+        $confTemplate   .= 'requiresAuth     = false' . "\n";
+        $confTemplate   .= 'showUntranslated = false';
         $success        = file_put_contents($confIniName, $confTemplate);
         @chmod($confIniName, 0666);
         return $success;

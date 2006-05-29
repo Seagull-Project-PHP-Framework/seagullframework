@@ -81,6 +81,14 @@ class {t.ManagerName}Mgr extends SGL_Manager
         }
     }
 
+    function display(&$output)
+    {
+        if ($this->conf['{t.ManagerName}Mgr']['showUntranslated'] == false) {
+            $c = &SGL_Config::singleton();
+            $c->set('debug', array('showUntranslated' => false));
+        }
+    }
+
 {t.methods:h}
 
 }
