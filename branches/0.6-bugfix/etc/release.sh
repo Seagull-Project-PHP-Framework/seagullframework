@@ -119,10 +119,18 @@ function exportSvnAndPackage()
 #    rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/lib/pear/Calendar
     rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
+    rm -rf $PROJECT_NAME/lib/pear/Image
+
     rm -rf $PROJECT_NAME/www/js/html_ajax
+
+    #datagrid js libs
+    rm -rf $PROJECT_NAME/www/js/overlib
+    rm -rf $PROJECT_NAME/www/js/jcalc
+
+    #themes that are incomplete
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
-    rm -rf $PROJECT_NAME/lib/pear/Image
+
 
     #remove non-standard themes
     rm -rf $PROJECT_NAME/www/savant
