@@ -727,7 +727,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id 
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm

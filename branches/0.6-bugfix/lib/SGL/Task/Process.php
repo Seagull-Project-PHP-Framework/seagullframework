@@ -944,6 +944,11 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
         //  get all html onLoad events
         $output->onLoad = $output->getAllOnLoadEvents();
 
+        //  unset unnecesssary objects
+        unset($output->currentUrl);
+        unset($output->manager->conf);
+        unset($output->manager->dbh);
+
         //  build view
         $templateEngine = isset($output->templateEngine) ? $output->templateEngine : null;
         $view = new SGL_HtmlSimpleView($output, $templateEngine);
