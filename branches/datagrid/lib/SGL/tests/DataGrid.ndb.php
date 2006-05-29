@@ -4,6 +4,7 @@ require_once dirname(__FILE__) . '/../Request.php';
 require_once dirname(__FILE__) . '/../DataGrid.php';
 require_once dirname(__FILE__) . '/../Column.php';
 require_once dirname(__FILE__) . '/../SQLDataSource.php';
+require_once dirname(__FILE__) . '/../../../docs/developer/examples/modules/tools/classes/Output.php';
 
 /**
  * Test suite.
@@ -270,10 +271,10 @@ class DataGridTest extends UnitTestCase {
 
     function testFormatDate2DB()
     {
-        $this->assertNotNull(SGL_Output::formatDate2DB('2005-01-01'));
-        $this->assertNull(SGL_Output::formatDate2DB('2005.01.01'));
-        $this->assertNotNull(SGL_Output::formatDate2DB('01.01.2005'));
-        $this->assertNull(SGL_Output::formatDate2DB('01.01.05'));
+        $this->assertNotNull(ToolsOutput::formatDate2DB('2005-01-01'));
+        $this->assertNull(ToolsOutput::formatDate2DB('2005.01.01'));
+        $this->assertNotNull(ToolsOutput::formatDate2DB('01.01.2005'));
+        $this->assertNull(ToolsOutput::formatDate2DB('01.01.05'));
     }
 }
 
