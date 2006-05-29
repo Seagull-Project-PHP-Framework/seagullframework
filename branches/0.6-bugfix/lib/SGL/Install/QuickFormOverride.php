@@ -52,7 +52,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             }
 
             //  toggle lang list disabled by default
-            toggleLangList();
+            if (useExistingData != null) {
+                toggleLangList();
+            }
         }
 
         function toggleLangList(myCheckbox)
