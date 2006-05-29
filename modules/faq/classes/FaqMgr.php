@@ -78,7 +78,7 @@ class FaqMgr extends SGL_Manager
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();

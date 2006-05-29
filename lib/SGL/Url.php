@@ -347,6 +347,8 @@ class SGL_URL
                     $this->aQueryData = $ret;
                 }
             }
+            //  remove strategy objects to streamline for storage
+            $this->removeStrategies();
             return true;
         }
         return SGL::raiseError('no URI data', SGL_ERROR_NODATA);
@@ -522,7 +524,7 @@ class SGL_URL
                         ? ''
                         : ':' . $this->port)
                    . $this->getPath();
-        
+
         //  append front script name if not already present
         if ($this->frontScriptName != false) {
             if (!preg_match("/$this->frontScriptName/", $retUrl)) {
@@ -793,6 +795,11 @@ class SGL_URL
         if ($key !== false) {
             unset($aUrl[$key], $aUrl[$key + 1]);
         }
+    }
+
+    function removeStrategies()
+    {
+        unset($this->aStrategies);
     }
 
     /**
