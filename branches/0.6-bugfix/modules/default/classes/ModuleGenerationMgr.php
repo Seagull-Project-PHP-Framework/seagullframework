@@ -301,7 +301,7 @@ class ModuleGenerationMgr extends SGL_Manager
             $fileName = $aDirectories['templates'] . '/' . $template;
             $html = '';
 
-            if (strpos($fileName,'Edit.html') !== false) {
+            if (strpos($fileName, 'Edit.html') !== false) {
                 foreach ($output->modelFields as $field => $type) {
                     //  omit the table key and foreign keys
                     if (substr($field, -3) != '_id') {
@@ -341,16 +341,17 @@ class ModuleGenerationMgr extends SGL_Manager
                 if ($fileTemplate) {
                     $fileTemplate = str_replace(array_keys($replace), array_values($replace), $fileTemplate);
                 }
-            } elseif (strpos($fileName,'List.html') !== false) {
-                $table_header = "";
-                $table_body = "";
+            } elseif (strpos($fileName, 'List.html') !== false) {
+                $table_header = '';
+                $table_body = '';
                 foreach ($output->modelFields as $key => $value) {
-                    if (strpos($key,'_id') === false) {
+                    if (strpos($key, '_id') === false) {
                         $table_header .= '<th>' . $key . '</th>';
                         $table_body   .= '<td nowrap>{aValue[' . $key . ']}</td>';
                     } else {
-                        $table_header .= '<th>&nbsp</th>';
+                        //  don't create columns for foreign key fields
                         if ($key == $output->managerName . '_id') {
+                            $table_header .= '<th>Select</th>';
                             $table_body .= '<td align="center"><input type="checkbox" name="frmDelete[]" value="{aValue[' . $output->managerName . '_id]}" /></td>';
                         }
                     }
@@ -409,7 +410,6 @@ class ModuleGenerationMgr extends SGL_Manager
     {
         if (is_writable(SGL_MOD_DIR)) {
             require_once 'System.php';
-
             foreach ($aDirectories as $directory){
                 //  pass path as array to avoid windows space parsing prob
                 if (!file_exists($directory)) {

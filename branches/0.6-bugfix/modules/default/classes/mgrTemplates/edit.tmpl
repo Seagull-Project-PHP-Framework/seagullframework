@@ -4,6 +4,5 @@
         $output->wysiwyg   = true;
 
         $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
-        $%mgrName%->%mgrName%_id = $input->%mgrName%_id;
-        $%mgrName%->find(true);
+        $%mgrName%->get($input->%mgrName%Id);
         $output->%mgrName% = $%mgrName%;
