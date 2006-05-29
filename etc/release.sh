@@ -131,11 +131,6 @@ function exportSvnAndPackage()
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
 
-
-    #remove non-standard themes
-    rm -rf $PROJECT_NAME/www/savant
-    rm -rf $PROJECT_NAME/www/smarty
-
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
 
