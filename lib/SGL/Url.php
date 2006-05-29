@@ -522,12 +522,13 @@ class SGL_URL
                         ? ''
                         : ':' . $this->port)
                    . $this->getPath();
-    if ($this->frontScriptName != false) {
-        if (!preg_match("/$this->frontScriptName/", $retUrl)) {
-            $retUrl .= $this->getFrontScriptName();
+        
+        //  append front script name if not already present
+        if ($this->frontScriptName != false) {
+            if (!preg_match("/$this->frontScriptName/", $retUrl)) {
+                $retUrl .= $this->getFrontScriptName();
+            }
         }
-    }
-    $this->getFrontScriptName();
 
         //  add a trailing slash if one is not present
         $qs  = $this->getQueryString();

@@ -1,8 +1,9 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
 <form method="post" flexy:ignore>
 <input type="hidden" name="action" value="{action}" />
 <input type="hidden" name="%mgrName%_id" value="{%mgrName%.%mgrName%_id}" />
-<h1 class="pageTitle">{translate(pageTitle)}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
 
 <table class="wide">
     <tr>
