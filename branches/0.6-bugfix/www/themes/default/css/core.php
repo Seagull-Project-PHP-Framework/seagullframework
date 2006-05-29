@@ -389,14 +389,15 @@ legend {
     margin: 0 15% 10px;
     padding: 5px;
     background-color: <?php echo $primaryTextLight ?>;
-    color: <?php echo $secondaryDarker ?>;
     text-align: center;
 }
 .infoMessage {
     border: 1px solid <?php echo $primary ?>;
+    color: <?php echo $primary ?>;
 }
 .errorMessage {
     border: 1px solid <?php echo $errorDark ?>;
+    color: <?php echo $errorDark ?>;
 }
 
 /* /////////////// Lists /////////////// */
