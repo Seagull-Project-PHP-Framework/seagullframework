@@ -90,7 +90,8 @@ class RegisterMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+        if (($input->submitted && $input->action != 'changeUserStatus')
+                || in_array($input->action, array('insert', 'update'))) {
             $v = & new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
@@ -154,7 +155,7 @@ class RegisterMgr extends SGL_Manager
             }
 
             //  check for hacks - only admin user can set certain attributes
-            if (($input->action != 'changeUserStatus' && SGL_Session::getUid() != SGL_ADMIN
+            if ((SGL_Session::getUid() != SGL_ADMIN
                     && count(array_filter(array_flip($req->get('user')), array($this, 'containsDisallowedKeys'))))) {
                 $msg = 'Hack attempted by ' .$_SERVER['REMOTE_ADDR'] . ', IP logged';
                 if (SGL_Session::getRoleId() > SGL_GUEST) {
