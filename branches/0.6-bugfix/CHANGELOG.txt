@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.0        |
 +-----------------------+
 BUGFIXES
+30-05-06    Fixed bug where dbdo links creation task was missing from install, only
+            available on rebuild
 IMPROVEMENTS
 
 
