@@ -19,7 +19,7 @@
 *
 * @package Cache_Lite
 * @category Caching
-* @version $Id: Lite.php,v 1.42 2006/02/04 17:08:22 fab Exp $
+* @version $Id: Lite.php,v 1.43 2006/05/13 22:11:52 fab Exp $
 * @author Fabien MARTY <fab@php.net>
 */
 
@@ -396,7 +396,7 @@ class Cache_Lite
             }
             if (is_object($res)) {
 	        	// $res is a PEAR_Error object 
-	        	if (!($this->_errorHandlingAPIBreak)) {   
+                if (!($this->_errorHandlingAPIBreak)) {   
 	                return false; // we return false (old API)
 	            }
 	        }
@@ -708,6 +708,7 @@ class Cache_Lite
         $fp = @fopen($this->_file, "rb");
         if ($this->_fileLocking) @flock($fp, LOCK_SH);
         if ($fp) {
+            clearstatcache();
             $length = @filesize($this->_file);
             $mqr = get_magic_quotes_runtime();
             set_magic_quotes_runtime(0);

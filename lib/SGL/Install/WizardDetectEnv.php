@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardDetectEnv.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -43,13 +43,21 @@ function environmentOk()
     if (SGL_Install_Common::errorsExist()) {
         return false;
     } else {
-        //  store output for later processing
-        $serialized = serialize($GLOBALS['_SGL']['runner']);
+        // cleanup data for storage
+        $oTask = $GLOBALS['_SGL']['runner'];
+        $aSummary = array();
+        foreach ($oTask->aTasks as $oTask) {
+            $aSummary[$oTask->key] = $oTask->aData;
+        }
+        $serialized = serialize($aSummary);
         @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardDetectEnv extends HTML_QuickForm_Page
 {
     function buildForm()

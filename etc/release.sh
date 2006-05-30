@@ -27,7 +27,7 @@ FTP_REMOTE_DIR=incoming
 REVISION_NUM=$1
 RELEASE_NAME=$2
 PROJECT_NAME=seagull
-SVN_REPO_LEAF_FOLDER_NAME=trunk
+SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
@@ -117,6 +117,19 @@ function exportSvnAndPackage()
 #    rm -f $PROJECT_NAME/etc/release.sh
 #    rm -rf $PROJECT_NAME/lib/SGL/tests
 #    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -rf $PROJECT_NAME/lib/pear/Calendar
+    rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
+    rm -rf $PROJECT_NAME/lib/pear/Image
+
+    rm -rf $PROJECT_NAME/www/js/html_ajax
+
+    #datagrid js libs
+    rm -rf $PROJECT_NAME/www/js/overlib
+    rm -rf $PROJECT_NAME/www/js/jcalc
+
+    #themes that are incomplete
+    rm -rf $PROJECT_NAME/www/savant
+    rm -rf $PROJECT_NAME/www/smarty
 
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
@@ -189,15 +202,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_files/web/
-}
-
-##############################
-# scp changelog to sgl site
-##############################
-function scpChangelogToSglSite()
-{
-    scp $PROJECT_NAME-$RELEASE_NAME/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull_files/web/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/
 }
 
 ##############################
@@ -206,8 +211,8 @@ function scpChangelogToSglSite()
 function buildMinimalPearPackage()
 {
     # remove unwanted files
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
     #rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
     #rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
@@ -229,18 +234,6 @@ function buildMinimalPearPackage()
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
 
-
-    #and their templates
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/block
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/contactus
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/documentor
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/export
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/faq
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/guestbook
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/messaging
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/newsletter
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/randommsg
 
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
@@ -275,7 +268,6 @@ function buildMinimalPearPackage()
     $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
-
 }
 
 ##############################
@@ -303,9 +295,7 @@ packageApiDocs
 
 uploadToSfApiDocs
 
-#scpApiDocsToSglSite
-
-#scpChangelogToSglSite
+scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 

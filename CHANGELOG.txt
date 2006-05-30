@@ -1,11 +1,112 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.7.0        |
+| VERSION: 0.6.0RC3     |
 +-----------------------+
 BUGFIXES
-IMPROVEMENTS
+28-05-06    Fixed a bug where if caching was enabled, a URI parser was not executed
+            which caused an error (AJ Tarachanowicz)
+28-05-06    Fixed paths for RPC server
+27-05-06    Fixed prob where environment data was not being saved correctly in PHP4
+27-05-06    Logging debug level set correctly by default
+26-05-06    Some error messages were being lost with incorrect redirects, now fixed.
+26-05-06    Export rss filter chain descriptor modified in php.ini to be compatible
+            with php4
+09-05-06    Authentication and authorisation improved
+07-05-06    Improved regex for detecting PHP CGI installs, php_sapi_name also
+            returns apache2filter for CGI installs which is now detected (Mehdi Radgohar)
+05-05-06    Added missing en.js file that caused TinyFCK to fail on some platforms
+            (Ed Lea)
+05-05-06    CLI invocation fixed, see
+            http://trac.seagullproject.org/wiki/Howto/WorkingWithCliOrHttpRequests
+04-05-06    Fixed bug where array internal pointer was not set for module list,
+            caused SectionMgr to fail to list modules
+03-05-06    Fixed cmdline installer, envRebuild.php
+01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
+IMPROVEMENTS
+28-05-06    Improved integration of orgs and org types
+28-05-06    Naming in Navigation section is friendlier
+27-05-06    Factored out recording of login to Login observer
+26-05-06    Update of OCI related schema/data (Marco Patania)
+26-05-06    Implemented ability to do single sign on:
+            http://trac.seagullproject.org/wiki/Integration/SingleSignOn
+26-05-06    RegistrationMgr::_cmd_insert() now gets id for new user, can be used
+            for more interesting thank you screen
+22-05-06    Params can now be passed after URI aliases (Andrey Podshivalov) for
+            patch, (Davert) for unit test
+22-05-06    Added lang switcher to new theme (Julien Casanova)
+22-05-06    OCI schema and data now up to date (Ben)
+22-05-06    Added ability to call makeUrl() from JavaScript (Miha Vrhovnik), see
+            http://trac.seagullproject.org/wiki/Howto/UriManagement#GeneratingURIsinJavaScript
+17-05-06    Refactored LoginMgr to support observers, implemented FUD forum login
+            hook
+10-05-06    Some updates for gallery module, to ensure compatibility with Gallery 2.1
+            (Neil Mather)
+10-05-06    A member user is now added as part of rebuild
+09-05-06    Added request history to session, ability to return to a previously
+            requested page on authorisation failure
+06-05-06    Implemented a library cache for all files used on every request,
+            loaded file count back near 20.  To enabled place a file named 'ENABLE_LIBCACHE.txt'
+            in your seagull/var directory.  To update the cache, delete the file.
+01-05-06    Install and rebuild process will now build the correct fk links file
+            for DB_DataObject
+01-05-06    You can now customise the location of the upload directory
+30-04-06    HTML date widget cleanup
+30-04-06    Module generator can now add additional managers per module
+27-04-06    Wizard functionality reinstated (Steven Stremciuc)
+26-04-06    Added ability to customise location of the modules directory
+24-04-06    Modified RSS export to use custom filter chain
+22-04-06    Japanese translation added (Dozo Yousan)
+
++-----------------------+
+| VERSION: 0.6.0RC2     |
++-----------------------+
+BUGFIXES
+22-04-06    Fixed problem where selecting 'store langs in DB' during install, but
+            then selecting none from list resulted in a fatal error (Heinrich Stoellinger)
+21-04-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
+            dataobjects', now file removal forces update
+21-04-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
+21-04-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
+            Postgres fixed, unique indexes removed from usr table
+15-04-06    At long last, thanks to matt from IRC, Seagull will install properly
+            on MySQL 3.23
+12-04-06    List of stylesheets now correctly drawn from configured default theme,
+            not session.
+12-04-06    Made instructions clearer for adding default module and manager
+07-04-06    Link to news items corrected (alphasock@disona.net)
+14-03-06    Fixed Config::merge behaviour (Miha Vrhovnik)
+14-03-06    Fixed query for listing users with a left join (mstahv)
+
+IMPROVEMENTS
+22-04-06    Added ability to control DB_DataObject debug level from Config
+21-04-06    Added ability to force cache usage, overriding perferences, ie:
+                $cache = & SGL_Cache::singleton($force = true);
+18-04-06    Added ability to detect new modules
+17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
+13-04-06    Added ability to rebuild Seagull environment for privileged users
+13-04-06    Module generator improved
+11-04-06    Implemented observer support, example in RegisterMgr::_cmd_insert()
+07-04-06    Code for Delegate class simplified to work with installations where PHP
+            is compiled with --disable-reflection (jbpros)
+06-04-06    Improved pre and post-process workflow
+06-04-06    Added the ability to create a broadcast message that will appear on
+            every screen, eg, "Maintenance planned at 22.00 GMT"
+06-04-06    Added MySQL version detection, added more info to bug reporter
+26-03-06    Modified SGL_Inflector::caseFix() to return the original string if a
+            config key cannot be found to compare with, instead of false
+26-03-06    Added ability to load navigation data during the install, so devs can
+            create navigation that corresponds with their custom modules
+20-03-06    Added Dutch translation (Peter Termaten)
+20-03-06    Russian translations updated and enhanced (Dmitry Lakachauskis)
+17-03-06    Improvements to module generator, CRUD added (Gerald Fischer)
+17-03-06    Guestbook, FAQ, Documentor and Export modules improved, updated Russian
+            translations (lakiboy)
+17-03-06    Removed CSS hacks (Riccardo Magliocchetti and mstahv)
+17-03-06    Additional include paths can now be added via Config
+16-03-06    Added ability to implement custom filter chains
+14-03-06    Default theme now config driven
 
 +-----------------------+
 | VERSION: 0.6.0RC1     |
@@ -24,6 +125,7 @@ BUGFIXES
             (sirphp)
 
 IMPROVEMENTS
+08-03-06    Admin GUI complete (Julien Casanova)
 04-03-06    Renamed AppController to FrontController
 26-02-06    Added printf() method for templates, see
             http://trac.seagullproject.org/wiki/Howto/Templates/WorkingWithTemplates#UsingVariablesinLanguageStrings
@@ -39,7 +141,7 @@ IMPROVEMENTS
             ties allocated to 'default' module
 20-02-06    Moved all default templates within modules
 17-02-06    Factored out module builder code into its own manager, ModuleGenerationMgr
-17-02-06    CLI installer added, see seagull/var/demoRebuild.php
+17-02-06    CLI installer added, see seagull/var/envRebuild.php
 17-02-06    Added ability to edit modules' config files through GUI
             (Eric Persson)
 16-02-06    Moved session options to their own config group

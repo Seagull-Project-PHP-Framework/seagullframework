@@ -2,7 +2,7 @@
 
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -31,15 +31,13 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Config.php                                                                |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 // $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
-
-require_once dirname(__FILE__) . '/ParamHandler.php';
 
 /**
  * Config file parsing and handling, acts as a registry for config data.
@@ -97,11 +95,6 @@ class SGL_Config
         }
     }
 
-    function add($key, $value)
-    {
-        array_push($this->aProps, $value);
-    }
-
     function replace($aConf)
     {
         $this->aProps = $aConf;
@@ -146,14 +139,55 @@ class SGL_Config
 
     function merge($aConf)
     {
-        $firstKey = key($aConf);
-        if (!array_key_exists($firstKey, $this->aProps)) {
-            $this->aProps = array_merge_recursive($this->aProps, $aConf);
-        }
+        $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
     }
 
     function isEmpty()
     {
         return count($this->aProps) ? false : true;
     }
+
+    /**
+     * Ensures the module's config file was loaded and returns an array
+     * containing the global and modulde config.
+     *
+     * This is required when the homepage is set to custom mod/mgr/params,
+     * and the module config file loaded while initialising the request is
+     * not the file required for the custom invocation.
+     *
+     * @param string $moduleName
+     * @return mixed    array on success, PEAR_Error on failure
+     */
+    function ensureModuleConfigLoaded($moduleName)
+    {
+        if (!defined('SGL_MODULE_CONFIG_LOADED')
+                || $this->aProps['localConfig']['moduleName'] != $moduleName) {
+            $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
+            $modConfigPath = realpath($path);
+
+            if ($modConfigPath) {
+                $aModuleConfig = $this->load($modConfigPath);
+
+                if (PEAR::isError($aModuleConfig)) {
+                    $ret = $aModuleConfig;
+                } else {
+                    //  merge local and global config
+                    $this->merge($aModuleConfig);
+
+                    //  set local config module name.
+                    $this->set('localConfig', array('moduleName' => $moduleName));
+
+                    //  return global & module config
+                    $ret = $this->getAll();
+                }
+            } else {
+                $ret = SGL::raiseError("Config file could not be found at '$path'",
+                    SGL_ERROR_NOFILE);
+            }
+        } else {
+            $ret = $this->getAll();
+        }
+        return $ret;
+    }
 }
+?>

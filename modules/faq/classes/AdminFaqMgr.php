@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FaqMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -42,7 +42,7 @@ require_once 'DB/DataObject.php';
 require_once SGL_MOD_DIR . '/faq/classes/FaqMgr.php';
 
 /**
- * To allow users to contact site admins.
+ * Allow admins to manage FAQs.
  *
  * @package faq
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -56,18 +56,18 @@ class AdminFaqMgr extends FaqMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::FaqMgr();
 
-        $this->pageTitle    = 'FAQ Manager';
-        $this->template     = 'faqList.html';
+        $this->pageTitle = 'FAQ Manager';
+        $this->template  = 'faqListAdmin.html';
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'reorder'   => array('reorder'),
+            'add'           => array('add'),
+            'insert'        => array('insert', 'redirectToDefault'),
+            'edit'          => array('edit'),
+            'update'        => array('update', 'redirectToDefault'),
+            'reorder'       => array('reorder'),
             'reorderUpdate' => array('reorderUpdate', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
-            'list'      => array('list'),
+            'delete'        => array('delete', 'redirectToDefault'),
+            'list'          => array('list'),
         );
     }
 
@@ -75,19 +75,14 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->aDelete     = $req->get('frmDelete');
-        $input->faqId       = $req->get('frmFaqId');
-        $input->items       = $req->get('_items');
-        $input->submitted   = $req->get('submitted');
-        $input->faq         = (object)$req->get('faq');
+        parent::validate($req, $input);
+        $input->aDelete   = $req->get('frmDelete');
+        $input->faqId     = $req->get('frmFaqId');
+        $input->items     = $req->get('_items');
+        $input->submitted = $req->get('submitted');
+        $input->faq       = (object)$req->get('faq');
 
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             if (empty($input->faq->question)) {
                 $aErrors['question'] = 'Please fill in a question';
             }
@@ -98,9 +93,16 @@ class AdminFaqMgr extends FaqMgr
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
+            $input->error    = $aErrors;
             $input->template = 'faqEdit.html';
             $this->validated = false;
+
+            // save currect title
+            if ($input->action == 'insert') {
+                $input->pageTitle .= ' :: Add';
+            } elseif ($input->action == 'update') {
+                $input->pageTitle .= ' :: Edit';
+            }
         }
     }
 
@@ -108,8 +110,8 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'faqEdit.html';
-        $output->action   = 'insert';
+        $output->template  = 'faqEdit.html';
+        $output->action    = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
     }
 
@@ -117,12 +119,7 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->faq)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
-
         //  get new order number
         $faq = DB_DataObject::factory($this->conf['table']['faq']);
         $faq->selectAdd();
@@ -139,9 +136,10 @@ class AdminFaqMgr extends FaqMgr
         $faq->item_order = $maxItemOrder + 1;
         $success = $faq->insert();
         if ($success) {
-            SGL::raiseMsg('faq saved successfully');
+            SGL::raiseMsg('faq saved successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 
@@ -149,8 +147,8 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'faqEdit.html';
-        $output->action   = 'update';
+        $output->template  = 'faqEdit.html';
+        $output->action    = 'update';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $faq = DB_DataObject::factory($this->conf['table']['faq']);
 
@@ -169,9 +167,10 @@ class AdminFaqMgr extends FaqMgr
         $faq->last_updated = SGL_Date::getTime(true);
         $success = $faq->update();
         if ($success) {
-            SGL::raiseMsg('faq updated successfully');
+            SGL::raiseMsg('faq updated successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem updating the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem updating the record',
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 
@@ -186,11 +185,11 @@ class AdminFaqMgr extends FaqMgr
                 $faq->delete();
                 unset($faq);
             }
+            SGL::raiseMsg('faq deleted successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('faq deleted successfully');
     }
 
     function _cmd_reorder(&$input, &$output)
@@ -198,7 +197,7 @@ class AdminFaqMgr extends FaqMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $this->pageTitle . ' :: Reorder';
-        $output->template = 'faqReorder.html';
+        $output->template  = 'faqReorder.html';
         $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();
@@ -214,40 +213,33 @@ class AdminFaqMgr extends FaqMgr
     function _cmd_reorderUpdate(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aNewOrder = explode(',', $input->items);
 
-        //  reorder elements
-        $pos = 1;
-        foreach ($aNewOrder as $faqId) {
-            $faq = DB_DataObject::factory($this->conf['table']['faq']);
-            $faq->get($faqId);
-            $faq->item_order = $pos;
-            $success = $faq->update();
-            unset($faq);
-            $pos++;
+        if (!empty($input->items)) {
+            $aNewOrder = explode(',', $input->items);
+            //  reorder elements
+            $pos = 1;
+            foreach ($aNewOrder as $faqId) {
+                $faq = DB_DataObject::factory($this->conf['table']['faq']);
+                $faq->get($faqId);
+                $faq->item_order = $pos;
+                $success = $faq->update();
+                unset($faq);
+                $pos++;
+            }
+            SGL::raiseMsg('faqs reordered successfully', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('faqs reordered successfully');
     }
 
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'faqListAdmin.html';
+        parent::_cmd_list($input, $output);
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-
-        $faqList = DB_DataObject::factory($this->conf['table']['faq']);
-        $faqList->orderBy('item_order');
-        $result = $faqList->find();
-        $aFaqs = array();
-        if ($result > 0) {
-            while ($faqList->fetch()) {
-                $faqList->question = $faqList->question;
-                $faqList->answer = nl2br($faqList->answer);
-                $aFaqs[] = clone($faqList);
-            }
-        }
-        $output->results = $aFaqs;
     }
 }
+
 ?>

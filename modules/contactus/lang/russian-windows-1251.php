@@ -1,26 +1,34 @@
 <?php
     $words = array(
+   
 /*  CONTACT US MGR  */
-        'Contact Us' => 'Связаться с нами',
-        'First Name' => 'Имя',
-        'Last Name' => 'Фамилия',
-        'Email' => 'Email',
-        'contact intro' => 'If you would like to get in touch please fill out the following form and submit your details.',
-        'Type of enquiry' => 'Тип вопроса',
-        'Comment' => 'Комментарий',
-        'Contact Enquiry from' => 'Вопрос от',
-        'aContactType' => array(
-            'General enquiry' => 'Общий вопрос',
-            'Get a quote' => 'Получить квоту',
-            'Hosting info' => 'Информация по хостингу',
-            'Site feedback' => 'Обратная связь',
-            ),
 
-/*  ERROR MSGS  */
-        'You must enter your first name' => 'Вы не указали имя',
-        'You must enter your last name' => 'Вы не указали фамилию',
-        'You must fill in your comment' => 'Вы не заполнили комментарий',
-        'Your email is not correctly formatted' => 'Некорректный email',
-        'You must enter your email' => 'Вы не указали email',
+        // Title
+        'Contact Us' => 'Обратная связь',
+        
+        // Form
+        'contact intro'   => 'Чтобы связаться с нами, пожалуйста, заполните поля формы, указав личные данные, тип вопроса и вопрос.',
+        'First Name'      => 'Имя',
+        'Last Name'       => 'Фамилия',
+        'Email'           => 'Эл. почта',
+        'Type of enquiry' => 'Тип вопроса',
+        'Comment'         => 'Вопрос',
+        
+        'aContactType' => array(
+            'General enquiry' => 'Вопрос на общую тему',
+            'Get a quote'     => 'Получение квоты',
+            'Hosting info'    => 'Информация о хостинг-услугах',
+            'Site feedback'   => 'Обратная взязь',
+        ),
+
+        // validate
+        'You must enter your first name'        => 'Пожалуйста, укажите имя',
+        'You must enter your last name'         => 'Пожалуйста, укажите фамилию',
+        'You must fill in your comment'         => 'Пожалуйста, укажите вопрос',
+        'You must enter your email'             => 'Пожалуйста, укажите адрес эл. почты',
+        'Your email is not correctly formatted' => 'Адрес эл. почты не корректен',
+        
+        // email
+        'Contact Enquiry from' => 'Вопрос от',
     );
 ?>

@@ -37,20 +37,21 @@
 // +---------------------------------------------------------------------------+
 // $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
 
+require_once 'DB/DataObject.php';
 /**
  * Type your class description here ...
  *
  * @package {t.moduleName}
  * @author  {t.authorName} <{t.authorEmail}>
  */
-class {t.managerName}Mgr extends SGL_Manager
+class {t.ManagerName}Mgr extends SGL_Manager
 {
-    function {t.managerName}Mgr()
+    function {t.ManagerName}Mgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = '{t.managerName} Manager';
+        $this->pageTitle    = '{t.ManagerName} Manager';
         $this->template     = '{t.templatePrefix}List.html';
 
         $this->_aActionsMapping =  array({foreach:t.aActionMapping,action}
@@ -68,7 +69,9 @@ class {t.managerName}Mgr extends SGL_Manager
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
+        $input->{t.managerName} = (object)$req->get('{t.managerName}');
+        $input->{t.managerName}Id = $req->get('frm{t.ManagerName}ID');
 
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
@@ -78,6 +81,14 @@ class {t.managerName}Mgr extends SGL_Manager
         }
     }
 
-{t.methods}
+    function display(&$output)
+    {
+        if ($this->conf['{t.ManagerName}Mgr']['showUntranslated'] == false) {
+            $c = &SGL_Config::singleton();
+            $c->set('debug', array('showUntranslated' => false));
+        }
+    }
+
+{t.methods:h}
 
 }

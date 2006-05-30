@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_User.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -97,7 +97,8 @@ class DA_User extends SGL_Manager
         SGL_DB::setConnection();
         $this->dbh->autocommit();
 
-        $oUser->usr_id = $this->dbh->nextId($this->conf['table']['user']);
+        $userId = $this->dbh->nextId($this->conf['table']['user']);
+        $oUser->usr_id = $userId;
         $ok = $oUser->insert();
 
         if (!$ok) {
@@ -135,10 +136,10 @@ class DA_User extends SGL_Manager
 
         if ($ok && !SGL_Error::count()) {
             $this->dbh->commit();
-            return true;
+            return $userId;
         } else {
             $this->dbh->rollback();
-            return PEAR::raiseError('Problem encountered adding user');
+            return SGL_Error::getLast();
         }
     }
 
@@ -587,14 +588,14 @@ class DA_User extends SGL_Manager
 
         if (!PEAR::isError($aRes) && count($aRes)) {
             return $aRes;
-        } elseif (!DB::isError($aRes)) {
+        } elseif (!PEAR::isError($aRes)) {
 
             //  return default prefs if none exist for given user id
             if ($uid != 0) { // uid of 0 is the anonymous/public user
                 return $this->getPrefsByUserId();
             } else {
                 $aRes = $this->getMasterPrefs();
-                if (DB::isError($aRes) || !count($aRes)) {
+                if (PEAR::isError($aRes) || !count($aRes)) {
                     SGL::raiseError('No default prefs have been set!',
                         SGL_ERROR_NODATA, PEAR_ERROR_DIE);
                 } else {
@@ -635,6 +636,12 @@ class DA_User extends SGL_Manager
             SELECT  $term, default_value
             FROM    {$this->conf['table']['preference']}";
         $aRes = $this->dbh->getAssoc($query);
+
+        //  set default theme from config
+        $key = ($type == SGL_RET_NAME_VALUE) ? 'theme' : 3;
+        $c = &SGL_Config::singleton();
+        $defaultTheme = $c->get(array('site' => 'defaultTheme'));
+        $aRes[$key] = $defaultTheme;
 
         return $aRes;
     }

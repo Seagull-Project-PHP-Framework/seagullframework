@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DocumentMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class DocumentMgr extends FileMgr
         $input->assetFileSize         = $input->assetFileArray['size'];
 
         //  determine user type
-        $input->isAdmin = (SGL_Session::getUserType() == SGL_ADMIN)
+        $input->isAdmin = (SGL_Session::getRoleId() == SGL_ADMIN)
             ? true
             : false;
 
@@ -130,14 +130,14 @@ class DocumentMgr extends FileMgr
 
                 //  check uploaded file is of valid type
                 if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
-                    $aErrors[] = SGL_String::translate('Error: Not a recognised file type');
+                    $aErrors[] = 'Error: Not a recognised file type';
                 }
                 //  ... and does not exist in uploads dir
                 if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
-                    $aErrors[] = SGL_String::translate('Error: A file with this name already exists');
+                    $aErrors[] = 'Error: A file with this name already exists';
                 }
             } else {
-                $aErrors[] = SGL_String::translate('You must select a file to upload');
+                $aErrors[] = 'You must select a file to upload';
             }
         }
 
@@ -296,6 +296,10 @@ class DocumentMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!SGL::objectHasState($input->document)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
         $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->setFrom($input->document);
@@ -319,16 +323,21 @@ class DocumentMgr extends FileMgr
         $output->template = 'documentMgrEdit.html';
 
         //  delete physical file
-        foreach ($input->deleteArray as $index => $assetID) {
-            $document = DB_DataObject::factory($this->conf['table']['document']);
-            $document->get($assetID);
-            if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
-                @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+        if (is_array($input->deleteArray)) {
+            foreach ($input->deleteArray as $index => $assetID) {
+                $document = DB_DataObject::factory($this->conf['table']['document']);
+                $document->get($assetID);
+                if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
+                    @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+                }
+                $document->delete();
+                unset($document);
             }
-            $document->delete();
-            unset($document);
+            SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)

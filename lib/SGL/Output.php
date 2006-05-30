@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -67,19 +67,28 @@ class SGL_Output
         return SGL_String::translate($key, $filter, $aParams);
     }
 
-    function get($key)
+    function getLangSwitcher($currUrl = '', $webRoot = '', $theme = '')
     {
-        if (isset($this->aProps[$key])) {
-            $ret = $this->aProps[$key];
-        } else {
-            $ret = null;
-        }
-        return $ret;
-    }
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aInstalledLangs = str_replace('_', '-', explode(',', $conf['translation']['installedLanguages']));
+        $imageDir = "$webRoot/themes/$theme/images/flags/";
+        $hasLangParam = preg_match('/lang=/', $currUrl);
+        $aLangs  = SGL_Util::getLangsDescriptionMap();
+        $langSwitcher  = '';
 
-    function set($key, $value)
-    {
-        $this->aProps[$key] = $value;
+        foreach ($aLangs as $k => $v) {
+            if (in_array($k, $aInstalledLangs)
+                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
+                $link = ($hasLangParam)
+                    ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
+                    : $currUrl . "?lang=$k";
+                preg_match('/(.+) \(.+\)/', $v, $matches);
+                $langSwitcher .= "<a class='langFlag' id='$k' href='$link'><img src='$imageDir$k.png' alt='$matches[1]' title='speak $matches[1] please'/></a>";
+            }
+        }
+
+        return $langSwitcher;
     }
 
     /**
@@ -377,7 +386,9 @@ class SGL_Output
     function getNoExpiryCheckbox($aDate,$sFormName)
     {
         $checked = ($aDate == null) ? 'checked' : '';
-        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.' /> '.SGL_Output::translate('No expire');
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName
+            .'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '
+            .$checked.' /> '.SGL_Output::translate('No expire');
     }
 
     /**
@@ -386,10 +397,13 @@ class SGL_Output
      *
      * @access  public
      * @param   boolean $isBold
+     * @param   string  $pColor optional primary color, override default
+     * @param   string  $sColor optional secondary color, override default
      * @return  string  $curRowClass string representing class found in stylesheet
      */
 
-    function switchRowClass($isBold = false, $id = 'default')
+    function switchRowClass($isBold = false, $pColor = 'backDark',
+                            $sColor = 'backLight', $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -400,15 +414,14 @@ class SGL_Output
             $_id = $id;
         }
 
-        if ($curRowClass == 'backLight' && $isBold ) {
-            $curRowClass = 'backDark bold';
-        } elseif ($curRowClass == 'backLight') {
-            $curRowClass = 'backDark';
-        } elseif ($isBold) {
-            $curRowClass = 'backLight bold';
+        if (strpos($curRowClass, $sColor) === false) {
+            $curRowClass = $sColor;
         } else {
-            $curRowClass = 'backLight';
+            $curRowClass = $pColor;
         }
+
+	if ($isBold)
+            $curRowClass .= ' bold';
 
         return $curRowClass;
     }

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Session.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -180,12 +180,12 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => $oUser->usr_id,
                 'rid'               => $oUser->role_id,
-                'oid'               => $oUser->organisation_id,
+                'oid'               => !empty($oUser->organisation_id) ? $oUser->organisation_id : 0,
                 'username'          => $oUser->username,
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
-                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id),
+                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id),
                 'aPerms'            => ($oUser->role_id == SGL_ADMIN)
                     ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
@@ -220,7 +220,7 @@ class SGL_Session
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             $oldSessionId = session_id();
-            session_regenerate_id();
+            @session_regenerate_id();
 
             if ($conf['session']['handler'] == 'file') {
 
@@ -288,7 +288,7 @@ class SGL_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            if (mktime() -$lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
+            if (mktime() - $lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
                 $_SESSION['lastRefreshed'] = mktime();
             }
             return false;
@@ -320,31 +320,12 @@ class SGL_Session
         return $ret;
     }
 
-    /**
-     * Determines current user type.
-     *
-     *      - guest (not logged in)
-     *      - member
-     *      - admin
-     *
-     * @access  public
-     * @static
-     * @return  int  $currentUserType
-     */
-    function getUserType()
+    function currentUserIsOwner($ownerId)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $currentRoleId = @$_SESSION['rid'];
-
-        if ($currentRoleId == SGL_GUEST) {
-            $currentUserType = SGL_GUEST;
-        } elseif ($currentRoleId == SGL_ADMIN) {
-            $currentUserType = SGL_ADMIN;
-        } else {
-            $currentUserType = SGL_MEMBER;
+        if (!isset($_SESSION)) {
+            return false;
         }
-        return $currentUserType;
+        return $_SESSION['uid'] == $ownerId;
     }
 
     /**
@@ -378,7 +359,7 @@ class SGL_Session
             return $_SESSION['username'];
         } else {
             return false;
-        }        
+        }
     }
 
     /**
@@ -391,7 +372,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION && isset($_SESSION['rid']))) {
+        if (count($_SESSION) && isset($_SESSION['rid'])) {
             return $_SESSION['rid'];
         } else {
             return false;

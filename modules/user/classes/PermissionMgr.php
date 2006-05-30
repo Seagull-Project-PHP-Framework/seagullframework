@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PermissionMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: PermissionMgr.php,v 1.58 2005/05/28 13:46:30 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
@@ -86,6 +85,7 @@ class PermissionMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
@@ -106,12 +106,10 @@ class PermissionMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submitted) {
-            if ($input->action == 'insert' || $input->action == 'update') {
-                if (empty($input->perm->name)) {
-                    $this->validated = false;
-                    $aErrors['name'] = 'You must enter a permission name';
-                }
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+            if (empty($input->perm->name)) {
+                $this->validated = false;
+                $aErrors['name'] = 'You must enter a permission name';
             }
         }
         //  if errors have occured
@@ -123,7 +121,9 @@ class PermissionMgr extends SGL_Manager
                 ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
             $input->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
-            $input->currentModule = $input->perm->module_id;
+            if (!empty($input->perm->module_id)) {
+                $input->currentModule = $input->perm->module_id;
+            }
         }
     }
 
@@ -181,10 +181,6 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->perm)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
@@ -216,7 +212,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return false;
         }
         $input->template = 'permScan.html';
@@ -253,7 +249,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return;
         }
         $input->template = 'permScan.html';
@@ -274,6 +270,7 @@ class PermissionMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
@@ -288,6 +285,7 @@ class PermissionMgr extends SGL_Manager
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
@@ -315,7 +313,6 @@ class PermissionMgr extends SGL_Manager
             unset($oPerm);
         }
         //  deleting associated perms - taken care of by cascading deletes
-
         //  update perms superset cache
         SGL_Cache::clear('perms');
 
@@ -461,7 +458,8 @@ class PermissionMgr extends SGL_Manager
     }
 
    /**
-    * Scans class files and retrieves an array of class and method perms using the aAllowedActions property
+    * Scans class files of registered modules and retrieves an array of class
+    * and method perms using the aAllowedActions property
     *
     * @author  Jacob Hanson <jacdx@jacobhanson.com>
     * @copyright Jacob Hanson 2004
@@ -483,9 +481,19 @@ class PermissionMgr extends SGL_Manager
 
         $permsFound = array();
 
+
         //  scan
         require_once  'System.php';
-        $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
+
+        $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
+        $aFindArgs = array(SGL_MOD_DIR, '-maxdepth', 3);
+
+        //only scan in registered modules
+        foreach ($aRegisteredModules as $module) {
+            $aFindArgs[] = '-name';
+            $aFindArgs[] = $module .'/classes/*php';
+        }
+        $files = System::find($aFindArgs);
 
         foreach ($files as $k => $v) {
             //  only process files in 'classes' directories

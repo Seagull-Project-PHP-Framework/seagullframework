@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Category.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -329,7 +329,7 @@ class SGL_Category
              		: array();
 
         foreach ($aRoles as $roleId => $roleName) {
-            $tmp['category_id'] = $roleId;
+            $tmp['role_id'] = $roleId;
             $tmp['name'] = $roleName;
             $tmp['isAllowed'] = (!in_array($roleId, $aPerms)) ? 1 : 0;
             $perms[] = (object)$tmp;
@@ -349,7 +349,7 @@ class SGL_Category
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
 
     	$nestedSet = new SGL_NestedSet($this->_params);
-    	$nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
+    	$nestedSet->setImage('folder', 'images/treeNav/file.png');
         $categoryTree = $nestedSet->getTree();
         $nestedSet->addImages($categoryTree);
 

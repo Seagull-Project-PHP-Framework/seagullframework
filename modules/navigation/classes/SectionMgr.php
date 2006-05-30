@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SectionMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -160,6 +160,10 @@ class SectionMgr extends SGL_Manager
                     }
                 }
             }
+            if (isset($input->section['staticArticleId'])
+                && $input->section['staticArticleId'] == 0) {
+                $aErrors['staticArticleId'] = 'You must select a valid article';
+            }
         } elseif (!empty($input->section['edit'])) {
             unset($input->aParams);
             $this->validated = false;
@@ -180,7 +184,6 @@ class SectionMgr extends SGL_Manager
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->pageTitle = $this->pageTitle .' :: Add';
         $output->template = 'sectionEdit.html';
         $output->mode     = 'New section';
         $output->isAdd    = true;
@@ -212,10 +215,10 @@ class SectionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
-        if ($msgType = $this->da->addSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
+        if ($this->da->addSection($input->section)) {
+            SGL::raiseMsg('Section successfully added', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseMsg('There was a problem inserting the record', true, SGL_MESSAGE_ERROR);
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
@@ -227,10 +230,10 @@ class SectionMgr extends SGL_Manager
 
         $input->section['lang'] = $input->navLang;
 
-        if ($msgType = $this->da->updateSection($input->section)) {
-            SGL::raiseMsg($this->da->getMessage(), true, $msgType);
+        if ($this->da->updateSection($input->section)) {
+            SGL::raiseMsg('Section details successfully updated', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseMsg('There was a problem updating the record', true, SGL_MESSAGE_ERROR);
         }
         //  clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('nav');
@@ -358,10 +361,11 @@ class SectionMgr extends SGL_Manager
 
             //  build dynamic section choosers
             $output->aModules = SGL_Util::getAllModuleDirs();
+            reset($output->aModules);
             $currentModule = isset($output->section['module'])
                 ? $output->section['module']
                 : key($output->aModules);
-            $output->aManagers = SGL_Util::getAllFilesPerModule(SGL_MOD_DIR .'/'. $currentModule);
+            $output->aManagers = SGL_Util::getAllManagersPerModule(SGL_MOD_DIR .'/'. $currentModule);
             $currentMgr = (isset($output->section['manager'])
                         && isset($output->aManagers[$output->section['manager']]))
                 ? $output->section['manager']

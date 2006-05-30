@@ -14,11 +14,11 @@
         </p>
         <p>
             <label>{translate(#Action#)}</label>
-            <input type="button" class="sgl-button" value="{translate(#List installed packages#)}"
-                onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-list-all/mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
             <input type="button" class="sgl-button" value="{translate(#List remote packages#)}"
                 onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-list-all/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
-            <input type="button" class="sgl-button" value="{translate(#Search package#)}" />
+            <input type="button" class="sgl-button" value="{translate(#List installed packages#)}"
+                onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-list-all/mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+<!--            <input type="button" class="sgl-button" value="{translate(#Search package#)}" />-->
         </p>
         </fieldset>
 

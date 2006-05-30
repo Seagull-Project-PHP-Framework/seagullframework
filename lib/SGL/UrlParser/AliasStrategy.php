@@ -8,6 +8,7 @@
  */
 
 require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
 
 /**
  * Concrete alias url parser strategy
@@ -28,8 +29,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
      */
     function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        $aUriAliases = $this->da->_aUriAliases;
-
+        $aUriAliases = $this->da->getAllAliases();
         $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
         //    The alias will always be the second uri part in the array
@@ -37,7 +37,10 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
         $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
         $ret = array();
         if (count($aUriParts) > $countUriParts) {
-            $alias = $aUriParts[$countUriParts];
+            $alias = array_shift($aUriParts);
+            if ($countUriParts) {
+                $alias = array_shift($aUriParts);
+            }
 
             //  If alias exists, update the alias in the uri with the specified resource
             if (array_key_exists($alias, $aUriAliases)) {
@@ -56,7 +59,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
                     }
 
                     $tmp = new stdClass();
-                    $tmp->url = $aliasUri;
+                    $tmp->url = $aliasUri . '/' . implode('/', $aUriParts);
                     $ret = parent::parseQueryString($tmp, $conf);
                 }
             }

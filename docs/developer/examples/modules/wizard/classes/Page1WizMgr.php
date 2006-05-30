@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Page1Wiz.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -63,14 +63,14 @@ class Page1WizMgr extends SGL_Wizard
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::validate($req, $input);
 
-        $this->validated    = true;
-        $input->error       = null;
-        $input->pageTitle   = 'Page 1';
-        $input->template    = 'contact1.html';
-        $input->masterTemplate = 'masterBlank.html';
-        $input->action      = $req->get('action');
-        $input->aDelete     = $req->get('frmDelete');
-        $input->contact     = (object)$req->get('contact');
+        $this->validated        = true;
+        $input->error           = null;
+        $input->pageTitle       = 'Page 1';
+        $input->template        = 'contact1.html';
+        $input->masterTemplate  = $this->masterTemplate;
+        $input->action          = $req->get('action');
+        $input->aDelete         = $req->get('frmDelete');
+        $input->contact         = (object)$req->get('contact');
 
         $aErrors = array();
         if ($this->submit) {

@@ -106,3 +106,9 @@ INSERT INTO item_type_mapping VALUES (5,4,'title',0);
 INSERT INTO item_type_mapping VALUES (6,4,'newsHtml',2);
 INSERT INTO item_type_mapping VALUES (7,5,'title',0);
 INSERT INTO item_type_mapping VALUES (8,5,'bodyHtml',2);
+
+#
+# Dumping data for table `category`
+#
+
+INSERT INTO category VALUES (1,'PublisherRoot',NULL,0,1,1,4,1,1);

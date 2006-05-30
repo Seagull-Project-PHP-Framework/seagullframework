@@ -1,7 +1,7 @@
 <?PHP
 /* vim: set expandtab shiftwidth=4 softtabstop=4 tabstop=4: */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Pierpaolo Toniolo                                     |
+// | Copyright (c) 2006, Pierpaolo Toniolo                                     |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Download.php                                                              |
 // +---------------------------------------------------------------------------+

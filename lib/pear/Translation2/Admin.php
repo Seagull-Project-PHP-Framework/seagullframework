@@ -130,7 +130,7 @@ class Translation2_Admin extends Translation2
     function _setDefaultOptions()
     {
         $this->options['autoCleanCache'] = false;
-        $this->options['cacheOptions']   = array();
+        $this->options['cacheOptions']   = array('defaultGroup' => 'Translation2');
         parent::_setDefaultOptions();
     }
 
@@ -328,7 +328,7 @@ class Translation2_Admin extends Translation2
             require_once 'Cache/Lite/Function.php';
             $cacheLiteFunction = new Cache_Lite_Function($this->options['cacheOptions']);
         }
-        $cacheLiteFunction->clean();
+        $cacheLiteFunction->clean($this->options['cacheOptions']['defaultGroup']);
     }
 
     // }}}

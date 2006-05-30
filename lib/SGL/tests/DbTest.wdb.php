@@ -45,10 +45,11 @@ class DbTest extends UnitTestCase {
           'phptype' => 'mysql_SGL',
           'username' => 'root',
           'password' => '',
-          'protocol' => 'unix',
+          'protocol' => 'tcp',
+          'socket' => false,
           'hostspec' => 'localhost',
-          'port' => '3306',
-          'database' => 'seagull',
+          'port' => false,
+          'database' => 'simpletest',
         );
         $this->assertEqual($dsn, $expected);
     }
@@ -61,9 +62,10 @@ class DbTest extends UnitTestCase {
           'phptype' => 'mysql_SGL',
           'username' => 'root',
           'password' => '',
-          'protocol' => 'unix',
+          'protocol' => 'tcp',
+          'socket' => false,
           'hostspec' => 'localhost',
-          'port' => '3306',
+          'port' => false,
         );
         $this->assertEqual($dsn, $expected);
     }
@@ -72,7 +74,7 @@ class DbTest extends UnitTestCase {
     {
 		$dbh = & SGL_DB::singleton($this->dsn);
 		$dsn = SGL_DB::getDsn(SGL_DSN_STRING);
-		$expected = 'mysql_SGL://root:@unix+localhost/seagull';
+		$expected = 'mysql_SGL://root:@tcp+localhost/simpletest';
         $this->assertEqual($dsn, $expected);
     }
 
@@ -80,7 +82,7 @@ class DbTest extends UnitTestCase {
     {
 		$dbh = & SGL_DB::singleton($this->dsn);
 		$dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
-		$expected = 'mysql_SGL://root:@unix+localhost';
+		$expected = 'mysql_SGL://root:@tcp+localhost';
         $this->assertEqual($dsn, $expected);
     }
 }

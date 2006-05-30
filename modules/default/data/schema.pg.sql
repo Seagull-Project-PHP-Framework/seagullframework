@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- Last edited: Pierpaolo Toniolo 29-03-2006
 -- Schema for default
 
 -- ==============================================================
@@ -15,6 +15,12 @@ create table log_table
 );
 
 -- ==============================================================
+--  Sequence: log_table_seq
+-- ==============================================================
+
+create sequence log_table_seq;
+
+-- ==============================================================
 --  Table: table_lock
 -- ==============================================================
 create table table_lock
@@ -26,10 +32,15 @@ create table table_lock
 );
 
 -- ==============================================================
+--  Sequence: table_lock_seq
+-- ==============================================================
+
+create sequence table_lock_seq;
+
+-- ==============================================================
 --  Table: session
 -- ==============================================================
-create table user_session
-(
+create table user_session (
    session_id                    VARCHAR(255)    not null,
    last_updated                  TIMESTAMP       null,
    data_value                    TEXT            null,
@@ -38,6 +49,12 @@ create table user_session
    expiry                        INT4            not null,
    constraint PK_SESSION primary key (session_id)
 );
+
+-- ==============================================================
+--  Sequence: session_seq
+-- ==============================================================
+
+create sequence session_seq;
 
 -- ==============================================================
 --  Index: user_session_last_updated
@@ -68,8 +85,7 @@ create  index user_session_username on user_session (
 --  Table: module
 -- ==============================================================
 
-create table module
-(
+create table module (
    module_id         INT4 not null,
    is_configurable   INT2 null,
    name              VARCHAR(255) null,
@@ -77,15 +93,25 @@ create table module
    description       TEXT         null,
    admin_uri         VARCHAR(255) null,
    icon              VARCHAR(255) null,
+   maintainers       TEXT,
+   version           VARCHAR(8)   null,
+   license           VARCHAR(16)  null,
+   state             VARCHAR(8)   null,
    constraint PK_MODULE primary key (module_id)
 );
+
+-- ==============================================================
+-- sequence module_seq
+-- ==============================================================
+
+create sequence module_seq;
 
 -- ==============================================================
 --  Function: unix_timestamp
 -- some functions for better compatibility with mysql master schema file
 -- ==============================================================
 
-CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
+CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;'; 
 
 CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 

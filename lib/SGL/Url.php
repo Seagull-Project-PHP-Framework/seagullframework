@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Url.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -112,7 +112,6 @@ class SGL_URL
     * @var array
     */
     var $querystring;
-
     var $aQueryData;
     var $frontScriptName;
     var $aStrategies = array();
@@ -170,7 +169,6 @@ class SGL_URL
         $this->path        = '';
         $this->aQueryData = array();
         $this->anchor      = '';
-
         //  get default config
         if (is_null($conf)) {
             $c = &SGL_Config::singleton();
@@ -205,7 +203,7 @@ class SGL_URL
         // Only set defaults if $url is not an absolute URL
         if (!preg_match('/^[a-z0-9]+:\/\//i', $this->url)) {
 
-            //FIXME: get rid of this
+            // FIXME: get rid of this
             if (is_a($this->aStrategies[0], 'SGL_UrlParser_SimpleStrategy')) {
                 $this->aQueryData = $this->parseQueryString($this->conf);
                 return;
@@ -241,12 +239,26 @@ class SGL_URL
                                         ? $_SERVER['SERVER_PORT']
                                         : $this->getStandardPort($this->protocol));
             $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
-            $this->anchor      = '';
+#FIXME: $_SERVER['PHP_SELF'] != $this->path when redir is appended, needs to be cleaned up
+# refactor removal of frontScriptName with routine use in switch below
+//            if (isset($this->path{0}) && $this->path{0} == '/') {
+//                if ($this->frontScriptName != false) {
+//                    $frontScriptStartIndex = strpos($this->path, $this->frontScriptName);
+//                    $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+//                    if ($frontScriptStartIndex) {
+//                        $this->path = substr($this->path, 0, $frontScriptStartIndex);
+//                    }
+//                }
+//            }
         }
 
-        // Parse the url and store the various parts
+        // Parse the URI and store the various parts
         if (!is_null($this->url)) {
-            $urlinfo = parse_url($this->url);
+            //  if we have a relative URI, enforce FQDN as required by parse_url
+            $target = (preg_match('/^[a-z0-9]+:\/\//i', $this->url))
+                ? $this->url
+                : $this->toString();
+            $urlinfo = parse_url($target);
 
             //  if a ? is present in frontScriptName, it gets stripped by calling $_SERVER['PHP_SELF']
             //  and needs to be re-added
@@ -288,7 +300,7 @@ class SGL_URL
                                 $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
-                                $this->querystring = substr($this->url, $frontScriptEndIndex);
+                                $this->querystring = substr($value, $frontScriptEndIndex);
                             }
                         } else {
                             $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR
@@ -335,9 +347,11 @@ class SGL_URL
                     $this->aQueryData = $ret;
                 }
             }
+            //  remove strategy objects to streamline for storage
+            $this->removeStrategies();
             return true;
         }
-        return SGL::raiseError('no uri data', SGL_ERROR_NODATA);
+        return SGL::raiseError('no URI data', SGL_ERROR_NODATA);
     }
 
 
@@ -509,8 +523,14 @@ class SGL_URL
                    . $this->getHostName() . ($this->port == $this->getStandardPort($this->protocol)
                         ? ''
                         : ':' . $this->port)
-                   . $this->getPath()
-                   . $this->getFrontScriptName();
+                   . $this->getPath();
+
+        //  append front script name if not already present
+        if ($this->frontScriptName != false) {
+            if (!preg_match("/$this->frontScriptName/", $retUrl)) {
+                $retUrl .= $this->getFrontScriptName();
+            }
+        }
 
         //  add a trailing slash if one is not present
         $qs  = $this->getQueryString();
@@ -777,8 +797,14 @@ class SGL_URL
         }
     }
 
+    function removeStrategies()
+    {
+        unset($this->aStrategies);
+    }
+
     /**
-     * Returns an array of all elements from the front controller script name onwards.
+     * Returns an array of all elements from the front controller script name onwards,
+     * including the frontScriptName.
      *
      * @access  public
      * @static

@@ -46,7 +46,7 @@
     {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Save#)}</a>
     {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)" onclick="return doAttach();">{translate(#Upload#)}</a>
     {end:}
-    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">Cancel</a>
+    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">

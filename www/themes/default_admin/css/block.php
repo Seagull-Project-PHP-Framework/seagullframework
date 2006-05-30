@@ -12,6 +12,9 @@
 #frmBlockEdit p select {
     width: 200px;
 }
+#frmBlockEdit dl.on-top dd {
+    margin: 0;
+}
 
 /*
 -- blockReorder.html -----------------------------------------*/

@@ -1,5 +1,5 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
--- Schema for /modules/faq
+-- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Schema for /faq
 
 BEGIN;
 
@@ -16,5 +16,11 @@ create table faq
    item_order           INT4                 null,
    constraint PK_FAQ primary key (faq_id)
 );
+
+-- ==============================================================
+--  Sequence: faq_seq
+-- ==============================================================
+
+create sequence faq_seq;
 
 COMMIT;

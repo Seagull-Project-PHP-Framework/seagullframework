@@ -39,11 +39,18 @@
         <fieldset class="inside">
             <p class="center">
                 <input type="hidden" name="action" value="clearCache" />
-                <input type="checkbox" name="frmCache[templates]" value="1" />{translate(#Templates#)}
-                <input type="checkbox" name="frmCache[nav]" value="1" />{translate(#navigation#,#ucfirst#)}
                 <input type="checkbox" name="frmCache[blocks]" value="1" />{translate(#blocks#,#ucfirst#)}
-                <input type="checkbox" name="frmCache[categorySelect]" value="1" />{translate(#categories#,#ucfirst#)}
-                <input type="checkbox" name="frmCache[perms]" value="1" />{translate(#permissions#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[categorySelect]" value="1" />{translate(#Categories#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[nav]" value="1" />{translate(#navigation#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[pear]" value="1" /><acronym>PEAR</acronym>
+                <input type="checkbox" name="frmCache[perms]" value="1" />{translate(#Permissions#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[templates]" value="1" />{translate(#Templates#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[translations]" value="1" />{translate(#translations#,#ucfirst#)}
+                <input type="checkbox" name="frmCache[uri]" value="1" /><acronym>URI</acronym>
+            </p>
+            <p class="center">
+                <input type="checkbox" name="checkAll" id="checkAll"
+                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />{translate(#select all#,#ucfirst#)}
             </p>
             <div class="center">
                 <p class="error" flexy:if="error[nothingChecked]">
@@ -51,6 +58,19 @@
                 </p>
                 <input type="submit" class="sgl-button"name="submitted" value="{translate(#Clear Selected Caches Now#)}" />
             </div>
+        </fieldset>
+    </form>
+
+    <form name="rebuildSeagull" method="post" id="rebuildSeagull" flexy:ignore>
+        <h3>{translate(#Rebuild Seagull#)}</h3>
+        <fieldset class="inside">
+            <p class="center">
+                WARNING: This will drop your database and create your Seagull environment from
+                discovered data files.  It will only work correctly if your current database user
+                has full privileges, ie to drop and create databases.<br />
+                <input type="hidden" name="action" value="rebuildSeagull" />
+                <input type="submit" class="sgl-button"name="submit" value="{translate(#Rebuild Seagull#)}" />
+            </p>
         </fieldset>
     </form>
     <div class="spacer"></div>

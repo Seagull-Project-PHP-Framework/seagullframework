@@ -15,15 +15,15 @@ class NavigationScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/user/login/');
         $this->setField('frmUsername', 'admin');
         $this->setField('frmPassword', 'admin');
-        $this->clickSubmitByName('submitted');    
+        $this->clickSubmitByName('submitted');
 
         //  navigation
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/section/');
-        $this->assertTitle('Seagull Framework :: Section Manager');
+        $this->assertTitle('Seagull Framework :: Manage navigation');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/section/action/add/');
-        $this->assertTitle('Seagull Framework :: Section Manager :: Add');
+        $this->assertTitle('Seagull Framework :: Manage navigation');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/navstyle/action/list/');

@@ -24,7 +24,7 @@
                 <div class="error" flexy:if="error[password]">
                     {translate(error[password])}
                 </div>
-                <input type="password" name="frmPassword" maxlength="24" />
+                <input type="password" name="frmPassword" value="{password}" maxlength="24" />
             </div>
 
             <p><input type="submit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>

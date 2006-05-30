@@ -1,5 +1,44 @@
 <script type='text/javascript'>
 <!--
+/**
+ * helper script to get accurate cross platform  canvas pos
+ * Origin: http://www.quirksmode.org
+ */
+function findPosX(obj)
+{
+    var curleft = 0;
+    if (obj.offsetParent)
+    {
+        while (obj.offsetParent)
+        {
+            curleft += obj.offsetLeft
+            obj = obj.offsetParent;
+        }
+    }
+    else if (obj.x)
+        curleft += obj.x;
+    return curleft;
+}
+/**
+ * helper script to get accurate cross platform  canvas pos
+ * Origin: http://www.quirksmode.org
+ */
+function findPosY(obj)
+{
+    var curtop = 0;
+    if (obj.offsetParent)
+    {
+        while (obj.offsetParent)
+        {
+            curtop += obj.offsetTop
+            obj = obj.offsetParent;
+        }
+    }
+    else if (obj.y)
+        curtop += obj.y;
+    return curtop;
+}
+
 function exp(strTag, strAttribute)
 {
     var elem = document.getElementsByTagName(strTag);
@@ -15,18 +54,19 @@ function exp(strTag, strAttribute)
 }
 function showCategoryBlock(ev)
 {
+    if (!ev) var ev = window.event;
+    var tg = (ev.target) ? ev.target : ev.srcElement
+    posx = findPosX(tg);
+    posy = findPosY(tg);
+
     var catBlock = document.getElementById("categoryNav");
     if (catBlock.style.display == 'block') {
         catBlock.style.display = 'none';
     } else {
         catBlock.style.display = 'block';
-        if (document.all) {
-            catBlock.style.left = event.screenX +30 +'px';
-            catBlock.style.marginTop = '-1em';
-        } else {
-            catBlock.style.left = ev.screenX +20 +'px';
-            catBlock.style.marginTop = '-1em';
-        }
+        catBlock.style.left = (posx + tg.offsetWidth + 2) +'px';
+        catBlock.style.top = (posy + tg.offsetHeight) +'px';
+        catBlock.style.marginTop = '-1em';
     }
 }
 function hideCategoryBlock()
@@ -82,10 +122,10 @@ function hideCombox(comboxId)
             </p>
             <p>
                 <label>{translate(#showing results for#,#ucfirst#)}</label>
-                <span>{queryRange:h}<a class="catSelect" href="javascript: void(0)" title="{translate(#select a category#)}" onclick="javascript:showCategoryBlock(event)">choose</a></span>
+                <span>{queryRange:h}<a class="catSelect" href="javascript: void(0)" title="{translate(#select a category#)}" onclick="javascript:showCategoryBlock(event)">{translate(#choose#)}</a></span>
                 <div id="categoryNav">
                     <div class="close">
-                        <span onclick="hideCategoryBlock()">close</span>
+                        <span onclick="hideCategoryBlock()">{translate(#close#)}</span>
                     </div>
                 {foreach:blocksAdminCategory,key,valueObj}
                     {valueObj.content:h}

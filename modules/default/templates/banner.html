@@ -27,8 +27,8 @@
 </div>
 
 <!-- tab navigation -->
-<div id="nav">
-    {foreach:blocksUserNav,key,valueObj}
+<div id="nav" flexy:if="!isVerticalNav(conf[navigation][stylesheet])">
+    {foreach:blocksMainNav,key,valueObj}
         {valueObj.content:h}
     {end:}
 </div>

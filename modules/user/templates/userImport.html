@@ -11,7 +11,7 @@
                 <p>{translate(#Use the document manager to upload CSV files.#)}</p>
             </td>
             <td class="title">
-                <div class="error" flexy:if="error[csvFile]">{error[csvFile]}</div>
+                <div class="error" flexy:if="error[csvFile]">{translate(error[csvFile])}</div>
                 <select name="frmCsvFile" size="5">
                     {generateSelect(aFiles):h}
                 </select>
@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <td>
-                <p class="title">{translate(#organisation#)}</p>
+                <p class="title">{translate(#organisation#,#ucfirst#)}</p>
                 <p>{translate(#Import users into selected organisation.#)}</p>
             </td>
             <td>
@@ -30,7 +30,7 @@
         </tr>
         <tr>
             <td>
-                <p class="title">{translate(#role#)}</p>
+                <p class="title">{translate(#role#,#ucfirst#)}</p>
                 <p>{translate(#User will be assigned to selected role.#)}</p>
             </td>
             <td>

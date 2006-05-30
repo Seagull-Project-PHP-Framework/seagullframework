@@ -20,12 +20,11 @@
         var SGL_JS_CURRURL="{currUrl}";
         var SGL_JS_THEME="{theme}";
         var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+        var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
+        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
     {scriptClose:h}
 
     {if:isAdmin()}
-    {scriptOpen:h}
-        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
-    {scriptClose:h}
     <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
     {end:}
     <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>

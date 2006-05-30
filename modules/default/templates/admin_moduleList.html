@@ -1,5 +1,6 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action reorder" href="{makeUrl(#detect#,#module#,#default#)}">Detect New Modules</a>
     <a class="action add" href="{makeUrl(#add#,#module#,#default#)}">{translate(#Add#)}</a>
 </div>
 <div id="content">
@@ -42,7 +43,11 @@
                         <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
                     </td>
                     <td class="left desc">{aValue[description]}</td>
-                    <td><a href="javascript:alert('Coming soon')" title="{translate(#disable#)} {aValue[title]}"><img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" /></a></td>
+                    <td>
+                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}" title="{translate(#disable#)} {aValue[title]}">
+                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
+                        </a>
+                    </td>
                 </tr>
             {else:}
                 <tr>

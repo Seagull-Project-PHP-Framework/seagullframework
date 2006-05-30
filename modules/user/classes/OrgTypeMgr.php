@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgtypeMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -47,7 +47,6 @@ require_once 'DB/DataObject.php';
  * @package user
  * @author  AJ Tarachanowicz <ajt@localhype.net>
  * @version $Revision: 1.5 $
- * @since   PHP 4.1
  */
 class OrgTypeMgr extends SGL_Manager
 {
@@ -73,6 +72,7 @@ class OrgTypeMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
@@ -89,7 +89,7 @@ class OrgTypeMgr extends SGL_Manager
         }
 
         $aErrors = array();
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             if (empty($input->orgTypes->name)) {
                 $aErrors['name'] = 'You must enter an organisation type name';
             }
@@ -117,36 +117,34 @@ class OrgTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->orgTypes)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->setFrom($input->orgTypes);
         $orgType->organisation_type_id = $this->dbh->nextId($this->conf['table']['organisation_type']);
         $success = $orgType->insert();
         if ($success) {
-            SGL::raiseMsg('Organisation type saved successfully');
+            SGL::raiseMsg('Organisation type saved successfully', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'orgTypeEdit.html';
         $output->isEdit = true;
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
         $output->orgTypes = $orgType;
-        //echo'<pre>';die(print_r($output->orgTypes));
     }
 
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'orgTypeEdit.html';
         $orgType = DB_DataObject::factory($this->conf['table']['organisation_type']);
         $orgType->get($input->orgTypeId);
@@ -176,11 +174,11 @@ class OrgTypeMgr extends SGL_Manager
                 $orgTypes->delete();
                 unset($orgTypes);
             }
+            SGL::raiseMsg('Org type(s) deleted successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('Org type(s) deleted successfully', true, SGL_MESSAGE_INFO);
     }
 }
 ?>

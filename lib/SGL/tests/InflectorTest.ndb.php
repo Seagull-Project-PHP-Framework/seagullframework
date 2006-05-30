@@ -89,6 +89,8 @@ class InflectorTest extends UnitTestCase {
     function testGetManagerNameFromSimplifiedName()
     {
         $url = 'foobar';
+        //  set key so caseFix can work
+        $c = &SGL_Config::singleton();
         $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FoobarMgr');
 
@@ -128,7 +130,7 @@ class InflectorTest extends UnitTestCase {
         $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
     }
-    
+
     function testCaseFix()
     {
     	$c = &SGL_Config::singleton();

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ProfileMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -116,7 +116,7 @@ class ProfileMgr extends SGL_Manager
         //  if current user is viewing his/her own profile,
         //  disable 'add to contacts' & 'send message'
         $output->allowContact = ($input->userId == SGL_Session::getUid()
-                || SGL_Session::getUserType() == SGL_GUEST)
+                || SGL_Session::getRoleId() == SGL_GUEST)
             ? false
             : true;
     }

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | style.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -87,6 +87,20 @@
      */
     $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
+
+    // get browser family
+    $browserFamily = 'None';
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
+    if (!empty($ua)) {
+        if (strstr($ua, 'Opera')) {
+            $browserFamily = 'Opera';
+        } else if (strstr($ua, 'MSIE')) {
+            $browserFamily = 'MSIE';      
+        } else {
+            $browserFamily = 'Gecko';
+        }
+    }
 
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);

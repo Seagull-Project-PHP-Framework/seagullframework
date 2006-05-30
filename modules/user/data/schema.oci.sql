@@ -14,6 +14,12 @@ constraint PK_LOGIN primary key (login_id)
 );
 
 -- ==============================================================
+--  sequence login_seq
+-- ==============================================================
+
+create sequence login_seq;
+
+-- ==============================================================
 --  Index: usr_login_fk                                          
 -- ==============================================================
 create  index usr_login_fk on login (
@@ -31,7 +37,13 @@ constraint PK_PREFERENCE primary key (preference_id)
 );
 
 -- ==============================================================
---  Table: organization                                          
+--  sequence preference_seq
+-- ==============================================================
+
+create sequence preference_seq;
+
+-- ==============================================================
+--  Table: organisation                                          
 -- ==============================================================
 CREATE TABLE organisation (
 organisation_id NUMBER(10) NOT NULL,
@@ -63,6 +75,12 @@ constraint PK_ORGANISATION_ID primary key (organisation_id)
 );
 
 -- ==============================================================
+--  sequence organisation_seq
+-- ==============================================================
+
+create sequence organisation_seq;
+
+-- ==============================================================
 --  Table: organisation_type                                     
 -- ==============================================================
 CREATE TABLE organisation_type (
@@ -70,6 +88,12 @@ organisation_type_id NUMBER(10) default 0 NOT NULL,
 name varchar(64) default NULL,
 primary key (organisation_type_id)
 );
+
+-- ==============================================================
+--  sequence organisation_type_seq
+-- ==============================================================
+
+create sequence organisation_type_seq;
 
 -- ==============================================================
 --  Table: permission                                            
@@ -81,6 +105,12 @@ description CLOB,
 module_id NUMBER(10) default 0 NOT NULL,
 CONSTRAINT PK_PERMISSION_ID PRIMARY KEY  (permission_id)
 );
+
+-- ==============================================================
+-- sequence permission_seq
+-- ==============================================================
+
+create sequence permission_seq;
 
 -- ==============================================================
 --  Index: perm_name                                            
@@ -104,6 +134,12 @@ CONSTRAINT PK_ROLE_ID PRIMARY KEY (role_id)
 );
 
 -- ==============================================================
+--  sequence role_seq
+-- ==============================================================
+
+create sequence role_seq;
+
+-- ==============================================================
 --  Table: role_permission                                       
 -- ==============================================================
 CREATE TABLE role_permission (
@@ -112,6 +148,12 @@ role_id NUMBER(10) default 0 NOT NULL,
 permission_id NUMBER(10) default 0 NOT NULL,
 CONSTRAINT PK_ROLE_PERMISSION_ID PRIMARY KEY (role_permission_id)
 );
+
+-- ==============================================================
+--  sequence role_permission_seq
+-- ==============================================================
+
+create sequence role_permission_seq;
 
 -- ==============================================================
 --  Index: permission_id                                         
@@ -140,6 +182,12 @@ constraint PK_USER_PREFERENCE primary key (user_preference_id)
 );
 
 -- ==============================================================
+--  sequence user_preference_seq
+-- ==============================================================
+
+create sequence user_preference_seq;
+
+-- ==============================================================
 --  Index: usr_user_preferences_fk                               
 -- ==============================================================
 create  index usr_user_preferences_fk on user_preference (
@@ -163,6 +211,12 @@ preference_id        NUMBER(10)                 not null,
 value                VARCHAR(128)         null,
 constraint PK_ORG_PREFERENCE primary key (org_preference_id)
 );
+
+-- ==============================================================
+--  sequence org_preference_seq
+-- ==============================================================
+
+create sequence org_preference_seq;
 
 -- ==============================================================
 --  Index: organisation_org_preference_fk                               
@@ -211,6 +265,12 @@ constraint PK_USR primary key (usr_id)
 );
 
 -- ==============================================================
+--  sequence usr_seq
+-- ==============================================================
+
+create sequence usr_seq;
+
+-- ==============================================================
 --  Index: usr_username                                            
 -- ==============================================================
 CREATE UNIQUE INDEX usr_username ON usr (
@@ -233,6 +293,12 @@ usr_id NUMBER(10) default 0 NOT NULL,
 permission_id NUMBER(10) default 0 NOT NULL,
 CONSTRAINT PK_USER_PERMISSION_ID PRIMARY KEY (user_permission_id)
 );
+
+-- ==============================================================
+--  sequence user_permission_seq
+-- ==============================================================
+
+create sequence user_permission_seq;
 
 -- ==============================================================
 --  Index: usr_id

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Manager.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -70,7 +70,7 @@ class SGL_Manager
      * @access  public
      * @var     string
      */
-    var $pageTitle = '';
+    var $pageTitle = 'default';
 
     /**
      * Flag indicated is Page validation passed.
@@ -79,14 +79,6 @@ class SGL_Manager
      * @var     boolean
      */
     var $validated = false;
-
-    /**
-     * Current module name.
-     *
-     * @access  public
-     * @var     string
-     */
-    var $module = '';
 
     /**
      * Sortby flag, used in child classes.
@@ -124,7 +116,6 @@ class SGL_Manager
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            require_once SGL_CORE_DIR . '/Translation.php';
             $this->trans = & SGL_Translation::singleton();
         }
     }
@@ -172,9 +163,16 @@ class SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $mgrName = SGL_Inflector::caseFix(get_class($this));
+        $defaultMgrLoaded = false;
+
+        if (SGL_Error::count()) {
+            $oLastError = SGL_Error::getLast();
+            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+                $defaultMgrLoaded = true;
+            }
 
         //  determine if action param from $_GET is valid
-        if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
+        } elseif (!(array_key_exists($input->action, $this->_aActionsMapping))) {
             return SGL::raiseError('The specified method, ' . $input->action .
                 ' does not exist', SGL_ERROR_NOMETHOD);
         }
@@ -183,7 +181,7 @@ class SGL_Manager
                 'constructor - please add "parent::SGL_Manager();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
-        //  only implement auth check on demand
+        //  only implement authorisation check on demand
         if ( isset($this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
@@ -200,7 +198,6 @@ class SGL_Manager
                 if (is_array($ok) && count($ok)) {
 
                     list($className, $methodName) = $ok;
-                    SGL::raiseMsg('you do not have perms');
                     SGL::logMessage('Unauthorised user '.SGL_Session::getUid() .' attempted to access ' .
                         $className . '::' .$methodName, PEAR_LOG_WARNING);
 
@@ -209,25 +206,44 @@ class SGL_Manager
                     $now = time();
                     SGL_Session::set('redirected', $now);
 
+                    //  if redirects happen less than 2 seconds apart, and there are greater
+                    //  than 2 of them, recursion is happening
                     if ($now - $lastRedirected < 2) {
+                        $redirectTimes = SGL_Session::get('redirectedTimes');
+                        $redirectTimes ++;
+                        SGL_Session::set('redirectedTimes', $redirectTimes);
+                    } else {
+                        SGL_Session::set('redirectedTimes', 0);
+                    }
+                    if (SGL_Session::get('redirectedTimes') > 2) {
                         return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
                             SGL_ERROR_RECURSION);
                     }
-                    //  get default params for logout page
-                    $aParams = $this->getDefaultPageParams();
-                    SGL_HTTP::redirect($aParams);
-
+                   // redirect to current or default screen
+                    SGL::raiseMsg('authorisation failed');
+                    $aHistory = SGL_Session::get('aRequestHistory');
+                    $aLastRequest = isset($aHistory[1]) ? $aHistory[1] : false;
+                    if ($aLastRequest) {
+                        $aRedir = array(
+                            'managerName'   => $aLastRequest['managerName'],
+                            'moduleName'    => $aLastRequest['moduleName'],
+                            );
+                    } else {
+                        $aRedir = $this->getDefaultPageParams();
+                    }
+                    SGL_HTTP::redirect($aRedir);
                 } else {
                     return PEAR::raiseError('unexpected response during authorisation check',
                         SGL_ERROR_INVALIDAUTH);
                 }
             }
         }
-
-        //  all tests passed, execute relevant method
-        foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-            $methodName = '_cmd_'.$methodName;
-            $this->{$methodName}($input, $output);
+        if (!$defaultMgrLoaded) {
+            //  all tests passed, execute relevant method
+            foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+                $methodName = '_cmd_'.$methodName;
+                $this->{$methodName}($input, $output);
+            }
         }
         return true;
     }
@@ -274,8 +290,8 @@ class SGL_Manager
     {
         $req = $input->getRequest();
         $mgr = $req->get('managerName');
-        $userRid = SGL_Session::getUserType();
-        
+        $userRid = SGL_Session::getRoleId();
+
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
                && $this->conf[$mgrName]['adminGuiAllowed']
                && $userRid == SGL_ADMIN) {

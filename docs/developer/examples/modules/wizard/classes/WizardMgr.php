@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,13 +30,15 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardMgr.php                                                              |
 // +---------------------------------------------------------------------------+
 // | Author:   Tobias Kuckuck <kuckuck@rancon.de>                           |
 // +---------------------------------------------------------------------------+
 // $Id: WizardMgr.php,v 1.1 2005/04/04 10:41:09 demian Exp $
+
+require_once SGL_CORE_DIR . '/Wizard.php';
 
 /**
  *
@@ -62,13 +64,13 @@ class WizardMgr extends SGL_Manager
 
         // initialize wizard pages
         SGL_Session::set('wiz_sequence', array());
-        SGL_Controller::addPage(array('managerName' => 'Page1Wiz'));
-        SGL_Controller::addPage(array('managerName' => 'Page2Wiz'));
+        SGL_Wizard::addPage(array('managerName' => 'Page1Wiz'));
+        SGL_Wizard::addPage(array('managerName' => 'Page2Wiz'));
     }
 
     function process(&$input, &$output)
     {
-        SGL_Controller::startWizard();
+        SGL_Wizard::startWizard();
     }
 }
 ?>

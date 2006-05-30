@@ -1,6 +1,6 @@
 <?php
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -29,7 +29,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DocumentorMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -56,6 +56,7 @@ class DocumentorMgr extends SGL_Manager
     function DocumentorMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
 
         $this->pageTitle        = 'Manual Generator';
         $this->template         = 'manual.html';
@@ -67,12 +68,12 @@ class DocumentorMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = array();
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = array();
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
+        $input->template       = $this->template;
     }
 
     function _cmd_list(&$input, &$output)

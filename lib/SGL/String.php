@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | String.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -101,29 +101,26 @@ class SGL_String
     /**
      * Defines the <CR><LF> value depending on the user OS.
      *
-     * From the phpMyAdmin common library
-     *
      * @return  string   the <CR><LF> value to use
      * @access  public
-     * @author  Marc Delisle <DelislMa@CollegeSherbrooke.qc.ca>
      */
     function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $crlf = "\n";
-
-        // Win case
-        if (SGL_CLIENT_OS == 'Win') {
-            $crlf = "\r\n";
-        }
-        // Mac case
-        elseif (SGL_CLIENT_OS == 'Mac') {
-            $crlf = "\r";
-        }
-        // Others
-        else {
-            $crlf = "\n";
+        if (defined(PHP_EOL)) {
+            $crlf = PHP_EOL;
+        } else {
+            // Win case
+            if (SGL_CLIENT_OS == 'Win') {
+                $crlf = "\r\n";
+            }
+            // Mac case
+            elseif (SGL_CLIENT_OS == 'Mac') {
+                $crlf = "\r";
+            } else {
+                $crlf = "\n";
+            }
         }
         return $crlf;
     }
@@ -293,7 +290,6 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                require_once SGL_CORE_DIR . '/Translation.php';
                 $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
@@ -493,6 +489,11 @@ class SGL_String
             $i++;
         }
         return $formated;
+    }
+
+    function toValidFileName($origName)
+    {
+        return SGL_String::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/

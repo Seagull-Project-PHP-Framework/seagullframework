@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UrlParserSefStrategy.php                                                  |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 // $Id: Util.php,v 1.22 2005/05/11 00:19:40 demian Exp $
 
 /**
- * Classic querystring url parser strategy.
+ * SEF querystring url parser strategy.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -263,7 +263,6 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
         //  add session info if necessary
         SGL_Url::addSessionInfo($url);
-
         return $url;
     }
 }

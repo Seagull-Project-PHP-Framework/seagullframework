@@ -1,5 +1,4 @@
 <?php
-
 //  start timer
 define('SGL_START_TIME', getSystemTime());
 $pearTest = '@PHP-DIR@';
@@ -13,6 +12,10 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $rootDir = dirname(__FILE__) . '/..';
     $varDir = dirname(__FILE__) . '/../var';
 }
+//  check for lib cache
+define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
+    ? true
+    : false);
 
 if (is_file($rootDir .'/lib/SGL/FrontController.php')) {
     require_once $rootDir .'/lib/SGL/FrontController.php';

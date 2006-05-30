@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | RegisterMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -41,6 +41,8 @@
 require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_CORE_DIR . '/Observer.php';
+require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Validate.php';
 require_once 'DB/DataObject.php';
 
@@ -88,14 +90,20 @@ class RegisterMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submitted && ($input->action == 'insert' || $input->action == 'update')) {
+        if (($input->submitted && $input->action != 'changeUserStatus')
+                || in_array($input->action, array('insert', 'update'))) {
             $v = & new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {
                 //  username must be at least 5 chars
-                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
+                if (!$v->string($input->user->username, array(
+                        'format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
                     $aErrors['username'] = 'username min length';
+                }
+                //  username must be unique
+                if ($input->action == 'insert' && !$this->da->isUniqueUsername($input->user->username)) {
+                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
                 }
             }
             //  only verify password and uniqueness of username/email on inserts
@@ -110,16 +118,8 @@ class RegisterMgr extends SGL_Manager
                 } elseif ($input->user->passwd != $input->user->password_confirm) {
                     $aErrors['password_confirm'] = 'Passwords are not the same';
                 }
-                //  username must be unique
-                if (!$this->da->isUniqueUsername($input->user->username)) {
-                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
-                }
-                //  email must be unique
-                if (!$this->da->isUniqueEmail($input->user->email)) {
-                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
-                }
             }
-            //  end verify inserts
+            //  check for data in required fields
             if (empty($input->user->addr_1)) {
                 $aErrors['addr_1'] = 'You must enter at least address 1';
             }
@@ -136,12 +136,38 @@ class RegisterMgr extends SGL_Manager
                 $aErrors['email'] = 'You must enter your email';
             } elseif (!$v->email($input->user->email)) {
                 $aErrors['email'] = 'Your email is not correctly formatted';
+            //  email must be unique
+            } elseif ($input->action == 'insert' && !$this->da->isUniqueEmail($input->user->email)) {
+                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
             }
             if (empty($input->user->security_question)) {
                 $aErrors['security_question'] = 'You must choose a security question';
             }
             if (empty($input->user->security_answer)) {
                 $aErrors['security_answer'] = 'You must provide a security answer';
+            }
+            // check for mail header injection
+            if (!empty($input->user->email)) {
+                $input->user->email =
+                    SGL_Emailer::cleanMailInjection($input->user->email);
+                $input->user->username =
+                    SGL_Emailer::cleanMailInjection($input->user->username);
+            }
+
+            //  check for hacks - only admin user can set certain attributes
+            if ((SGL_Session::getUid() != SGL_ADMIN
+                    && count(array_filter(array_flip($req->get('user')), array($this, 'containsDisallowedKeys'))))) {
+                $msg = 'Hack attempted by ' .$_SERVER['REMOTE_ADDR'] . ', IP logged';
+                if (SGL_Session::getRoleId() > SGL_GUEST) {
+                    $msg .= ', user id ' . SGL_Session::getUid();
+                }
+                SGL_Session::destroy();
+                SGL::raiseMsg($msg, false);
+                SGL::logMessage($msg, PEAR_LOG_CRIT);
+
+                $input->template = 'docBlank.html';
+                $this->validated = false;
+                return false;
             }
         }
         //  if errors have occured
@@ -158,6 +184,12 @@ class RegisterMgr extends SGL_Manager
             $input->template = 'docBlank.html';
             $this->validated = false;
         }
+    }
+
+    function containsDisallowedKeys($var)
+    {
+        $disAllowedKeys = array('role_id', 'organisation_id', 'is_acct_active');
+        return in_array($var, $disAllowedKeys);
     }
 
     function display(&$output)
@@ -193,94 +225,65 @@ class RegisterMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->user)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
+        $addUser = new User_AddUser($input, $output);
+        $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $addUser->attach(new $observer());
+            }
         }
+        //  returns id for new user
+        $output->uid = $addUser->run();
+    }
+}
+
+class User_AddUser extends SGL_Observable
+{
+    function User_AddUser(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get default values for new users
+        $this->conf = $this->input->getConfig();
         $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
         $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
-        $oUser = $this->da->getUserById();
-        $oUser->setFrom($input->user);
-        $oUser->passwdClear = $input->user->passwd;
-        $oUser->passwd = md5($input->user->passwd);
+        $da = & DA_User::singleton();
+        $oUser = $da->getUserById();
+        $oUser->setFrom($this->input->user);
+        $oUser->passwdClear = $this->input->user->passwd;
+        $oUser->passwd = md5($this->input->user->passwd);
+
         if ($this->conf['RegisterMgr']['autoEnable']) {
             $oUser->is_acct_active = 1;
         }
         $oUser->role_id = $defaultRoleId;
         $oUser->organisation_id = $defaultOrgId;
         $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
-        $success = $this->da->addUser($oUser);
+        $success = $da->addUser($oUser);
+
+        //  make user object available to observers
+        $this->oUser = $oUser;
 
         if ($success) {
-            //  send email confirmation according to config
-            if ($this->conf['RegisterMgr']['sendEmailConfUser']) {
-                $bEmailSent = $this->_sendEmail($oUser, $input->moduleName);
-                if (!$bEmailSent) {
-                    SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
-                }
-            }
-            //  authenticate user according to settings
-            if ($this->conf['RegisterMgr']['autoLogin']) {
-                $input->username = $input->user->username;
-                $input->password = $input->user->passwd;
-                $oLogin = new LoginMgr();
-                $oLogin->_cmd_login($input, $output);
-            } else {
-               SGL::raiseMsg('user successfully registered');
-            }
+            //  invoke observers
+            $this->notify();
+			$ret = $success;
+            SGL::raiseMsg('user successfully registered', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
+			$ret = false;
         }
-    }
-
-    function _sendEmail($oUser, $moduleName)
-    {
-        require_once SGL_CORE_DIR . '/Emailer.php';
-
-        $realName = $oUser->first_name . ' ' . $oUser->last_name;
-        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
-        $options = array(
-                'toEmail'       => $oUser->email,
-                'toRealName'    => $recipientName,
-                'fromEmail'     => $this->conf['email']['admin'],
-                'replyTo'       => $this->conf['email']['admin'],
-                'subject'       => 'Thanks for registering at ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                    $moduleName . '/email_registration_thanks.php',
-                'username'      => $oUser->username,
-                'password'      => $oUser->passwdClear,
-        );
-        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
-            $options['Cc'] = $this->conf['email']['admin'];
-        }
-
-        $message = & new SGL_Emailer($options);
-        $message->prepare();
-        $message->send();
-
-        //  conf to admin
-        if ($this->conf['RegisterMgr']['sendEmailConfAdmin']) {
-            $options = array(
-                    'toEmail'       => $this->conf['email']['admin'],
-                    'toRealName'    => 'Admin',
-                    'fromEmail'     => $this->conf['email']['admin'],
-                    'replyTo'       => $this->conf['email']['admin'],
-                    'subject'       => 'New Registration at ' . $this->conf['site']['name'],
-                    'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
-                        $moduleName . '/email_registration_admin.php',
-                    'username'      => $oUser->username,
-                    'activationUrl'      => 'http://seagull.phpkitchen.com/index.php/user/',
-            );
-            $notification = & new SGL_Emailer($options);
-            $notification->prepare();
-            $notification->send();
-        }
-        //  check error stack
-        return (SGL_Error::count()) ? false : true;
+        return $ret;
     }
 }
 ?>

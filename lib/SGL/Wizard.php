@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Wizard.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -246,6 +246,47 @@ class SGL_Wizard extends SGL_Manager
             }
             return true;
         }
-    }    
+    }
+
+    /**
+     * Adds pages to a Wizard queue.
+     *
+     * @access  public
+     * @param   string  $pageName   the name of the calling script
+     * @param   array   $param      params to be appended to URL
+     * @return  void
+     */
+    function addPage($pageName, $param=null)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aPages = SGL_Session::get('wiz_sequence');
+        if (isset($pageName)) {
+
+            //  pagename, isCurrent, param
+            $aPages[] = array(  'pageName'  => $pageName,
+                                'current'   => false,
+                                'param'     => $param);
+        }
+        SGL_Session::set('wiz_sequence', $aPages);
+        return true;
+    }
+
+    /**
+     * Loads sequence of pages from Wizard queue and starts execution.
+     *
+     * @access  public
+     * @return  void
+     */
+    function startWizard()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aPages = SGL_Session::get('wiz_sequence');
+
+        //  set first page to enabled
+        $aPages[0]['current'] = true;
+        SGL_Session::set('wiz_sequence', $aPages);
+        SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
+        return true;
+    }
 }
 ?>

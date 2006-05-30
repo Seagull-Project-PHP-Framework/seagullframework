@@ -8,7 +8,7 @@ $aBlocksNames = array(
 	'AdminCategory' => 'AdminCategory',
 	'AdminNav' => 'AdminNav',
 	'AdminBreadcrumbs' => 'AdminBreadcrumbs',
-	'UserNav' => 'UserNav',
-	'UserBreadcrumb' => 'UserBreadcrumb',
+	'MainNav' => 'MainNav',
+	'MainBreadcrumb' => 'MainBreadcrumb',
     );
 ?>

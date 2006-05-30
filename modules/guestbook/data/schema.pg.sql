@@ -16,4 +16,11 @@ create table guestbook
    constraint PK_GUESTBOOK primary key (guestbook_id)
 );
 
+-- ==============================================================
+--  Sequence: guestbook_seq
+-- ==============================================================
+
+create sequence guestbook_seq;
+
+
 COMMIT;

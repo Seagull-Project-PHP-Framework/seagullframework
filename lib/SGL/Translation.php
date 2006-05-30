@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Translation.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -69,6 +69,13 @@ class SGL_Translation
      */
     function &singleton($type = 'translation')
     {
+        static $instance;
+
+        // If the instance exists, return one
+        if (isset($instance[$type])) {
+            return $instance[$type];
+        }
+
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -111,25 +118,78 @@ class SGL_Translation
 
         case 'admin':
             require_once 'Translation2/Admin.php';
-            $oTranslation = &Translation2_Admin::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2_Admin::factory($driver, $dsn, $params);
             break;
 
         case 'translation':
         default:
             require_once 'Translation2.php';
-            $oTranslation = &Translation2::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2::factory($driver, $dsn, $params);
         }
         //  switch phptype to mysql when using mysql_SGL otherwise the langs table
         //  and index's will not be created.
         if ($dsn['phptype'] == 'mysql_SGL') {
-            $oTranslation->storage->db->phptype = 'mysql';
+            $instance[$type]->storage->db->phptype = 'mysql';
         }
-        return $oTranslation;
+
+        return $instance[$type];
     }
 
+    /**
+     * Clear translation2 and GUI cache
+     *
+     * @static
+     * @access  public
+     *
+     * @return  boolean     true on success/false on failure
+     */
+    function clearCache()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if ('db' == $conf['translation']['container']) {
+            //   clear Translation2 cache
+            $trans = SGL_Translation::singleton('admin');
+            $trans->options['cacheOptions']['cacheDir'] = SGL_TMP_DIR .'/';
+            $trans->options['cacheOptions']['defaultGroup'] = 'translation';
+            return $trans->cleanCache();
+        } else {
+            //   clear file GUI cache
+            return SGL_Translation::clearGuiTranslationsCache();
+        }
+    }
 
     /**
-     * Returns an dictionary of translated strings.
+     * Clear GUI Translations cache
+     *
+     * @static
+     * @access  public
+     *
+     * @return boolean      true on success/false on failure
+     */
+    function clearGuiTranslationsCache()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
+
+        if (count($aLangs) > 0) {
+            $cache = & SGL_Cache::singleton();
+            $cache->setOption('cacheDir', SGL_TMP_DIR .'/');
+
+            $success = true;
+            foreach ($aLangs as $group) {
+                $result = SGL_Cache::clear('translation_'. $group);
+                $success = $success && $result;
+            }
+            return $success;
+        }
+    }
+
+    /**
+     * Returns a dictionary of translated strings.
      *
      * @static
      * @param string $module
@@ -201,7 +261,7 @@ class SGL_Translation
 
             foreach ($aTrans as $key => $value) {
                 $string = array($langID => $value);
-                $result = $trans->add($key, $module, $string);
+                $result = $trans->add(stripslashes($key), $module, $string);
 
                 if (is_a($result, 'PEAR_Error')) {
                     return $result;
@@ -212,7 +272,10 @@ class SGL_Translation
         default:
             //  read translation data and get reference to root
             $c = new Config();
-            $root = & $c->parseConfig($aTrans, 'phparray');
+            foreach ($aTrans as $key => $value) {
+                $aTransStrip[stripslashes($key)] = $value;
+            }
+            $root = & $c->parseConfig($aTransStrip, 'phparray');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
@@ -271,6 +334,7 @@ class SGL_Translation
                     $translation = &$translation->getDecorator('CacheLiteFunction');
                     $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
                     $translation->setOption('lifeTime', $conf['cache']['lifetime']);
+                    $translation->setOption('defaultGroup', 'translation');
                 }
 
                 //  fetch translations

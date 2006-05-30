@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -128,9 +128,12 @@ class SGL_Util
     function getStyleFiles($curStyle = false)
     {
         $aFiles = array();
-        $theme = $_SESSION['aPrefs']['theme'];
+
+        $c = &SGL_Config::singleton();
+        $theme = $c->get(array('site' => 'defaultTheme'));
+
         //  get array of files in /www/css/
-        if ($fh = opendir(SGL_THEME_DIR . "/$theme/css/")) {
+        if ($fh = @opendir(SGL_THEME_DIR . "/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {
 
                 //  remove unwanted dir elements
@@ -176,8 +179,18 @@ class SGL_Util
     }
 
     /**
-     * Returns an array of strings containing the installed (and registered) Modules
+     * Returns an hash of strings containing the installed (and registered) Modules
      *
+        Array
+        (
+            [block] => block
+            [cms] => cms
+            [default] => default
+            [event] => event
+            [export] => export
+            [navigation] => navigation
+            [user] => user
+        )
      * @static
      * @access  public
      * @return  array
@@ -189,6 +202,7 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
+        require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
         $da = & DA_Default::singleton();
 
         //  match all folders except CVS
@@ -203,7 +217,7 @@ class SGL_Util
         return $ret;
     }
 
-    function getAllFilesPerModule($moduleDir)
+    function getAllManagersPerModule($moduleDir)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -224,9 +238,10 @@ class SGL_Util
     {
         $managerFileName = basename($mgr);
         $moduleDir = dirname(dirname($mgr));
-        $files = SGL_Util::getAllFilesPerModule($moduleDir);
+        $files = SGL_Util::getAllManagersPerModule($moduleDir);
 
         //  remap 'ContactUsMgr.php => ContactUsMgr' hash to array
+        $fileNames = array();
         foreach ($files as $k => $file) {
             $fileNames[] = $k;
         }
@@ -344,7 +359,6 @@ class SGL_Util
      */
     function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
     {
-        require_once SGL_DAT_DIR . '/ary.languages.php';
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
         $aLangs = array();
@@ -362,8 +376,8 @@ class SGL_Util
 
         //  if $aSelectedLangs has elements return it.
         $aLangs = (isset ($aSelectedLangs) && !empty($aSelectedLangs))
-                    ? $aSelectedLangs
-                    : $aLangs;
+            ? $aSelectedLangs
+            : $aLangs;
 
         return $aLangs;
     }

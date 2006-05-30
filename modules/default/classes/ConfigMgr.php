@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ConfigMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -91,6 +91,15 @@ class ConfigMgr extends SGL_Manager
             2 => 'word beginning',
             3 => 'word fragment',
             );
+        $this->aDbDoDebugLevels = array(
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            );
+
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $navDir = SGL_MOD_DIR . '/navigation/classes';
         $this->aNavDrivers   = SGL_Util::getAllClassesFromFolder($navDir, '.*Driver');
@@ -123,6 +132,7 @@ class ConfigMgr extends SGL_Manager
         $input->aDelete     = $req->get('frmDelete');
         $input->submitted   = $req->get('submitted');
         $input->conf        = $req->get('conf');
+        $input->displayTab  = 'generalSiteOptions';
 
         $aErrors = array();
         if ($input->submitted) {
@@ -135,7 +145,7 @@ class ConfigMgr extends SGL_Manager
             //  paths
             if (empty($input->conf['path']['webRoot'])) {
                 $aErrors['webRoot'] = 'Please enter a valid path';
-                // unset() because we use isset() in lib/SGL/Tasks/Init.php to check this variable
+                // unset() because we use isset() in lib/SGL/Task/Init.php to check this variable
                 unset($input->conf['path']['webRoot']);
             }
 
@@ -148,6 +158,7 @@ class ConfigMgr extends SGL_Manager
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
+                $input->displayTab = 'mtaOptions';
             }
 
             switch ($input->conf['mta']['backend']) {
@@ -156,9 +167,11 @@ class ConfigMgr extends SGL_Manager
                 if (empty($input->conf['mta']['sendmailPath']) ||
                     !is_file($input->conf['mta']['sendmailPath'])) {
                     $aErrors['sendmailPath'] = 'Please enter a valid path to Sendmail';
+                    $input->displayTab = 'mtaOptions';
                 }
                 if (empty($input->conf['mta']['sendmailArgs'])) {
                     $aErrors['sendmailArgs'] = 'Please enter valid Sendmail arguments';
+                    $input->displayTab = 'mtaOptions';
                 }
                 break;
 
@@ -166,9 +179,11 @@ class ConfigMgr extends SGL_Manager
                 if ($input->conf['mta']['smtpAuth'] == 1) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
                         $aErrors['smtpUsername'] = 'Please enter a valid Username';
+                        $input->displayTab = 'mtaOptions';
                     }
                     if (empty($input->conf['mta']['smtpPassword'])) {
                         $aErrors['smtpPassword'] = 'Please enter a valid Password';
+                        $input->displayTab = 'mtaOptions';
                     }
                 }
                 break;
@@ -177,10 +192,12 @@ class ConfigMgr extends SGL_Manager
             if (  !empty($input->conf['session']['singleUser'])
                 && empty($input->conf['session']['extended'])) {
                     $aErrors['singleUser'] = 'Single session per user requires extended session';
+                    $input->displayTab = 'sessionOptions';
             }
             if (   !empty($input->conf['session']['extended'])
                 && $input->conf['session']['handler'] != 'database') {
                     $aErrors['extendedSession'] = 'Extended session requires database session handling';
+                    $input->displayTab = 'sessionOptions';
             }
         }
         //  if errors have occured
@@ -210,15 +227,17 @@ class ConfigMgr extends SGL_Manager
         $output->aUrlHandlers       = $this->aUrlHandlers;
         $output->aTemplateEngines       = $this->aTemplateEngines;
         $output->aTranslationContainers = $this->aTranslationContainers;
+        $output->aDbDoDebugLevels = $this->aDbDoDebugLevels;
 
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
             $output->aInstalledLangs = $this->trans->getLangs();
         } else {
-            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(), SGL_LANG_ID_TRANS2);
-        }      
+            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(),
+                SGL_LANG_ID_TRANS2);
+        }
 
-        $output->addOnLoadEvent("showSelectedOptions('configuration','generalSiteOptions')");
+        $output->addOnLoadEvent("showSelectedOptions('configuration','$output->displayTab')");
 
         //  disable translation options depending on the selected translation container.
         $output->addOnLoadEvent("toggleTransElements()");
@@ -234,13 +253,13 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
-            SGL::raiseMsg('Config settings cannot be modified in demo mode', false, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('Config settings cannot be modified in demo mode',
+                false, SGL_MESSAGE_WARNING);
             return false;
         }
-
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
-        $c->replace($input->conf);
+        $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
 
         //  write configuration to file

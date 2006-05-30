@@ -15,8 +15,9 @@
     position: relative;
     float: left;
     margin: 0;
-    /* IE :hover silly javascript workaround */
+    <?php if ($browserFamily == 'MSIE') {?>
     behavior: url(<?php echo $baseUrl ?>/css/listItemHover.htc);
+    <?php } ?>
 }
 #nav ul li a {
     display: block;

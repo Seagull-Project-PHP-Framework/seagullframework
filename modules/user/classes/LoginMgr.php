@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,13 +30,15 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginMgr.php                                                              |
 // +---------------------------------------------------------------------------+
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
 // $Id: LoginMgr.php,v 1.34 2005/06/15 00:50:40 demian Exp $
+
+require_once SGL_CORE_DIR . '/Observer.php';
 
 /**
  * Handles user logins.
@@ -107,7 +109,71 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($res = $this->_doLogin($input->username, $input->password)) {
+        $doLogin = new User_DoLogin($input, $output);
+        $aObservers = explode(',', $this->conf['LoginMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $doLogin->attach(new $observer());
+            }
+        }
+        $doLogin->run();
+    }
+
+    function _cmd_logout(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_Session::destroy();
+        SGL::raiseMsg('You have been successfully logged out', true, SGL_MESSAGE_INFO);
+
+        //  get default params for logout page
+        $aParams = $this->getDefaultPageParams();
+        SGL_HTTP::redirect($aParams);
+    }
+
+    function _cmd_list(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $output->username = 'admin';
+            $output->password = 'admin';
+        }
+    }
+}
+
+class User_DoLogin extends SGL_Observable
+{
+    function User_DoLogin(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->conf = $this->input->getConfig();
+        $this->dbh = $this->_getDb();
+
+        if ($res = $this->_doLogin($this->input->username, $this->input->password)) {
+
+            //  invoke observers
+            $this->notify();
 
             // Get the user id from the current session
             $uid = SGL_Session::getUid();
@@ -123,10 +189,9 @@ class LoginMgr extends SGL_Manager
                     SGL::raiseMsg('You have multiple sessions on this site!');
                 }
             }
-
             //  if redirect captured
-            if (!empty($input->redir)) {
-                SGL_HTTP::redirect(urldecode($input->redir));
+            if (!empty($this->input->redir)) {
+                SGL_HTTP::redirect(urldecode($this->input->redir));
             }
             $type = ($res['role_id'] == SGL_ADMIN) ? 'logonAdminGoto' : 'logonUserGoto';
             list($mod, $mgr) = split('\^', $this->conf['LoginMgr'][$type]);
@@ -140,23 +205,6 @@ class LoginMgr extends SGL_Manager
             SGL::raiseMsg('username/password not recognized');
             SGL::logMessage('login failed', PEAR_LOG_NOTICE);
         }
-    }
-
-    function _cmd_logout(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_Cache::clear('blocks');
-        SGL_Session::destroy();
-        SGL::raiseMsg('You have been successfully logged out');
-
-        //  get default params for logout page
-        $aParams = $this->getDefaultPageParams();
-        SGL_HTTP::redirect($aParams);
-    }
-
-    function _cmd_list(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
     function _doLogin($username, $password)
@@ -175,16 +223,6 @@ class LoginMgr extends SGL_Manager
             $uid = $aResult['usr_id'];
             $rid = $aResult['role_id'];
 
-            //  record login in db for security
-            if (@$this->conf['LoginMgr']['recordLogin']) {
-                require_once 'DB/DataObject.php';
-                $login = DB_DataObject::factory($this->conf['table']['login']);
-                $login->login_id = $this->dbh->nextId('login');
-                $login->usr_id = $uid;
-                $login->date_time = SGL_Date::getTime(true);
-                $login->remote_ip = $_SERVER['REMOTE_ADDR'];
-                $login->insert();
-            }
             //  associate new session with authenticated user
             new SGL_Session($uid);
 

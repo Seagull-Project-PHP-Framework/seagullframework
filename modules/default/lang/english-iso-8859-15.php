@@ -33,8 +33,8 @@
         'Seagull Framework' => 'Seagull Framework',
 
 /*  GENERAL MESSAGES    */
-        'insufficient rights' => 'You do not have sufficient privileges to view this area.',
-        'authorization required' => 'You need to login to use this feature.  Fill your username and password below.',
+        'authorisation failed' => 'You do not have sufficient privileges to view this area.',
+        'authentication required' => 'You need to login to use this feature.  Fill your username and password below.',
         'session timeout' => 'Your session has timed out, please login again',
         'You have been successfully logged out' => 'You have been successfully logged out',
         'password emailed out' => 'A new password has been emailed to the address you registered with',
@@ -138,18 +138,18 @@
         'at time' => 'at',
 
         'aMonths' => array(
-            13 => 'January',
-            14 => 'February',
-            15 => 'March',
-            16 => 'April',
-            17 => 'May',
-            18 => 'June',
-            19 => 'July',
-            20 => 'August',
-            21 => 'September',
-            22 => 'October',
-            23 => 'November',
-            24 => 'December'
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
         ),
 /*
   Author: Michael willemot <michael@sotto.be>
@@ -275,8 +275,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)'=>'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)',
         'The name of your Seagull index file'=>'The name of your Seagull index file',
         'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir',
-        'This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)'=>'This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)',
-        'This is the manager class that will be loaded if none are specified (FC only)'=>'This is the manager class that will be loaded if none are specified (FC only)',
+        'This is the module that will be loaded if none are specified, ie, when you call index.php'=>'This is the module that will be loaded if none are specified, ie, when you call index.php',
+        'This is the manager class that will be loaded if none are specified'=>'This is the manager class that will be loaded if none are specified - use the shortname, ie use "faq" and not "FaqMgr"',
         'Disable navigation altogether with this switch'=>'Disable navigation altogether with this switch',
         'Use this option to choose from various menu types - currently only 1 provided'=>'Use this option to choose from various menu types - currently only 1 provided',
         'Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager'=>'Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager',
@@ -469,5 +469,22 @@ $defaultWords['is not writeable.'] = 'is not writeable.';
 $defaultWords['does not exist.'] = 'does not exist.';
 $defaultWords['Please change file permissions before editing.'] = 'Please change file permissions before editing.';
 $defaultWords['Please create it.'] = 'Please create it.';
-
+$defaultWords['Default theme'] = 'Default theme';
+$defaultWords['Additional Include Path'] = 'Additional Include Path';
+$defaultWords['Custom filter chain'] = 'Custom filter chain';
+$defaultWords['Create CRUD actions'] = 'Create CRUD Actions';
+$defaultWords['Broadcast message'] = 'Broadcast message';
+$defaultWords['Rebuild Seagull'] = 'Rebuild Seagull';
+$defaultWords['Module Manager :: Discovered'] = 'Module Manager :: Discovered';
+$defaultWords['Register this module?'] = 'Register this module?';
+$defaultWords['DataObject debug level'] = 'DataObject debug level';
+$defaultWords['Please choose a simple, single word'] = 'Please choose a simple, single word for your module name, it will be used in URIs.';
+$defaultWords['Please give the webserver write permissions to the modules directory'] = 'Please give the webserver write permissions to the modules directory';
+$defaultWords['The manager, which can be'] = 'The manager, which can be one of several per module, is the controller object, so if you want it to deliver pizzas call it PizzaMgr.';
+$defaultWords['Module Directory Override'] = 'Module Directory Override';
+$defaultWords['Upload Directory Override'] = 'Upload Directory Override';
+$defaultWords['Submit login'] = 'Submit login';
+$defaultWords['select all'] = 'select all';
+$defaultWords['templates'] = 'templates';
+$defaultWords['translations'] = 'translations';
 ?>
