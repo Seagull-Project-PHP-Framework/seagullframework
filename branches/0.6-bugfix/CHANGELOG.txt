@@ -32,6 +32,7 @@ BUGFIXES
 01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
 
 IMPROVEMENTS
+28-05-06    Module generator improved (Gerald Fischer, AJ Tarachanowicz)
 28-05-06    Improved integration of orgs and org types
 28-05-06    Naming in Navigation section is friendlier
 27-05-06    Factored out recording of login to Login observer
