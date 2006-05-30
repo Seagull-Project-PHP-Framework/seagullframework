@@ -1,0 +1,8 @@
+Options +FollowSymlinks
+RewriteEngine on
+
+#allow cool urls
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php [L]
+#allow to have Url without index.php
