@@ -289,13 +289,13 @@ exportSvnAndPackage
 
 uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
-scpApiDocsToSglSite
+#scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 
