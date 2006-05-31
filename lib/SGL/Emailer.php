@@ -116,6 +116,7 @@ class SGL_Emailer
         $this->html = $this->headerTemplate . $body . $this->footerTemplate;
         $this->headers['From'] = $this->options['fromEmail'];
         $this->headers['Subject'] = $this->options['subject'];
+        $this->headers['Return-Path'] = $this->options['fromEmail'];
         return true;
     }
 
