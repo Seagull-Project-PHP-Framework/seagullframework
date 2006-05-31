@@ -117,7 +117,7 @@ class SGL_EnvSummaryTask extends SGL_Task
             if (preg_match("/>.*/", $depValue)) {
                 $comparator = $depValue{0};
                 $value = substr($depValue, 1);
-                if (version_compare($actual, $value, 'ge')) {
+                if (version_compare($actual, $value, 'g')) {
                     $status = 'green';
                 } else {
                     $status = 'red';
@@ -226,7 +226,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
     var $key = 'php_environment';
     var $mandatory = true;
     var $aRequirements = array(
-        'phpVersion' => array(SGL_REQUIRED => '>4.3.0'),
+        'phpVersion' => array(SGL_REQUIRED => '>4.2.3'),
         'operatingSystem' => array(SGL_NEUTRAL => 0),
         'webserverSapi' => array(SGL_NEUTRAL => 0),
         'webserverPort' => array(SGL_NEUTRAL => 0),
@@ -273,6 +273,19 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         'upload_max_filesize' => array(SGL_RECOMMENDED => '10M'),
         );
 
+    var $aErrors = array(
+        'safe_mode' => '',
+        'register_globals' => '',
+        'magic_quotes_gpc' => '',
+        'magic_quotes_runtime' => '',
+        'session.use_trans_sid' => '',
+        'allow_url_fopen' => '',
+        'file_uploads' => '',
+        'post_max_size' => '',
+        'upload_max_filesize' => '',
+        'memory_limit' => "Please set the option 'memory_limit' in your php.ini to a minimum of 16MB",
+        );
+
     function run()
     {
         $this->aData['safe_mode'] = ini_get2('safe_mode');
@@ -285,7 +298,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         $this->aData['post_max_size'] = ini_get('post_max_size');
         $this->aData['upload_max_filesize'] = ini_get('upload_max_filesize');
         if (ini_get('memory_limit')) {
-            $this->aRequirements['memory_limit'] = array(SGL_RECOMMENDED => '16M');
+            $this->aRequirements['memory_limit'] = array(SGL_REQUIRED => '>8M');
             $this->aData['memory_limit'] = ini_get('memory_limit');
         }
     	return $this->render($this->aData);
