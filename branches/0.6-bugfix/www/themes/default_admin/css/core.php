@@ -753,6 +753,9 @@ p.errorBlock input, p.errorBlock select {
 .narrow {
     width: 45%;
 }
+.wide {
+    width: 60%;
+}
 .full {
     width: 100%;
 }
