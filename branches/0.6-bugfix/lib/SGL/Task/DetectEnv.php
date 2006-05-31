@@ -274,15 +274,6 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         );
 
     var $aErrors = array(
-        'safe_mode' => '',
-        'register_globals' => '',
-        'magic_quotes_gpc' => '',
-        'magic_quotes_runtime' => '',
-        'session.use_trans_sid' => '',
-        'allow_url_fopen' => '',
-        'file_uploads' => '',
-        'post_max_size' => '',
-        'upload_max_filesize' => '',
         'memory_limit' => "Please set the option 'memory_limit' in your php.ini to a minimum of 16MB",
         );
 
