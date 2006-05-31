@@ -105,7 +105,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'usersearchmgr_cmd_search', NULL, 
 
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'sessionTimeout', '1800');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'timezone', 'UTC');
-INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'theme', 'default');
+INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'theme', 'classic');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'dateFormat', 'UK');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'language', 'en-iso-8859-15');
 INSERT INTO preference VALUES ({SGL_NEXT_ID}, 'resPerPage', '10');
