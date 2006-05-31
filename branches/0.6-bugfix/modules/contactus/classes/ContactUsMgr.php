@@ -115,6 +115,15 @@ class ContactUsMgr extends SGL_Manager
             if (empty($input->contact->user_comment)) {
                 $aErrors['user_comment'] = 'You must fill in your comment';
             }
+            if ($this->conf['ContactUsMgr']['useCaptcha']) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                if (!$captcha->validateCaptcha($input->contact->captcha)) {
+                    $aErrors['captcha'] = 'You must enter the number to the left in this field';
+                }
+                $input->captcha = $captcha->generateCaptcha();
+                $input->useCaptcha = true;
+            }
             //check for mail header injection
             require_once SGL_CORE_DIR . '/Emailer.php';
             $input->contact->first_name = SGL_Emailer::cleanMailInjection($input->contact->first_name);
@@ -201,6 +210,13 @@ class ContactUsMgr extends SGL_Manager
             $contact->email = $user->email;
 
             //  and send populated contact object to output
+        }
+
+        if ($this->conf['ContactUsMgr']['useCaptcha']) {
+            require_once SGL_CORE_DIR . '/Captcha.php';
+            $captcha = new SGL_Captcha();
+            $output->captcha = $captcha->generateCaptcha();
+            $output->useCaptcha = true;
         }
 
         if (!(empty($input->contact->enquiry_type))) {
