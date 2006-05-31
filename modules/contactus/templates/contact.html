@@ -66,6 +66,21 @@
             </td>
         </tr>
 
+        {if:useCaptcha}
+        <tr>
+            <td align="center" colspan="2">{translate(#Enter Captcha#)}</td>
+        </tr>
+        <tr>
+            <td align="right"><font style="font-size: 4pt; font-weight: bold"><pre>{captcha}</pre></font></td>
+            <td align="center">
+                <div class="error" flexy:if="error[captcha]">
+                    {translate(error[captcha])}
+                </div>
+                <input type="text" name="contact[captcha]" size="30" />
+            </td>
+        </tr>
+        {end:}
+
         <tr>
             <td colspan="2" align="center">
                 <input type="submit" name="submitted" class="wideButton" value="{translate(#Send it#)}" />
