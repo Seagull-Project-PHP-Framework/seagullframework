@@ -7,6 +7,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+30-05-06    Requiring greater than 8MB memory_limit is enforced
 30-05-06    Added Captcha lib and example implementation in contactus module
             (Steven Stremciuc)
 
