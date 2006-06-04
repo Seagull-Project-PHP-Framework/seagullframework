@@ -368,5 +368,38 @@ pre.codeExample {
 }
 
 /*
+========================Miscellaneous=========================*/
+
+.tipOwner {
+    position: relative;
+    cursor: help;
+    <?php if ($browserFamily == 'MSIE') {?>
+    behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
+    <?php } ?>
+}
+.tipOwner .tipText {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 105%;
+    border: 1px solid transparent;
+    border-color: <?php echo $button ?>;
+    background-color: <?php echo $tertiaryLight ?>;
+    color: <?php echo $secondaryDarker ?>;
+    text-align: center;
+    width: 15em;
+    padding: 2px 5px;
+    <?php if ($browserFamily == 'Gecko') {?>
+    -moz-opacity: 0.85;
+    <?php } else if ($browserFamily == 'MSIE') {?>
+    filter: alpha(opacity=85);
+    filter: progid: DXImageTransform.Microsoft.Alpha(opacity=85);
+    <?php } ?>
+}
+.tipOwner:hover .tipText {
+    display: block;
+}
+
+/*
 TO REMOVE WHEN ALL TEMPLATES ARE CONSOLIDATED
 ======================Default Theme BC========================*/
