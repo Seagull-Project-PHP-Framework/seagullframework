@@ -84,6 +84,13 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         } else {
             $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
             $aParsedUri['managerName'] = $conf['site']['defaultManager'];
+            if (!empty($conf['site']['defaultParams'])) {
+                $aParams = SGL_Url::querystringArrayToHash(
+                    explode('/', $conf['site']['defaultParams']));
+                foreach ($aParams as $k => $v) {
+                    $aParsedUri[$k] = $v;
+                }
+            }
         }
 
         //  if no manager name, must be default manager, ie, has same name as module
