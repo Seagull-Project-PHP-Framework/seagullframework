@@ -144,6 +144,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         //  db name
         $this->addElement('text',  'name',     'Database name: ');
+        $this->addElement('text',  'postConnect',     'Post Connect string: ');
         $this->addRule('name', 'Please specify the name of the database', 'required');
 
         //  db prefix
