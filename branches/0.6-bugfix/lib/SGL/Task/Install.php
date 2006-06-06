@@ -109,6 +109,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
         $c->set('db', array('socket' => $data['socket']));
         $c->set('db', array('type' => $data['dbType']['type']));
+        $c->set('db', array('postConnect' => $data['postConnect']));
 
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));
