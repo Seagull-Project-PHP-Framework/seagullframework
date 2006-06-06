@@ -101,9 +101,13 @@ class MaintenanceMgr extends SGL_Manager
     function _cmd_dbgen(&$input, &$output)
     {
         require_once SGL_CORE_DIR . '/Task/Install.php';
-        $res = SGL_Task_CreateDataObjectEntities::run();
+
+        //  First regenerate entities files
+        $resEntities = SGL_Task_CreateDataObjectEntities::run();
+        //  Then regenerate links file
+        $data['aModuleList'] = SGL_Util::getAllModuleDirs($onlyRegistered = true);
+        $resLinks = SGL_Task_CreateDataObjectLinkFile::run($data);
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
-        SGL::logMessage($res, PEAR_LOG_DEBUG);
     }
 
     function _cmd_checkLatestVersion(&$input, &$output)
