@@ -215,6 +215,9 @@ class SectionMgr extends SGL_Manager
             SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
             return false;
         }
+        if (!empty($input->aParams)) {
+            $input->section['aParams'] = $input->aParams;
+        }
         if ($this->da->addSection($input->section)) {
             SGL::raiseMsg('Section successfully added', true, SGL_MESSAGE_INFO);
         } else {
@@ -229,6 +232,9 @@ class SectionMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $input->section['lang'] = $input->navLang;
+        if (!empty($input->aParams)) {
+            $input->section['aParams'] = $input->aParams;
+        }
 
         if ($this->da->updateSection($input->section)) {
             SGL::raiseMsg('Section details successfully updated', true, SGL_MESSAGE_INFO);
