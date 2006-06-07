@@ -653,7 +653,7 @@ class DA_Navigation extends SGL_Manager
             break;
 
         case 'uriAddon':
-            $string = 'uriAddon:' . $section['addon'] . ':' . @serialize($input->aParams);
+            $string = 'uriAddon:' . $section['addon'] . ':' . @serialize($section['aParams']);
             $section['resource_uri'] = $string;
             break;
 
