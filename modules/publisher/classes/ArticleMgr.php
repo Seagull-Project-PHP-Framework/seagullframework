@@ -268,14 +268,12 @@ class ArticleMgr extends SGL_Manager
             $output->availableLangs = $installedLanguages;
             $output->articleLang = (!empty($input->articleLang))
                 ? $input->articleLang
-                : $this->conf['translation']['fallbackLang'];
+                : SGL_Translation::getLangID();
         }
 
         //  get dynamic content
-        $output->dynaContent = (isset($input->articleLang))
-            ? $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $input->articleLang)
-            : $item->getDynamicContent($input->articleID, SGL_RET_ARRAY,
-                @$this->conf['translation']['fallbackLang']);
+        $output->dynaContent =
+            $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $output->articleLang);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
