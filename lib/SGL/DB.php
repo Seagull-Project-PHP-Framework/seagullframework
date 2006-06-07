@@ -256,6 +256,13 @@ class SGL_DB
 		require_once 'Pager/Pager.php';
         $pager_options['append']   = isset($pager_options['append'])   ? $pager_options['append']   : false;
         $pager_options['fileName'] = isset($pager_options['fileName']) ? $pager_options['fileName'] : '/pageID/%d/';
+
+        // translate PEAR::Pager
+        $pager_options['altPrev'] = SGL_String::translate('altPrev');
+        $pager_options['altNext'] = SGL_String::translate('altNext');
+        $pager_options['altPage'] = SGL_String::translate('altPage');
+        $pager_options['prevImg'] = SGL_String::translate('prevImg');
+        $pager_options['nextImg'] = SGL_String::translate('nextImg');
         $pager = Pager::factory($pager_options);
 
         $page = array();

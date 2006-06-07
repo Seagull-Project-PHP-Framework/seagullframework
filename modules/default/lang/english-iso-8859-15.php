@@ -487,4 +487,12 @@ $defaultWords['Submit login'] = 'Submit login';
 $defaultWords['select all'] = 'select all';
 $defaultWords['templates'] = 'templates';
 $defaultWords['translations'] = 'translations';
+
+/* --- PEAR::Pager --- */
+$defaultWords['altPrev'] = 'Previous'; 
+$defaultWords['altNext'] = 'Next'; 
+$defaultWords['altPage'] = 'Page'; 
+$defaultWords['prevImg'] = '&laquo; previous'; 
+$defaultWords['nextImg'] = 'next &raquo;'; 
+
 ?>
