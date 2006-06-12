@@ -1,6 +1,11 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action save" href="javascript:formSubmit('frmPermScan');">{translate(#Save#)}</a>
+    <a flexy:if="isNewForm" class="action save" href="javascript:formSubmit('frmPermScan');">
+        {translate(#Save#)}
+    </a>
+    <a flexy:if="!isNewForm" class="action save" href="javascript:formSubmit('frmPermScan');">
+        {translate(#Delete#)}
+    </a>
     <a class="action cancel" href="{makeUrl(##,#permission#,#user#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
@@ -23,7 +28,7 @@
                     <span class="detail">{translate(#orphaned perms description#)}</span>
                     {end:}
                 </label>
-                <select class="longText" name="scannedPerms[]" id="scannedPerms[]" size="10" multiple="multiple">
+                <select class="longText" name="scannedPerms[]" id="scannedPerms" size="10" multiple="multiple">
                     {scannedOptions:h}
                 </select>
             </p>

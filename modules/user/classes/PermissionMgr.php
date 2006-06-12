@@ -472,91 +472,92 @@ class PermissionMgr extends SGL_Manager
 
         //  get a list of modules in db
         $query = "SELECT module_id, name FROM {$this->conf['table']['module']}";
-		$modules = $this->dbh->getAssoc($query);
+        $modules = $this->dbh->getAssoc($query);
 
-		if (is_a($modules, 'PEAR_Error')) {
-           return SGL::raiseError('There was a problem retrieving modules',
+        if (PEAR::isError($modules)) {
+            return SGL::raiseError('There was a problem retrieving modules',
                 SGL_ERROR_NODATA);
-		}
-
-        $permsFound = array();
-
+        }
 
         //  scan
-        require_once  'System.php';
+        require_once 'System.php';
 
         $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
-        $aFindArgs = array(SGL_MOD_DIR, '-maxdepth', 3);
-
-        //only scan in registered modules
+        $aFiles = array();
+        
+        //only scan in registered modules for *Mgr.php
         foreach ($aRegisteredModules as $module) {
-            $aFindArgs[] = '-name';
-            $aFindArgs[] = $module .'/classes/*php';
+            $aFindArgs = array(
+                SGL_MOD_DIR . "/$module/classes",
+                '-name', '*Mgr.php');
+            $aFilesFound = System::find($aFindArgs);
+            $aFiles = array_merge($aFiles, $aFilesFound);
         }
-        $files = System::find($aFindArgs);
 
-        foreach ($files as $k => $v) {
-            //  only process files in 'classes' directories
-            if (stristr ($v, 'classes') === false) {
-                continue;
-            }
-
+        $aPermsFound = array();
+        foreach ($aFiles as $file) {
             //  grab class name from path (platform independent)
-            preg_match('/[\\\\\/](\\w+)\\.php/', $v, $className);
+            preg_match('/[\\\\\/](\\w+)\\.php/', $file, $className);
             if (isset($className[1])) {
                 $className = strtolower($className[1]);
             } else {
                 continue;
             }
+            
             //  grab module name from path (platform independent)
-            preg_match('/(\\w+)[\\\\\/]classes[\\\\\/]/', $v, $moduleName);
+            preg_match('/(\\w+)[\\\\\/]classes[\\\\\/]/', $file, $moduleName);
             if (isset($moduleName[1])) {
                 $moduleName = strtolower($moduleName[1]);
             } else {
                 continue;
             }
+            
             //  load file as string (note: just for curiosity, I tried reading
             //  line by line and 1K and 4K chunks, so I wouldn't have to load the whole file
             //  and file_get_contents was a little faster! ...and it's 1 line of code
-            $t = file_get_contents($v);
+            $t = file_get_contents($file);
 
             //  find first actionsMapping statement, if any
             $pos1 = strpos($t, '$this->_aActionsMapping');
-            if ($pos1 === false) continue;
+            if ($pos1 === false) {
+                continue;
+            } 
+            
+            //  search for closing semicolon
             $pos2 = strpos($t, ';', $pos1);
-            if ($pos2 === false) continue;
+            if ($pos2 === false) {
+                continue;
+            }
 
             //  narrow down to actionsMapping statement only, so preg
             //  doesn't have to work so hard
             $actionStr = substr($t, $pos1, $pos2 - $pos1);
 
             //  grab all allowed actions into an array
-            $aTmp = array();
-            preg_match_all("/[^']*'(\w*)'[^']*/s", $actionStr, $aTmp);
+            preg_match_all("/[^']*'(\w*)'[^']*/s", $actionStr, $aMatchedActions);
 
             //  remove duplicates
-            $aActions = array_unique($aTmp[1]);
+            $aMatchedActions = array_unique($aMatchedActions[1]);
 
             //  find moduleId for moduleName
             $moduleId = array_search($moduleName, $modules);
 
             //  add class perm
-            $permsFound[] = array(
+            $aPermsFound[] = array(
                 'perm' => $className,
                 'module_id' => $moduleId,
                 'module_name' => $moduleName);
 
-            //  add each method perm, if not found. store display name and a
-            //  delimited value used for form submission
-            foreach ($aActions as $k2 => $v2) {
-                $permsFound[] = array(
-                    'perm' => "{$className}_cmd_{$v2}",
+            //  add each method perm
+            foreach ($aMatchedActions as $action) {
+                $aPermsFound[] = array(
+                    'perm' => "{$className}_cmd_{$action}",
                     'module_id' => $moduleId,
                     'module_name' => $moduleName);
             }
-            unset($aActions);
         }
-        return $permsFound;
+        
+        return $aPermsFound;
     }
 }
 ?>
