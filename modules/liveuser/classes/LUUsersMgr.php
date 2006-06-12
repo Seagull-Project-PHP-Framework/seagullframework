@@ -1,5 +1,5 @@
 <?php
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/usr.php';
 require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_ADD', 1);
@@ -13,8 +13,9 @@ define('SGL_LIVEUSER_REMOVE', 2);
 class LUUsersMgr extends SGL_Manager
 {
     function LUUsersMgr()
-    {
+    {        
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();        
         $this->module       = 'liveuser';
         $this->pageTitle    = 'Group Manager';
 
@@ -42,13 +43,13 @@ class LUUsersMgr extends SGL_Manager
     }
     
     // groups
-    function _editGroups(&$input, &$output)
+    function _cmd_editGroups(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'luUserEditGroups.html';
         $output->pageTitle = $this->pageTitle . ' :: Change assignments';
         
-        $user = &DB_DataObject::factory('usr');
+        $user = & new DataObjects_Usr;
         $ret = $user->get($input->user_id);
         if (!$ret || PEAR::isError($ret)) {
             LUAdmin::noRecordRedirect();
@@ -66,7 +67,7 @@ class LUUsersMgr extends SGL_Manager
         $output->remainingGroupsOptions = SGL_Output::generateSelect($aRemainingGroups);
     }
     
-    function _updateGroups(&$input, &$output)
+    function _cmd_updateGroups(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -92,7 +93,7 @@ class LUUsersMgr extends SGL_Manager
      * @param   constant    action   whether to add/remove group
      * @return  void
      */
-    function _changeGroupsAssignments($aGroups, $userId, $action)
+    function _cmd_changeGroupsAssignments($aGroups, $userId, $action)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         

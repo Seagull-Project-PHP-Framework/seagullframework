@@ -18,3 +18,6 @@ CREATE TABLE newsletter (
   last_updated DATE DEFAULT SYSDATE NOT NULL,
   constraint PK_NEWSLETTER PRIMARY KEY (newsletter_id)
 ); 
+
+create sequence newsletter_seq;
+

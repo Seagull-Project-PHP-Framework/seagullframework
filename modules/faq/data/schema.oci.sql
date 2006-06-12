@@ -14,3 +14,6 @@ answer               CLOB                 null,
 item_order           NUMBER(10)                 null,
 constraint PK_FAQ primary key (faq_id)
 );
+
+create sequence faq_seq;
+

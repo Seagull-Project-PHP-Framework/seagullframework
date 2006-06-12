@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgPreferenceMgr.php                                                      |
 // +---------------------------------------------------------------------------+
@@ -60,13 +60,13 @@ class OrgPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
-        $this->module       = 'user';
+
         $this->template     = 'prefOrgEdit.html';
         $this->pageTitle    = 'Organisation Preferences';
 
         $this->_aActionsMapping =  array(
-            'editAll'   => array('editAll'), 
-            'updateAll' => array('updateAll', 'redirectToDefault'), 
+            'editAll'   => array('editAll'),
+            'updateAll' => array('updateAll', 'redirectToDefault'),
         );
     }
 
@@ -78,56 +78,79 @@ class OrgPreferenceMgr extends PreferenceMgr
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->orgId       = $req->get('frmOrgId');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'editAll';
         $input->aPrefs      = $req->get('prefs');
     }
 
-    function _editAll(&$input, &$output)
+    function _cmd_editAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aPrefs = $this->da->getUserPrefsByOrgId($input->orgId);
-        $output->aDateFormats = $this->aDateFormats;        
+        $output->aDateFormats = $this->aDateFormats;
         $output->aThemes = $this->aThemes;
         $output->aTimeouts = $this->aTimeouts;
         $output->aResPerPage = $this->aResPerPage;
+        $output->orgName = $this->da->getOrgNameById($input->orgId);
         $output->prefs = $aPrefs;
     }
 
-    function _updateAll(&$input, &$output)
+    function _cmd_updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $query1 = " DELETE FROM {$conf['table']['org_preference']}
+
+        $query1 = " DELETE FROM {$this->conf['table']['org_preference']}
                     WHERE organisation_id = " . $input->orgId;
-        $dbh->query($query1);
+        $this->dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$conf['table']['org_preference']} 
-                (   org_preference_id, 
-                    organisation_id, 
-                    preference_id, 
+            INSERT INTO {$this->conf['table']['org_preference']}
+                (   org_preference_id,
+                    organisation_id,
+                    preference_id,
                     value)
-            VALUES(" . 
-                    $dbh->nextId($conf['table']['org_preference']) . ", 
+            VALUES(" .
+                    $this->dbh->nextId($this->conf['table']['org_preference']) . ",
                     $input->orgId,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
-            $res = $dbh->query($query2);
+            $res = $this->dbh->query($query2);
             if (DB::isError($res)) {
-                SGL::raiseError('Error inserting prefs, exiting ...', 
+                SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
         }
         //  redirect on success
-        SGL::raiseMsg('org details successfully updated');
+        SGL::raiseMsg('org details successfully updated', true, SGL_MESSAGE_INFO);
+    }
+
+/**
+     * Specific redirect.
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     */
+    function _cmd_redirectToDefault(&$input, &$output)
+    {
+        //  must not logmessage here
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array(
+                    'moduleName' => 'user',
+                    'managerName' => 'org',
+                    )
+                );
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
     }
 }
 ?>

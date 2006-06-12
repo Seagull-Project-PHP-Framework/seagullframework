@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UserPreferenceMgr.php                                                     |
 // +---------------------------------------------------------------------------+
@@ -45,9 +45,7 @@ require_once SGL_MOD_DIR . '/user/classes/PreferenceMgr.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.26 $
- * @since   PHP 4.1
  */
 class UserPreferenceMgr extends PreferenceMgr
 {
@@ -60,13 +58,13 @@ class UserPreferenceMgr extends PreferenceMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::PreferenceMgr();
-        $this->module       = 'user';
+
         $this->template     = 'prefUserEdit.html';
         $this->pageTitle    = 'User Preferences';
 
         $this->_aActionsMapping =  array(
-            'editAll'   => array('editAll'), 
-            'updateAll' => array('updateAll', 'redirectToDefault'), 
+            'editAll'   => array('editAll'),
+            'updateAll' => array('updateAll', 'redirectToDefault'),
         );
     }
 
@@ -78,12 +76,12 @@ class UserPreferenceMgr extends PreferenceMgr
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'editAll';
         $input->aPrefs      = $req->get('prefs');
     }
 
-    function _editAll(&$input, &$output)
+    function _cmd_editAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aDateFormats = $this->aDateFormats;
@@ -93,35 +91,33 @@ class UserPreferenceMgr extends PreferenceMgr
         $output->prefs = $_SESSION['aPrefs'];
     }
 
-    function _updateAll(&$input, &$output)
+    function _cmd_updateAll(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        
-        $uid = SGL_HTTP_Session::getUid();
-        $query1 = " DELETE FROM {$conf['table']['user_preference']}
+
+        $uid = SGL_Session::getUid();
+        $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . $uid;
-        $dbh->query($query1);
+        $ok = $this->dbh->query($query1);
 
         //  get prefName/id mapping
         $aMapping = $this->da->getPrefsMapping();
         foreach ($input->aPrefs as $prefName => $prefValue) {
             $query2 ="
-            INSERT INTO {$conf['table']['user_preference']} 
-                (   user_preference_id, 
-                    usr_id, 
-                    preference_id, 
+            INSERT INTO {$this->conf['table']['user_preference']}
+                (   user_preference_id,
+                    usr_id,
+                    preference_id,
                     value)
-            VALUES(" . 
-                    $dbh->nextId($conf['table']['user_preference']) . ", 
+            VALUES(" .
+                    $this->dbh->nextId($this->conf['table']['user_preference']) . ",
                     $uid,
                     $aMapping[$prefName],
                     '$prefValue'
             )";
-            $res = $dbh->query($query2);
-            if (DB::isError($res)) {
-                SGL::raiseError('Error inserting prefs, exiting ...', 
+            $res = $this->dbh->query($query2);
+            if (PEAR::isError($res)) {
+                SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }
         }
@@ -129,7 +125,7 @@ class UserPreferenceMgr extends PreferenceMgr
         unset($_SESSION['aPrefs']);
         $_SESSION['aPrefs'] = $this->da->getPrefsByUserId($uid);
 
-        SGL::raiseMsg('details successfully updated');
+        SGL::raiseMsg('details successfully updated', true, SGL_MESSAGE_INFO);
     }
 }
 ?>

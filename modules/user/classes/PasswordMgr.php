@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PasswordMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -39,30 +39,27 @@
 // $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
 
 require_once 'Validate.php';
-require_once SGL_ENT_DIR . '/Usr.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages passwords.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.26 $
- * @since   PHP 4.1
  */
 class PasswordMgr extends SGL_Manager
 {
     function PasswordMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'user';
-        $this->template = 'userPasswordEdit.html';
+        parent::SGL_Manager();
+
+        $this->template = 'loginForgot.html';
 
         $this->_aActionsMapping =  array(
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToEdit'), 
-            'retrieve'  => array('retrieve', 'redirectToDefault'), 
-            'forgot'    => array('forgot'), 
+            'retrieve'  => array('retrieve', 'redirectToDefault'),
+            'forgot'    => array('forgot'),
         );
     }
 
@@ -71,6 +68,7 @@ class PasswordMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->validated        = true;
         $input->masterTemplate  = $this->masterTemplate;
+        $input->template        = $this->template;
         $input->error           = array();
         $input->pageTitle       = 'Retrieve password';
         $input->action          = ($req->get('action')) ? $req->get('action') : 'forgot';
@@ -79,14 +77,13 @@ class PasswordMgr extends SGL_Manager
         $input->passwordConfirm = $req->get('frmPasswordConfirm');
         $input->question        = $req->get('frmQuestion');
         $input->answer          = $req->get('frmAnswer');
-        $input->passwdResetNotify = ($req->get('frmPasswdResetNotify') == 'on') ? 1 : 0;
         $input->forgotEmail     = $req->get('frmEmail');
-        $input->submit          = $req->get('submitted');
+        $input->submitted       = $req->get('submitted');
 
         $aErrors = array();
 
         //  forgot password validation
-        if ($input->submit && ($input->action == 'forgot' || $input->action == 'retrieve')) {
+        if ($input->submitted && ($input->action == 'forgot' || $input->action == 'retrieve')) {
             $v = & new Validate();
             if (empty($input->forgotEmail)) {
                 $aErrors['frmEmail'] = 'You must enter your email';
@@ -105,42 +102,9 @@ class PasswordMgr extends SGL_Manager
             if (is_array($aErrors) && count($aErrors)) {
                 SGL::raiseMsg('Please fill in the indicated fields');
                 $input->error = $aErrors;
-                $input->template = 'loginForgot.html';
                 $this->validated = false;
             }
             unset($v);
-        } 
-        //  password update validation for AccountMgr
-        if ($input->submit && ($input->action == 'edit') || ($input->action == 'update')) {
-            $v = & new Validate();
-            if (empty($input->passwordOrig)) {
-                $aErrors['frmPasswordOrig'] = 'You must enter your original password';
-            } else {
-                if (!$this->_isOriginalPassword($input->passwordOrig)) {
-                    $aErrors['frmPasswordOrig'] = 'You have entered your original password incorrectly';
-                }
-            }
-            if (empty($input->password)) {
-                $aErrors['frmPassword'] = 'You must enter a new password';
-            } else {
-                if (!$v->string($input->password, array('min_length' => 5, 'max_length' => 10 ))) {
-                    $aErrors['frmPassword'] = 'Password must be between 5 to 10 characters';
-                }
-            }
-            if (empty($input->passwordConfirm)) {
-                $aErrors['frmPasswordConfirm'] = 'Please confirm password';
-            } else {
-                if ($input->password != $input->passwordConfirm) {
-                    $aErrors['frmPasswordConfirm'] = 'Passwords are not the same';
-                }
-            }
-            //  if errors have occured
-            if (is_array($aErrors) && count($aErrors)) {
-                SGL::raiseMsg('Please fill in the indicated fields');
-                $input->error = $aErrors;
-                $input->template = 'userPasswordEdit.html';
-                $this->validated = false;
-            }
         }
     }
 
@@ -150,68 +114,48 @@ class PasswordMgr extends SGL_Manager
         $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_forgot(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'userPasswordEdit.html';
-        $output->pageTitle = 'Change Password';
     }
 
-    function _update(&$input, &$output)
+    function _cmd_retrieve(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = & new DataObjects_Usr();
-        $oUser->get(SGL_HTTP_Session::getUid());
-        $oUser->passwd = md5($input->password);
-        $success = $oUser->update();
-        if ($input->passwdResetNotify) {
-            $this->sendPassword($oUser, $input->password);
-        }
-        //  redirect on success
-        if ($success) {
-            SGL::raiseMsg('Password updated successfully');
-        } else {
-            SGL::raiseError('There was a problem inserting the record', SGL_ERROR_NOAFFECTEDROWS);
-        }
-    }
 
-    function _forgot(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'loginForgot.html';
-    }
-
-    function _retrieve(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
         $query = "
             SELECT  *
-            FROM    " . $conf['table']['user'] ."
-            WHERE   email = " . $dbh->quote($input->forgotEmail) . "
+            FROM    " . $this->conf['table']['user'] ."
+            WHERE   email = " . $this->dbh->quote($input->forgotEmail) . "
             AND     security_question = " . $input->question. "
             AND     security_answer = '" . $input->answer . "'";
-        $userId = $dbh->getOne($query);
+        $userId = $this->dbh->getOne($query);
         if ($userId) {
             $aRet = $this->_resetPassword($userId);
             list($passwd, $oUser) = $aRet;
             $bEmailSent = $this->sendPassword($oUser, $passwd);
             if ($bEmailSent) {
-                //  redirect
-                SGL::raiseMsg('password emailed out');
-                $aParams = array(
-                    'moduleName'    => 'default',
-                    'managerName'   => 'default',
-                    );
-                SGL_HTTP::redirect($aParams);
+                SGL::raiseMsg('password emailed out', true, SGL_MESSAGE_INFO);
             } else {
                 SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
             }
         //  credentials not recognised
         } else {
-            //  redirect
             SGL::raiseMsg('email not in system');
+        }
+    }
+
+    function _cmd_redirectToEdit(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array('action' => 'edit'));
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
         }
     }
 
@@ -221,46 +165,42 @@ class PasswordMgr extends SGL_Manager
         require_once 'Text/Password.php';
         $oPassword = & new Text_Password();
         $passwd = $oPassword->create();
-        $oUser = & new DataObjects_Usr();
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($userId);
         $oUser->passwd = md5($passwd);
         $oUser->update();
         return array($passwd, $oUser);
     }
 
-    function _isOriginalPassword($passwd)
-    {
-        if (isset($passwd)) {
-            $oUser = & new DataObjects_Usr();
-            $oUser->get(SGL_HTTP_Session::getUid());
-            return md5($passwd) == $oUser->passwd;
-        }
-    }
-
+    /**
+     * Wrapper for emailing password.
+     *
+     * @static
+     * @param object $oUser
+     * @param string $passwd
+     * @return boolean
+     */
     function sendPassword($oUser, $passwd)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         $options = array(
-                'toEmail'   => $oUser->email,
-                'fromEmail' => $conf['email']['admin'],
-                'replyTo'   => $conf['email']['admin'],
-                'subject'   => 'Password reminder from ' . $conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_forgot.php',
-                'username'  => $oUser->username,
-                'password'  => $passwd,
+            'toEmail'   => $oUser->email,
+            'fromEmail' => $conf['email']['admin'],
+            'replyTo'   => $conf['email']['admin'],
+            'subject'   => 'Password reminder from ' . $conf['site']['name'],
+            'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                . '/user/email_forgot.php',
+            'username'  => $oUser->username,
+            'password'  => $passwd,
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
-    }
-    
-    function _redirectToEdit(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);  
-        SGL_HTTP::redirect(array('action' => 'edit'));
     }
 }
 ?>

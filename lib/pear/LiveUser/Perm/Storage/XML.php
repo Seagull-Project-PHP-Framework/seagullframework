@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: XML.php,v 1.12 2005/04/14 11:06:41 lsmith Exp $
+ * @version CVS: $Id: XML.php,v 1.26 2006/03/14 13:10:04 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -60,10 +60,10 @@ require_once 'XML/Tree.php';
  * - XML_Parser
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -97,11 +97,10 @@ class LiveUser_Perm_Storage_XML extends LiveUser_Perm_Storage
     var $userObj = null;
 
     /**
+     * Initialize the storage container
      *
-     *
-     *
-     * @param array &$storageConf Array with the storage configuration
-     * @return boolean true on success, false on failure.
+     * @param array Array with the storage configuration
+     * @return bool true on success, false on failure.
      *
      * @access public
      */
@@ -111,38 +110,41 @@ class LiveUser_Perm_Storage_XML extends LiveUser_Perm_Storage
 
         if (!is_file($this->file)) {
             if (!is_file(getenv('DOCUMENT_ROOT') . $this->file)) {
-                $this->_stack->push(LIVEUSER_ERROR_MISSING_DEPS, 'exception', array(),
+                $this->stack->push(LIVEUSER_ERROR_MISSING_DEPS, 'exception', array(),
                     "Perm initialisation failed. Can't find xml file.");
                 return false;
             }
             $this->file = getenv('DOCUMENT_ROOT') . $this->file;
         }
-        if (!class_exists('XML_Tree')) {
-            $this->_stack->push(LIVEUSER_ERROR_MISSING_DEPS, 'exception', array(),
-                "Perm initialisation failed. Can't find XML_Tree class");
-            return false;
-        }
+
         $tree =& new XML_Tree($this->file);
         $err =& $tree->getTreeFromFile();
         if (PEAR::isError($err)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
                 "Perm initialisation failed. Can't get tree from file");
             return false;
         }
-        $this->tree = $tree;
+        $this->tree =& $tree;
+
+        if (!is_a($this->tree, 'xml_tree')) {
+            $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                array('container' => 'storage layer configuration missing'));
+            return false;
+        }
+
         return true;
     }
 
     /**
+     * map an auth user to a perm user
      *
-     *
-     * @param int $authUserId
+     * @param int $auth_user_id
      * @param string $containerName
-     * @return mixed array or false on failure
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function mapUser($authUserId, $containerName)
+    function mapUser($auth_user_id, $containerName)
     {
         $nodeIndex = 0;
         $userIndex = 0;
@@ -151,9 +153,9 @@ class LiveUser_Perm_Storage_XML extends LiveUser_Perm_Storage
             foreach ($this->tree->root->children as $node) {
                 if ($node->name == 'users') {
                     foreach ($node->children as $user) {
-                        if ($user->name == 'user' &&
-                            $authUserId == $user->attributes['authUserId'] &&
-                            $containerName == $user->attributes['authContainerName']
+                        if ($user->name == 'user'
+                            && $auth_user_id == $user->attributes['authUserId']
+                            && $containerName == $user->attributes['authContainerName']
                         ) {
                             $result['perm_user_id'] = $user->attributes['userId'];
                             $result['perm_type'] = $user->attributes['type'];
@@ -177,12 +179,12 @@ class LiveUser_Perm_Storage_XML extends LiveUser_Perm_Storage
      * Group rights and invididual rights are being merged
      * in the process.
      *
-     * @param int $permUserId
-     * @return mixed array of false on failure
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readUserRights()
+    function readUserRights($perm_user_id)
     {
         $result = array();
 
@@ -208,14 +210,15 @@ class LiveUser_Perm_Storage_XML extends LiveUser_Perm_Storage
     /**
      * properly disconnect from resources
      *
-     * @return void
+     * @return bool true on success and false on failure
      *
-     * @access  public
+     * @access public
      */
     function disconnect()
     {
         $this->tree = null;
         $this->userObj = null;
+        return true;
     }
 }
 ?>

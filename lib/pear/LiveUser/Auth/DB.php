@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: DB.php,v 1.18 2005/07/18 16:16:56 lsmith Exp $
+ * @version CVS: $Id: DB.php,v 1.40 2006/04/13 15:26:49 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -61,15 +61,13 @@ require_once 'DB.php';
  * - File "LiveUser.php" (contains the parent class "LiveUser")
  * - Array of connection options or a PEAR::DB connection object must be
  *   passed to the constructor.
- *   Example: array('dsn'                   => 'mysql://user:pass@host/db_name',
- *                  'connection             => &$conn, # PEAR::DB connection object
- *                  'loginTimeout'          => 0,
- *                  'allowDuplicateHandles' => 1);
+ *   Example: array('dsn' => 'mysql://user:pass@host/db_name',
+ *                  'dbc' => &$conn, # PEAR::DB connection object);
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author   Markus Wolff <wolff@21st.de>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -79,10 +77,10 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
     /**
      * dsn that was connected to
      *
-     * @var object
+     * @var    string
      * @access private
      */
-    var $dsn = null;
+    var $dsn = false;
 
     /**
      * Database connection object.
@@ -90,7 +88,15 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
      * @var    object
      * @access private
      */
-    var $dbc = null;
+    var $dbc = false;
+
+    /**
+     * Database connection options.
+     *
+     * @var    object
+     * @access private
+     */
+    var $options = array();
 
     /**
      * Table prefix
@@ -104,64 +110,60 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
     /**
      * Load the storage container
      *
-     * @param  mixed &$conf   Name of array containing the configuration.
-     * @param string $containerName name of the container that should be used
-     * @return  boolean true on success or false on failure
+     * @param   array  array containing the configuration.
+     * @param string  name of the container that should be used
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function init(&$conf, $containerName)
     {
         parent::init($conf, $containerName);
 
-        if (is_array($conf['storage'])) {
-            if (isset($conf['storage']['connection'])
-                && DB::isConnection($conf['storage']['connection'])
-            ) {
-                $this->dbc = &$conf['storage']['connection'];
-            } elseif (isset($conf['storage']['dsn'])) {
-                $this->dsn = $conf['storage']['dsn'];
-                $options = null;
-                if (isset($conf['storage']['options'])) {
-                    $options = $conf['storage']['options'];
-                }
-                $options['portability'] = DB_PORTABILITY_ALL;
-                $this->dbc =& DB::connect($conf['storage']['dsn'], $options);
-                if (PEAR::isError($this->dbc)) {
-                    $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                        array('container' => 'could not connect: '.$this->dbc->getMessage()));
-                    return false;
-                }
+        if (!is_a($this->dbc, 'db_common') && !is_null($this->dsn)) {
+            $this->options['portability'] = DB_PORTABILITY_ALL;
+            $dbc =& DB::connect($this->dsn, $this->options);
+            if (PEAR::isError($dbc)) {
+                $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                    array('container' => 'could not connect: '.$dbc->getMessage(),
+                    'debug' => $dbc->getUserInfo()));
+                return false;
             }
+            $this->dbc =& $dbc;
         }
+
+        if (!is_a($this->dbc, 'db_common')) {
+            $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                array('container' => 'storage layer configuration missing'));
+            return false;
+        }
+
         return true;
     }
 
     /**
      * Writes current values for user back to the database.
-     * This method does nothing in the base class and is supposed to
-     * be overridden in subclasses according to the supported backend.
      *
-     * @return boolean true on success or false on failure
+     * @return bool true on success or false on failure
      *
      * @access private
      */
     function _updateUserData()
     {
-        if (!isset($this->tables['users']['fields']['lastlogin'])) {
+        if (!array_key_exists('lastlogin', $this->tables['users']['fields'])) {
             return true;
         }
 
-        $sql  = 'UPDATE ' . $this->prefix . $this->alias['users'].'
+        $query  = 'UPDATE ' . $this->prefix . $this->alias['users'].'
                  SET '    . $this->alias['lastlogin'] . '=' .
                     $this->dbc->quoteSmart(date('Y-m-d H:i:s', $this->currentLogin)) . '
                  WHERE '  . $this->alias['auth_user_id']   . '=' .
-                    $this->dbc->quoteSmart($this->authUserId);
+                    $this->dbc->quoteSmart($this->propertyValues['auth_user_id']);
 
-        $result = $this->dbc->query($sql);
+        $result = $this->dbc->query($query);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(
+            $this->stack->push(
                 LIVEUSER_ERROR, 'exception',
                 array('reason' => $result->getMessage() . '-' . $result->getUserInfo())
             );
@@ -172,8 +174,7 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
     }
 
     /**
-     * Reads auth_user_id, passwd, is_active flag
-     * lastlogin timestamp from the database
+     * Reads user data from the given data source
      * If only $handle is given, it will read the data
      * from the first user with that handle and return
      * true on success.
@@ -182,16 +183,17 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
      * matching and return true on success (this allows
      * multiple users having the same handle but different
      * passwords - yep, some people want this).
+     * if only an auth_user_id is passed it will try to read the data based on the id
      * If no match is found, false is being returned.
      *
-     * @param  string $handle  user handle
-     * @param  boolean $passwd  user password
-     * @param string $authUserId auth user id
-     * @return boolean  true upon success or false on failure
+     * @param  string user handle
+     * @param  string user password
+     * @param  bool|int if the user data should be read using the auth user id
+     * @return bool true on success or false on failure
      *
      * @access public
      */
-    function readUserData($handle = '', $passwd = '', $authUserId = false)
+    function readUserData($handle = '', $passwd = '', $auth_user_id = false)
     {
         $fields = array();
         foreach ($this->tables['users']['fields'] as $field => $req) {
@@ -199,31 +201,29 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
         }
 
         // Setting the default sql query.
-        $sql    = 'SELECT ' . implode(',', $fields) . '
+        $query = 'SELECT ' . implode(',', $fields) . '
                    FROM   ' . $this->prefix . $this->alias['users'].'
                    WHERE  ';
-        if ($authUserId) {
-            $sql .= $this->alias['auth_user_id'] . '='
-                . $this->dbc->quoteSmart($this->authUserId);
+        if ($auth_user_id) {
+            $query .= $this->alias['auth_user_id'] . '='
+                . $this->dbc->quoteSmart($auth_user_id);
         } else {
-            $sql .= $this->alias['handle'] . '='
+            $query .= $this->alias['handle'] . '='
                 . $this->dbc->quoteSmart($handle);
 
-            if ($this->tables['users']['fields']['passwd']) {
+            if (!is_null($this->tables['users']['fields']['passwd'])) {
                 // If $passwd is set, try to find the first user with the given
                 // handle and password.
-                $sql .= ' AND   ' . $this->alias['passwd'] . '='
+                $query .= ' AND   ' . $this->alias['passwd'] . '='
                     . $this->dbc->quoteSmart($this->encryptPW($passwd));
             }
         }
 
         // Query database
-        $result = $this->dbc->getRow($sql, null, DB_FETCHMODE_ASSOC);
+        $result = $this->dbc->getRow($query, null, DB_FETCHMODE_ASSOC);
 
         if (PEAR::isError($result)) {
-        // If a user was found, read data into class variables and set
-        // return value to true
-            $this->_stack->push(
+            $this->stack->push(
                 LIVEUSER_ERROR, 'exception',
                 array('reason' => $result->getMessage() . '-' . $result->getUserInfo())
             );
@@ -231,37 +231,14 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
         }
 
         if (!is_array($result)) {
-            return false;
+            return null;
         }
 
-        $this->handle = $result['handle'];
-        unset($result['handle']);
-        $this->passwd = $this->decryptPW($result['passwd']);
-        unset($result['passwd']);
-        $this->authUserId = $result['auth_user_id'];
-        unset($result['auth_user_id']);
-        $this->isActive = ((!isset($result['is_active']) || $result['is_active']) ? true : false);
-        if (isset($result['is_active'])) {
-            unset($result['is_active']);
+        // User was found, read data into class variables and set return value to true
+        if (array_key_exists('lastlogin', $result) && !empty($result['lastlogin'])) {
+            $result['lastlogin'] = strtotime($result['lastlogin']);
         }
-        $this->lastLogin = (isset($result['lastlogin']) && !empty($result['lastlogin']))
-            ? strtotime($result['lastlogin']) : '';
-        if (isset($result['lastlogin'])) {
-            unset($result['lastlogin']);
-        }
-        $this->ownerUserId  = isset($result['owner_user_id']) ? $result['owner_user_id'] : null;
-        if (isset($result['owner_user_id'])) {
-            unset($result['owner_user_id']);
-        }
-        $this->ownerGroupid = isset($result['owner_group_id']) ? $result['owner_group_id'] : null;
-        if (isset($result['owner_group_id'])) {
-            unset($result['owner_group_id']);
-        }
-        if (!empty($result)) {
-            foreach ($result as $name => $value) {
-                $this->{$name} = $value;
-            }
-        }
+        $this->propertyValues = $result;
 
         return true;
     }
@@ -269,7 +246,7 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
     /**
      * Properly disconnect from database
      *
-     * @return void
+     * @return bool true on success or false on failure
      *
      * @access public
      */
@@ -278,13 +255,13 @@ class LiveUser_Auth_DB extends LiveUser_Auth_Common
         if ($this->dsn) {
             $result = $this->dbc->disconnect();
             if (PEAR::isError($result)) {
-                $this->_stack->push(
+                $this->stack->push(
                     LIVEUSER_ERROR, 'exception',
                     array('reason' => $result->getMessage() . '-' . $result->getUserInfo())
                 );
                 return false;
             }
-            $this->dbc = null;
+            $this->dbc = false;
         }
         return true;
     }

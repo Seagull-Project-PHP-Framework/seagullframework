@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -60,6 +60,30 @@ class NavigationOutput
             $radioString .= "<input class='noBorder' type='radio' id='".$valueObj->$id."_no' name='category[perms][".$valueObj->$id."]' value='0' $no><label for=''>" . SGL_Output::translate('No') . "</label>\n";
             $radioString .= "</td><td>$valueObj->name</td>";
             $radioString .= "</tr>\n";
+        }
+        return $radioString;
+    }
+
+     /**
+     * Generates collection of radio buttons.
+     *
+     * @access  public
+     * @param   array   $array          hash of radio values
+     * @return  string  $radioString    list of radio objects
+     * @see     PermissionsMgr()
+	 */
+    function generatePermsRadioList1($array, $id = 'id')
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $radioString = '';
+        foreach ($array as $key => $valueObj) {
+            $yes    = ($valueObj->isAllowed) ? ' checked="checked"' : '';
+            $no     = (!$valueObj->isAllowed) ? ' checked="checked"' : '';
+            $radioString .= "<p>\n\t\t";
+            $radioString .= "<label>$valueObj->name</label>\n\t\t";
+            $radioString .= "<input type='radio' id='".$valueObj->$id."_yes' name='category[perms][".$valueObj->$id."]' value='1' $yes>" . SGL_Output::translate('Yes') . "\n\t\t";
+            $radioString .= "<input type='radio' id='".$valueObj->$id."_no' name='category[perms][".$valueObj->$id."]' value='0' $no>" . SGL_Output::translate('No') . "\n\t\t";
+            $radioString .= "</p>\n";
         }
         return $radioString;
     }

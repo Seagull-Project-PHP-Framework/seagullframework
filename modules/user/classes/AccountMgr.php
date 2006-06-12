@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | AccountMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -40,31 +40,29 @@
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-require_once SGL_ENT_DIR . '/Usr.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages User's account.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
- * @version $Revision: 1.25 $
- * @since   PHP 4.1
  */
 class AccountMgr extends RegisterMgr
 {
     function AccountMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'user';
+        parent::RegisterMgr();
+
         $this->pageTitle = 'My Account';
         $this->da = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
-            'edit'          => array('edit'), 
+            'edit'          => array('edit'),
             'update'        => array('update', 'redirectToDefault'),
-            'viewProfile'   => array('viewProfile'), 
-            'summary'       => array('summary'), 
+            'viewProfile'   => array('viewProfile'),
+            'summary'       => array('summary'),
         );
     }
 
@@ -81,70 +79,74 @@ class AccountMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::display($output);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
         //  set user's country
         if (isset($output->user) && $output->action == 'viewProfile') {
             $output->user->country = $GLOBALS['_SGL']['COUNTRIES'][$output->user->country];
             $output->user->region = $GLOBALS['_SGL']['STATES'][$output->user->region];
         }
-        if ($conf['OrgMgr']['enabled']) {
+        if ($this->conf['OrgMgr']['enabled']) {
             $output->aOrgs = $this->da->getOrgs();
         }
         $output->aRoles = $this->da->getRoles();
         $output->isAcctActive = (@$output->user->is_acct_active) ? ' checked' : '';
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->pageTitle = 'My Profile :: Edit';
         $output->template = 'userAdd.html';
-        $oUser = & new DataObjects_Usr();
-        $oUser->get(SGL_HTTP_Session::getUid());
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser->get(SGL_Session::getUid());
         $output->user = $oUser;
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $oUser = & new DataObjects_Usr();
-        $oUser->get(SGL_HTTP_Session::getUid());
+
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser->get(SGL_Session::getUid());
         $original = clone($oUser);
         $oUser->setFrom($input->user);
-        $oUser->last_updated = SGL::getTime();
+        $oUser->last_updated = SGL_Date::getTime();
         $success = $oUser->update($original);
 
         if ($success) {
-            SGL::raiseMsg('profile successfully updated');
+            SGL::raiseMsg('profile successfully updated', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('There was a problem inserting the record', 
+            SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
     }
 
-    function _viewProfile(&$input, &$output)
+    function _cmd_viewProfile(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'account.html';
         $output->pageTitle = 'My Profile';
-        $user = & new DataObjects_Usr();
-        $user->get(SGL_HTTP_Session::getUid());
-        $output->user = $user;
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser->get(SGL_Session::getUid());
+        $output->user = $oUser;
     }
 
-    function _summary(&$input, &$output)
+    function _cmd_summary(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'accountSummary.html';
-        $user = & new DataObjects_Usr();
-        $user->get(SGL_HTTP_Session::getUid());
-        $user->getLinks('link_%s');
+        $currentUid = SGL_Session::getUid();
+        $oUser = DB_DataObject::factory($this->conf['table']['user']);
+        $oUser->get($currentUid);
 
         //  get current remote IP
         $output->remote_ip = $_SERVER['REMOTE_ADDR'];
         $output->login = $this->da->getLastLogin();
-        $output->user = $user;
+        $output->user = $oUser;
+        $output->user->role_name = $this->da->getRoleNameById(SGL_Session::getRoleId());
     }
 }
 ?>

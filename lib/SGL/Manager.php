@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Manager.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -39,12 +39,12 @@
 // $Id: Manager.php,v 1.19 2005/06/13 12:00:25 demian Exp $
 
 /**
- * Parent class for all Page/module objects.
+ * Abstract model controller for all the 'manager' classes.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.19 $
- * @since   PHP 4.1
+ * @abstract
  */
 class SGL_Manager
 {
@@ -70,7 +70,7 @@ class SGL_Manager
      * @access  public
      * @var     string
      */
-    var $pageTitle = '';
+    var $pageTitle = 'default';
 
     /**
      * Flag indicated is Page validation passed.
@@ -79,14 +79,6 @@ class SGL_Manager
      * @var     boolean
      */
     var $validated = false;
-
-    /**
-     * Current module name.
-     *
-     * @access  public
-     * @var     string
-     */
-    var $module = '';
 
     /**
      * Sortby flag, used in child classes.
@@ -104,6 +96,10 @@ class SGL_Manager
      */
     var $_aActionsMapping = array();
 
+    var $conf = array();
+    var $dbh = null;
+
+
     /**
      * Constructor.
      *
@@ -113,129 +109,278 @@ class SGL_Manager
     function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+        $this->dbh = $this->_getDb();
+
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            $this->trans = & SGL_Translation::singleton();
+        }
     }
 
-    // +---------------------------------------+
-    // | Public workflow methods               |
-    // |                                       |
-    // | All manager classes in the framework  |
-    // | workflow must follow the validate,    |
-    // | process, display pattern.             |
-    // +---------------------------------------+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
+    }
+
+    function getConfig()
+    {
+        $c = &SGL_Config::singleton();
+        return $c;
+    }
 
     /**
-     * Page validation method, extended by all Manager classes.
+     * Specific validations are implemented in sub classes.
      *
-     * Get tabID required by ALL pages, same goes for msg, action, from
-     * 
+     * @abstract
+     *
      * @access  public
-     * @param   object  $req    SGL_HTTP_Request object received from user agent
-     * @param   object  $input  SGL_Output object from Controller
+     * @param   SGL_Request     $req    SGL_Request object received from user agent
+     * @param   SGL_Registry    $input  SGL_Registry for storing data
      * @return  void
      */
-    function validate($req, &$input)
-    {
-        //  abstract
-    }
+    function validate($req, &$input) {}
 
     /**
-     * Abstract Page processing method.
+     * Super class for implementing authorisation checks, delegates specific processing
+     * to child classses.
      *
      * @access  public
-     * @abstract
-     * @param   object  $input  Input object received from validate()
-     * @param   object  $output Processed result
-     * @return  void
+     * @param   SGL_Registry    $input  Input object received from validate()
+     * @param   SGL_Output      $output Processed result
+     * @return  mixed           true on success or PEAR_Error on failure
      */
     function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $className = get_class($this);
+        $mgrName = SGL_Inflector::caseFix(get_class($this));
+        $defaultMgrLoaded = false;
+
+        if (SGL_Error::count()) {
+            $oLastError = SGL_Error::getLast();
+            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+                $defaultMgrLoaded = true;
+            }
 
         //  determine if action param from $_GET is valid
-        if (!(array_key_exists($input->action, $this->_aActionsMapping))) {
-            SGL::raiseError('The specified method, ' . $input->action . 
-                ' does not exist', SGL_ERROR_NOMETHOD, PEAR_ERROR_DIE);
+        } elseif (!(array_key_exists($input->action, $this->_aActionsMapping))) {
+            return SGL::raiseError('The specified method, ' . $input->action .
+                ' does not exist', SGL_ERROR_NOMETHOD);
         }
+        if (!count($this->conf)) {
+            return SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
+                'constructor - please add "parent::SGL_Manager();" in your '.
+                'manager\'s constructor.', SGL_ERROR_NOCLASS);
+        }
+        //  only implement authorisation check on demand
+        if ( isset($this->conf[$mgrName]['requiresAuth'])
+                && $this->conf[$mgrName]['requiresAuth'] == true
+                && $this->conf['debug']['authorisationEnabled'])
+        {
+            //  determine global manager perm, ie that is valid for all actions
+            //  in the mgr
+            $mgrPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
 
-        //  don't perform checks if authentication is disabled in debug
-        if ($conf['debug']['authenticationEnabled']) {
+            //  check authorisation
+            $ok = $this->_authorise($mgrPerm, $mgrName, $input);
+            if ($ok !== true) {
 
-            //  setup classwide perm
-            $classPerm = @constant('SGL_PERMS_' . strtoupper($className));
+                //  test for possible errors
+                if (is_array($ok) && count($ok)) {
 
-            // if user has no class perms check for each action
-            if (! SGL_HTTP_Session::hasPerms($classPerm)) {
+                    list($className, $methodName) = $ok;
+                    SGL::logMessage('Unauthorised user '.SGL_Session::getUid() .' attempted to access ' .
+                        $className . '::' .$methodName, PEAR_LOG_WARNING);
 
-                // ...and if linked methods to be called are allowed
-                foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-                
-                    //  allow redirects without perms
-                    if ($methodName == 'redirectToDefault') {
-                        continue;
+                    //  make sure no infinite redirections
+                    $lastRedirected = SGL_Session::get('redirected');
+                    $now = time();
+                    SGL_Session::set('redirected', $now);
+
+                    //  if redirects happen less than 2 seconds apart, and there are greater
+                    //  than 2 of them, recursion is happening
+                    if ($now - $lastRedirected < 2) {
+                        $redirectTimes = SGL_Session::get('redirectedTimes');
+                        $redirectTimes ++;
+                        SGL_Session::set('redirectedTimes', $redirectTimes);
+                    } else {
+                        SGL_Session::set('redirectedTimes', 0);
                     }
-                    $methodName = '_' . $methodName;
-
-                    //  build relevant perms constant
-                    $perm = @constant('SGL_PERMS_' . strtoupper($className . $methodName));
-                    
-                    //  redirect if user doesn't have method specific or classwide perms
-                    if (! SGL_HTTP_Session::hasPerms($perm)) {
-                        SGL::raiseMsg('you do not have perms');
-                        SGL::logMessage('You do not have the required perms for ' . 
-                            $className . '::' .$methodName, PEAR_LOG_NOTICE);
-
-                        //  make sure no infinite redirections
-                        $lastRedirected = SGL_HTTP_Session::get('redirected');
-                        $now = time();
-                        SGL_HTTP_Session::set('redirected', $now);
-                        if ($now - $lastRedirected < 2) {
-                            PEAR::raiseError('infinite loop detected, clear cookies and check perms', 
-                                SGL_ERROR_RECURSION, PEAR_ERROR_DIE);
-                        }
-                        $redirect = array(  'moduleName'    => 'default', 
-                                            'managerName'   => 'default');
-                        SGL_HTTP::redirect($redirect);
+                    if (SGL_Session::get('redirectedTimes') > 2) {
+                        return PEAR::raiseError('infinite loop detected, clear cookies and check perms',
+                            SGL_ERROR_RECURSION);
                     }
+                   // redirect to current or default screen
+                    SGL::raiseMsg('authorisation failed');
+                    $aHistory = SGL_Session::get('aRequestHistory');
+                    $aLastRequest = isset($aHistory[1]) ? $aHistory[1] : false;
+                    if ($aLastRequest) {
+                        $aRedir = array(
+                            'managerName'   => $aLastRequest['managerName'],
+                            'moduleName'    => $aLastRequest['moduleName'],
+                            );
+                    } else {
+                        $aRedir = $this->getDefaultPageParams();
+                    }
+                    SGL_HTTP::redirect($aRedir);
+                } else {
+                    return PEAR::raiseError('unexpected response during authorisation check',
+                        SGL_ERROR_INVALIDAUTH);
                 }
             }
         }
-
-        //  all tests passed, execute relevant method
-        foreach ($this->_aActionsMapping[$input->action] as $methodName) {
-            $methodName = '_'.$methodName;
-            $this->$methodName($input, $output);
+        if (!$defaultMgrLoaded) {
+            //  all tests passed, execute relevant method
+            foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+                $methodName = '_cmd_'.$methodName;
+                $this->{$methodName}($input, $output);
+            }
         }
+        return true;
+    }
+
+    /**
+     * Perform authorisation on specified action methods.
+     *
+     * @param integer $mgrPerm
+     * @param string  $mgrName
+     * @param SGL_Registry $input
+     * @return mixed true on success, array of class/method names on failure
+     */
+    function _authorise($mgrPerm, $mgrName, $input)
+    {
+        // if user has no global manager perms check for each action
+        if (!SGL_Session::hasPerms($mgrPerm)) {
+
+            // and if chained methods to be called are allowed
+            $ret = true;
+            foreach ($this->_aActionsMapping[$input->action] as $methodName) {
+
+                //  allow redirects without perms
+                if (preg_match("/redirect/", $methodName)) {
+                    continue;
+                }
+                $methodName = '_cmd_' . $methodName;
+
+                //  build relevant perms constant
+                $perm = @constant('SGL_PERMS_' . strtoupper($mgrName . $methodName));
+
+                //  return false if user doesn't have method specific or classwide perms
+                if (SGL_Session::hasPerms($perm) === false) {
+                    $ret = array($mgrName, $methodName);
+                    break;
+                }
+            }
+        } else {
+            $ret = true;
+        }
+        return $ret;
+    }
+
+    function getTemplate(&$input)
+    {
+        $req = $input->getRequest();
+        $mgr = $req->get('managerName');
+        $userRid = SGL_Session::getRoleId();
+
+        if (isset($this->conf[$mgrName]['adminGuiAllowed'])
+               && $this->conf[$mgrName]['adminGuiAllowed']
+               && $userRid == SGL_ADMIN) {
+            $this->template = 'admin_' . $this->template;
+        }
+        //echo'<pre>';die(print_r($mgr));
     }
 
     /**
      * Abstract page display method.
      *
-     * @access  public
      * @abstract
-     * @param   object  $output Input object that has passed through validation
+     *
+     * @access  public
+     * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output)
+    function display(&$output) {}
+
+    /**
+     * Return true if child class has validated.
+     *
+     * @return boolean
+     */
+    function isValid()
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        return $this->validated;
     }
 
-    function _redirectToDefault(&$input, &$output)
+    /**
+     * Default redirect for all Managers.
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     */
+    function _cmd_redirectToDefault(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        //  must not logmessage here
 
         //  if no errors have occured, redirect
-        if (!(count($GLOBALS['_SGL']['ERRORS']))) {    
-            SGL_HTTP::redirect(array());
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect();
 
         //  else display error with blank template
         } else {
             $output->template = 'docBlank.html';
         }
+    }
+
+    /**
+     * Returns details of the module/manager/params defaults
+     * set in configuration, used for logouts and redirects.
+     *
+     * @return array
+     */
+    function getDefaultPageParams()
+    {
+        $moduleName     = $this->conf['site']['defaultModule'];
+        $managerName    = $this->conf['site']['defaultManager'];
+        $defaultParams  = $this->conf['site']['defaultParams'];
+        $aDefaultParams = !empty($defaultParams)
+            ? explode('/', $defaultParams)
+            : array();
+
+        $aParams = array(
+            'moduleName'    => $moduleName,
+            'managerName'   => $managerName,
+            );
+
+        //  convert string into hash and merge with $aParams
+        $aRet = array();
+        if ($numElems = count($aDefaultParams)) {
+            $aTmp = array();
+            for ($x = 0; $x < $numElems; $x++) {
+                if ($x % 2) { // if index is odd
+                    $aTmp['varValue'] = urldecode($aDefaultParams[$x]);
+                } else {
+                    // parsing the parameters
+                    $aTmp['varName'] = urldecode($aDefaultParams[$x]);
+                }
+                //  if a name/value pair exists, add it to request
+                if (count($aTmp) == 2) {
+                    $aRet[$aTmp['varName']] = $aTmp['varValue'];
+                    $aTmp = array();
+                }
+            }
+        }
+        $aMergedParams = array_merge($aParams, $aRet);
+        return $aMergedParams;
     }
 }
 ?>

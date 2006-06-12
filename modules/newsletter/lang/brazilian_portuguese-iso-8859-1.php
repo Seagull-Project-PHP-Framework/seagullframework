@@ -1,4 +1,5 @@
 <?php
+$words['Please enter your name and e-mail address and select the newsletters that you want to subscribe.'] = 'Por favor digite seu nome e e-mail e escolha as listas que deseja se inscrever';
 $words['Newsletter'] = 'Informativo';
 $words['Subscribe'] = 'Inscrever';
 $words['subscribe'] = 'inscrever';
@@ -35,7 +36,7 @@ $words['or go to'] = 'ou ir para';
 $words['and fill in the form with your e-mail and authorization code'] = 'e preencher o formulário com seu endereço de e-mail e código de autorização';
 $words['If this is an unrequested action just delete this e-mail'] = 'Se essa for uma requisição não solicitada, apenas apague esse e-mail';
 $words['Best regards'] = 'Atenciosamente';
-$words['Subscribers'] = 'Assinates';
+$words['Subscribers'] = 'Assinantes';
 $words['Compose'] = 'Compor';
 $words['Newsletter List Mgr'] = 'Gerenciador de informativo';
 $words['From'] = 'De';

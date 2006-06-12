@@ -7,7 +7,7 @@
  * LiveUser_Admin is meant to be used with the LiveUser package.
  * It is composed of all the classes necessary to administrate
  * data used by LiveUser.
- * 
+ *
  * You'll be able to add/edit/delete/get things like:
  * * Rights
  * * Users
@@ -16,19 +16,19 @@
  * * Applications
  * * Subgroups
  * * ImpliedRights
- * 
+ *
  * And all other entities within LiveUser.
- * 
+ *
  * At the moment we support the following storage containers:
  * * DB
  * * MDB
  * * MDB2
- * 
+ *
  * But it takes no time to write up your own storage container,
  * so if you like to use native mysql functions straight, then it's possible
  * to do so in under a hour!
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,24 +40,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser_Admin
+ * @package LiveUser_Admin
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
  * @author  Christian Dickmann <dickmann@php.net>
  * @author  Matt Scifo <mscifo@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Common.php,v 1.14 2005/06/20 11:10:51 lsmith Exp $
+ * @version CVS: $Id: Common.php,v 1.32 2006/04/13 08:52:59 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -65,9 +65,9 @@
  * Base class for authentication backends.
  *
  * @category authentication
- * @package  LiveUser_Admin
- * @author   Lukas Smith <smith@backendmedia.com>
- * @copyright 2002-2005 Markus Wolff
+ * @package LiveUser_Admin
+ * @author   Lukas Smith <smith@pooteeweet.org>
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser_Admin
@@ -78,17 +78,27 @@ class LiveUser_Admin_Auth_Common
      * Error stack
      *
      * @var object PEAR_ErrorStack
-     * @access private
+     * @access public
      */
-    var $_stack = null;
+    var $stack = null;
 
     /**
      * Storage Container
      *
-     * @var object
+     * @var    LiveUser_Admin_Storage
      * @access private
      */
     var $_storage = null;
+
+    /**
+     * Key (method names), with array lists of selectable tables for the given method
+     *
+     * @var array
+     * @access public
+     */
+    var $selectable_tables = array(
+        'getUsers' => array('users'),
+    );
 
     /**
      * Set posible encryption modes.
@@ -96,10 +106,12 @@ class LiveUser_Admin_Auth_Common
      * @access private
      * @var    array
      */
-    var $encryptionModes = array('MD5'   => 'MD5',
-                                 'RC4'   => 'RC4',
-                                 'PLAIN' => 'PLAIN',
-                                 'SHA1'  => 'SHA1');
+    var $encryptionModes = array(
+        'MD5'   => 'MD5',
+        'RC4'   => 'RC4',
+        'PLAIN' => 'PLAIN',
+        'SHA1'  => 'SHA1'
+    );
 
     /**
      * Defines the algorithm used for encrypting/decrypting
@@ -130,42 +142,28 @@ class LiveUser_Admin_Auth_Common
     var $containerName = null;
 
     /**
-     * Allow multiple users in the database to have the same
-     * login handle. Default: false.
-     *
-     * @var    boolean
-     */
-    var $allowDuplicateHandles = false;
-
-    /**
-     * Allow empty passwords to be passed to LiveUser. Default: false.
-     *
-     * @var    boolean
-     */
-    var $allowEmptyPasswords = false;
-
-    /**
      * Class constructor. Feel free to override in backend subclasses.
      *
      * @access protected
      */
     function LiveUser_Admin_Auth_Common()
     {
-        $this->_stack = &PEAR_ErrorStack::singleton('LiveUser_Admin');
+        $this->stack = &PEAR_ErrorStack::singleton('LiveUser_Admin');
     }
 
     /**
-     * Load the storage container
+     * Initialize the storage container
      *
      * @access  public
-     * @param  mixed         Name of array containing the configuration.
-     * @return  boolean true on success or false on failure
+     * @param   array contains configuration of the container
+     * @param   string name of container
+     * @return  bool true on success or false on failure
      */
     function init(&$conf, $containerName)
     {
         $this->containerName = $containerName;
-        if (!isset($conf['storage'])) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+        if (!array_key_exists('storage', $conf)) {
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Missing storage configuration array'));
             return false;
         }
@@ -179,11 +177,12 @@ class LiveUser_Admin_Auth_Common
             }
         }
 
-        $storage_conf = array($conf['type'] => &$conf['storage']);
-        $this->_storage = LiveUser::storageFactory($storage_conf, 'LiveUser_Admin_Auth_');
+        $storageConf = array();
+        $storageConf[$conf['type']] =& $conf['storage'];
+        $this->_storage = LiveUser::storageFactory($storageConf, 'LiveUser_Admin_Auth_');
         if ($this->_storage === false) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                array('msg' => 'Could not instanciate storage container'));
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                array('msg' => 'Could not instanciate auth storage container: '.$conf['type']));
             return false;
         }
 
@@ -200,6 +199,10 @@ class LiveUser_Admin_Auth_Common
      */
     function decryptPW($encryptedPW)
     {
+        if (empty($encryptedPW) && $encryptedPW !== 0) {
+            return '';
+        }
+
         $decryptedPW = 'Encryption type not supported.';
 
         switch (strtoupper($this->passwordEncryptionMode)) {
@@ -227,11 +230,15 @@ class LiveUser_Admin_Auth_Common
      * Uses the algorithm defined in the passwordEncryptionMode
      * property.
      *
-     * @param string  encryption type
+     * @param string  password to encrypt
      * @return string The encrypted password
      */
     function encryptPW($plainPW)
     {
+        if (empty($plainPW) && $plainPW !== 0) {
+            return '';
+        }
+
         $encryptedPW = 'Encryption type not supported.';
 
         switch (strtoupper($this->passwordEncryptionMode)) {
@@ -246,7 +253,7 @@ class LiveUser_Admin_Auth_Common
             break;
         case 'SHA1':
             if (!function_exists('sha1')) {
-                $this->_stack->push(LIVEUSER_ERROR_NOT_SUPPORTED,
+                $this->stack->push(LIVEUSER_ERROR_NOT_SUPPORTED,
                     'exception', array(), 'SHA1 function doesn\'t exist. Upgrade your PHP version');
                 return false;
             }
@@ -258,11 +265,11 @@ class LiveUser_Admin_Auth_Common
     }
 
     /**
-     * Add user
+     * Add a user
      *
-     *
-     * @param array $data
-     * @return
+     * @param array containing atleast the key-value-pairs of all required
+     *              columns in the users table
+     * @return int|bool false on error, true (or new id) on success
      *
      * @access public
      */
@@ -272,17 +279,19 @@ class LiveUser_Admin_Auth_Common
             $data['passwd'] = $this->encryptPW($data['passwd']);
         }
         $result = $this->_storage->insert('users', $data);
-        // notify observer
+        // todo: notify observer
         return $result;
     }
 
     /**
-     * Update usr
+     * Update a user
      *
-     *
-     * @param array $data
-     * @param array $filters
-     * @return
+     * @param array containing the key value pairs of columns to update
+     * @param array key values pairs (value may be a string or an array)
+     *                      This will construct the WHERE clause of your update
+     *                      Be careful, if you leave this blank no WHERE clause
+     *                      will be used and all users will be affected by the update
+     * @return int|bool false on error, the affected rows on success
      *
      * @access public
      */
@@ -292,48 +301,68 @@ class LiveUser_Admin_Auth_Common
             $data['passwd'] = $this->encryptPW($data['passwd']);
         }
         $result = $this->_storage->update('users', $data, $filters);
-        // notify observer
+        // todo: notify observer
         return $result;
     }
 
     /**
-     * Remove user
+     * Remove a user
      *
-     *
-     * @param array $filters Array containing the filters on what user(s)
-     *                       should be removed
-     * @return
+     * @param array key values pairs (value may be a string or an array)
+     *                      This will construct the WHERE clause of your update
+     *                      Be careful, if you leave this blank no WHERE clause
+     *                      will be used and all users will be affected by the update
+     * @return int|bool false on error, the affected rows on success
      *
      * @access public
      */
     function removeUser($filters)
     {
         $result = $this->_storage->delete('users', $filters);
-        // notify observer
+        // todo: notify observer
         return $result;
     }
+
     /**
      * Fetches users
      *
-     *
-     * @param array $params
-     * @return
+     * @param array containing key-value pairs for:
+     *                 'fields'  - ordered array containing the fields to fetch
+     *                             if empty all fields from the user table are fetched
+     *                 'filters' - key values pairs (value may be a string or an array)
+     *                 'orders'  - key value pairs (values 'ASC' or 'DESC')
+     *                 'rekey'   - if set to true, returned array will have the
+     *                             first column as its first dimension
+     *                 'group'   - if set to true and $rekey is set to true, then
+     *                             all values with the same first column will be
+     *                             wrapped in an array
+     *                 'limit'   - number of rows to select
+     *                 'offset'  - first row to select
+     *                 'select'  - determines what query method to use:
+     *                             'one' -> queryOne, 'row' -> queryRow,
+     *                             'col' -> queryCol, 'all' ->queryAll (default)
+     *                 'selectable_tables' - array list of tables that may be
+     *                             joined to in this query, the first element is
+     *                             the root table from which the joins are done
+     * @return bool|array false on failure or array with selected data
      *
      * @access public
      */
     function getUsers($params = array())
     {
-        $fields = isset($params['fields']) ? $params['fields'] : array();
-        $filters = isset($params['filters']) ? $params['filters'] : array();
-        $orders = isset($params['orders']) ? $params['orders'] : array();
-        $rekey = isset($params['rekey']) ? $params['rekey'] : false;
-        $group = isset($params['group']) ? $params['group'] : false;
-        $limit = isset($params['limit']) ? $params['limit'] : null;
-        $offset = isset($params['offset']) ? $params['offset'] : null;
-        $select = isset($params['select']) ? $params['select'] : 'all';
+        $selectable_tables = array();
+        if (array_key_exists('selectable_tables', $params)) {
+            $selectable_tables = $params['selectable_tables'];
+        } elseif (array_key_exists('getUsers', $this->selectable_tables)) {
+            $selectable_tables = $this->selectable_tables['getUsers'];
+        }
+        $root_table = reset($selectable_tables);
 
-        return $this->_storage->select($select, $fields, $filters, $orders,
-            $rekey, $group, $limit, $offset, 'users', array('users'));
+        $params = LiveUser_Admin_Storage::setSelectDefaultParams($params);
+
+        return $this->_storage->select($params['select'], $params['fields'],
+            $params['filters'], $params['orders'], $params['rekey'], $params['group'],
+            $params['limit'], $params['offset'], $root_table, $selectable_tables);
     }
 
     /**

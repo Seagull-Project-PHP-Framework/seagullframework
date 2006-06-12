@@ -9,9 +9,10 @@ create table if not exists block
    title_class                    varchar(32),
    body_class                     varchar(32),
    blk_order                      smallint,
-   is_onleft                      smallint,
+   position                       varchar(16),
    is_enabled                     smallint,
-   content longtext,
+   is_cached                      smallint,
+   params                         longtext,
    primary key (block_id)
 );
 
@@ -39,4 +40,12 @@ create index block_assignment_fk on block_assignment
 create index block_assignment_fk2 on block_assignment
 (
    section_id
+);
+-- ==============================================================
+--  table block_role
+--  DK 
+-- ==============================================================
+create table if not exists block_role (
+    block_id integer not null,
+    role_id integer not null
 );

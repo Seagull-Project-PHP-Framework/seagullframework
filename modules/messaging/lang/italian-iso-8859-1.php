@@ -27,4 +27,7 @@ $words['contacts successfully added'] = 'Il contatto è stato aggiunto';
 $words['admin cannot save contacts'] = 'Admin non è autorizzato a salvare i contatti';
 $words['Message sent successfully'] = 'Messaggio spedito';
 $words['message deleted successfully'] = 'Messaggio cancellato';
+$words['Messages did not reach all recipients'] = ' Il messaggio non ha raggiunto tutti i destinatari';
+$words['Reply'] = 'Risposta';
+$words['Compose Message'] = 'Componi il messaggio';
 ?>

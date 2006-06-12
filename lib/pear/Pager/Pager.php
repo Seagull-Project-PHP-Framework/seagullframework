@@ -6,19 +6,34 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
+ * LICENSE: Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE FREEBSD PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   HTML
  * @package    Pager
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @author     Richard Heyes <richard@phpguru.org>
- * @copyright  2003-2005 Lorenzo Alberton, Richard Heyes
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Pager.php,v 1.16 2005/04/01 13:04:53 quipo Exp $
+ * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
+ * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @version    CVS: $Id: Pager.php,v 1.19 2006/04/27 10:21:40 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -155,9 +170,22 @@ class Pager
         $mode = (isset($options['mode']) ? ucfirst($options['mode']) : 'Jumping');
         $classname = 'Pager_' . $mode;
         $classfile = 'Pager' . DIRECTORY_SEPARATOR . $mode . '.php';
-        require_once $classfile;
-        $pager =& new $classname($options);
-        return $pager;
+
+        // Attempt to include a custom version of the named class, but don't treat
+        // a failure as fatal.  The caller may have already included their own
+        // version of the named class.
+        if (!class_exists($classname)) {
+            include_once $classfile;
+        }
+
+        // If the class exists, return a new instance of it.
+        if (class_exists($classname)) {
+            $pager =& new $classname($options);
+            return $pager;
+        }
+
+        $null = null;
+        return $null;
     }
 
     // }}}

@@ -14,9 +14,9 @@
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.23 2005/06/23 15:56:36 demian Exp $
+ * @version    CVS: $Id: Install.php,v 1.115 2006/03/02 18:14:13 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -34,9 +34,9 @@ require_once 'PEAR/Command/Common.php';
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -53,6 +53,10 @@ class PEAR_Command_Install extends PEAR_Command_Common
                 'force' => array(
                     'shortopt' => 'f',
                     'doc' => 'will overwrite newer installed packages',
+                    ),
+                'loose' => array(
+                    'shortopt' => 'l',
+                    'doc' => 'do not check for recommended dependency version',
                     ),
                 'nodeps' => array(
                     'shortopt' => 'n',
@@ -77,7 +81,12 @@ class PEAR_Command_Install extends PEAR_Command_Common
                 'installroot' => array(
                     'shortopt' => 'R',
                     'arg' => 'DIR',
-                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT)',
+                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT), use packagingroot for RPM',
+                    ),
+                'packagingroot' => array(
+                    'shortopt' => 'P',
+                    'arg' => 'DIR',
+                    'doc' => 'root directory used when packaging files, like RPM packaging',
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
@@ -89,11 +98,6 @@ class PEAR_Command_Install extends PEAR_Command_Common
                 'onlyreqdeps' => array(
                     'shortopt' => 'o',
                     'doc' => 'install all required dependencies',
-                    ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also install to ftp site using remote config file (ftp://host.com/pear.conf)'
                     ),
                 'offline' => array(
                     'shortopt' => 'O',
@@ -140,6 +144,10 @@ four ways of specifying packages.
                     'shortopt' => 'f',
                     'doc' => 'overwrite newer installed packages',
                     ),
+                'loose' => array(
+                    'shortopt' => 'l',
+                    'doc' => 'do not check for recommended dependency version',
+                    ),
                 'nodeps' => array(
                     'shortopt' => 'n',
                     'doc' => 'ignore dependencies, upgrade anyway',
@@ -159,7 +167,12 @@ four ways of specifying packages.
                 'installroot' => array(
                     'shortopt' => 'R',
                     'arg' => 'DIR',
-                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT)',
+                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT), use packagingroot for RPM',
+                    ),
+                'packagingroot' => array(
+                    'shortopt' => 'P',
+                    'arg' => 'DIR',
+                    'doc' => 'root directory used when packaging files, like RPM packaging',
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
@@ -171,11 +184,6 @@ four ways of specifying packages.
                 'onlyreqdeps' => array(
                     'shortopt' => 'o',
                     'doc' => 'install all required dependencies',
-                    ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also upgrade on ftp site using remote config file (ftp://host.com/pear.conf)'
                     ),
                 'offline' => array(
                     'shortopt' => 'O',
@@ -220,15 +228,13 @@ More than one package may be specified at once.
                 'installroot' => array(
                     'shortopt' => 'R',
                     'arg' => 'DIR',
-                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT)',
+                    'doc' => 'root directory used when installing files (ala PHP\'s INSTALL_ROOT), use packagingroot for RPM',
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
                     ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also upgrade on ftp site using remote config file (ftp://host.com/pear.conf)'
+                'loose' => array(
+                    'doc' => 'do not check for recommended dependency version',
                     ),
                 ),
             'doc' => '
@@ -257,11 +263,6 @@ more stable.
                     ),
                 'ignore-errors' => array(
                     'doc' => 'force install even if there were errors',
-                    ),
-                'remoteconfig' => array(
-                    'shortopt' => 'F',
-                    'arg' => 'URL',
-                    'doc' => 'also uninstall on ftp site using remote config file (ftp://host.com/pear.conf)'
                     ),
                 'offline' => array(
                     'shortopt' => 'O',
@@ -349,14 +350,14 @@ Run post-installation scripts in package <package>, if any exist.
         if (empty($this->installer)) {
             $this->installer = &$this->getInstaller($this->ui);
         }
-        if (isset($options['remoteconfig'])) {
-            $e = $this->config->readFTPConfigFile($options['remoteconfig']);
-            if (!PEAR::isError($e)) {
-                $this->installer->setConfig($this->config);
-            }
-        }
         if ($command == 'upgrade') {
             $options['upgrade'] = true;
+        }
+        if (isset($options['installroot']) && isset($options['packagingroot'])) {
+            return $this->raiseError('ERROR: cannot use both --installroot and --packagingroot');
+        }
+        if (isset($options['packagingroot']) && $this->config->get('verbose') > 2) {
+            $this->ui->outputData('using package root: ' . $options['packagingroot']);
         }
         $reg = &$this->config->getRegistry();
         if ($command == 'upgrade-all') {
@@ -370,6 +371,9 @@ Run post-installation scripts in package <package>, if any exist.
                 }
                 $this->config->set('default_channel', $channel);
                 $chan = &$reg->getChannel($channel);
+                if (PEAR::isError($chan)) {
+                    return $this->raiseError($chan);
+                }
                 if ($chan->supportsREST($this->config->get('preferred_mirror')) &&
                       $base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))) {
                     $dorest = true;
@@ -457,9 +461,39 @@ Run post-installation scripts in package <package>, if any exist.
                         $this->ui->outputData('ERROR: ' .$oldinfo->getMessage());
                         continue;
                     }
+                    // we just installed a different package than requested,
+                    // let's change the param and info so that the rest of this works
+                    $param = $info[0];
+                    $info = $info[1];
                 }
             }
             if (is_array($info)) {
+                if ($param->getPackageType() == 'extsrc' ||
+                      $param->getPackageType() == 'extbin') {
+                    $pkg = &$param->getPackageFile();
+                    if ($instbin = $pkg->getInstalledBinary()) {
+                        $instpkg = &$reg->getPackage($instbin, $pkg->getChannel());
+                    } else {
+                        $instpkg = &$reg->getPackage($pkg->getPackage(), $pkg->getChannel());
+                    }
+                    foreach ($instpkg->getFilelist() as $name => $atts) {
+                        $pinfo = pathinfo($atts['installed_as']);
+                        if (!isset($pinfo['extension']) ||
+                              in_array($pinfo['extension'], array('c', 'h'))) {
+                            continue; // make sure we don't match php_blah.h
+                        }
+                        if ((strpos($pinfo['basename'], 'php_') === 0 &&
+                              $pinfo['extension'] == 'dll') ||
+                              // most unices
+                              $pinfo['extension'] == 'so' ||
+                              // hp-ux
+                              $pinfo['extension'] == 'sl') {
+                            $extrainfo[] = 'You should add "extension=' . $pinfo['basename']
+                                . '" to php.ini';
+                            break;
+                        }
+                    }
+                }
                 if ($this->config->get('verbose') > 0) {
                     $channel = $param->getChannel();
                     $label = $reg->parsedPackageNameToString(
@@ -505,23 +539,29 @@ Run post-installation scripts in package <package>, if any exist.
                                 $group['attribs']['hint'] . ')');
                         }
                         $extrainfo[] = 'To install use "pear install ' .
-                            $param->getPackage() . '#featurename"';
+                            $reg->parsedPackageNameToString(
+                                array('package' => $param->getPackage(),
+                                      'channel' => $param->getChannel()), true) .
+                                  '#featurename"';
                     }
                 }
                 if (isset($options['installroot'])) {
                     $reg = &$this->config->getRegistry();
                 }
                 $pkg = &$reg->getPackage($param->getPackage(), $param->getChannel());
-                $pkg->setConfig($this->config);
-                if ($list = $pkg->listPostinstallScripts()) {
-                    $pn = $reg->parsedPackageNameToString(array('channel' =>
-                        $param->getChannel(), 'package' => $param->getPackage()), true);
-                    $extrainfo[] = $pn . ' has post-install scripts:';
-                    foreach ($list as $file) {
-                        $extrainfo[] = $file;
+                // $pkg may be NULL if install is a 'fake' install via --packagingroot
+                if (is_object($pkg)) {
+                    $pkg->setConfig($this->config);
+                    if ($list = $pkg->listPostinstallScripts()) {
+                        $pn = $reg->parsedPackageNameToString(array('channel' =>
+                           $param->getChannel(), 'package' => $param->getPackage()), true);
+                        $extrainfo[] = $pn . ' has post-install scripts:';
+                        foreach ($list as $file) {
+                            $extrainfo[] = $file;
+                        }
+                        $extrainfo[] = 'Use "pear run-scripts ' . $pn . '" to run';
+                        $extrainfo[] = 'DO NOT RUN SCRIPTS FROM UNTRUSTED SOURCES';
                     }
-                    $extrainfo[] = 'Use "pear run-scripts ' . $pn . '" to run';
-                    $extrainfo[] = 'DO NOT RUN SCRIPTS FROM UNTRUSTED SOURCES';
                 }
             } else {
                 return $this->raiseError("$command failed");
@@ -567,10 +607,27 @@ Run post-installation scripts in package <package>, if any exist.
             $package = $parsed['package'];
             $channel = $parsed['channel'];
             $info = &$reg->getPackage($package, $channel);
+            if ($info === null &&
+                 ($channel == 'pear.php.net' || $channel == 'pecl.php.net')) {
+                // make sure this isn't a package that has flipped from pear to pecl but
+                // used a package.xml 1.0
+                $testc = ($channel == 'pear.php.net') ? 'pecl.php.net' : 'pear.php.net';
+                $info = &$reg->getPackage($package, $testc);
+                if ($info !== null) {
+                    $channel = $testc;
+                }
+            }
             if ($info === null) {
                 $badparams[] = $pkg;
             } else {
                 $newparams[] = &$info;
+                // check for binary packages (this is an alias for those packages if so)
+                if ($installedbinary = $info->getInstalledBinary()) {
+                    $this->ui->log('adding binary package ' .
+                        $reg->parsedPackageNameToString(array('channel' => $channel,
+                            'package' => $installedbinary), true));
+                    $newparams[] = &$reg->getPackage($installedbinary, $channel);
+                }
                 // add the contents of a dependency group to the list of installed packages
                 if (isset($parsed['group'])) {
                     $group = $info->getDependencyGroup($parsed['group']);
@@ -578,7 +635,7 @@ Run post-installation scripts in package <package>, if any exist.
                         $installed = &$reg->getInstalledGroup($group);
                         if ($installed) {
                             foreach ($installed as $i => $p) {
-                                $newparams[] = & $installed[$i];
+                                $newparams[] = &$installed[$i];
                             }
                         }
                     }
@@ -610,7 +667,8 @@ Run post-installation scripts in package <package>, if any exist.
                     }
                     $this->ui->outputData("uninstall ok: $pkg", $command);
                 }
-                if (!isset($options['offline']) && is_object($savepkg)) {
+                if (!isset($options['offline']) && is_object($savepkg) &&
+                      defined('PEAR_REMOTEINSTALL_OK')) {
                     if ($this->config->isDefinedLayer('ftp')) {
                         $this->installer->pushErrorHandling(PEAR_ERROR_RETURN);
                         $info = $this->installer->ftpUninstall($savepkg);

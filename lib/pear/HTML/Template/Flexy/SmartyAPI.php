@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome.com>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: SmartyAPI.php,v 1.14 2005/02/09 11:03:44 demian Exp $
+// $Id: SmartyAPI.php,v 1.2 2004/04/03 12:08:57 alan_k Exp $
 //
 //  Description this class emulates the Smarty API to attempt to enable 
 //  upgrading to flexy. (eg. for use with flexy templates (that have been
@@ -70,7 +70,7 @@ _* (all the privates)
 * - provides only basic support for variables
 * - uses flexy templates (that have been converted previosly with the converor)
 *  
-* @version    $Id: SmartyAPI.php,v 1.14 2005/02/09 11:03:44 demian Exp $
+* @version    $Id: SmartyAPI.php,v 1.2 2004/04/03 12:08:57 alan_k Exp $
 */
 
 class HTML_Template_Flexy_SmartyAPI {

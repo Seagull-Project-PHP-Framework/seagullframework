@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | RegisterMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -41,29 +41,31 @@
 require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_CORE_DIR . '/Observer.php';
+require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Manages User objects.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.38 $
- * @since   PHP 4.1
  */
 class RegisterMgr extends SGL_Manager
 {
     function RegisterMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';
         $this->da           = & DA_User::singleton();
-        
+
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
         );
     }
@@ -79,7 +81,7 @@ class RegisterMgr extends SGL_Manager
         $input->sortBy      = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder   = SGL_Util::getSortOrder($req->get('frmSortOrder'));
         $input->action      = ($req->get('action')) ? $req->get('action') : 'add';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->userID      = $req->get('frmUserID');
         $input->aDelete     = $req->get('frmDelete');
         $input->user        = (object)$req->get('user');
@@ -88,42 +90,36 @@ class RegisterMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submit && ($input->action == 'insert' || $input->action == 'update')) {
+        if (($input->submitted && $input->action != 'changeUserStatus')
+                || in_array($input->action, array('insert', 'update'))) {
             $v = & new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {
                 //  username must be at least 5 chars
-                if (!$v->string($input->user->username, array('format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
+                if (!$v->string($input->user->username, array(
+                        'format' => VALIDATE_NUM . VALIDATE_ALPHA, 'min_length' => 5 ))) {
                     $aErrors['username'] = 'username min length';
                 }
+                //  username must be unique
+                if ($input->action == 'insert' && !$this->da->isUniqueUsername($input->user->username)) {
+                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
+                }
             }
-            //  only verify password and uniqueness of username on inserts
+            //  only verify password and uniqueness of username/email on inserts
             if ($input->action != 'update') {
                 if (empty($input->user->passwd)) {
                     $aErrors['passwd'] = 'You must enter a password';
-                } else {
-                    if (!$v->string($input->user->passwd, array('min_length' => 5, 'max_length' => 10 ))) {
-                        $aErrors['passwd'] = 'Password must be between 5 to 10 characters';
-                    }
+                } elseif (!$v->string($input->user->passwd, array('min_length' => 5, 'max_length' => 10 ))) {
+                    $aErrors['passwd'] = 'Password must be between 5 to 10 characters';
                 }
                 if (empty($input->user->password_confirm)) {
                     $aErrors['password_confirm'] = 'Please confirm password';
-                } else {
-                    if ($input->user->passwd != $input->user->password_confirm) {
-                        $aErrors['password_confirm'] = 'Passwords are not the same';
-                    }
-                }
-                //  username must be unique
-                if (!$this->da->isUniqueUsername($input->user->username)) {
-                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
-                }
-                //  username must be unique
-                if (!$this->da->isUniqueEmail($input->user->email)) {
-                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
+                } elseif ($input->user->passwd != $input->user->password_confirm) {
+                    $aErrors['password_confirm'] = 'Passwords are not the same';
                 }
             }
-            //  end verify inserts
+            //  check for data in required fields
             if (empty($input->user->addr_1)) {
                 $aErrors['addr_1'] = 'You must enter at least address 1';
             }
@@ -138,16 +134,40 @@ class RegisterMgr extends SGL_Manager
             }
             if (empty($input->user->email)) {
                 $aErrors['email'] = 'You must enter your email';
-            } else {
-                if (!$v->email($input->user->email)) {
-                    $aErrors['email'] = 'Your email is not correctly formatted';
-                }
+            } elseif (!$v->email($input->user->email)) {
+                $aErrors['email'] = 'Your email is not correctly formatted';
+            //  email must be unique
+            } elseif ($input->action == 'insert' && !$this->da->isUniqueEmail($input->user->email)) {
+                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
             }
             if (empty($input->user->security_question)) {
                 $aErrors['security_question'] = 'You must choose a security question';
             }
             if (empty($input->user->security_answer)) {
                 $aErrors['security_answer'] = 'You must provide a security answer';
+            }
+            // check for mail header injection
+            if (!empty($input->user->email)) {
+                $input->user->email =
+                    SGL_Emailer::cleanMailInjection($input->user->email);
+                $input->user->username =
+                    SGL_Emailer::cleanMailInjection($input->user->username);
+            }
+
+            //  check for hacks - only admin user can set certain attributes
+            if ((SGL_Session::getUid() != SGL_ADMIN
+                    && count(array_filter(array_flip($req->get('user')), array($this, 'containsDisallowedKeys'))))) {
+                $msg = 'Hack attempted by ' .$_SERVER['REMOTE_ADDR'] . ', IP logged';
+                if (SGL_Session::getRoleId() > SGL_GUEST) {
+                    $msg .= ', user id ' . SGL_Session::getUid();
+                }
+                SGL_Session::destroy();
+                SGL::raiseMsg($msg, false);
+                SGL::logMessage($msg, PEAR_LOG_CRIT);
+
+                $input->template = 'docBlank.html';
+                $this->validated = false;
+                return false;
             }
         }
         //  if errors have occured
@@ -157,6 +177,19 @@ class RegisterMgr extends SGL_Manager
             $input->template = 'userAdd.html';
             $this->validated = false;
         }
+
+        //  check if reg disabled
+        if (!$this->conf['RegisterMgr']['enabled']) {
+            SGL::raiseMsg('Registration has been disabled');
+            $input->template = 'docBlank.html';
+            $this->validated = false;
+        }
+    }
+
+    function containsDisallowedKeys($var)
+    {
+        $disAllowedKeys = array('role_id', 'organisation_id', 'is_acct_active');
+        return in_array($var, $disAllowedKeys);
     }
 
     function display(&$output)
@@ -169,113 +202,88 @@ class RegisterMgr extends SGL_Manager
         }
 
         //  build country/state select boxes unless any of following methods
-        $aDisallowedMethods = array('list', 'reset', 'passwdEdit', 'passwdUpdate', 
+        $aDisallowedMethods = array('list', 'reset', 'passwdEdit', 'passwdUpdate',
             'requestPasswordReset', 'editPrefs');
         if (!in_array($output->action, $aDisallowedMethods)) {
-            $lang = SGL::getCurrentLang();
-
-            //  default to english as the data array, countries, etc, only exists in english
-            if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-                $lang = 'en';
-            }
-            include_once SGL_DAT_DIR . '/ary.states.' . $lang . '.php';
-            include_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
-            $output->states = $states;
-            $output->countries = $countries;
-            $GLOBALS['_SGL']['COUNTRIES'] = &$countries;
-            $GLOBALS['_SGL']['STATES'] = &$states;
+            $output->states = SGL::loadRegionList('states');
+            $output->countries = SGL::loadRegionList('countries');
             $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
         }
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'userAdd.html';
-        $output->user = & new DataObjects_Usr();
-        $output->user->password_confirm = (isset($input->user->password_confirm)) ? 
+        $output->user = DB_DataObject::factory($this->conf['table']['user']);
+        $output->user->password_confirm = (isset($input->user->password_confirm)) ?
             $input->user->password_confirm : '';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
 
-        //  get default values for new users
-        $defaultRoleId = $conf['RegisterMgr']['defaultRoleId'];
-        $defaultOrgId  = $conf['RegisterMgr']['defaultOrgId'];
-
-        //  build new user object
-        $oUser = & new DataObjects_Usr();
-        $oUser->setFrom($input->user);
-        $oUser->passwdClear = $input->user->passwd;
-        $oUser->passwd = md5($input->user->passwd);
-        if ($conf['RegisterMgr']['autoEnable']) {
-            $oUser->is_acct_active = 1;
-        }
-        $dbh = $oUser->getDatabaseConnection();
-        $oUser->usr_id = $dbh->nextId($conf['table']['user']);
-        $oUser->role_id = $defaultRoleId;
-        $oUser->organisation_id = $defaultOrgId;
-        $oUser->date_created = $oUser->last_updated = SGL::getTime();
-        $success = $oUser->insert();
-
-        //  assign permissions associated with role user belongs to
-        //  first get all perms associated with user's role
-        $aRolePerms = $this->da->getPermsByRoleId($defaultRoleId);
-
-        //  then assign them to the user_permission table
-        foreach ($aRolePerms as $permId) {
-            $dbh->query('   INSERT INTO ' . $conf['table']['user_permission'] . '
-                            (user_permission_id, usr_id, permission_id)
-                            VALUES (' . $dbh->nextId($conf['table']['user_permission']) . ', ' . $oUser->usr_id . ", $permId)");
-        }
-
-        if ($success) {
-            //  send email confirmation according to config
-            if ($conf['RegisterMgr']['sendEmailConf']) {
-                $bEmailSent = $this->_sendEmail($oUser);
-                if (!$bEmailSent) {
-                    SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
-                }
+        $addUser = new User_AddUser($input, $output);
+        $aObservers = explode(',', $this->conf['RegisterMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $addUser->attach(new $observer());
             }
-            //  authenticate user according to settings
-            if ($conf['RegisterMgr']['autoLogin']) {
-                $input->username = $input->user->username;
-                $input->password = $input->user->passwd;
-                $oLogin = new LoginMgr();
-                $oLogin->_login($input, $output);
-            } else {
-               SGL::raiseMsg('user successfully registered');
-            }
-        } else {
-            SGL::raiseError('There was a problem inserting the record', 
-                SGL_ERROR_NOAFFECTEDROWS);
         }
+        //  returns id for new user
+        $output->uid = $addUser->run();
+    }
+}
+
+class User_AddUser extends SGL_Observable
+{
+    function User_AddUser(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
     }
 
-    function _sendEmail($oUser)
+    function run()
     {
-        require_once SGL_CORE_DIR . '/Emailer.php';
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $realName = $oUser->first_name . ' ' . $oUser->last_name;
-        $recipientName = (trim($realName)) ? $realName : '&lt;no name supplied&gt;';
-        $options = array(
-                'toEmail'       => $oUser->email,
-                'toRealName'    => $recipientName,
-                'fromEmail'     => $conf['email']['admin'],
-                'replyTo'       => $conf['email']['admin'],
-                'subject'       => 'Thanks for registering at ' . $conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/email_registration_thanks.php',
-                'username'      => $oUser->username,
-                'password'      => $oUser->passwdClear,
-        );
-        $message = & new SGL_Emailer($options);
-        $message->prepare();
-        return $message->send();
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  get default values for new users
+        $this->conf = $this->input->getConfig();
+        $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
+        $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
+
+        $da = & DA_User::singleton();
+        $oUser = $da->getUserById();
+        $oUser->setFrom($this->input->user);
+        $oUser->passwdClear = $this->input->user->passwd;
+        $oUser->passwd = md5($this->input->user->passwd);
+
+        if ($this->conf['RegisterMgr']['autoEnable']) {
+            $oUser->is_acct_active = 1;
+        }
+        $oUser->role_id = $defaultRoleId;
+        $oUser->organisation_id = $defaultOrgId;
+        $oUser->date_created = $oUser->last_updated = SGL_Date::getTime();
+        $success = $da->addUser($oUser);
+
+        //  make user object available to observers
+        $this->oUser = $oUser;
+
+        if ($success) {
+            //  invoke observers
+            $this->notify();
+			$ret = $success;
+            SGL::raiseMsg('user successfully registered', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
+			$ret = false;
+        }
+        return $ret;
     }
 }
 ?>

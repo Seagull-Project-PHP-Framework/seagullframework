@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
+// | Copyright (c) 1997-2005 The PHP Group                                |
 // +----------------------------------------------------------------------+
 // | This source file is subject to version 2.02 of the PHP license,      |
 // | that is bundled with this package in the file LICENSE, and is        |
@@ -16,16 +16,21 @@
 // | Author: Sterling Hughes <sterling@php.net>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Find.php,v 1.3 2005/06/23 15:56:30 demian Exp $
+// $Id: Find.php,v 1.26 2006/02/11 16:28:40 techtonik Exp $
 //
 
 require_once 'PEAR.php';
+
+define('FILE_FIND_VERSION', '@package_version@');
+
+// to debug uncomment this string
+// define('FILE_FIND_DEBUG', '');
 
 /**
 *  Commonly needed functions searching directory trees
 *
 * @access public
-* @version $Id: Find.php,v 1.3 2005/06/23 15:56:30 demian Exp $
+* @version $Id: Find.php,v 1.26 2006/02/11 16:28:40 techtonik Exp $
 * @package File
 * @author Sterling Hughes <sterling@php.net>
 */
@@ -60,14 +65,15 @@ class File_Find
      * to search.
      *
      * @param string $pattern_type a string containing the type of
-     * pattern matching functions to use (can either be 'php' or
-     * 'perl').
+     * pattern matching functions to use (can either be 'php',
+     * 'perl' or 'shell').
      *
      * @return array containing all of the files and directories
      * matching the pattern or null if no matches
      *
      * @author Sterling Hughes <sterling@php.net>
      * @access public
+     * @static
      */
     function &glob($pattern, $dirpath, $pattern_type = 'php')
     {
@@ -80,16 +86,24 @@ class File_Find
 
         $match_function = File_Find::_determineRegex($pattern, $pattern_type);
         $matches = array();
-        while (false !== ($entry = @readdir($dh))) {
-            if ($match_function($pattern, $entry) &&
-                $entry != '.' && $entry != '..') {
-                $matches[] = $entry;
+
+        // empty string cannot be specified for 'php' and 'perl' pattern
+        if ($pattern || ($pattern_type != 'php' && $pattern_type != 'perl')) {
+            while (false !== ($entry = @readdir($dh))) {
+                if ($match_function($pattern, $entry) &&
+                    $entry != '.' && $entry != '..') {
+                    $matches[] = $entry;
+                }
             }
         }
 
         @closedir($dh);
 
-        return (count($matches) > 0) ? $matches : null;
+        if (0 == count($matches)) {
+            $matches = null;
+        }
+
+        return $matches ;
     }
 
     /**
@@ -107,14 +121,21 @@ class File_Find
      */
     function &maptree($directory)
     {
-        /* TODO: make mapTree() statically callable */
 
+        /* if called statically */
+        if (!isset($this)  || !is_a($this, "File_Find")) {
+            $obj = &new File_Find();
+            return $obj->maptree($directory);
+        }
+      
         /* clear the results just in case */
         $this->files       = array();
         $this->directories = array();
 
-        /* strip out tailing / to be consistent */
-        $directory = ereg_replace(DIRECTORY_SEPARATOR.'$', '', $directory);
+        /* consistency rules - strip out trailing slashes */
+        $directory = preg_replace('![\\\\/]+$!', '', $directory);
+        /* use only native system directory delimiters */
+        $directory = preg_replace("![\\\\/]+!", DIRECTORY_SEPARATOR, $directory);
 
         $this->_dirs = array($directory);
 
@@ -124,7 +145,9 @@ class File_Find
             array_push($this->directories, $dir);
         }
 
-        return array($this->directories, $this->files);
+        $retval = array($this->directories, $this->files);
+        return $retval;
+
     }
 
     /**
@@ -150,6 +173,7 @@ class File_Find
      *
      * @author Mika Tuupola <tuupola@appelsiini.net>
      * @access public
+     * @static
      */
     function &mapTreeMultiple($directory, $maxrecursion = 0, $count = 0)
     {   
@@ -158,14 +182,16 @@ class File_Find
         $count++;
 
         $directory .= DIRECTORY_SEPARATOR;
-        $dh = opendir($directory);
-        while (false !== ($entry = @readdir($dh))) {
-            if ($entry != '.' && $entry != '..') {
-                 array_push($retval, $entry);
+        
+        if (is_readable($directory)) {
+            $dh = opendir($directory);
+            while (false !== ($entry = @readdir($dh))) {
+                if ($entry != '.' && $entry != '..') {
+                     array_push($retval, $entry);
+                }
             }
+            closedir($dh);
         }
-
-        closedir($dh);
      
         while (list($key, $val) = each($retval)) {
             $path = $directory . $val;
@@ -175,7 +201,7 @@ class File_Find
             if (!is_array($val) && is_dir($path)) {
                 unset($retval[$key]);
                 if ($maxrecursion == 0 || $count < $maxrecursion) {
-                    $retval[$val] = File_Find::mapTreeMultiple($path, 
+                    $retval[$val] = &File_Find::mapTreeMultiple($path, 
                                     $maxrecursion, $count);
                 }
             }
@@ -193,40 +219,53 @@ class File_Find
      * @param string $directory the directory tree to search in.
      *
      * @param string $type the type of regular expression support to use, either
-     * 'php' or 'perl'.
+     * 'php', 'perl' or 'shell'.
      *
      * @param bool $fullpath whether the regex should be matched against the
      * full path or only against the filename
+     *
+     * @param string $match can be either 'files', 'dirs' or 'both' to specify
+     * the kind of list to return
      *
      * @return array a list of files matching the pattern parameter in the the
      * directory path specified by the directory parameter
      *
      * @author Sterling Hughes <sterling@php.net>
      * @access public
+     * @static
      */
-    function &search($pattern, $directory, $type = 'php', $fullpath = true)
+    function &search($pattern, $directory, $type = 'php', $fullpath = true, $match = 'files')
     {
 
-        /* if called statically */
-        if (!isset($this)  || !is_a($this, "File_Find")) {
-            $obj = &new File_Find();
-            return $obj->search($pattern, $directory, $type, $fullpath);
-        } else {
+        $matches = array();
+        list ($directories,$files)  = File_Find::maptree($directory);
+        switch($match) {
+            case 'directories': 
+                $data = $directories; 
+                break;
+            case 'both': 
+                $data = array_merge($directories, $files); 
+                break;
+            case 'files':
+            default:
+                $data = $files;
+        }
+        unset($files, $directories);
 
-            $matches = array();
-            list (,$files)  = File_Find::maptree($directory);
-            $match_function = File_Find::_determineRegex($pattern, $type);
+        $match_function = File_Find::_determineRegex($pattern, $type);
 
-            reset($files);
-            while (list(,$entry) = each($files)) {
+        reset($data);
+        // check if empty string given (ok for 'shell' method, but bad for others)
+        if ($pattern || ($type != 'php' && $type != 'perl')) {
+            while (list(,$entry) = each($data)) {
                 if ($match_function($pattern, 
                                     $fullpath ? $entry : basename($entry))) {
                     $matches[] = $entry;
-                }
+                } 
             }
         }
 
-        return ($matches);
+        return $matches;
     }
 
     /**
@@ -288,16 +327,151 @@ class File_Find
      */
     function _determineRegex($pattern, $type)
     {
-        if (!strcasecmp($type, 'perl')) {
+        if (!strcasecmp($type, 'shell')) {
+            $match_function = 'File_Find_match_shell';
+        } else if (!strcasecmp($type, 'perl')) {
             $match_function = 'preg_match';
         } else if (!strcasecmp(substr($pattern, -2), '/i')) {
             $match_function = 'eregi';
         } else {
             $match_function = 'ereg';
         }
-
         return $match_function;
     }
+
+}
+
+/**
+* Package method to match via 'shell' pattern. Provided in global
+* scope, because they should be called like 'preg_match' and 'eregi'
+* and can be easily copied into other packages
+*
+* @author techtonik <techtonik@php.net>
+* @return mixed bool on success and PEAR_Error on failure
+*/ 
+function File_Find_match_shell($pattern, $filename)
+{
+    // {{{ convert pattern to positive and negative regexps
+        $positive = $pattern;
+        $negation = substr_count($pattern, "|");
+
+        if ($negation > 1) {
+            PEAR::raiseError("Mask string contains errors!");
+            return FALSE;
+        } elseif ($negation) {
+            list($positive, $negative) = explode("|", $pattern);
+            if (strlen($negative) == 0) {
+                PEAR::raiseError("File-mask string contains errors!");
+                return FALSE;
+            }
+        }
+
+       $positive = _File_Find_match_shell_get_pattern($positive);
+       if ($negation) {
+           $negative = _File_Find_match_shell_get_pattern($negative);
+       }
+    // }}} convert end 
+
+
+    if (defined("FILE_FIND_DEBUG")) {
+        print("Method: $type\nPattern: $pattern\n Converted pattern:");
+        print_r($positive);
+        if (isset($negative)) print_r($negative);
+    }
+
+    if (!preg_match($positive, $filename)) {
+        return FALSE;
+    } else {
+        if (isset($negative) 
+              && preg_match($negative, $filename)) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+}
+
+/**
+* function used by File_Find_match_shell to convert 'shell' mask
+* into pcre regexp. Some of the rules (see testcases for more): 
+*  escaping all special chars and replacing 
+*    . with \.
+*    * with .*
+*    ? with .{1}
+*    also adding ^ and $ as the pattern matches whole filename
+*
+* @author techtonik <techtonik@php.net>
+* @return string pcre regexp for preg_match
+*/ 
+function _File_Find_match_shell_get_pattern($mask) {
+    // get array of several masks (if any) delimited by comma
+    // do not touch commas in char class
+    $premasks = preg_split("|(\[[^\]]+\])|", $mask, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nPremask: ");
+        print_r($premasks);
+    }
+    $pi = 0;
+    foreach($premasks as $pm) {
+        if (!isset($masks[$pi])) $masks[$pi] = "";
+        if ($pm{0} == '[' && $pm{strlen($pm)-1} == ']') {
+            // strip commas from character class
+            $masks[$pi] .= str_replace(",", "", $pm);
+        } else {
+            $tarr = explode(",", $pm);
+            if (sizeof($tarr) == 1) {
+                $masks[$pi] .= $pm;
+            } else {
+                foreach ($tarr as $te) {
+                    $masks[$pi++] .= $te;
+                    $masks[$pi] = "";
+                }
+                unset($masks[$pi--]);
+            }
+        }
+    }
+
+    // if empty string given return *.* pattern
+    if (strlen($mask) == 0) return "!^.*$!";
+
+    // convert to preg regexp
+    $regexmask = implode("|", $masks);
+    if (defined("FILE_FIND_DEBUG")) {
+        print("regexMask step one(implode): $regexmask");
+    }
+    $regexmask = addcslashes($regexmask, '^$}!{)(\/.+');
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nregexMask step two(addcslashes): $regexmask");
+    }
+    $regexmask = preg_replace("!(\*|\?)!", ".$1", $regexmask);
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nregexMask step three(* ? -> .* .?): $regexmask");
+    }
+    // a special case '*.' at the end means that there is no extension
+    $regexmask = preg_replace("!\.\*\\\.(\||$)!", "[^\.]*$1", $regexmask);
+    // it is impossible to have dot at the end of filename
+    $regexmask = preg_replace("!\\\.(\||$)!", "$1", $regexmask);
+    // and .* at the end also means that there could be nothing at all
+    //   (i.e. no dot at the end also)
+    $regexmask = preg_replace("!\\\.\.\*(\||$)!", "(\\\\..*)?$1", $regexmask);
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nregexMask step two and half(*.$ \\..*$ .$ -> [^.]*$ .?.* $): $regexmask");
+    }
+    // if no extension supplied - add .* to match partially from filename start
+    if (strpos($regexmask, "\\.") === FALSE) $regexmask .= ".*";
+
+    // file mask match whole name - adding restrictions
+    $regexmask = preg_replace("!(\|)!", '^'."$1".'$', $regexmask);
+    $regexmask = '^'.$regexmask.'$';
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nregexMask step three(^ and $ to match whole name): $regexmask");
+    }
+    // wrap regex into ! since all ! are already escaped
+    $regexmask = "!$regexmask!i";
+    if (defined("FILE_FIND_DEBUG")) {
+        print("\nWrapped regex: $regexmask\n");
+    }
+    return $regexmask;
 }
 
 /*

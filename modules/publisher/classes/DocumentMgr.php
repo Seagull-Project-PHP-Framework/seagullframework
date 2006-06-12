@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DocumentMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -41,16 +41,13 @@
 require_once SGL_MOD_DIR . '/publisher/classes/PublisherBase.php';
 require_once SGL_MOD_DIR . '/publisher/classes/FileMgr.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-require_once SGL_ENT_DIR . '/Category.php';
-require_once SGL_ENT_DIR . '/Document.php';
+require_once 'DB/DataObject.php';
 
 /**
  * For performing operations on Document objects.
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.47 $
- * @since   PHP 4.1
  * @todo    handle uploads with HTTP::Upload
  */
 class DocumentMgr extends FileMgr
@@ -60,8 +57,8 @@ class DocumentMgr extends FileMgr
     function DocumentMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::FileMgr();
 
-        $this->module       = 'publisher';
         $this->pageTitle    = 'Document Manager';
         $this->template     = 'documentManager.html';
         $this->_aAllowedFileTypes = array(
@@ -72,14 +69,14 @@ class DocumentMgr extends FileMgr
         );
 
         $this->_aActionsMapping =  array(
-            'add'       => array('add'), 
+            'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'), 
-            'update'    => array('update', 'redirectToDefault'), 
-            'delete'    => array('delete', 'redirectToDefault'), 
-            'setDownload' => array('setDownload'), 
-            'list'      => array('list'), 
-            'view'      => array('view'), 
+            'edit'      => array('edit'),
+            'update'    => array('update', 'redirectToDefault'),
+            'delete'    => array('delete', 'redirectToDefault'),
+            'setDownload' => array('setDownload'),
+            'list'      => array('list'),
+            'view'      => array('view'),
         );
     }
 
@@ -95,7 +92,7 @@ class DocumentMgr extends FileMgr
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit          = $req->get('submit');
+        $input->submitted       = $req->get('submitted');
         $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom'):0;
         $input->catID           = $req->get('frmCatID');
         $input->docCatID        = $req->get('frmDocumentCatID');
@@ -113,8 +110,9 @@ class DocumentMgr extends FileMgr
         $input->assetFileSize         = $input->assetFileArray['size'];
 
         //  determine user type
-        $input->isAdmin = (SGL_HTTP_Session::getUserType() == SGL_ADMIN) ? 
-            true : false;
+        $input->isAdmin = (SGL_Session::getRoleId() == SGL_ADMIN)
+            ? true
+            : false;
 
         //  request values for save upload
         $input->document = (object)$req->get('document');
@@ -126,16 +124,20 @@ class DocumentMgr extends FileMgr
             : $input->document->orig_name;
 
         //  if document has been uploaded
-        if ($input->assetFileName != '') {
-            $ext = end(explode('.', $input->assetFileName));
+        if ($input->assetFileArray) {
+            if ($input->assetFileName != '') {
+                $ext = end(explode('.', $input->assetFileName));
 
-            //  check uploaded file is of valid type
-            if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
-                $aErrors[] = SGL_String::translate('Error: Not a recognised file type');
-            }
-            //  ... and does not exist in uploads dir
-            if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
-                $aErrors[] = SGL_String::translate('Error: A file with this name already exists');
+                //  check uploaded file is of valid type
+                if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
+                    $aErrors[] = 'Error: Not a recognised file type';
+                }
+                //  ... and does not exist in uploads dir
+                if (is_readable(SGL_UPLOAD_DIR . '/' . $input->assetFileName)) {
+                    $aErrors[] = 'Error: A file with this name already exists';
+                }
+            } else {
+                $aErrors[] = 'You must select a file to upload';
             }
         }
 
@@ -159,15 +161,15 @@ class DocumentMgr extends FileMgr
         //  session var persistence
         PublisherBase::maintainState($input);
 
-        //  if document category has been changed, update input, 
-        //  or if catChangeToID is 0 leave catID as is 
+        //  if document category has been changed, update input,
+        //  or if catChangeToID is 0 leave catID as is
         //  (in the case of logged on user browsing documents)
         if (!$input->docCatID) {  //  true in case of adding doc
-            $input->docCatID = 
+            $input->docCatID =
                 ($input->catID == $input->catChangeToID || !$input->catChangeToID)
                 ? $input->catID : $input->catChangeToID;
         } else {                  //  true in case of editing
-            $input->docCatID = 
+            $input->docCatID =
                 ($input->docCatID == $input->catChangeToID || !$input->catChangeToID)
                 ? $input->docCatID : $input->catChangeToID;
         }
@@ -178,26 +180,28 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get current navigation cat name for publisher subnav
-        $category = & new DataObjects_Category();
+        $category = DB_DataObject::factory($this->conf['table']['category']);
         $category->get($output->catID);
         $output->catName = $category->label;
         $output->queryRange = PublisherBase::getQueryRange($output);
     }
 
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->docCatID = $input->docCatID;
         $output->template = 'documentMgrAdd.html';
-        if ($input->submit) { // if file uploaded 
-        
+        if ($input->submitted) { // if file uploaded
+
             //  check id dir exists, create if not
             if (!is_writable(SGL_UPLOAD_DIR)) {
                 include_once 'System.php';
                 $success = System::mkDir(array(SGL_UPLOAD_DIR));
                 if (!$success) {
                     SGL::raiseError('The upload directory does not appear to be writable, please give the
-                    webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE, PEAR_ERROR_DIE);
+                    webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+                    return false;
                 }
             }
             copy($_FILES['assetFile']['tmp_name'], SGL_UPLOAD_DIR . '/' . $input->assetFileName);
@@ -212,16 +216,16 @@ class DocumentMgr extends FileMgr
                 $output->currentCat = $input->docCatID;
 
                 $output->breadCrumbs = $menu->getBreadCrumbs($input->docCatID, false);
-            }           
+            }
         } else { // display upload screen
-            if ($input->isAdmin) {     
-               
+            if ($input->isAdmin) {
+
                 //  prepare breadcrumbs and category changer
                 $menu = & new MenuBuilder('SelectBox');
                 $htmlOptions = $menu->toHtml();
                 $output->aCategories = $htmlOptions;
                 $output->currentCat = $input->catID;
-    
+
                 $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
             }
             $output->save = false;
@@ -229,34 +233,39 @@ class DocumentMgr extends FileMgr
         }
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];        
-        
-        $asset = & new DataObjects_Document();
+
+        if (!SGL::objectHasState($input->document)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+        SGL_DB::setConnection();
+        $asset = DB_DataObject::factory($this->conf['table']['document']);
         $asset->setFrom($input->document);
-        $dbh = $asset->getDatabaseConnection();
-        $asset->document_id = $dbh->nextId($conf['table']['document']);
+        $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
-        $asset->date_created  = SGL::getTime();
-        $asset->name = SGL_String::censor($asset->name);
+        $asset->date_created  = SGL_Date::getTime();
+        $asset->name = SGL_String::censor(ucfirst(strtolower($asset->name)));
         $asset->description = SGL_String::censor($asset->description);
-        $asset->insert();
-        
+        if ($asset->insert()) {
+            SGL::raiseMsg('The asset has successfully been added', true, SGL_MESSAGE_INFO);
+        }
+
         //  if file has been renamed
         if ($input->document->orig_name != $asset->name) {
-            rename(SGL_UPLOAD_DIR . '/' . $input->document->orig_name, 
-                SGL_UPLOAD_DIR . '/' . $asset->name);
-        $output->asset = $asset;
+            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
+                    SGL_UPLOAD_DIR . '/' . $asset->name);
+            $output->asset = $asset;
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->getLinks('link_%s');
 
@@ -266,27 +275,31 @@ class DocumentMgr extends FileMgr
             $htmlOptions = $menu->toHtml();
             $output->aCategories = $htmlOptions;
             $output->currentCat = $document->category_id;
-
             $output->breadCrumbs = $menu->getBreadCrumbs($document->category_id, false);
         }
         $output->asset = $document;
     }
 
-    function _setDownload(&$input, &$output)
+    function _cmd_setDownload(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($conf['DocumentMgr']['zipDownloads']) {
-            $this->_downloadZipped($input, $output);
+
+        if ($this->conf['DocumentMgr']['zipDownloads']) {
+            $this->_cmd_downloadZipped($input, $output);
         } else {
-            $this->_download($input, $output);
+            $this->_cmd_download($input, $output);
         }
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = & new DataObjects_Document();
+
+        if (!SGL::objectHasState($input->document)) {
+            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
+            return false;
+        }
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
@@ -296,38 +309,40 @@ class DocumentMgr extends FileMgr
 
         //  if file has been renamed
         if ($input->document->orig_name != $document->name) {
-            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name, 
+            rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
                     SGL_UPLOAD_DIR . '/' . $document->name);
         }
         $output->asset = $document;
-        SGL::raiseMsg('The asset has successfully been updated');
+        SGL::raiseMsg('The asset has successfully been updated', true, SGL_MESSAGE_INFO);
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
 
         //  delete physical file
-        foreach ($input->deleteArray as $index => $assetID) {
-            $document = & new DataObjects_Document();
-            $document->get($assetID);
-            if (file_exists(SGL_UPLOAD_DIR . '/' . $document->name)) {
-                @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+        if (is_array($input->deleteArray)) {
+            foreach ($input->deleteArray as $index => $assetID) {
+                $document = DB_DataObject::factory($this->conf['table']['document']);
+                $document->get($assetID);
+                if (is_file(SGL_UPLOAD_DIR . '/' . $document->name)) {
+                    @unlink(SGL_UPLOAD_DIR . '/' . $document->name);
+                }
+                $document->delete();
+                unset($document);
             }
-            $document->delete();
-            unset($document);
+            SGL::raiseMsg('The asset has successfully been deleted', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('The asset has successfully been deleted');
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
-                
+
         $rangeWhereClause = ($input->queryRange == 'all')
             ? ''
             : " AND c.category_id = $input->catID";
@@ -338,8 +353,10 @@ class DocumentMgr extends FileMgr
                 dt.name AS document_type_name,
                 u.username AS document_added_by
             FROM
-                {$conf['table']['document']} d, {$conf['table']['category']} c, 
-                {$conf['table']['document_type']} dt, {$conf['table']['user']} u
+                {$this->conf['table']['document']} d,
+                {$this->conf['table']['category']} c,
+                {$this->conf['table']['document_type']} dt,
+                {$this->conf['table']['user']} u
             WHERE dt.document_type_id = d.document_type_id
             AND c.category_id = d.category_id
             AND u.usr_id = d.added_by
@@ -348,19 +365,22 @@ class DocumentMgr extends FileMgr
 
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
-            'mode'      => 'Sliding',
-            'delta'     => 3,
-            'perPage'   => $limit,
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
             'totalItems'=> $input->totalItems,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
         );
-        $aPagedData = SGL_DB::getPagedData($dbh, $query, $pagerOptions);
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
 
-        //  prepare data for publisher subnav
-        $output->addOnLoadEvent("document.getElementById('frmResourceChooser').documents.disabled = true");
+        $output->addOnLoadEvent("switchRowColorOnHover()");
 
         //  prepare breadcrumbs
         $menu = & new MenuBuilder('SelectBox');
@@ -383,6 +403,7 @@ class DocumentMgr extends FileMgr
         //  jpgs on linux
         case 'image/jpeg':                      $assetTypeID = 5; break;
         case 'image/x-png':                     $assetTypeID = 5; break;
+        case 'image/png':                       $assetTypeID = 5; break;
         case 'image/gif':                       $assetTypeID = 5; break;
         case 'application/pdf':                 $assetTypeID = 6; break;
         default:
@@ -394,12 +415,11 @@ class DocumentMgr extends FileMgr
     function _getType($documentTypeID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
+
         $query = "  SELECT  name
-                    FROM    " . $conf['table']['document_type'] . "
+                    FROM    " . $this->conf['table']['document_type'] . "
                     WHERE   document_type_id = $documentTypeID";
-        return $dbh->getOne($query);
+        return $this->dbh->getOne($query);
     }
 }
 ?>

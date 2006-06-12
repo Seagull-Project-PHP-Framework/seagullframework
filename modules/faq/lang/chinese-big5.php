@@ -1,11 +1,14 @@
 <?php
+$words['FAQ Manager :: Reorder'] = '常見問答：重新排序';
+$words['FAQ Manager :: Add'] = '常見問答：新增';
+$words['FAQ Manager :: Edit'] = '常見問答：編輯';
 $words['faq updated successfully'] = 'FAQ更新完成';
 $words['faqs reordered successfully'] = 'FAQ重組完成';
 $words['faq saved successfully'] = 'FAQ存儲完成';
 $words['faq deleted successfully'] = 'FAQ刪除完成';
-$words['FAQs'] = '常見問題';
-$words['FAQ Manager'] = '常見問題管理';
-$words['FAQ Manager :: Browse'] = '常見問題管理 :: 瀏覽';
+$words['FAQs'] = '常見問答';
+$words['FAQ Manager'] = '常見問答管理';
+$words['FAQ Manager :: Browse'] = '常見問答管理 :: 瀏覽';
 $words['Please fill in a question'] = '請填寫問題';
 $words['Please fill in an answer'] = '請填寫答案';
 $words['Question'] = '問題';

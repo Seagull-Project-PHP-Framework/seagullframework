@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -39,12 +39,12 @@
 // $Id: Output.php,v 1.22 2005/06/04 23:56:33 demian Exp $
 
 /**
- * High level HTML transform methods.
+ * High level HTML transform methods, 'Template Helpers' in Yahoo speak, 50% html,
+ * 50% php.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  * @todo    look at PEAR::Date to improve various date methods used here
  */
 class SGL_Output
@@ -62,9 +62,33 @@ class SGL_Output
      * @return  string          translated text
      * @see     setLanguage()
      */
-    function translate($key, $filter = false)
+    function translate($key, $filter = false, $aParams = array())
     {
-        return SGL_String::translate($key, $filter);
+        return SGL_String::translate($key, $filter, $aParams);
+    }
+
+    function getLangSwitcher($currUrl = '', $webRoot = '', $theme = '')
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aInstalledLangs = str_replace('_', '-', explode(',', $conf['translation']['installedLanguages']));
+        $imageDir = "$webRoot/themes/$theme/images/flags/";
+        $hasLangParam = preg_match('/lang=/', $currUrl);
+        $aLangs  = SGL_Util::getLangsDescriptionMap();
+        $langSwitcher  = '';
+
+        foreach ($aLangs as $k => $v) {
+            if (in_array($k, $aInstalledLangs)
+                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
+                $link = ($hasLangParam)
+                    ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
+                    : $currUrl . "?lang=$k";
+                preg_match('/(.+) \(.+\)/', $v, $matches);
+                $langSwitcher .= "<a class='langFlag' id='$k' href='$link'><img src='$imageDir$k.png' alt='$matches[1]' title='speak $matches[1] please'/></a>";
+            }
+        }
+
+        return $langSwitcher;
     }
 
     /**
@@ -74,23 +98,30 @@ class SGL_Output
      * @param   array   $array      hash of select values
      * @param   mixed   $selected   default selected element, array for multiple elements
      * @param   boolean $multiple   true if multiple
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  select options
      */
-    function generateSelect($aValues, $selected = null, $multiple = false)
+    function generateSelect($aValues, $selected = null, $multiple = false, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (!is_array($aValues)) {
+        if (!is_array($aValues) || (isset($options) && !is_array($options))) {
             SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         if (is_numeric($selected)) {
             $selected = (int) $selected;
         }
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($options as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
         $r = '';
         if ($multiple && is_array($selected)) {
             foreach ($aValues as $k => $v) {
                 $isSelected = in_array($k, $selected) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"" . $isSelected . ">$v</option>";
+                $r .= "\n<option value=\"$k\"" . $isSelected . $optionsString . ">$v</option>";
             }
         } else {
             //  ensure $selected is not the default null arg, allowing
@@ -98,7 +129,7 @@ class SGL_Output
             $r = '';
             foreach ($aValues as $k => $v) {
                 $isSelected = ($k === $selected && !is_null($selected)) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"". $isSelected .">$v</option>";
+                $r .= "\n<option value=\"$k\"". $isSelected . $optionsString . ">$v</option>";
             }
         }
         return $r;
@@ -111,21 +142,28 @@ class SGL_Output
      * @param   array   $hElements  hash of checkbox values
      * @param   array   $aChecked   array of checked elements
      * @param   string  $groupName  usually an array name that will contain all elements
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html        list of checkboxes
      */
-    function generateCheckboxList($hElements, $aChecked, $groupName)
+    function generateCheckboxList($hElements, $aChecked, $groupName, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (!is_array($hElements) || !is_array($aChecked)) {
-            SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
-                SGL_ERROR_INVALIDARGS);
+        if (!is_array($hElements) || !is_array($aChecked) || (isset($options) && !is_array($options))) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
+        }
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
         }
         $html = '';
         foreach ($hElements as $k => $v) {
             $isChecked = (in_array($k, $aChecked)) ? ' checked' : '';
             $html .= "<input class='noBorder' type='checkbox' name='$groupName' " .
-                     "id='$groupName-$k' value='$k' $isChecked><label for='$groupName-$k'>$v</label><br />\n";
+                     "id='$groupName-$k' value='$k'" . $optionsString . " $isChecked><label for='$groupName-$k'>$v</label><br />\n";
         }
         return $html;
     }
@@ -137,14 +175,26 @@ class SGL_Output
      * @param   string   $name       element name
      * @param   string   $value      element value
      * @param   boolean  $checked    is checked
+     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html         checkbox tag w/label
      */
-    function generateCheckbox($name, $value, $checked)
+    function generateCheckbox($name, $value, $checked, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (isset($options) && !is_array($options)) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
+        }
         $isChecked = $checked ? ' checked' : '';
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
         $html = "<input class='noBorder' type='checkbox' name='$name' " .
-            "id='$name' value='$value' $isChecked><label for='$name'>$value</label><br />\n";
+            "id= '$name' value='$value'" . $optionsString . " $isChecked><label for='$name'>$value</label><br />\n";
         return $html;
     }
 
@@ -154,11 +204,17 @@ class SGL_Output
      * @access  public
      * @param   string   $radioName  name of radio element
      * @param   boolean  $checked    is checked
+     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string   html        yes/no radio pair
      */
-    function generateRadioPair($radioName, $checked)
+    function generateRadioPair($radioName, $checked, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (isset($options) && !is_array($options)) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
+        }
         $radioString = '';
         if ($checked) {
             $yesChecked = ' checked';
@@ -167,9 +223,81 @@ class SGL_Output
             $yesChecked = '';
             $noChecked = ' checked';
         }
-        $radioString .= "<input type='radio' name='$radioName' value='0' $noChecked>".SGL_String::translate('no')."\n";
-        $radioString .= "<input type='radio' name='$radioName' value='1' $yesChecked>".SGL_String::translate('yes')."\n";
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($options as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
+        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked>".SGL_String::translate('no')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked>".SGL_String::translate('yes')."\n";
         return $radioString;
+    }
+
+    /**
+     * Generates sequence of radio button from array.
+     *
+     * @access  public
+     * @param   array   $elements   array of  values or radio button
+     * @param   array   $selected   array selected key ... single array with only zero index , i am need in array
+     * @param   string  $groupname  usually an array name that will contain all elements
+     * @param   integer $newline    how many columns to display for this radio group
+     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param 	boolean $inTable    true for adding table formatting
+     * @return  string  $html       a list of radio buttons
+     */
+    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true, $options = null)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (!is_array($elements) || (isset($options) && !is_array($options))) {
+            SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            return false;
+        }
+        $elementcount = count($elements);
+        $html = '';
+        $i = 0;
+        $optionsString = '';
+        if (isset($options)) {
+            foreach ($aValues as $k => $v) {
+                $optionsString .= ' ' . $k . '="' . $v . '"';
+            }
+        }
+        if ($inTable == false){
+            foreach ($elements as $k => $v) {
+                $i = $i + 1;
+                $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
+                if ($selected[0] == $k ){
+                    $html .= " checked";
+                }
+                $html .= " />$v ";
+                $modvalue = $i % $newline;
+                if ($modvalue == 0 ) {
+                    $html .= "<br/>\n";
+                }
+            }
+        } else {
+            $html ="<table>";
+            $html .="<tr>";
+            foreach ($elements as $k => $v) {
+                $i = $i + 1;
+                $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
+                if ($selected[0] == $k ) {
+                    $html .= " checked ";
+                }
+                $html .= " />$v </td>\n";
+                $modvalue = $i % $newline;
+                if ( $modvalue == 0 ) {
+                    if ($i < $elementcount){
+                        $html .="</tr>\n<tr>";
+                    } else {
+                        $html .="</tr>\n";
+                    }
+                }
+            }
+            $html .="</table>";
+        }
+        return $html;
     }
 
     /**
@@ -196,8 +324,11 @@ class SGL_Output
      * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $output user-friendly format (european)
      */
-    function formatDate($date)
+    function formatDate($date = '')
     {
+        if (empty($date)) {
+            $date = SGL_Date::getTime();
+        }
         return SGL_Date::format($date);
     }
 
@@ -208,11 +339,24 @@ class SGL_Output
      * @param   string  $date  Date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $formatted  user-friendly format (european)
      */
-    function formatDatePretty($date)
+    function formatDatePretty($date = '')
     {
+        if (empty($date)) {
+            $date = SGL_Date::getTime();
+        }
         return SGL_Date::formatPretty($date);
     }
 
+    /**
+     * Gets appropriate date format
+     *
+     * @access  public
+     * @return  string  $date template (e.g. "%d %B %Y, %H:%M" for FR date format)
+     */
+    function getDateFormat()
+    {
+        return SGL_Date::getDateFormat();
+    }
 
     /**
      * Wrapper for SGL_Date::showDateSelector(),
@@ -232,16 +376,34 @@ class SGL_Output
     }
 
     /**
+     * Creates a checkbox for infinite Articles (no expiry)
+     *
+     * @access public
+     * @param  array $aDate if NULL checkbox is checked
+     * @param  string $sFormName Name of Date Selector to reset if checkbox is clicked
+     * @return string with checkbox. Name of checkbox will be $sFormName.NoExpire, e.g. ExpiryDateNoExpire
+     */
+    function getNoExpiryCheckbox($aDate,$sFormName)
+    {
+        $checked = ($aDate == null) ? 'checked' : '';
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName
+            .'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '
+            .$checked.' /> '.SGL_Output::translate('No expire');
+    }
+
+    /**
      * Generates alternate classes for rows in tables, used to switch
      * row colors.
      *
-     * usage:
-     * <tr class="{switchRowClass()}" flexy:foreach="...">
-     *
      * @access  public
+     * @param   boolean $isBold
+     * @param   string  $pColor optional primary color, override default
+     * @param   string  $sColor optional secondary color, override default
      * @return  string  $curRowClass string representing class found in stylesheet
-    */
-    function switchRowClass($id = 'default')
+     */
+
+    function switchRowClass($isBold = false, $pColor = 'backDark',
+                            $sColor = 'backLight', $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -252,13 +414,37 @@ class SGL_Output
             $_id = $id;
         }
 
-        //  choose the next color
-        if ($curRowClass == 'sgl-row-dark') {
-            $curRowClass = 'sgl-row-light';
+        if (strpos($curRowClass, $sColor) === false) {
+            $curRowClass = $sColor;
         } else {
-            $curRowClass = 'sgl-row-dark';
+            $curRowClass = $pColor;
         }
+
+	if ($isBold)
+            $curRowClass .= ' bold';
+
         return $curRowClass;
+    }
+
+    /**
+     * Generates alternate value (false/true) to be used in template
+     *
+     * @access  public
+     * @param int $elementsToCount Number of elements to reach to switch from false/true, default 2
+     * @return  bool  $switcher
+     */
+
+    function switchTrueFalse($elementsToCount=2)
+    {
+        static $count;
+        if ($count % $elementsToCount) {
+            $switcher = false;
+        } else {
+            $switcher = true;
+        }
+        $count++;
+
+        return $switcher;
     }
 
     /**
@@ -271,25 +457,43 @@ class SGL_Output
      * @param   string  $appendString  Trailing string to be appended
      * @return  string  $processedString    Correctly shortened text
      */
-    function summarise($str, $limit=50, $appendString=' ...')
+    function summarise($str, $limit=50, $element=SGL_WORD, $appendString=' ...')
     {
-         return SGL_String::summarise($str, $limit, $appendString);
+         return SGL_String::summarise($str, $limit, $element, $appendString);
     }
 
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $message = SGL_HTTP_Session::get('message');
+
+        $message     = SGL_Session::get('message');
+        $messageType = SGL_Session::get('messageType');
         if (isset($message) && $message != '') {
-            SGL_HTTP_Session::remove('message');
-            echo '<div class="errorMessage">' . $message . '</div><br />';
+            SGL_Session::remove('message');
+            SGL_Session::remove('messageType');
+
+            switch ($messageType) {
+
+            case SGL_MESSAGE_INFO:
+                $class = 'info';
+                break;
+
+            case SGL_MESSAGE_WARNING:
+                $class = 'warning';
+                break;
+
+            default:
+                $class = 'error';
+            }
+            echo '<div class="' . $class . 'Message">' . $message . '</div>';
 
             //  required to remove message that persists when register_globals = on
             unset($GLOBALS['message']);
-        } elseif (count($GLOBALS['_SGL']['ERRORS'])) {
+            unset($GLOBALS['messageType']);
+        } elseif (SGL_Error::count()) {
 
             //  for now get last message added to stack
-            $msg = SGL::errorObjToString($GLOBALS['_SGL']['ERRORS'][0]);
+            $msg = SGL_Error::toString($GLOBALS['_SGL']['ERRORS'][0]);
             echo '  <div class="errorContainer">
                         <div class="errorHeader">Error</div>
                         <div class="errorContent">' . $msg . '</div>
@@ -299,10 +503,18 @@ class SGL_Output
         }
     }
 
-    //  return true if role id  denotes admin (1)
-    function isAdmin($rid)
+    //  return true if role id  is admin (1)
+    /**
+     * Returns true if current user or passed role ID is that of an admin.
+     *
+     * @return boolean
+     */
+    function isAdmin($rid = null)
     {
-        return ($rid == SGL_ADMIN) ? true : false;
+        if (is_null($rid)) {
+            $rid = SGL_Session::getRoleId();
+        }
+        return ($rid && $rid == SGL_ADMIN) ? true : false;
     }
 
     //  return true if $rid is 1 or -1
@@ -345,16 +557,66 @@ class SGL_Output
         return in_array($styleSheet, array('SglListamaticSubtle', 'verticalSimple'));
     }
 
-    function outputBody()
+    function outputBody($templateEngine = null)
     {
-        $body = new HTML_Template_Flexy();
-        $body->compile($this->template);
-        $body->outputObject($this);
+        if (empty($this->template)) {
+	    $this->template = 'docBlank.html';
+        }
+        $this->masterTemplate = $this->template;
+        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
+        echo $view->render();
     }
 
+    /**
+     * Returns true if client OS is windows.
+     *
+     * @return boolean
+     */
     function isWin()
     {
-        return SGL_USR_OS == 'Win';
+        return SGL_CLIENT_OS == 'Win';
+    }
+
+    /**
+     * Returns true if a and b are equal.
+     *
+     */
+    function isEqual($a, $b)
+    {
+        return $a == $b;
+    }
+
+    /**
+     * Check permission at the template level and returns true if permission
+     * exists.
+	 *
+	 * Use as follows in any Flexy template:
+	 * <code>
+     * {if:hasPerms(#faqmgr_delete#)} on {else:} off {end:}
+     * </code>
+     *
+     * To get various perm names, select User module then go to 'perms' section.
+     *
+     * @access  public
+     * @param   string  $permName    Name of permission eg. "faqmgr_delete"
+     * @return 	boolean
+     *
+     */
+    function hasPerms($permName)
+    {
+        $permId = @constant('SGL_PERMS_' . strtoupper($permName));
+        return (!empty($permId) && SGL_Session::hasPerms($permId) ? true : false);
+    }
+
+    /**
+     * printf function wrapper.
+     *
+     * @return string
+     */
+    function printf()
+    {
+        $argv = func_get_args();
+        return @call_user_func_array('sprintf', $argv);
     }
 }
 ?>

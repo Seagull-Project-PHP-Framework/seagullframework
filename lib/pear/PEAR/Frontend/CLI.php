@@ -14,9 +14,9 @@
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CLI.php,v 1.23 2005/06/23 15:56:37 demian Exp $
+ * @version    CVS: $Id: CLI.php,v 1.59 2006/03/02 13:16:19 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -31,9 +31,9 @@ require_once 'PEAR/Frontend.php';
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -242,13 +242,41 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                     }
                 }
                 $lastgroup = $group;
+                if (isset($group['instructions'])) {
+                    $this->_display($group['instructions']);
+                }
                 if (!isset($group['param'][0])) {
                     $group['param'] = array($group['param']);
                 }
                 if (isset($group['param'])) {
-                    $answers = $this->confirmDialog($group['param']);
+                    if (method_exists($script, 'postProcessPrompts')) {
+                        $prompts = $script->postProcessPrompts($group['param'], $group['id']);
+                        if (!is_array($prompts) || count($prompts) != count($group['param'])) {
+                            $this->outputData('postinstall', 'Error: post-install script did not ' .
+                                'return proper post-processed prompts');
+                            $prompts = $group['param'];
+                        } else {
+                            foreach ($prompts as $i => $var) {
+                                if (!is_array($var) || !isset($var['prompt']) ||
+                                      !isset($var['name']) ||
+                                      ($var['name'] != $group['param'][$i]['name']) ||
+                                      ($var['type'] != $group['param'][$i]['type'])) {
+                                    $this->outputData('postinstall', 'Error: post-install script ' .
+                                        'modified the variables or prompts, severe security risk. ' .
+                                        'Will instead use the defaults from the package.xml');
+                                    $prompts = $group['param'];
+                                }
+                            }
+                        }
+                        $answers = $this->confirmDialog($prompts);
+                    } else {
+                        $answers = $this->confirmDialog($group['param']);
+                    }
                 }
-                if ($answers) {
+                if ((isset($answers) && $answers) || !isset($group['param'])) {
+                    if (!isset($answers)) {
+                        $answers = array();
+                    }
                     array_unshift($completedPhases, $group['id']);
                     if (!$script->run($answers, $group['id'])) {
                         $script->run($completedPhases, '_undoOnError');
@@ -332,6 +360,9 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 if (version_compare(phpversion(), '5.0.0', '<')) {
                     $line = fgets($fp, 2048);
                 } else {
+                    if (!defined('STDIN')) {
+                        define('STDIN', fopen('php://stdin', 'r'));
+                    }
                     $line = fgets(STDIN, 2048);
                 }
                 if ($type == 'password') {
@@ -424,12 +455,17 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             } else {
                 $w = strlen($col);
             }
-            if ($w > @$this->params['widest'][$i]) {
+
+            if (isset($this->params['widest'][$i])) {
+                if ($w > $this->params['widest'][$i]) {
+                    $this->params['widest'][$i] = $w;
+                }
+            } else {
                 $this->params['widest'][$i] = $w;
             }
             $tmp = count_chars($columns[$i], 1);
             // handle unix, mac and windows formats
-            $lines = (isset($tmp[10]) ? $tmp[10] : @$tmp[13]) + 1;
+            $lines = (isset($tmp[10]) ? $tmp[10] : (isset($tmp[13]) ? $tmp[13] : 0)) + 1;
             if ($lines > $highest) {
                 $highest = $lines;
             }

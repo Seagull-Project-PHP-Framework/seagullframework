@@ -11,19 +11,26 @@ create table section
    section_id           INT4                 not null,
    title                VARCHAR(32)          null,
    resource_uri         VARCHAR(128)         null,
-   perms                VARCHAR(16)          null,
-   parent_id            INT4                 null,
-   root_id              INT4                 null,
-   left_id              INT4                 null,
-   right_id             INT4                 null,
-   order_id             INT4                 null,
-   level_id             INT4                 null,
-   is_enabled           INT2                 null,
-   is_static            INT2                 null,
+   perms                VARCHAR(32)          null,
+   trans_id             INT4,
+   parent_id            INT4,
+   root_id              INT4,
+   left_id              INT4,
+   right_id             INT4,
+   order_id             INT4,
+   level_id             INT4,
+   is_enabled           INT2,
+   is_static            INT2,
    access_key           CHAR(1)              null,
    rel                  VARCHAR(16)          null,   
    constraint PK_SECTION primary key (section_id)
 );
+
+-- ==============================================================
+--  Sequence: section_seq
+-- ==============================================================
+
+create sequence section_seq;
 
 -- ==============================================================
 --  Index: root_id                                               
@@ -31,6 +38,14 @@ create table section
 create index AK_section_key_root_id on section 
 (
    root_id
+);
+
+-- ==============================================================
+--  Index: order_id                                              
+-- ==============================================================
+create index AK_section_key_order_id on section 
+(
+   order_id
 );
 
 -- ==============================================================
@@ -50,22 +65,6 @@ create index AK_section_key_rigth_id on section
 );
 
 -- ==============================================================
---  Index: order_id                                              
--- ==============================================================
-create index AK_section_key_order_id on section 
-(
-   order_id
-);
-
--- ==============================================================
---  Index: level_id                                              
--- ==============================================================
-create index AK_section_key_level_id on section 
-(
-   level_id
-);
-
--- ==============================================================
 --  Index: id_root_l_r                                           
 -- ==============================================================
 create index AK_section_id_root_l_r on section 
@@ -77,80 +76,39 @@ create index AK_section_id_root_l_r on section
 );
 
 -- ==============================================================
--- Table: category
+--  Index: level_id                                              
 -- ==============================================================
-create table category (
-  category_id      INT4            NOT NULL default '0',
-  label            VARCHAR(32)     default NULL,
-  perms            VARCHAR(16)     default NULL,
-  parent_id        INT4            default NULL,
-  root_id          INT4            default NULL,
-  left_id          INT4            default NULL,
-  right_id         INT4            default NULL,
-  order_id         INT4            default NULL,
-  level_id         INT4            default NULL,
-  constraint PK_category PRIMARY KEY (category_id)
-);
-
--- ==============================================================
---  Index: root_id                                               
--- ==============================================================
-create index AK_category_key_root_id on category
+create index AK_section_key_level_id on section 
 (
-    root_id
-);
-
-
--- ==============================================================
---  Index: order_id
--- ==============================================================
-create index AK_category_key_order_id on category
-(
-    order_id
+   level_id
 );
 
 -- ==============================================================
---  Index: left_id
+-- Table: uri_alias
 -- ==============================================================
-create index AK_category_key_left_id on category
-(
-    left_id
-);
+create table uri_alias (
+   uri_alias_id       INT4     NOT NULL   default '0',
+   uri_alias          VARCHAR(255)        NULL,
+   section_id         INT4                NULL,
+   title              VARCHAR(255)        NULL,
+   keywords           TEXT,
+   description        TEXT,
+   PRIMARY KEY  (uri_alias_id)
+) ;
 
 -- ==============================================================
---  Index: right_id
+--  Sequence: uri_alias_seq
 -- ==============================================================
-create index AK_category_key_right_id on category
-(
-    right_id
-);
+
+create sequence uri_alias_seq;
 
 -- ==============================================================
---  Index: root_l_r
+-- Index: uri_alias
 -- ==============================================================
-create index AK_category_id_root_l_r on category
-(
-    category_id,
-    root_id,
-    left_id,
-    right_id
+create unique index UK_uri_alias ON uri_alias (
+    uri_alias
 );
 
--- ==============================================================
---  Index: level_id
--- ==============================================================
-create index AK_category_key_level_id on category
-(
-    level_id
-);
-
--- ==============================================================
---  Index: parent_id
--- ==============================================================
-create index AK_category_key_parent_fk on category
-(
-    parent_id
-);
 
 COMMIT;
 

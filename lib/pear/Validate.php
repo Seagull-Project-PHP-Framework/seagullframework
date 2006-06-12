@@ -1,6 +1,20 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
-
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2005 Pierre-Alain Joye,Tomas V.V.Cox              |
+// +----------------------------------------------------------------------+
+// | This source file is subject to the New BSD license, That is bundled  |
+// | with this package in the file LICENSE, and is available through      |
+// | the world-wide-web at                                                |
+// | http://www.opensource.org/licenses/bsd-license.php                   |
+// | If you did not receive a copy of the new BSDlicense and are unable   |
+// | to obtain it through the world-wide-web, please send a note to       |
+// | pajoye@php.net so we can mail you a copy immediately.                |
+// +----------------------------------------------------------------------+
+// | Author: Tomas V.V.Cox  <cox@idecnet.com>                             |
+// |         Pierre-Alain Joye <pajoye@php.net>                           |
+// +----------------------------------------------------------------------+
+//
 /**
  * Validation class
  *
@@ -12,21 +26,13 @@
  *   - uri (RFC2396)
  *   - possibility valid multiple data with a single method call (::multiple)
  *
- * PHP versions 4
- *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   Validate
  * @package    Validate
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.7 2005/06/23 15:56:28 demian Exp $
+ * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
+ * @version    CVS: $Id: Validate.php,v 1.88 2006/04/20 12:03:27 toggg Exp $
  * @link       http://pear.php.net/package/Validate
  */
 
@@ -43,7 +49,7 @@ define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . '¡…Õ”⁄¿»Ã“ŸƒÀœ÷‹¬ Œ‘€—«ﬁ∆
 define('VALIDATE_EALPHA',       VALIDATE_EALPHA_LOWER . VALIDATE_EALPHA_UPPER);
 define('VALIDATE_PUNCTUATION',  VALIDATE_SPACE . '\.,;\:&"\'\?\!\(\)');
 define('VALIDATE_NAME',         VALIDATE_EALPHA . VALIDATE_SPACE . "'");
-define('VALIDATE_STREET',       VALIDATE_NAME . "/\\∫™");
+define('VALIDATE_STREET',       VALIDATE_NAME . "/\\∫™\.");
 
 /**
  * Validation class
@@ -60,8 +66,8 @@ define('VALIDATE_STREET',       VALIDATE_NAME . "/\\∫™");
  * @package    Validate
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @author     Pierre-Alain Joye <pajoye@php.net>
- * @copyright  2005 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
+ * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
  * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Validate
  */
@@ -75,7 +81,7 @@ class Validate
      *                              'decimal'   is the decimal char or false when decimal not allowed
      *                                          i.e. ',.' to allow both ',' and '.'
      *                              'dec_prec'  Number of allowed decimals
-     *                              'min'       minimun value
+     *                              'min'       minimum value
      *                              'max'       maximum value
      *
      * @return boolean true if valid number, false if not
@@ -112,27 +118,106 @@ class Validate
     }
 
     /**
-     * Validate a email
+     * Validate an email according to full RFC822 (inclusive human readable part)
      *
-     * @param string    $email          URL to validate
-     * @param boolean   $domain_check   Check or not if the domain exists
+     * @param string $email email to validate,
+     *                      will return the address for optional dns validation
+     * @param array $options email() options
+     *
+     * @return boolean true if valid email, false if not
+     *
+     * @access private
+     */
+    function __emailRFC822(&$email, &$options)
+    {
+        static $address = null;
+        static $uncomment = null;
+        if (!$address) {
+            // atom        =  1*<any CHAR except specials, SPACE and CTLs>
+            $atom = '[^][()<>@,;:\\".\s\000-\037\177-\377]+\s*';
+            // qtext       =  <any CHAR excepting <">,     ; => may be folded
+            //         "\" & CR, and including linear-white-space>
+            $qtext = '[^"\\\\\r]';
+            // quoted-pair =  "\" CHAR                     ; may quote any char
+            $quoted_pair = '\\\\.';
+            // quoted-string = <"> *(qtext/quoted-pair) <">; Regular qtext or
+            //                                             ;   quoted chars.
+            $quoted_string = '"(?:' . $qtext . '|' . $quoted_pair . ')*"\s*';
+            // word        =  atom / quoted-string
+            $word = '(?:' . $atom . '|' . $quoted_string . ')';
+            // local-part  =  word *("." word)             ; uninterpreted
+            //                                             ; case-preserved
+            $local_part = $word . '(?:\.\s*' . $word . ')*';
+            // dtext       =  <any CHAR excluding "[",     ; => may be folded
+            //         "]", "\" & CR, & including linear-white-space>
+            $dtext = '[^][\\\\\r]';
+            // domain-literal =  "[" *(dtext / quoted-pair) "]"
+            $domain_literal = '\[(?:' . $dtext . '|' . $quoted_pair . ')*\]\s*';
+            // sub-domain  =  domain-ref / domain-literal
+            // domain-ref  =  atom                         ; symbolic reference
+            $sub_domain = '(?:' . $atom . '|' . $domain_literal . ')';
+            // domain      =  sub-domain *("." sub-domain)
+            $domain = $sub_domain . '(?:\.\s*' . $sub_domain . ')*';
+            // addr-spec   =  local-part "@" domain        ; global address
+            $addr_spec = $local_part . '@\s*' . $domain;
+            // route       =  1#("@" domain) ":"           ; path-relative
+            $route = '@' . $domain . '(?:,@\s*' . $domain . ')*:\s*';
+            // route-addr  =  "<" [route] addr-spec ">"
+            $route_addr = '<\s*(?:' . $route . ')?' . $addr_spec . '>\s*';
+            // phrase      =  1*word                       ; Sequence of words
+            $phrase = $word  . '+';
+            // mailbox     =  addr-spec                    ; simple address
+            //             /  phrase route-addr            ; name & addr-spec
+            $mailbox = '(?:' . $addr_spec . '|' . $phrase . $route_addr . ')';
+            // group       =  phrase ":" [#mailbox] ";"
+            $group = $phrase . ':\s*(?:' . $mailbox . '(?:,\s*' . $mailbox . ')*)?;\s*';
+            //     address     =  mailbox                      ; one addressee
+            //                 /  group                        ; named list
+            $address = '/^\s*(?:' . $mailbox . '|' . $group . ')$/';
+            $uncomment =
+            '/((?:(?:\\\\"|[^("])*(?:' . $quoted_string .
+                                             ')?)*)((?<!\\\\)\((?:(?2)|.)*?(?<!\\\\)\))/';
+        }
+        // strip comments
+        $email = preg_replace($uncomment, '$1 ', $email);
+        return preg_match($address, $email);
+    }
+
+    /**
+     * Validate an email
+     *
+     * @param string $email email to validate
+     * @param mixed boolean (BC) $check_domain   Check or not if the domain exists
+     *              array $options associative array of options
+     *              'check_domain' boolean Check or not if the domain exists
+     *              'use_rfc822' boolean Apply the full RFC822 grammar
      *
      * @return boolean true if valid email, false if not
      *
      * @access public
      */
-    function email($email, $check_domain = false)
+    function email($email, $options = null)
     {
-        $regex = '/^((\"[^\"\f\n\r\t\v\b]+\")|([\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+'.
-                 '(\.[\w\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|'.
-                 '(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|'.
-                 '([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))'.
-                 '\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|'.
-                 '(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|'.
-                 '([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))'.
-                 '\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|'.
-                 '((([A-Za-z0-9\-])+\.)+[A-Za-z\-]+))$/';
-        if (preg_match($regex, $email)) {
+        $check_domain = false;
+        $use_rfc822 = false;
+        if (is_bool($options)) {
+            $check_domain = $options;
+        } elseif (is_array($options)) {
+            extract($options);
+        }
+
+        // the base regexp for address
+        $regex = '&^(?:                                               # recipient:
+         ("\s*(?:[^"\f\n\r\t\v\b\s]+\s*)+")|                          #1 quoted name
+         ([-\w!\#\$%\&\'*+~/^`|{}]+(?:\.[-\w!\#\$%\&\'*+~/^`|{}]+)*)) #2 OR dot-atom
+         @(((\[)?                     #3 domain, 4 as IPv4, 5 optionally bracketed
+         (?:(?:(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))\.){3}
+               (?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))))(?(5)\])|
+         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?))  #6 domain as hostname
+         $&xi';
+
+        if ($use_rfc822? Validate::__emailRFC822($email, $options) :
+            preg_match($regex, $email)) {
             if ($check_domain && function_exists('checkdnsrr')) {
                 list (, $domain)  = explode('@', $email);
                 if (checkdnsrr($domain, 'MX') || checkdnsrr($domain, 'A')) {
@@ -185,8 +270,18 @@ class Validate
      * option, like this:
      * <code>
      * $options = array('allowed_schemes' => array('http', 'https', 'ftp'))
-     * var_dumpn(Validate::uri('http://www.example.org'), $options);
+     * var_dump(Validate::uri('http://www.example.org'), $options);
      * </code>
+     *
+     * NOTE 1: The rfc2396 normally allows middle '-' in the top domain
+     *         e.g. http://example.co-m should be valid
+     *         However, as '-' is not used in any known TLD, it is invalid
+     * NOTE 2: As double shlashes // are allowed in the path part, only full URIs
+     *         including an authority can be valid, no relative URIs
+     *         the // are mandatory (optionally preceeded by the 'sheme:' )
+     * NOTE 3: the full complience to rfc2396 is not achieved by default
+     *         the characters ';/?:@$,' will not be accepted in the query part
+     *         if not urlencoded, refer to the option "strict'"
      *
      * @param string    $url        URI to validate
      * @param array     $options    Options used by the validation method.
@@ -196,6 +291,10 @@ class Validate
      *                              'allowed_schemes' => array, list of protocols
      *                                  List of allowed schemes ('http',
      *                                  'ssh+svn', 'mms')
+     *                              'strict' => string the refused chars
+     *                                   in query and fragment parts
+     *                                   default: ';/?:@$,'
+     *                                   empty: accept all rfc2396 foreseen chars
      *
      * @return boolean true if valid uri, false if not
      *
@@ -203,24 +302,46 @@ class Validate
      */
     function uri($url, $options = null)
     {
+        $strict = ';/?:@$,';
         $domain_check = false;
         $allowed_schemes = null;
         if (is_array($options)) {
             extract($options);
         }
         if (preg_match(
-            '!^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?!',
-            $url, $matches))
-        {
-            $scheme = $matches[2];
-            $authority = $matches[4];
+             '&^(?:([a-z][-+.a-z0-9]*):)?                             # 1. scheme
+              (?://                                                   # authority start
+              (?:((?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'();:\&=+$,])*)@)?    # 2. authority-userinfo
+              (?:((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[a-z0-9]+)?\.?)  # 3. authority-hostname OR
+              |([0-9]{1,3}(?:\.[0-9]{1,3}){3}))                       # 4. authority-ipv4
+              (?::([0-9]*))?)                                        # 5. authority-port
+              ((?:/(?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'():@\&=+$,;])*)*/?)? # 6. path
+              (?:\?([^#]*))?                                          # 7. query
+              (?:\#((?:%[0-9a-f]{2}|[-a-z0-9_.!~*\'();/?:@\&=+$,])*))? # 8. fragment
+              $&xi', $url, $matches)) {
+            $scheme = isset($matches[1]) ? $matches[1] : '';
+            $authority = isset($matches[3]) ? $matches[3] : '' ;
             if (is_array($allowed_schemes) &&
                 !in_array($scheme,$allowed_schemes)
             ) {
                 return false;
             }
-            if ($domain_check && function_exists('checkdnsrr')) {
+            if (!empty($matches[4])) {
+                $parts = explode('.', $matches[4]);
+                foreach ($parts as $part) {
+                    if ($part > 255) {
+                        return false;
+                    }
+                }
+            } elseif ($domain_check && function_exists('checkdnsrr')) {
                 if (!checkdnsrr($authority, 'A')) {
+                    return false;
+                }
+            }
+            if ($strict) {
+                $strict = '#[' . preg_quote($strict, '#') . ']#';
+                if ((!empty($matches[7]) && preg_match($strict, $matches[7]))
+                 || (!empty($matches[8]) && preg_match($strict, $matches[8]))) {
                     return false;
                 }
             }
@@ -250,11 +371,12 @@ class Validate
     {
         $max = $min = false;
         $format = '';
-        if (is_array($options)){
+        if (is_array($options)) {
             extract($options);
         }
-        $date_len   = strlen($format);
-        for ($i = 0; $i < strlen($format); $i++) {
+
+        $date_len = strlen($format);
+        for ($i = 0; $i < $date_len; $i++) {
             $c = $format{$i};
             if ($c == '%') {
                 $next = $format{$i + 1};
@@ -343,7 +465,7 @@ class Validate
             if (!checkdate($month, $day, $year)) {
                 return false;
             }
-            
+
             if ($min) {
                 include_once 'Date/Calc.php';
                 if (is_a($min, 'Date') &&
@@ -540,21 +662,23 @@ class Validate
                 $method       = array_pop($validateType);
                 $class        = implode('_', $validateType);
                 $classPath    = str_replace('_', DIRECTORY_SEPARATOR, $class);
+                $class        = 'Validate_' . $class;
                 if (!@include_once "Validate/$classPath.php") {
-                    trigger_error("Validate_$class isn't installed or you may have some permissoin issues", E_USER_ERROR);
+                    trigger_error("$class isn't installed or you may have some permissoin issues", E_USER_ERROR);
                 }
 
-                if (!class_exists("Validate_$class") ||
-                    !in_array($method, get_class_methods("Validate_$class")))
+                $ce = substr(phpversion(), 0, 1) > 4 ? class_exists($class, false) : class_exists($class);
+                if (!$ce ||
+                    !in_array($method, get_class_methods($class)))
                 {
-                    trigger_error("Invalid validation type Validate_$class::$method", E_USER_WARNING);
+                    trigger_error("Invalid validation type $class::$method", E_USER_WARNING);
                     continue;
                 }
                 unset($opt['type']);
                 if (sizeof($opt) == 1) {
                     $opt = array_pop($opt);
                 }
-                $valid[$var_name] = call_user_func(array("Validate_$class", $method), $data[$var_name], $opt);
+                $valid[$var_name] = call_user_func(array($class, $method), $data[$var_name], $opt);
             } else {
                 trigger_error("Invalid validation type {$opt['type']}", E_USER_WARNING);
             }

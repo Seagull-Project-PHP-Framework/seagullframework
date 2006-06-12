@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ConfigMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -47,7 +47,6 @@ require_once 'Validate.php';
  * @package default
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.32 $
- * @since   PHP 4.1
  */
 class ConfigMgr extends SGL_Manager
 {
@@ -57,11 +56,14 @@ class ConfigMgr extends SGL_Manager
     var $aMtaBackends;
     var $aCensorModes;
     var $aNavDrivers;
+    var $aNavRenderers;
+    var $aTranslationContainers;
 
     function ConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module = 'default';
+        parent::SGL_Manager();
+
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';
         $this->aDbTypes = array(
@@ -69,7 +71,8 @@ class ConfigMgr extends SGL_Manager
             'mysql' => 'mysql',
             'pgsql' => 'pgsql',
             'oci8_SGL' => 'oci8',
-            'odbc' => 'odbc',
+            'maxdb_SGL' => 'maxdb_SGL',
+            'db2_SGL' => 'db2',
             );
         $this->aLogTypes = array(
             'file' => 'file',
@@ -88,78 +91,113 @@ class ConfigMgr extends SGL_Manager
             2 => 'word beginning',
             3 => 'word fragment',
             );
-            
-        //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
-        $this->aNavDrivers = SGL_Util::getAllNavDrivers();
-        $this->aSessHandlers = array(
-            'file' => 'file', 
-            'database' => 'database'
-            );
-        $this->aPermDrivers = array(
-            'liveuser' => 'Liveuser', 
-            'seagull' => 'Seagull'
+        $this->aDbDoDebugLevels = array(
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
             );
 
+        //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
+        $navDir = SGL_MOD_DIR . '/navigation/classes';
+        $this->aNavDrivers   = SGL_Util::getAllClassesFromFolder($navDir, '.*Driver');
+        $this->aNavRenderers = SGL_Util::getAllClassesFromFolder($navDir, '.*Renderer');
+        $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
+        $this->aUrlHandlers  = array(
+            'SGL_UrlParser_SefStrategy' => 'Seagull SEF',
+            'SGL_UrlParser_ClassicStrategy' => 'Classic');
+        $this->aTemplateEngines = array(
+            'flexy'   => 'Flexy',
+            'savant2' => 'Savant2',
+            'smarty'  => 'Smarty');
         $this->_aActionsMapping =  array(
-            'edit'   => array('edit'), 
-            'insert' => array('insert', 'redirectToDefault'), 
+            'edit'   => array('edit'),
+            'update' => array('update', 'redirectToDefault'),
         );
+        $this->aTranslationContainers = array('file' => 'file', 'db' => 'database');
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->aStyleFiles = SGL_Util::getStyleFiles();
+        $this->aStyleFiles  = SGL_Util::getStyleFiles();
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = 'masterMinimal.html';
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'edit';
         $input->aDelete     = $req->get('frmDelete');
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->conf        = $req->get('conf');
+        $input->displayTab  = 'generalSiteOptions';
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
-            if (empty($input->conf['site']['baseUrl']) || 
+            if (empty($input->conf['site']['baseUrl']) ||
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
-            
-            //  filter site name for illegal chars
-            $input->conf['site']['name'] = preg_replace("/[^\sa-z]/i", "", $input->conf['site']['name']);
-            
+
+            //  paths
+            if (empty($input->conf['path']['webRoot'])) {
+                $aErrors['webRoot'] = 'Please enter a valid path';
+                // unset() because we use isset() in lib/SGL/Task/Init.php to check this variable
+                unset($input->conf['path']['webRoot']);
+            }
+
+            if (empty($input->conf['path']['installRoot'])) {
+                $aErrors['installRoot'] = 'Please enter a valid path';
+            }
+
             // MTA backend & params
             $aBackends = array_keys($this->aMtaBackends);
             if (empty($input->conf['mta']['backend']) ||
                 !in_array($input->conf['mta']['backend'], $aBackends)) {
                 $aErrors['mtaBackend'] = 'Please choose a valid MTA backend';
+                $input->displayTab = 'mtaOptions';
             }
-            
+
             switch ($input->conf['mta']['backend']) {
-                
+
             case 'sendmail':
                 if (empty($input->conf['mta']['sendmailPath']) ||
-                    !file_exists($input->conf['mta']['sendmailPath'])) {
+                    !is_file($input->conf['mta']['sendmailPath'])) {
                     $aErrors['sendmailPath'] = 'Please enter a valid path to Sendmail';
+                    $input->displayTab = 'mtaOptions';
                 }
                 if (empty($input->conf['mta']['sendmailArgs'])) {
                     $aErrors['sendmailArgs'] = 'Please enter valid Sendmail arguments';
+                    $input->displayTab = 'mtaOptions';
                 }
                 break;
-                
+
             case 'smtp':
                 if ($input->conf['mta']['smtpAuth'] == 1) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
                         $aErrors['smtpUsername'] = 'Please enter a valid Username';
+                        $input->displayTab = 'mtaOptions';
                     }
                     if (empty($input->conf['mta']['smtpPassword'])) {
                         $aErrors['smtpPassword'] = 'Please enter a valid Password';
+                        $input->displayTab = 'mtaOptions';
                     }
                 }
                 break;
+            }
+            //  session validations
+            if (  !empty($input->conf['session']['singleUser'])
+                && empty($input->conf['session']['extended'])) {
+                    $aErrors['singleUser'] = 'Single session per user requires extended session';
+                    $input->displayTab = 'sessionOptions';
+            }
+            if (   !empty($input->conf['session']['extended'])
+                && $input->conf['session']['handler'] != 'database') {
+                    $aErrors['extendedSession'] = 'Extended session requires database session handling';
+                    $input->displayTab = 'sessionOptions';
             }
         }
         //  if errors have occured
@@ -176,42 +214,61 @@ class ConfigMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once SGL_DAT_DIR . '/ary.logLevels.php';
-        $output->conf = $GLOBALS['_SGL']['CONF'];
-        $output->aDbTypes = $this->aDbTypes;
-        $output->aLogTypes = $this->aLogTypes;
-        $output->aLogPriorities = $aLogLevels;
-        $output->aEmailThresholds = $aLogLevels;
-        $output->aMtaBackends = $this->aMtaBackends;
-        $output->aCensorModes = $this->aCensorModes;
-        $output->aNavDrivers = $this->aNavDrivers;
-        $output->aStyleFiles = $this->aStyleFiles;
-        $output->aSessHandlers = $this->aSessHandlers;
-        $output->aPermDrivers = $this->aPermDrivers;
-    }
+        $output->aDbTypes           = $this->aDbTypes;
+        $output->aLogTypes          = $this->aLogTypes;
+        $output->aLogPriorities     = $aLogLevels;
+        $output->aEmailThresholds   = $aLogLevels;
+        $output->aMtaBackends       = $this->aMtaBackends;
+        $output->aCensorModes       = $this->aCensorModes;
+        $output->aNavDrivers        = $this->aNavDrivers;
+        $output->aNavRenderers      = $this->aNavRenderers;
+        $output->aStyleFiles        = $this->aStyleFiles;
+        $output->aSessHandlers      = $this->aSessHandlers;
+        $output->aUrlHandlers       = $this->aUrlHandlers;
+        $output->aTemplateEngines       = $this->aTemplateEngines;
+        $output->aTranslationContainers = $this->aTranslationContainers;
+        $output->aDbDoDebugLevels = $this->aDbDoDebugLevels;
 
-    function _edit(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
-
-    function _insert(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = new Config();
-        
-        //  add version info which is not available in form
-        $input->conf['tuples']['version'] = $GLOBALS['_SGL']['VERSION'];
-                
-        //  read configuration data and get reference to root
-        $root = & $c->parseConfig($input->conf, 'phparray');
-        
-        //  write configuration to file
-        $result = $c->writeConfig(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php', 'inifile');
-        SGL_Util::makeIniUnreadable(SGL_PATH . '/var/' . SGL_SERVER_NAME . '.default.conf.ini.php');
-        if (!is_a($result, 'PEAR_Error')) {
-            SGL::raiseMsg('config info successfully updated');
+        //  retrieve installed languages
+        if ($this->conf['translation']['container'] == 'db') {
+            $output->aInstalledLangs = $this->trans->getLangs();
         } else {
-            SGL::raiseError('There was a problem saving your configuration, make sure /var is writable', 
+            $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(),
+                SGL_LANG_ID_TRANS2);
+        }
+
+        $output->addOnLoadEvent("showSelectedOptions('configuration','$output->displayTab')");
+
+        //  disable translation options depending on the selected translation container.
+        $output->addOnLoadEvent("toggleTransElements()");
+    }
+
+    function _cmd_edit(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+    }
+
+    function _cmd_update(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            SGL::raiseMsg('Config settings cannot be modified in demo mode',
+                false, SGL_MESSAGE_WARNING);
+            return false;
+        }
+        //  add version info which is not available in form
+        $c = &SGL_Config::singleton();
+        $c->merge($input->conf);
+        $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
+
+        //  write configuration to file
+        $ok = $c->save(SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php');
+
+        if (!is_a($ok, 'PEAR_Error')) {
+            SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('There was a problem saving your configuration, make sure /var is writable',
                 SGL_ERROR_FILEUNWRITABLE);
         }
     }

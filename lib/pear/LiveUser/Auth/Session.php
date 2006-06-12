@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Session.php,v 1.10 2005/06/07 14:41:17 lsmith Exp $
+ * @version CVS: $Id: Session.php,v 1.29 2006/03/14 13:03:32 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -55,9 +55,9 @@ require_once 'LiveUser/Auth/Common.php';
  * - File "LiveUser.php" (contains the parent class "LiveUser")
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
- * @copyright 2002-2005 Markus Wolff
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -75,11 +75,11 @@ class LiveUser_Auth_Session extends LiveUser_Auth_Common
     /**
      * Load the storage container
      *
-     * @param  mixed &$conf   Name of array containing the configuration.
-     * @param string $containerName name of the container that should be used
-     * @return  boolean true on success or false on failure
+     * @param   array  array containing the configuration.
+     * @param string  name of the container that should be used
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function init(&$conf, $containerName)
     {
@@ -89,59 +89,44 @@ class LiveUser_Auth_Session extends LiveUser_Auth_Common
     }
 
     /**
-     * Writes current values for user back to the database.
-     * This method does nothing in the base class and is supposed to
-     * be overridden in subclasses according to the supported backend.
+     * Does nothing
      *
-     * @return boolean true on success or false on failure
+     * @return bool true on success or false on failure
      *
      * @access private
      */
     function _updateUserData()
     {
-        $this->lastLogin    = $this->currentLogin;
         return true;
     }
 
     /**
-     * Reads auth_user_id, passwd, is_active flag
-     * lastlogin timestamp from the database
-     * If only $handle is given, it will read the data
-     * from the first user with that handle and return
-     * true on success.
-     * If $handle and $passwd are given, it will try to
-     * find the first user with both handle and password
-     * matching and return true on success (this allows
-     * multiple users having the same handle but different
-     * passwords - yep, some people want this).
-     * If no match is found, false is being returned.
+     * Reads user data from the given data source
+     * Compares $passwd with a string inside the $_SESSION array
      *
-     
-     * @param  string $handle  user handle
-     * @param  boolean $passwd user password
-     * @param string $authUserId auth user id
-     * @return boolean true on success or false on failure
+     * @param  string user handle
+     * @param  string user password
+     * @param  bool|int if the user data should be read using the auth user id
+     * @return bool true on success or false on failure
      *
-     * @access private
+     * @access public
      */
-    function readUserData($handle = '', $passwd = '', $authUserId = false)
+    function readUserData($handle = '', $passwd = '', $auth_user_id = false)
     {
-        if ($authUserId) {
-            // where can we get the handle and passwd from?
-        } else {
-            if ($this->tables['users']['fields']['passwd']) {
-                if (!isset($_SESSION[$this->alias['passwd']]) ||
-                    $_SESSION[$this->alias['passwd']] !== $passwd
+        if (!$auth_user_id) {
+            if (!is_null($this->tables['users']['fields']['passwd'])) {
+                if (!array_key_exists($this->alias['passwd'], $_SESSION)
+                    || $_SESSION[$this->alias['passwd']] !== $passwd
                 ) {
                     return false;
                 }
             }
+            $this->propertyValues = $this->tables['users']['fields'];
+            $this->propertyValues['handle']    = $handle;
+            $this->propertyValues['passwd']    = $passwd;
+            $this->propertyValues['is_active'] = true;
+            $this->propertyValues['lastlogin'] = time();
         }
-
-        $this->handle       = $handle;
-        $this->passwd       = $passwd;
-        $this->isActive     = true;
-        $this->lastLogin    = time();
 
         return true;
     }

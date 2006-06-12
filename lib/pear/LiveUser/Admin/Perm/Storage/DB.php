@@ -7,7 +7,7 @@
  * LiveUser_Admin is meant to be used with the LiveUser package.
  * It is composed of all the classes necessary to administrate
  * data used by LiveUser.
- * 
+ *
  * You'll be able to add/edit/delete/get things like:
  * * Rights
  * * Users
@@ -16,19 +16,19 @@
  * * Applications
  * * Subgroups
  * * ImpliedRights
- * 
+ *
  * And all other entities within LiveUser.
- * 
+ *
  * At the moment we support the following storage containers:
  * * DB
  * * MDB
  * * MDB2
- * 
+ *
  * But it takes no time to write up your own storage container,
  * so if you like to use native mysql functions straight, then it's possible
  * to do so in under a hour!
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,24 +40,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser_Admin
+ * @package LiveUser_Admin
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
  * @author  Christian Dickmann <dickmann@php.net>
  * @author  Matt Scifo <mscifo@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: DB.php,v 1.10 2005/06/07 11:38:19 lsmith Exp $
+ * @version CVS: $Id: DB.php,v 1.16 2006/03/01 12:10:29 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -67,23 +67,14 @@
 require_once 'LiveUser/Admin/Storage/DB.php';
 
 /**
- * This is a PEAR::DB backend driver for the LiveUser class.
- * A PEAR::DB connection object can be passed to the constructor to reuse an
- * existing connection. Alternatively, a DSN can be passed to open a new one.
- *
- * Requirements:
- * - File "Liveuser.php" (contains the parent class "LiveUser")
- * - Array of connection options or a PEAR::DB connection object must be
- *   passed to the constructor.
- *   Example: array('dsn' => 'mysql://user:pass@host/db_name')
- *              OR
- *            &$conn (PEAR::DB connection object)
+ * This is a PEAR::DB backend storage driver for the LiveUser_Admin perm class.
+ * All it does is read the Globals.php file and the container and database config on
  *
  * @category authentication
- * @package  LiveUser_Admin
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @package LiveUser_Admin
+ * @permor  Lukas Smith <smith@pooteeweet.org>
+ * @permor  Bjoern Kraus <krausbn@php.net>
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser_Admin
@@ -92,10 +83,8 @@ class LiveUser_Admin_Perm_Storage_DB extends LiveUser_Admin_Storage_DB
 {
     /**
      * Initializes database storage container.
-     * Merges tables/fields/aliases together if needed or set the default
-     * ones if any of those vars are empty.
      *
-     * @param array &$storageConf Storage Configuration
+     * @param array Storage Configuration
      * @return void
      *
      * @access public
@@ -103,24 +92,8 @@ class LiveUser_Admin_Perm_Storage_DB extends LiveUser_Admin_Storage_DB
      */
     function init(&$storageConf)
     {
-        parent::init($storageConf);
-
         require_once 'LiveUser/Perm/Storage/Globals.php';
-        if (empty($this->tables)) {
-            $this->tables = $GLOBALS['_LiveUser']['perm']['tables'];
-        } else {
-            $this->tables = LiveUser::arrayMergeClobber($GLOBALS['_LiveUser']['perm']['tables'], $this->tables);
-        }
-        if (empty($this->fields)) {
-            $this->fields = $GLOBALS['_LiveUser']['perm']['fields'];
-        } else {
-            $this->fields = LiveUser::arrayMergeClobber($GLOBALS['_LiveUser']['perm']['fields'], $this->fields);
-        }
-        if (empty($this->alias)) {
-            $this->alias = $GLOBALS['_LiveUser']['perm']['alias'];
-        } else {
-            $this->alias = LiveUser::arrayMergeClobber($GLOBALS['_LiveUser']['perm']['alias'], $this->alias);
-        }
+        parent::init($storageConf, $GLOBALS['_LiveUser']['perm']);
     }
 }
 ?>

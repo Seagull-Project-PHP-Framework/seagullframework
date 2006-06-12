@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,40 +24,41 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Simple.php,v 1.21 2005/04/06 17:16:40 lsmith Exp $
+ * @version CVS: $Id: Simple.php,v 1.41 2006/04/10 14:41:44 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
 /**
- * Base class for permission handling
+ * Base class for permission handling. Provides the simplest
+ * set of permission handling features.
  *
  * This class provides a set of functions for implementing a user
  * permission management system on live websites. All authorisation
- * backends/containers must be extensions of this base class.
+ * backends/containers must extend this base class.
  *
- * @category authentication
- * @package  LiveUser
- * @author  Markus Wolff <wolff@21st.de>
- * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
- * @license http://www.gnu.org/licenses/lgpl.txt
- * @version Release: @package_version@
+ * @category  authentication
+ * @package   LiveUser
+ * @author    Markus Wolff <wolff@21st.de>
+ * @author    Bjoern Kraus <krausbn@php.net>
+ * @copyright 2002-2006 Markus Wolff
+ * @license   http://www.gnu.org/licenses/lgpl.txt
+ * @version   Release: @package_version@
  * @link http://pear.php.net/LiveUser
  */
 class LiveUser_Perm_Simple
@@ -68,10 +69,10 @@ class LiveUser_Perm_Simple
      * @var string
      * @access public
      */
-    var $permUserId = '';
+    var $perm_user_id = '';
 
     /**
-     * One-dimensional array containing current user's rights.
+     * One-dimensional array containing current user's rights (direct and (sub)group).
      * This already includes grouprights and possible overrides by
      * individual right settings.
      *
@@ -80,26 +81,27 @@ class LiveUser_Perm_Simple
      * @var mixed
      * @access public
      */
-    var $rights = false;
+    var $right_ids = false;
 
     /**
      * One-dimensional array containing only the individual
-     * rights for the actual user.
+     * rights directly assigned to the user.
      *
      * Format: "RightId" => "Level"
      *
      * @var array
      * @access public
      */
-    var $userRights = array();
+    var $user_right_ids = array();
 
     /**
-     * Defines the user type.
+     * Defines the user type. Depending on the value the user can gain certain
+     * rights automatically
      *
-     * @var integer
+     * @var int
      * @access public
      */
-    var $userType = LIVEUSER_ANONYMOUS_TYPE_ID;
+    var $perm_type = LIVEUSER_ANONYMOUS_TYPE_ID;
 
     /**
      * Error stack
@@ -107,13 +109,13 @@ class LiveUser_Perm_Simple
      * @var PEAR_ErrorStack
      * @access public
      */
-    var $_stack = null;
+    var $stack = null;
 
     /**
      * Storage Container
      *
      * @var object
-     * @access public
+     * @access private
      */
     var $_storage = null;
 
@@ -122,21 +124,21 @@ class LiveUser_Perm_Simple
      */
     function LiveUser_Perm_Simple()
     {
-        $this->_stack = &PEAR_ErrorStack::singleton('LiveUser');
+        $this->stack = &PEAR_ErrorStack::singleton('LiveUser');
     }
 
     /**
-     * Load the storage container
+     * Load and initialize the storage container.
      *
-     * @param  mixed &$conf   Name of array containing the configuration.
-     * @return  boolean true on success or false on failure
+     * @param array Array with the configuration
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function init(&$conf)
     {
-        if (!isset($conf['storage'])) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception',
+        if (!array_key_exists('storage', $conf)) {
+            $this->stack->push(LIVEUSER_ERROR, 'exception',
                 array('msg' => 'Missing storage configuration array'));
             return false;
         }
@@ -150,10 +152,12 @@ class LiveUser_Perm_Simple
             }
         }
 
-        $this->_storage = LiveUser::storageFactory($conf['storage']);
+        $this->_storage =& LiveUser::storageFactory($conf['storage']);
         if ($this->_storage === false) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception',
-                array('msg' => 'Could not instanciate storage container'));
+            end($conf['storage']);
+            $key = key($conf['storage']);
+            $this->stack->push(LIVEUSER_ERROR, 'exception',
+                array('msg' => 'Could not instanciate perm storage container: '.$key));
             return false;
         }
 
@@ -164,15 +168,15 @@ class LiveUser_Perm_Simple
      * Tries to find the user with the given user ID in the permissions
      * container. Will read all permission data and return true on success.
      *
-     * @param   string $authUserId  user identifier
-     * @param   string $containerName  name of the auth container
-     * @return  boolean true on success or false on failure
+     * @param  string user identifier
+     * @param  string name of the auth container
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
-    function mapUser($authUserId = null, $containerName = null)
+    function mapUser($auth_user_id = null, $containerName = null)
     {
-        $result = $this->_storage->mapUser($authUserId, $containerName);
+        $result = $this->_storage->mapUser($auth_user_id, $containerName);
         if ($result === false) {
             return false;
         }
@@ -181,8 +185,8 @@ class LiveUser_Perm_Simple
             return false;
         }
 
-        $this->permUserId = $result['perm_user_id'];
-        $this->userType   = $result['perm_type'];
+        $this->perm_user_id = $result['perm_user_id'];
+        $this->perm_type    = $result['perm_type'];
 
         $this->readRights();
 
@@ -193,72 +197,72 @@ class LiveUser_Perm_Simple
      * Reads all rights of current user into a
      * two-dimensional associative array, having the
      * area names as the key of the 1st dimension.
-     * Group rights and invididual rights are being merged
-     * in the process.
      *
-     * @return mixed array or false on failure
+     * @return array requested data or false on failure
      *
-     * @access public
+     * @access private
      */
     function readRights()
     {
-        $this->rights = array();
-        $result = $this->readUserRights($this->permUserId);
+        $this->right_ids = array();
+        $result = $this->readUserRights($this->perm_user_id);
         if ($result === false) {
             return false;
         }
-        $this->rights = $result;
-        return $this->rights;
+        $this->right_ids = $result;
+        return $this->right_ids;
     }
 
     /**
+     * Read all the user rights from the storage and puts them in a class
+     * member for later retrieval.
      *
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
-     * @param int $permUserId
-     * @return mixed array or false on failure
+     * @access private
+     */
+    function readUserRights($perm_user_id)
+    {
+        $this->user_right_ids = array();
+        $result = $this->_storage->readUserRights($perm_user_id);
+        if ($result === false) {
+            return false;
+        }
+        $this->user_right_ids = $result;
+        return $this->user_right_ids;
+    }
+
+    /**
+     * Checks if the current user has a certain right.
+     *
+     * If the user is has an "area admin" type he will automatically be
+     * awarded the right.
+     *
+     * @param int Id of the right to check for.
+     * @return int level at which the user has the given right or
+     *                 false if the user does not have the right.
      *
      * @access public
-     */
-    function readUserRights($permUserId)
-    {
-        $this->userRights = array();
-        $result = $this->_storage->readUserRights($permUserId);
-        if ($result === false) {
-            return false;
-        }
-        $this->userRights = $result;
-        return $this->userRights;
-    }
-
-    /**
-     * Checks if the current user has a certain right in a
-     * given area.
-     * If $this->ondemand and $ondemand is true, the rights will be loaded on
-     * the fly.
-     *
-     * @param   integer $right_id  Id of the right to check for.
-     * @return  integer Level of the right.
-     *
-     * @access  public
      */
     function checkRight($right_id)
     {
         // check if the user is above areaadmin
-        if (!$right_id || $this->userType > LIVEUSER_AREAADMIN_TYPE_ID) {
+        if (!$right_id || $this->perm_type > LIVEUSER_AREAADMIN_TYPE_ID) {
             return LIVEUSER_MAX_LEVEL;
         // If he does, look for the right in question.
-        } elseif (is_array($this->rights) && isset($this->rights[$right_id])) {
+        } elseif (is_array($this->right_ids) && array_key_exists($right_id, $this->right_ids)) {
             // We know the user has the right so the right level will be returned.
-            return $this->rights[$right_id];
+            return $this->right_ids[$right_id];
         }
         return false;
-    } // end func checkRight
+    }
 
     /**
      * Function returns the inquired value if it exists in the class.
      *
-     * @param  string $what  Name of the property to be returned.
-     * @return mixed    null, a value or an array.
+     * @param  string  name of the property to be returned.
+     * @return mixed   null, a scalar or an array.
      *
      * @access public
      */
@@ -272,33 +276,33 @@ class LiveUser_Perm_Simple
     }
 
     /**
-     * store all properties in an array
+     * Stores all properties in an array.
      *
-     * @param string $sessionName name of the session in use.
+     * @param string name of the session in use.
      * @return  array containing the property values
      *
-     * @access  public
+     * @access public
      */
     function freeze($sessionName)
     {
         $propertyValues = array(
-            'permUserId'  => $this->permUserId,
-            'rights'      => $this->rights,
-            'userRights'  => $this->userRights,
-            'groupRights' => $this->groupRights,
-            'userType'    => $this->userType,
-            'groupIds'    => $this->groupIds,
+            'perm_user_id' => $this->perm_user_id,
+            'right_ids' => $this->right_ids,
+            'user_right_ids' => $this->user_right_ids,
+            'group_right_ids' => $this->group_right_ids,
+            'perm_type' => $this->perm_type,
+            'group_ids' => $this->group_ids,
         );
         return $this->_storage->freeze($sessionName, $propertyValues);
-    } // end func freeze
+    }
 
     /**
-     * Reinitializes properties
+     * Reinitializes properties from the storage container.
      *
-     * @param   array  $sessionName name of the session in use.
-     * @param boolean always returns true
+     * @param string name of the key to use inside the session
+     * @param bool always returns true
      *
-     * @access  public
+     * @access public
      */
     function unfreeze($sessionName)
     {
@@ -309,14 +313,14 @@ class LiveUser_Perm_Simple
             }
         }
         return true;
-    } // end func unfreeze
+    }
 
     /**
-     * properly disconnect from resources
+     * Properly disconnect from resources.
      *
-     * @return void
+     * @return bool true on success and false on failure
      *
-     * @access  public
+     * @access public
      */
     function disconnect()
     {

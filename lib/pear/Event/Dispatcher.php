@@ -33,7 +33,7 @@
 // |         Stephan Schmidt <schst@php.net>                               |
 // +-----------------------------------------------------------------------+
 //
-// $Id: Dispatcher.php,v 1.2 2005/02/14 10:35:18 mansion Exp $
+// $Id: Dispatcher.php,v 1.4 2005/09/22 15:37:10 schst Exp $
 
 require_once 'Event/Notification.php';
 
@@ -74,7 +74,7 @@ define('EVENT_DISPATCHER_GLOBAL', '');
  * @author     Stephan Schmidt <schst@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version    Release: 0.9.1
+ * @version    Release: @package_version@
  * @link       http://pear.php.net/package/Event_Dispatcher
  */
 class Event_Dispatcher
@@ -180,8 +180,8 @@ class Event_Dispatcher
      * posted notifications. Same goes for the class name.
      *
      * @access  public
-     * @param   string      Expected notification name, serves as a filter
      * @param   mixed       A PHP callback
+     * @param   string      Expected notification name, serves as a filter
      * @param   string      Expected contained object class, serves as a filter
      * @return void
      */
@@ -350,6 +350,62 @@ class Event_Dispatcher
         return $removed;
     }
 
+   /**
+    * Check, whether the specified observer has been registered with the
+    * dispatcher
+    *
+     * @access  public
+     * @param   mixed       A PHP callback
+     * @param   string      Notification name
+     * @param   string      Contained object class
+     * @return  bool        True if the observer has been registered, false otherwise
+    */
+    function observerRegistered($callback, $nName = EVENT_DISPATCHER_GLOBAL, $class = null)
+    {
+        if (is_array($callback)) {
+            if (is_object($callback[0])) {
+                $reg = get_class($callback[0]).'::'.$callback[1];
+            } else {
+                $reg = $callback[0].'::'.$callback[1];
+            }
+        } else {
+            $reg = $callback;
+        }
+
+        if (!isset($this->_ro[$nName][$reg])) {
+            return false;
+        }
+        if (empty($class)) {
+            return true;
+        }
+        if (strcasecmp($this->_ro[$nName][$reg]['class'], $class) == 0) {
+            return true;
+        }
+        return false;
+    }
+
+   /**
+    * Get all observers, that have been registered for a notification
+    *
+     * @access  public
+     * @param   string      Notification name
+     * @param   string      Contained object class
+     * @return  array       List of all observers
+    */
+    function getObservers($nName = EVENT_DISPATCHER_GLOBAL, $class = null)
+    {
+        $observers = array();        
+        if (!isset($this->_ro[$nName])) {
+            return $observers;
+        }
+        foreach ($this->_ro[$nName] as $reg => $observer) {
+        	if ($class == null || $observer['class'] == null ||  strcasecmp($observer['class'], $class) == 0) {
+        		$observers[] = $reg;
+        	}
+        }
+        return $observers;
+    }
+    
     /**
      * Get the name of the dispatcher.
      *

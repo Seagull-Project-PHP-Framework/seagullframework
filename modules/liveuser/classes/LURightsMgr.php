@@ -1,5 +1,5 @@
 <?php
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Right_permission.php';
 require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_PERM_ADD', 1);
@@ -15,6 +15,7 @@ class LURightsMgr extends SGL_Manager
     function LURightsMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
         $this->module       = 'liveuser';
         $this->pageTitle    = 'Liveuser Rights Manager';
         $this->template     = 'luRightsList.html';
@@ -74,7 +75,7 @@ class LURightsMgr extends SGL_Manager
         }
     }
     
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -82,48 +83,55 @@ class LURightsMgr extends SGL_Manager
         $output->action = 'insert';
     }
 
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $admin = &LUAdmin::singleton();
         
-        $data = $this->_buildRightData($input);
+        $data = $this->_cmd_buildRightData($input);
         $rightId = $admin->perm->addRight($data);
         if ($rightId === false) {
-              SGL::raiseError('Error on line: '.__LINE__.' last query: '.$admin->perm->_storage->dbc->last_query, 
-                  SGL_ERROR_DBFAILURE);
+             LUAdmin::raiseError($admin);                     
         } else {
-            LUAdmin::rebuildRightsConstants();
+            $translation = $this->_cmd_buildRightTranslationData($input,$rightId);
+            $result = $admin->perm->addTranslation($translation);
+            if ($result === false) {
+                LUAdmin::raiseError($admin);
+            } else {            
             
-            SGL::raiseMsg('Right was successfully added');
+//                LUAdmin::rebuildRightsConstants();            
+                SGL::raiseMsg('Right was successfully added');
+                
+            }
         }
     }
 
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         if (empty($input->right_id)) {
-            LUAdmin::noRecordRedirect();
+            echo "hi";
         }
         
         $output->template = 'luRightEdit.html';
         $output->action = 'update';
         
-        $params['filters'] = array('right_id' => $input->right_id);
-        
+        $params['fields'] = array('right_id', 'right_define_name', 'name', 'description');
+        $params['filters'] = array('language_id' => SGL_Translation::getLangId(), 'right_id' => $input->right_id);        
+              
         $admin = &LUAdmin::singleton();
-        $rights = &$admin->perm->getRights($params);
-        
-        if (empty($rights[$input->right_id])) {
+        $rights = $admin->perm->getRights($params);
+       
+        if (empty($rights[0]['right_id'])) {
             LUAdmin::noRecordRedirect();
         }
         
-        $output->right = &$rights[$input->right_id];
+        $output->right = &$rights[0];
     }
 
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -133,33 +141,45 @@ class LURightsMgr extends SGL_Manager
         
         $admin = &LUAdmin::singleton();
         
-        $data = $this->_buildRightData($input);
+        $data = $this->_cmd_buildRightData($input);
         $filters = array('right_id' => $input->right_id);
         
-        $upRight = $admin->perm->updateRight($data, $filters); 
-        
+        $upRight = $admin->perm->updateRight($data, $filters);
+
         if ($upRight === false) {
-            SGL::raiseError('Error on line: '.__LINE__.', error: '.LUAdmin::errorToString($admin->getErrors()), 
-                SGL_ERROR_DBFAILURE);
+            LUAdmin::raiseError($admin);        
         } else {
-            LUAdmin::rebuildRightsConstants();
+            $translation = $this->_cmd_buildRightTranslationData($input,$upRight);
+            $filters = array('section_id' => $input->right_id, 'section_type' => LIVEUSER_SECTION_RIGHT);
+            $translation['section_id'] = $input->right_id;                  
+            $result = $admin->perm->updateTranslation($translation, $filters);
+            if ($result === false) {
+                LUAdmin::raiseError($admin);
+            } else {            
             
-            SGL::raiseMsg('Right was successfully updated');
-        }
+//                LUAdmin::rebuildRightsConstants();            
+                SGL::raiseMsg('Right was successfully updated');
+                
+            }
+        }         
+        
     }
 
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $output->template = 'luRightsList.html';
         
         $admin = &LUAdmin::singleton();
-        $output->rights = &$admin->perm->getRights();
+        $params = array();
+        $params['fields'] = array('right_id', 'right_define_name', 'name', 'description');
+        $params['filters'] = array('language_id' => SGL_Translation::getLangId());        
+        $output->rights = $admin->perm->getRights($params);
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').rights.disabled = true");        
     }
 
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -174,7 +194,7 @@ class LURightsMgr extends SGL_Manager
                         SGL_ERROR_DBFAILURE);
                 } else {
                     // also delete the associated records from right_permission table
-                    $rightPermission = &DB_DataObject::factory('right_permission');
+                    $rightPermission = & new DataObjects_Right_permission();
                     $rightPermission->right_id = $rightId;
                     $ret = true;
                     if($rightPermission->find()) {
@@ -194,7 +214,7 @@ class LURightsMgr extends SGL_Manager
         }
     }
     
-    function _editPerms(&$input, &$output)
+    function _cmd_editPerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'luRightEditPerms.html';
@@ -202,35 +222,48 @@ class LURightsMgr extends SGL_Manager
         
         $params['filters'] = array('right_id' => $input->right_id);
         $admin = &LUAdmin::singleton();
-        $rights = &$admin->perm->getRights($params);
-        if (empty($rights[$input->right_id])) {
+        $rights = $admin->perm->getRights($params);
+        if ($rights[0]['right_id']!=$input->right_id) {
             LUAdmin::noRecordRedirect();
         }
-        $output->right = (object) $rights[$input->right_id];
+        $output->right = (object) $rights[0];
         
         //  get set of perms associated with role
-        $aRightPerms = $this->getPermsDetailsByRightId($output->right->right_id);
+        $aRightPerms = $this->getPermsDetailsByRightId($input->right_id);
+        if (PEAR::isError($aRightPerms)) {
+            SGL::raiseError("Error getting Permissions");
+            return null; 
+        }
         asort($aRightPerms);
         $output->rightPermOptions = SGL_Output::generateSelect($aRightPerms);
 
         //  get remaining perms
         $aRemainingPerms = $this->retrieveAllOthers($aRightPerms);
+        if (PEAR::isError($aRemainingPerms)) {
+            SGL::raiseError("Error getting Permissions");
+            return null; 
+        }        
         asort($aRemainingPerms);
         $output->remainingPermOptions = SGL_Output::generateSelect($aRemainingPerms);
     }
     
-    function _updatePerms(&$input, &$output)
+    function _cmd_updatePerms(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aPermsToAdd     = LUAdmin::parseWidgetString($input->permsToAdd);
+        $aPermsToAdd     = LUAdmin::parseWidgetString($input->permsToAdd);       
         $aPermsToRemove  = LUAdmin::parseWidgetString($input->permsToRemove);
-        if (is_array($aPermsToAdd) && count($aPermsToAdd)) {
-            $this->_changeRightsAssignments($aPermsToAdd, $input->right_id, SGL_LIVEUSER_PERM_ADD);
+        $result = true;
+        if (is_array($aPermsToAdd) && count($aPermsToAdd)) {             
+            $result = $this->_cmd_changeRightsAssignments($aPermsToAdd, $input->right_id, SGL_LIVEUSER_PERM_ADD);
         }
         if (is_array($aPermsToRemove) && count($aPermsToRemove)) {
-            $this->_changeRightsAssignments($aPermsToRemove, $input->right_id, SGL_LIVEUSER_PERM_REMOVE);
+            $result = $this->_cmd_changeRightsAssignments($aPermsToRemove, $input->right_id, SGL_LIVEUSER_PERM_REMOVE);
         }
-        SGL::raiseMsg('right assignments successfully updated');
+        if ($result) {
+            SGL::raiseMsg('right assignments successfully updated');
+        } else {
+            SGL::raiseError("Error inserting Permissions to Rights link");            
+        }
     }
 
     /**
@@ -242,7 +275,7 @@ class LURightsMgr extends SGL_Manager
      * @param   constant    action  whether to add/remove perm
      * @return  void
      */
-    function _changeRightsAssignments($aPerms, $rightId, $action)
+    function _cmd_changeRightsAssignments($aPerms, $rightId, $action)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $conf = & $GLOBALS['_SGL']['CONF'];
@@ -255,12 +288,18 @@ class LURightsMgr extends SGL_Manager
             }
         } else {
             //  add perms
-            foreach ($aPerms as $permId => $permName) {
+            foreach ($aPerms as $permId => $permName) {             
                 $dbh->query("   INSERT INTO right_permission
                                 (right_permission_id, right_id, permission_id)
-                                VALUES (" . $dbh->nextId('right_permission') . ", $rightId, $permId)");
+                                VALUES (" . $dbh->nextId('right_permission') . ", $rightId, $permId)");                               
+                   
+                if (PEAR::isError($dbh)) {               
+                    return null;
+                }   
+          
             }
         }
+        return true;
     }
 
     /**
@@ -323,15 +362,26 @@ class LURightsMgr extends SGL_Manager
      * @param   object $input  seagull input
      * @return  array $data
      */
-    function _buildRightData(&$input)
+    function _cmd_buildRightData(&$input)
     {
         $data = array(
             'area_id' => OPC_DEFAULT_AREA,
             'right_define_name' => LUAdmin::convertToConstant($input->right['right_define_name']),
+        );                
+        return $data;
+    }
+    
+    function _cmd_buildRightTranslationData(&$input,$right_id) {
+
+        $data = array (
+            'section_type' => LIVEUSER_SECTION_RIGHT,
+            'section_id' => $right_id,
+            'language_id' => SGL_Translation::getLangId(),
             'name' => $input->right['name'],
-            'description' => $input->right['description'],
+            'description' => $input->right['description'],        
         );
         return $data;
     }
+    
 }
 ?>

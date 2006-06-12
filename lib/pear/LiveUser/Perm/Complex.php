@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Complex.php,v 1.13 2005/06/29 14:43:21 lsmith Exp $
+ * @version CVS: $Id: Complex.php,v 1.27 2006/04/10 14:41:44 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -55,11 +55,11 @@ require_once 'LiveUser/Perm/Medium.php';
  * Complex permission complexity driver for LiveUser.
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @version $Id: Complex.php,v 1.13 2005/06/29 14:43:21 lsmith Exp $
- * @copyright 2002-2005 Markus Wolff
+ * @version $Id: Complex.php,v 1.27 2006/04/10 14:41:44 lsmith Exp $
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -101,8 +101,8 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
             foreach ($result as $val) {
                 // only store the implied right if the right wasn't stored before
                 // or if the level is higher
-                if (!isset($rightIds[$val['right_id']]) ||
-                    $rightIds[$val['right_id']] < $val['right_level']
+                if (!array_key_exists($val['right_id'], $rightIds)
+                    || $rightIds[$val['right_id']] < $val['right_level']
                 ) {
                     $rightIds[$val['right_id']] = $val['right_level'];
                     if ($val['has_implied']) {
@@ -112,63 +112,82 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
             }
         }
         return $rightIds;
-    } // end func _readImpliedRights
+    }
 
     /**
      * Reads all individual rights of current user into
      * an array of this format:
      * RightName -> Value
      *
-     * @param int $permUserId
+     * @param int perm user id
      * @see    readRights()
-     * @return void
+     * @return array requested data or false on failure
      *
      * @access private
      */
-    function readUserRights($permUserId)
+    function readUserRights($perm_user_id)
     {
-        $userRights = parent::readUserRights($permUserId);
-        $this->userRights = $this->_readImpliedRights($userRights, 'user');
+        $result = parent::readUserRights($perm_user_id);
+         if ($result === false) {
+            return false;
+         }
 
-        return $this->userRights;
-    } // end func readUserRights
+        if ($this->perm_type == LIVEUSER_AREAADMIN_TYPE_ID) {
+            $result = $this->readAreaAdminAreas($this->perm_user_id);
+            if ($result === false) {
+               return false;
+            }
+
+            if (is_array($this->area_admin_areas)) {
+                if (is_array($this->user_right_ids)) {
+                    $this->user_right_ids = $this->area_admin_areas + $this->user_right_ids;
+                } else {
+                    $this->user_right_ids = $this->area_admin_areas;
+                }
+            }
+        }
+
+        $this->user_right_ids = $this->_readImpliedRights($this->user_right_ids, 'user');
+
+        return $this->user_right_ids;
+    }
 
     /**
      * Reads all the group ids in that the user is also a member of
      * (all groups that are subgroups of these are also added recursively)
      *
-     * @param int $permUserId
+     * @param int perm user id
      * @see    readRights()
-     * @return void
+     * @return array requested data or false on failure
      *
      * @access private
      */
-    function readGroups($permUserId)
+    function readGroups($perm_user_id)
     {
-        $result = parent::readGroups($permUserId);
+        $result = parent::readGroups($perm_user_id);
 
         // get all subgroups recursively
         while (count($result)) {
-            $result = $this->readSubGroups($this->groupIds, $result);
+            $result = $this->readSubGroups($this->group_ids, $result);
             if (is_array($result)) {
-                $this->groupIds = array_merge($result, $this->groupIds);
+                $this->group_ids = array_merge($result, $this->group_ids);
             }
         }
-        return $this->groupIds;
-    } // end func readGroups
+        return $this->group_ids;
+    }
 
     /**
+     * Read the sub groups of the groups where the user is a member in
      *
+     * @param array group ids
+     * @param array new group ids
+     * @return array requested data or false on failure
      *
-     * @param array $groupIds
-     * @param array $newGroupIds
-     * @return mixed array or false on failure
-     *
-     * @access public
+     * @access private
      */
-    function readSubGroups($groupIds, $newGroupIds)
+    function readSubGroups($group_ids, $newGroupIds)
     {
-        $result = $this->_storage->readSubGroups($groupIds, $newGroupIds);
+        $result = $this->_storage->readSubGroups($group_ids, $newGroupIds);
         if ($result === false) {
             return false;
         }
@@ -180,30 +199,29 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
      * a two-dimensional array of this format:
      * "GroupName" => "RightName" -> "Level"
      *
-     * @param   array $groupIds array with id's for the groups
-     *                          that rights will be read from
+     * @param   array id's for the groups that rights will be read from
      * @see    readRights()
-     * @return void
+     * @return array requested data or false on failure
      *
       * @access private
      */
-    function readGroupRights($groupIds)
+    function readGroupRights($group_ids)
     {
-        $groupRights = parent::readGroupRights($groupIds);
-        $this->groupRights = $this->_readImpliedRights($groupRights, 'group');
+        $group_right_ids = parent::readGroupRights($group_ids);
+        $this->group_right_ids = $this->_readImpliedRights($group_right_ids, 'group');
 
-        return $this->groupRights;
-    } // end func readGroupRights
+        return $this->group_right_ids;
+    }
 
     /**
      * Checks if the current user has a certain right in a
      * given area at the necessary level.
      *
-     * Level 1: requires that owner_user_id matches $this->permUserId
+     * Level 1: requires that owner_user_id matches $this->perm_user_id
      * Level 2: requires that the $owner_group_id matches the id one of
-     *          the (sub)groups that $this->permUserId is a memember of
+     *          the (sub)groups that $this->perm_user_id is a member of
      *          or requires that the $owner_user_id matches a perm_user_id of
-     *          a memeber of one of $this->permUserId's (sub)groups
+     *          a member of one of $this->perm_user_id's (sub)groups
      * Level 3: no requirements
      *
      * Important note:
@@ -212,14 +230,14 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
      *          either be an integer or null.
      *
      * @see    checkRightLevel()
-     * @param  integer  $level          Level value as returned by checkRight().
-     * @param  mixed  $owner_user_id  Id or array of Ids of the owner of the
-                                        ressource for which the right is requested.
-     * @param  mixed  $owner_group_id Id or array of Ids of the group of the
-     *                                  ressource for which the right is requested.
-     * @return boolean  level if the level is sufficient to grant access else false.
+     * @param int       Level value as returned by checkRight().
+     * @param int|array Id or array of Ids of the owner of the
+                        ressource for which the right is requested.
+     * @param int|array Id or array of Ids of the group of the
+     *                  ressource for which the right is requested.
+     * @return bool level if the level is sufficient to grant access else false.
      *
-     * @access private
+     * @access public
      */
     function checkLevel($level, $owner_user_id, $owner_group_id)
     {
@@ -234,9 +252,9 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
             return $level;
         }
         // level 1 or higher
-        if ((!is_array($owner_user_id) && $this->permUserId == $owner_user_id) ||
-            is_array($owner_user_id) && in_array($this->permUserId, $owner_user_id))
-        {
+        if ((!is_array($owner_user_id) && $this->perm_user_id == $owner_user_id)
+            || is_array($owner_user_id) && in_array($this->perm_user_id, $owner_user_id)
+        ) {
             return $level;
         // level 2 or higher
         }
@@ -244,33 +262,33 @@ class LiveUser_Perm_Complex extends LiveUser_Perm_Medium
             // check if the ressource is owned by a (sub)group
             // that the user is part of
             if (is_array($owner_group_id)) {
-                if (count(array_intersect($owner_group_id, $this->groupIds))) {
+                if (count(array_intersect($owner_group_id, $this->group_ids))) {
                     return $level;
                 }
-            } elseif (in_array($owner_group_id, $this->groupIds)) {
+            } elseif (in_array($owner_group_id, $this->group_ids)) {
                 return $level;
             }
         }
         return false;
-    } // end func checkLevel
+    }
 
     /**
+     * Read all the areas in which the user is an area admin
      *
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
-     * @param int $permUserId
-     * @return mixed array or false on failure
-     *
-     * @access public
+     * @access private
      */
-    function readAreaAdminAreas($permUserId)
+    function readAreaAdminAreas($perm_user_id)
     {
-        $result = $this->_storage->readAreaAdminAreas($permUserId);
+        $result = $this->_storage->readAreaAdminAreas($perm_user_id);
         if ($result === false) {
             return false;
         }
 
-        $this->areaAdminAreas = $result;
-        return $this->areaAdminAreas;
+        $this->area_admin_areas = $result;
+        return $this->area_admin_areas;
     }
 }
 ?>

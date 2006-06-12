@@ -16,7 +16,7 @@
 // | Authors: Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: Compiler.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+// $Id: Compiler.php,v 1.7 2004/07/08 04:56:30 alan_k Exp $
 //
 //  Base Compiler Class (Interface)
 //

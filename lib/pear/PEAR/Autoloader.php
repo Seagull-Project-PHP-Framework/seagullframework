@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Autoloader.php,v 1.23 2005/06/23 15:56:31 demian Exp $
+ * @version    CVS: $Id: Autoloader.php,v 1.13 2006/01/06 04:47:36 cellog Exp $
  * @link       http://pear.php.net/manual/en/core.ppm.php#core.ppm.pear-autoloader
  * @since      File available since Release 0.1
  * @deprecated File deprecated in Release 1.4.0a1
@@ -48,9 +48,9 @@ require_once "PEAR.php";
  * @category   pear
  * @package    PEAR
  * @author Stig Bakken <ssb@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/manual/en/core.ppm.php#core.ppm.pear-autoloader
  * @since      File available since Release 0.1
  * @deprecated File deprecated in Release 1.4.0a1

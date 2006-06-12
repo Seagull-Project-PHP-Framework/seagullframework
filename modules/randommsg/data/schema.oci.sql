@@ -10,3 +10,6 @@ rndmsg_message_id             NUMBER(10)            not null,
 msg                           CLOB            null,
 constraint PK_RNDMSG_MESSAGE primary key (rndmsg_message_id)
 );
+
+create sequence rndmsg_message_seq;
+

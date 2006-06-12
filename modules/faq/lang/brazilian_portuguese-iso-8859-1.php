@@ -1,14 +1,17 @@
 <?php
+$words['FAQ Manager :: Reorder'] = 'Gerenciador de FAQ :: Reordenar';
+$words['FAQ Manager :: Add'] = 'Gerenciador de FAQ :: Adicionar';
+$words['FAQ Manager :: Edit'] = 'Gerenciador de FAQ :: Ediar';
 $words['FAQs'] = 'FAQs';
 $words['FAQ Manager'] = 'Gerenciador de FAQ';
 $words['FAQ Manager :: Browse'] = 'Gerenciador de FAQ :: Navegar';
 $words['Please fill in a question'] = 'Por favor preencha uma questao';
 $words['Please fill in an answer'] = 'Por favor preencha uma rsposta';
-$words['Question'] = 'Questao';
+$words['Question'] = 'Pergunta';
 $words['Answer'] = 'Resposta';
 $words['FAQ ID'] = 'ID da FAQ';
 $words['Date created'] = 'Data de criação';
-$words['Questions'] = 'Questoes';
+$words['Questions'] = 'Perguntas';
 $words['Answers'] = 'Respostas';
 $words['Q'] = 'Q';
 $words['A'] = 'R';

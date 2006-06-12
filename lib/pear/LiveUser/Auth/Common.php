@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,144 +24,65 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Common.php,v 1.24 2005/06/20 09:03:19 lsmith Exp $
+ * @version CVS: $Id: Common.php,v 1.52 2006/04/07 22:20:56 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
 /**
  * This class provides a set of functions for implementing a user
  * authorisation system on live websites. All authorisation
- * backends/containers must be extensions of this base class.
- *
- * Requirements:
- * - When using "DB" backend:
- *   PEAR::DB database abstraction layer
- * - LiveUser admin GUI for easy user administration and setup of
- *   authorisation areas and rights
+ * backends/containers must be inherited from this base class.
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author   Markus Wolff <wolff@21st.de>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
  */
 class LiveUser_Auth_Common
 {
-/**#@+
- * @access protected
- */
-    /**
-     * The handle (username) of the current user
-     *
-     * @var    string
-     */
-    var $handle = '';
-
-    /**
-     * The password of the current user as given to the
-     * login() method.
-     *
-     * @var    string
-     */
-    var $passwd = '';
-
-    /**
-     * Current user's database record id
-     *
-     * @var    integer
-     */
-    var $authUserId = 0;
-
-    /**
-     * Is the current user allowed to login at all? If false,
-     * a call to login() will not set $logged_in to true, even
-     * if handle and password were submitted correctly. This is
-     * useful when you want your users to be activated by an
-     * administrator before they can actually use your application.
-     * Default: false
-     *
-     * @var    boolean
-     * @see    LiveUser_Auth_Common::loggedIn
-     */
-    var $isActive = null;
-
-    /**
-     * Owner User Id
-     *
-     * @var int
-     */
-    var $ownerUserId = null;
-
-    /**
-     * Owner User Id
-     *
-     * @var int
-     */
-    var $ownerGroupId = null;
-
     /**
      * Has the current user successfully logged in?
-     * Default: false
      *
-     * @var    boolean
+     * @var    bool
+     * @access public
      * @see    LiveUser_Auth_Common::isActive
      */
     var $loggedIn = null;
 
     /**
-     * Timestamp of last login (previous to currentLogin)
-     *
-     * @var    integer
-     */
-    var $lastLogin = 0;
-
-    /**
-     * Update the last login time or not
-     *
-     * @var    boolean
-     */
-    var $updateLastLogin = true;
-
-    /**
      * Timestamp of current login (last to be written)
      *
-     * @var    integer
+     * @var    int
+     * @access public
      */
     var $currentLogin = 0;
 
     /**
-     * Number of hours that must pass between two logins
-     * to be counted as a new login. Comes in handy in
-     * some situations. Default: 12
-     *
-     * @var    integer
-     */
-    var $loginTimeout = 12;
-
-    /**
-     * Auth lifetime in seconds
+     * Auth maximum lifetime in seconds
      *
      * If this variable is set to 0, auth never expires
      *
-     * @var    integer
+     * @var    int
+     * @access public
      */
     var $expireTime = 0;
 
@@ -171,38 +92,26 @@ class LiveUser_Auth_Common
      * Idletime gets refreshed each time, init() is called. If this
      * variable is set to 0, idle time is never checked.
      *
-     * @var    integer
+     * @var    int
+     * @access public
      */
     var $idleTime = 0;
 
     /**
-     * Allow multiple users in the database to have the same
-     * login handle. Default: false.
-     *
-     * @var    boolean
-     */
-    var $allowDuplicateHandles = false;
-
-    /**
-     * Allow empty passwords to be passed to LiveUser. Default: false.
-     *
-     * @var    boolean
-     */
-    var $allowEmptyPasswords = false;
-
-    /**
-     * Set posible encryption modes.
+     * Possible encryption modes.
      *
      * @var    array
+     * @access public
      */
-    var $encryptionModes = array('MD5'   => 'MD5',
-                                 'PLAIN' => 'PLAIN',
-                                 'RC4'   => 'RC4',
-                                 'SHA1'  => 'SHA1');
+    var $encryptionModes = array(
+        'MD5'   => 'MD5',
+        'PLAIN' => 'PLAIN',
+        'RC4'   => 'RC4',
+        'SHA1'  => 'SHA1'
+    );
 
     /**
-     * Defines the algorithm used for encrypting/decrypting
-     * passwords. Default: "MD5".
+     * Defines the algorithm used for encrypting/decrypting passwords.
      *
      * @var    string
      */
@@ -212,26 +121,20 @@ class LiveUser_Auth_Common
      * Defines the secret to use for encryption if needed
      *
      * @var    string
+     * @access public
      */
-    var $secret;
-
-    /**
-     * Defines the array index number of the LoginManager?s "backends" property.
-     *
-     * @var    integer
-     */
-    var $backendArrayIndex = 0;
+    var $secret = '';
 
     /**
      * Error stack
      *
      * @var    PEAR_ErrorStack
+     * @access public
      */
-    var $_stack = null;
-/**#@-*/
+    var $stack = null;
 
     /**
-    * Property values
+    * Array of all the user data read from the backend database
     *
     * @var array
     * @access public
@@ -258,47 +161,50 @@ class LiveUser_Auth_Common
     var $externalValues = array();
 
     /**
+     * Table configuration
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $tables = array();
 
     /**
+     * All fields with their types
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $fields = array();
 
     /**
+     * All fields with their alias
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $alias = array();
 
     /**
      * Class constructor. Feel free to override in backend subclasses.
      *
-     * @var    array     configuration options
+     * @var    array configuration options
      * @return void
      *
      * @access protected
      */
     function LiveUser_Auth_Common()
     {
-        $this->_stack = &PEAR_ErrorStack::singleton('LiveUser');
+        $this->stack = &PEAR_ErrorStack::singleton('LiveUser');
     }
 
     /**
      * Load the storage container
      *
-     * @param  mixed &$conf   Name of array containing the configuration.
-     * @param string $containerName name of the container that should be used
-     * @return  boolean true on success or false on failure
+     * @param   array  array containing the configuration.
+     * @param   string name of the container that should be used
+     * @return  bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function init($conf, $containerName)
     {
@@ -312,7 +218,7 @@ class LiveUser_Auth_Common
             }
         }
 
-        if (isset($conf['storage']) && is_array($conf['storage'])) {
+        if (array_key_exists('storage', $conf) && is_array($conf['storage'])) {
             $keys = array_keys($conf['storage']);
             foreach ($keys as $key) {
                 if (isset($this->$key)) {
@@ -344,7 +250,7 @@ class LiveUser_Auth_Common
      *
      * @return  array
      *
-     * @access  public
+     * @access public
      */
     function freeze()
     {
@@ -353,22 +259,10 @@ class LiveUser_Auth_Common
         $this->setExternalValues();
 
         $propertyValues = array(
-            'handle'       => $this->handle,
-            'authUserId'   => $this->authUserId,
-            'isActive'     => $this->isActive,
-            'loggedIn'     => $this->loggedIn,
-            'lastLogin'    => $this->lastLogin,
-            'currentLogin' => $this->currentLogin,
-            'ownerGroupId' => $this->ownerGroupId,
-            'ownerUserId'  => $this->ownerUserId
+            'propertyValues'    => $this->propertyValues,
+            'loggedIn'          => $this->loggedIn,
+            'currentLogin'      => $this->currentLogin,
         );
-
-        $propertyValues['storedExternalValues'] = null;
-        if (isset($this->propertyValues['storedExternalValues']) &&
-            !empty($this->propertyValues['storedExternalValues'])
-        ) {
-            $propertyValues['storedExternalValues'] = $this->propertyValues['storedExternalValues'];
-        }
 
         return $propertyValues;
     }
@@ -377,18 +271,18 @@ class LiveUser_Auth_Common
      * Reinitializes properties
      *
      * @param   array  $propertyValues
-     * @return  boolean
+     * @return  bool
      *
-     * @access  publi
+     * @access public
      */
     function unfreeze($propertyValues)
     {
-        foreach ($propertyValues as $key => $value) {
-            $this->{$key} = $value;
-        }
+         foreach ($propertyValues as $key => $value) {
+             $this->{$key} = $value;
+         }
 
         return $this->externalValuesMatch();
-    } // end func unfreeze
+    }
 
     /**
      * Decrypts a password so that it can be compared with the user
@@ -396,12 +290,16 @@ class LiveUser_Auth_Common
      * property.
      *
      * @param  string the encrypted password
-     * @return string The decrypted password
+     * @return string the decrypted password
      *
      * @access public
      */
     function decryptPW($encryptedPW)
     {
+        if (empty($encryptedPW) && $encryptedPW !== 0) {
+            return '';
+        }
+
         $decryptedPW = 'Encryption type not supported.';
 
         switch (strtoupper($this->passwordEncryptionMode)) {
@@ -430,12 +328,16 @@ class LiveUser_Auth_Common
      * property.
      *
      * @param string  encryption type
-     * @return string The encrypted password
+     * @return string the encrypted password
      *
      * @access public
      */
     function encryptPW($plainPW)
     {
+        if (empty($plainPW) && $plainPW !== 0) {
+            return '';
+        }
+
         $encryptedPW = 'Encryption type not supported.';
 
         switch (strtoupper($this->passwordEncryptionMode)) {
@@ -450,8 +352,8 @@ class LiveUser_Auth_Common
             break;
         case 'SHA1':
             if (!function_exists('sha1')) {
-                $this->_stack->push(LIVEUSER_ERROR_NOT_SUPPORTED,
-                    'exception', array(), 'SHA1 function doesn\'t exist. Upgrade your PHP version');
+                $this->stack->push(LIVEUSER_ERROR_NOT_SUPPORTED, 'exception', array(),
+                    'SHA1 function doesn\'t exist. Upgrade your PHP version');
                 return false;
             }
             $encryptedPW = sha1($plainPW);
@@ -462,56 +364,39 @@ class LiveUser_Auth_Common
     }
 
     /**
-     * Checks if there's enough time between lastLogin
-     * and current login (now) to count as a new login.
-     *
-     * @return boolean  true if it is a new login, false if not
-     *
-     * @access public
-     */
-    function isNewLogin()
-    {
-        $meantime = $this->loginTimeout * 3600;
-        if (time() >= $this->lastLogin + $meantime) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Tries to make a login with the given handle and password.
      * A user can't login if he's not active.
      *
-     * @param string   user handle
-     * @param string   user password
-     * @return boolean
+     * @param  string   user handle
+     * @param  string   user password
+     * @param  bool|int if the user data should be read using the auth user id
+     * @return bool null when user is inactive, true on success or false on failure
      *
      * @access public
      */
-    function login($handle, $passwd)
+    function login($handle, $passwd, $auth_user_id = false)
     {
         // Init value: Is user logged in?
         $this->loggedIn = false;
 
         // Read user data from database
-        if (!$this->readUserData($handle, $passwd)) {
-            return false;
+        $result = $this->readUserData($handle, $passwd, $auth_user_id);
+        if (!$result) {
+            return $result;
         }
 
         // If login is successful (user data has been read)
         // ...we still need to check if this user is declared active
-        if ($this->isActive !== false) {
+        if (!array_key_exists('is_active', $this->propertyValues)
+            || $this->propertyValues['is_active']
+        ) {
             // ...and if so, we have a successful login (hooray)!
             $this->loggedIn = true;
             $this->currentLogin = time();
         }
 
-        // In case Login was successful, check if this can be counted
-        // as a _new_ login by definition...
-        if ($this->updateLastLogin == true &&
-            $this->isNewLogin() == true && $this->loggedIn == true
-        ) {
+        // In case Login was successful update user data
+        if ($this->loggedIn) {
             $this->_updateUserData();
         }
 
@@ -523,18 +408,20 @@ class LiveUser_Auth_Common
      * This method does nothing in the base class and is supposed to
      * be overridden in subclasses according to the supported backend.
      *
-     * @return void
+     * @return bool true on success or false on failure
      *
      * @access private
      */
     function _updateUserData()
     {
-        $this->_stack->push(LIVEUSER_ERROR_NOT_SUPPORTED, 'exception');
+        $this->stack->push(LIVEUSER_ERROR_NOT_SUPPORTED, 'exception',
+            array('feature' => '_updateUserData')
+        );
+        return false;
     }
 
     /**
-     * Reads auth_user_id, passwd, is_active flag
-     * lastlogin timestamp from the database
+     * Reads user data from the given data source
      * If only $handle is given, it will read the data
      * from the first user with that handle and return
      * true on success.
@@ -543,39 +430,42 @@ class LiveUser_Auth_Common
      * matching and return true on success (this allows
      * multiple users having the same handle but different
      * passwords - yep, some people want this).
+     * if only an auth_user_id is passed it will try to read the data based on the id
      * If no match is found, false is being returned.
      *
      * Again, this does nothing in the base class. The
      * described functionality must be implemented in a
      * subclass overriding this method.
      *
-     * @param  string $handle user handle
-     * @param  boolean $passwd user password
-     * @param string $authUserId auth user id
-     * @return void
+     * @param  string user handle
+     * @param  string user password
+     * @param  bool|int if the user data should be read using the auth user id
+     * @return bool true on success or false on failure
      *
      * @access public
      */
-    function readUserData($handle = '', $passwd = '', $authUserId = false)
+    function readUserData($handle = '', $passwd = '', $auth_user_id = false)
     {
-        $this->_stack->push(LIVEUSER_ERROR_NOT_SUPPORTED, 'exception',
-            array('feature' => '_readUserData'));
+        $this->stack->push(LIVEUSER_ERROR_NOT_SUPPORTED, 'exception',
+            array('feature' => 'readUserData')
+        );
         return false;
     }
 
     /**
      * Function returns the inquired value if it exists in the class.
      *
-     * @param  string $what  Name of the property to be returned.
-     * @return mixed    null, a value or an array.
+     * @param  string  name of the property to be returned.
+     * @return mixed   null, a scalar or an array.
      *
      * @access public
      */
     function getProperty($what)
     {
         $that = null;
-        $lwhat = strtolower($what);
-        if (isset($this->$what)) {
+        if (array_key_exists($what, $this->propertyValues)) {
+            $that = $this->propertyValues[$what];
+        } elseif (isset($this->$what)) {
             $that = $this->$what;
         }
         return $that;
@@ -590,11 +480,11 @@ class LiveUser_Auth_Common
      */
     function setExternalValues()
     {
-        if (isset($this->externalValues['keysToCheck']) &&
-            is_array($this->externalValues['keysToCheck'])
+        if (array_key_exists('keysToCheck', $this->externalValues)
+            && is_array($this->externalValues['keysToCheck'])
         ) {
             foreach ($this->externalValues['keysToCheck'] as $keyToCheck) {
-                if (isset($this->externalValues['values'][$keyToCheck])) {
+                if (array_key_exists($keyToCheck, $this->externalValues['values'])) {
                     $this->propertyValues['storedExternalValues'][$keyToCheck] =
                         md5($this->externalValues['values'][$keyToCheck]);
                 }
@@ -605,19 +495,19 @@ class LiveUser_Auth_Common
     /**
      * Check if the stored external values match the current external values
      *
-     * @return boolean
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function externalValuesMatch()
     {
-        if (isset($this->propertyValues['storedExternalValues']) &&
-            is_array($this->propertyValues['storedExternalValues'])
+        if (array_key_exists('storedExternalValues', $this->propertyValues)
+            && is_array($this->propertyValues['storedExternalValues'])
         ) {
             foreach ($this->propertyValues['storedExternalValues'] as $keyToCheck => $storedValue) {
                 // return false if any one of the stored values does not match the current value
-                if (!isset($this->externalValues['values'][$keyToCheck]) ||
-                    md5($this->externalValues['values'][$keyToCheck]) != $storedValue
+                if (!array_key_exists($keyToCheck, $this->externalValues['values'])
+                    || md5($this->externalValues['values'][$keyToCheck]) != $storedValue
                 ) {
                     return false;
                 }
@@ -629,12 +519,13 @@ class LiveUser_Auth_Common
     /**
      * properly disconnect from resources
      *
-     * @return  void
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function disconnect()
     {
+        return true;
     }
 
 }

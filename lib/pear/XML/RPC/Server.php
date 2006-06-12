@@ -32,7 +32,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    CVS: $Id: Server.php,v 1.28 2005/07/07 01:21:29 danielc Exp $
+ * @version    CVS: $Id: Server.php,v 1.33 2006/01/14 22:30:31 danielc Exp $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -214,7 +214,7 @@ function XML_RPC_Server_methodHelp($server, $m)
         $dmap = $server->dmap;
         $sysCall = 0;
     }
-    //  print "<!-- ${methName} -->\n";
+
     if (isset($dmap[$methName])) {
         if ($dmap[$methName]['docstring']) {
             $r = new XML_RPC_Response(new XML_RPC_Value($dmap[$methName]['docstring']),
@@ -270,7 +270,7 @@ function XML_RPC_Server_debugmsg($m)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.3
+ * @version    Release: 1.4.8
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
@@ -391,7 +391,23 @@ class XML_RPC_Server
         if (!$this->server_headers) {
             $this->createServerHeaders();
         }
-        header($this->server_headers);
+
+        /*
+         * $server_headers needs to remain a string for compatibility with
+         * old scripts using this package, but PHP 4.4.2 no longer allows
+         * line breaks in header() calls.  So, we split each header into
+         * an individual call.  The initial replace handles the off chance
+         * that someone composed a single header with multiple lines, which
+         * the RFCs allow.
+         */
+        $this->server_headers = preg_replace("/[\r\n]+[ \t]+/", ' ',
+                                             trim($this->server_headers));
+        $headers = preg_split("/[\r\n]+/", $this->server_headers);
+        foreach ($headers as $header)
+        {
+            header($header);
+        }
+
         print $this->server_payload;
     }
 
@@ -505,11 +521,12 @@ class XML_RPC_Server
         $parser = (int) $parser_resource;
 
         $XML_RPC_xh[$parser] = array();
-        $XML_RPC_xh[$parser]['st']     = '';
         $XML_RPC_xh[$parser]['cm']     = 0;
         $XML_RPC_xh[$parser]['isf']    = 0;
         $XML_RPC_xh[$parser]['params'] = array();
         $XML_RPC_xh[$parser]['method'] = '';
+        $XML_RPC_xh[$parser]['stack'] = array();	
+        $XML_RPC_xh[$parser]['valuestack'] = array();	
 
         $plist = '';
 
@@ -526,16 +543,26 @@ class XML_RPC_Server
                                               xml_error_string(xml_get_error_code($parser_resource)),
                                               xml_get_current_line_number($parser_resource)));
             xml_parser_free($parser_resource);
+        } elseif ($XML_RPC_xh[$parser]['isf']>1) {
+            $r = new XML_RPC_Response(0,
+                                      $XML_RPC_err['invalid_request'],
+                                      $XML_RPC_str['invalid_request']
+                                      . ': '
+                                      . $XML_RPC_xh[$parser]['isf_reason']);
+            xml_parser_free($parser_resource);
         } else {
             xml_parser_free($parser_resource);
             $m = new XML_RPC_Message($XML_RPC_xh[$parser]['method']);
             // now add parameters in
             for ($i = 0; $i < sizeof($XML_RPC_xh[$parser]['params']); $i++) {
                 // print '<!-- ' . $XML_RPC_xh[$parser]['params'][$i]. "-->\n";
-                $plist .= "$i - " . $XML_RPC_xh[$parser]['params'][$i] . " \n";
-                @eval('$m->addParam(' . $XML_RPC_xh[$parser]['params'][$i] . ');');
+                $plist .= "$i - " . var_export($XML_RPC_xh[$parser]['params'][$i], true) . " \n";
+                $m->addParam($XML_RPC_xh[$parser]['params'][$i]);
             }
-            XML_RPC_Server_debugmsg($plist);
+
+            if ($this->debug) {
+                XML_RPC_Server_debugmsg($plist);
+            }
 
             // now to deal with the method
             $methName = $XML_RPC_xh[$parser]['method'];

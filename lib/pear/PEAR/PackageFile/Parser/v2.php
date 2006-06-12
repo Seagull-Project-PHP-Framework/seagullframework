@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.7 2005/06/23 15:56:40 demian Exp $
+ * @version    CVS: $Id: v2.php,v 1.19 2006/01/23 17:39:52 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    Release: @PEAR-VER@
  * @link       http://pear.php.net/package/PEAR
@@ -51,6 +51,43 @@ class PEAR_PackageFile_Parser_v2 extends PEAR_XMLParser
     {
         $this->_logger = &$l;
     }
+    /**
+     * Unindent given string
+     *
+     * @param string $str The string that has to be unindented.
+     * @return string
+     * @access private
+     */
+    function _unIndent($str)
+    {
+        // remove leading newlines
+        $str = preg_replace('/^[\r\n]+/', '', $str);
+        // find whitespace at the beginning of the first line
+        $indent_len = strspn($str, " \t");
+        $indent = substr($str, 0, $indent_len);
+        $data = '';
+        // remove the same amount of whitespace from following lines
+        foreach (explode("\n", $str) as $line) {
+            if (substr($line, 0, $indent_len) == $indent) {
+                $data .= substr($line, $indent_len) . "\n";
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * post-process data
+     *
+     * @param string $data
+     * @param string $element element name
+     */
+    function postProcess($data, $element)
+    {
+        if ($element == 'notes') {
+            return trim($this->_unIndent($data));
+        }
+        return trim($data);
+    }
 
     /**
      * @param string
@@ -60,17 +97,12 @@ class PEAR_PackageFile_Parser_v2 extends PEAR_XMLParser
      *               a subclass
      * @return PEAR_PackageFile_v2
      */
-    function parse($data, $file, $archive = false, $class = 'PEAR_PackageFile_v2')
+    function &parse($data, $file, $archive = false, $class = 'PEAR_PackageFile_v2')
     {
-        $test = $this->preProcessStupidSaxon($data);
         if (PEAR::isError($err = parent::parse($data, $file))) {
             return $err;
         }
         $ret = new $class;
-        if ($test != $data) {
-            $ret->_stack->push('_warningNonIsoChars', 'warning', array(),
-                'Non-ISO-8859-1 character detected, validation may fail');
-        }
         $ret->setConfig($this->_config);
         if (isset($this->_logger)) {
             $ret->setLogger($this->_logger);

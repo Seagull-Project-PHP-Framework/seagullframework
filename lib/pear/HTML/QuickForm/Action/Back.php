@@ -16,7 +16,7 @@
 // | Author: Alexey Borzov <avb@php.net>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Back.php,v 1.1 2003/11/19 10:00:30 cvsroot Exp $
+// $Id: Back.php,v 1.4 2004/11/26 10:49:48 avb Exp $
 
 require_once 'HTML/QuickForm/Action.php';
 
@@ -25,7 +25,7 @@ require_once 'HTML/QuickForm/Action.php';
  * 
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.4 $
  */
 class HTML_QuickForm_Action_Back extends HTML_QuickForm_Action
 {
@@ -33,7 +33,7 @@ class HTML_QuickForm_Action_Back extends HTML_QuickForm_Action
     {
         // save the form values and validation status to the session
         $page->isFormBuilt() or $page->buildForm();
-        $pageName =  $page->getAttribute('name');
+        $pageName =  $page->getAttribute('id');
         $data     =& $page->controller->container();
         $data['values'][$pageName] = $page->exportValues();
         if (!$page->controller->isModal()) {
@@ -43,10 +43,10 @@ class HTML_QuickForm_Action_Back extends HTML_QuickForm_Action
         // get the previous page and go to it
         // we don't check validation status here, 'jump' handler should
         if (null === ($prevName = $page->controller->getPrevName($pageName))) {
-            $page->handle('jump');
+            return $page->handle('jump');
         } else {
             $prev =& $page->controller->getPage($prevName);
-            $prev->handle('jump');
+            return $prev->handle('jump');
         }
     }
 }

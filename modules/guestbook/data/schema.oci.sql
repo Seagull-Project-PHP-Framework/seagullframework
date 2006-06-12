@@ -13,3 +13,6 @@ email           VARCHAR(255)         null,
 message         CLOB                 null,
 constraint PK_GUESTBOOK primary key (guestbook_id)
 );
+
+create sequence guestbook_seq;
+

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Wizard.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -49,7 +49,7 @@
  *          parent::Wizard();
  *  3.  at the beginning of your validate method, fire the parent's validate, ie
  *          parent::validate($req, $input);
- *  4.  replace and instance of $input->submit with  $this->submit
+ *  4.  replace and instance of $input->submitted with  $this->submit
  *  5.  at the end of your validate method, fire the following method:
  *          $this->maintainState($input->obj); 
  *      where $input->obj represent the data from your form
@@ -65,7 +65,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.8 $
- * @since   PHP 4.1
  */
 class SGL_Wizard extends SGL_Manager
 {
@@ -80,6 +79,7 @@ class SGL_Wizard extends SGL_Manager
     function SGL_Wizard()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
     }
 
     function maintainState(&$obj)
@@ -89,9 +89,9 @@ class SGL_Wizard extends SGL_Manager
         if (isset($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']) 
                 && !(SGL_Wizard::isObjEmpty($_SESSION['wiz_sequence'][$this->_getCurrent()]['data'])) 
                 &&   SGL_Wizard::isObjEmpty($obj)) {
-            $obj = $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'];
+            $obj = clone($_SESSION['wiz_sequence'][$this->_getCurrent()]['data']);
         } else {
-            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = $obj;
+            $_SESSION['wiz_sequence'][$this->_getCurrent()]['data'] = clone($obj);
         }
     }
 
@@ -151,32 +151,43 @@ class SGL_Wizard extends SGL_Manager
         $max = count($this->sequence) -1;
         //  beginning
         if (isset($this->sequence[0]['current']) && $this->sequence[0]['current'] == true) {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;';
         //  end
         } elseif (isset($this->sequence[$max]['current']) && $this->sequence[$max]['current'] == true) {
-            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
-                    
+            $html = '<input type="submit" name="finish" class="buttonSubmit01" value="'.SGL_String::translate('finish').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         //  middle
         } else {
-            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'">&nbsp;' .
-                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'">&nbsp;';
+            $html = '<input type="submit" name="next" class="buttonSubmit01" value="'.SGL_String::translate('next').'" />&nbsp;' .
+                    '<br /><input type="submit" name="back" class="buttonSubmit02" value="'.SGL_String::translate('back').'" />&nbsp;';
         }
         return $html;
     }
 
-    function _createRegister()
+    function _createRegister($moduleName)
     {
         $html = '';
         foreach($this->sequence as $key => $aSeq) {
             $html .= '<a class="subnavi" href="javascript:document.frmWizard.jumpID.value='.$key.';document.frmWizard.submit()">'.SGL_String::translate($aSeq['pageName']['managerName']).'</a><br/>';
         }
-        $html .= '<span class="mainnavi">'.SGL_String::translate($this->module).'</span>';
+        $html .= '<span class="mainnavi">'.SGL_String::translate($moduleName).'</span>';
         return $html;
     }
 
     function validate($req, &$input)
     {
+        // if direct entering, redirect to default page
+        // for security reasons
+        if (!isset($_SESSION['wiz_sequence'][0]['pageName']['managerName'])) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $aParams = array(
+                'moduleName'    => $conf['site']['defaultModule'],
+                'managerName'   => $conf['site']['defaultManager'],
+            );
+            SGL_HTTP::redirect($aParams);
+        }
+
         //  init sequence values from session
         $this->sequence     = &$_SESSION['wiz_sequence'];
         $input->back        = $req->get('back');
@@ -201,7 +212,7 @@ class SGL_Wizard extends SGL_Manager
     {
         //  put below in parent class
         $output->buttons = $this->_createButtons();
-        $output->register = $this->_createRegister(); 
+        $output->register = $this->_createRegister($output->moduleName); 
 
         //  catch back button
         if ($this->submit == 'back') {
@@ -225,6 +236,7 @@ class SGL_Wizard extends SGL_Manager
     function isObjEmpty($obj)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        
         $aObjAttrs = get_object_vars($obj);
         if (is_array($aObjAttrs)) {
             foreach ($aObjAttrs as $k => $v) {
@@ -234,6 +246,47 @@ class SGL_Wizard extends SGL_Manager
             }
             return true;
         }
-    }    
+    }
+
+    /**
+     * Adds pages to a Wizard queue.
+     *
+     * @access  public
+     * @param   string  $pageName   the name of the calling script
+     * @param   array   $param      params to be appended to URL
+     * @return  void
+     */
+    function addPage($pageName, $param=null)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aPages = SGL_Session::get('wiz_sequence');
+        if (isset($pageName)) {
+
+            //  pagename, isCurrent, param
+            $aPages[] = array(  'pageName'  => $pageName,
+                                'current'   => false,
+                                'param'     => $param);
+        }
+        SGL_Session::set('wiz_sequence', $aPages);
+        return true;
+    }
+
+    /**
+     * Loads sequence of pages from Wizard queue and starts execution.
+     *
+     * @access  public
+     * @return  void
+     */
+    function startWizard()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aPages = SGL_Session::get('wiz_sequence');
+
+        //  set first page to enabled
+        $aPages[0]['current'] = true;
+        SGL_Session::set('wiz_sequence', $aPages);
+        SGL_HTTP::redirect($aPages[0]['pageName'],$aPages[0]['param']);
+        return true;
+    }
 }
 ?>

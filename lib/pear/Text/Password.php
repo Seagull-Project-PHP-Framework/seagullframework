@@ -1,24 +1,26 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4: */
-// +----------------------------------------------------------------------+
-// | PHP Version 4                                                        |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.02 of the PHP license,      |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Martin Jansen <mj@php.net>                                  |
-// |          Olivier Vanhoucke <olivier@php.net>                         |
-// +----------------------------------------------------------------------+
-//
-// $Id: Password.php,v 1.3 2004/10/25 06:39:24 cvsroot Exp $
-//
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+/**
+ * Class to create passwords
+ *
+ * PHP versions 4 and 5
+ *
+ * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ *
+ * @category   Text
+ * @package    Text_Password
+ * @author     Martin Jansen <mj@php.net>
+ * @author     Olivier Vanhoucke <olivier@php.net>
+ * @copyright  2004-2005 Martin Jansen, Olivier Vanhoucke
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version    CVS: $Id: Password.php,v 1.16 2005/08/21 19:47:53 mj Exp $
+ * @link       http://pear.php.net/package/Text_Password
+ */
 
 /**
  * Number of possible characters in the password
@@ -26,11 +28,16 @@
 $_Text_Password_NumberOfPossibleCharacters = 0;
 
 /**
- * Create passwords
+ * Main class for the Text_Password package
  *
- * @package Text_Password
- * @author  Martin Jansen <mj@php.net>
- * @author  Olivier Vanhoucke <olivier@php.net>
+ * @category   Text
+ * @package    Text_Password
+ * @author     Martin Jansen <mj@php.net>
+ * @author     Olivier Vanhoucke <olivier@php.net>
+ * @copyright  2004-2005 Martin Jansen, Olivier Vanhoucke
+ * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @version    Release: @package_version@
+ * @link       http://pear.php.net/package/Text_Password
  */
 class Text_Password {
 
@@ -42,13 +49,11 @@ class Text_Password {
      * @param  string  Type of password (pronounceable, unpronounceable)
      * @param  string  Character which could be use in the
      *                 unpronounceable password ex : 'A,B,C,D,E,F,G'
-     *                 or numeric or alphanumeric.
+     *                 or numeric, alphabetical or alphanumeric.
      * @return string  Returns the generated password.
      */
     function create($length = 10, $type = 'pronounceable', $chars = '')
     {
-        mt_srand((double) microtime() * 1000000);
-
         switch ($type) {
         case 'unpronounceable' :
             return Text_Password::_createUnpronounceable($length, $chars);
@@ -71,7 +76,7 @@ class Text_Password {
      * @param  string  Type of password (pronounceable, unpronounceable)
      * @param  string  Character which could be use in the
      *                 unpronounceable password ex : 'A,B,C,D,E,F,G'
-     *                 or numeric or alphanumeric.
+     *                 or numeric, alphabetical or alphanumeric.
      * @return array   Array containing the passwords
      */
     function createMultiple($number, $length = 10, $type = 'pronounceable', $chars = '')
@@ -314,6 +319,13 @@ class Text_Password {
             } elseif ($next < 0) {
                 $next += 255;
             }
+            switch ($next) { // delete white space
+            case 0x09:
+            case 0x20:
+            case 0x0A:
+            case 0x0D:
+                $next++;
+            }
             $tmp .= chr($next);
         }
 
@@ -341,6 +353,13 @@ class Text_Password {
             } elseif ($next < 0) {
                 $next += 255;
             }
+            switch ($next) { // delete white space
+            case 0x09:
+            case 0x20:
+            case 0x0A:
+            case 0x0D:
+                $next++;
+            }
             $tmp .= chr($next);
         }
 
@@ -367,6 +386,13 @@ class Text_Password {
                 $next -= 255;
             } elseif ($next < 0) {
                 $next += 255;
+            }
+            switch ($next) { // delete white space
+            case 0x09:
+            case 0x20:
+            case 0x0A:
+            case 0x0D:
+                $next++;
             }
             $tmp .= chr($next);
         }
@@ -448,8 +474,8 @@ class Text_Password {
      * @access private
      * @param  integer Length of the password
      * @param  string  Character which could be use in the
-     *                 unpronounceable password ex : 'A,B,C,D,E,F,G'
-     *                 or numeric or alphanumeric.
+     *                 unpronounceable password ex : 'ABCDEFG'
+     *                 or numeric, alphabetical or alphanumeric.
      * @return string  Returns the password
      */
     function _createUnpronounceable($length, $chars)
@@ -464,18 +490,23 @@ class Text_Password {
          switch($chars) {
 
          case 'alphanumeric':
-             $regex = 'A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9';
+             $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
              $_Text_Password_NumberOfPossibleCharacters = 62;
              break;
 
+         case 'alphabetical':
+             $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+             $_Text_Password_NumberOfPossibleCharacters = 52;
+             break;
+
          case 'numeric':
-             $regex = '0|1|2|3|4|5|6|7|8|9';
+             $chars = '0123456789';
              $_Text_Password_NumberOfPossibleCharacters = 10;
              break;
 
          case '':
-             $regex = '_|#|@|%|£|&|ç|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9';
-             $_Text_Password_NumberOfPossibleCharacters = 69;
+             $chars = '_#@%&ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+             $_Text_Password_NumberOfPossibleCharacters = 67;
              break;
 
          default:
@@ -483,31 +514,18 @@ class Text_Password {
               * Some characters shouldn't be used
               */
              $chars = trim($chars);
-             $chars = str_replace('+' , '' , $chars);
-             $chars = str_replace('|' , '' , $chars);
-             $chars = str_replace('$' , '' , $chars);
-             $chars = str_replace('^' , '' , $chars);
-             $chars = str_replace('/' , '' , $chars);
-             $chars = str_replace('\\', '' , $chars);
-             $chars = str_replace(',,', ',', $chars);
+             $chars = str_replace(array('+', '|', '$', '^', '/', '\\', ','), '', $chars);
 
-             if ($chars{strlen($chars)-1} == ',') {
-                 $chars = substr($chars, 0, -1);
-             }
-
-             $regex = str_replace(',', '|', $chars);
-             $_Text_Password_NumberOfPossibleCharacters = strlen(str_replace(',', '', $chars));
+             $_Text_Password_NumberOfPossibleCharacters = strlen($chars);
          }
 
          /**
           * Generate password
           */
-         do {
-             $chr = chr(mt_rand(0, 255));
-             if (preg_match('/'.$regex.'/US', $chr)) {
-                 $password .= $chr;
-             }
-         } while (strlen($password) < $length);
+         for ($i = 0; $i < $length; $i++) {
+             $num = mt_rand(0, $_Text_Password_NumberOfPossibleCharacters - 1);
+             $password .= $chars{$num};
+         }
 
          /**
           * Return password

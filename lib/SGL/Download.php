@@ -1,7 +1,7 @@
 <?PHP
 /* vim: set expandtab shiftwidth=4 softtabstop=4 tabstop=4: */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Pierpaolo Toniolo                                     |
+// | Copyright (c) 2006, Pierpaolo Toniolo                                     |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Download.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -40,14 +40,13 @@
 require_once 'HTTP/Download.php';
 
 /** 
-* wrapper around PEAR HTTP/Download class to workaround some limits of
+* Wrapper around PEAR HTTP/Download class to workaround some limits of
 * that class.
 *
 * @package SGL
 * @author Pierpaolo Toniolo
 * @copyright Pierpaolo Toniolo
 * @version $Revision: 1.4 $
-* @since PHP 4.1
 *
 */
 class SGL_Download extends HTTP_Download

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -39,48 +39,17 @@
 // +---------------------------------------------------------------------------+
 // $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
-require_once 'PEAR.php';
-require_once 'DB.php';
-require_once SGL_CORE_DIR . '/DB.php';
-require_once SGL_CORE_DIR . '/HTTP.php';
-require_once SGL_CORE_DIR . '/String.php';
-
 /**
- * Base class the Seagull framework.
+ * Provides a set of static utility methods used by most modules.
  *
  * A set of utility methods used by most modules.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.20 $
- * @since   PHP 4.1
  */
 class SGL
 {
-    /**
-     * Returns current time in YYYY-MM-DD HH:MM:SS format.
-     * 
-     * GMT format is best for logging system events, otherwise locale offset
-     * will be most helpful to users.
-     * 
-     * @access public
-     * @static
-     * @param boolean $gmt       is time GMT or locale offset
-     * @return string $instance  formatted current time
-     * @todo factor out Cache and Lang methods into their own objects
-     */
-    function getTime($gmt = false)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        static $instance;
-        if (!isset($instance)) {
-            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                                : strftime("%Y-%m-%d %H:%M:%S", time());
-        }
-        return $instance;
-    }
-
     /**
      * Returns the 2 letter language code, ie, de for German.
      *
@@ -93,6 +62,18 @@ class SGL
         $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
         $sessLang = $_SESSION['aPrefs']['language'];
         return $aLangs[$sessLang][2];
+    }
+
+    /**
+     * Returns current encoding, ie, utf-8.
+     *
+     * @access  public
+     * @static
+     * @return string   charset codepage
+     */
+    function getCurrentCharset()
+    {
+        return $GLOBALS['_SGL']['CHARSET'];
     }
 
     /**
@@ -117,12 +98,14 @@ class SGL
      */
     function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // Logging is not activated
-        if ($conf['log']['enabled'] == false) {
+        if (empty($conf['log']['enabled']) || $conf['log']['enabled'] == false) {
             return;
         }
+
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
@@ -141,15 +124,17 @@ class SGL
                 $logName = $conf['log']['name'];
             } else {
                 $logName = SGL_PATH . '/' . $conf['log']['name'];
-            }        
+            }
         } else {
             $logName = $conf['log']['name'];
         }
-        
+
+        require_once 'Log.php';
+
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton( $conf['log']['type'], 
+        $logger = & Log::singleton( $conf['log']['type'],
                                     $logName,
-                                    $conf['log']['ident'], 
+                                    $conf['log']['ident'],
                                     array(  $conf['log']['paramsUsername'],
                                             $conf['log']['paramsPassword'],
                                             'dsn' => $dsn
@@ -166,7 +151,7 @@ class SGL
             }
         }
         // Obtain backtrace information, if supported by PHP
-        if (version_compare(phpversion(), '4.3.0') >= 0) {      
+        if (version_compare(phpversion(), '4.3.0') >= 0) {
             $bt = debug_backtrace();
             if (isset($bt[1]['class']) && $bt[1]['type'] && isset($bt[1]['function'])) {
                 $callInfo = $bt[1]['class'] . $bt[1]['type'] . $bt[1]['function'] . ': ';
@@ -179,6 +164,10 @@ class SGL
                 }
             }
         }
+        if ($priority == PEAR_LOG_DEBUG) {
+            $message .= ' time: ' . (string)(getSystemTime() - @SGL_START_TIME) . 'ms';
+        }
+
         // Log the message
         return $logger->log($message, $priority);
     }
@@ -192,110 +181,10 @@ class SGL
      */
     function debugAllowed()
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         return $conf['debug']['sessionDebugAllowed'] &&
             in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['TRUSTED_IPS']);
-    }
-
-    /**
-     * Clear cache directory of a specific module's cache files. A simple wrapper to
-     * PEAR::Cache_Lite's clean() method.
-     *
-     * @access public
-     * @param  string $group name of the cache group (e.g. nav, blocks, etc.)
-     * @return boolean true on success
-     * @author  Andy Crain <apcrain@fuse.net>
-     */
-     function clearCache($group = false)
-     {
-        $cache = & SGL::cacheSingleton();
-        return $cache->clean($group);
-     }
-
-    /**
-     * Returns a singleton Cache_Lite instance.
-     *
-     * example usage: 
-     * $cache = & SGL::cacheSingleton();
-     * warning: in order to work correctly, the cache
-     * singleton must be instantiated statically and
-     * by reference
-     *
-     * @access  public
-     * @static
-     * @return  mixed reference to Cache_Lite object
-     */
-    function &cacheSingleton()
-    {
-        static $instance;
-        // If the instance is not there, create one
-        if (!isset($instance)) {
-            require_once 'Cache/Lite.php';
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $options = array(
-                'cacheDir'  => SGL_TMP_DIR . '/', 
-                'lifeTime'  => $conf['cache']['lifetime'],
-                'caching'   => $conf['cache']['enabled']);
-            $instance = new Cache_Lite($options);
-        }
-        return $instance;
-    }
-
-    /**
-     * Converts error constants into equivalent strings.
-     *
-     * @access  public
-     * @param   int     $errorCode  error code
-     * @return  string              text representing error type
-     */
-    function errorConstantToString($errorCode)
-    {
-        $aErrorCodes = array(
-            SGL_ERROR_INVALIDARGS       => 'invalid arguments',
-            SGL_ERROR_INVALIDCONFIG     => 'invalid config',
-            SGL_ERROR_NODATA            => 'no data',
-            SGL_ERROR_NOCLASS           => 'no class',
-            SGL_ERROR_NOMETHOD          => 'no method',
-            SGL_ERROR_NOAFFECTEDROWS    => 'no affected rows',
-            SGL_ERROR_NOTSUPPORTED      => 'not supported',
-            SGL_ERROR_INVALIDCALL       => 'invalid call',
-            SGL_ERROR_INVALIDAUTH       => 'invalid auth',
-            SGL_ERROR_EMAILFAILURE      => 'email failure',
-            SGL_ERROR_DBFAILURE         => 'db failure',
-            SGL_ERROR_DBTRANSACTIONFAILURE => 'db transaction failure',
-            SGL_ERROR_BANNEDUSER        => 'banned user',
-            SGL_ERROR_NOFILE            => 'no file',
-            SGL_ERROR_INVALIDFILEPERMS  => 'invalid file perms',
-            SGL_ERROR_INVALIDSESSION    => 'invalid session',
-            SGL_ERROR_INVALIDPOST       => 'invalid post',
-            SGL_ERROR_INVALIDTRANSLATION => 'invalid translation',
-            SGL_ERROR_FILEUNWRITABLE    => 'file unwritable',
-            SGL_ERROR_INVALIDREQUEST    => 'invalid request',
-            SGL_ERROR_INVALIDTYPE       => 'invalid type',
-            SGL_ERROR_RECURSION         => 'recursion',
-        );
-        if (in_array($errorCode, array_keys($aErrorCodes))) {
-            return strtoupper($aErrorCodes[$errorCode]);
-
-        //  if not within this range, most likely a PEAR::DB error
-        } else {
-            return 'PEAR';
-        }
-    }
-
-    function errorObjToString($oError)
-    {
-        $message = $oError->getMessage();
-        $debugInfo = $oError->getDebugInfo();
-        $level = $oError->getCode();
-        $errorType = SGL::errorConstantToString($level);
-        $output = <<<EOF
-  <strong>MESSAGE</strong>: $message<br />
-  <strong>TYPE:</strong> $errorType<br />
-  <strong>DEBUG INFO:</strong> $debugInfo<br />
-  <strong>CODE:</strong> $level<br />
-EOF;
-        return $output;
     }
 
     /**
@@ -311,20 +200,23 @@ EOF;
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
 
         //  if fatal
         if ($behaviour > 0) {
-            if ($conf['debug']['production']) {
+            if (isset($conf['debug']['production']) && $conf['debug']['production']) {
                 die ('Sorry your request can not be processed now. Try again later');
             }
             //  must log fatal msgs here as execution stops after
             //  PEAR::raiseError(arg, arg, PEAR_ERROR_DIE)
-            $errorType = SGL::errorConstantToString($type);
+            $errorType = SGL_Error::constantToString($type);
             SGL::logMessage($errorType . ' :: ' . $msg, PEAR_LOG_EMERG);
         }
         $error = '';
         $message = SGL_String::translate($msg);
+
         //  catch error message that results for 'logout' where trans file is not loaded
         if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                     && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
@@ -336,9 +228,9 @@ EOF;
         return $error;
     }
 
-    function raiseMsg($msg, $getTranslation = true)
+    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_MESSAGE_ERROR)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  must not log message here
         if (is_string($msg) && !empty($msg)) {
 
             $message = SGL_String::translate($msg);
@@ -347,10 +239,11 @@ EOF;
             if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                         && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
                         || (!$getTranslation)) {
-                SGL_HTTP_Session::set('message', $msg);
+                SGL_Session::set('message', $msg);
             } else {
-                SGL_HTTP_Session::set('message', $message);
+                SGL_Session::set('message', $message);
             }
+            SGL_Session::set('messageType', $msgType);
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
         }
@@ -363,6 +256,41 @@ EOF;
     }
 
     /**
+     * Returns false if no properties are set.
+     *
+     * Simplistic if ($prop) test is intentional, method will return false for
+     * props such as 0, "0", "", null, array(), etc.
+     *
+     * @param object $obj
+     * @return boolean
+     */
+    function objectHasState($obj)
+    {
+        $aProps = get_object_vars($obj);
+        if (count($aProps)) {
+            $ret = false;
+            foreach ($aProps as $prop) {
+                if ($prop) {
+                    $ret = true;
+                    break;
+                }
+            }
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    //  to get around limitations of PHP4's aggregate_* methods
+    function objectCopy($src, &$target)
+    {
+        $aProps = get_object_vars($src);
+        foreach ($aProps as $attribName => $attribValue) {
+            $target->{$attribName} = $attribValue;
+        }
+    }
+
+    /**
      * Determines current server API, ie, are we running from commandline or webserver.
      *
      * @return boolean
@@ -372,33 +300,83 @@ EOF;
         // STDIN isn't a CLI constant before 4.3.0
         $sapi = php_sapi_name();
         if (version_compare(PHP_VERSION, '4.3.0') >= 0 && $sapi != 'cgi') {
-            return @is_resource(STDIN);
+            if (!defined('STDIN')) {
+                return false;
+            } else {
+                return @is_resource(STDIN);
+            }
         } else {
             return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
         }
     }
 
-    /**
-     * Makes up for case insensitive classnames in php4 with get_class().
-     *
-     * @access   public
-     * @static    
-     * @param    string $str classname  
-     * @return   mixed       either correct case classname or false
-     */
-    function caseFix($str)
+    function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {
-        if (SGL::isPhp5()) {
-            return $str;
-        }
-        static $aConfValues;
-        if (!isset($aConfValues)) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
-            $aConfValues = array_keys($conf);
-        }
-        $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
-        $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
-        return ($isFound !== false) ? $aConfValues[$isFound] : false;
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
+
+    /**
+     * Returns true on success, false if resource was not found.
+     *
+     * @param string $resource  File or lib name
+     */
+    function import($resource)
+    {
+
+    }
+
+     /**
+      * Test if there is a country or state file corresponding
+      * to the current language preference/setting.
+      * If not, tries with the default file (English).
+      * In either case, load it into the GLOBALS and return the array.
+      *
+      * @param string $fileType 'states' or 'countries' or 'counties'
+      * @return array reference
+      *
+      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+      */
+     function loadRegionList($fileType)
+     {
+         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+         if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
+             SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
+             return;
+         }
+         $lang = SGL::getCurrentLang();
+         $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+         if (!file_exists($file)) {
+             $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+         }
+         require_once $file;
+
+         $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+         if (is_array($a)) {
+            asort($a);
+         }
+         return $a;
+     }
+
+     function displayStaticPage($msg)
+     {
+        require_once SGL_CORE_DIR . '/Install/Common.php';
+        SGL_Install_Common::printHeader('An error has occurred');
+        if (SGL::runningFromCli()) {
+            print $msg;
+        } else {
+            echo '  <div class="errorContainer">
+                        <div class="errorHeader">Error</div>
+                        <div class="errorContent">' . $msg . '</div>
+                    </div>';
+        }
+        SGL_Install_Common::printFooter();
+        exit();
+     }
+}
+
+if (!SGL::isPhp5() && !function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
 }
 ?>

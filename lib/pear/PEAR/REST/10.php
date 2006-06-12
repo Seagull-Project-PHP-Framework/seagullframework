@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.1 2005/06/23 15:56:41 demian Exp $
+ * @version    CVS: $Id: 10.php,v 1.40 2006/01/06 04:47:37 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -31,14 +31,17 @@ require_once 'PEAR/REST.php';
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
 class PEAR_REST_10
 {
+    /**
+     * @var PEAR_REST
+     */
     var $_rest;
     function PEAR_REST_10($config, $options = array())
     {
@@ -119,7 +122,7 @@ class PEAR_REST_10
             return PEAR::raiseError('Package "' . $deppackage['channel'] . '/' . $deppackage['package']
                 . '" dependency "' . $channel . '/' . $package . '" has no releases');
         }
-        if (!isset($info['r'])) {
+        if (!is_array($info) || !isset($info['r'])) {
             return false;
         }
         $exclude = array();
@@ -176,11 +179,23 @@ class PEAR_REST_10
             }
             // allow newer releases to say "I'm OK with the dependent package"
             if ($xsdversion == '2.0' && isset($release['co'])) {
-                if (isset($release['co'][$deppackage['channel']]
-                      [$deppackage['p']]) && in_array($release['v'],
-                        $release['co'][$deppackage['channel']]
-                        [$deppackage['package']])) {
-                    $recommended = $release['v'];
+                if (!is_array($release['co']) || !isset($release['co'][0])) {
+                    $release['co'] = array($release['co']);
+                }
+                foreach ($release['co'] as $entry) {
+                    if (isset($entry['x']) && !is_array($entry['x'])) {
+                        $entry['x'] = array($entry['x']);
+                    } elseif (!isset($entry['x'])) {
+                        $entry['x'] = array();
+                    }
+                    if ($entry['c'] == $deppackage['channel'] &&
+                          strtolower($entry['p']) == strtolower($deppackage['package']) &&
+                          version_compare($deppackage['version'], $entry['min'], '>=') &&
+                          version_compare($deppackage['version'], $entry['max'], '<=') &&
+                          !in_array($release['v'], $entry['x'])) {
+                        $recommended = $release['v'];
+                        break;
+                    }
                 }
             }
             if ($recommended) {
@@ -214,50 +229,73 @@ class PEAR_REST_10
 
     function _returnDownloadURL($base, $package, $release, $info, $found)
     {
+        if (!$found) {
+            $release = $info['r'][0];
+        }
+        $releaseinfo = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' . 
+            $release['v'] . '.xml');
+        if (PEAR::isError($releaseinfo)) {
+            return PEAR::raiseError('Package "' . $package . '" Version "' . $release['v'] .
+                '" does not have REST xml available');
+        }
+        $packagexml = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' .
+            'deps.' . $release['v'] . '.txt', false, true);
+        if (PEAR::isError($packagexml)) {
+            return PEAR::raiseError('Package "' . $package . '" Version "' . $release['v'] .
+                '" does not have REST dependency information available');
+        }
+        $packagexml = unserialize($packagexml);
+        if (!$packagexml) {
+            $packagexml = array();
+        }
+        $allinfo = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
+            '/allreleases.xml');
+        if (!is_array($allinfo['r']) || !isset($allinfo['r'][0])) {
+            $allinfo['r'] = array($allinfo['r']);
+        }
+        $compatible = false;
+        foreach ($allinfo['r'] as $release) {
+            if ($release['v'] != $releaseinfo['v']) {
+                continue;
+            }
+            if (!isset($release['co'])) {
+                break;
+            }
+            $compatible = array();
+            if (!is_array($release['co']) || !isset($release['co'][0])) {
+                $release['co'] = array($release['co']);
+            }
+            foreach ($release['co'] as $entry) {
+                $comp = array();
+                $comp['name'] = $entry['p'];
+                $comp['channel'] = $entry['c'];
+                $comp['min'] = $entry['min'];
+                $comp['max'] = $entry['max'];
+                if (isset($entry['x']) && !is_array($entry['x'])) {
+                    $comp['exclude'] = $entry['x'];
+                }
+                $compatible[] = $comp;
+            }
+            if (count($compatible) == 1) {
+                $compatible = $compatible[0];
+            }
+            break;
+        }
         if ($found) {
-            $releaseinfo = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' . 
-                $release['v'] . '.xml');
-            if (PEAR::isError($releaseinfo)) {
-                return $releaseinfo;
-            }
-            $packagexml = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' .
-                'deps.' . $release['v'] . '.txt', false, true);
-            if (PEAR::isError($packagexml)) {
-                return $packagexml;
-            }
-            $packagexml = unserialize($packagexml);
-            if (!$packagexml) {
-                $packagexml = array();
-            }
             return 
                 array('version' => $releaseinfo['v'],
                       'info' => $packagexml,
                       'package' => $releaseinfo['p']['_content'],
                       'stability' => $releaseinfo['st'],
-                      'url' => $releaseinfo['g']);
+                      'url' => $releaseinfo['g'],
+                      'compatible' => $compatible);
         } else {
-            $release = $info['r'][0];
-            $releaseinfo = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' . 
-                $release['v'] . '.xml');
-            if (PEAR::isError($releaseinfo)) {
-                return PEAR::raiseError('Package "' . $package . '" Version "' . $release['v'] .
-                    '" does not have REST xml available');
-            }
-            $packagexml = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' .
-                'deps.' . $release['v'] . '.txt', false, true);
-            if (PEAR::isError($packagexml)) {
-                return PEAR::raiseError('Package "' . $package . '" Version "' . $release['v'] .
-                    '" does not have REST dependency information available');
-            }
-            $packagexml = unserialize($packagexml);
-            if (!$packagexml) {
-                $packagexml = array();
-            }
             return
                 array('version' => $releaseinfo['v'],
                       'package' => $releaseinfo['p']['_content'],
                       'stability' => $releaseinfo['st'],
-                      'info' => $packagexml);
+                      'info' => $packagexml,
+                      'compatible' => $compatible);
         }
     }
 
@@ -266,6 +304,9 @@ class PEAR_REST_10
         $packagelist = $this->_rest->retrieveData($base . 'p/packages.xml');
         if (PEAR::isError($packagelist)) {
             return $packagelist;
+        }
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            return array();
         }
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
@@ -279,13 +320,31 @@ class PEAR_REST_10
         if (PEAR::isError($packagelist)) {
             return $packagelist;
         }
+        if ($this->_rest->config->get('verbose') > 0) {
+            $ui = &PEAR_Frontend::singleton();
+            $ui->log('Retrieving data...0%', false);
+        }
         $ret = array();
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            return $ret;
+        }
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
         }
-        foreach ($packagelist['p'] as $package) {
+        PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
+        $next = .1;
+        foreach ($packagelist['p'] as $progress => $package) {
+            if ($this->_rest->config->get('verbose') > 0) {
+                if ($progress / count($packagelist['p']) >= $next) {
+                    if ($next == .5) {
+                        $ui->log('50%', false);
+                    } else {
+                        $ui->log('.', false);
+                    }
+                    $next += .1;
+                }
+            }
             if ($basic) { // remote-list command
-                PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
                 if ($dostable) {
                     $latest = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
                         '/stable.txt');
@@ -293,7 +352,6 @@ class PEAR_REST_10
                     $latest = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
                         '/latest.txt');
                 }
-                PEAR::popErrorHandling();
                 if (PEAR::isError($latest)) {
                     $latest = false;
                 }
@@ -301,18 +359,18 @@ class PEAR_REST_10
             } else { // list-all command
                 $inf = $this->_rest->retrieveData($base . 'p/' . strtolower($package) . '/info.xml');
                 if (PEAR::isError($inf)) {
+                    PEAR::popErrorHandling();
                     return $inf;
                 }
                 if ($searchpackage) {
                     $found = (!empty($searchpackage) && stristr($package, $searchpackage) !== false);
                     if (!$found && !(isset($searchsummary) && !empty($searchsummary)
                         && (stristr($inf['s'], $searchsummary) !== false
-                            || stristr($info['d'], $searchsummary) !== false)))
+                            || stristr($inf['d'], $searchsummary) !== false)))
                     {
                         continue;
                     };
                 }
-                PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
                 $releases = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
                     '/allreleases.xml');
                 if (PEAR::isError($releases)) {
@@ -393,13 +451,22 @@ class PEAR_REST_10
                         }
                     }
                 }
-                PEAR::popErrorHandling();
-                $info = array('stable' => $latest, 'summary' => $inf['s'], 'description' =>
-                    $inf['d'], 'deps' => $deps, 'category' => $inf['ca']['_content'],
-                    'unstable' => $unstable, 'state' => $state);
+                if (!isset($stable)) {
+                    $stable = '-n/a-';
+                }
+                if (!$searchpackage) {
+                    $info = array('stable' => $latest, 'summary' => $inf['s'], 'description' =>
+                        $inf['d'], 'deps' => $deps, 'category' => $inf['ca']['_content'],
+                        'unstable' => $unstable, 'state' => $state);
+                } else {
+                    $info = array('stable' => $stable, 'summary' => $inf['s'], 'description' =>
+                        $inf['d'], 'deps' => $deps, 'category' => $inf['ca']['_content'],
+                        'unstable' => $unstable, 'state' => $state);
+                }
             }
             $ret[$package] = $info;
         }
+        PEAR::popErrorHandling();
         return $ret;
     }
 
@@ -410,6 +477,9 @@ class PEAR_REST_10
             return $packagelist;
         }
         $ret = array();
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            return $ret;
+        }
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
         }
@@ -471,6 +541,11 @@ class PEAR_REST_10
     {
         PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
         $pinfo = $this->_rest->retrieveData($base . 'p/' . strtolower($package) . '/info.xml');
+        if (PEAR::isError($pinfo)) {
+            PEAR::popErrorHandling();
+            return PEAR::raiseError('Unknown package: "' . $package . '" (Debug: ' .
+                $pinfo->getMessage() . ')');
+        }
         $releases = array();
         $allreleases = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
             '/allreleases.xml');
@@ -493,8 +568,11 @@ class PEAR_REST_10
                 }
                 $pf->setDeps(unserialize($ds));
                 $ds = $pf->getDeps();
-                $info = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' .
-                    $release['v'] . '.xml');
+                $info = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package)
+                    . '/' . $release['v'] . '.xml');
+                if (PEAR::isError($info)) {
+                    continue;
+                }
                 $releases[$release['v']] = array(
                     'doneby' => $info['m'],
                     'license' => $info['l'],
@@ -506,15 +584,10 @@ class PEAR_REST_10
                     'deps' => $ds ? $ds : array(),
                 );
             }
-            $relinfo = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' . 
-                $release['v'] . '.xml');
         } else {
             $latest = '';
         }
         PEAR::popErrorHandling();
-        if (PEAR::isError($pinfo)) {
-            return PEAR::raiseError('Unknown package: "' . $package . '"');
-        }
         return array(
             'name' => $pinfo['n'],
             'channel' => $pinfo['c'],

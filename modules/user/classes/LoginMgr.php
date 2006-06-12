@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,13 +30,15 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | LoginMgr.php                                                              |
 // +---------------------------------------------------------------------------+
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
 // $Id: LoginMgr.php,v 1.34 2005/06/15 00:50:40 demian Exp $
+
+require_once SGL_CORE_DIR . '/Observer.php';
 
 /**
  * Handles user logins.
@@ -45,18 +47,17 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2004
  * @version $Revision: 1.34 $
- * @since   PHP 4.1
  */
 class LoginMgr extends SGL_Manager
 {
     function LoginMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
 
         $this->_aActionsMapping =  array(
-            'login' => array('login'), 
-            'list'  => array('list'), 
+            'login' => array('login'),
+            'list'  => array('list'),
             'logout' => array('logout'),
         );
     }
@@ -68,12 +69,12 @@ class LoginMgr extends SGL_Manager
         $this->validated    = true;
         $input->username    = '';
         $input->password    = '';
-        $input->submit      = '';
+        $input->submitted   = '';
         $input->error       = array();
         $input->pageTitle   = 'Login';
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = 'login.html';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->username    = $req->get('frmUsername');
         $input->password    = $req->get('frmPassword');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
@@ -82,7 +83,7 @@ class LoginMgr extends SGL_Manager
         $input->redir = $req->get('redir');
 
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             if ($input->username == '') {
                 $aErrors['username'] = 'You must enter a username';
             }
@@ -104,19 +105,96 @@ class LoginMgr extends SGL_Manager
         $output->addOnLoadEvent('document.getElementById("frmLogin").frmUsername.focus()');
     }
 
-    function _login(&$input, &$output)
+    function _cmd_login(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        if ($res = $this->_doLogin($input->username, $input->password)) {
+        $doLogin = new User_DoLogin($input, $output);
+        $aObservers = explode(',', $this->conf['LoginMgr']['observers']);
+        foreach ($aObservers as $observer) {
+            $path = SGL_MOD_DIR . "/user/classes/observers/$observer.php";
+            if (is_file($path)) {
+                require_once $path;
+                $doLogin->attach(new $observer());
+            }
+        }
+        $doLogin->run();
+    }
 
+    function _cmd_logout(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_Session::destroy();
+        SGL::raiseMsg('You have been successfully logged out', true, SGL_MESSAGE_INFO);
+
+        //  get default params for logout page
+        $aParams = $this->getDefaultPageParams();
+        SGL_HTTP::redirect($aParams);
+    }
+
+    function _cmd_list(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($this->conf['tuples']['demoMode']) && $this->conf['tuples']['demoMode'] == true) {
+            $output->username = 'admin';
+            $output->password = 'admin';
+        }
+    }
+}
+
+class User_DoLogin extends SGL_Observable
+{
+    function User_DoLogin(&$input, &$output)
+    {
+        $this->input = $input;
+        $this->output = $output;
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
+    }
+
+    function run()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->conf = $this->input->getConfig();
+        $this->dbh = $this->_getDb();
+
+        if ($res = $this->_doLogin($this->input->username, $this->input->password)) {
+
+            //  invoke observers
+            $this->notify();
+
+            // Get the user id from the current session
+            $uid = SGL_Session::getUid();
+
+            // Check for multiple user sessions: allow one only excluding current one.
+            $multiple = SGL_Session::getUserSessionCount($uid, session_id());
+            if ($multiple > 0) {
+                if ($this->conf['session']['singleUser']) {
+                    SGL_Session::destroyUserSessions($uid, session_id());
+                    SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
+                } else {
+                    // Issue warning only
+                    SGL::raiseMsg('You have multiple sessions on this site!');
+                }
+            }
             //  if redirect captured
-            if (!empty($input->redir)) {
-                SGL_HTTP::redirect(urldecode($input->redir));
+            if (!empty($this->input->redir)) {
+                SGL_HTTP::redirect(urldecode($this->input->redir));
             }
             $type = ($res['role_id'] == SGL_ADMIN) ? 'logonAdminGoto' : 'logonUserGoto';
-            list($mod, $mgr) = split('\^', $conf['LoginMgr'][$type]);
+            list($mod, $mgr) = split('\^', $this->conf['LoginMgr'][$type]);
             $aParams = array(
                 'moduleName'    => $mod,
                 'managerName'   => $mgr,
@@ -129,80 +207,24 @@ class LoginMgr extends SGL_Manager
         }
     }
 
-    function _logout(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL::clearCache('blocks');
-        SGL_HTTP_Session::destroy();
-        SGL::raiseMsg('You have been successfully logged out');
-        
-        //  get logout page
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $moduleName = $conf['site']['defaultModule'];
-        $managerName = $conf['site']['defaultManager'];
-        $defaultParams = $conf['site']['defaultParams'];
-        $aDefaultParams = !empty($defaultParams) ? explode('/', $defaultParams) : array();
-        
-        $aParams = array(
-            'moduleName'    => $moduleName,
-            'managerName'   => $managerName,
-            );
-        
-        //  convert string into hash and merge with $aParams
-        $aRet = array();            
-        if ($numElems = count($aDefaultParams)) {
-            $aTmp = array();
-            for ($x = 0; $x < $numElems; $x++) {
-                if ($x % 2) { // if index is odd
-                    $aTmp['varValue'] = urldecode($aDefaultParams[$x]);
-                } else {
-                    // parsing the parameters
-                    $aTmp['varName'] = urldecode($aDefaultParams[$x]);
-                }
-                //  if a name/value pair exists, add it to request
-                if (count($aTmp) == 2) {
-                    $aRet[$aTmp['varName']] = $aTmp['varValue'];
-                    $aTmp = array();                
-                }
-            }
-        }
-        $aMergedParams = array_merge($aParams, $aRet);   
-        SGL_HTTP::redirect($aMergedParams);
-    }
-
-    function _list(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
-
     function _doLogin($username, $password)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $conf = & $GLOBALS['_SGL']['CONF'];
-        $dbh = & SGL_DB::singleton();
+
         $query = "
             SELECT  usr_id, role_id
-            FROM " . $conf['table']['user'] . "
-            WHERE   username = " . $dbh->quote($username) . "
+            FROM " . $this->conf['table']['user'] . "
+            WHERE   username = " . $this->dbh->quote($username) . "
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
-        $aResult = $dbh->getRow($query, DB_FETCHMODE_ASSOC);
+
+        $aResult = $this->dbh->getRow($query, DB_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];
             $rid = $aResult['role_id'];
 
-            //  record login in db for security
-            if (@$conf['LoginMgr']['recordLogin']) {
-                include_once SGL_ENT_DIR . '/Login.php';
-                $login = & new DataObjects_Login();
-                $login->login_id = $dbh->nextId('login');
-                $login->usr_id = $uid;
-                $login->date_time = SGL::getTime(true);
-                $login->remote_ip = $_SERVER['REMOTE_ADDR'];
-                $login->insert();
-            }
             //  associate new session with authenticated user
-            $sess = & new SGL_HTTP_Session($uid);
+            new SGL_Session($uid);
 
             return $aResult;
 
