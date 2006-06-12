@@ -408,7 +408,7 @@
             }
         }
         
-        document.cookie = 'TreeMenuBranchStatus=' + cookieString.join(':');
+        document.cookie = 'TreeMenuBranchStatus=' + cookieString.join(':') + '; path=/';
     }
 
 /**

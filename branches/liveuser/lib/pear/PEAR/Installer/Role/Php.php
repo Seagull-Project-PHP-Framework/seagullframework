@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Php.php,v 1.6 2005/06/23 15:56:38 demian Exp $
+ * @version    CVS: $Id: Php.php,v 1.7 2006/01/06 04:47:37 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -24,41 +24,11 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
-class PEAR_Installer_Role_Php extends PEAR_Installer_Role_Common
-{
-    var $_setup =
-        array(
-            'releasetypes' => array('php'),
-            'installable' => true,
-            'locationconfig' => 'php_dir',
-            'honorsbaseinstall' => true,
-            'unusualbaseinstall' => false,
-            'phpfile' => true,
-            'executable' => false,
-            'phpextension' => false,
-        );
-    function getInfo()
-    {
-        return array(
-            'releasetypes' => array('php'),
-            'installable' => true,
-            'locationconfig' => 'php_dir',
-            'honorsbaseinstall' => true,
-            'unusualbaseinstall' => false,
-            'phpfile' => true,
-            'executable' => false,
-            'phpextension' => false,
-        );
-    }
-
-    function setup(&$installer, $pkg, $atts, $file)
-    {
-    }
-}
+class PEAR_Installer_Role_Php extends PEAR_Installer_Role_Common {}
 ?>

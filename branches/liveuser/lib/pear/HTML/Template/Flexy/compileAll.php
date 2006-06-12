@@ -16,7 +16,7 @@
 // | Author:  Alan Knowles <alan@akbkhome.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: compileAll.php,v 1.21 2005/02/09 11:03:44 demian Exp $
+// $Id: compileAll.php,v 1.3 2003/08/01 08:50:27 alan_k Exp $
 //
 
 @include 'HTML/Template/Flexy.php';

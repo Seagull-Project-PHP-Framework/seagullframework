@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2002-2004, Richard Heyes                                    |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,13 +30,15 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Url.php                                                                   |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Authors:   Richard Heyes <richard at php net>                             |
+// |            Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
 // $Id: Url.php,v 1.32 2005/05/29 21:32:17 demian Exp $
+//
 
 /**
  * Url related functionality.
@@ -44,116 +46,611 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.32 $
- * @since   PHP 4.1
+ * @see seagull/lib/SGL/tests/UrlTest.ndb.php
  */
-class SGL_Url
+class SGL_URL
 {
     /**
-     * Converts querystring into/se/friendly/format.
-     *
-     * @access  public
-     * @param   $url    Url to be parsed
-     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
-     *                              from the front controller script name onwards
-     */
-    function getSignificantSegments($url)
+    * Full url
+    * @var string
+    */
+    var $url;
+
+    /**
+    * Protocol
+    * @var string
+    */
+    var $protocol;
+
+    /**
+    * Username
+    * @var string
+    */
+    var $username;
+
+    /**
+    * Password
+    * @var string
+    */
+    var $password;
+
+    /**
+    * Host
+    * @var string
+    */
+    var $host;
+
+    /**
+    * Port
+    * @var integer
+    */
+    var $port;
+
+    /**
+    * Path
+    * @var string
+    */
+    var $path;
+
+    /**
+    * Query string.
+    *
+    * The querystring is defined as everthing from the frontScriptName
+    * to the end of the URI, not including anchors, examples:
+    *
+    *   - http://example.com/index.php/foo/bar/baz/fluux
+    *   -> qs = foo/bar/baz/fluux
+    *
+    *   - http://example.com/foo/bar/baz/fluux?sess=a&rand=123
+    *   -> qs = foo/bar/baz/fluux?sess=a&rand=123
+    *
+    *   - http://example.com/?sess=a&rand=123
+    *   -> qs = sess=a&rand=123
+    *
+    *   - http://example.com/2006/02/07/my_interesting_blog.html
+    *   -> qs - 2006/02/07/my_interesting_blog.html
+    * @var array
+    */
+    var $querystring;
+    var $aQueryData;
+    var $frontScriptName;
+    var $aStrategies = array();
+    var $aRes = array();
+
+    /**
+    * Anchor
+    * @var string
+    */
+    var $anchor;
+
+    /**
+    * Whether to use []
+    * @var bool
+    */
+    var $useBrackets;
+
+    /**
+    * PHP4 Constructor
+    *
+    * @see __construct()
+    */
+    function SGL_URL(
+        $url = null,
+        $useBrackets = true,
+        /*SGL_UrlParserStrategy*/ $parserStrategy = null,
+        $conf = null)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $this->__construct($url, $useBrackets, $parserStrategy, $conf);
+    }
 
-        //  split elements (remove eventual leading/trailing slashes)
-        $aUriParts = explode('/', trim($url, '/'));
+    /**
+    * PHP5 Constructor
+    *
+    * Parses the given url and stores the various parts
+    * Defaults are used in certain cases
+    *
+    * @param string $url         Optional URL
+    * @param bool   $useBrackets Whether to use square brackets when
+    *                            multiple querystrings with the same name
+    *                            exist
+    * @param SGL_UrlParserStrategy  The strategy object to be used, optional
+    * @param array               An array of config elements, optional
+    *
+    * @todo the main URL attributes always get set twice, this needs to be optimised
+    */
+    function __construct($url = null, $useBrackets = true, $parserStrategy = null, $conf = null)
+    {
+        $this->useBrackets = $useBrackets;
+        $this->url         = $url;
+        $this->user        = '';
+        $this->pass        = '';
+        $this->host        = '';
+        $this->port        = 80;
+        $this->path        = '';
+        $this->aQueryData = array();
+        $this->anchor      = '';
+        //  get default config
+        if (is_null($conf)) {
+            $c = &SGL_Config::singleton();
+            $this->conf = $c->getAll();
+        } else {
+            $this->conf = $conf;
+        }
+        //  setup strategies array
+        //  if no strats are provided, use native SEF strategy
+        if (is_null($parserStrategy)) {
+            $this->aStrategies[] = new SGL_UrlParser_SefStrategy();
+        }
+        if (!is_array($parserStrategy) && is_a($parserStrategy, 'SGL_UrlParserStrategy')) {
+            $this->aStrategies[] = $parserStrategy;
 
-        //  step through array and strip until fc element is reached
-        foreach ($aUriParts as $elem) {
-            if ($elem != $conf['site']['frontScriptName']) {
-                array_shift($aUriParts);
-            } else {
-                break;
+        } elseif (is_array($parserStrategy)) {
+            $this->aStrategies = $parserStrategy;
+
+        } else {
+            SGL::raiseError('unrecognised url strategy');
+        }
+        $this->frontScriptName = $this->conf['site']['frontScriptName'];
+    }
+
+    /**
+     * Attempts to parse URI elements.
+     *
+     * @return true on success, PEAR_Error on failure
+     */
+    function init()
+    {
+        // Only set defaults if $url is not an absolute URL
+        if (!preg_match('/^[a-z0-9]+:\/\//i', $this->url)) {
+
+            // FIXME: get rid of this
+            if (is_a($this->aStrategies[0], 'SGL_UrlParser_SimpleStrategy')) {
+                $this->aQueryData = $this->parseQueryString($this->conf);
+                return;
+            }
+
+            $this->protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
+                ? 'https'
+                : 'http';
+
+            /**
+            * Figure out host/port
+            */
+            if (!empty($_SERVER['HTTP_HOST']) && preg_match('/^(.*)(:([0-9]+))?$/U',
+                    $_SERVER['HTTP_HOST'], $matches)) {
+                $host = $matches[1];
+                if (!empty($matches[3])) {
+                    $port = $matches[3];
+                } else {
+                    $port = $this->getStandardPort($this->protocol);
+                }
+            }
+
+            $this->user        = '';
+            $this->pass        = '';
+            $this->host        = !empty($host)
+                                    ? $host
+                                    : (isset($_SERVER['SERVER_NAME'])
+                                        ? $_SERVER['SERVER_NAME']
+                                        : 'localhost');
+            $this->port        = !empty($port)
+                                    ? $port
+                                    : (isset($_SERVER['SERVER_PORT'])
+                                        ? $_SERVER['SERVER_PORT']
+                                        : $this->getStandardPort($this->protocol));
+            $this->path        = !empty($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '/';
+#FIXME: $_SERVER['PHP_SELF'] != $this->path when redir is appended, needs to be cleaned up
+# refactor removal of frontScriptName with routine use in switch below
+//            if (isset($this->path{0}) && $this->path{0} == '/') {
+//                if ($this->frontScriptName != false) {
+//                    $frontScriptStartIndex = strpos($this->path, $this->frontScriptName);
+//                    $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+//                    if ($frontScriptStartIndex) {
+//                        $this->path = substr($this->path, 0, $frontScriptStartIndex);
+//                    }
+//                }
+//            }
+        }
+
+        // Parse the URI and store the various parts
+        if (!is_null($this->url)) {
+            //  if we have a relative URI, enforce FQDN as required by parse_url
+            $target = (preg_match('/^[a-z0-9]+:\/\//i', $this->url))
+                ? $this->url
+                : $this->toString();
+            $urlinfo = parse_url($target);
+
+            //  if a ? is present in frontScriptName, it gets stripped by calling $_SERVER['PHP_SELF']
+            //  and needs to be re-added
+            if (preg_match("/\?/", $this->frontScriptName)) {
+                $urlinfo['path'] = preg_replace("/index.php/", "index.php?", $urlinfo['path']);
+            }
+
+            // Default query data
+            $this->aQueryData = array();
+
+            foreach ($urlinfo as $key => $value) {
+                switch ($key) {
+
+                case 'scheme':
+                    $this->protocol = $value;
+                    $this->port     = $this->getStandardPort($value);
+                    break;
+
+                case 'user':
+                case 'pass':
+                case 'host':
+                case 'port':
+                    $this->$key = $value;
+                    break;
+
+                case 'path':
+                    //  the 'path' is deemed to be everything after the hostname,
+                    //  but before the frontScriptName, including initial and final
+                    //  slashes, ie: /seagull/trunk/www/
+                    if (isset($value{0}) && $value{0} == '/') {
+                        if ($this->frontScriptName != false) {
+                            $frontScriptStartIndex = strpos($value, $this->frontScriptName);
+                            $frontScriptEndIndex = $frontScriptStartIndex + strlen($this->frontScriptName);
+                            if (!$frontScriptStartIndex) {
+
+                                //  this is an install and index.php was omitted
+                                $this->path = $urlinfo['path'];
+                                $this->querystring = @$urlinfo['query'];
+                                $install = true;
+                            } else {
+                                $this->path = substr($value, 0, $frontScriptStartIndex);
+                                $this->querystring = substr($value, $frontScriptEndIndex);
+                            }
+                        } else {
+                            $this->path = dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR
+                                ? ''
+                                : dirname($_SERVER['SCRIPT_NAME']);
+                            $this->querystring = str_replace($this->path, '', $urlinfo['path']);
+                        }
+                    } else {
+                        $path = dirname($this->path) == DIRECTORY_SEPARATOR
+                            ? ''
+                            : dirname($this->path);
+                        $this->path = sprintf('%s/%s', $path, $value);
+                    }
+                    break;
+
+                case 'query':
+                    if (isset($urlinfo['query']) && empty($this->querystring)) {
+                        $this->querystring = $urlinfo['query'];
+                    }
+                    $ret = $this->parseQueryString($this->conf);
+
+                    if (PEAR::isError($ret)) {
+                        return $ret;
+                    } else {
+                        $this->aQueryData = $ret;
+                    }
+                    //  populate querystring property
+                    $this->querystring =    $this->getModuleName() .'/'.
+                                            $this->getManagerName() .'/'.
+                                            SGL_Array::implodeWithKeys('/', $this->getQueryData(true));
+                    break;
+
+                case 'fragment':
+                    $this->anchor = $value;
+                    break;
+                }
+            }
+            if (!array_key_exists('query', $urlinfo)) {
+                $ret = $this->parseQueryString($this->conf);
+
+                if (PEAR::isError($ret)) {
+                    return $ret;
+                } else {
+                    $this->aQueryData = $ret;
+                }
+            }
+            //  remove strategy objects to streamline for storage
+            $this->removeStrategies();
+            return true;
+        }
+        return SGL::raiseError('no URI data', SGL_ERROR_NODATA);
+    }
+
+
+    /**
+     * SGL_Url singletons are currently only used for output URLs, so the output
+     * format is taken from $conf.
+     *
+     * @return SGL_Url
+     */
+    function &singleton()
+    {
+        static $instance;
+        if (!isset($instance)) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $parserStrategy = $conf['site']['outputUrlHandler'];
+            $class = __CLASS__;
+            $instance = new $class(null, true, new $parserStrategy());
+        }
+        return $instance;
+    }
+
+    function getManagerName()
+    {
+        return @$this->aQueryData['managerName'];
+    }
+
+    function getModuleName()
+    {
+        return @$this->aQueryData['moduleName'];
+    }
+
+    /**
+     * Returns querystring data as an array.
+     *
+     * @param boolean $strict If strict is true, managerName and moduleName are removed
+     * @return array
+     */
+    function getQueryData($strict = false)
+    {
+        $aRet = $this->aQueryData;
+
+        if (PEAR::isError($aRet)) {
+            return $aRet;
+        }
+        if ($strict) {
+            if (isset($aRet['moduleName'])) {
+                unset($aRet['moduleName']);
+            }
+            if (isset($aRet['managerName'])) {
+                unset($aRet['managerName']);
             }
         }
-        return $aUriParts;
+        //  zend debug cleanup
+        $aZendDebugParams = array('debug_fastfile', 'debug_host', 'debug_new_session',
+            'debug_no_cache', 'debug_port', 'debug_stop', 'debug_url', 'send_sess_end',
+            'start_debug');
+        foreach ($aZendDebugParams as $param) {
+            if (isset($aRet[$param])) {
+                unset($aRet[$param]);
+            }
+        }
+        return $aRet;
     }
 
     /**
-     * Returns true if manager name is the same of module name, ie, index.php/faq/faq/.
+     * Returns querystring portion of url.
      *
-     * @param string $url
-     * @return boolean
-     */
-    function containsDuplicates($url)
-    {
-        if (!empty($url)) {
-            $aPieces = explode('/', $url);
-            $initial = count($aPieces);
-            $unique = count(array_unique($aPieces));
-            $ret = $initial != $unique;
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-
-    /**
-    * Returns true if URL has been abbreviated
-    *
-    * This happens when a manager name is the same as its module name, ie
-    * UserManger in the 'user' module would become user/user which gets
-    * reduced to user
-    *
-    * @param string $url            From the querystring
-    * @param string $sectionName    From the database
-    * @return boolean
-    */
-    function isSimplified($url, $sectionName)
-    {
-        if (!(empty($url))) {
-            $aUrlPieces = explode('/', $url);
-            $moduleNameUrl = $aUrlPieces[0];
-            $aSections =  explode('/', $sectionName);
-            $ret = in_array($moduleNameUrl, $aSections) && (SGL_Url::containsDuplicates($sectionName));
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-    
-    /**
-     * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
-     *
-     * @param string $name
      * @return string
      */
-    function getManagerNameFromSimplifiedName($name)
+    function getQueryString()
     {
-        //  if Mgr suffix has been left out, append it
-        if (strtolower(substr($name, -3)) != 'mgr') {
-            $name .= 'Mgr';
-        }
-        return ucfirst($name);
+        return $this->querystring;
     }
-    
-    /**
-     * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
-     *
-     * @param unknown_type $name
-     * @return unknown
-     */
-    function getSimplifiedNameFromManagerName($name)
-    {
-        //  strip file extension if exists
-        if (substr($name, -4) == '.php') {
-            $name = substr($name, 0, -4);
-        }
-        
-        //  strip 'Mgr' if exists
-        if (strtolower(substr($name, -3)) == 'mgr') {
-            $name = substr($name, 0, -3);
-        }
-        return strtolower($name);      
-    }    
 
     /**
-     * Converts querystring into/se/friendly/format.
+     * Build array of strategies and executes parsers.
+     *
+     * @param array $conf
+     * @return array
+     */
+    function parseQueryString($conf)
+    {
+        foreach ($this->aStrategies as $strategy) {
+
+            //  all strategies will attempt to parse url, overwriting
+            //  previous results as they do
+            $res = $strategy->parseQueryString($this, $conf);
+            if (PEAR::isError($res)) {
+                return $res;
+            } else {
+                $this->aRes[] = $res;
+            }
+        }
+        $ret = call_user_func_array('array_merge', $this->aRes);
+        return $ret;
+    }
+
+    /**
+     * Parses an array of querystring param names and values and returns a
+     * key/value hash.
+     *
+     * @param array $aUriParts  The list of candidate values.
+     * @param array $aParsedUri The list of existing valid value, to avoid overwriting
+     * @return array            A hash of k/v pairs
+     */
+    function querystringArrayToHash($aUriParts, $aParsedUri = array())
+    {
+        $numParts = count($aUriParts);
+
+        //  if varName/varValue don't match, assign a null varValue to the last varName
+        if ($numParts % 2) {
+            array_push($aUriParts, null);
+            ++ $numParts;
+        }
+
+        //  parse FC querystring params
+        $aQsParams = array();
+
+        for ($i = 0; $i < $numParts; $i += 2) {
+            $varName  = urldecode($aUriParts[$i]);
+            $varValue = urldecode($aUriParts[$i+1]);
+
+            //  check if the variable is an array
+            if ((strpos($varName, '[') !== false) &&
+                (strpos($varName, ']') !== false))
+            {
+                //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
+                preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
+                $aRequestVars = array_merge($_REQUEST, $aParsedUri);
+                if (    !array_key_exists($matches[1], $aRequestVars)
+                    &&  !array_key_exists($matches[1], $aQsParams)) {
+                        $aQsParams[$matches[1]] = array();
+                }
+                //  no key given => append to array
+                if (empty($matches[2])) {
+                    array_push($aQsParams[$matches[1]], $varValue);
+                } else {
+                    $aQsParams[$matches[1]][$matches[2]] = $varValue;
+                }
+            } else {
+                $aQsParams[$varName] = $varValue;
+            }
+        }
+        return $aQsParams;
+    }
+
+    function getStrategiesFingerprint($aStrats)
+    {
+        $aStratNames = array();
+        foreach ($aStrats as $strategy) {
+            $aStratNames[] = get_class($strategy);
+        }
+        $fingerprint = implode('', $aStratNames);
+        return $fingerprint;
+    }
+
+    /**
+    * Returns the full URI as a string.
+    *
+    * @return string Full URI
+    * @access public
+    */
+    function toString()
+    {
+        $retUrl = $this->protocol . '://'
+                   . $this->user . (!empty($this->pass) ? ':' : '')
+                   . $this->pass . (!empty($this->user) ? '@' : '')
+                   . $this->getHostName() . ($this->port == $this->getStandardPort($this->protocol)
+                        ? ''
+                        : ':' . $this->port)
+                   . $this->getPath();
+
+        //  append front script name if not already present
+        if ($this->frontScriptName != false) {
+            if (!preg_match("/$this->frontScriptName/", $retUrl)) {
+                $retUrl .= $this->getFrontScriptName();
+            }
+        }
+
+        //  add a trailing slash if one is not present
+        $qs  = $this->getQueryString();
+        $qs .= !empty($this->anchor) ? '#' . $this->anchor : '';
+        if (!empty($qs) && $qs{0} != '/' && substr($retUrl, -1) != '/') {
+            $qs = '/' . $qs . (!empty($this->anchor) ? '#' . $this->anchor : '');
+        }
+        $retUrl .= $qs;
+        return $retUrl;
+    }
+
+    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
+        $params = '', $idx = 0, $output = '')
+    {
+        //  a workaround for 0.4.x style of building SEF URLs
+        $url = & SGL_Url::singleton();
+        return $url->aStrategies[0]->makeLink(
+            $action, $mgr, $mod, $aList, $params, $idx, $output);
+    }
+
+    /**
+    * Returns the standard port number for a protocol.
+    *
+    * @param  string  $scheme The protocol to lookup
+    * @return integer         Port number or NULL if no scheme matches
+    *
+    * @author Philippe Jausions <Philippe.Jausions@11abacus.com>
+    */
+    function getStandardPort($scheme)
+    {
+        switch (strtolower($scheme)) {
+
+        case 'http':    return 80;
+        case 'https':   return 443;
+        case 'ftp':     return 21;
+        case 'imap':    return 143;
+        case 'imaps':   return 993;
+        case 'pop3':    return 110;
+        case 'pop3s':   return 995;
+        default:        return null;
+       }
+    }
+
+    /**
+    * Forces the URL to a particular protocol.
+    *
+    * @param string  $protocol Protocol to force the URL to
+    * @param integer $port     Optional port (standard port is used by default)
+    */
+    function setProtocol($protocol, $port = null)
+    {
+        $this->protocol = $protocol;
+        $this->port = is_null($port) ? $this->getStandardPort() : $port;
+    }
+
+    /**
+     * Resolves PHP_SELF var depending on implementation, ie apache, iis, cgi, etc.
+     *
+     * @abstract
+     */
+    function resolveServerVars($conf = null)
+    {
+        //  cgi SERVER vars hack causes probs w/quickform
+        if (!is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+            return;
+        }
+        //  it's apache
+        if (!empty($_SERVER['PHP_SELF']) && !empty($_SERVER['REQUEST_URI'])) {
+
+            //  however we're running from cgi, so populate PHP_SELF info from REQUEST_URI
+            if (strpos(php_sapi_name(), 'cgi') !== false) {
+                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+
+            //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
+            } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF'])
+                    && strstr($_SERVER['REQUEST_URI'], '?')
+                    && !isset($conf['setup']))) {
+                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+
+            // we don't want to have index.php in our url, so REQUEST_URI as more info
+            } elseif ($conf['site']['frontScriptName'] == false) {
+                $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
+            } else {
+                //  do nothing, PHP_SELF is valid
+            }
+
+        //  it's IIS
+        } else {
+            $frontScriptName = is_null($conf) ? 'index.php' : $conf['site']['frontScriptName'];
+            if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($frontScriptName, -1, 1)) {
+                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . '?' . @$_SERVER['QUERY_STRING'];
+            } else {
+                $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
+            }
+
+        }
+    }
+
+    function getHostName()
+    {
+        return $this->host;
+    }
+
+    function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Returns the front controller script name.
+     *
+     * @return string
+     */
+    function getFrontScriptName()
+    {
+        return $this->frontScriptName;
+    }
+
+    /**
+     * Ensures URL is fully qualified.
      *
      * @access  public
      * @param   string  $url    The relative URL string
@@ -166,27 +663,66 @@ class SGL_Url
             $url = SGL_BASE_URL . '/' . $url;
         }
     }
-    
+
     /**
-     * Parse string stored in resource_uri field in section table
+     * Returns hostname + path with final slashes removed if present.
+     *
+     * @return string   The base url
+     * @todo make logic more generic
+     */
+    function getBase()
+    {
+        $aParts = explode('/', $this->path);
+
+        //  accomodate setup exception
+        if (in_array('setup.php', $aParts)) {
+            array_pop($aParts);
+            $this->path = implode('/', $aParts);
+        }
+
+        $retUrl = $this->protocol . '://'
+                   . $this->user . (!empty($this->pass) ? ':' : '')
+                   . $this->pass . (!empty($this->user) ? '@' : '')
+                   . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
+                   . $this->path;
+
+        //  handle case for user's homedir, ie, presence of tilda: example.com/~seagull
+        if (preg_match('/~/', $retUrl)) {
+            $retUrl = str_replace('~', '%7E', $retUrl);
+        }
+        //  remove trailing slash
+        if (substr($retUrl, -1) == '/') {
+            $retUrl = substr($retUrl, 0, -1);
+        }
+        return $retUrl;
+    }
+
+    /**
+     * Parse string stored in resource_uri field in section table.
+     *
+     * This will always contain URL elements after the frontScriptName (index.php), never
+     * a FQDN, and never simplified names, ie section table must specify module name and
+     * manager name explicitly, even if they are the same, ie user/user
      *
      * @param string $str
      * @return array  A hash containing URL info
+     *
+     * @todo this method is VERY similar to parseQueryString and should be consolidated
      */
     function parseResourceUri($str)
     {
         $ret = array();
         $default = array(
-            'module' => 'default', 
-            'manager' => 'default');        
-            
+            'module' => 'default',
+            'manager' => 'default');
+
         //  catch case for default page, ie, home
         if (empty($str)) {
             return $default;
         }
         $parts = array_filter(explode('/', $str), 'strlen');
         $numElems = count($parts);
-        
+
         //  we need at least 2 elements
         if ($numElems < 2) {
             return $default;
@@ -198,12 +734,11 @@ class SGL_Url
 
         //  parse params
         $idx = ($actionExists) ? 4 : 2;
-        
+
         //  break out if no params detected
         if ($numElems <= $idx) {
             return $ret;
-        }        
-        
+        }
         $aTmp = array();
         for ($x = $idx; $x < $numElems; $x++) {
             if ($x % 2) { // if index is odd
@@ -215,214 +750,12 @@ class SGL_Url
             //  if a name/value pair exists, add it to request
             if (count($aTmp) == 2) {
                 $ret['parsed_params'][$aTmp['varName']] = $aTmp['varValue'];
-                $aTmp = array();                
+                $aTmp = array();
             }
         }
-        return $ret;               
-    }
-    
-
-    /**
-     * Converts querystring into/se/friendly/format.
-     *
-     * @access  public
-     * @return  void
-     */
-    function dirify()
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        $aUriParts = SGL_Url::getSignificantSegments($_SERVER['PHP_SELF']);
-
-        //  remap
-        $aParsedUri['frontScriptName'] = array_shift($aUriParts);
-        $aParsedUri['moduleName'] = strtolower(array_shift($aUriParts));
-        $aParsedUri['managerName'] = strtolower(array_shift($aUriParts));
-
-        //  if frontScriptName empty, get from config
-        $default = false;
-        if (empty($aParsedUri['frontScriptName'])) {
-            $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
-        }
-
-        //  if no module name present, get from config
-        //  catch case where debugging with Zend supplies querystring params
-        if (empty(  $aParsedUri['moduleName'])
-                || ($aParsedUri['moduleName'] == 'staticId')
-                || (preg_match('/start_debug/', $aParsedUri['moduleName']))) {
-            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
-            $default = true;
-        }
-
-        //  if no manager name, must be default manager, ie, has same name as module
-        //  the exception is when the moduleName comes from the conf
-        if ((empty( $aParsedUri['managerName']) && !$default)
-                || ($aParsedUri['managerName'] == 'staticid')             
-                || (preg_match('/start_debug/', $aParsedUri['managerName']))) {
-            $aParsedUri['managerName'] = $aParsedUri['moduleName'];
-
-        //  we are here because we're using defaults from config
-        } elseif ($default) {
-            $aParsedUri['managerName'] = $conf['site']['defaultManager'];
-            $aParsedUri['defaultParams'] = $conf['site']['defaultParams'];            
-        }
-        
-        //  catch case where when manger + mod names are the same, and cookies
-        //  disabled, sglsessid gets bumped into wrong slot
-        if (($aParsedUri['managerName'] == strtolower($conf['cookie']['name']))) {
-            $aParsedUri['managerName'] = $aParsedUri['moduleName'];
-            array_unshift($aUriParts, $conf['cookie']['name']);            
-        }
-
-        //  if 'action' is in manager slot, move it to querystring array, and replace 
-        //  manager name with default mgr name, ie, that of the module
-        if ($aParsedUri['managerName'] == 'action') {
-            $aParsedUri['managerName'] = $aParsedUri['moduleName'];
-            array_unshift($aUriParts, 'action');
-        }
-
-        //  if default params exist, append them to the uri array
-        if (!empty($aParsedUri['defaultParams'])) {
-            $aUriParts = array_merge($aUriParts, explode('/', $aParsedUri['defaultParams']));
-        }
-
-        $numParts = count($aUriParts);
-
-        //  if varName/varValue don't match, assign a null varValue to the last varName
-        if ($numParts % 2) {
-            array_push($aUriParts, null);
-            ++$numParts;
-        }
-
-        //  add fc params to request
-        for ($i=0; $i<$numParts; $i+=2) {
-            $varName  = urldecode($aUriParts[$i]);
-            $varValue = urldecode($aUriParts[$i+1]);
-
-            //  check if the variable is an array
-            if ((strpos($varName, '[') !== false) &&
-                (strpos($varName, ']') !== false))
-            {
-                //  retrieve the array name ($matches[1]) and its eventual key ($matches[2])
-                preg_match('/([^\[]*)\[([^\]]*)\]/', $varName, $matches);
-                if (!array_key_exists($matches[1], $GLOBALS['_SGL']['REQUEST'])) {
-                    $GLOBALS['_SGL']['REQUEST'][$matches[1]] = array();
-                }
-                //  no key given => append to array                
-                if (empty($matches[2])) {
-                    array_push($GLOBALS['_SGL']['REQUEST'][$matches[1]], $varValue);
-                } else {
-                    $GLOBALS['_SGL']['REQUEST'][$matches[1]][$matches[2]] = $varValue;
-                }
-                $tmpArrays[] = array($varName, $varValue);
-            } else {
-                $GLOBALS['_SGL']['REQUEST'][$varName] = $varValue;
-            }
-        }
-        $GLOBALS['_SGL']['REQUEST'] = array_merge($aParsedUri, $GLOBALS['_SGL']['REQUEST'], $_POST);
+        return $ret;
     }
 
-    /**
-     * Best way I've come up with so far for passing all params required by Flexy to build a URL.
-     *
-     * @param string $action
-     * @param string $mgr
-     * @param string $mod
-     * @param array $aList
-     * @param string $params
-     * @param integer $idx
-     * @param object $output
-     * @return string
-     */
-    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(), 
-        $params = '', $idx = 0, $output = '')
-    {
-        $conf = & $GLOBALS['_SGL']['CONF'];
-
-        //  get a reference to the request object
-        $req = & SGL_HTTP_Request::singleton();
-
-        //  determine module and manager names
-        $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;
-        $mod = (empty($mod)) ? $req->get('moduleName'): $mod;
-        $url = $conf['site']['frontScriptName'] . '/';
-
-        //  allow for default managers, ie, in faqMgr, don't
-        //  return http://localhost.localdomain/seagull/www/index.php/faq/faq/action/edit/
-        if ($mgr != $mod) {
-            $url .= $mod . '/';
-        }
-        $url .= $mgr;
-
-        //  only add action param if an action was supplied/found
-        if (!(empty($action))) {
-            $url .= '/action/' . $action;
-        }
-
-        //  if qs params are supplied
-        if (!(empty($params))) {
-            $aParams = explode('||', $params);
-            $qs = '';
-            foreach ($aParams as $param) {
-                list($qsParamName, $listKey) = explode('|', $param);
-
-                //  if we have an array of arrays (we're interating through a resultset)
-                //  or no resulset was passed (qs params are literals)
-                //  - empty array if from manager
-                //  - string equal to 0 if ## passed from template
-                if (is_array(end($aList)) || (is_array($aList) && !is_object(end($aList))) || !(count($aList)) || $aList == 0) {
-                
-                    //  determine type of param value
-                    if (isset($aList[$idx][$listKey]) && !is_null($listKey)) { // pass referenced array element
-                        $qsParamValue = $aList[$idx][$listKey];
-                        
-                    //  we're here because a simple array was passed for $aList, ie:
-                    //  makeUrl(#edit#,#orgType#,#user#,orgTypes,#frmOrgTypeID#,id)
-                    //  in this case, the key from the flexy foreach is what we want to assign as the value, ie
-                    //  - frmOrgTypeId/0
-                    //  - frmOrgTypeId/1 ... etc
-                    } elseif (isset($aList[$idx]) && is_null($listKey)) {
-                        $qsParamValue = $idx;
-                        
-                    } else {
-                        if (stristr($listKey, '[')) { // it's a hash
-
-                            //  split out images[fooBar] to array(images,fooBar)
-                            $elems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
-                            if (!($aList) && is_a($output, 'SGL_Output')) {
-                                
-                                //  variable is of type $output->org['organisation_id'] = 'foo';
-                                $qsParamValue = $output->{$elems[0]}[$elems[1]];
-                            } else {
-                                $qsParamValue = $aList[$idx][$elems[0]][$elems[1]];
-                            }
-                        } elseif (is_a($output, 'SGL_Output') && isset($output->{$listKey})) {
-                            $qsParamValue = $output->{$listKey}; // pass $output property 
-                        } else {                        
-                            $qsParamValue = $listKey; // pass literal                        
-                        }
-                    }
-                    $qs .= '/' . $qsParamName . '/' . $qsParamValue;
-                } else {
-                    $qs .= '/' . $qsParamName . '/' . $aList[$idx]->$listKey;
-                }
-            }
-            //  append querystring
-            $url .= $qs;
-        }
-        //  add url scheme and SGL prefix if necessary
-        SGL_Url::toAbsolute($url);
-
-        //  add a trailing slash if one is not present
-        if (substr($url, -1) != '/') {
-            $url .= '/';
-        }
-        //  add session info if necessary
-        SGL_Url::addSessionInfo($url);
-        
-        return $url;
-    }
-    
     /**
      * Checks to see if cookies are enabled, if not, session id is added to URL.
      *
@@ -434,16 +767,21 @@ class SGL_Url
      */
     function addSessionInfo(&$url)
     {
-        //  determine is session propagated in cookies or URL
-        $sessionInfo = defined('SID') ? SID : '';
-        if (!empty($sessionInfo)) {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        if ($conf['session']['allowedInUri']) {
 
-            //  determine glue
-            $glue = (preg_match("/\?pageID/i", $url)) ? '&' : '?';
-            $url .= $glue . $sessionInfo . '&/1/';
+            //  determine is session propagated in cookies or URL
+            $sessionInfo = defined('SID') ? SID : '';
+            if (!empty($sessionInfo)) {
+
+                //  determine glue
+                $glue = (preg_match("/\?pageID/i", $url)) ? '&amp;' : '?';
+                $url .= $glue . $sessionInfo . '&amp;/1/';
+            }
         }
     }
-    
+
     /**
      * Removes the session name and session value elements from an array.
      *
@@ -451,11 +789,82 @@ class SGL_Url
      */
     function removeSessionInfo(&$aUrl)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
         $key = array_search($conf['cookie']['name'], $aUrl);
         if ($key !== false) {
             unset($aUrl[$key], $aUrl[$key + 1]);
         }
     }
+
+    function removeStrategies()
+    {
+        unset($this->aStrategies);
+    }
+
+    /**
+     * Returns an array of all elements from the front controller script name onwards,
+     * including the frontScriptName.
+     *
+     * @access  public
+     * @static
+     *
+     * @param   string  $url        Url to be parsed
+     * @return  array   $aUriParts  An array of all significant parts of the URL, ie
+     *                              from the front controller script name onwards
+     */
+    function toPartialArray($url, $frontScriptName)
+    {
+        //  split elements (remove eventual leading/trailing slashes)
+        $aUriParts = explode('/', trim($url, '/'));
+
+        if ($frontScriptName != false) {
+            //  step through array and strip until fc element is reached
+            foreach ($aUriParts as $elem) {
+                if ($elem != $frontScriptName) {
+                    array_shift($aUriParts);
+                } else {
+                    break;
+                }
+            }
+        } else {
+            $pathFromServer = (dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR)
+                ? ''
+                : dirname($_SERVER['SCRIPT_NAME']); //=> /seagull/trunk/www
+            if (!empty($pathFromServer)) {
+                foreach ($aUriParts as $elem) {
+                    if (stristr($pathFromServer, $elem)) {
+                        array_shift($aUriParts);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        return $aUriParts;
+    }
+
+    function ensureWebrootSet()
+    {
+        if (!defined('SGL_BASE_URL')) {
+            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
+                define('SGL_BASE_URL', $aMatches[1]);
+            } else {
+                die('Could not set webroot');
+            }
+        }
+    }
+}
+
+/**
+ * Abstract url parser strategy
+ *
+ * @abstract
+ */
+class SGL_UrlParserStrategy
+{
+    function parseQueryString() {}
+
+    function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output) {}
 }
 ?>

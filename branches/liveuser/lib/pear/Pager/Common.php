@@ -6,19 +6,34 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
+ * LICENSE: Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE FREEBSD PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   HTML
  * @package    Pager
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @author     Richard Heyes <richard@phpguru.org>
- * @copyright  2003-2005 Lorenzo Alberton, Richard Heyes
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.38 2005/07/04 08:18:42 quipo Exp $
+ * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
+ * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
+ * @version    CVS: $Id: Common.php,v 1.54 2006/04/21 13:27:02 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -28,7 +43,7 @@
  */
 if (substr($_SERVER['PHP_SELF'], -1) == '/') {
     define('CURRENT_FILENAME', '');
-    define('CURRENT_PATHNAME', str_replace('\\', '/', $_SERVER['PHP_SELF']));
+    define('CURRENT_PATHNAME', 'http://'.$_SERVER['HTTP_HOST'].str_replace('\\', '/', $_SERVER['PHP_SELF']));
 } else {
     define('CURRENT_FILENAME', preg_replace('/(.*)\?.*/', '\\1', basename($_SERVER['PHP_SELF'])));
     define('CURRENT_PATHNAME', str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])));
@@ -112,6 +127,12 @@ class Pager_Common
      * @access private
      */
     var $_fileName    = CURRENT_FILENAME;
+    
+    /**
+     * @var boolean If false, don't override the fileName option. Use at your own risk.
+     * @access private
+     */
+    var $_fixFileName = true;
 
     /**
      * @var boolean you have to use FALSE with mod_rewrite
@@ -124,6 +145,12 @@ class Pager_Common
      * @access private
      */
     var $_httpMethod  = 'GET';
+    
+    /**
+     * @var string specifies which HTML form to use
+     * @access private
+     */
+    var $_formID  = '';
 
     /**
      * @var boolean whether or not to import submitted data
@@ -160,6 +187,18 @@ class Pager_Common
      * @access private
      */
     var $_expanded    = true;
+    
+    /**
+     * @var boolean TRUE => show accesskey attribute on <a> tags
+     * @access private
+     */
+    var $_accesskey   = false;
+
+    /**
+     * @var string extra attributes for the <a> tag
+     * @access private
+     */
+    var $_attributes  = '';
 
     /**
      * @var string alt text for "first page" (use "%d" placeholder for page number)
@@ -378,6 +417,76 @@ class Pager_Common
      * @access public
      */
     var $range = array();
+    
+    /**
+     * @var array list of available options (safety check)
+     * @access private
+     */
+    var $_allowed_options = array(
+        'totalItems',
+        'perPage',
+        'delta',
+        'linkClass',
+        'path',
+        'fileName',
+        'fixFileName',
+        'append',
+        'httpMethod',
+        'formID',
+        'importQuery',
+        'urlVar',
+        'altFirst',
+        'altPrev',
+        'altNext',
+        'altLast',
+        'altPage',
+        'prevImg',
+        'nextImg',
+        'expanded',
+        'accesskey',
+        'attributes',
+        'separator',
+        'spacesBeforeSeparator',
+        'spacesAfterSeparator',
+        'curPageLinkClassName',
+        'curPageSpanPre',
+        'curPageSpanPost',
+        'firstPagePre',
+        'firstPageText',
+        'firstPagePost',
+        'lastPagePre',
+        'lastPageText',
+        'lastPagePost',
+        'firstLinkTitle',
+        'nextLinkTitle',
+        'prevLinkTitle',
+        'lastLinkTitle',
+        'showAllText',
+        'itemData',
+        'clearIfVoid',
+        'useSessions',
+        'closeSession',
+        'sessionVar',
+        'pearErrorMode',
+        'extraVars',
+        'excludeVars',
+        'currentPage',
+    );
+
+    // }}}
+    // {{{ build()
+    
+    /**
+     * Generate or refresh the links and paged data after a call to setOptions()
+     *
+     * @access public
+     */
+    function build()
+    {
+        $msg = '<b>PEAR::Pager Error:</b>'
+              .' function "build()" not implemented.';
+        return $this->raiseError($msg, ERROR_PAGER_NOT_IMPLEMENTED);
+    }
 
     // }}}
     // {{{ getPageData()
@@ -399,7 +508,7 @@ class Pager_Common
         if (!empty($this->_pageData[$pageID])) {
             return $this->_pageData[$pageID];
         }
-        return false;
+        return array();
     }
 
     // }}}
@@ -641,19 +750,22 @@ class Pager_Common
             if ($this->_append) {
                 $href = '?' . $this->_http_build_query_wrapper($this->_linkData);
             } else {
-                $href = sprintf($this->_fileName, $this->_linkData[$this->_urlVar]);
+                $href = str_replace('%d', $this->_linkData[$this->_urlVar], $this->_fileName);
             }
-            return sprintf('<a href="%s"%s title="%s">%s</a>',
+            return sprintf('<a href="%s"%s%s%s title="%s">%s</a>',
                            htmlentities($this->_url . $href),
                            empty($this->_classString) ? '' : ' '.$this->_classString,
+                           empty($this->_attributes)  ? '' : ' '.$this->_attributes,
+                           empty($this->_accesskey)   ? '' : ' accesskey="'.$this->_linkData[$this->_urlVar].'"',
                            $altText,
                            $linkText
             );
-        }
-        if ($this->_httpMethod == 'POST') {
-            return sprintf('<a onclick=\'%s\' href="#"%s title="%s">%s</a>',
+        } elseif ($this->_httpMethod == 'POST') {
+            return sprintf("<a href='javascript:void(0)' onclick='%s'%s%s%s title='%s'>%s</a>",
                            $this->_generateFormOnClick($this->_url, $this->_linkData),
                            empty($this->_classString) ? '' : ' '.$this->_classString,
+                           empty($this->_attributes)  ? '' : ' '.$this->_attributes,
+                           empty($this->_accesskey)   ? '' : ' accesskey=\''.$this->_linkData[$this->_urlVar].'\'',
                            $altText,
                            $linkText
             );
@@ -674,9 +786,9 @@ class Pager_Common
      * and _generateFormOnClick('foo.php', $arr)
      * will yield
      * $_REQUEST['array'][0][0] === 'hello'
-     * $_REQUEST['array'][0][0] === 'world'
+     * $_REQUEST['array'][0][1] === 'world'
      * $_REQUEST['array']['things'][0] === 'stuff'
-     * $_REQUEST['array']['things'][0] === 'junk'
+     * $_REQUEST['array']['things'][1] === 'junk'
      *
      * However, instead of  generating a query string, it generates
      * Javascript to create and submit a form.
@@ -696,15 +808,25 @@ class Pager_Common
             );
             return false;
         }
-        $str = 'var form = document.createElement("form"); var input = ""; ';
+
+        if (!empty($this->_formID)) {
+            $str = 'var form = document.getElementById("'.$this->_formID.'"); var input = ""; ';
+        } else {
+            $str = 'var form = document.createElement("form"); var input = ""; ';
+        }
+        
         // We /shouldn't/ need to escape the URL ...
         $str .= sprintf('form.action = "%s"; ', htmlentities($formAction));
         $str .= sprintf('form.method = "%s"; ', $this->_httpMethod);
         foreach ($data as $key => $val) {
             $str .= $this->_generateFormOnClickHelper($val, $key);
         }
-        $str .= 'document.getElementsByTagName("body")[0].appendChild(form);';
-        $str .= 'form.submit();';
+
+        if (empty($this->_formID)) {
+            $str .= 'document.getElementsByTagName("body")[0].appendChild(form);';
+        }
+        
+        $str .= 'form.submit(); return false;';
         return $str;
     }
 
@@ -738,7 +860,11 @@ class Pager_Common
             $escapedData = str_replace($search, $replace, $data);
             // am I forgetting any dangerous whitespace?
             // would a regex be faster?
-            $escapedData = htmlentities($escapedData);
+            // if it's already encoded, don't encode it again
+            if (!$this->_isEncoded($escapedData)) {
+                $escapedData = urlencode($escapedData);
+            }
+            $escapedData = htmlentities($escapedData, ENT_QUOTES, 'UTF-8');
 
             $str .= 'input = document.createElement("input"); ';
             $str .= 'input.type = "hidden"; ';
@@ -865,9 +991,8 @@ class Pager_Common
     function _getPageLinks($url='')
     {
         $msg = '<b>PEAR::Pager Error:</b>'
-              .' function "getOffsetByPageId()" not implemented.';
+              .' function "_getPageLinks()" not implemented.';
         return $this->raiseError($msg, ERROR_PAGER_NOT_IMPLEMENTED);
-
     }
 
     // }}}
@@ -991,7 +1116,7 @@ class Pager_Common
         if ($this->_append) {
             $href = '?' . $this->_http_build_query_wrapper($this->_linkData);
         } else {
-            $href = sprintf($this->_fileName, $this->_linkData[$this->_urlVar]);
+            $href = str_replace('%d', $this->_linkData[$this->_urlVar], $this->_fileName);
         }
         return htmlentities($this->_url . $href);
     }
@@ -1014,70 +1139,40 @@ class Pager_Common
      *                - 'optionText': text to show in each option.
      *                  Use '%d' where you want to see the number of pages selected.
      *                - 'attributes': (html attributes) Tag attributes or
-     *                  HTML attributes id="foo" pairs, will be inserted in the
+     *                  HTML attributes (id="foo" pairs), will be inserted in the
      *                  <select> tag
      * @return string xhtml select box
      * @access public
      */
     function getPerPageSelectBox($start=5, $end=30, $step=5, $showAllData=false, $extraParams=array())
     {
-        // FIXME: needs POST support
-        $optionText = '%d';
-        $attributes = '';
-        if (is_string($extraParams)) {
-            //old behavior, BC maintained
-            $optionText = $extraParams;
-        } else {
-            if (array_key_exists('optionText', $extraParams)) {
-                $optionText = $extraParams['optionText'];
-            }
-            if (array_key_exists('attributes', $extraParams)) {
-                $attributes = $extraParams['attributes'];
-            }
-        }
+        require_once 'Pager/HtmlWidgets.php';
+        $widget =& new Pager_HtmlWidgets($this);
+        return $widget->getPerPageSelectBox($start, $end, $step, $showAllData, $extraParams);
+    }
 
-        if (!strstr($optionText, '%d')) {
-            return $this->raiseError(
-                $this->errorMessage(ERROR_PAGER_INVALID_PLACEHOLDER),
-                ERROR_PAGER_INVALID_PLACEHOLDER
-            );
-        }
-        $start = (int)$start;
-        $end   = (int)$end;
-        $step  = (int)$step;
-        if (!empty($_SESSION[$this->_sessionVar])) {
-            $selected = (int)$_SESSION[$this->_sessionVar];
-        } else {
-            $selected = $this->_perPage;
-        }
+    // }}}
+    // {{{ getPageSelectBox()
 
-        $tmp = '<select name="'.$this->_sessionVar.'"';
-        if (!empty($attributes)) {
-            $tmp .= ' '.$attributes;
-        }
-        $tmp .= '>';
-        for ($i=$start; $i<=$end; $i+=$step) {
-            $tmp .= '<option value="'.$i.'"';
-            if ($i == $selected) {
-                $tmp .= ' selected="selected"';
-            }
-            $tmp .= '>'.sprintf($optionText, $i).'</option>';
-        }
-        if ($showAllData && $end < $this->_totalItems) {
-            $tmp .= '<option value="'.$this->_totalItems.'"';
-            if ($this->_totalItems == $selected) {
-                $tmp .= ' selected="selected"';
-            }
-            $tmp .= '>';
-            if (empty($this->_showAllText)) {
-                $tmp .= str_replace('%d', $this->_totalItems, $optionText);
-            } else {
-                $tmp .= $this->_showAllText;
-            }
-            $tmp .= '</option>';
-        }
-        $tmp .= '</select>';
-        return $tmp;
+    /**
+     * Returns a string with a XHTML SELECT menu with the page numbers,
+     * useful as an alternative to the links
+     *
+     * @param array   - 'optionText': text to show in each option.
+     *                  Use '%d' where you want to see the number of pages selected.
+     *                - 'autoSubmit': if TRUE, add some js code to submit the
+     *                  form on the onChange event
+     * @param string   $extraAttributes (html attributes) Tag attributes or
+     *                  HTML attributes (id="foo" pairs), will be inserted in the
+     *                  <select> tag
+     * @return string xhtml select box
+     * @access public
+     */
+    function getPageSelectBox($params = array(), $extraAttributes = '')
+    {
+        require_once 'Pager/HtmlWidgets.php';
+        $widget =& new Pager_HtmlWidgets($this);
+        return $widget->getPageSelectBox($params, $extraAttributes);
     }
 
     // }}}
@@ -1172,7 +1267,9 @@ class Pager_Common
         $tmp = array ();
         foreach ($data as $key => $val) {
             if (is_scalar($val)) {
-                array_push($tmp, $key.'='.$val);
+                //array_push($tmp, $key.'='.$val);
+                $val = urlencode($val);
+                array_push($tmp, $key .'='. str_replace('%2F', '/', $val));
                 continue;
             }
             // If the value is an array, recursively parse it
@@ -1198,14 +1295,34 @@ class Pager_Common
         $tmp = array ();
         foreach ($array as $key => $value) {
             if (is_array($value)) {
+                //array_push($tmp, $this->__http_build_query($value, sprintf('%s[%s]', $name, $key)));
                 array_push($tmp, $this->__http_build_query($value, $name.'%5B'.$key.'%5D'));
             } elseif (is_scalar($value)) {
+                //array_push($tmp, sprintf('%s[%s]=%s', $name, htmlentities($key), htmlentities($value)));
                 array_push($tmp, $name.'%5B'.htmlentities($key).'%5D='.htmlentities($value));
             } elseif (is_object($value)) {
+                //array_push($tmp, $this->__http_build_query(get_object_vars($value), sprintf('%s[%s]', $name, $key)));
                 array_push($tmp, $this->__http_build_query(get_object_vars($value), $name.'%5B'.$key.'%5D'));
             }
         }
         return implode(ini_get('arg_separator.output'), $tmp);
+    }
+
+    // }}}
+    // {{{ _isEncoded()
+
+    /**
+     * Helper function
+     * Check if a string is an encoded multibyte string
+     * @param string $string
+     * @return boolean
+     * @access private
+     */
+    
+    function _isEncoded($string)
+    {
+        $hexchar = '&#[\dA-Fx]{2,};';
+        return preg_match("/^(\s|($hexchar))*$/Uims", $string) ? true : false;
     }
 
     // }}}
@@ -1228,7 +1345,7 @@ class Pager_Common
     }
 
     // }}}
-    // {{{ _setOptions()
+    // {{{ setOptions()
 
     /**
      * Set and sanitize options
@@ -1236,59 +1353,12 @@ class Pager_Common
      * @param mixed $options    An associative array of option names and
      *                          their values.
      * @return integer error code (PAGER_OK on success)
-     * @access private
+     * @access public
      */
-    function _setOptions($options)
+    function setOptions($options)
     {
-        $allowed_options = array(
-            'totalItems',
-            'perPage',
-            'delta',
-            'linkClass',
-            'path',
-            'fileName',
-            'append',
-            'httpMethod',
-            'importQuery',
-            'urlVar',
-            'altFirst',
-            'altPrev',
-            'altNext',
-            'altLast',
-            'altPage',
-            'prevImg',
-            'nextImg',
-            'expanded',
-            'separator',
-            'spacesBeforeSeparator',
-            'spacesAfterSeparator',
-            'curPageLinkClassName',
-            'curPageSpanPre',
-            'curPageSpanPost',
-            'firstPagePre',
-            'firstPageText',
-            'firstPagePost',
-            'lastPagePre',
-            'lastPageText',
-            'lastPagePost',
-            'firstLinkTitle',
-            'nextLinkTitle',
-            'prevLinkTitle',
-            'lastLinkTitle',
-            'showAllText',
-            'itemData',
-            'clearIfVoid',
-            'useSessions',
-            'closeSession',
-            'sessionVar',
-            'pearErrorMode',
-            'extraVars',
-            'excludeVars',
-            'currentPage',
-        );
-        
         foreach ($options as $key => $value) {
-            if (in_array($key, $allowed_options) && (!is_null($value))) {
+            if (in_array($key, $this->_allowed_options) && (!is_null($value))) {
                 $this->{'_' . $key} = $value;
             }
         }
@@ -1307,7 +1377,9 @@ class Pager_Common
         $this->_path     = rtrim($this->_path, '/');      //strip trailing slash
 
         if ($this->_append) {
-            $this->_fileName = CURRENT_FILENAME; //avoid possible user error;
+            if ($this->_fixFileName) {
+                $this->_fileName = CURRENT_FILENAME; //avoid possible user error;
+            }
             $this->_url = $this->_path.'/'.$this->_fileName;
         } else {
             $this->_url = $this->_path;
@@ -1359,6 +1431,42 @@ class Pager_Common
         $this->_linkData = $this->_getLinksData();
 
         return PAGER_OK;
+    }
+
+    // }}}
+    // {{{ getOption()
+    
+    /**
+     * Return the current value of a given option
+     *
+     * @param string option name
+     * @return mixed option value
+     */
+    function getOption($name)
+    {
+        if (!in_array($name, $this->_allowed_options)) {
+            $msg = '<b>PEAR::Pager Error:</b>'
+                  .' invalid option: '.$name;
+            return $this->raiseError($msg, ERROR_PAGER_INVALID);
+        }
+        return $this->{'_' . $name};
+    }
+
+    // }}}
+    // {{{ getOptions()
+
+    /**
+     * Return an array with all the current pager options
+     *
+     * @return array list of all the pager options
+     */
+    function getOptions()
+    {
+        $options = array();
+        foreach ($this->_allowed_options as $option) {
+            $options[$option] = $this->{'_' . $option};
+        }
+        return $options;
     }
 
     // }}}

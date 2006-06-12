@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,30 +24,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Globals.php,v 1.11 2005/05/05 16:29:15 lsmith Exp $
+ * @version CVS: $Id: Globals.php,v 1.20 2006/02/27 18:05:28 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
 
 /**
  * This file holds all our default table/fields name/types/relations,
- * if they should be checked and more which are needed by both 
+ * if they should be checked and more which are needed by both
  * LiveUser and LiveUser_Admin
  *
  * You can add to those table or modify options via our table/field
@@ -84,7 +84,7 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
             'right_id' => 'seq',
             'area_id' => 'define_name',
             'right_define_name' => 'define_name',
-            'has_implied' => false,
+            'has_implied' => null,
         ),
         'joins' => array(
             'areas' => 'area_id',
@@ -92,7 +92,6 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
             'grouprights' => 'right_id',
             'right_implied' => array(
                 'right_id' => 'right_id',
-                'right_id' => 'implied_right_id',
             ),
             'translations' => array(
                 'right_id' => 'section_id',
@@ -119,7 +118,7 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
             'section_type' => 'translation',
             'language_id' => 'translation',
             'name' => false,
-            'description' => false,
+            'description' => null,
         ),
         'joins' => array(
             'rights' => array(
@@ -184,9 +183,6 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
             'group_id' => 'seq',
             'group_type' => false,
             'group_define_name' => 'define_name',
-            'is_active' => false,
-            'owner_user_id' => false,
-            'owner_group_id' => false,
         ),
         'joins' => array(
             'groupusers' => 'group_id',
@@ -206,6 +202,7 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
         'joins' => array(
             'groups' => 'group_id',
             'perm_users' => 'perm_user_id',
+            'grouprights' => 'group_id',
         ),
     ),
     'grouprights' => array(
@@ -217,6 +214,7 @@ $GLOBALS['_LiveUser']['perm']['tables'] = array(
         'joins' => array(
             'rights' => 'right_id',
             'groups' => 'group_id',
+            'groupusers' => 'group_id',
         ),
     ),
     'group_subgroups' => array(
@@ -251,9 +249,6 @@ $GLOBALS['_LiveUser']['perm']['fields'] = array(
     'group_id' => 'integer',
     'group_type' => 'integer',
     'group_define_name' => 'text',
-    'is_active' => 'boolean',
-    'owner_user_id' => 'integer',
-    'owner_group_id' => 'integer',
     'has_implied' => 'boolean',
     'implied_right_id' => 'integer',
     'subgroup_id' => 'integer'
@@ -280,9 +275,6 @@ $GLOBALS['_LiveUser']['perm']['alias'] = array(
     'group_id' => 'group_id',
     'group_type' => 'group_type',
     'group_define_name' => 'group_define_name',
-    'is_active' => 'is_active',
-    'owner_user_id' => 'owner_user_id',
-    'owner_group_id' => 'owner_group_id',
     'has_implied' => 'has_implied',
     'implied_right_id' => 'implied_right_id',
     'subgroup_id' => 'subgroup_id',

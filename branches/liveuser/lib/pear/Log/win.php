@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header: /var/cvs/seagull/lib/pear/Log/win.php,v 1.13 2004/12/24 22:23:25 demian Exp $
+ * $Header: /repository/pear/Log/Log/win.php,v 1.19 2006/05/28 00:40:01 jon Exp $
  *
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.19 $
  * @package Log
  */
 
@@ -14,7 +14,7 @@
  * entitled "JavaScript Power PHP Debugging:
  *
  *  http://www.zend.com/zend/tut/tutorial-DebugLib.php
- * 
+ *
  * @author  Jon Parise <jon@php.net>
  * @since   Log 1.7.0
  * @package Log
@@ -62,7 +62,7 @@ class Log_win extends Log
 
     /**
      * Constructs a new Log_win object.
-     * 
+     *
      * @param string $name     Ignored.
      * @param string $ident    The identity string.
      * @param array  $conf     The configuration array.
@@ -127,6 +127,7 @@ $win.document.writeln('body { font-family: monospace; font-size: 8pt; }');
 $win.document.writeln('td,th { font-size: 8pt; }');
 $win.document.writeln('td,th { border-bottom: #999999 solid 1px; }');
 $win.document.writeln('td,th { border-right: #999999 solid 1px; }');
+$win.document.writeln('tr { text-align: left; vertical-align: top; }');
 $win.document.writeln('</style>');
 $win.document.writeln('</head>');
 $win.document.writeln('<body>');
@@ -206,7 +207,7 @@ END_OF_SCRIPT;
     /**
      * Logs $message to the output window.  The message is also passed along
      * to any Log_observer instances that are observing this Log.
-     * 
+     *
      * @param mixed  $message  String or object containing the message to log.
      * @param string $priority The priority of the message.  Valid
      *                  values are: PEAR_LOG_EMERG, PEAR_LOG_ALERT,
@@ -233,9 +234,9 @@ END_OF_SCRIPT;
         list($usec, $sec) = explode(' ', microtime());
 
         /* Build the output line that contains the log entry row. */
-        $line  = '<tr align="left" valign="top">';
+        $line  = '<tr>';
         $line .= sprintf('<td>%s.%s</td>',
-                         strftime('%T', $sec), substr($usec, 2, 2));
+                         strftime('%H:%M:%S', $sec), substr($usec, 2, 2));
         if (!empty($this->_ident)) {
             $line .= '<td>' . $this->_ident . '</td>';
         }
@@ -251,6 +252,5 @@ END_OF_SCRIPT;
 
         return true;
     }
-}
 
-?>
+}

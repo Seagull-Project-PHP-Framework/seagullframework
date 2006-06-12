@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: PackageFile.php,v 1.7 2005/06/23 15:56:34 demian Exp $
+ * @version    CVS: $Id: PackageFile.php,v 1.33 2006/02/09 22:39:32 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -39,19 +39,37 @@ define('PEAR_PACKAGEFILE_ERROR_INVALID_PACKAGEVERSION', 2);
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
 class PEAR_PackageFile
 {
+    /**
+     * @var PEAR_Config
+     */
     var $_config;
     var $_debug;
+    /**
+     * Temp directory for uncompressing tgz files.
+     * @var string|false
+     */
     var $_tmpdir;
     var $_logger = false;
+    /**
+     * @var boolean
+     */
     var $_rawReturn = false;
+
+    /**
+     *
+     * @param   PEAR_Config $config
+     * @param   ?   $debug
+     * @param   string @tmpdir Optional temporary directory for uncompressing
+     *          files
+     */
     function PEAR_PackageFile(&$config, $debug = false, $tmpdir = false)
     {
         $this->_config = $config;
@@ -74,22 +92,16 @@ class PEAR_PackageFile
         $this->_logger = &$l;
     }
 
-    function &parserFactory($version, $phpversion = false)
+    /**
+     * Create a PEAR_PackageFile_Parser_v* of a given version.
+     * @param   int $version
+     * @return  PEAR_PackageFile_Parser_v1|PEAR_PackageFile_Parser_v1
+     */
+    function &parserFactory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
             $a = false;
             return $a;
-        }
-        if ($phpversion) {
-            if (!in_array((int) $phpversion, array(4, 5))) {
-                $phpversion = 'PHP4';
-            }
-        } else {
-            $v = phpversion();
-            if (!in_array((int) $v{0}, array(4, 5))) {
-                $v = 5;
-            }
-            $phpversion = 'PHP' . $v{0};
         }
         include_once 'PEAR/PackageFile/Parser/v' . $version{0} . '.php';
         $version = $version{0};
@@ -107,22 +119,16 @@ class PEAR_PackageFile
         return 'PEAR_PackageFile_v';
     }
 
-    function &factory($version, $phpversion = false)
+    /**
+     * Create a PEAR_PackageFile_v* of a given version.
+     * @param   int $version
+     * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v1
+     */
+    function &factory($version)
     {
         if (!in_array($version{0}, array('1', '2'))) {
             $a = false;
             return $a;
-        }
-        if ($phpversion) {
-            if (!in_array((int) $phpversion, array(4, 5))) {
-                $phpversion = 'PHP4';
-            }
-        } else {
-            $v = phpversion();
-            if (!in_array((int) $v{0}, array(4, 5))) {
-                $v = 5;
-            }
-            $phpversion = 'PHP' . $v{0};
         }
         include_once 'PEAR/PackageFile/v' . $version{0} . '.php';
         $version = $version{0};
@@ -132,12 +138,13 @@ class PEAR_PackageFile
     }
 
     /**
-     * Return a packagefile object from its toArray() method
+     * Create a PEAR_PackageFile_v* from its toArray() method
      *
      * WARNING: no validation is performed, the array is assumed to be valid,
      * always parse from xml if you want validation.
-     * @param array
+     * @param   array $arr
      * @return PEAR_PackageFileManager_v1|PEAR_PackageFileManager_v2
+     * @uses    factory() to construct the returned object.
      */
     function &fromArray($arr)
     {
@@ -165,10 +172,16 @@ class PEAR_PackageFile
     }
 
     /**
-     * @param string contents of package.xml file
-     * @param int package state (one of PEAR_VALIDATE_* constants)
-     * @param string full path to the package.xml file (and the files it references)
-     * @return PEAR_PackageFileManager_v1|PEAR_PackageFileManager_v2
+     * Create a PEAR_PackageFile_v* from an XML string.
+     * @access  public
+     * @param   string $data contents of package.xml file
+     * @param   int $state package state (one of PEAR_VALIDATE_* constants)
+     * @param   string $file full path to the package.xml file (and the files
+     *          it references)
+     * @param   string $archive optional name of the archive that the XML was
+     *          extracted from, if any
+     * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @uses    parserFactory() to construct a parser to load the package.
      */
     function &fromXmlString($data, $state, $file, $archive = false)
     {
@@ -202,6 +215,15 @@ class PEAR_PackageFile
                 }
                 return $pf;
             } else {
+                if ($this->_config->get('verbose') > 0) {
+                    if ($this->_logger) {
+                        if ($pf->getValidationWarnings(false)) {
+                            foreach ($pf->getValidationWarnings(false) as $warning) {
+                                $this->_logger->log(0, 'ERROR: ' . $warning['message']);
+                            }
+                        }
+                    }
+                }
                 $a = PEAR::raiseError('Parsing of package.xml from file "' . $file . '" failed',
                     2, null, null, $pf->getValidationWarnings());
                 return $a;
@@ -214,7 +236,7 @@ class PEAR_PackageFile
             if (!class_exists('PEAR_ErrorStack')) {
                 require_once 'PEAR/ErrorStack.php';
             }
-            PEAR_ErrorStack::staticPush('PEAR_PackageFile', 
+            PEAR_ErrorStack::staticPush('PEAR_PackageFile',
                 PEAR_PACKAGEFILE_ERROR_NO_PACKAGEVERSION,
                 'warning', array('xml' => $data), 'package.xml "' . $file .
                     '" has no package.xml <package> version');
@@ -246,8 +268,6 @@ class PEAR_PackageFile
             }
         }
     }
-    
-    // {{{ addTempFile()
 
     /**
      * Register a temporary file or directory.  When the destructor is
@@ -255,16 +275,22 @@ class PEAR_PackageFile
      * removed.
      *
      * @param string  $file  name of file or directory
+     * @return  void
      */
     function addTempFile($file)
     {
         $GLOBALS['_PEAR_Common_tempfiles'][] = $file;
     }
-    
+
     /**
+     * Create a PEAR_PackageFile_v* from a compresed Tar or Tgz file.
+     * @access  public
      * @param string contents of package.xml file
      * @param int package state (one of PEAR_VALIDATE_* constants)
-     * @return bool success of parsing
+     * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @using   Archive_Tar to extract the files
+     * @using   fromPackageFile() to load the package after the package.xml
+     *          file is extracted.
      */
     function &fromTgzFile($file, $state)
     {
@@ -287,7 +313,7 @@ class PEAR_PackageFile
             $file = realpath($file);
             $ret = PEAR::raiseError("Could not get contents of package \"$file\"".
                                      '. Invalid tgz file.');
-            return $ret;                                    
+            return $ret;
         } else {
             if (!count($content) && !@is_file($file)) {
                 $ret = PEAR::raiseError("could not open file \"$file\"");
@@ -306,7 +332,7 @@ class PEAR_PackageFile
                 $xml = $name;
                 break;
             } elseif (ereg('package.xml$', $name, $match)) {
-                $xml = $match[0];
+                $xml = $name;
                 break;
             }
         }
@@ -324,41 +350,57 @@ class PEAR_PackageFile
         $ret = &PEAR_PackageFile::fromPackageFile("$tmpdir/$xml", $state, $origfile);
         return $ret;
     }
-    
+
     /**
-     * Returns information about a package file.  Expects the name of
-     * a package xml file as input.
+     * Create a PEAR_PackageFile_v* from a package.xml file.
      *
-     * @param string  $descfile  name of package xml file
-     * @return array  array with package information
      * @access public
-     * @static
+     * @param   string  $descfile  name of package xml file
+     * @param   int     $state package state (one of PEAR_VALIDATE_* constants)
+     * @param   string|false $archive name of the archive this package.xml came
+     *          from, if any
+     * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @uses    PEAR_PackageFile::fromXmlString to create the oject after the
+     *          XML is loaded from the package.xml file.
      */
     function &fromPackageFile($descfile, $state, $archive = false)
     {
         if (is_string($descfile) && strlen($descfile) < 255 &&
              !@is_file($descfile) || !is_readable($descfile) ||
              (!$fp = @fopen($descfile, 'r'))) {
-            return PEAR::raiseError("Unable to open $descfile");
+            $a = PEAR::raiseError("Unable to open $descfile");
+            return $a;
         }
 
         // read the whole thing so we only get one cdata callback
         // for each block of cdata
-        $data = @fread($fp, filesize($descfile));
+        if (function_exists('file_get_contents')) {
+            @fclose($fp);
+            $data = file_get_contents($descfile);
+        } else {
+            $data = '';
+            while (!feof($fp)) {
+                $data .= @fread($fp, 8192);
+            }
+            fclose($fp);
+        }
         $ret = &PEAR_PackageFile::fromXmlString($data, $state, $descfile, $archive);
         return $ret;
     }
 
 
     /**
-     * Returns package information from different sources
+     * Create a PEAR_PackageFile_v* from a .tgz archive or package.xml file.
      *
-     * This method is able to extract information about a package
-     * from a .tgz archive or from a XML package definition file.
+     * This method is able to extract information about a package from a .tgz
+     * archive or from a XML package definition file.
      *
      * @access public
-     * @return string
-     * @static
+     * @param   string  $info file name
+     * @param   int     $state package state (one of PEAR_VALIDATE_* constants)
+     * @return  PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @uses    fromPackageFile() if the file appears to be XML
+     * @uses    fromTgzFile() to load all non-XML files
      */
     function &fromAnyFile($info, $state)
     {
@@ -384,9 +426,11 @@ class PEAR_PackageFile
                 }
             }
         } else {
-            return PEAR::raiseError("Cannot open '$info' for parsing");
+            $info = PEAR::raiseError("Cannot open '$info' for parsing");
+            return $info;
         }
         return $info;
     }
-
 }
+
+?>

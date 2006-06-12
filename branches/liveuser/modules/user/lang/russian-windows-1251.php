@@ -1,221 +1,493 @@
 <?php
     $words = array(
-/*  LOGIN   */
-        'Login' => 'Вход',
-        'Forgot Password' => 'Забыли свой пароль',
-        'Not Registered' => 'Не зарегистрированы?',
-        'Retrieve password' => 'Восстановить пароль',
-        'Enter the email address you registered with' => 'Введите email адрес, который вы указывали при регистрации',
-        'retrieve' => 'получить',
-        'You must enter a username' => 'Вы должны ввести имя пользователя (логин)',
-        'You must enter a password' => 'Вы должны ввести пароль',
-        'There was a problem with your session, please login again' => 'Возникла проблема с вашей сессией, возможно она устарела, пожалуйста авторизуйтесь еще раз',
-        'Only logged on users have access to this area, please register' => 'Только авторизованные пользователи имеют доступ в эту область, пожалуйста зарегистрируйтесь',
-        'username/password not recognized' => 'Ваша комбинация логин/пароль не распознана, попытайтесь еще раз',
 
-/*  USER MGR    */
-        'User Manager' => 'Менежер пользователей',
-        'User Manager :: Browse' => 'Менежер пользователей :: Просмотр',
-        'User Manager :: Edit' => 'Менежер пользователей :: Редактирование',
-        'User Manager :: Add' => 'Менежер пользователей :: Добавление',
-        'User Manager :: Reset password' => 'Менежер пользователей :: Восстановление пароля',
-        'My Profile :: Edit' => 'Мой профайл :: Редактирование',
-        'My Profile :: Password' => 'Мой профайл :: Пароль',
-        'User ID' => 'ID пользователя',
-        'Username' => 'Логин',
-        'Password' => 'Пароль',
-        'Confirm Password' => 'Подтвердите пароль',
-        'First Name' => 'Имя',
-        'Last Name' => 'Фамилия',
-        'Dealer' => 'Компания',
-        'Company' => 'Компания',
-        'Position' => 'Должность',
-        'Mobile' => 'Мобильный телефон',
-        'Account active' => 'Аккаунт активирован',
-        'You must enter a username' => 'Вы не ввели логин',
-        'You must enter an email' => 'Вы не вели email адрес',
-        'Your email address in not of the correct format' => 'Email адрес имеет не корректный формат',
-        'You must enter a password' => 'Вы не ввели пароль',
-        'Your passwords do not match' => 'Ваши пароли не совпадает',
-        'add user' => 'добавить пользователя',
-        'add group' => 'добавить группу',
-        'asset type' => 'тип файла',
-        'Select' => 'Выбрать',
-        'Email' => 'Email',
-        'Status' => 'Статус',
-        'Active' => 'Активный',
-        'Disabled' => 'Не доступный', // ?
-        'check if active' => 'проверять есть активный', // ?
-        'users' => 'пользователи',
-        'New User' => 'Новый пользователь',
-        'Full Name' => 'Полное имя',
-        'manage groups' => 'управление группами',
-        'Password updated successfully' => 'Пароль был успешно обновлен',
-        'With selected user(s)' => 'С выбранным пользователем(и)',
+/* Account MGR */
 
-        'return to profile edit' => 'вернуться в редактирование профайла',
-        'Change password' => 'Изменить пароль',
-        'Original password' => 'Оригинальный пароль', // ?
-        'New password' => 'Новый пароль',
-        'Confirm' => 'Подтвердить',
-        'Notify me by email' => 'Уведомить меня по email',
+    // title
+    'My Account'                   => 'Мой аккаунт',
+    'My Profile :: Edit'           => 'Мой профиль :: редактирование',
+    
+    // summary form (admin template)
+    'Role'                         => 'Роль',
+    'Date Registered'              => 'Зарегистрирован',
+    'Last Login'                   => 'Последний вход',
+    'first login in progress'      => 'зашел в первый раз (сейчас на сайте)',
+    'Current IP Address'           => 'Текущий IP адрес',
+    'change password'              => 'Сменить пароль',
+    // + user template
+    'My Profile'                   => 'Мой профиль',
+    'Preferences'                  => 'Настройки',
+    'Password'                     => 'Пароль',
+    'edit preferences'             => 'Редактировать',
+    'view profile'                 => 'Просмотр', // po smyslu
+    'No results found for that ID' => 'Нет результата для данного ID',
 
-        'Reseting password for' => 'Восстановить пароль для',
-        'Notify user' => 'Уведомить пользователя',
+    // profile form (admin template)
+    'Personal Details'        => 'Личная информация',
+    'Username'                => 'Имя пользователя',
+    'First Name'              => 'Имя',
+    'Last Name'               => 'Фамилия',
+    'Contact'                 => 'Контакты',
+    'Location'                => 'Местонахождение',
+    'Address 1'               => 'Адрес 1',
+    'Address 2'               => 'Адрес 2',
+    'Address 3'               => 'Адрес 3',
+    'City'                    => 'Город',
+    'Country'                 => 'Страна',
+    'Telephone'               => 'Телефон',
+    'Mobile'                  => 'Мобильный телефон',
+    'County/State/Province'   => 'Округ / штат / провинция',
+    'ZIP/Postal Code'         => 'ZIP / почтовый индекс',
+    // + user template
+    'Company'                 => 'Компания',
+    'edit these values'       => 'Редактировать',
+    
+    // edit form
+    'edit user'          => 'редактирование пользователя',
+    'Confirm Password'   => 'Подтвердить пароль',
+    'Organisation name'  => 'Организация',
+    'Is Active?'         => 'Активен',
+    'Security'           => 'Безопасность',
+    'Security question'  => 'Секретный вопрос',
+    'Answer'             => 'Ответ',
 
+    'aSecurityQuestions' => array(
+        0 => '',
+        1 => 'Кличка любимого домашнего животного',
+        2 => 'Памятная дата (дд/мм/гггг)',
+        3 => 'Памятное место',
+        4 => 'Девичья фамилия матери',
+        5 => 'Название любимого фильма',
+        6 => 'Название любимой песни',
+        7 => 'Название любимого коктейля'
+    ),
+    
+    // messages
+    'profile successfully updated'          => 'Профиль успешно отредактирован',
+    
+   
+    // validate
+    'You must enter a username'             => 'Пожалуйста, укажите имя пользователя',
+    'username min length'                   => 'Имя пользователя должно быть не меньше пяти символов',
+    'You must enter at least address 1'     => 'Пожалуйста, укажите адрес 1',
+    'You must enter your city'              => 'Пожалуйста, укажите город',
+    'You must enter your state/province'    => 'Пожалуйста, укажите округ / штат / провинцию',
+    'Please enter a company name'           => 'Пожалуйста, укажите компанию',
+    'You must enter your ZIP/Postal Code'   => 'Пожалуйста, укажите ZIP / почтовый индекс',
+    'You must enter your country'           => 'Пожалуйста, укажите страну',
+    'Your email is not correctly formatted' => 'Адрес эл. почты не корректен',
+    'You must enter your email'             => 'Пожалуйста, укажите адрес эл. почты',
+    'You must choose a security question'   => 'Пожалуйста, укажите секретный вопрос',
+    'Please enter a telephone number'       => 'Пожалуйста, укажите телефонный номер',
+    'You must provide a security answer'    => 'Пожалуйста, укажите секретный ответ',
+    
 
+/* Register MRG */
 
-/*  MY ACCOUNT    */
-        'My Account' => 'Мой аккаунт',
-        'My Profile' => 'Мой профайл',
+    // title
+    'Register' => 'Регистрация',
+    
+    // validate
+    'You must enter a password'                                    => 'Пожалуйста, укажите пароль',
+    'Please confirm password'                                      => 'Пожалуйста, подтвердите пароль',
+    'Password must be between 5 to 10 characters'                  => 'Пароль должен быть не меньше пяти символов и не больше десяти',
+    'Passwords are not the same'                                   => 'Пароли не совпадают',
+    'This email already exist in the DB, please choose another'    => 'Этот адрес эл. почты уже существует, пожалуйста, укажите другой',
+    'This username already exist in the DB, please choose another' => 'Это имя пользователя уже существует, пожалуйста, укажите другое',
+    
+    // messages
+    'user successfully registered' => 'Вы успешно зарегистрированы! На указанный адрес эл. почты было выслано письмо для подтверждения регистрации.',
+    
+    
+/* Password MRG */
 
-/*  PREF MGR    */
-        'Preference Manager :: Browse' => 'Менеджер настроек :: Просмотр',
-        'Preference Manager :: Edit' => 'Менеджер настроек :: Редактирование',
-        'Preference Manager :: Add' => 'Менеджер настроек :: Добавление',
-        'manage prefs' => 'редактирование настроек',
-        'add preference' => 'добавить настройку', // ?
-        'preference' => 'настройка',
-        'Pref ID' => 'ID настройки',
-        'Name' => 'Имя',
-        'Default value' => 'Значение по умолчанию',
-        'With selected pref(s)' => 'С выбранной настройкой(ми)',
-        'Details' => 'Подробности',
-        'pref successfully added' => 'Настройка была успешно добавлена',
-        'pref successfully updated' => 'Настройка была успешно обновлена',
-        'You must enter a preference name' => 'Вы не указали имя настройки',
-        'You must enter a default value' => 'Вы не указали значение по умолчанию',
-        'pref successfully deleted' => 'Настройка была успешно удалена',
+    // titles
+    'Retrieve password' => 'Восстановить пароль',
+    
+    // list
+    'Enter the email address you registered with' => 'Введите адрес эл. почты, который был указан при регистрации',
+    'retrieve' => 'Восстановить',
+    
 
-/* ACCOUNT SUMMARY */
-        'Group Membership' => 'Принадлежность к группам',
-        'Date Registered' => 'Дата регистрации',
-        'Last Login' => 'Последний логин',
-        'Current IP Address' => 'Текущий IP адрес',
-        'view profile' => 'просмотреть профайл',
-        'edit preferences' => 'редактировать настройки',
-        'No results found' => 'Ничего не найдено',
-        'No results found for that ID' => 'Ничего не найдено для указанного ID',
+/* UserPassword */
 
-/* ACCOUNT */
-        'edit these values' => 'редактировать эти значнеия',
-        'County/State/Province' => 'Округ/Страна/Район', // ?
+    // titles
+    'Change Password' => 'Смена пароля',
 
-/* PREF EDIT ALL */
-        'General' => 'Общие',
-        'Theme' => 'Тема',
-        'Change what this site looks like' => 'Изменить внешний вид сайта', // ?
-        'Date format' => 'Формат даты',
-        'UK format is dd/mm/yyyy and US is mm/dd/yyyy' => 'Формат даты Великобритании - dd/mm/yyyy и США - mm/dd/yyyy',
-        'Interface language' => 'Язык',
-        'Session timeout' => 'Время устаревания сессии',
-        'Session timeout tooltip' => 'As a security measure your session will end once you close the browser, however, you can set the max duration of your session within this time',
-        'Locale' => 'Местоположение',
-        'Locale tooltip' => 'Too many strings to list, see the PHP manual for more info: http://www.php.net/manual/en/function.setlocale.php',
-        'Character set' => 'Кодировка',
-        'Character set tooltip' => 'Enter your character set if the standard western european doesn\'t work for you, Seagull does not support multi-byte charsets yet',
-        'Results per page' => 'Результатов на странице',
-        'Show execution times?' => 'Отображать время выполнения?',
+    // form
+    'Original password'  => 'Текущий пароль',
+    'New password'       => 'Новый пароль',
+    'Confirm'            => 'Подтвердить',
+    'Notify me by email' => 'Уведомление на эл. адрес',
+    
+    // messages
+    'Password updated successfully' => 'Пароль успешно отредактирован',
+    
+    // validate
+    'You must enter your original password'                 => 'Пожалуйста, укажите текущий пароль',
+    'You must enter a new password'                         => 'Пожалуйста, укажите новый пароль',
+    'You have entered your original password incorrectly'   => 'Вы ввели неправильный текущий пароль',
+    
+    
+/* Login MRG */
 
-/*  REGISTER    */
-        'Preferences' => 'Настройки',
-        'Register' => 'Регистрация', // ?
-        'Personal Details' => 'Персональная информация', // ?
-        'Username' => 'Логин',
-        'Password' => 'Пароль',
-        'Confirm Password' => 'Подтверждение пароль',
-        'First Name' => 'Имя',
-        'Last Name' => 'Фамилия',
-        'Company Name' => 'Компания',
-        'Location' => 'Местоположение',
-        'Address 1' => 'Адрес 1',
-        'Address 2' => 'Адрес 2',
-        'Address 3' => 'Адрес 3',
-        'City' => 'Город',
-        'State/Province' => 'Страна/Область',
-        'ZIP/Postal Code' => 'ZIP/Postal Code', // ?
-        'Country' => 'Страна',
-        'Contact' => 'Контакт',
-        'Telephone' => 'Телефон',
-        'Mobile' => 'Мобильный телефон',
-        'Fax' => 'Факс',
-        'Is Active?' => 'Активный?',
-        ' check if active' => ' проверять если активный',
-        'Submit' => 'Ок',
-        'Reset' => 'Восстановить',
-        'Reset password now' => 'Восстановить пароль сейчас',
-        'aSecurityQuestions' => array(
-            0 => '',
-            1 => 'Имя любимой кошки/собаки',
-            2 => 'Значимая дата (dd/mm/yyyy)',
-            3 => 'Значимое место',
-            4 => 'Девичья фамилия вашем матери',
-            ),
+    // title
+    'Login' => 'Вход',
+    
+    // form
+    'Authorisation Required' => 'Требуется авторизация',
+    
+    // validate
+    'username/password not recognized' => 'Неверное имя пользователя и/или пароль',
+    
 
-/* User Edit*/
-        'return to browse' => 'вернуться в просмотр',
-        'back to Account' => 'вернуться на аккаунт',
-        'change password' => 'изменить пароль',
+/* UserPreference MGR */
 
-/*  REGISTER MESSAGES   */
-        'This email already exist in the DB, please choose another' => 'Указанный email адрес уже используется, пожалуйства выберите другой',
-        'This username already exist in the DB, please choose another' => 'Указанный логин уже зарегистрирован, пожалуйства выберите другой',
-        'Your email is not correctly formatted' => 'Ваш email некорректен',
-        'You must enter your email' => 'Вы не указали email',
-        'You must enter a username' => 'Вы не указали логин',
-        'You must enter a password' => 'Вы не указали пароль',
-        'You must enter a new password' => 'Вы не указали ваш новый пароль',
-        'You must enter your original password' => 'Вы не указали пароль',
-        'Password must be between 5 to 10 characters' => 'Пароль должен быть длиной от 5 до 10 знаков',
-        'Passwords are not the same' => 'Пароли не совпадают',
-        'You have entered your original password incorrectly' => 'Ваш пароль некорректен',
-        'Please confirm password' => 'Пожалуйста подтвердите пароль',
-        'username min length' => 'Ваш логин должен состоять из букв или цифр - по крайней мере 3 знаков и без пробелов',
-        'You must enter your first name' => 'Вы не ввели имя',
-        'You must enter your last name' => 'Вы не ввели фамилию',
-        'You must enter your company name' => 'Вы не указали название вашей компании',
-        'You must enter at least address 1' => 'Необходимо заполнить по крайней мере адрес1',
-        'You must enter your city' => 'Вы не указали ваш город',
-        'You must enter your state/province' => 'Вы не указали ваш state/province', // ?
-        'You must enter your ZIP/Postal Code' => 'Вы не указали ZIP/Postal Code', // ?
-        'You must enter your country' => 'Вы не указали страну',
-        'You must enter your telephone number' => 'Вы не ввели номер телефона',
-        'You must choose a security question' => 'Вы не выбрали секретный вопрос',
-        'You must provide a security answer' => 'Вы не ввели ответ на ваш секретный вопрос',
+    // title
+    'User Preferences' => 'Настройки пользователя',
+    
+    // form (admin template)
+    'Theme'                                        => 'Тема',
+    'Change what this site looks like'             => 'Изменяет внешний вид сайта',
+    'Date format'                                  => 'Формат даты',
+    'UK format is dd/mm/yyyy and US is mm/dd/yyyy' => 'Формат Великобритании - дд/мм/гггг, формат США - мм/дд/гггг',
+    'Interface language'                           => 'Язык интерфейса',
+    'Session timeout'                              => 'Таймаут сессии',
+    'Session timeout tooltip'                      => 'Сессия прекращает свое действие после закрытия окна браузера, однако, Вы можете установить продолжительность сессии',
+    'Locale'                                       => 'Локаль',
+    'Timezone'                                     => 'Временная зона',
+    'Results per page'                             => 'Записей на странице',
+    'Show execution times?'                        => 'Показывать время выполнения',
+    // + user template
+    'General'                                      => 'Основные',
+    
+    // messages
+    'details successfully updated' => 'Настройки пользователя успешно сохранены',
+    
+    
+/* Profile MGR */
 
+    // titile
+    'User Profile' => 'Профиль пользователя',
+    
+    // form
+    'Real Name'                => 'Имя',
+    'Lives in'                 => 'Местонахождение',
+    'Member Since'             => 'Зарегистрирован',
+    'none given'               => 'не указано',
+    'Posting Stats for User'   => 'Статистика текстов на сайте',
+    'Total Articles'           => 'Всего статей',
+    'Total Comments'           => 'Всего комментариев',
+    'coming soon ...'          => 'в разработке...',
+    // messaging
+    'back to contacts'         => 'назад в контакты',
+    'Message'                  => 'Сообщение',
+    'send message'             => 'послать сообщение',
+    'Contacts'                 => 'Контакты',
+    'add to contacts'          => 'добавить в контакты',
+    
+    
+/* OrgPreferences MGR */
 
-/* REGISTER EMAILS */
-        'Thanks for registering with' => 'Спасибо за регистрацию с', // ?
-        'Dear' => 'Дорогой',
-        'You are being sent this email because you just registered, your logon details are as follows' => 'Вам было выслано это письмо т.к. вы только что зарегистрировались, ваша информация для входа в систему приведена ниже',
-        'Your logon is' => 'Ваш логин',
-        'Your password is' => 'Ваш пароль',
-        'Click' => 'Нажать',
-        'here' => 'здесь',
-        'to logon to the' => 'для входа в',
-        'site now' => 'сайт сейчас.',
-        'Password Reminder' => 'Напомнить пароль',
-        'You are being sent this email because' => 'Вам было выслано это сообщение, т.к. вы запросили напоминание пароля.',
-        'Your new password is' => 'Ваш новый пароль',
+    // title
+    'Organisation Preferences' => 'Настройки организации',
+    
+    // form
+    'Preferences for org' => 'Настройки организации',
+    
+    // messages
+    'org details successfully updated' => 'Настройки организации успешно отредактированы',
+    
+    
+/* OrgType MGR */
 
-/*  GROUP MGR   */
-        'Group Manager' => 'Менеджер групп',
-        'Group Manager :: Browse' => 'Менеджер групп :: Browse',
-        'Group Manager :: Edit' => 'Менеджер групп :: Edit',
-        'Group Manager :: New Group' => 'Менеджер групп :: New Group',
-        'groups' => 'группы',
-        'Group' => 'Группа',
-        'Group ID' => 'ID группы',
-        'Group Name' => 'Имя группы',
-        'delete' => 'удалить',
-        'Add' => 'Добавить',
-        'Current Catgory' => 'Текущая категория',
-        'Manage' => 'Редактировать', // ?
-        'manage users' => 'редактировать пользователей', // ?
-        'You must enter a group name' => 'Вы не указали имя группы',
-        'The group has successfully been updated' => 'Группы была успешно обновлена',
-        'The group membership has successfully been modified' => 'Информация о принадлежности к группе была успешно измененеа',
-        'The selected group(s) have successfully been deleted' => 'Выбранная группа(ы) была успешно удалена',
-        'The group has successfully been added' => 'Группа была успешно добавлена',
-    );
+    // titles
+    'OrgType Manager'           => 'Управление типами организаций',
+    'OrgType Manager :: Browse' => 'Управление типами организаций :: Просмотр',
+    'OrgType Manager :: Add'    => 'Управление типами организаций :: Добавление',
+    'OrgType Manager :: Edit'   => 'Управление типами организаций :: Редактирование',
+
+    // list
+    'Organisation Type list'    => 'Список типов организаций',
+    'Add organisation type'     => 'Добавить тип организации',
+    'organisation type'         => 'тип организации',
+    'Be Careful!'               => 'Осторожно!',
+    
+    // form
+    'New organisation'          => 'Новая организация',
+    'Edit organisation'         => 'Редактирование организации',
+   
+    // validate
+    'You must enter an organisation type name' => 'Пожалуйста, укажите имя типа организации',
+    
+    // messages
+    'No data was updated'                             => 'Данные не изменены',
+    'Org type(s) deleted successfully'                => 'Выбранные типы организаций успешно удалены',
+    'Organisation type saved successfully'            => 'Тип организации успешно сохранен',
+    'Organisation type has been updated successfully' => 'Тип организации успешно отредактирован',
+
+    
+/* Org MGR */
+
+    // titile
+    'Organisation Manager'           => 'Управление организациями',
+    'Organisation Manager :: Browse' => 'Управление организациями :: просмотр',
+    'Organisation Manager :: Add'    => 'Управление организациями :: добавление',
+    'Organisation Manager :: Edit'   => 'Управление организациями :: редактирование',
+    
+    // list
+    'Organisation list'    => 'Список организаций',
+    'Website'              => 'Веб-сайт',
+    'change'               => 'сменить',
+    'organisation'         => 'организация',
+        
+    // form
+    'New organisation'     => 'Новая организация',
+    'Edit organisation'    => 'Редактирование организации',
+    'Details'              => 'Основная информация', // details
+    'Description'          => 'Описание',
+    'Parent Org'           => 'Родительская организация',
+    'Default Role'         => 'Роль по умолчанию',
+    
+    // validate
+    'You must enter an organisation name' => 'Пожалуйста, укажите имя организации',
+    
+    // messages
+    'organisation successfully added'                                                     => 'Организация успешно добавлена',
+    'The selected organisation(s) have successfully been deleted'                         => 'Выбранные организации успешно удалены',
+    'The selected organisation cannot be deleted because there are users relating to it'  => 'Выбранная организация "%s" не может быть удалена, т.к. существуют пользователи, относящиеся к ней',
+    'The organisation has successfully been updated'                                      => 'Организация успешно отредактирована',
+    'The organisation has successfully been updated, no data changed'                     => 'Организация успешно отредактирована, данные не изменены',
+    
+
+/* Preference MGR */
+
+    // titles
+    'Preference Manager'           => 'Управление настройками',
+    'Preference Manager :: Browse' => 'Управление настройками :: просмотр',
+    'Preference Manager :: Add'    => 'Управление настройками :: добавление',
+    'Preference Manager :: Edit'   => 'Управление настройками :: редактирование',
+    
+    // list
+    'Default value' => 'Значение по умолчанию',
+    'preference'    => 'опция',
+    
+    // form
+    'New preference'     => 'Новая опция',
+    'Editing preference' => 'Редактирование опции',
+    
+    // validate
+    'You must enter a default value'   => 'Пожалуйста, укажите значение по умолчанию',
+    'You must enter a preference name' => 'Пожалуйста, укажите имя опции',
+    
+    // messages
+    'pref successfully deleted' => 'Выбранные настройки успешно удалены',
+    'pref successfully updated' => 'Опция успешно отредактирована',
+    'pref successfully added'   => 'Опция успешно добавлена',
+    
+    
+/* Permission MGR */
+
+    // titles
+    'Permission Manager'                    => 'Управление уровнями доступа',
+    'Permission Manager :: Browse'          => 'Управление уровнями доступа :: просмотр',
+    'Permission Manager :: Add'             => 'Управление уровнями доступа :: добавление',
+    'Permission Manager :: Edit'            => 'Управление уровнями доступа :: редактирование',
+    'Permission Manager :: Detect & Add'    => 'Управление уровнями доступа :: обнаружение и добавление',
+    'Permission Manager :: Detect Orphaned' => 'Управление уровнями доступа :: удаление устаревших',
+    
+    // list
+    'New permission'           => 'Новый уровень доступа',
+    'Editing permission'       => 'Редактирование уровня доступа',
+    'detect & add permissions' => 'Обнаружение и добавление',
+    'remove orphaned'          => 'Удаление устаревших',
+    'filter by module'         => 'Фильтровать по модулю',
+    'all'                      => 'Все',
+    'permission'               => 'уровень доступа',
+    
+    // add / edit form
+    'Module'                   => 'Модуль',
+    
+    // detect perms / remove orphaned
+    'Detected Perms'             => 'Обнаруженные уровни доступа',
+    'Detected Orphaned Perms'    => 'Обнаруженные устаревшие уровни доступа',
+    'orphaned perms description' => 'Данные уровни доступа были обнаружены в базе данных, но не существуют в соответствующих модулях.',
+    'detected perms description' => 'Данные уровни доступа были обнаружены в модулях, но соотвествующие записи отсутствуют в базе данных.',
+
+    // validate
+    'You must enter a permission name' => 'Пожалуйста, укажите название уровня доступа',
+    
+    // messages
+    'perm already defined'                      => 'Уровень доступа с таким названием уже определен',
+    'perm successfully added'                   => 'Уровень доступа успешно добавлен',
+    'perm(s) successfully added'                => 'Выбранные уровни доступа успешно добавлены',
+    'perm successfully deleted'                 => 'Выбранные уровни доступа успешно удалены',
+    'perm successfully updated'                 => 'Уровень доступа успешно отредактирован',
+    'perm successfully deleted'                 => 'Выбранные уровни доступа успешно удалены',
+    
+    
+/* Role MGR */
+
+    // titles
+    'Role Manager'                => 'Управление ролями',
+    'Role Manager :: Browse'      => 'Управление ролями :: просмотр',
+    'Role Manager :: Add'         => 'Управление ролями :: добавление',
+    'Role Manager :: Edit'        => 'Управление ролями :: редактирование',
+    'Role Manager :: Permissions' => 'Управление ролями :: уровни доступа',
+    
+    // list
+    'New Role'   => 'Новая роль',
+    'duplicate'  => 'дублировать',
+    'role'       => 'роль',
+    'remove'     => 'удалить',
+    
+    // add / edit / perms assignment
+    'Editing role'                        => 'Редактирование роли',
+    'Changing permission assignments for' => 'Смена уровней доступа для роли',
+    'Remaining permissions'               => 'Свободные уровни доступа',
+    'Selected permissions for'            => 'Выбранные уровни доступа для',
+    
+    // validation
+    'You must enter a role name' => 'Пожалуйста, укажите название роли',
+    
+    // messages
+    'role successfully added'                                                             => 'Роль успешно добавлена',
+    'role successfully updated'                                                           => 'Роль успешно отредактирована',
+    'role successfully deleted'                                                           => 'Выбранные роли успешно удалены',
+    'role successfully deleted but please note, admin/unassigned roles cannot be deleted' => 'Выбранные роли успешно удалены, кроме ролей admin / unassigned, которые являются системными и не могут быть удалены',
+    'role successfully duplicated'                                                        => 'Роль успешно дублирована',
+    'role assignments successfully updated'                                               => 'Уровни доступа роли успешно отредактированы',
+    
+
+/* UserSearch MGR */
+
+    // titles
+    'User Manager :: Search' => 'Управление пользователями :: поиск',
+    
+    // list
+    'Search Criteria' => 'Критерии поиска',
+    'Role name'       => 'Роль',
+    'User ID'         => 'ID пользователя',
+    'Organisation'    => 'Организация',
+    'Register Date'   => 'Дата регистрации',
+    
+    // validation
+    'You must select a valid date' => 'Пожалуйста, укажите корректную дату',
+    'You must select a date'       => 'Пожалуйста, укажите дату',
+    
+    
+/* UserImport MGR */
+
+    // titles
+    'User Import Manager' => 'Управление импортом пользователей',
+    
+    // list
+    'userfile'                                                         => 'Исходный файл',
+    'Use the document manager to upload CSV files.'                    => 'Используйте модуль управления документами для загрузки CSV-файла',
+    'Import users into selected organisation.'                         => 'Импортирование пользователей к выбранной организации',
+    'User will be assigned to selected role.'                          => 'Импортирование пользователей к выбранной роли',
+    'You should first upload at least one csv file in your upload dir' => 'Для импорта пользователей Вам следует загрузить хотя бы один CSV-файл',
+    
+    // validation
+    'Please select a file.'              => 'Пожалуйста, укажите исходный файл',
+    'Please select the organisation'     => 'Пожалуйста, укажите организацию',
+    'Please select the role'             => 'Пожалуйста, укажите роль',
+    
+    
+/* User MGR */
+
+    // titles
+    'User Manager'                     => 'Управление пользователями',
+    'User Manager :: Browse'           => 'Управление пользователями :: просмотр',
+    'User Manager :: Login Data'       => 'Управление пользователями :: входы* в систему',
+    'User Manager :: Edit'             => 'Управление пользователями :: редактирование',
+    'User Manager :: Edit permissions' => 'Управление пользователями :: редактирование уровней доступа',
+    'User Manager :: Add'              => 'Управление пользователями :: добавление',
+    'User Manager :: Reset password'   => 'Управление пользователями :: сброс пороля',
+    'User Manager :: Change status'    => 'Управление пользователями :: смена статуса',
+    
+    // list
+    'New User'             => 'Новый пользователь',
+    'Search'               => 'Поиск',
+    'Import users'         => 'Импорт пользователей',
+    'User list'            => 'Список пользователей',
+    'user(s) found'        => 'пользователей найдено',
+    'clear search'         => 'убрать поиск',
+    'Logins'               => 'Входы*',
+    'list'                 => 'список',
+    'Change status'        => 'Сменить статус',
+    'No users found'       => 'Пользователей не найдено',
+    'Synchronise'          => 'Синхронизация',
+    '(each users current)' => '(текущая роль пользователей)',
+    'sync perms with role' => 'синхронизация ур. доступа с ролью',
+    'add missing perms'    => 'добавление недостающих ур. доступа',
+    'remove extra perms'   => 'удаление устаревших ур. доступа',
+    'complete sync'        => 'полная синхронизация',
+    
+    // add / edit
+    'add user'             => 'Добавление пользователя',
+    'check if active'      => 'отметьте для активации',
+    
+    // login data
+    'Connection list'      => 'Cписок входов в систему',
+    'Login Time'           => 'Время входа',
+    'Remote IP'            => 'Удаленный IP адрес',
+    'Are you sure?'        => 'Вы уверены?',
+    
+    // status change
+    'Disable Now'          => 'Отключить',
+    'Enable Now'           => 'Включить',
+    'active'               => 'активен',
+    'disabled'             => 'выключен',
+    'Changing status for'  => 'Смена статуса для',
+    'Current status is'    => 'Текущий статус:',
+    'Enable user'          => 'Активация пользователя',
+    'Disable user'         => 'Отключение пользователя',
+    'Notify user'          => 'Уведомить пользователя',
+    
+    // reset
+    'Reset password now'     => 'Сменить пароль',
+    'Resetting password for' => 'Сменя пароля для',
+    'Reset password info'    => 'Внимание! Если Вы сбрасываете пароль администратора, убедитесь, что указан соответствующий адрес эл. почты (воспользуйтесь функцией редактирования). Кроме того, убедитесь, что Ваша система настроена правильно для получения и отсылки эл. почты!',
+    
+    // change permissions
+    'for user id'            => 'для пользователя с ID',
+    'Select a module'        => 'Выберите модуль',
+    
+    // messages
+    'Deleted successfully'                 => 'Выбранные записи успешно удалены',
+    'Status changed successfully'          => 'Статус пользователя успешно сменен',
+    'user successfully added'              => 'Пользователь успешно добавлен',
+    'user successfully deleted'            => 'Выбранные пользователи успешно удалены',
+    'The user has been successfully added' => 'Пользователь успешно добавлен', // povtor
+    
+
+/**
+ * Mail templates
+ * (mail-shablony ne perevedeny, t.k. v etom net smysla, skoro budut sovsem drugie pis'ma - 
+ * s ispol'zovaniem novyh vozmohnostej metoda translate()).
+ */
+    'Thanks for registering with'            => 'Thanks for registering with',
+    'Dear'                                   => 'Dear',
+    'Click'                                  => 'Click',
+    'here'                                   => 'here',
+    'to logon to the'                        => 'to logon to the',
+    'site now'                               => 'site now.',
+    'Your username is'                       => 'Your username is',
+    'Your password is'                       => 'Your password is',
+    'Your registration is being reviewed'    => 'Your registration is being reviewed, you will be notified shortly',
+    'Password Reminder'                      => 'Password Reminder',
+    'You are being sent this email because'  => 'You are being sent this email because you requested a password reminder.',
+    'Your new password is'                   => 'Your new password is',
+    'New Registration at'                    => 'New Registration at',
+    'The following user has just registered' => 'The following user has just registered',
+    'to enable the new users account'        => 'to enable the new user\'s account',
+    'You are being sent this email because your new account status is now' => 'You are being sent this email because your new account status is now',    
+    'You are being sent this email because you just registered, your logon details are as follows' => 'You are being sent this email because you just registered, your logon details are as follows',
+    
+    // not found anywhere, but I suppose, that somewhere it is used
+    'There was a problem with your session, please login again'      => 'There was a problem with your session which may have timed out, please login again',
+    'Only logged on users have access to this area, please register' => 'Only logged on users have access to this area, please register',
+    'Registration has been disabled'                                 => 'Registration has been disabled',
+);
 ?>

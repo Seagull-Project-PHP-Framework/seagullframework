@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | NestedSet.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -46,7 +46,6 @@
  * @package SGL
  * @author  Andy Crain <andy@newslogic.com>
  * @version $Revision: 1.10 $
- * @since   PHP 4.1
  */
 class SGL_NestedSet
 {
@@ -57,16 +56,16 @@ class SGL_NestedSet
     * @access private
     */
     var $_images = array(
-        'upArrow'       => 'images/sort_desc.gif',
-        'upArrowDead'   => 'images/sort_desc_dead.gif',
-        'downArrow'     => 'images/sort_asc.gif',
-        'downArrowDead' => 'images/sort_asc_dead.gif',
-        'folder'        => 'images/imagesAlt2/foldericon.png',
-        'file'          => 'images/imagesAlt2/file.png',
-        'blank'         => 'images/imagesAlt2/blank.png',
-        't'             => 'images/imagesAlt2/T.png',
-        'l'             => 'images/imagesAlt2/L.png',
-        'i'             => 'images/imagesAlt2/I.png');
+        'upArrow'       => 'images/16/move_up.gif',
+        'upArrowDead'   => 'images/16/move_up_dead.gif',
+        'downArrow'     => 'images/16/move_down.gif',
+        'downArrowDead' => 'images/16/move_down_dead.gif',
+        'folder'        => 'images/treeNav/foldericon.png',
+        'file'          => 'images/treeNav/file.png',
+        'blank'         => 'images/treeNav/blank.png',
+        't'             => 'images/treeNav/T.png',
+        'l'             => 'images/treeNav/L.png',
+        'i'             => 'images/treeNav/I.png');
 
     var $_protectedFields = array('id', 'rootid', 'l', 'r', 'norder', 'level', 'parent');
 
@@ -90,11 +89,22 @@ class SGL_NestedSet
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->dbh                =& SGL_DB::singleton();
+        $this->dbh                = $this->_getDb();
         $this->_params            = $params;
         $this->_tableName         = $params['tableName'];
         $this->_fieldsInternal    = array_flip($params['tableStructure']);
         $this->_fieldListExternal = $this->_tableName . '.' . implode(",$this->_tableName.",$this->_fieldsInternal);
+    }
+
+    function &_getDb()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh;
     }
 
     function setImage($key, $value)
@@ -177,7 +187,7 @@ class SGL_NestedSet
                 if (DB::isError($result)) {
                     SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                     return;
-                }                
+                }
                 while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
                     $r[$row[$this->_fieldsInternal['id']]] = $row;
                 }
@@ -216,7 +226,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
@@ -255,12 +265,18 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = '';
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;
+    }
+
+    function getParent($id)
+    {
+        $ns = $this->_getNestedSet();
+        return $ns->getParent($id);
     }
 
     /**
@@ -294,7 +310,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)) {
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -402,7 +418,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -508,7 +524,7 @@ class SGL_NestedSet
         if (DB::isError($result)) {
             SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
             return;
-        }        
+        }
         return $result;
     }
 
@@ -563,8 +579,6 @@ class SGL_NestedSet
      * @return object DB_NestedSet_DB
      *
      * @author  Andy Crain <andy@newslogic.com>
-     * @version 1.0
-     * @since   PHP 4.0
      */
     function _getNestedSet()
     {
@@ -599,7 +613,7 @@ class SGL_NestedSet
     function createSubNode($id, $values)
     {
         $this->_cleanMemoryCache($id);
-        
+
         $ns = $this->_getNestedSet();
         return $ns->createSubNode($id, $values);
     }
@@ -607,7 +621,7 @@ class SGL_NestedSet
     function moveTree($id, $targetid, $pos, $copy = false)
     {
         $this->_cleanMemoryCache();
-        
+
         $ns = $this->_getNestedSet();
         return $ns->moveTree($id, $targetid, $pos, $copy);
     }
@@ -615,11 +629,11 @@ class SGL_NestedSet
     function deleteNode($id)
     {
         $this->_cleanMemoryCache($id);
-        
+
         $ns = $this->_getNestedSet();
         return $ns->deleteNode($id);
     }
-    
+
     /**
      * Clean nodes stored in memory
      * @param integer node id [optional]

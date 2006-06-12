@@ -1,6 +1,6 @@
 <?php
 // +-----------------------------------------------------------------------+
-// | Copyright (c) 2002-2003, Richard Heyes, Harald Radi                        |
+// | Copyright (c) 2002-2005, Richard Heyes, Harald Radi                   |
 // | All rights reserved.                                                  |
 // |                                                                       |
 // | Redistribution and use in source and binary forms, with or without    |
@@ -29,11 +29,11 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  |
 // |                                                                       |
 // +-----------------------------------------------------------------------+
-// | Author: Richard Heyes <richard@phpguru.org>                           |
+// | Author: Richard Heyes <http://www.phpguru.org/>                       |
 // |         Harald Radi <harald.radi@nme.at>                              |
 // +-----------------------------------------------------------------------+
 //
-// $Id: TreeMenu.php,v 1.3 2003/12/20 22:05:20 cvsroot Exp $
+// $Id: TreeMenu.php,v 1.21 2005/03/02 02:24:26 richard Exp $
 
 /**
 * HTML_TreeMenu Class
@@ -552,7 +552,7 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
     * Whether to use clientside persistence or not
     * @var bool
     */
-    var $userPersistence;
+    var $usePersistence;
 
     /**
     * The default CSS class for the nodes
@@ -564,6 +564,12 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
     * @var bool
     */
     var $noTopLevelImages;
+    
+    /**
+    * Name of Jabbascript object to use
+    * @var string
+    */
+    var $jsObjectName;
 
     /**
     * Constructor, takes the tree structure as
@@ -579,6 +585,9 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
     *  o maxDepth          -  The maximum depth of indentation. Useful for ensuring
     *                         deeply nested trees don't go way off to the right of your
     *                         page etc. Defaults to no limit.
+    *  o jsObjectName      -  Name to use for jabbascript object. Set this if you have
+    *                         different menus that should maintain their persistence
+    *                         information separately.
     *
     * And also a boolean for whether the entire tree is dynamic or not.
     * This overrides any perNode dynamic settings.
@@ -596,6 +605,7 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
         $this->images           = 'images';
         $this->maxDepth         = 0;        // No limit
         $this->linkTarget       = '_self';
+        $this->jsObjectName     = 'objTreeMenu';
         $this->defaultClass     = '';
         $this->usePersistence   = true;
         $this->noTopLevelImages = false;
@@ -616,10 +626,10 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
     function toHTML()
     {
         static $count = 0;
-        $menuObj     = 'objTreeMenu_' . ++$count;
+        $menuObj     = $this->jsObjectName . '_' . ++$count;
 
         $html  = "\n";
-        $html .= '<script language="javascript" type="text/javascript">' . "\n\t";
+        $html .= '<script language="javascript" type="text/javascript">' . "\n//<![CDATA[\n\t";
         $html .= sprintf('%s = new TreeMenu("%s", "%s", "%s", "%s", %s, %s);',
                          $menuObj,
                          $this->images,
@@ -646,7 +656,7 @@ class HTML_TreeMenu_DHTML extends HTML_TreeMenu_Presentation
         if ($this->usePersistence && $this->isDynamic) {
             $html .= sprintf("\n\t%s.resetBranches();", $menuObj);
         }
-        $html .= "\n</script>";
+        $html .= "\n// ]]>\n</script>";
 
         return $html;
     }

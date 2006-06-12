@@ -30,14 +30,14 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | BugMgr.php                                                                |
 // +---------------------------------------------------------------------------+
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
 // $Id: BugMgr.php,v 1.4 2005/06/23 18:21:25 demian Exp $
- 
+
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Validate.php';
 
@@ -46,22 +46,22 @@ class BugMgr extends SGL_Manager
     var $_clientInfo = array();
     var $_serverInfo = array();
     var $aSeverityTypes = array();
-    
+
     function BugMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module      = 'default';
+        parent::SGL_Manager();
+
         $this->pageTitle   = 'Bug Report';
         $this->template    = 'bugReport.html';
 
         $this->_aActionsMapping =  array(
-            'list'  => array('list'), 
-            'send'  => array('send', 'redirectToDefault'), 
+            'list'  => array('list'),
+            'send'  => array('send', 'redirectToDefault'),
         );
-        
+
         $this->_clientInfo = $this->getClientInfo();
-        $this->_serverInfo = $this->getServerInfo();
-        
+
         $this->aSeverityTypes = array(
             'not categorized' => 'not categorized',
             'critical' => 'critical',
@@ -74,7 +74,7 @@ class BugMgr extends SGL_Manager
             'support request' => 'support request',
             );
     }
-    
+
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -84,11 +84,11 @@ class BugMgr extends SGL_Manager
         $input->masterTemplate = 'masterMinimal.html';
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submit      = $req->get('submitted');
+        $input->submitted   = $req->get('submitted');
         $input->bug         = (object)$req->get('bug');
-        
+
         $aErrors = array();
-        if ($input->submit) {
+        if ($input->submitted) {
             $v = & new Validate();
             if (empty($input->bug->reporter_email)) {
                 $aErrors['reporter_email'] = 'You must enter your email';
@@ -102,7 +102,14 @@ class BugMgr extends SGL_Manager
             }
             if (empty($input->bug->comment)) {
                 $aErrors['comment'] = 'You must fill in your comment';
-            }            
+            }
+            // check for mail header injection
+            $input->bug->reporter_first_name =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_first_name);
+            $input->bug->reporter_last_name =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_last_name);
+            $input->bug->reporter_email =
+                SGL_Emailer::cleanMailInjection($input->bug->reporter_email);
         }
         //  if errors have occured
         if (is_array($aErrors) && count($aErrors)) {
@@ -111,10 +118,10 @@ class BugMgr extends SGL_Manager
             $this->validated = false;
         }
     }
-    
-    function _list(&$input, &$output)
+
+    function _cmd_list(&$input, &$output)
     {
-        if (SGL_HTTP_Session::getUserType() != SGL_GUEST) {                        
+        if (SGL_Session::getRoleId() != SGL_GUEST) {
             $user = $this->getCurrentUserInfo();
             $bug = new stdClass();
             $bug->reporter_first_name = $user->first_name;
@@ -123,19 +130,12 @@ class BugMgr extends SGL_Manager
 
             //  and send populated bug object to output
             $output->bug = $bug;
-        }      
+        }
     }
-    
-    function display(&$output)
+
+    function _cmd_send(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->environment = $this->buildEnvironmentReport();
-        $output->aSeverityTypes = $this->aSeverityTypes;          
-    }
-    
-    function _send(&$input, &$output)
-    {
-        $ok = $this->sendEmail($input->bug);
+        $ok = $this->_sendEmail($input->bug, $input->moduleName);
         if (!PEAR::isError($ok)) {
             SGL::raiseMsg('email submitted successfully');
         } else {
@@ -143,26 +143,15 @@ class BugMgr extends SGL_Manager
         }
     }
 
-    function getServerInfo()
+    function display(&$output)
     {
-        $conf = & $GLOBALS['_SGL']['CONF'];        
-        $aServerInfo = array();
-        //  get db info
-        $dbh = & SGL_DB::singleton();
-        $lastQuery = $dbh->last_query;
-        $aServerInfo['lastSql'] = isset($dbh->last_query) ? 
-            $dbh->last_query : null;
-        $aServerInfo['phpSapi'] = php_sapi_name();
-        $aServerInfo['phpOs'] = PHP_OS;
-        $aServerInfo['dbType'] = $conf['db']['type'];
-        $aServerInfo['phpVersion'] = PHP_VERSION;
-        $aServerInfo['serverPort'] = $_SERVER['SERVER_PORT'];
-        $aServerInfo['serverSoftware'] = $_SERVER['SERVER_SOFTWARE'];   
-        $aServerInfo['sglVersion'] = $GLOBALS['_SGL']['VERSION'];
-        return $aServerInfo;
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->environment = $this->buildEnvironmentReport();
+        $output->aSeverityTypes = $this->aSeverityTypes;
     }
-    
-    
+
+
     function getClientInfo()
     {
         $aclientInfo = array();
@@ -172,49 +161,49 @@ class BugMgr extends SGL_Manager
         $aclientInfo['remoteAddr'] = $_SERVER['REMOTE_ADDR'];
         return $aclientInfo;
     }
-    
+
     function getCurrentUserInfo()
     {
         //  instantiate new User entity
-        require_once SGL_ENT_DIR . '/Usr.php';        
-        $user = & new DataObjects_Usr();    
-        $user->get(SGL_HTTP_Session::getUid());
+		require_once 'DB/DataObject.php';
+        $user = DB_DataObject::factory($this->conf['table']['user']);
+        $user->get(SGL_Session::getUid());
         return $user;
     }
-    
+
     function buildEnvironmentReport()
     {
-        $html = '';
-        $data = array_merge($this->_clientInfo, $this->_serverInfo);
-        foreach ($data as $k => $v) {
-            $html .= "[$k] => $v \n";   
-        }
-        return $html;
+        $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+        $aEnvData['client_info'] = $this->_clientInfo;
+        $lastQuery = $this->dbh->last_query;
+        $aEnvData['db_info']['lastSql'] = isset($this->dbh->last_query) ?
+            $this->dbh->last_query : null;
+        return print_r($aEnvData, 1);
     }
-    
-    function sendEmail($oData)
+
+    function _sendEmail($oData, $moduleName)
     {
         $body = "The following bug report was submitted: \n\n";
-        
+
         $report = new BugReport($oData);
-        
+
         $options = array(
-            'toEmail'       => 'bugs@phpkitchen.com',
+            'toEmail'       => 'bugs@seagullproject.org',
             'toRealName'    => 'Seagull Maintainer',
             'fromEmail'     => $report->getEmail(),
             'fromRealName'  => $report->getName(),
-            'replyTo'       => 'seagull@phpkitchen.com',
+            'replyTo'       => 'seagull@seagullproject.org',
             'subject'       => '[Seagull Bug report]',
             'body'          => $report->toString(),
-            'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' . 
-                    $this->module . '/emailBugReport.php',
+            'template'      => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
+                $moduleName . '/email_bug_report.php',
             'siteUrl'       => SGL_BASE_URL,
             'siteName'      => 'Seagull',
         );
         $email = new SGL_Emailer($options);
         $ret = $email->prepare();
         if (!($ret)) {
-            return PEAR::raiseError('Problem building email'); 
+            return PEAR::raiseError('Problem building email');
         } else {
             return $email->send();
         }
@@ -222,36 +211,36 @@ class BugMgr extends SGL_Manager
 }
 
 class BugReport
-{   
+{
     var $reporter_first_name;
     var $reporter_last_name;
-    
+
     function BugReport($oData)
     {
         foreach ($oData as $k => $v) {
-            $this->$k = $v;   
+            $this->$k = $v;
         }
     }
-    
+
     function getEmail()
     {
         return isset($this->reporter_email) ? $this->reporter_email : 'anonymous';
     }
-    
+
     function getName()
     {
-        return isset($this->reporter_first_name) 
-            ? $this->reporter_first_name .' '. $this->reporter_last_name 
+        return isset($this->reporter_first_name)
+            ? $this->reporter_first_name .' '. $this->reporter_last_name
             : 'BugReporter';
-        
+
     }
-    
+
     function toString()
     {
         $str = '';
         $data = get_object_vars($this);
         foreach ($data as $k => $v) {
-            $str .= "[$k] => $v \n";   
+            $str .= "[$k] => $v \n";
         }
         return $str;
     }

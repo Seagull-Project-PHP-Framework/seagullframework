@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PublisherBase.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -43,8 +43,6 @@
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.11 $
- * @since   PHP 4.1
  */
 class PublisherBase
 {
@@ -86,45 +84,55 @@ class PublisherBase
     function maintainState(& $input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         //  look for catID
-        $sessCatID = SGL_HTTP_Session::get('currentCatId');
+        $sessCatID = SGL_Session::get('currentCatId');
         if (!$input->catID && !$sessCatID) {    //  if not in input or session, default to 1
             $input->catID = 1;
         } elseif (!$input->catID)               //  if not in input, grab from session
-            $input->catID = SGL_HTTP_Session::get('currentCatId');
+            $input->catID = SGL_Session::get('currentCatId');
+
         //  add to session
-        SGL_HTTP_Session::set('currentCatId', $input->catID);
+        SGL_Session::set('currentCatId', $input->catID);
 
         //  look for resource range, ie: 'all' or 'thisCategory'
-        $sessResourceRange = SGL_HTTP_Session::get('currentResRange');
+        $sessResourceRange = SGL_Session::get('currentResRange');
         if (!isset($input->queryRange) && !$sessResourceRange) {    // if not in input or session, default to 'all'
             $input->queryRange = 'all';
         } elseif (!isset($input->queryRange))               // if not in input, grab from session
-            $input->queryRange = SGL_HTTP_Session::get('currentResRange');
-        //  add to session
-        SGL_HTTP_Session::set('currentResRange', $input->queryRange);
+            $input->queryRange = SGL_Session::get('currentResRange');
 
-        //  look for dataTypeID for template selection in article manager 
-        $sessDatatypeID = SGL_HTTP_Session::get('dataTypeId');
+        //  add to session
+        SGL_Session::set('currentResRange', $input->queryRange);
+
+        //  look for dataTypeID for template selection in article manager
+        $sessDatatypeID = SGL_Session::get('dataTypeId');
+
         //    if not in input or session, set default article type
-        if (!isset($input->dataTypeID) && !$sessDatatypeID) {		           
-        	$conf = & $GLOBALS['_SGL']['CONF'];
-			$defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site'])) 
-			 ? $conf['site']['defaultArticleViewType'] 
-			 : 1; 
-            $input->dataTypeID = $defaultArticleType;            
+        if (!isset($input->dataTypeID) && !$sessDatatypeID) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+			$defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site']))
+			 ? $conf['site']['defaultArticleViewType']
+			 : 1;
+            $input->dataTypeID = $defaultArticleType;
+
         // if not in input, grab from session
         } elseif (!isset($input->dataTypeID))
-            $input->dataTypeID = SGL_HTTP_Session::get('dataTypeId');
+            $input->dataTypeID = SGL_Session::get('dataTypeId');
+
         //  add to session
-        SGL_HTTP_Session::set('dataTypeId', $input->dataTypeID);
+        SGL_Session::set('dataTypeId', $input->dataTypeID);
     }
 
     function getDocumentListByCatID($catID)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Document.php';
-        $documentList = & new DataObjects_Document();
+
+        require_once 'DB/DataObject.php';
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $documentList = DB_DataObject::factory($conf['table']['document']);
         $documentList->category_id = $catID;
         $result = $documentList->find();
         $documents = array();

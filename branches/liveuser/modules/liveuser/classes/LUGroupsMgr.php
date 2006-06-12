@@ -1,5 +1,5 @@
 <?php
-require_once 'DB/DataObject.php';
+require_once SGL_ENT_DIR . '/Liveuser_groupusers.php';
 require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_RIGHT_ADD', 1);
@@ -15,6 +15,8 @@ class LUGroupsMgr extends SGL_Manager
     function LUGroupsMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+        
         $this->module       = 'liveuser';
         $this->pageTitle    = 'Groups Manager';
         $this->template     = 'luGroupsList.html';
@@ -66,9 +68,6 @@ class LUGroupsMgr extends SGL_Manager
                 $aErrors['group_define_name'] = 'You must enter a "define name"';
             }
             */
-            if(empty($input->group['description'])) {
-                $aErrors['description'] = 'You must enter a description';
-            }
         }
         
         //  if errors have occured
@@ -86,7 +85,7 @@ class LUGroupsMgr extends SGL_Manager
     * Show the form which allow to create new group
     *
     */
-    function _add(&$input, &$output)
+    function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -99,17 +98,16 @@ class LUGroupsMgr extends SGL_Manager
     * Insert new group to database
     *
     */
-    function _insert(&$input, &$output)
+    function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $admin = &LUAdmin::singleton();
         
-        $data = $this->_buildFilterData($input);
+        $data = $this->_cmd_buildFilterData($input);
         $groupId = $admin->perm->addGroup($data);
         if ($groupId === false) {
-              SGL::raiseError('Error on line: '.__LINE__.' last query: '.$admin->perm->_storage->dbc->last_query, 
-                  SGL_ERROR_DBFAILURE);
+             LUAdmin::raiseError($admin);  
         } else {
             SGL::raiseMsg('Group was successfully added');
         }
@@ -120,7 +118,7 @@ class LUGroupsMgr extends SGL_Manager
     * Show specific group data (in the form)
     *
     */
-    function _edit(&$input, &$output)
+    function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -136,6 +134,7 @@ class LUGroupsMgr extends SGL_Manager
             LUAdmin::noRecordRedirect();
         }
         
+        $group->name = $group->group_define_name;
         $output->group = (array)$group;
     }
 
@@ -144,7 +143,7 @@ class LUGroupsMgr extends SGL_Manager
     * Update group data
     *
     */
-    function _update(&$input, &$output)
+    function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -154,7 +153,7 @@ class LUGroupsMgr extends SGL_Manager
         
         $admin = &LUAdmin::singleton();
         
-        $data = $this->_buildFilterData($input);
+        $data = $this->_cmd_buildFilterData($input);
         $filters = array('group_id' => $input->group_id);
         
         $upGroup = $admin->perm->updateGroup($data, $filters); 
@@ -172,7 +171,7 @@ class LUGroupsMgr extends SGL_Manager
     * List all groups
     *
     */
-    function _list(&$input, &$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -187,7 +186,7 @@ class LUGroupsMgr extends SGL_Manager
 
         // get members quantity
         foreach ($groups as $key => $group) {
-            $liveuserGroupUsers = &DB_DataObject::factory('liveuser_groupusers');
+            $liveuserGroupUsers = & new DataObjects_Liveuser_groupusers; 
             $liveuserGroupUsers->group_id = $group['group_id'];
             $groups[$key]['members_quantity'] = $liveuserGroupUsers->find();
         }
@@ -200,7 +199,7 @@ class LUGroupsMgr extends SGL_Manager
     * Delete group(s)
     *
     */
-    function _delete(&$input, &$output)
+    function _cmd_delete(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -227,7 +226,7 @@ class LUGroupsMgr extends SGL_Manager
     * Edit group rights
     *
     */
-    function _editRights(&$input, &$output)
+    function _cmd_editRights(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'luGroupEditRights.html';
@@ -255,7 +254,7 @@ class LUGroupsMgr extends SGL_Manager
     * Update group rights
     *
     */
-    function _updateRights(&$input, &$output)
+    function _cmd_updateRights(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -263,10 +262,10 @@ class LUGroupsMgr extends SGL_Manager
         $aRightsToRemove = LUAdmin::parseWidgetString($input->rightsToRemove);
         
         if (is_array($aRightsToAdd) && count($aRightsToAdd)) {
-            $this->_changeAssignments($aRightsToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
+            $this->_cmd_changeAssignments($aRightsToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
         }
         if (is_array($aRightsToRemove) && count($aRightsToRemove)) {
-            $this->_changeAssignments($aRightsToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
+            $this->_cmd_changeAssignments($aRightsToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
         }
         SGL::raiseMsg('group assignments successfully updated');
     }
@@ -280,7 +279,7 @@ class LUGroupsMgr extends SGL_Manager
      * @param   constant    action  whether to add/remove right
      * @return  void
      */
-    function _changeAssignments($aRights, $groupId, $action)
+    function _cmd_changeAssignments($aRights, $groupId, $action)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -362,7 +361,7 @@ class LUGroupsMgr extends SGL_Manager
     * Allow to edit group members
     *
     */
-    function _editMembers(&$input, &$output)
+    function _cmd_editMembers(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'luGroupEditMembers.html';
@@ -385,7 +384,7 @@ class LUGroupsMgr extends SGL_Manager
         $output->remainingMembersOptions = SGL_Output::generateSelect($aRemainingMembers);
     }
     
-    function _updateMembers(&$input, &$output)
+    function _cmd_updateMembers(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -393,10 +392,10 @@ class LUGroupsMgr extends SGL_Manager
         $aMembersToRemove = LUAdmin::parseWidgetString($input->membersToRemove);
         
         if (is_array($aMembersToAdd) && count($aMembersToAdd)) {
-            $this->_changeMemberAssignments($aMembersToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
+            $this->_cmd_changeMemberAssignments($aMembersToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
         }
         if (is_array($aMembersToRemove) && count($aMembersToRemove)) {
-            $this->_changeMemberAssignments($aMembersToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
+            $this->_cmd_changeMemberAssignments($aMembersToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
         }
         SGL::raiseMsg('group assignments successfully updated');
     }
@@ -410,7 +409,7 @@ class LUGroupsMgr extends SGL_Manager
      * @param   constant    action  whether to add/remove right
      * @return  void
      */
-    function _changeMemberAssignments($aMembers, $groupId, $action)
+    function _cmd_changeMemberAssignments($aMembers, $groupId, $action)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
@@ -502,7 +501,7 @@ class LUGroupsMgr extends SGL_Manager
         $params['filters'] = array('group_id' => $groupId);
         
         $admin = &LUAdmin::singleton();
-        $groups = &$admin->perm->getGroups($params);
+        @$groups = &$admin->perm->getGroups($params);
         $foundGroup = false;
         
         foreach ($groups as $group) {
@@ -521,13 +520,10 @@ class LUGroupsMgr extends SGL_Manager
      * @param   int   $input
      * @return  array $data  Formatted data options
      */
-    function _buildFilterData(&$input)
+    function _cmd_buildFilterData(&$input)
     {
         $data = array(
             'group_define_name' => LUAdmin::convertToConstant($input->group['name']), //$input->group['group_define_name'],
-            'name'              => $input->group['name'],
-            'description'       => $input->group['description'],
-            'is_active'         => 'Y',
         );
         return $data;
     }

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | HTML_TreeMenu_DHTML_SGL.php                                               |
 // +---------------------------------------------------------------------------+
@@ -149,13 +149,13 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $html  = "\n";
         $html .= '<script type="text/javascript">' . "\n\t";
         $html .= sprintf('%s = new TreeMenu("%s", "%s", "%s", "%s", %s, %s);',
-                         $menuObj,
-                         $this->images,
-                         $menuObj,
-                         $this->linkTarget,
-                         $this->defaultClass,
-                         $this->usePersistence ? 'true' : 'false',
-                         $this->noTopLevelImages ? 'true' : 'false');
+                    $menuObj,
+                    $this->images,
+                    $menuObj,
+                    $this->linkTarget,
+                    $this->defaultClass,
+                    $this->usePersistence ? 'true' : 'false',
+                    $this->noTopLevelImages ? 'true' : 'false');
 
         $html .= "\n";
 
@@ -163,12 +163,17 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         * Loop through subnodes
         */
         if (isset($this->menu->items)) {
-            for ($i=0; $i<count($this->menu->items); $i++) {
-                $html .= $this->_nodeToHTML($this->menu->items[$i], $menuObj);
+            for ($i = 0; $i < count($this->menu->items); $i++) {
+
+                // We don't want HiddentRoot, with id 0 (on PostgreSQL) to be shown as part of the menu
+                $currItem = $this->menu->items[$i];
+                if (!empty($currItem->id)) {
+                    $html .= $this->_nodeToHTML($this->menu->items[$i], $menuObj);
+                }
             }
         }
 
-         $html .= sprintf("\n\t%s.drawMenu();", $menuObj);
+        $html .= sprintf("\n\t%s.drawMenu();", $menuObj);
         if ($this->usePersistence && $this->isDynamic) {
             $html .= sprintf("\n\t%s.resetBranches();", $menuObj);
         }
@@ -187,23 +192,23 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
         $expanded  = $this->isDynamic ? ($nodeObj->expanded  ? 'true' : 'false') : 'true';
         $isDynamic = $this->isDynamic ? ($nodeObj->isDynamic ? 'true' : 'false') : 'false';
         $html = sprintf("\t %s = %s.addItem(new TreeNode('%s', %s, %s, %s, %s, '%s', '%s', %s));\n",
-                        addslashes($return),
-                        $prefix,
-                        $nodeObj->text,
-                        !empty($nodeObj->icon) ? "'" . $nodeObj->icon . "'" : 'null',
-#                        !empty($nodeObj->link) ? "'" . $nodeObj->link . "'" : 'null',
-                        !empty($nodeObj->link) ? "'" . $nodeObj->link . $nodeObj->id ."/'" : 'null',
-                        $expanded,
-                        $isDynamic,
-                        $nodeObj->cssClass,
-                        $nodeObj->linkTarget,
-                        !empty($nodeObj->expandedIcon) ? "'" . $nodeObj->expandedIcon . "'" : 'null');
+                    addslashes($return),
+                    $prefix,
+                    addslashes($nodeObj->text),
+                    !empty($nodeObj->icon) ? "'" . $nodeObj->icon . "'" : 'null',
+#                   !empty($nodeObj->link) ? "'" . $nodeObj->link . "'" : 'null',
+                    !empty($nodeObj->link) ? "'" . $nodeObj->link . $nodeObj->id ."/'" : 'null',
+                    $expanded,
+                    $isDynamic,
+                    $nodeObj->cssClass,
+                    $nodeObj->linkTarget,
+                    !empty($nodeObj->expandedIcon) ? "'" . $nodeObj->expandedIcon . "'" : 'null');
 
         foreach ($nodeObj->events as $event => $handler) {
             $html .= sprintf("\t %s.setEvent('%s', '%s');\n",
-                             $return,
-                             $event,
-                             str_replace(array("\r", "\n", "'"), array('\r', '\n', "\'"), $handler));
+                         $return,
+                         $event,
+                         str_replace(array("\r", "\n", "'"), array('\r', '\n', "\'"), $handler));
         }
 
         /**
@@ -217,5 +222,5 @@ class HTML_TreeMenu_DHTML_SGL extends HTML_TreeMenu_DHTML
 
         return $html;
     }
-} // End class HTML_TreeMenu_DHTML
+}
 ?>

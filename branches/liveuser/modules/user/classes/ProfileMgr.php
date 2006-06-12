@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ProfileMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -38,29 +38,35 @@
 // +---------------------------------------------------------------------------+
 // $Id: ProfileMgr.php,v 1.17 2005/06/08 10:07:28 demian Exp $
 
+require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_CORE_DIR . '/Delegator.php';
+
 
 /**
  * Display user account account info.
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @copyright Demian Turner 2004
  * @version $Revision: 1.17 $
- * @since   PHP 4.1
  */
 class ProfileMgr extends SGL_Manager
 {
     function ProfileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module       = 'user';
+        parent::SGL_Manager();
+
         $this->pageTitle    = 'User Profile';
         $this->template     = 'profile.html';
-        $this->da           = & DA_User::singleton();
+        $daUser    = &DA_User::singleton();
+        $daDefault = &DA_Default::singleton();
+        $this->da = new SGL_Delegator();
+        $this->da->add($daUser);
+        $this->da->add($daDefault);
 
         $this->_aActionsMapping =  array(
-            'view'   => array('view'), 
+            'view'   => array('view'),
         );
     }
 
@@ -76,39 +82,42 @@ class ProfileMgr extends SGL_Manager
         $input->fromContacts    = $req->get('frmFromContacts');
     }
 
-    function _view(&$input, &$output)
+    function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        require_once SGL_ENT_DIR . '/Usr.php';
-        $user = & new DataObjects_Usr();
+
+        require_once 'DB/DataObject.php';
+        $user = DB_DataObject::factory($this->conf['table']['user']);
+
+        if (is_null($input->userId)) {
+            return SGL::raiseError('user id cannot be null', SGL_ERROR_INVALIDARGS);
+        }
         $user->get($input->userId);
         $output->profile = $user;
 
-        //  include countries array
-        $lang = $_SESSION['aPrefs']['language'];
-        if ($lang != 'en' && $lang != 'de' && $lang != 'it') {
-            $lang = 'en';
-        }
-        require_once SGL_DAT_DIR . '/ary.countries.' . $lang . '.php';
+        $countries = SGL::loadRegionList('countries');
         $output->profile->country = $countries[$user->country];
 
         //  get last login
         $output->login = $this->da->getLastLogin();
-
+        if ($output->login === false) {
+            return SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
+        }
         //  total articles
-        require_once SGL_ENT_DIR . '/Item.php';
-        $items = & new DataObjects_Item();
-        $items->created_by_id = $input->userId;
-        $output->totalArticles = $items->count();
+        if ($this->da->moduleIsRegistered('publisher')) {
+            $items = DB_DataObject::factory($this->conf['table']['item']);
+            $items->created_by_id = $input->userId;
+            $output->totalArticles = $items->count();
+        }
 
         //  set conditional 'back' button
         $output->backButton = (isset($input->fromContacts)) ? $input->fromContacts : false;
 
         //  if current user is viewing his/her own profile,
         //  disable 'add to contacts' & 'send message'
-        $output->allowContact = ($input->userId == SGL_HTTP_Session::getUid()
-                              || SGL_HTTP_Session::getUserType() == SGL_GUEST) 
-            ? false 
+        $output->allowContact = ($input->userId == SGL_Session::getUid()
+                || SGL_Session::getRoleId() == SGL_GUEST)
+            ? false
             : true;
     }
 }

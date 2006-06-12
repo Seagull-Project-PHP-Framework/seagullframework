@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Storage.php,v 1.8 2005/06/07 14:40:01 lsmith Exp $
+ * @version CVS: $Id: Storage.php,v 1.18 2006/03/14 13:10:04 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -48,10 +48,10 @@
  * Abstraction class for all the storage containers
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -59,23 +59,26 @@
 class LiveUser_Perm_Storage
 {
     /**
+     * Table configuration
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $tables = array();
 
     /**
+     * All fields with their types
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $fields = array();
 
     /**
+     * All fields with their alias
      *
-     * @access public
      * @var    array
+     * @access public
      */
     var $alias = array();
 
@@ -88,20 +91,19 @@ class LiveUser_Perm_Storage
      */
     function LiveUser_Perm_Storage()
     {
-        $this->_stack = &PEAR_ErrorStack::singleton('LiveUser');
+        $this->stack = &PEAR_ErrorStack::singleton('LiveUser');
     }
 
     /**
+     * Initialize the storage container
      *
-     *
-     *
-     * @param array &$storageConf Array with the storage configuration
-     * @return boolean true on success, false on failure.
+     * @param array Array with the storage configuration
+     * @return bool true on success, false on failure.
      *
      * @access public
      */
     function init(&$storageConf)
-    {
+    {             
         if (is_array($storageConf)) {
             $keys = array_keys($storageConf);
             foreach ($keys as $key) {
@@ -132,16 +134,19 @@ class LiveUser_Perm_Storage
     }
 
     /**
+     * map an auth user to a perm user
      *
-     *
-     * @param int $authUserId
+     * @param int $auth_user_id
      * @param string $containerName
-     * @return mixed array or false on failure
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function mapUser($authUserId, $containerName)
+    function mapUser($auth_user_id, $containerName)
     {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
     }
 
     /**
@@ -151,40 +156,49 @@ class LiveUser_Perm_Storage
      * Group rights and invididual rights are being merged
      * in the process.
      *
-     * @param int $permUserId
-     * @return mixed array of false on failure
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readUserRights($permUserId)
+    function readUserRights($perm_user_id)
     {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
     }
 
     /**
+     * read the areas in which a user is an area admin
      *
-     *
-     * @param int $permUserId
-     * @return mixed array or false on failure
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readAreaAdminAreas($permUserId)
+    function readAreaAdminAreas($perm_user_id)
     {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
     }
 
     /**
      * Reads all the group ids in that the user is also a member of
      * (all groups that are subgroups of these are also added recursively)
      *
-     * @param int $permUserId
-     * @return void
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @see    readRights()
-     * @access private
+     * @access public
      */
-    function readGroups($permUserId)
+    function readGroups($perm_user_id)
     {
-    } // end func readGroups
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
+    }
 
     /**
      * Reads the group rights
@@ -192,63 +206,103 @@ class LiveUser_Perm_Storage
      *
      * right => 1
      *
-     * @param array $groupIds
-     * @return  mixed   MDB2_Error on failure or nothing
-     *
-     * @access  public
-     */
-    function readGroupRights($groupIds)
-    {
-    } // end func readGroupRights
-
-    /**
-     *
-     *
-     * @param array $groupIds
-     * @param array $newGroupIds
-     * @return mixed array or false on failure
+     * @param int group ids
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readSubGroups($groupIds, $newGroupIds)
+    function readGroupRights($group_ids)
     {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
     }
 
     /**
-     * store all properties in an array
+     * Read the sub groups of the new groups that are not part of the group ids
      *
-     * @param string $sessionName name of the session in use.
-     * @param array $propertyValues
-     * @return  array containing the property values
+     * @param array group ids
+     * @param array new group ids
+     * @return array requested data or false on failure
      *
-     * @access  public
+     * @access public
+     */
+    function readSubGroups($group_ids, $newGroupIds)
+    {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
+    }
+
+    /**
+     * Read out the rights from the userrights or grouprights table
+     * that imply other rights along with their level
+     *
+     * @param array right ids
+     * @param string name of the table
+     * @return array requested data or false on failure
+     *
+     * @access public
+     */
+    function readImplyingRights($rightIds, $table)
+    {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
+    }
+
+    /**
+    * Read out the implied rights with a given level from the implied_rights table
+    *
+    * @param array current right ids
+    * @param string current level
+     * @return array requested data or false on failure
+    *
+    * @access public
+    */
+    function readImpliedRights($currentRights, $currentLevel)
+    {
+        $this->stack->push(LIVEUSER_ERROR, 'error', array(),
+            __METHOD__.' is not implemented');
+        return false;
+    }
+
+    /**
+     * store all properties in the session and return them as an array
+     *
+     * @param string name of the key to use inside the session
+     * @param array property values
+     * @return array containing the property values
+     *
+     * @access public
      */
     function freeze($sessionName, $propertyValues)
     {
         $_SESSION[$sessionName]['perm'] = $propertyValues;
         return $propertyValues;
-    } // end func freeze
+    }
 
     /**
      * Reinitializes properties
      *
-     * @param   array  $propertyValues
+     * @param string name of the key to use inside the session
      * @return array
      *
-     * @access  public
+     * @access public
      */
     function unfreeze($sessionName)
     {
-        return (isset($_SESSION[$sessionName]['perm']))
-            ? $_SESSION[$sessionName]['perm'] : array();
-    } // end func unfreeze
+        return (array_key_exists('perm', $_SESSION[$sessionName])
+            && is_array($_SESSION[$sessionName]['perm']))
+                ? $_SESSION[$sessionName]['perm'] : array();
+    }
 
     /**
      * properly disconnect from resources
      *
-     * @return void
+     * @return bool true on success and false on failure
      *
-     * @access  public
+     * @access public
      */
     function disconnect()
     {

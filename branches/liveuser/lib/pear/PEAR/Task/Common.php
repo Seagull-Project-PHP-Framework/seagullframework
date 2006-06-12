@@ -13,9 +13,9 @@
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.6 2005/06/23 15:56:41 demian Exp $
+ * @version    CVS: $Id: Common.php,v 1.15 2006/01/06 04:47:37 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -51,9 +51,9 @@ define('PEAR_TASK_PACKAGEANDINSTALL', 3);
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  * @abstract
@@ -129,9 +129,10 @@ class PEAR_Task_Common
      * Initialize a task instance with the parameters
      * @param array raw, parsed xml
      * @param array attributes from the <file> tag containing this task
+     * @param string|null last installed version of this package
      * @abstract
      */
-    function init($xml, $fileattribs)
+    function init($xml, $fileAttributes, $lastVersion)
     {
     }
 
@@ -141,7 +142,7 @@ class PEAR_Task_Common
      * return any errors using the custom throwError() method to allow forward compatibility
      *
      * This method MUST NOT write out any changes to disk
-     * @param PEAR_PackageFile_v1|PEAR_PackageFile_v2
+     * @param PEAR_PackageFile_v2
      * @param string file contents
      * @param string the eventual final file location (informational only)
      * @return string|false|PEAR_Error false to skip this file, PEAR_Error to fail
@@ -171,6 +172,22 @@ class PEAR_Task_Common
     function hasPostinstallTasks()
     {
         return isset($GLOBALS['_PEAR_TASK_POSTINSTANCES']);
+    }
+
+    /**
+     * @static
+     * @final
+     */
+     function runPostinstallTasks()
+     {
+         foreach ($GLOBALS['_PEAR_TASK_POSTINSTANCES'] as $class => $tasks) {
+             $err = call_user_func(array($class, 'run'),
+                  $GLOBALS['_PEAR_TASK_POSTINSTANCES'][$class]);
+             if ($err) {
+                 return PEAR_Task_Common::throwError($err);
+             }
+         }
+         unset($GLOBALS['_PEAR_TASK_POSTINSTANCES']);
     }
 
     /**

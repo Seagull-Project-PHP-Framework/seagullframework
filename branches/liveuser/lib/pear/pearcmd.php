@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.23 2005/06/23 15:56:28 demian Exp $
+// $Id: pearcmd.php,v 1.33 2006/01/02 18:05:53 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -26,11 +26,22 @@ if (!defined('PEAR_RUNTYPE')) {
     define('PEAR_RUNTYPE', 'pear');
 }
 define('PEAR_IGNORE_BACKTRACE', 1);
+if (!function_exists('file_get_contents')) {
+    function file_get_contents($filename)
+    {
+        $fp = fopen($filename, 'rb');
+        $ret = '';
+        while (!feof($fp)) {
+            $ret .= fread($fp, 8092);;
+        }
+        return $ret;
+    }
+}
 /**
  * @nodep Gtk
  */
-if ('/var/www/html/seagull_dev/HEAD/seagull/lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', '/var/www/html/seagull_dev/HEAD/seagull/lib/pear');
+if ('/var/www/html/seagull/branches/0.6-bugfix/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/var/www/html/seagull/branches/0.6-bugfix/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
@@ -47,7 +58,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.4.0a12";
+$pear_package_version = "1.4.9";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -59,7 +70,16 @@ require_once 'Console/Getopt.php';
 PEAR_Command::setFrontendType('CLI');
 $all_commands = PEAR_Command::getCommands();
 
+// remove this next part when we stop supporting that crap-ass PHP 4.2
+if (!isset($_SERVER['argv']) && !isset($argv) && !isset($HTTP_SERVER_VARS['argv'])) {
+    die('ERROR: either use the CLI php executable, or set register_argc_argv=On in php.ini');
+}
 $argv = Console_Getopt::readPHPArgv();
+// fix CGI sapi oddity - the -- in pear.bat/pear is not removed
+if (php_sapi_name() != 'cli' && isset($argv[1]) && $argv[1] == '--') {
+    unset($argv[1]);
+    $argv = array_values($argv);
+}
 $progname = PEAR_RUNTYPE;
 if (in_array('getopt2', get_class_methods('Console_Getopt'))) {
     array_shift($argv);
@@ -83,6 +103,11 @@ if ($progname == 'gpear' || $progname == 'pear-gtk') {
         }
     }
 }
+//Check if Gtk and PHP >= 5.1.0
+if ($fetype == 'Gtk' && version_compare(phpversion(), '5.1.0', '>=')) {
+    $fetype = 'Gtk2';
+}
+
 $pear_user_config = '';
 $pear_system_config = '';
 $store_user_config = false;
@@ -103,6 +128,24 @@ foreach ($opts as $opt) {
 PEAR_Command::setFrontendType($fetype);
 $ui = &PEAR_Command::getFrontendObject();
 $config = &PEAR_Config::singleton($pear_user_config, $pear_system_config);
+
+if (PEAR::isError($config)) {
+    $_file = '';
+    if ($pear_user_config !== false) {
+       $_file .= $pear_user_config;
+    }
+    if ($pear_system_config !== false) {
+       $_file .= '/' . $pear_system_config;
+    }
+    if ($_file == '/') {
+        $_file = 'The default config file';
+    }
+    $config->getMessage();
+    $ui->outputData("ERROR: $_file is not a valid config file or is corrupted.");
+    // We stop, we have no idea where we are :)
+    exit();    
+}
+
 // this is used in the error handler to retrieve a relative path
 $_PEAR_PHPDIR = $config->get('php_dir');
 $ui->setConfig($config);
@@ -203,7 +246,7 @@ if (empty($command) && ($store_user_config || $store_system_config)) {
     exit;
 }
 
-if ($fetype == 'Gtk') {
+if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
     if (!$config->validConfiguration()) {
         PEAR::raiseError('CRITICAL ERROR: no existing valid configuration files found in files ' .
             "'$pear_user_config' or '$pear_system_config', please copy an existing configuration" .
@@ -261,6 +304,10 @@ if ($fetype == 'Gtk') {
     $ok = $cmd->run($command, $opts, $params);
     if ($ok === false) {
         PEAR::raiseError("unknown command `$command'");
+    }
+    if (PEAR::isError($ok)) {
+        PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
+        PEAR::raiseError($ok);
     }
 } while (false);
 
@@ -346,7 +393,12 @@ function cmdHelp($command)
 
 function error_handler($errno, $errmsg, $file, $line, $vars) {
     if ((defined('E_STRICT') && $errno & E_STRICT) || !error_reporting()) {
-        return; // @silenced error
+        if (defined('E_STRICT') && $errno & E_STRICT) {
+            return; // E_STRICT
+        }
+        if ($GLOBALS['config']->get('verbose') < 4) {
+            return; // @silenced error, show all if debug is high enough
+        }
     }
     $errortype = array (
         E_ERROR   =>  "Error",
@@ -362,16 +414,11 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
         E_USER_NOTICE =>  "User Notice"
     );
     $prefix = $errortype[$errno];
-    $file = basename($file);
-    if (function_exists('debug_backtrace')) {
-        $trace = debug_backtrace();
-        if (isset($trace[1]) && isset($trace[1]['file'])) {
-            $dir = $trace[1]['file'];
-            global $_PEAR_PHPDIR;
-            if (stristr($dir, $_PEAR_PHPDIR)) {
-                $file = substr($dir, strlen($_PEAR_PHPDIR) + 1);
-            }
-        }
+    global $_PEAR_PHPDIR;
+    if (stristr($file, $_PEAR_PHPDIR)) {
+        $file = substr($file, strlen($_PEAR_PHPDIR) + 1);
+    } else {
+        $file = basename($file);
     }
     print "\n$prefix: $errmsg in $file on line $line\n";
 }

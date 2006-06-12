@@ -16,12 +16,12 @@
 // | Author: Chuck Hagenbuch <chuck@horde.org>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: mail.php,v 1.13 2004/09/09 02:08:55 jon Exp $
+// $Id: mail.php,v 1.15 2005/10/10 04:16:26 jon Exp $
 
 /**
  * internal PHP-mail() implementation of the PEAR Mail:: interface.
  * @package Mail
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.15 $
  */
 class Mail_mail extends Mail {
 
@@ -54,7 +54,11 @@ class Mail_mail extends Mail {
          * line arguments, we can't guarantee the use of the standard
          * "\r\n" separator.  Instead, we use the system's native line
          * separator. */
-        $this->sep = (strstr(PHP_OS, 'WIN')) ? "\r\n" : "\n";
+        if (defined(PHP_EOL)) {
+            $this->sep = PHP_EOL;
+        } else {
+            $this->sep = (strpos(PHP_OS, 'WIN') === false) ? "\n" : "\r\n";
+        }
     }
 
 	/**

@@ -15,7 +15,7 @@
 // | Author: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +---------------------------------------------------------------------+
 //
-// $Id: Container.php,v 1.7 2005/02/27 10:00:26 demian Exp $
+// $Id: Container.php,v 1.40 2006/02/14 00:47:46 aashley Exp $
 
 require_once 'Config.php';
 
@@ -89,7 +89,11 @@ class Config_Container {
         $this->content    = $content;
         $this->attributes = $attributes;
         $this->parent     = null;
-        $this->_id        = uniqid($name.$type, true);
+        if (version_compare(PHP_VERSION, '5.0.0', 'gt')) {
+            $this->_id    = uniqid($name.$type, true);
+        } else {
+            $this->_id    = uniqid(substr($name.$type, 0, 114), true);
+        }
     } // end constructor
 
     /**
@@ -286,13 +290,15 @@ class Config_Container {
             if (isset($itemsArr[$index])) {
                 return $itemsArr[$index];
             } else {
-                return false;
+                $return = false;
+                return $return;
             }
         } else {
             if ($count = count($itemsArr)) {
                 return $itemsArr[$count-1];
             } else {
-                return false;
+                $return = false;
+                return $return;
             }
         }
     } // end func &getItem
@@ -333,7 +339,8 @@ class Config_Container {
         $match =& $this->getItem(null, $name, null, $attributes);
 
         if (!$match) {
-            return false;
+            $return = false;
+            return $return;
         }
         if (!empty($args)) {
             return $match->searchPath($args);
@@ -401,7 +408,7 @@ class Config_Container {
         $count = 0;
         if (isset($name) && isset($type)) {
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name && 
+                if ($this->children[$i]->name === $name && 
                     $this->children[$i]->type == $type) {
                     $count++;
                 }
@@ -419,7 +426,7 @@ class Config_Container {
         if (isset($name)) {
             // Some directives can have the same name
             for ($i = 0, $children = count($this->children); $i < $children; $i++) {
-                if ($this->children[$i]->name == $name) {
+                if ($this->children[$i]->name === $name) {
                     $count++;
                 }
             }

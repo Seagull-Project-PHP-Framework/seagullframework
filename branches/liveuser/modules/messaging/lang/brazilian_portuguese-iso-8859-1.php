@@ -1,4 +1,7 @@
 <?php
+$words['Messages did not reach all recipients'] = 'As mensanges não foram enviadas para todos os destinatários';
+$words['Reply'] = 'Responder';
+$words['Compose Message'] = 'Criar mensagem';
 $words['Read'] = 'Ler';
 $words['From'] = 'De';
 $words['cancel'] = 'cancelar';

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Util.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -44,35 +44,9 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.22 $
- * @since   PHP 4.1
  */
 class SGL_Util
 {
-    function getUserOs()
-    {
-        //  detect OS
-        if (!empty($_SERVER['HTTP_USER_AGENT']) and !defined('SGL_USR_OS')) {
-            if (strstr($_SERVER['HTTP_USER_AGENT'], 'Win')) {
-                define('SGL_USR_OS', 'Win');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Mac')) {
-                define('SGL_USR_OS', 'Mac');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Linux')) {
-                define('SGL_USR_OS', 'Linux');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'Unix')) {
-                define('SGL_USR_OS', 'Unix');
-            } elseif (strstr($_SERVER['HTTP_USER_AGENT'], 'OS/2')) {
-                define('SGL_USR_OS', 'OS/2');
-            } else {
-                define('SGL_USR_OS', 'Other');
-            }
-        } else {
-            // Could be that the file is being run natively (not through a web server)
-			if (!defined('SGL_USR_OS')) {
-            	define('SGL_USR_OS', 'None');
-			}
-        }
-    }
-
     // +---------------------------------------+
     // | Column-sorting methods                |
     // +---------------------------------------+
@@ -91,14 +65,14 @@ class SGL_Util
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if ($sortOrder == '') {
-            $order = SGL_HTTP_Session::get('sortOrder');
+            $order = SGL_Session::get('sortOrder');
         } elseif ($sortOrder == 'ASC') {
             $order = 'DESC';
         } else {
             $order = 'ASC';
         }
         //  update session
-        SGL_HTTP_Session::set('sortOrder', $order);
+        SGL_Session::set('sortOrder', $order);
         return $order;
     }
 
@@ -118,13 +92,15 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         switch ($callingPage) {
+
         case SGL_SORTBY_GRP:
             $sortByType = 'Grp';
-            $sessSortBy = SGL_HTTP_Session::get('sortByGrp');
+            $sessSortBy = SGL_Session::get('sortByGrp');
             break;
+
         case SGL_SORTBY_USER:
             $sortByType = 'User';
-            $sessSortBy = SGL_HTTP_Session::get('sortByUser');
+            $sessSortBy = SGL_Session::get('sortByUser');
             break;
         }
         if ($frmSortBy == '' && $sessSortBy == '') {
@@ -137,7 +113,7 @@ class SGL_Util
         }
         //  update session
         $sessVar = 'sortBy' . $sortByType;
-        SGL_HTTP_Session::set($sessVar, $sortBy);
+        SGL_Session::set($sessVar, $sortBy);
         return $sortBy;
     }
 
@@ -152,25 +128,30 @@ class SGL_Util
     function getStyleFiles($curStyle = false)
     {
         $aFiles = array();
-        $theme = $_SESSION['aPrefs']['theme'];
+
+        $c = &SGL_Config::singleton();
+        $theme = $c->get(array('site' => 'defaultTheme'));
+
         //  get array of files in /www/css/
-        if ($fh = opendir(SGL_WEB_ROOT . "/themes/$theme/css/")) {
+        if ($fh = @opendir(SGL_THEME_DIR . "/$theme/css/")) {
             while (false !== ($file = readdir($fh))) {
 
                 //  remove unwanted dir elements
                 if ($file == '.' || $file == '..' || $file == 'CVS') {
                     continue;
                 }
-                //  and anything without css extension
-                if (($ext = end(explode('.', $file))) != 'css') {
+                //  and anything without .nav.php extension
+                $ext = substr($file, -8);
+                if ($ext != '.nav.php') {
                     continue;
                 }
+
                 $filename = substr($file, 0, strpos($file, '.'));
 
                 //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
                 if ($curStyle) {
                     $aFiles[$filename]['currentStyle'] = ($filename == $curStyle) ? true : false;
-                    $aFiles[$filename]['fileMtime'] =  strftime('%Y-%b-%d %H:%M:%S', 
+                    $aFiles[$filename]['fileMtime'] =  strftime('%Y-%b-%d %H:%M:%S',
                         filemtime(SGL_THEME_DIR . '/' . $theme . '/css/' . $file));
 
                 //  otherwise a simple hash will do for ConfigMgr
@@ -180,7 +161,7 @@ class SGL_Util
             }
             closedir($fh);
         } else {
-            SGL::raiseError('There was a problem reading the navigation style dir', 
+            SGL::raiseError('There was a problem reading the navigation style dir',
                 SGL_ERROR_INVALIDFILEPERMS);
         }
         return $aFiles;
@@ -192,28 +173,51 @@ class SGL_Util
 
         require_once 'File/Util.php';
         //  match all folders except CVS
-        $ret = SGL_Util::listDir(SGL_THEME_DIR, FILE_LIST_DIRS, $sort = FILE_SORT_NONE, 
+        $ret = SGL_Util::listDir(SGL_THEME_DIR, FILE_LIST_DIRS, $sort = FILE_SORT_NONE,
                 create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
         return $ret;
     }
 
+    /**
+     * Returns an hash of strings containing the installed (and registered) Modules
+     *
+        Array
+        (
+            [block] => block
+            [cms] => cms
+            [default] => default
+            [event] => event
+            [export] => export
+            [navigation] => navigation
+            [user] => user
+        )
+     * @static
+     * @access  public
+     * @return  array
+     * @param   bool $onlyRegistered
+     */
 
-    function getAllModuleDirs()
+    function getAllModuleDirs($onlyRegistered = true)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
+        require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+        $da = & DA_Default::singleton();
 
         //  match all folders except CVS
-        $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME, 
-                create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
+        $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
+            create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
-        //  until i get rid of this folder
-        unset($ret['wizardExample']);
+        foreach ($ret as $module) {
+            if ($onlyRegistered && !$da->moduleIsRegistered($module)) {
+                unset($ret[$module]);
+            }
+        }
         return $ret;
     }
 
-    function getAllFilesPerModule($moduleDir)
+    function getAllManagersPerModule($moduleDir)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -221,8 +225,8 @@ class SGL_Util
 
         //  match files with php extension
         $classDir = $moduleDir . '/classes';
-        $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME, 
-                create_function('$a', 'return preg_match("/.*Mgr\.php/", $a);'));
+        $ret = SGL_Util::listDir($classDir, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
+                create_function('$a', 'return preg_match("/.*Mgr\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
         array_walk($ret, create_function('&$a', 'preg_match("/^.*Mgr/", $a, $matches); $a =  $matches[0]; return true;'));
@@ -234,9 +238,10 @@ class SGL_Util
     {
         $managerFileName = basename($mgr);
         $moduleDir = dirname(dirname($mgr));
-        $files = SGL_Util::getAllFilesPerModule($moduleDir);
-        
+        $files = SGL_Util::getAllManagersPerModule($moduleDir);
+
         //  remap 'ContactUsMgr.php => ContactUsMgr' hash to array
+        $fileNames = array();
         foreach ($files as $k => $file) {
             $fileNames[] = $k;
         }
@@ -244,16 +249,19 @@ class SGL_Util
         $fileNamesLowerCase = array_map('strtolower', $fileNames);
         $isFound = array_search(strtolower($managerFileName), $fileNamesLowerCase);
         $managerFileName = ($isFound !== false) ? $fileNames[$isFound] : false;
-        
+
         if (!($managerFileName)) {
             return false;
         }
-        
+
         $filePath = $moduleDir . '/classes/' . $managerFileName;
-        
-        if (file_exists($filePath)) {
-            include_once($filePath);
-            $className = substr(array_pop(explode('/', $filePath)), 0, -4);
+
+        if (is_file($filePath)) {
+            require_once $filePath;
+            $aElems = explode('/', $filePath);
+            $last = array_pop($aElems);
+            $className = substr($last, 0, -4);
+
             $obj = new $className(); // extract classname
             $vars = get_object_vars($obj);
             $actions = array_keys($vars['_aActionsMapping']);
@@ -267,39 +275,37 @@ class SGL_Util
         }
     }
 
-    function getAllNavDrivers()
+    function getAllClassesFromFolder($folder = '', $filter = '.*')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
-        $navDir = SGL_MOD_DIR . '/navigation/classes';
 
-        //  match files with *Nav.php format
-        $ret = SGL_Util::listDir($navDir, FILE_LIST_FILES, $sort = FILE_SORT_NONE, 
-                create_function('$a', 'return preg_match("/.*Nav\.php/", $a);'));
+        //  match files with php extension
+        $ret = SGL_Util::listDir($folder, FILE_LIST_FILES, $sort = FILE_SORT_NAME,
+                create_function('$a', 'return preg_match("/^.*\.php$/", $a);'));
 
         //  parse out filename w/o extension and .
-        array_walk($ret, create_function('&$a', 'preg_match("/^.*Nav/", $a, $matches); $a =  $matches[0]; return true;'));
-
-        //  propagate changes to keys as well
-        $aDrivers = array();
+        $aClasses = array();
         foreach ($ret as $k => $v) {
-            $aDrivers[$v] = $v;
-        }       
-        return $aDrivers;
+            if (preg_match("/^($filter)\.php$/", $v, $matches)) {
+                $aClasses[$matches[1]] = $matches[1];
+            }
+        }
+        return $aClasses;
     }
 
     /**
      * Wrapper for the File_Util::listDir method.
-     * 
+     *
      * Instead of returning an array of objects, it returns an array of
      * strings (filenames).
-     * 
+     *
      * The final argument, $cb, is a callback that either evaluates to true or
-     * false and performs a filter operation, or it can also modify the 
-     * directory/file names returned.  To achieve the latter effect use as 
+     * false and performs a filter operation, or it can also modify the
+     * directory/file names returned.  To achieve the latter effect use as
      * follows:
-     * 
+     *
      * <code>
      * function uc(&$filename) {
      *     $filename = strtoupper($filename);
@@ -310,7 +316,7 @@ class SGL_Util
      *     echo $e->name, "\n";
      * }
      * </code>
-     * 
+     *
      * @static
      * @access  public
      * @return  array
@@ -321,14 +327,15 @@ class SGL_Util
      */
     function listDir($path, $list = FILE_LIST_ALL, $sort = FILE_SORT_NONE, $cb = null)
     {
-        $aFiles = File_Util::listDir($path, $list, $sort, $cb);
         $aRet = array();
-        foreach ($aFiles as $oFile) {
-            $aRet[$oFile->name] = $oFile->name;
+        if (is_array($aFiles = File_Util::listDir($path, $list, $sort, $cb))) {
+            foreach ($aFiles as $oFile) {
+                $aRet[$oFile->name] = $oFile->name;
+            }
         }
         return $aRet;
     }
-    
+
     /**
      * Ini file protection.
      *
@@ -336,7 +343,7 @@ class SGL_Util
      * we can improve security in situations where browsers might be able to
      * read them.  Thanks to Georg Gell for the idea.
      *
-     * @param unknown_type $file
+     * @param string $file
      */
     function makeIniUnreadable($file)
     {
@@ -344,6 +351,79 @@ class SGL_Util
         $string = ';<?php die("Eat dust"); ?>' . "\n";
         array_unshift($iniFle, $string);
         file_put_contents($file, implode("", $iniFle));
+    }
+    /**
+     * Returns a hash of the form array('en-iso-8859-15' => 'English (en-iso-8859-15),) etc.
+     *
+     * @return array
+     */
+    function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
+    {
+        $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        uasort($availableLanguages, 'SGL_cmp');
+        $aLangs = array();
+        foreach ($availableLanguages as $id => $tmplang) {
+            $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $keyId = ($langKeyType)
+                ? SGL_Translation::transformLangID($id, $langKeyType)
+                : $id;
+            if (count($aSelected) && in_array($id, $aSelected)) {
+                $aSelectedLangs[$keyId] =  $langName . ' (' . $id . ')';
+            } else {
+                $aLangs[$keyId] =  $langName . ' (' . $id . ')';
+            }
+        }
+
+        //  if $aSelectedLangs has elements return it.
+        $aLangs = (isset ($aSelectedLangs) && !empty($aSelectedLangs))
+            ? $aSelectedLangs
+            : $aLangs;
+
+        return $aLangs;
+    }
+
+    /**
+     * Returns params from ini file.
+     *
+     * @return array
+     */
+    function loadParams($ini_file = '', $aSavedParams = array(), $aCurrentParams = array())
+    {
+        //  set default params
+        $aReturn = array();
+        $details = '';
+        $aPreparedParams = array();
+
+        if (is_file($ini_file)) {
+
+            //  get details section
+            $aParams = @parse_ini_file($ini_file, true);
+            if (array_key_exists('details', $aParams)) {
+                $details = (object)$aParams['details'];
+                unset($aParams['details']);
+            }
+
+            foreach ($aParams as $key => $value) {
+                if (is_array($value) && array_key_exists('value',$value)
+                    && array_key_exists('type',$value) && array_key_exists('label',$value)) {
+                    $value =  array_key_exists($key, $aCurrentParams) ? $aCurrentParams[$key] : '';
+                    if ($value) {
+                        $aParams[$key]['value'] = $value;
+                    } elseif (array_key_exists($key ,$aSavedParams)) {
+                        $aParams[$key]['value'] = $aSavedParams[$key];
+                    }
+                    $aParams[$key]['name'] = 'aParams['.$key.']';
+                    if ($aParams[$key]['type'] == 'wysiwyg') {
+                        $aReturn['wysiwyg'] = true;
+                    }
+                    $aPreparedParams[$key] = (object)$aParams[$key];
+                }
+            }
+        }
+
+        $aReturn['details'] = $details;
+        $aReturn['aParams'] = $aPreparedParams;
+        return $aReturn;
     }
 }
 ?>

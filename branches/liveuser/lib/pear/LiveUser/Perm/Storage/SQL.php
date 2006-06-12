@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: SQL.php,v 1.19 2005/06/07 14:40:23 lsmith Exp $
+ * @version CVS: $Id: SQL.php,v 1.28 2006/03/14 13:10:04 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -53,10 +53,10 @@ require_once 'LiveUser/Perm/Storage.php';
  * SQL container for permission handling
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -65,18 +65,26 @@ class LiveUser_Perm_Storage_SQL extends LiveUser_Perm_Storage
 {
     /**
      * dsn that was connected to
+     * @var string
+     * @access private
+     */
+    var $dsn = false;
+
+    /**
+     * instance of the database backend object.
+     *
      * @var object
      * @access private
      */
-    var $dsn = null;
+    var $dbc = false;
 
     /**
-     * PEAR::MDB2 connection object.
+     * Database connection options.
      *
      * @var    object
      * @access private
      */
-    var $dbc = null;
+    var $options = array();
 
     /**
      * Table prefix
@@ -88,9 +96,9 @@ class LiveUser_Perm_Storage_SQL extends LiveUser_Perm_Storage
     var $prefix = 'liveuser_';
 
     /**
-     * Properly disconnect from database
+     * properly disconnect from resources
      *
-     * @return void
+     * @return bool true on success and false on failure
      *
      * @access public
      */
@@ -99,13 +107,13 @@ class LiveUser_Perm_Storage_SQL extends LiveUser_Perm_Storage
         if ($this->dsn) {
             $result = $this->dbc->disconnect();
             if (PEAR::isError($result)) {
-                $this->_stack->push(
+                $this->stack->push(
                     LIVEUSER_ERROR, 'exception',
                     array('reason' => $result->getMessage() . '-' . $result->getUserInfo())
                 );
                 return false;
             }
-            $this->dbc = null;
+            $this->dbc = false;
         }
         return true;
     }

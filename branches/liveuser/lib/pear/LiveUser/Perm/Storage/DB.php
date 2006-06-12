@@ -31,16 +31,16 @@
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: DB.php,v 1.15 2005/07/06 19:36:54 arnaud Exp $
+ * @version CVS: $Id: DB.php,v 1.33 2006/04/07 22:20:57 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -66,11 +66,11 @@ require_once 'DB.php';
  *            &$conn (PEAR::DB connection object)
  *
  * @category authentication
- * @package  LiveUser
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @version $Id: DB.php,v 1.15 2005/07/06 19:36:54 arnaud Exp $
- * @copyright 2002-2005 Markus Wolff
+ * @version $Id: DB.php,v 1.33 2006/04/07 22:20:57 lsmith Exp $
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -78,11 +78,10 @@ require_once 'DB.php';
 class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
 {
     /**
+     * Initialize the storage container
      *
-     *
-     *
-     * @param array &$storageConf Array with the storage configuration
-     * @return boolean true on success, false on failure.
+     * @param array Array with the storage configuration
+     * @return bool true on success, false on failure.
      *
      * @access public
      */
@@ -90,38 +89,37 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
     {
         parent::init($storageConf);
 
-        if (isset($storageConf['connection']) &&
-            DB::isConnection($storageConf['connection'])
-        ) {
-            $this->dbc = &$storageConf['connection'];
-        } elseif (isset($storageConf['dsn'])) {
-            $this->dsn = $storageConf['dsn'];
-            $options = null;
-            if (isset($storageConf['options'])) {
-                $options = $storageConf['options'];
-            }
-            $options['portability'] = DB_PORTABILITY_ALL;
-            $this->dbc =& DB::connect($storageConf['dsn'], $options);
-            if (PEAR::isError($this->dbc)) {
-                $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                    array('container' => 'could not connect: '.$this->dbc->getMessage()));
+        if (!is_a($this->dbc, 'db_common') && !is_null($this->dsn)) {
+            $this->options['portability'] = DB_PORTABILITY_ALL;
+            $dbc =& DB::connect($this->dsn, $this->options);
+            if (PEAR::isError($dbc)) {
+                $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                    array('container' => 'could not connect: '.$dbc->getMessage(),
+                    'debug' => $dbc->getUserInfo()));
                 return false;
             }
+            $this->dbc =& $dbc;
         }
+
+        if (!is_a($this->dbc, 'db_common')) {
+            $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                array('container' => 'storage layer configuration missing'));
+            return false;
+        }
+
         return true;
     }
 
     /**
-     * Returns the perm userid from an auth userid
-     * and a container name.
+     * map an auth user to a perm user
      *
-     * @param int $authUserId
+     * @param int $auth_user_id
      * @param string $containerName
-     * @return mixed array or false on failure
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function mapUser($authUserId, $containerName)
+    function mapUser($auth_user_id, $containerName)
     {
         $query = '
             SELECT
@@ -131,7 +129,7 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
                 '.$this->prefix.$this->alias['perm_users'].'
             WHERE
                 ' . $this->alias['auth_user_id'] . ' = '.
-                    $this->dbc->quoteSmart($authUserId).'
+                    $this->dbc->quoteSmart($auth_user_id).'
             AND
                 ' . $this->alias['auth_container_name'] . ' = '.
                     $this->dbc->quoteSmart((string)$containerName);
@@ -139,8 +137,8 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
         $result = $this->dbc->getRow($query, null, DB_FETCHMODE_ASSOC);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
@@ -154,31 +152,28 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
      * Group rights and invididual rights are being merged
      * in the process.
      *
-     * @param int $permUserId
-     * @return mixed array of false on failure
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readUserRights($permUserId)
+    function readUserRights($perm_user_id)
     {
         $query = '
             SELECT
-                R.' . $this->alias['right_id'] . ',
-                U.' . $this->alias['right_level'] . '
+                ' . $this->alias['right_id'] . ',
+                ' . $this->alias['right_level'] . '
             FROM
-                '.$this->prefix.$this->alias['rights'].' R,
-                '.$this->prefix.$this->alias['userrights'].' U
+                '.$this->prefix.$this->alias['userrights'].'
             WHERE
-                R.' . $this->alias['right_id'] . ' = U.' . $this->alias['right_id'] . '
-            AND
-                U.' . $this->alias['perm_user_id'] . ' = '.
-                    $this->dbc->quoteSmart($permUserId);
+                ' . $this->alias['perm_user_id'] . ' = '.
+                    $this->dbc->quoteSmart($perm_user_id);
 
         $result = $this->dbc->getAssoc($query, false, null, DB_FETCHMODE_ORDERED);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
@@ -186,14 +181,14 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
     }
 
     /**
-     * Fetch all the rights for every area where the user is an area admin.
+     * read the areas in which a user is an area admin
      *
-     * @param int $permUserId
-     * @return mixed array or false on failure
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readAreaAdminAreas($permUserId)
+    function readAreaAdminAreas($perm_user_id)
     {
         // get all areas in which the user is area admin
         $query = '
@@ -207,13 +202,13 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
                 AAA.area_id = R.area_id
             AND
                 AAA.' . $this->alias['perm_user_id'] . ' = '.
-                    $this->dbc->quoteSmart($permUserId);
+                    $this->dbc->quoteSmart($perm_user_id);
 
         $result = $this->dbc->getAssoc($query, false, null, DB_FETCHMODE_ORDERED);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
@@ -224,14 +219,13 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
      * Reads all the group ids in that the user is also a member of
      * (all groups that are subgroups of these are also added recursively)
      *
+     * @param int perm user id
+     * @return array requested data or false on failure
      *
-     * @param int $permUserId
-     * @return mixed array or false on failure
-     *
-     * @access private
      * @see    readRights()
+     * @access public
      */
-    function readGroups($permUserId)
+    function readGroups($perm_user_id)
     {
         $query = '
             SELECT
@@ -243,9 +237,9 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
                 GU.' . $this->alias['group_id'] . ' = G. ' . $this->alias['group_id'] . '
             AND
                 GU.' . $this->alias['perm_user_id'] . ' = '.
-                    $this->dbc->quoteSmart($permUserId);
+                    $this->dbc->quoteSmart($perm_user_id);
 
-        if (isset($this->tables['groups']['fields']['is_active'])) {
+        if (array_key_exists('is_active', $this->tables['groups']['fields'])) {
             $query .= ' AND
                 G.' . $this->alias['is_active'] . '=' .
                     $this->dbc->quoteSmart(true);
@@ -254,13 +248,13 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
         $result = $this->dbc->getCol($query);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
         return $result;
-    } // end func readGroups
+    }
 
     /**
      * Reads the group rights
@@ -268,13 +262,12 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
      *
      * right => 1
      *
-     * @param   array $groupIds array with id's for the groups
-     *                          that rights will be read from
-     * @return  mixed   array or false on failure
+     * @param int group ids
+     * @return array requested data or false on failure
      *
-     * @access  public
+     * @access public
      */
-    function readGroupRights($groupIds)
+    function readGroupRights($group_ids)
     {
         $query = '
             SELECT
@@ -284,31 +277,31 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
                 '.$this->prefix.$this->alias['grouprights'].' GR
             WHERE
                 GR.' . $this->alias['group_id'] . ' IN('.
-                    implode(', ', $groupIds).')
+                    implode(', ', $group_ids).')
             GROUP BY
                 GR.' . $this->alias['right_id'] . '';
 
         $result = $this->dbc->getAssoc($query, false, null, DB_FETCHMODE_ORDERED);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
         return $result;
-    } // end func readGroupRights
+    }
 
     /**
+     * Read the sub groups of the new groups that are not part of the group ids
      *
-     *
-     * @param array $groupIds
-     * @param array $newGroupIds
-     * @return mixed array or false on failure
+     * @param array group ids
+     * @param array new group ids
+     * @return array requested data or false on failure
      *
      * @access public
      */
-    function readSubGroups($groupIds, $newGroupIds)
+    function readSubGroups($group_ids, $newGroupIds)
     {
         $query = '
             SELECT
@@ -324,9 +317,9 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
                     implode(', ', $newGroupIds).')
             AND
                 SG.' . $this->alias['subgroup_id'] . ' NOT IN ('.
-                    implode(', ', $groupIds).')';
+                    implode(', ', $group_ids).')';
 
-        if (isset($this->tables['groups']['fields']['is_active'])) {
+        if (array_key_exists('is_active', $this->tables['groups']['fields'])) {
             $query .= ' AND
                 G.' . $this->alias['is_active'] . '=' .
                     $this->dbc->quoteSmart(true);
@@ -335,8 +328,8 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
         $result = $this->dbc->getCol($query);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
@@ -344,17 +337,17 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
     }
 
     /**
+     * Read out the rights from the userrights or grouprights table
+     * that imply other rights along with their level
      *
-     *
-     * @param array $rightIds
-     * @param string $table
-     * @return mixed array or false on failure
+     * @param array right ids
+     * @param string name of the table
+     * @return array requested data or false on failure
      *
      * @access public
      */
     function readImplyingRights($rightIds, $table)
     {
-
         $query = '
             SELECT
             DISTINCT
@@ -375,8 +368,8 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
         $result = $this->dbc->getAssoc($query, false, null, DB_FETCHMODE_ORDERED, true);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 
@@ -384,17 +377,14 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
     }
 
     /**
-     * Fetch rights implied by other rights.
-     *
-     * For instance you may have "write" implies "read" so whenever you affect "write"
-     * the user will also have the "read" right.
-     *
-     * @param array $currentRights
-     * @param string $currentLevel
-     * @return mixed array or false on failure
-     *
-     * @access public
-     */
+    * Read out the implied rights with a given level from the implied_rights table
+    *
+    * @param array current right ids
+    * @param string current level
+     * @return array requested data or false on failure
+    *
+    * @access public
+    */
     function readImpliedRights($currentRights, $currentLevel)
     {
         $query = '
@@ -414,8 +404,8 @@ class LiveUser_Perm_Storage_DB extends LiveUser_Perm_Storage_SQL
         $result = $this->dbc->getAll($query, null, DB_FETCHMODE_ASSOC);
 
         if (PEAR::isError($result)) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception', array(),
-                'error in query' . $result->getMessage . '-' . $result->getUserInfo());
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                'error in query' . $result->getMessage() . '-' . $result->getUserInfo());
             return false;
         }
 

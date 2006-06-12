@@ -1,48 +1,51 @@
+-- Data dump for /modules/block
+
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'block', 'Blocks', 'Use the ''Blocks'' module to configure the contents of the blocks in the left and right hand columns.', 'block/block', 'blocks.png', '', NULL, NULL, NULL);
+
+--
+-- perms
+--
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr', 'Permission to use block manager', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_add', 'Permission to add new block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_edit', 'Permission to edit existing block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_delete', 'Permission to remove block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_reorder', 'Permission to reorder blocks', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_list', 'Permission to view block listing', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_insert', 'Permission to insert block', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'blockmgr_cmd_update', 'Permission to update block', (SELECT MAX(module_id) FROM module));
+
 --
 -- Dumping data for table block
 --
 
-
-INSERT INTO block VALUES (1, 'SiteNews', 'Site News', '', '', 2, 1, 1, NULL);
-INSERT INTO block VALUES (2, 'DirectoryNav', 'Navigation', '', 'navWidget', 1, 1, 1, NULL);
-INSERT INTO block VALUES (3, 'SampleBlock1', 'Sample Block 1', '', '', 3, 1, 1, NULL);
-INSERT INTO block VALUES (4, 'SampleBlock2', 'Sample Block 2', '', '', 4, 1, 1, NULL);
-INSERT INTO block VALUES (5, 'CategoryNav', 'Categories', '', 'navWidget', 1, 1, 1, NULL);
-INSERT INTO block VALUES (10, 'SampleRightBlock1', 'Sample Right Block', '', '', 1, 0, 1, NULL);
-INSERT INTO block VALUES (11, 'CalendarBlock', 'Calendar', 'blockHeader', 'blockContent', 2, 0, 0, NULL);
-INSERT INTO block VALUES (12, 'LoginBlock', 'Login', 'blockHeader', 'blockContent', 3, 0, 0, NULL);
-INSERT INTO block VALUES (13, 'ShopNav', 'Products', '', 'sgl-dropdown', 1, 1, 0, NULL);
-INSERT INTO block VALUES (14, 'ShoppingCart', 'Cart', 'blockHeader', 'blockContent', 1, 0, 0, NULL);
-INSERT INTO block VALUES (15, 'RndProducts', 'Promotions', 'blockHeader', 'rndProducts', 5, 0, 0, NULL);
-INSERT INTO block VALUES (16, 'ShopSearch', 'Search', 'blockHeader', 'blockContent', 7, 1, 0, NULL);
-INSERT INTO block VALUES (17, 'NewsletterBlock', 'Newsletter', 'blockHeader', 'blockContent', 5, 0, 0, NULL);
-INSERT INTO block VALUES (18, 'Exchange', 'Exchange', 'blockHeader', 'blockContent', 9, 1, 0, NULL);
+INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'Admin menu', '', '', 1, 'AdminNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"4";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
+INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'User menu', '', '', 1, 'MainNav', 1, 0, 'a:9:{s:15:"startParentNode";s:1:"2";s:10:"startLevel";s:1:"0";s:14:"levelsToRender";s:1:"0";s:9:"collapsed";s:1:"1";s:10:"showAlways";s:1:"1";s:12:"cacheEnabled";s:1:"1";s:11:"breadcrumbs";s:1:"0";s:8:"renderer";s:14:"SimpleRenderer";s:8:"template";s:0:"";}');
+INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_CategoryNav', 'Categories', '', 'navWidget', 1, 'AdminCategory', 1, 1, 'N;');
 
 --
--- Dumping data for table block_assignment
+-- Dumping data for table `block_assignment`
 --
 
-
-INSERT INTO block_assignment VALUES (1, 0);
-INSERT INTO block_assignment VALUES (3, 0);
-INSERT INTO block_assignment VALUES (4, 0);
-INSERT INTO block_assignment VALUES (5, 2);
-INSERT INTO block_assignment VALUES (5, 17);
-INSERT INTO block_assignment VALUES (5, 18);
-INSERT INTO block_assignment VALUES (5, 19);
-INSERT INTO block_assignment VALUES (10, 0);
-INSERT INTO block_assignment VALUES (11, 0);
-INSERT INTO block_assignment VALUES (12, 0);
-INSERT INTO block_assignment VALUES (13, 22);
-INSERT INTO block_assignment VALUES (13, 24);
-INSERT INTO block_assignment VALUES (16, 0);
-INSERT INTO block_assignment VALUES (17, 0);
-INSERT INTO block_assignment VALUES (18, 0);
+-- admin menu
+INSERT INTO block_assignment VALUES ({SGL_NEXT_ID}, 0);
+-- user menu
+INSERT INTO block_assignment VALUES ({SGL_NEXT_ID}, 0);
+-- adminCategoryNav (assigned in Publishing/Articles/Categories/Files sections)
+INSERT INTO block_assignment VALUES (3, 67);
+INSERT INTO block_assignment VALUES (3, 69);
+INSERT INTO block_assignment VALUES (3, 71);
+INSERT INTO block_assignment VALUES (3, 73);
 
 --
--- Creating sequences
--- sequence must start on the first free record id
+-- Dumping data for table `block_role`
 --
 
-CREATE SEQUENCE block_seq START WITH 19;
-CREATE SEQUENCE block_assignment_seq START WITH 19;
+-- admin menu
+INSERT INTO block_role VALUES ({SGL_NEXT_ID}, 1);
+-- user menu
+INSERT INTO block_role VALUES ({SGL_NEXT_ID}, -2);
+-- adminCategoryNav
+INSERT INTO block_role VALUES ({SGL_NEXT_ID}, 1);
+
+

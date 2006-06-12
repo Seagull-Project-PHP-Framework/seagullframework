@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ErrorHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ErrorHandler.php,v 1.8 2005/05/28 19:32:12 demian Exp $
 
-//  This class is based on Peter James' class of the same name, for more info 
+//  This class is based on Peter James' class of the same name, for more info
 //  see http://php.shaman.ca/
 
 /**
@@ -48,7 +48,6 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.8 $
- * @since   PHP 4.1
  */
 class SGL_ErrorHandler
 {
@@ -66,22 +65,22 @@ class SGL_ErrorHandler
         //  first dimension elements are PHP error types
         //  2nd dimension elements are roughly PEAR Log's equivalents
 
-        //  nb: comment out Notice for equivalent of 
+        //  nb: comment out Notice for equivalent of
         //  error_reporting(E_ALL ^ E_NOTICE);
         $this->errorType = array (
-               1   =>  array('Error', 3),
-               2   =>  array('Warning', 4),
-               4   =>  array('Parsing Error', 3),
-               8   =>  array('Notice', 5),
-               16  =>  array('Core Error', 3),
-               32  =>  array('Core Warning', 4),
-               64  =>  array('Compile Error', 3),
-               128 =>  array('Compile Warning', 4),
-               256 =>  array('User Error', 3),
-               512 =>  array('User Warning', 4),
-               1024=>  array('User Notice', 5),
-               2047=>  array('All', 7)
-                );
+           1   =>  array('Error', 3),
+           2   =>  array('Warning', 4),
+           4   =>  array('Parsing Error', 3),
+           8   =>  array('Notice', 5),
+           16  =>  array('Core Error', 3),
+           32  =>  array('Core Warning', 4),
+           64  =>  array('Compile Error', 3),
+           128 =>  array('Compile Warning', 4),
+           256 =>  array('User Error', 3),
+           512 =>  array('User Warning', 4),
+           1024=>  array('User Notice', 5),
+           2047=>  array('All', 7)
+            );
         $this->sourceContextOptions = array('lines' => 5);
     }
 
@@ -100,7 +99,7 @@ class SGL_ErrorHandler
         function eh($errNo, $errStr, $file, $line, $context)
         {
             call_user_func(array(
-               &$GLOBALS['_SGL']['ERROR_HANDLER_OBJECT'], 
+               &$GLOBALS['_SGL']['ERROR_HANDLER_OBJECT'],
                 $GLOBALS['_SGL']['ERROR_HANDLER_METHOD']),
                 $errNo, $errStr, $file, $line, $context
             );
@@ -113,11 +112,11 @@ class SGL_ErrorHandler
      * Enhances PHP's default error handling.
      *
      *  o overrides notices in certain cases
-     *  o obeys @muffled errors, 
+     *  o obeys @muffled errors,
      *  o error logged to selected target
      *  o context info presented for developer
-     *  o error data emailed to admin if theshold passed
-     * 
+     *  o error data emailed to admin if threshold passed
+     *
      * @access  public
      * @param   int     $errNo      PHP's error number
      * @param   string  $errStr     PHP's error message
@@ -139,7 +138,8 @@ class SGL_ErrorHandler
             }
         }
         if (in_array($errNo, array_keys($this->errorType))) {
-            $conf = & $GLOBALS['_SGL']['CONF'];
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
             //  final param is 2nd dimension element from errorType array,
             //  representing PEAR error codes mapped to PHP's
 
@@ -147,30 +147,30 @@ class SGL_ErrorHandler
             //  in the logMessage method
             SGL::logMessage($errStr, $file, $line, $this->errorType[$errNo][1]);
 
-            //  if a debug sesssion has been started, or the site in in 
+            //  if a debug sesssion has been started, or the site in in
             //  development mode, send error info to screen
-            if (!$conf['debug']['production'] || SGL_HTTP_Session::get('debug')) {
+            if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
                 $source = $this->_getSourceContext($file, $line);
                 //  generate screen debug html
                 //  type is 1st dimension element from $errorType array, ie,
                 //  PHP error code
                 $output = <<<EOF
 <hr />
-<p class="error">
-  <strong>MESSAGE</strong>: $errStr<br />
-  <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
-  <strong>FILE:</strong> $file<br />
-  <strong>LINE:</strong> $line<br />
-  <strong>DEBUG INFO:</strong>
-  <p>$source</p>
-</p>
+<div class="errorContent">
+        <strong>MESSAGE</strong>: $errStr<br />
+        <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
+        <strong>FILE:</strong> $file<br />
+        <strong>LINE:</strong> $line<br />
+        <strong>DEBUG INFO:</strong>
+        <p>$source</p>
+</div>
 <hr />
 EOF;
                 echo $output;
 
                 //  disable block so errors can be seen
-                $conf['site']['blocksEnabled'] = false;
-                
+                $c->set('site', array('blocksEnabled' => false));
+
             } else {
                 //  we're in production mode, suppress any errors from being displayed
                 @ini_set('display_errors', 0);
@@ -182,9 +182,9 @@ EOF;
                 $dbh = & SGL_DB::singleton();
                 $lastQuery = $dbh['last_query'];
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
-                $aExtraInfo['lastSQL'] = isset($dbh['last_query']) ? 
+                $aExtraInfo['lastSQL'] = isset($dbh['last_query']) ?
                     $dbh['last_query'] : null;
-                $aExtraInfo['userID'] = SGL_HTTP_Session::get('uid');
+                $aExtraInfo['userID'] = SGL_Session::get('uid');
                 $aExtraInfo['clientData']['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
                 $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
                 $aExtraInfo['clientData']['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
@@ -199,12 +199,12 @@ EOF;
                 //  rebuild error output w/out html
                 require_once SGL_CORE_DIR . '/Util.php';
                 $crlf = SGL_String::getCrlf();
-                $output = $errStr . $crlf . 
+                $output = $errStr . $crlf .
                     'type: ' . $this->errorType[$errNo][0] . $crlf .
                     'file: ' . $file . $crlf .
                     'line: ' . $line . $crlf . $crlf;
                 $message = $output . $info;
-                @mail($conf['email']['admin'], 'ERROR OUTPUT FROM ' . 
+                @mail($conf['email']['admin'], 'ERROR OUTPUT FROM ' .
                     $conf['site']['name'], $message);
             }
         }
@@ -225,33 +225,33 @@ EOF;
     function _getSourceContext($file, $line)
     {
     	$sourceContext = null;
-    	
+
         //  check that file exists
-        if (!file_exists($file)) {
+        if (!is_file($file)) {
             $sourceContext = "Context cannot be shown - ($file) does not exist";
 
         //  check if line number is valid
         } elseif ((!is_int($line)) || ($line <= 0)) {
             $sourceContext = "Context cannot be shown - ($line) is an invalid line number";
-        } else {        
+        } else {
 	        $lines = file($file);
-	        
+
 	        //  get the source ## core dump in windows, scrap colour highlighting :-(
 	        //  $source = highlight_file($file, true);
 	        //  $lines = split("<br />", $source);
 	        //  get line numbers
 	        $start = $line - $this->sourceContextOptions['lines'] - 1;
 	        $finish = $line + $this->sourceContextOptions['lines'];
-	        
+
 	        //  get lines
 	        if ($start < 0) {
 	            $start = 0;
 	        }
-	        
+
 	        if ($start >= count($lines)) {
 	            $start = count($lines) -1;
 	        }
-	        
+
 	        for ($i = $start; $i < $finish; $i++) {
 	            //  highlight line in question
 	            if ($i == ($line - 1)) {
@@ -259,9 +259,9 @@ EOF;
 	                    "\t" . strip_tags($lines[$line -1]) . '</strong></div>';
 	            } else {
 	                $context_lines[] = '<strong>' . ($i + 1) .
-	                    "</strong>\t" . $lines[$i];
+	                    "</strong>\t" . @$lines[$i];
 	            }
-	        }   
+	        }
 	        $sourceContext = trim(join("<br />\n", $context_lines)) . "<br />\n";
         }
         return $sourceContext;

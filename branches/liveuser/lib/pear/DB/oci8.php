@@ -20,7 +20,7 @@
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: oci8.php,v 1.16 2005/04/21 06:34:09 demian Exp $
+ * @version    CVS: $Id: oci8.php,v 1.103 2005/04/11 15:10:22 danielc Exp $
  * @link       http://pear.php.net/package/DB
  */
 
@@ -254,7 +254,8 @@ class DB_oci8 extends DB_common
                                                        $dsn['hostspec']);
             } elseif ($dsn['username'] || $dsn['password']) {
                 $this->connection = @$connect_function($dsn['username'],
-                                                       $dsn['password']);
+                                                       $dsn['password'],
+                                                       $dsn['database']);
             }
         }
 

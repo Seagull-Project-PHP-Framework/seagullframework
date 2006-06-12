@@ -7,7 +7,7 @@
  * LiveUser_Admin is meant to be used with the LiveUser package.
  * It is composed of all the classes necessary to administrate
  * data used by LiveUser.
- * 
+ *
  * You'll be able to add/edit/delete/get things like:
  * * Rights
  * * Users
@@ -16,19 +16,19 @@
  * * Applications
  * * Subgroups
  * * ImpliedRights
- * 
+ *
  * And all other entities within LiveUser.
- * 
+ *
  * At the moment we support the following storage containers:
  * * DB
  * * MDB
  * * MDB2
- * 
+ *
  * But it takes no time to write up your own storage container,
  * so if you like to use native mysql functions straight, then it's possible
  * to do so in under a hour!
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,33 +40,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser_Admin
+ * @package LiveUser_Admin
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
  * @author  Christian Dickmann <dickmann@php.net>
  * @author  Matt Scifo <mscifo@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Admin.php,v 1.39 2005/07/19 10:53:04 lsmith Exp $
+ * @version CVS: $Id: Admin.php,v 1.65 2006/04/11 17:27:39 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
 require_once 'LiveUser.php';
+require_once 'LiveUser/Admin/Storage.php';
 
 /**#@+
  * Error related constants definition
  *
- * @var integer
+ * @var int
  */
 define('LIVEUSER_ADMIN_ERROR',                  -1);
 define('LIVEUSER_ADMIN_ERROR_FILTER',           -2);
@@ -77,12 +78,12 @@ define('LIVEUSER_ADMIN_ERROR_NOT_SUPPORTED',    -6);
 /**#@-*/
 
 /**
- * Attempt at a unified admin class
+ * A unified admin class
  *
  * Simple usage:
  *
  * <code>
- * $admin = new LiveUser_Admin::factory($conf);
+ * $admin = LiveUser_Admin::factory($conf);
  * $filters = array(
  *     'perm_user_id' => '3'
  * );
@@ -96,18 +97,17 @@ define('LIVEUSER_ADMIN_ERROR_NOT_SUPPORTED',    -6);
  * @see     LiveUser::factory()
  *
  * @category authentication
- * @package  LiveUser_Admin
- * @author  Lukas Smith <smith@backendmedia.com>
+ * @package LiveUser_Admin
+ * @author  Lukas Smith <smith@pooteeweet.org>
  * @author  Arnaud Limbourg <arnaud@php.net>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser_Admin
  */
 class LiveUser_Admin
 {
-
      /**
       * Name of the current selected auth container
       *
@@ -127,7 +127,7 @@ class LiveUser_Admin
     /**
      * Admin perm object
      *
-     * @var    object
+     * @var    LiveUser_Admin_Perm_Simple
      * @access public
      */
     var $perm = null;
@@ -135,7 +135,7 @@ class LiveUser_Admin
     /**
      * Auth admin object
      *
-     * @var    object
+     * @var    LiveUser_Admin_Auth_Common
      * @access public
      */
     var $auth = null;
@@ -164,90 +164,56 @@ class LiveUser_Admin
     );
 
     /**
-     * PEAR::Log object
-     * used for error logging by ErrorStack
-     *
+     * PEAR::Log object used for error logging by ErrorStack
      *
      * @var    Log
-     * @access private
-     */
-    var $_log = null;
-
-    function LiveUser_Admin()
-    {
-        $this->_stack = &PEAR_ErrorStack::singleton('LiveUser_Admin');
-
-        if ($GLOBALS['_LIVEUSER_DEBUG']) {
-            if (!is_object($this->_log)) {
-                $this->loadPEARLog();
-            }
-            $winlog = &Log::factory('win', 'LiveUser_Admin');
-            $this->_log->addChild($winlog);
-        }
-
-        $this->_stack->setErrorMessageTemplate($this->_errorMessages);
-    }
-
-    /**
-     * This method lazy loads PEAR::Log
-     *
-     * @return void
-     *
-     * @access protected
-     */
-    function loadPEARLog()
-    {
-        require_once 'Log.php';
-        $this->_log = &Log::factory('composite');
-        $this->_stack->setLogger($this->_log);
-    }
-
-    /**
-     * Add error logger for use by Errorstack.
-     *
-     * Be aware that if you need add a log
-     * at the beginning of your code if you
-     * want it to be effective. A log will only
-     * be taken into account after it's added.
-     *
-     * Sample usage:
-     * <code>
-     * $lu_object = &LiveUser_Admin::singleton($conf);
-     * $logger = &Log::factory('mail', 'bug@example.com',
-     *      'myapp_debug_mail_log', array('from' => 'application_bug@example.com'));
-     * $lu_object->addErrorLog($logger);
-     * </code>
-     *
-     * @param  Log &$log logger instance
-     * @return boolean true on success or false on failure
-     *
      * @access public
      */
-    function addErrorLog(&$log)
+    var $log = null;
+
+    /**
+     *
+     * @param bool|log boolean value to denote if the debug mode should be
+       enabled, or instance of a PEAR_ErrorStack compatible Log object
+     * @return LiveUser_Admin
+     *
+     * @access public
+     * @see init
+     */
+    function LiveUser_Admin($debug)
     {
-        if (!is_object($this->_log)) {
-            $this->loadPEARLog();
+        $this->stack = &PEAR_ErrorStack::singleton('LiveUser_Admin');
+
+        if ($debug) {
+            $log =& LiveUser::PEARLogFactory($debug);
+            if ($log) {
+                $this->log =& $log;
+                $this->stack->setLogger($this->log);
+            }
         }
-        return $this->_log->addChild($log);
+
+        $this->stack->setErrorMessageTemplate($this->_errorMessages);
     }
 
     /**
      *
-     * @param array $conf configuration array
-     * @return object
+     * @param array configuration array
+     * @return LiveUser_Admin|bool
      *
      * @access public
-     * @see setAdminContainers
+     * @see init
      */
-    function &factory($conf)
+    function &factory(&$conf)
     {
-        $obj = &new LiveUser_Admin;
+        $debug = false;
+        if (array_key_exists('debug', $conf)) {
+            $debug =& $conf['debug'];
+        }
 
-        if (is_array($conf) && !empty($conf)) {
-            $obj->_conf = $conf;
-            if (isset($obj->_conf['autoInit']) && $obj->_conf['autoInit']) {
-                $obj->setAdminContainers();
-            }
+        $obj = &new LiveUser_Admin($debug);
+
+        if (is_array($conf)) {
+            $obj->_conf =& $conf;
         }
 
         return $obj;
@@ -255,13 +221,13 @@ class LiveUser_Admin
 
     /**
      *
-     * @param array $conf configuration array
-     * @return object
+     * @param array configuration array
+     * @return LiveUser_Admin|bool
      *
      * @access public
      * @see factory
      */
-    function &singleton($conf = null)
+    function &singleton(&$conf)
     {
         static $instance;
 
@@ -277,47 +243,26 @@ class LiveUser_Admin
     }
 
     /**
-     * Merges the current configuration array with configuration array pases
-     * along with the method call.
-     *
-     * @param  array $conf configuration array
-     * @return boolean true upon success, false otherwise
-     *
-     * @access public
-     */
-    function setConfArray($conf)
-    {
-        if (!is_array($conf)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                array('msg' => 'Missing configuration array'));
-            return false;
-        }
-
-        $this->_conf = LiveUser::arrayMergeClobber($this->_conf, $conf);
-        return true;
-    }
-
-    /**
      * Sets the current auth container to the one with the given auth container name
      *
-     * Upon success it will return true. You can then
+     * Upon success it will return the auth instance. You can then
      * access the auth backend container by using the
-     * auth property of this class.
+     * auth property of this class or the auth object directly
      *
-     * e.g.: $admin->auth->addUser();
+     * e.g.: $admin->auth->addUser(); or $auth->addUser();
      *
-     * @param  string $authName  auth container name
-     * @return boolean true upon success, false otherwise
+     * @param  string auth container name
+     * @return LiveUser_Admin_Auth_Common|bool auth instance upon success, false otherwise
      *
      * @access public
      */
     function &setAdminAuthContainer($authName)
     {
-        if (!isset($this->_authContainers[$authName])
+        if (!array_key_exists($authName, $this->_authContainers)
             || !is_object($this->_authContainers[$authName])
         ) {
             if (!isset($this->_conf['authContainers'][$authName])) {
-                $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                     array('msg' => 'Could not create auth container instance'));
                 $result = false;
                 return $result;
@@ -328,10 +273,9 @@ class LiveUser_Admin
                 'LiveUser_Admin_'
             );
             if ($auth === false) {
-                $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                    array('msg' => 'Could not create auth container instance'));
-                $result = false;
-                return $result;
+                $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                    array('msg' => 'Could not instanciate auth container: '.$authName));
+                return $auth;
             }
             $this->_authContainers[$authName] = &$auth;
         }
@@ -343,52 +287,55 @@ class LiveUser_Admin
     /**
      * Sets the perm container
      *
-     * Upon success it will return true. You can then
+     * Upon success it will return a perm instance. You can then
      * access the perm backend container by using the
-     * perm properties of this class.
+     * perm properties of this class or the perm object directly.
      *
-     * e.g.: $admin->perm->addUser();
+     * e.g.: $admin->perm->addUser(); or $perm->addUser();
      *
-     * @return boolean true upon success, false otherwise
+     * @return LiveUser_Admin_Perm_Simple|bool auth instance upon success, false otherwise
      *
      * @access public
      */
     function &setAdminPermContainer()
     {
-        if (!isset($this->_conf['permContainer'])) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+        if (!array_key_exists('permContainer', $this->_conf)) {
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Could not create perm container instance'));
             $result = false;
             return $result;
         }
 
-        $this->perm = &LiveUser::permFactory(
-            $this->_conf['permContainer'],
-            'LiveUser_Admin_'
-        );
-
+        $perm = &LiveUser::permFactory($this->_conf['permContainer'], 'LiveUser_Admin_');
+        if ($perm === false) {
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                array('msg' => 'Could not instanciate perm container of type: '.$this->_conf['permContainer']['type']));
+            return $perm;
+        }
+        $this->perm = &$perm;
+        
         return $this->perm;
     }
 
     /**
-     * Tries to find a user in any of the auth container.
+     * Setup backend container.
      *
      * Upon success it will return true. You can then
      * access the backend container by using the auth
      * and perm properties of this class.
      *
-     * e.g.: $admin->perm->updateAuthUserId();
+     * e.g.: $admin->perm->getUsers();
      *
-     * @param  mixed $authUserId  user auth id
-     * @param  string $authName  auth container name
-     * @return boolean true upon success, false otherwise
+     * @param int user auth id
+     * @param  string auth container name
+     * @return bool true upon success, false otherwise
      *
      * @access public
      */
-    function setAdminContainers($authUserId = null, $authName = null)
+    function init($authUserId = null, $authName = null)
     {
         if (!is_array($this->_conf)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Missing configuration array'));
             return false;
         }
@@ -399,33 +346,34 @@ class LiveUser_Admin
                 $authName = key($this->_conf['authContainers']);
             } else {
                 foreach ($this->_conf['authContainers'] as $key => $value) {
-                    if (!isset($this->_authContainers[$key]) ||
-                        !is_object($this->_authContainers[$key])
+                    if (!isset($this->_authContainers[$key])
+                        || !is_object($this->_authContainers[$key])
                     ) {
-                        $this->_authContainers[$key] = &LiveUser::authFactory(
-                            $value,
-                            $key,
-                            'LiveUser_Admin_'
-                        );
+                        $auth = &LiveUser::authFactory($value, $key, 'LiveUser_Admin_');
+                        if ($auth === false) {
+                            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                                array('msg' => 'Could not instanciate auth container: '.$key));
+                            return $auth;
+                        }
+                        $this->_authContainers[$key] =& $auth;
                     }
 
                     if (!is_null($authUserId)) {
                         $match = $this->_authContainers[$key]->getUsers(
-                            array('auth_user_id' => $authUserId)
+                            array('filters' => array('auth_user_id' => $authUserId))
                         );
-                        if (is_array($match) && sizeof($match) > 0) {
+                        if (is_array($match) && count($match) > 0) {
                             $authName = $key;
                             break;
                         }
                     }
                 }
             }
-        }
-
-        if (!isset($authName)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                array('msg' => 'Could not determine what auth container to use'));
-            return false;
+            if (!isset($authName)) {
+                $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                    array('msg' => 'Could not determine what auth container to use'));
+                return false;
+            }
         }
 
         if (!$this->setAdminAuthContainer($authName)) {
@@ -442,20 +390,26 @@ class LiveUser_Admin
     }
 
     /**
-     * Tries to add a user to both containers.
+     * Add a user to both containers.
      *
-     * @param  string $data authentication user data
-     * @param  integer $type permission user type
-     * @return mixed   perm user id or false
+     * @param  array auth user data and perm type
+     * @return int|bool perm user id or false
      *
      * @access public
      */
-    function addUser($data, $type = LIVEUSER_USER_TYPE_ID)
+    function addUser($data)
     {
         if (!is_object($this->auth) || !is_object($this->perm)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Perm and/or Auth container not set.'));
             return false;
+        }
+
+        if (array_key_exists('perm_type', $data)) {
+            $type = $data['perm_type'];
+            unset($data['perm_type']);
+        } else {
+            $type = LIVEUSER_USER_TYPE_ID;
         }
 
         $authUserId = $this->auth->addUser($data);
@@ -472,19 +426,18 @@ class LiveUser_Admin
     }
 
     /**
-     * Tried to changes user data for both containers.
+     * Changes user data for both containers.
      *
-     * @param integer $permUserId permission user id
-     * @param  string $data authentication user data
-     * @param  integer $type permission user type
-     * @return mixed   error object or true
+     * @param  array auth user data and perm type
+     * @param int permission user id
+     * @return int|bool affected rows on success or false otherwise
      *
      * @access public
      */
-    function updateUser($permUserId, $data, $type = null)
+    function updateUser($data, $permUserId)
     {
         if (!is_object($this->auth) || !is_object($this->perm)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Perm and/or Auth container not set.'));
             return false;
         }
@@ -498,9 +451,16 @@ class LiveUser_Admin
          );
 
         if (!$permData) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Could not find user in the permission backend'));
             return false;
+        }
+
+        if (array_key_exists('perm_type', $data)) {
+            $type = $data['perm_type'];
+            unset($data['perm_type']);
+        } else {
+            $type = null;
         }
 
         $this->setAdminAuthContainer($permData['auth_container_name']);
@@ -515,25 +475,23 @@ class LiveUser_Admin
             return true;
         }
 
-        $data = array(
-            'perm_type' => $type
-        );
+        $data = array('perm_type' => $type);
         $filters = array('perm_user_id' => $permUserId);
         return $this->perm->updateUser($data, $filters);
     }
 
     /**
-    * Removes user from both Perm and Auth containers
-    *
-    * @param  mixed $permUserId Perm ID
-    * @return  mixed error object or true
-    *
-    * @access public
-    */
+     * Removes user from both Perm and Auth containers
+     *
+     * @param int Perm ID
+     * @return int|bool affected rows on success or false otherwise
+     *
+     * @access public
+     */
     function removeUser($permUserId)
     {
         if (!is_object($this->auth) || !is_object($this->perm)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Perm and/or Auth container not set.'));
             return false;
         }
@@ -547,7 +505,7 @@ class LiveUser_Admin
          );
 
         if (!$permData) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Could not find user in the permission backend'));
             return false;
         }
@@ -565,45 +523,58 @@ class LiveUser_Admin
     }
 
     /**
-    * Finds and gets full userinfo by filtering inside the given container
-    *
-    * @access public
-    * @param  mixed perm filters (as for getUsers() from the perm container
-    * @param  boolean if only one row should be returned
-    * @return mixed Array with userinfo if found else error object
-    */
-    function getUsers($container = 'perm', $filter = array(), $first = false)
+     * Finds and gets full userinfo by filtering inside the given container
+     * Note that this method is not particularily efficient, as it fetches
+     * the data in the primary container in a single call, but requires one call
+     * to the secondary container for every user returned from the primary container
+     *
+     * @param  array params (as for getUsers()
+     *          with an additional optional key 'container' 'perm' (default) or
+                'auth' to determine the primary and secondary container.
+                data is first fetched from the primary container and then
+                combined with data from the secondary container if available
+     * @return array|bool array with userinfo if found on success or false otherwise
+     *
+     * @access public
+     */
+    function getUsers($params = array())
     {
-        if ($container == 'perm') {
-            return $this->_getUsersByPerm($filter, $first);
+        $params = LiveUser_Admin_Storage::setSelectDefaultParams($params);
+
+        if ($params['select'] != 'row' && $params['select'] != 'all') {
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                array('msg' => 'Select must be "row" or "all"'));
+            return false;
         }
-        return $this->_getUsersByAuth($filter, $first);
+
+        if (array_key_exists('container', $params)
+            && $params['container'] == 'auth'
+        ) {
+            return $this->_getUsersByAuth($params);
+        }
+        return $this->_getUsersByPerm($params);
     }
 
     /**
-    * Finds and gets full userinfo by filtering inside the perm container
-    *
-    * @param  mixed $permFilter perm filters (as for getUsers() from the perm container
-    * @param  boolean $first if only one row should be returned
-    * @return mixed Array with userinfo if found else error object
-    *
-    * @access public
-    */
-    function _getUsersByPerm($permFilter = array(), $first = false)
+     * Finds and gets full userinfo by filtering inside the perm container
+     *
+     * @param  array perm params (as for getUsers() from the perm container
+     * @return array|bool Array with userinfo if found on success or false otherwise
+     *
+     * @access private
+     */
+    function _getUsersByPerm($permParams = array())
     {
         if (!is_object($this->perm)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Perm container not set.'));
             return false;
         }
 
-        $permFilter = array('filters' => $permFilter);
-        $permFilter['select'] = $first ? 'row' : 'all';
-        $permUsers = $this->perm->getUsers($permFilter);
+        $first = ($permParams['select'] == 'row');
+        $permUsers = $this->perm->getUsers($permParams);
         if (!$permUsers) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                array('msg' => 'Could not find user in the permission backend'));
-            return false;
+            return $permUsers;
         }
 
         if ($first) {
@@ -611,19 +582,21 @@ class LiveUser_Admin
         }
 
         $users = array();
-        foreach($permUsers as $permData) {
+        foreach ($permUsers as $permData) {
             if (!$this->setAdminAuthContainer($permData['auth_container_name'])) {
-                $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+                $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                     array('msg' => 'Auth container could not be set.'));
                 return false;
             }
 
-            $authFilter = array('filters' => array('auth_user_id' => $permData['auth_user_id']));
-            $authData = $this->auth->getUsers($authFilter);
+            $authParams = array(
+                'filters' => array('auth_user_id' => $permData['auth_user_id']),
+                'select' => 'row',
+            );
+            $authData = $this->auth->getUsers($authParams);
             if (!$authData) {
                 continue;
             }
-            $authData = array_shift($authData);
 
             if ($first) {
                 return LiveUser::arrayMergeClobber($permData, $authData);
@@ -635,29 +608,25 @@ class LiveUser_Admin
     }
 
     /**
-    * Finds and gets full userinfo by filtering inside the auth container
-    *
-    * @param  mixed auth filters (as for getUsers() from the auth container
-    * @param  boolean if only one row should be returned
-    * @return mixed Array with userinfo if found else error object
-    *
-    * @access public
-    */
-    function _getUsersByAuth($authFilter = array(), $first = false)
+     * Finds and gets full userinfo by filtering inside the auth container
+     *
+     * @param  array auth params (as for getUsers() from the auth container
+     * @return array|bool Array with userinfo if found on success or false otherwise
+     *
+     * @access private
+     */
+    function _getUsersByAuth($authParams = array())
     {
         if (!is_object($this->auth) || !is_object($this->perm)) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
                 array('msg' => 'Perm and/or Auth container not set.'));
             return false;
         }
 
-        $authFilter = array('filters' => $authFilter);
-        $authFilter['select'] = $first ? 'row' : 'all';
-        $authUsers = $this->auth->getUsers($authFilter);
+        $first = ($authParams['select'] == 'row');
+        $authUsers = $this->auth->getUsers($authParams);
         if (!$authUsers) {
-            $this->_stack->push(LIVEUSER_ADMIN_ERROR, 'exception',
-                array('msg' => 'Could not find user in the authentication backend'));
-            return false;
+            return $authUsers;
         }
 
         if ($first) {
@@ -665,14 +634,15 @@ class LiveUser_Admin
         }
 
         $users = array();
-        foreach($authUsers as $authData) {
-            $permData = $this->perm->getUsers(array(
+        foreach ($authUsers as $authData) {
+            $permParams = array(
                 'filters' => array(
                     'auth_user_id' => $authData['auth_user_id'],
                     'auth_container_name' => $this->authContainerName,
                 ),
                 'select' => 'row',
-            ));
+            );
+            $permData = $this->perm->getUsers($permParams);
             if (!$permData) {
                 continue;
             }
@@ -687,29 +657,29 @@ class LiveUser_Admin
     }
 
     /**
-    * Wrapper method to get the Error Stack
-    *
-    * @return array  an array of the errors
-    *
-    * @access public
-    */
+     * Wrapper method to get the Error Stack
+     *
+     * @return array  an array of the errors
+     *
+     * @access public
+     */
     function getErrors()
     {
-        if (is_object($this->_stack)) {
-            return $this->_stack->getErrors();
+        if (is_object($this->stack)) {
+            return $this->stack->getErrors();
         }
         return false;
     }
 
     /**
-    * Calls a method using the __call() magic method on perm or auth
-    *
-    * @param string method name
-    * @param array  arguments
-    * @return mixed returned value
-    *
-    * @access public
-    */
+     * Calls a method using the __call() magic method on perm or auth
+     *
+     * @param string method name
+     * @param array  arguments
+     * @return mixed returned value
+     *
+     * @access private
+     */
     function __call($method, $params)
     {
         if (is_object($this->perm) && method_exists($this->perm, $method)) {

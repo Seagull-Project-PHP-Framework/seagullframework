@@ -33,12 +33,12 @@ class LUAdmin
         $staticConf = &LUAdmin::getConfig();
         
         $admin = &LUAdmin::factory($staticConf);
-        $ok = $admin->setAdminContainers();
+        $ok = $admin->setAdminPermContainer();
         if (!$ok) {
             return $admin->getErrors();  
         }
+
         $admin->perm->init($staticConf['permContainer']);
-        $admin->perm->setCurrentApplication(OPC_DEFAULT_APPLICATION);
         
         /*
         $logconf = array('mode' => 0666, 'timeFormat' => '%X %x');
@@ -72,11 +72,13 @@ class LUAdmin
 
         // seagull specific mysql container
 #FIXME remove
-//        if ($dsn['phptype'] == 'mysql_SGL') {
-//            $dsn['phptype'] = 'mysql';
-//        }
-        
+       
         $dsn = SGL_DB::getDsn();
+        
+        if ($dsn['phptype'] == 'mysql_SGL') {
+            $dsn['phptype'] = 'mysql';
+        }
+        
         $dbSingleton = &SGL_DB::singleton(); // get as a copy
         
         // clone it - because we are changing assocMode
@@ -87,6 +89,7 @@ class LUAdmin
                     SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
         
+      
         $db->setFetchMode(DB_FETCHMODE_ASSOC);
         
         $luConf =
@@ -151,16 +154,15 @@ class LUAdmin
                     ),
                 ),
                 'permContainer' => array(
-                    'type'  => 'Complex',
+                    'type'  => 'Complex',                   
                     'alias' => array(),
                     'storage' => array(
                         'DB' => array(
-                            'connection' => $db,
-                            //'dsn' => $dsn,
+                            'dsn' => $dsn,
                             'prefix' => 'liveuser_',
                             'tables' => array(),
                             'fields' => array(),
-                            // 'force_seq' => false
+                             'force_seq' => false
                         ),
                     ),
                 ),
@@ -209,7 +211,7 @@ class LUAdmin
     function noRecordRedirect()
     {
         SGL::raiseMsg('There is not record with such id');
-        SGL_HTTP::redirect('luRightsMgr.php', array('action' => 'list')); 
+        SGL_HTTP::redirect('', array('action' => 'list')); 
     }
     
     /**
@@ -331,6 +333,23 @@ class LUAdmin
         } else {
             return true;
         }
+    }
+    
+    /**
+     * Prints last LU Error
+     *
+     * @access  public
+     * @static 
+     * @return  bool  true on success else false
+     */    
+
+    function raiseError(&$obj) {
+        $LUErrors = $obj->perm->stack->getErrors();        
+        $message =  $LUErrors[0]['message'] . "\n" .
+                    "Error in " . $LUErrors[0]['context']['file'] . " on line " .
+                    $LUErrors[0]['context']['line'];
+        SGL::raiseError($message,LU_ERROR_ADMIN);
+        
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Rares Benea                                           |
+// | Copyright (c) 2006, Rares Benea                                           |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -38,13 +38,13 @@
 // +---------------------------------------------------------------------------+
 // $Id: Output.php,v 1.4 2005/05/31 23:34:23 demian Exp $
 
-class NewsletterOutput 
+class NewsletterOutput
 {
- 
+
     function generateCheckboxNewsList($hElements, $aChecked, $groupName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-      
+
         if (!is_array($hElements)) {
             SGL::raiseError('incorrect args passed to ' . __FILE__ . ',' . __LINE__,
                 SGL_ERROR_INVALIDARGS);
@@ -62,23 +62,27 @@ class NewsletterOutput
         }
         return $html;
     }
-    
-    function statusToString($statusID) 
-    {  
+
+    function statusToString($statusID)
+    {
         return SGL_String::translate('Status_'.$statusID);
     }
-    
-    function statusOpts($selected) 
+
+    function statusOpts($selected)
     {
-        $aSatusOpts = & $GLOBALS['_SGL']['CONF']['statusOpts'];
-        return SGL_Output :: generateSelect($aSatusOpts, $selected);
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aSatusOpts = $conf['statusOpts'];
+        return SGL_Output::generateSelect($aSatusOpts, $selected);
     }
-    
+
     function actionOpts($action)
     {
-        $aActionOpts = & $GLOBALS['_SGL']['CONF']['ActionOpts'];
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aActionOpts = $conf['ActionOpts'];
         $selectedAction = $action == ''  ? 'empty' : $action;
-        return SGL_Output :: generateSelect($aActionOpts, $selectedAction);
+        return SGL_Output::generateSelect($aActionOpts, $selectedAction);
     }
 }
 ?>

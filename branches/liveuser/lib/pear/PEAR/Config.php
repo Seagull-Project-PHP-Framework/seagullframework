@@ -14,9 +14,9 @@
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.23 2005/06/23 15:56:32 demian Exp $
+ * @version    CVS: $Id: Config.php,v 1.124 2006/03/02 18:14:12 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -214,9 +214,9 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @package    PEAR
  * @author     Stig Bakken <ssb@php.net>
  * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0a12
+ * @version    Release: 1.4.9
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -301,6 +301,14 @@ class PEAR_Config extends PEAR
      * @access private
      */
     var $_noRegistry = false;
+
+    /**
+     * amount of errors found while parsing config
+     * @var integer
+     * @access private
+     */
+    var $_errorsFound = 0;
+    var $_lastError = null;
 
     /**
      * Information about the configuration data.  Stores the type,
@@ -505,12 +513,14 @@ class PEAR_Config extends PEAR
      * @param bool   determines whether a registry object "follows"
      *               the value of php_dir (is automatically created
      *               and moved when php_dir is changed)
+     * @param bool   if true, fails if configuration files cannot be loaded
      *
      * @access public
      *
      * @see PEAR_Config::singleton
      */
-    function PEAR_Config($user_file = '', $system_file = '', $ftp_file = false)
+    function PEAR_Config($user_file = '', $system_file = '', $ftp_file = false,
+                         $strict = true)
     {
         $this->PEAR();
         PEAR_Installer_Role::initializeConfig($this);
@@ -529,24 +539,39 @@ class PEAR_Config extends PEAR
                 $system_file = PEAR_CONFIG_SYSCONFDIR . $sl . 'pear.conf';
             }
         }
+
         $this->layers = array_keys($this->configuration);
         $this->files['user'] = $user_file;
         $this->files['system'] = $system_file;
         if ($user_file && @file_exists($user_file)) {
-            $this->readConfigFile($user_file);
+            $this->pushErrorHandling(PEAR_ERROR_RETURN);
+            $this->readConfigFile($user_file, 'user', $strict);
+            $this->popErrorHandling();
+            if ($this->_errorsFound > 0) {
+                return;
+            }
         }
+
         if ($system_file && @file_exists($system_file)) {
-            $this->mergeConfigFile($system_file, false, 'system');
+            $this->mergeConfigFile($system_file, false, 'system', $strict);
+            if ($this->_errorsFound > 0) {
+                return;
+            }
+
         }
+
         if (!$ftp_file) {
             $ftp_file = $this->get('remote_config');
         }
-        if ($ftp_file) {
+
+        if ($ftp_file && defined('PEAR_REMOTEINSTALL_OK')) {
             $this->readFTPConfigFile($ftp_file);
         }
+
         foreach ($this->configuration_info as $key => $info) {
             $this->configuration['default'][$key] = $info['default'];
         }
+
         $this->_registry['default'] = &new PEAR_Registry($this->configuration['default']['php_dir']);
         $this->_registry['default']->setConfig($this);
         $this->_regInitialized['default'] = false;
@@ -571,21 +596,24 @@ class PEAR_Config extends PEAR
      *
      * @see PEAR_Config::PEAR_Config
      */
-    function &singleton($user_file = '', $system_file = '')
+    function &singleton($user_file = '', $system_file = '', $strict = true)
     {
         if (is_object($GLOBALS['_PEAR_Config_instance'])) {
             return $GLOBALS['_PEAR_Config_instance'];
         }
-        $GLOBALS['_PEAR_Config_instance'] =
-             &new PEAR_Config($user_file, $system_file);
+
+        $t_conf = &new PEAR_Config($user_file, $system_file, false, $strict);
+        if ($t_conf->_errorsFound > 0) {
+             return $t_conf->lastError;
+        }
+
+        $GLOBALS['_PEAR_Config_instance'] = &$t_conf;
         return $GLOBALS['_PEAR_Config_instance'];
     }
 
     // }}}
-    // {{{ readConfigFile([file], [layer])
-
-    // }}}
     // {{{ validConfiguration()
+
     /**
      * Determine whether any configuration files have been detected, and whether a
      * registry object can be retrieved from this configuration.
@@ -600,6 +628,9 @@ class PEAR_Config extends PEAR
         return false;
     }
 
+    // }}}
+    // {{{ readConfigFile([file], [layer])
+
     /**
      * Reads configuration data from a file.  All existing values in
      * the config layer are discarded and replaced with data from the
@@ -609,20 +640,31 @@ class PEAR_Config extends PEAR
      * @param string config layer to insert data into ('user' or 'system')
      * @return bool TRUE on success or a PEAR error on failure
      */
-    function readConfigFile($file = null, $layer = 'user')
+    function readConfigFile($file = null, $layer = 'user', $strict = true)
     {
         if (empty($this->files[$layer])) {
             return $this->raiseError("unknown config layer `$layer'");
         }
+
         if ($file === null) {
             $file = $this->files[$layer];
         }
+
         $data = $this->_readConfigDataFrom($file);
+
         if (PEAR::isError($data)) {
-            return $data;
+            if ($strict) {
+                $this->_errorsFound++;
+                $this->lastError = $data;
+
+                return $data;
+            } else {
+                return true;
+            }
         } else {
             $this->files[$layer] = $file;
         }
+
         $this->_decodeInput($data);
         $this->configuration[$layer] = $data;
         $this->_setupChannels();
@@ -653,7 +695,8 @@ class PEAR_Config extends PEAR
                     include_once 'Net/FTP.php';
                 }
             }
-            if (class_exists('Net_FTP')) {
+            if (class_exists('Net_FTP') &&
+                  (class_exists('PEAR_FTP') || PEAR_Common::isIncludeable('PEAR/FTP.php'))) {
                 require_once 'PEAR/FTP.php';
                 $this->_ftp = &new PEAR_FTP;
                 $this->_ftp->pushErrorHandling(PEAR_ERROR_RETURN);
@@ -754,9 +797,10 @@ class PEAR_Config extends PEAR
      * @param string file to read from
      * @param bool whether to overwrite existing data (default TRUE)
      * @param string config layer to insert data into ('user' or 'system')
+     * @param string if true, errors are returned if file opening fails
      * @return bool TRUE on success or a PEAR error on failure
      */
-    function mergeConfigFile($file, $override = true, $layer = 'user')
+    function mergeConfigFile($file, $override = true, $layer = 'user', $strict = true)
     {
         if (empty($this->files[$layer])) {
             return $this->raiseError("unknown config layer `$layer'");
@@ -766,7 +810,14 @@ class PEAR_Config extends PEAR
         }
         $data = $this->_readConfigDataFrom($file);
         if (PEAR::isError($data)) {
-            return $data;
+            if ($strict) {
+                $this->_errorsFound++;
+                $this->lastError = $data;
+
+                return $data;
+            } else {
+                return true;
+            }
         }
         $this->_decodeInput($data);
         if ($override) {
@@ -889,27 +940,57 @@ class PEAR_Config extends PEAR
         $size = filesize($file);
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
-        $contents = @fread($fp, $size);
+        if (function_exists('file_get_contents')) {
+            fclose($fp);
+            $contents = file_get_contents($file);
+        } else {
+            $contents = @fread($fp, $size);
+            fclose($fp);
+        }
+        if (empty($contents)) {
+            return $this->raiseError('Configuration file "' . $file . '" is empty');
+        }
+        
         set_magic_quotes_runtime($rt);
-        fclose($fp);
-        $version = '0.1';
+
+        $version = false;
         if (preg_match('/^#PEAR_Config\s+(\S+)\s+/si', $contents, $matches)) {
             $version = $matches[1];
             $contents = substr($contents, strlen($matches[0]));
+        } else {
+            // Museum config file
+            if (substr($contents,0,2) == 'a:') {
+                $version = '0.1';
+            }
         }
-        if (version_compare("$version", '1', '<')) {
-            $data = @unserialize($contents);
+        if ($version && version_compare("$version", '1', '<')) {
+
+            // no '@', it is possible that unserialize
+            // raises a notice but it seems to block IO to
+            // STDOUT if a '@' is used and a notice is raise
+            $data = unserialize($contents);
+
+            if (!is_array($data) && !$data) {
+                if ($contents == serialize(false)) {
+                    $data = array();
+                } else {
+                    $err = $this->raiseError("PEAR_Config: bad data in $file");
+                    return $err;
+                }
+            }
             if (!is_array($data)) {
                 if (strlen(trim($contents)) > 0) {
                     $error = "PEAR_Config: bad data in $file";
-                    return $this->raiseError($error);
+                    $err = $this->raiseError($error);
+                    return $err;
                 } else {
                     $data = array();
                 }
             }
         // add parsing of newer formats here...
         } else {
-            return $this->raiseError("$file: unknown version `$version'");
+            $err = $this->raiseError("$file: unknown version `$version'");
+            return $err; 
         }
         return $data;
     }
@@ -930,13 +1011,12 @@ class PEAR_Config extends PEAR
     // }}}
 
     /**
-     * @param PEAR_Installer_Role_Common
+     * @param array information on a role as parsed from its xml file
      * @return true|PEAR_Error
      * @access private
      */
-    function _addConfigVars($role)
+    function _addConfigVars($vars)
     {
-        $vars = call_user_func(array($role, 'getSupportingConfigVars'));
         if (count($vars) > 3) {
             return $this->raiseError('Roles can only define 3 new config variables or less');
         }
@@ -957,6 +1037,36 @@ class PEAR_Config extends PEAR
             if (!isset($var['default'])) {
                 return $this->raiseError(
                     'Configuration information must contain a default value ("default" index)');
+            } else {
+                if (is_array($var['default'])) {
+                    $real_default = '';
+                    foreach ($var['default'] as $config_var => $val) {
+                        if (strpos($config_var, 'text') === 0) {
+                            $real_default .= $val;
+                        } elseif (strpos($config_var, 'constant') === 0) {
+                            if (defined($val)) {
+                                $real_default .= constant($val);
+                            } else {
+                                return $this->raiseError(
+                                    'Unknown constant "' . $val . '" requested in ' .
+                                    'default value for configuration variable "' .
+                                    $name . '"');
+                            }
+                        } elseif (isset($this->configuration_info[$config_var])) {
+                            $real_default .=
+                                $this->configuration_info[$config_var]['default'];
+                        } else {
+                            return $this->raiseError(
+                                'Unknown request for "' . $config_var . '" value in ' .
+                                'default value for configuration variable "' .
+                                $name . '"');
+                        }
+                    }
+                    $var['default'] = $real_default;
+                }
+                if ($var['type'] == 'integer') {
+                    $var['default'] = (integer) $var['default'];
+                }
             }
             if (!isset($var['doc'])) {
                 return $this->raiseError(
@@ -978,6 +1088,7 @@ class PEAR_Config extends PEAR
         }
         return true;
     }
+
     // {{{ _encodeOutput(&data)
 
     /**
@@ -1154,6 +1265,9 @@ class PEAR_Config extends PEAR
                         $reg = &$this->getRegistry();
                         if (is_object($reg)) {
                             $chan = &$reg->getChannel($channel);
+                            if (PEAR::isError($chan)) {
+                                return $channel;
+                            }
                             if (!$chan->getMirror($test) && $chan->getName() != $test) {
                                 return $channel; // mirror does not exist
                             }
@@ -1175,6 +1289,9 @@ class PEAR_Config extends PEAR
                 $reg = &$this->getRegistry();
                 if (is_object($reg)) {
                     $chan = &$reg->getChannel($channel);
+                    if (PEAR::isError($chan)) {
+                        return $channel;
+                    }
                     if (!$chan->getMirror($test) && $chan->getName() != $test) {
                         return $channel; // mirror does not exist
                     }
@@ -1218,6 +1335,9 @@ class PEAR_Config extends PEAR
                 $reg = &$this->getRegistry($layer);
                 if (is_object($reg)) {
                     $chan = &$reg->getChannel($channel);
+                    if (PEAR::isError($chan)) {
+                        return $channel;
+                    }
                     if (!$chan->getMirror($ret) && $chan->getName() != $ret) {
                         return $channel; // mirror does not exist
                     }
@@ -1272,6 +1392,9 @@ class PEAR_Config extends PEAR
             $reg = &$this->getRegistry($layer);
             if (is_object($reg)) {
                 $chan = &$reg->getChannel($channel ? $channel : 'pear.php.net');
+                if (PEAR::isError($chan)) {
+                    return false;
+                }
                 if (!$chan->getMirror($value) && $chan->getName() != $value) {
                     return false; // mirror does not exist
                 }

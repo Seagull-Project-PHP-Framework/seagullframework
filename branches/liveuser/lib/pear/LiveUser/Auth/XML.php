@@ -12,7 +12,7 @@
  * approach which should enable it to
  * be versatile enough to meet most needs.
  *
- * PHP version 4 and 5 
+ * PHP version 4 and 5
  *
  * LICENSE: This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,23 +24,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA 
+ * MA  02111-1307  USA
  *
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Markus Wolff <wolff@21st.de>
- * @author Helgi Þormar Þorbjörnsson <dufuz@php.net>
- * @author  Lukas Smith <smith@backendmedia.com>
- * @author Arnaud Limbourg <arnaud@php.net>
- * @author   Pierre-Alain Joye  <pajoye@php.net>
+ * @author  Helgi Þormar Þorbjörnsson <dufuz@php.net>
+ * @author  Lukas Smith <smith@pooteeweet.org>
+ * @author  Arnaud Limbourg <arnaud@php.net>
+ * @author  Pierre-Alain Joye <pajoye@php.net>
  * @author  Bjoern Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: XML.php,v 1.20 2005/07/18 16:16:56 lsmith Exp $
+ * @version CVS: $Id: XML.php,v 1.43 2006/04/07 22:20:57 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -56,9 +56,9 @@ require_once 'XML/Tree.php';
  * This is a XML backend driver for the LiveUser class.
  *
  * @category authentication
- * @package  LiveUser
+ * @package LiveUser
  * @author  Björn Kraus <krausbn@php.net>
- * @copyright 2002-2005 Markus Wolff
+ * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
  * @version Release: @package_version@
  * @link http://pear.php.net/LiveUser
@@ -69,7 +69,7 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
      * XML file in which the auth data is stored.
      *
      * @var    string
-      * @access private
+     * @access private
      */
     var $file = '';
 
@@ -79,88 +79,85 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
      * @var    XML_Tree
      * @access private
      */
-    var $tree = null;
+    var $tree = false;
 
     /**
      * XML::Tree object of the user logged in.
      *
      * @var    XML_Tree
      * @access private
-     * @see    _readUserData()
+     * @see    readUserData()
      */
     var $userObj = null;
 
     /**
      * Load the storage container
      *
-     * @param  mixed &$conf   Name of array containing the configuration.
-     * @param string $containerName name of the container that should be used
-     * @return  boolean true on success or false on failure
+     * @param   array  array containing the configuration.
+     * @param string  name of the container that should be used
+     * @return bool true on success or false on failure
      *
-     * @access  public
+     * @access public
      */
     function init(&$conf, $containerName)
     {
         parent::init($conf, $containerName);
 
-        if (is_array($conf['storage'])) {
-            if (!is_file($this->file)) {
-                if (!is_file(getenv('DOCUMENT_ROOT') . $this->file)) {
-                    $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                        array('container' => "Auth initialisation failed. Can't find xml file."));
-                    return false;
-                }
-                $this->file = getenv('DOCUMENT_ROOT') . $this->file;
-            }
-            if ($this->file) {
-                if (class_exists('XML_Tree')) {
-                    $tree =& new XML_Tree($this->file);
-                    $err =& $tree->getTreeFromFile();
-                    if (PEAR::isError($err)) {
-                        $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                            array('container' => 'could not connect: '.$err->getMessage()));
-                        return false;
-                    }
-                    $this->tree = $tree;
-                } else {
-                    $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                        array('container' => "Auth initialisation failed. Can't find XML_Tree class."));
-                    return false;
-                   ;
-                }
-            } else {
-                $this->_stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
-                    array('container' => "Auth initialisation failed. Can't find xml file."));
+        if (!is_file($this->file)) {
+            if (!is_file(getenv('DOCUMENT_ROOT') . $this->file)) {
+                $this->stack->push(LIVEUSER_ERROR_MISSING_DEPS, 'exception', array(),
+                    "Perm initialisation failed. Can't find xml file.");
                 return false;
             }
+            $this->file = getenv('DOCUMENT_ROOT') . $this->file;
         }
+
+        $tree =& new XML_Tree($this->file);
+        $err =& $tree->getTreeFromFile();
+        if (PEAR::isError($err)) {
+            $this->stack->push(LIVEUSER_ERROR, 'exception', array(),
+                "Perm initialisation failed. Can't get tree from file");
+            return false;
+        }
+        $this->tree =& $tree;
+
+        if (!is_a($this->tree, 'xml_tree')) {
+            $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
+                array('container' => 'storage layer configuration missing'));
+            return false;
+        }
+
         return true;
     }
 
     /**
      * Writes current values for user back to the database.
-     * This method does nothing in the base class and is supposed to
-     * be overridden in subclasses according to the supported backend.
      *
-     * @return boolean true on success or false on failure
+     * @return bool true on success or false on failure
      *
      * @access private
      */
     function _updateUserData()
     {
-        $data = array('lastLogin' => $this->currentLogin);
+        if (!array_key_exists('lastlogin', $this->tables['users']['fields'])) {
+            return true;
+        }
 
         $index = 0;
         foreach ($this->userObj->children as $value) {
-            if (in_array($value->name, array_keys($data))) {
+            if ($value->name == $this->alias['lastlogin']) {
                 $el =& $this->userObj->getElement(array($index));
-                $el->setContent($data[$value->name]);
+                $el->setContent($this->currentLogin);
             }
             $index++;
         }
 
         $success = false;
         do {
+          if (is_writable($this->file)) {
+              $errorMsg = 'Auth freeze failure. Cannot write to the xml file';
+              break;
+          }
           $fp = fopen($this->file, 'wb');
           if (!$fp) {
               $errorMsg = "Auth freeze failure. Failed to open the xml file.";
@@ -182,7 +179,7 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
         @fclose($fp);
 
         if (!$success) {
-            $this->_stack->push(LIVEUSER_ERROR, 'exception',
+            $this->stack->push(LIVEUSER_ERROR, 'exception',
                 array(), 'Cannot read XML Auth file: '.$errorMsg);
         }
 
@@ -190,27 +187,26 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
     }
 
     /**
-     *
-     * Reads auth_user_id, password from the xml file
+     * Reads user data from the given data source
      * If only $handle is given, it will read the data
      * from the first user with that handle and return
      * true on success.
      * If $handle and $passwd are given, it will try to
-     * find the first user with both handle and passwd
+     * find the first user with both handle and password
      * matching and return true on success (this allows
      * multiple users having the same handle but different
      * passwords - yep, some people want this).
+     * if only an auth_user_id is passed it will try to read the data based on the id
      * If no match is found, false is being returned.
      *
-     * @param string $handle   Handle of the current user.
-     * @param mixed $passwd    Can be a string with an
-     *                  unencrypted pwd or false.
-     * @param string $authUserId auth user id
-     * @return boolean true on success or false on failure
+     * @param  string user handle
+     * @param  string user password
+     * @param  bool|int if the user data should be read using the auth user id
+     * @return bool true on success or false on failure
      *
-     * @access private
+     * @access public
      */
-    function readUserData($handle = '', $passwd = '', $authUserId = false)
+    function readUserData($handle = '', $passwd = '', $auth_user_id = false)
     {
         $success = false;
         $index = 0;
@@ -219,26 +215,26 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
             $result = array();
             $names = array_flip($this->alias);
             foreach ($user->children as $value) {
-                if (isset($names[$value->name])) {
+                if (array_key_exists($value->name, $names)) {
                     $result[$names[$value->name]] = $value->content;
                 }
             }
 
-            if ($authUserId) {
-                if (isset($result['auth_user_id']) &&
-                    $authUserId === $result['auth_user_id']
+            if ($auth_user_id) {
+                if (array_key_exists('auth_user_id', $result)
+                    && $auth_user_id === $result['auth_user_id']
                 ) {
                     $success = true;
                     break;
                 }
-            } elseif (isset($result['handle']) && $handle === $result['handle']) {
-                if ($this->tables['users']['fields']['passwd']) {
-                    if (isset($result['passwd']) &&
-                        $this->encryptPW($passwd) === $result['passwd']
+            } elseif (array_key_exists('handle', $result) && $handle === $result['handle']) {
+                if (!is_null($this->tables['users']['fields']['passwd'])) {
+                    if (array_key_exists('passwd', $result)
+                        && $this->encryptPW($passwd) === $result['passwd']
                     ) {
                         $success = true;
                         break;
-                    } elseif(!$this->allowDuplicateHandles) {
+                    } elseif (is_string($this->tables['users']['fields']['handle'])) {
                         // dont look for any further matching handles
                         break;
                     }
@@ -252,37 +248,10 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
         }
 
         if (!$success) {
-            return false;
+            return null;
         }
 
-        $this->handle = $result['handle'];
-        unset($result['handle']);
-        $this->passwd = $this->decryptPW($result['passwd']);
-        unset($result['passwd']);
-        $this->authUserId = $result['auth_user_id'];
-        unset($result['auth_user_id']);
-        $this->isActive = ((!isset($result['is_active']) || $result['is_active']) ? true : false);
-        if (isset($result['is_active'])) {
-            unset($result['is_active']);
-        }
-        $this->lastLogin = (isset($result['lastlogin']) && !empty($result['lastlogin']))
-            ? $result['lastlogin'] : '';
-        if (isset($result['lastlogin'])) {
-            unset($result['lastlogin']);
-        }
-        $this->ownerUserId  = isset($result['owner_user_id']) ? $result['owner_user_id'] : null;
-        if (isset($result['owner_user_id'])) {
-            unset($result['owner_user_id']);
-        }
-        $this->ownerGroupid = isset($result['owner_group_id']) ? $result['owner_group_id'] : null;
-        if (isset($result['owner_group_id'])) {
-            unset($result['owner_group_id']);
-        }
-        if (!empty($result)) {
-            foreach ($result as $name => $value) {
-                $this->{$name} = $value;
-            }
-        }
+        $this->propertyValues = $result;
 
         $this->userObj      =& $this->tree->root->getElement(array($index));
 
@@ -292,14 +261,15 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
     /**
      * Properly disconnect from resources
      *
-     * @return void
+     * @return bool true on success or false on failure
      *
      * @access public
      */
     function disconnect()
     {
-        $this->tree = null;
+        $this->tree = false;
         $this->userObj = null;
+        return true;
     }
 }
 ?>

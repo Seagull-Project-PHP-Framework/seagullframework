@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FileMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: FileMgr.php,v 1.15 2005/03/14 02:21:46 demian Exp $
 
-require_once SGL_ENT_DIR . '/Document.php';
+require_once 'DB/DataObject.php';
 require_once SGL_CORE_DIR . '/Download.php';
 
 /**
@@ -46,21 +46,19 @@ require_once SGL_CORE_DIR . '/Download.php';
  *
  * @package publisher
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.15 $
- * @since   PHP 4.1
  */
 class FileMgr extends SGL_Manager
 {
     function FileMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->module           = 'publisher';
-        $this->pageTitle        = 'File Manager';
+        parent::SGL_Manager();
 
+        $this->pageTitle        = 'File Manager';
         $this->_aActionsMapping =  array(
-            'download'   => array('download'), 
-            'downloadZipped'   => array('downloadZipped'), 
-            'view'   => array('view'), 
+            'download'       => array('download'),
+            'downloadZipped' => array('downloadZipped'),
+            'view'           => array('view'),
         );
     }
 
@@ -73,14 +71,15 @@ class FileMgr extends SGL_Manager
 
         //  form vars
         $input->action          = $req->get('action');
-        $input->submit          = $req->get('submit');
+        $input->submitted       = $req->get('submitted');
         $input->assetID         = $req->get('frmAssetID');
     }
 
-    function _download(&$input, &$output)
+    function _cmd_download(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $document = & new DataObjects_Document();
+
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $mimeType = $document->mime_type;
@@ -91,16 +90,17 @@ class FileMgr extends SGL_Manager
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {
-            SGL::raiseError('There was an error attempting to download the file', 
+            SGL::raiseError('There was an error attempting to download the file',
                 SGL_ERROR_NOFILE);
         }
     }
 
-    function _downloadZipped(&$input, &$output)
+    function _cmd_downloadZipped(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         require_once SGL_LIB_DIR . '/other/Zip.php';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $buffer = file_get_contents($fileName);
@@ -117,15 +117,16 @@ class FileMgr extends SGL_Manager
         exit;
     }
 
-    function _view(&$input, &$output)
+    function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'docBlank.html';
-        $document = & new DataObjects_Document();
+        $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetID);
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
-        if (!@file_exists($fileName)) {
-            SGL::raiseError('The specified file does not appear to exist', 
+        if (!@is_file($fileName)) {
+            SGL::raiseError('The specified file does not appear to exist',
                 SGL_ERROR_NOFILE);
             return false;
         }
@@ -137,10 +138,10 @@ class FileMgr extends SGL_Manager
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {
-            SGL::raiseError('There was an error displaying the file', 
+            SGL::raiseError('There was an error displaying the file',
                 SGL_ERROR_NOFILE);
-        exit;
         }
+        exit;
     }
 }
 ?>
