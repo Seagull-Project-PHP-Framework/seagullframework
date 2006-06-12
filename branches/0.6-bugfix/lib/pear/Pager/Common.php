@@ -33,7 +33,7 @@
  * @author     Richard Heyes <richard@phpguru.org>
  * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Common.php,v 1.54 2006/04/21 13:27:02 quipo Exp $
+ * @version    CVS: $Id: Common.php,v 1.55 2006/06/07 11:33:00 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -1293,6 +1293,10 @@ class Pager_Common
     function __http_build_query($array, $name)
     {
         $tmp = array ();
+        $separator = ini_get('arg_separator.output');
+        if ($separator == '&amp;') {
+            $separator = '&'; //the string is escaped by htmlentities anyway...
+        }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 //array_push($tmp, $this->__http_build_query($value, sprintf('%s[%s]', $name, $key)));
@@ -1305,7 +1309,7 @@ class Pager_Common
                 array_push($tmp, $this->__http_build_query(get_object_vars($value), $name.'%5B'.$key.'%5D'));
             }
         }
-        return implode(ini_get('arg_separator.output'), $tmp);
+        return implode($separator, $tmp);
     }
 
     // }}}
