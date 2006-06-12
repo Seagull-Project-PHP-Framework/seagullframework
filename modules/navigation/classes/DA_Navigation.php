@@ -313,9 +313,10 @@ class DA_Navigation extends SGL_Manager
         $query = "
             SELECT uri_alias
             FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $id
-            LIMIT 1";
-        return $this->dbh->getOne($query);
+            WHERE section_id = $id";
+        $result = $this->dbh->limitQuery($query,0,1);
+        $row =& $result->fetchRow();
+        return $row->uri_alias;
     }
 
     function updateUriAlias($aliasName, $target)
