@@ -410,6 +410,13 @@
 
 
 
+	#event_navigation{
+	}
+
+	#event_navigation li{
+        display: inline;
+        list-style-type: none;
+	}
 	#event_search{
 		margin:10px 0  20px 0;
 		padding:10px;
