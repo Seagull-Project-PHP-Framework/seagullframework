@@ -243,7 +243,7 @@ class SGL_Output
      * @param   string  $groupname  usually an array name that will contain all elements
      * @param   integer $newline    how many columns to display for this radio group
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
-     * @param 	boolean $inTable    true for adding table formatting
+     * @param     boolean $inTable    true for adding table formatting
      * @return  string  $html       a list of radio buttons
      */
     function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true, $options = null)
@@ -420,7 +420,7 @@ class SGL_Output
             $curRowClass = $pColor;
         }
 
-	if ($isBold)
+        if ($isBold)
             $curRowClass .= ' bold';
 
         return $curRowClass;
@@ -560,7 +560,7 @@ class SGL_Output
     function outputBody($templateEngine = null)
     {
         if (empty($this->template)) {
-	    $this->template = 'docBlank.html';
+            $this->template = 'docBlank.html';
         }
         $this->masterTemplate = $this->template;
         $view = &new SGL_HtmlSimpleView($this, $templateEngine);
@@ -587,11 +587,21 @@ class SGL_Output
     }
 
     /**
+     * Makes new var and assign value.
+     *
+     */
+    function assign(&$a, $b)
+    {
+        $a = $b;
+        return;
+    }
+
+    /**
      * Check permission at the template level and returns true if permission
      * exists.
-	 *
-	 * Use as follows in any Flexy template:
-	 * <code>
+     *
+     * Use as follows in any Flexy template:
+     * <code>
      * {if:hasPerms(#faqmgr_delete#)} on {else:} off {end:}
      * </code>
      *
@@ -599,7 +609,7 @@ class SGL_Output
      *
      * @access  public
      * @param   string  $permName    Name of permission eg. "faqmgr_delete"
-     * @return 	boolean
+     * @return     boolean
      *
      */
     function hasPerms($permName)
