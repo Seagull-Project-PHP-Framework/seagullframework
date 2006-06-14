@@ -319,6 +319,18 @@ class DA_User extends SGL_Manager
             WHERE   usr_id = $userId
                 ";
         $aUserPerms = $this->dbh->getCol($query);
+        
+        //  in case of LU
+/*        $conf = & $GLOBALS['_SGL']['CONF'];    
+        if ($this->conf['permission']['driver'] == 'liveuser') {
+            $perm = &SGL_Perm::singletonPerm('liveuser');
+            $rights = $perm->readRights($force = true, $userId);
+            $aRightsPerms = $perm->getPermsByRights($rights);
+            if(!empty($aRightsPerms)) {
+                $aUserPerms = array_merge($aUserPerms, $aRightsPerms);
+            }
+        }*/        
+        
         return $aUserPerms;
     }
 

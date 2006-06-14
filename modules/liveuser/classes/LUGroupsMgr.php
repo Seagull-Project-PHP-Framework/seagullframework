@@ -45,17 +45,13 @@ class LUGroupsMgr extends SGL_Manager
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        
-        $input->submit      = $req->get('submitted');
-        
+        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';       
+        $input->submit      = $req->get('submitted');        
         $input->group    = $req->get('group');
         $input->group_id = $req->get('group_id');
-        $input->aDelete  = $req->get('frmDelete');
-        
+        $input->aDelete  = $req->get('frmDelete');        
         $input->rightsToAdd      = $req->get('AddfrmGroupRights');
-        $input->rightsToRemove   = $req->get('RemovefrmGroupRights');
-        
+        $input->rightsToRemove   = $req->get('RemovefrmGroupRights');        
         $input->membersToAdd      = $req->get('AddfrmGroupMembers');
         $input->membersToRemove   = $req->get('RemovefrmGroupMembers');
             
@@ -63,11 +59,15 @@ class LUGroupsMgr extends SGL_Manager
             if(empty($input->group['name'])) {
                 $aErrors['name'] = 'You must enter a name';
             }
-            /*
+            
+            if(empty($input->group['description'])) {
+                $aErrors['description'] = 'You must enter a description';
+            }            
+            
             if(empty($input->group['group_define_name'])) {
                 $aErrors['group_define_name'] = 'You must enter a "define name"';
             }
-            */
+            
         }
         
         //  if errors have occured
@@ -109,7 +109,16 @@ class LUGroupsMgr extends SGL_Manager
         if ($groupId === false) {
              LUAdmin::raiseError($admin);  
         } else {
-            SGL::raiseMsg('Group was successfully added');
+            $translation = $this->_cmd_buildGroupTranslationData($input,$groupId);
+            $result = $admin->perm->addTranslation($translation);
+            if ($result === false) {
+                LUAdmin::raiseError($admin);
+            } else {            
+            
+//                LUAdmin::rebuildRightsConstants();            
+                SGL::raiseMsg('Group was successfully added');
+                
+            }
         }
     }
 
@@ -133,9 +142,8 @@ class LUGroupsMgr extends SGL_Manager
         if($group === false) {
             LUAdmin::noRecordRedirect();
         }
-        
-        $group->name = $group->group_define_name;
-        $output->group = (array)$group;
+                
+        $output->group = & $group;
     }
 
    /**
@@ -159,11 +167,21 @@ class LUGroupsMgr extends SGL_Manager
         $upGroup = $admin->perm->updateGroup($data, $filters); 
         
         if ($upGroup === false) {
-            SGL::raiseError('Error on line: '.__LINE__.', error: '.LUAdmin::errorToString($admin->getErrors()), 
-                SGL_ERROR_DBFAILURE);
+            LUAdmin::raiseError($admin);        
         } else {
-            SGL::raiseMsg('Group was successfully updated');
-        }
+            $translation = $this->_cmd_buildGroupTranslationData($input,$upGroup);
+            $filters = array('section_id' => $input->group_id, 'section_type' => LIVEUSER_SECTION_GROUP);
+            $translation['section_id'] = $input->group_id;                  
+            $result = $admin->perm->updateTranslation($translation, $filters);
+            if ($result === false) {
+                LUAdmin::raiseError($admin);
+            } else {            
+            
+//                LUAdmin::rebuildRightsConstants();            
+                SGL::raiseMsg('Group was successfully updated');
+                
+            }
+        }          
     }
 
    /**
@@ -208,13 +226,21 @@ class LUGroupsMgr extends SGL_Manager
             
             foreach ($input->aDelete as $groupId) {
                 $filters = array('group_id' => $groupId, 'recursive' => true);
-                $rmGroup = $admin->perm->removeGroup($filters);
+                $rmGroup = $admin->perm->removeGroup($filters);                
                 if ($rmGroup === false) {
-                    SGL::raiseError('Error on line: '.__LINE__.', error: '.LUAdmin::errorToString($admin->getErrors()), 
-                        SGL_ERROR_DBFAILURE);
+                    LUAdmin::raiseError($admin);
+
+                } else {
+                    $filters = array('section_id' => $groupId, 'section_type' => LIVEUSER_SECTION_GROUP);
+                    $result = $admin->perm->removeTranslation($filters);
+                    if ($result === false) {
+                        LUAdmin::raiseError($admin);                        
+                    } else {
+                        SGL::raiseMsg('Group(s) was successfully deleted');                    
+                    }     
                 }
             }
-            SGL::raiseMsg('Group(s) was successfully deleted');
+
         } else {
             SGL::raiseError('Incorrect parameter passed to ' . 
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -236,7 +262,8 @@ class LUGroupsMgr extends SGL_Manager
         if ($group === false) {
             LUAdmin::noRecordRedirect();
         }
-        $output->group = &$group;
+        
+        $output->group = (object)$group;
         
         //  get set of rights associated with group
         $aGroupRights = $this->getRightsDetailsByGroupId($input->group_id);
@@ -261,13 +288,18 @@ class LUGroupsMgr extends SGL_Manager
         $aRightsToAdd    = LUAdmin::parseWidgetString($input->rightsToAdd);
         $aRightsToRemove = LUAdmin::parseWidgetString($input->rightsToRemove);
         
+        $result=true;
         if (is_array($aRightsToAdd) && count($aRightsToAdd)) {
-            $this->_cmd_changeAssignments($aRightsToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
+            $result = $this->_cmd_changeAssignments($aRightsToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
         }
         if (is_array($aRightsToRemove) && count($aRightsToRemove)) {
-            $this->_cmd_changeAssignments($aRightsToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
+            $result = $this->_cmd_changeAssignments($aRightsToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
         }
-        SGL::raiseMsg('group assignments successfully updated');
+        if ($result) {
+            SGL::raiseMsg('group assignments successfully updated');
+        } else {
+            SGL::raiseError('error updating rights');
+        }
     }
 
     /**
@@ -290,6 +322,9 @@ class LUGroupsMgr extends SGL_Manager
                 $dbh->query("   DELETE FROM liveuser_grouprights
                                 WHERE   right_id = $rightId
                                 AND     group_id = $groupId");
+                if (PEAR::isError($dbh)) {               
+                    return false;
+                }                                       
             }
         } else {
             //  add rights
@@ -297,8 +332,12 @@ class LUGroupsMgr extends SGL_Manager
                 $dbh->query("   INSERT INTO liveuser_grouprights
                                 (group_id, right_id, right_level)
                                 VALUES ($groupId, $rightId, 1)");
+                if (PEAR::isError($dbh)) {               
+                    return false;
+                }                                
             }
         }
+        return true;
     }
 
     /**
@@ -312,16 +351,23 @@ class LUGroupsMgr extends SGL_Manager
     function getRightsDetailsByGroupId($groupId)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+             
         $query = "
-            SELECT  gr.right_id, r.name
-            FROM    liveuser_grouprights gr, liveuser_rights r
-            WHERE   gr.right_id = r.right_id
+            SELECT  gr.right_id, lt.name
+            FROM    liveuser_grouprights gr, liveuser_translations lt        
+            WHERE   gr.right_id = lt.section_id
+            AND     lt.section_type = " .LIVEUSER_SECTION_RIGHT ."                    
             AND     gr.group_id = $groupId
             ";
         
         $dbh = & SGL_DB::singleton();
         $aGroupRights = $dbh->getAssoc($query);
+        
+        
+        if (PEAR::isError($dbh)) {
+            SGL::raiseError("Error");
+        }
+        
         return $aGroupRights;
     }
 
@@ -346,11 +392,14 @@ class LUGroupsMgr extends SGL_Manager
             $whereClause = substr($whereClause, 0, -4);
         }
         $query = '
-            SELECT  r.right_id, r.name
-            FROM    liveuser_rights r';
+            SELECT  r.right_id, lt.name
+            FROM    liveuser_rights r, liveuser_translations lt
+            WHERE   r.right_id = lt.section_id                  
+            AND     lt.section_type = ' .LIVEUSER_SECTION_RIGHT .' ';
         if (count($aGroupRights) > 0) {
-            $query .= " WHERE $whereClause";
+            $query .= 'AND ' .$whereClause;
         }
+      
         $dbh = & SGL_DB::singleton();
         $aOthersRights = $dbh->getAssoc($query);
         return $aOthersRights;
@@ -371,7 +420,8 @@ class LUGroupsMgr extends SGL_Manager
         if ($group === false) {
             LUAdmin::noRecordRedirect();
         }
-        $output->group = &$group;
+        
+        $output->group = (object)$group;
         
         //  get set of members associated with group
         $aGroupMembers = $this->getMembersDetailsByGroupId($input->group_id);
@@ -390,14 +440,20 @@ class LUGroupsMgr extends SGL_Manager
         
         $aMembersToAdd    = LUAdmin::parseWidgetString($input->membersToAdd);
         $aMembersToRemove = LUAdmin::parseWidgetString($input->membersToRemove);
-        
+                
+        $result = true;       
         if (is_array($aMembersToAdd) && count($aMembersToAdd)) {
-            $this->_cmd_changeMemberAssignments($aMembersToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
+            $result = $this->_cmd_changeMemberAssignments($aMembersToAdd, $input->group_id, SGL_LIVEUSER_RIGHT_ADD);
         }
         if (is_array($aMembersToRemove) && count($aMembersToRemove)) {
-            $this->_cmd_changeMemberAssignments($aMembersToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
+            $result = $this->_cmd_changeMemberAssignments($aMembersToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
         }
-        SGL::raiseMsg('group assignments successfully updated');
+        
+        if ($result) {
+            SGL::raiseMsg('group assignments successfully updated');
+        } else {
+            SGL::raiseError('Error inserting Permissions to Rights link');  
+        }
     }
 
     /**
@@ -421,14 +477,24 @@ class LUGroupsMgr extends SGL_Manager
                                 WHERE   perm_user_id = $memberId
                                 AND     group_id = $groupId");
             }
+            if (PEAR::isError($dbh)) {               
+                return false;
+            }               
+            
         } else {
             //  add rights
             foreach ($aMembers as $memberId => $name) {
                 $dbh->query("   INSERT INTO liveuser_groupusers
                                 (group_id, perm_user_id)
                                 VALUES ($groupId, $memberId)");
+
+                if (PEAR::isError($dbh)) {               
+                    return false;
+                }                                 
             }
+              
         }
+        return true;
     }
 
     /**
@@ -498,15 +564,22 @@ class LUGroupsMgr extends SGL_Manager
      */
     function getGroup($groupId)
     {
-        $params['filters'] = array('group_id' => $groupId);
+                
+        $params['fields'] = array('group_id', 'group_define_name','name','description');
+        $params['filters'] = array('group_id' => $groupId, 'language_id' => SGL_Translation::getLangId());       
         
         $admin = &LUAdmin::singleton();
-        @$groups = &$admin->perm->getGroups($params);
-        $foundGroup = false;
+        $groups = $admin->perm->getGroups($params);       
+                             
+        if (PEAR::isError($groups)) {
+            LUAdmin::raiseError($admin);
+        }        
+        
+        $foundGroup = false;       
         
         foreach ($groups as $group) {
             if ($group['group_id'] == $groupId) {
-                $foundGroup = (object)$group;
+                $foundGroup = & $group;
                 break;
             }
         }
@@ -514,7 +587,30 @@ class LUGroupsMgr extends SGL_Manager
     }
     
     /**
+     * Build array with data for LiveUser transltion
+     *
+     * @access  private
+     * @param   object $input  seagull input
+     * @param   int    $group_id  id of translation
+     * @return  array $data
+     */    
+    
+    function _cmd_buildGroupTranslationData(&$input,$group_id) {
+
+        $data = array (
+            'section_type' => LIVEUSER_SECTION_GROUP,
+            'section_id' => $group_id,
+            'language_id' => SGL_Translation::getLangId(),
+            'name' => $input->group['name'],
+            'description' => $input->group['description'],        
+        );
+        return $data;
+    }
+    
+    
+    /**
      * Find group via LiveUser_Admin api
+     * 
      *
      * @access  private
      * @param   int   $input

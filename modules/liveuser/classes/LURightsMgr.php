@@ -110,11 +110,7 @@ class LURightsMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
-        if (empty($input->right_id)) {
-            echo "hi";
-        }
-        
+              
         $output->template = 'luRightEdit.html';
         $output->action = 'update';
         
@@ -190,8 +186,7 @@ class LURightsMgr extends SGL_Manager
                 $filters = array('right_id' => $rightId);
                 $rmRight = $admin->perm->removeRight($filters);
                 if ($rmRight === false) {
-                    SGL::raiseError('Error on line: '.__LINE__.', error: '.LUAdmin::errorToString($admin->getErrors()), 
-                        SGL_ERROR_DBFAILURE);
+                    LUAdmin::raiseError($admin);
                 } else {
                     // also delete the associated records from right_permission table
                     $rightPermission = & new DataObjects_Right_permission();
@@ -201,13 +196,23 @@ class LURightsMgr extends SGL_Manager
                         $ret = $rightPermission->delete();
                     }
                     if(!$ret || PEAR::isError($ret)) {
-                        Base::raiseError('There was a problem deleting the record '
+                        SGL::raiseError('There was a problem deleting the record '
                             . __FILE__ . ':' . __LINE__, 
                             SGL_ERROR_NOAFFECTEDROWS);
+                    } else {
+                        $filters = array('section_id' => $rightId, 'section_type' => LIVEUSER_SECTION_RIGHT);
+                        $result = $admin->perm->removeTranslation($filters);
+                        if ($result === false) {
+                            LUAdmin::raiseError($admin);                        
+                        } else {
+                            SGL::raiseMsg('Right(s) was successfully deleted');                    
+                        }     
+                    
                     }
+                    
                 }
             }
-            SGL::raiseMsg('Right(s) was successfully deleted');
+
         } else {
             SGL::raiseError('Incorrect parameter passed to ' . 
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -286,6 +291,9 @@ class LURightsMgr extends SGL_Manager
                                 WHERE   permission_id = $permId
                                 AND     right_id = $rightId");
             }
+            if (PEAR::isError($dbh)) {               
+                return false;
+            }               
         } else {
             //  add perms
             foreach ($aPerms as $permId => $permName) {             
@@ -294,7 +302,7 @@ class LURightsMgr extends SGL_Manager
                                 VALUES (" . $dbh->nextId('right_permission') . ", $rightId, $permId)");                               
                    
                 if (PEAR::isError($dbh)) {               
-                    return null;
+                    return false;
                 }   
           
             }
@@ -371,6 +379,15 @@ class LURightsMgr extends SGL_Manager
         return $data;
     }
     
+    
+    /**
+     * Build array with data for LiveUser transltion
+     *
+     * @access  private
+     * @param   object $input  seagull input
+     * @param   int    $right_id  id of translation
+     * @return  array $data
+     */        
     function _cmd_buildRightTranslationData(&$input,$right_id) {
 
         $data = array (
