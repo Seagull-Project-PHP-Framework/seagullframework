@@ -570,10 +570,10 @@
 		border:1px solid #D0DCE0;
 		padding:10px;
 	}
-	.a_column{
-		width:250px;
-		float:left;
-	}
+    div.a_column{
+        width:48%;
+        float:left;
+    }
 	#select_dates{
 		margin:0 0 5px 0;
 		height: 20px;
