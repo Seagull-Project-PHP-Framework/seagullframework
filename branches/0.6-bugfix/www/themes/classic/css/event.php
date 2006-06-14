@@ -410,7 +410,7 @@
 
 
 /*******************************************************/
-/* NAVIGATION FOR EVENT 							   */
+/*  EVENT NAVIGATION							       */
 /*******************************************************/
 	#event_navigation{
 		margin:10px 0 25px 0;
@@ -439,11 +439,12 @@
 	#event_navigation{display:block;}
 	/* End Hack */
 
-
+/*******************************************************/
+/*  EVENT SEARCH    							       */
+/*******************************************************/
 	#event_search{
 		margin:10px 0  20px 0;
 		padding:10px;
-		background-color:#FDE7F7;
 	}
 	#event_search:after{
 		content: ".";
@@ -467,9 +468,8 @@
 		color:#333333;
 		font-size:0.9em;
 		margin:0;
-		padding:0;
 		background-color:#AEEF4F;
-		background-image:url("<?php echo $baseUrl; ?>/images/cal_event_bg_3.jpg");
+		background-image:url("<?php echo $baseUrl; ?>/images/cal_event_bg_2.jpg");
 		background-position:top left;
 		background-repeat:repeat-x;
 		padding:4px;
@@ -487,7 +487,6 @@
 		float:left;
 	}
 
-
 	#event_search span{
 		text-align: center;
 		font-size: 1em;
@@ -498,7 +497,7 @@
 		border-top: 1px solid #FFFFFF;
 		border-left: 1px solid #FFFFFF;
 		font-weight:normal;
-		background-image:url("<?php echo $baseUrl; ?>/images/cal_search_days_bg.jpg");
+		background-image:url("<?php echo $baseUrl; ?>/images/cal_event_bg.jpg");
 		background-position:top left;
 		background-repeat:repeat-x;
 		padding:4px;
@@ -577,14 +576,9 @@
 	}
 	#select_dates{
 		margin:0 0 5px 0;
+		height: 20px;
 	}
-	#select_dates:after{
-		content: ".";
-		display: block;
-		height: 0;
-		clear: both;
-		visibility:hidden;
-	}
+
 	#select_dates{display: inline-block;}
 	/* Hides from IE Mac \*/
 	* html #select_dates {height: 1%;}
