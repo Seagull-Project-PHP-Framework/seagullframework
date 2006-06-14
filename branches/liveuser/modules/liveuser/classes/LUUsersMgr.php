@@ -1,5 +1,5 @@
 <?php
-require_once SGL_ENT_DIR . '/usr.php';
+require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_ADD', 1);
@@ -54,15 +54,21 @@ class LUUsersMgr extends SGL_Manager
         if (!$ret || PEAR::isError($ret)) {
             LUAdmin::noRecordRedirect();
         }
-        $output->user = &$user;
+        $output->user = $user;
         
         //  get set of groups associated with user
         $aUserGroups = $this->getGroupsDetailsByUserId($input->user_id);
+        if (PEAR::isError($aUserGroups)) {
+            SGL::raiseError("Error getting groups");
+        }
         asort($aUserGroups);
         $output->userGroupsOptions = SGL_Output::generateSelect($aUserGroups);
 
         //  get remaining groups
         $aRemainingGroups = $this->retrieveAllOthersGroups($aUserGroups);
+        if (PEAR::isError($aRemainingGroups)) {
+            SGL::raiseError("Error getting groups");
+        }        
         asort($aRemainingGroups);
         $output->remainingGroupsOptions = SGL_Output::generateSelect($aRemainingGroups);
     }
@@ -74,14 +80,20 @@ class LUUsersMgr extends SGL_Manager
         $aGroupsToAdd    = LUAdmin::parseWidgetString($input->groupsToAdd);
         $aGroupsToRemove = LUAdmin::parseWidgetString($input->groupsToRemove);
         
+        $result = true;
         if (is_array($aGroupsToAdd) && count($aGroupsToAdd)) {
-            $this->_changeGroupsAssignments($aGroupsToAdd, $input->user_id, SGL_LIVEUSER_ADD);
+            $result = $this->_cmd_changeGroupsAssignments($aGroupsToAdd, $input->user_id, SGL_LIVEUSER_ADD);
         }
         if (is_array($aGroupsToRemove) && count($aGroupsToRemove)) {
-            $this->_changeGroupsAssignments($aGroupsToRemove, $input->user_id, SGL_LIVEUSER_REMOVE);
+            $result = $this->_cmd_changeGroupsAssignments($aGroupsToRemove, $input->user_id, SGL_LIVEUSER_REMOVE);
         }
-        SGL::raiseMsg('user assignments successfully updated');
-        SGL_HTTP::redirect('userMgr.php', array('action' => 'list')); 
+        
+        if ($result) {
+            SGL::raiseMsg('user assignments successfully updated');
+            SGL_HTTP::redirect(array('moduleName'=>'user','managerName'=>'user','action' => 'list'));         
+        } else {
+            SGL::raiseError("Error updating user permissions");        
+        }
     }
 
     /**
@@ -103,16 +115,24 @@ class LUUsersMgr extends SGL_Manager
             foreach ($aGroups as $groupId => $name) {
                 $dbh->query("   DELETE FROM liveuser_groupusers
                                 WHERE   perm_user_id = $userId
-                                AND     group_id = $groupId");
+                                AND     group_id = $groupId");                                
+                if (PEAR::isError($dbh)) {
+                    return false;
+                }                                
             }
+            
         } else {
             //  add groups
             foreach ($aGroups as $groupId => $name) {
                 $dbh->query("   INSERT INTO liveuser_groupusers
                                 (perm_user_id, group_id)
                                 VALUES ($userId, $groupId)");
+                if (PEAR::isError($dbh)) {
+                    return false;
+                }                                                
             }
         }
+        return true;
     }
 
     /**
@@ -128,9 +148,11 @@ class LUUsersMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $query = "
-            SELECT  gu.group_id, g.name
+            SELECT  gu.group_id, lt.name
             FROM    liveuser_groupusers gu, liveuser_groups g
+            LEFT JOIN liveuser_translations lt ON lt.section_id = gu.group_id     
             WHERE   gu.group_id = g.group_id
+            AND     section_type = ".LIVEUSER_SECTION_GROUP."                    
             AND     gu.perm_user_id = $userId
             ";
         
@@ -160,8 +182,10 @@ class LUUsersMgr extends SGL_Manager
             $whereClause = substr($whereClause, 0, -4);
         }
         $query = '
-            SELECT  g.group_id, g.name
-            FROM    liveuser_groups g';
+            SELECT  g.group_id, lt.name
+            FROM    liveuser_groups g
+            LEFT JOIN liveuser_translations lt ON lt.section_id = g.group_id';
+                                
         if (count($aGroups) > 0) {
             $query .= " WHERE $whereClause";
         }

@@ -260,15 +260,19 @@ class LUAdmin
         }
         
         $query = "
-                SELECT  lgu.group_id, lg.name
-                FROM    liveuser_groups lg, liveuser_groupusers lgu
+                SELECT  lgu.group_id, lt.name
+                FROM    liveuser_groups lg, liveuser_groupusers lgu 
+                LEFT JOIN liveuser_translations lt ON lt.section_id = lg.group_id 
                 WHERE   lg.group_id = lgu.group_id
-                        AND lgu.perm_user_id = " . $userId . "
-                ORDER BY lg.name";
+                AND lt.section_type = ".LIVEUSER_SECTION_GROUP."
+                AND lgu.perm_user_id = " . $userId . "
+                ORDER BY lt.name";
         
         $dbh = &SGL_DB::singleton();
         
-        $aGroups = $dbh->getAssoc($query);
+        
+        $aGroups = $dbh->getAssoc($query);        
+              
         return $aGroups;
     }
     

@@ -1,0 +1,136 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" href="{makeUrl(#add#,#document#,#publisher#)}">{translate(#New Asset#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="newAsset" flexy:ignore id="newAsset">
+        <h3>{translate(#Document filter#)}</h3>
+        <fieldset class="inside">
+            <input type="hidden" name="action" value="delete" />
+            <p>
+                <label>{translate(#You are here#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label>{translate(#showing results for#,#ucfirst#)}</label>
+                <span>{queryRange:h}<a class="catSelect" href="javascript: void(0)" title="{translate(#select a category#)}" onclick="javascript:showCategoryBlock(event)">{translate(#choose#)}</a></span>
+                <div id="categoryNav">
+                    <div class="close">
+                        <span onclick="hideCategoryBlock()">close</span>
+                    </div>
+                {foreach:blocksAdminCategory,key,valueObj}
+                    {valueObj.content:h}
+                {end:}
+                </div>
+            </p>
+        </fieldset>
+
+        <h3>{translate(#Document list#)}</h3>
+        <fieldset class="noBorder">
+            <table class="full">
+                <thead>
+                    <tr class="infos">
+                        <td class="right" colspan="14">
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                    <tr class="noBg">
+                        <td colspan="8">&nbsp;</td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_word.gif" alt="Miscrosoft Word" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_excel.gif" alt="Microsoft Excel" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_ppt.gif" alt="Microsoft Powerpoint" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_url.gif" alt="url" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_image.gif" alt="image" /></td>
+                        <td width="2%"><img src="{webRoot}/themes/{theme}/images/16/doc_pdf.gif" alt="Portable Document Format (PDF)" /></td>
+                    </tr>
+                    <tr>
+                        <th width="3%">
+                            <span class="tipOwner">
+                                <span class="tipText" id="becareful">Be Careful !</span>
+                                <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('newAsset', 'frmDelete[]', this.checked)" />
+                            </span>
+                        </th>
+                        <th width="20%" class="left"><a href="#">{translate(#Asset Name#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#Size#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#Type#)}</a></th>
+                        <th width="12%"><a href="#">{translate(#Date Added#)}</a></th>
+                        <th width="10%"><a href="#">{translate(#Owner#)}</a></th>
+                        <th width="5%">{translate(#View#)}</a></th>
+                        <th width="10%">{translate(#Download#)}</a></th>
+                        <th colspan="6">{translate(#Document type#)}</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="infos">
+                        <td class="right" colspan="15">
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {if:aPagedData[data]}
+                    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                        <td>
+                            <input type="checkbox" name="frmDelete[]" value="{aValue[document_id]}" />
+                        </td>
+                        <td class="left"><a href="{makeUrl(#edit#,#document#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}">{aValue[name]}</a></td>
+                        <td align="right">{formatBytes(aValue[file_size])}</td>
+                        <td nowrap="nowrap">{aValue[document_type_name]}</td>
+                        <td>{formatDate(aValue[date_created])}</td>
+                        <td>{aValue[document_added_by]}</td>
+                        <td>
+                            <a  onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)"
+                                href="#">
+                                <img src="{webRoot}/themes/{theme}/images/16/action_view.gif" alt="view" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{makeUrl(#setDownload#,#document#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}">
+                                <img src="{webRoot}/themes/{theme}/images/16/action_download.gif" alt="download" />
+                            </a>
+                        </td>
+                        {this.plugin(#outputIcon#,aValue[document_type_id]):h}
+                    </tr>
+                    {else:}
+                    <tr>
+                        <td colspan="14">{translate(#no results found#)}</td>
+                    </tr>
+                    {end:}
+                </tbody>
+            </table>
+            <input type="submit" class="sgl-button" name="deleteButton" value="{translate(#delete#)}"
+                   onclick="return confirmSubmit('{translate(#asset#)}', 'newAsset')" />
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+
+<script type='text/javascript'>
+<!--
+function showCategoryBlock(ev)
+{
+    var catBlock = document.getElementById("categoryNav");
+    if (catBlock.style.display == 'block') {
+        catBlock.style.display = 'none';
+    } else {
+        catBlock.style.display = 'block';
+        if (document.all) {
+            catBlock.style.left = event.screenX +30 +'px';
+            catBlock.style.marginTop = '-1em';
+        } else {
+            catBlock.style.left = ev.screenX +20 +'px';
+            catBlock.style.marginTop = '-1em';
+        }
+    }
+}
+function hideCategoryBlock()
+{
+    var catBlock = document.getElementById("categoryNav");
+    catBlock.style.display = 'none';
+}
+//-->
+</script>

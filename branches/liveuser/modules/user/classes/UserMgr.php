@@ -323,6 +323,20 @@ class UserMgr extends RegisterMgr
             'curPageSpanPost'       => '</span>',
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+         
+/* For better times :) 
+ * Retrival of all groups for all users will slow the process 
+  
+         if ($this->conf['permission']['driver'] == 'liveuser') {           
+            require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
+            foreach ($aPagedData['data'] as $key => $user) {
+
+                // find groups for every user
+                $aPagedData['data'][$key]['groups'] = LUAdmin::getGroupsByUserId($user['usr_id']);                                
+            }
+        }
+        */
+        
 
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {

@@ -1,0 +1,31 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<h1 class="pageTitle">{translate(pageTitle)} :: {translate(action)}</h1>
+<form name="editType" action="{makeUrl(#update#,#contentType#,#publisher#)}" method="post" id="editType" flexy:ignore>
+<input type="hidden" name="frmContentTypeID" value="{contentTypeID}" />
+<table class="wide">
+    <tr>
+        <th colspan="2"><div class="error" flexy:if="error[name]">
+                    {error[name]}
+                </div>
+        Name: <input type="text" name="type[item_type_name]" value="{type[item_type_name]}" />
+            <input type="hidden" name="type[item_type_name_original]" value="{type[item_type_name]}" />
+        </th>
+    </tr>          
+    <tr flexy:foreach="type[fields],aKey,aValue">    
+        <td><input type="text" name="type[fields][{aKey}][field_name]" value="{aValue[field_name]}" />
+            <input type="hidden" name="type[fields][{aKey}][field_name_original]" value="{aValue[field_name]}" />
+        </td>   
+        <td><select name="type[fields][{aKey}][field_type]">
+            {generateSelect(fieldTypes,aValue[field_type]):h}</select>
+            <input type="hidden" name="type[fields][{aKey}][field_type_original]" value="{aValue[field_type]}" />
+        </td>    
+    </tr>
+    <tr>
+        <td><input class="wideButton" name="submitted" value="{translate(#Submit#)}" type="submit" /></td>
+        <td><input class="wideButton" type="button" value="{translate(#Cancel#)}" 
+                onclick="javascript:document.location.href='{makeUrl(##,#contentType#,#publisher#)}'" />
+        </td>
+    </tr>
+</table>
+</form>
