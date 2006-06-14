@@ -482,10 +482,10 @@
 		vertical-align:bottom;
 		border:1px solid #666666;
 	}
-	.a_column{
-		width:250px;
-		float:left;
-	}
+    div.a_column{
+        width:48%;
+        float:left;
+    }
 
 	#event_search span{
 		text-align: center;
