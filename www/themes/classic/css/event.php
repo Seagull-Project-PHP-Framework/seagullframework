@@ -409,14 +409,37 @@
 	}
 
 
-
+/*******************************************************/
+/* NAVIGATION FOR EVENT 							   */
+/*******************************************************/
 	#event_navigation{
+		margin:10px 0 25px 0;
+		padding:5px;
+		text-align:center;
+    	background-color:#F0FFD9;
+    	border:1px solid #C6D7AA;
+    	height: 75px;
 	}
 
 	#event_navigation li{
         display: inline;
         list-style-type: none;
+		float:left;
+		margin:0 16px 0 6px;
 	}
+
+	#event_navigation span{
+		margin:8px 0 0 0;
+		display:block;
+	}
+
+
+	/* Hides from IE Mac \*/
+	* html #event_navigation {height: 1%;}
+	#event_navigation{display:block;}
+	/* End Hack */
+
+
 	#event_search{
 		margin:10px 0  20px 0;
 		padding:10px;
