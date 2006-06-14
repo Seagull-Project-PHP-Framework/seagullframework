@@ -612,3 +612,61 @@
 		font-size:0.9em;
 		color:#333333;
 	}
+
+
+
+
+/*******************************************************/
+/* LOCATIONS                                           */
+/*******************************************************/
+	.default_table{
+		margin:0;
+		padding:10px;
+		background-color:#F3F3EC;
+		border:1px solid #999791;
+	}
+	.default_table table{
+		margin:0;
+		padding:0;
+		border:0;
+		width:100%;
+	}
+	.default_table caption{
+		color:#9CB20A;
+		font-size:1em;
+		text-align:left;
+		margin:0 0 10px 0;
+	}
+	.default_table th{
+		margin:0;
+		padding:3px;
+		text-align:left;
+		color:#666666;
+		font-weight:bold;
+		border:0;
+	}
+	.default_table tr{
+		margin:0;
+		padding:0;
+		text-align:left;
+	}
+	.default_table td{
+		margin:0;
+		padding:3px 10px 3px 3px ;
+		border-left:0;
+		border-right:0;
+		border-top:1px solid #999791;
+		border-bottom:6px solid #F3F3EC;
+		background-color:#FFFFFF;
+		color:#855F48;
+	}
+	.default_table a{
+		color:#0066CC;
+		text-decoration:underline;
+	}
+	.default_table a:hover{
+		color:#CC3300;
+	}
+	td.icon_in_table{
+		text-align:center;
+	}
