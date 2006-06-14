@@ -518,7 +518,6 @@
 	#add_edit_form form{
 		margin:0;
 		padding:10px;
-		width:550px;
 	}
 	#add_edit_form label{
 		font-weight:bold;
