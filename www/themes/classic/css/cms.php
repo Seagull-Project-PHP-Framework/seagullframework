@@ -48,6 +48,85 @@
 	border:1px solid #C6D7AA;
 }
 
+
+/*******************************************************/
+/* SELECT FILE TYPE - NARROW RESULTS                   */
+/*******************************************************/
+
+	#view_type{
+		margin:10px 0 25px 0;
+		padding:10px;
+		background-color:#E0EFB8;
+		border:1px solid #C3CEA5;
+	}
+	#view_type img{
+		margin:auto 0 -8px 0;
+	}	
+	#view_type a{
+		font-size:0.9em;
+		color:#333333;
+		text-decoration:none;
+	}
+	#view_type a:hover{
+		color:#0066CC;
+	}	
+	#view_type:after{
+		content: "."; 
+		display: block; 
+		height: 0; 
+		clear: both; 
+		visibility:hidden;
+	}
+	#view_type{display: inline-block;}
+	/* Hides from IE Mac \*/
+	* html #view_type {height: 1%;}
+	#view_type{display:block;}
+	/* End Hack */
+	
+
+	#view_type span{
+		float:left;
+		color:#5F7032;
+		font-size:1em;
+		font-weight:bold;
+		margin:12px 10px 0 0;
+	}
+	#view_type input{
+		margin:0;
+		padding:0;
+		border:1px solid #C3CEA5;
+	}
+	.doc_icon{
+		width:70px;
+		text-align:center;
+		margin:0 0 8px 0;
+	}
+	.doc_name{
+		text-align:center;
+		color:#5F7032;
+		font-size:0.9em;
+	}
+	.file_type_icon{
+		float:left;
+	}
+	
+	#keyword_div{
+		float:left;
+		margin:12px 10px 0 0;
+	}
+	#keyword_div label{
+		text-align:center;
+		color:#5F7032;
+		font-size:0.9em;
+		font-weight:bold;
+	}
+	#submit_div{
+		float:left;
+		margin:12px 10px 0 0;
+		
+	}
+	
+
 /*******************************************************/
 /* THUMBNAIL CREATION                                  */
 /*******************************************************/
