@@ -79,7 +79,7 @@ class SGL_Task_SetupPaths extends SGL_Task
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
             if (function_exists('set_include_path')) {
-                set_include_path('.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+                set_include_path('.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR);
             } else {
                 die('You need at least PHP 4.3.0 if you want to run Seagull
                 with safe mode enabled.');
