@@ -84,9 +84,9 @@ class SGL_Emailer
 
         $siteName = $this->conf['site']['name'];
         $this->headerTemplate
-            = "<html><head><title>$siteName</title></head></html><body>";
+            = "<html><head><title>$siteName</title></head><body>";
         $this->footerTemplate
-            = "<table><tr><td>&nbsp;</td></tr></table></body>";
+            = "<table><tr><td>&nbsp;</td></tr></table></body></html>";
         foreach ($options as $k => $v) {
             $this->options[$k] = $v;
         }
