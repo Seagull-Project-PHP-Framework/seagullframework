@@ -56,7 +56,8 @@ img {
 ======================Global layaout==========================*/
 #outer-wrapper {
     max-width: 1000px;
-    margin: 0 5%;
+    width: 900px;
+    margin: 0 auto;
     text-align: left;
 }
 #header {
@@ -67,6 +68,8 @@ img {
 }
 #inner-wrapper {
     clear: both;
+    width: 896px;
+    /* 896 is for mainWrapper width - borders width : 900 - (2 x 2) */
 }
 #footer {
     clear: both;
@@ -74,21 +77,35 @@ img {
 
 /*
 ======================2 Cols Fluid============================*/
+#middleCol {
+    float: left;
+    background: <?php echo $greyLightest ?>;
+}
+#middleCol .inner {
+    padding: 5px 10px;
+}
+#ensureMinHeight {
+    float: left;
+    width: 1px;
+    height: <?php echo $contentMinHeight ?>;
+}
 #layout-3Cols #middleCol {
-    margin: 0 <?php echo $rightColWidth ?> 0 <?php echo $leftColWidth ?>;
+    width: <?php echo ($mainWrapperWidth - $leftColWidth - $rightColWidth - 6) . 'px' ?>;
+    /* 6 is for borders width : (2+1) x 2 */
 }
 #layout-leftCol #middleCol {
-    margin-left: <?php echo $leftColWidth ?>;
+    width: <?php echo ($mainWrapperWidth - $leftColWidth - 6) . 'px' ?>;
 }
 #layout-rightCol #middleCol {
-    margin-right: <?php echo $rightColWidth ?>;
+    width: <?php echo ($mainWrapperWidth - $rightColWidth -6) . 'px' ?>;
 }
 #layout-noCols #middleCol {
-    margin: 0;
+    width: <?php echo ($mainWrapperWidth -6) . 'px' ?>;
 }
 #leftCol {
     float: left;
-    width: 15em;
+    width: <?php echo $leftColWidth . 'px' ?>;
+    /*background: url('<?php echo $baseUrl ?>/images/backgrounds/v4-bubbles.png') left top no-repeat;*/
 }
 #leftCol .inner {
     padding: 5px;
@@ -96,17 +113,14 @@ img {
 }
 #rightCol {
     float: right;
-    width: 15em;
-}
-#rightCol .inner {
-    padding: 5px;
-    padding-top: 0.8em;
-}
-#middleCol {
+    width: <?php echo $rightColWidth . 'px' ?>;
     background: <?php echo $greyLightest ?>;
 }
-#middleCol .inner {
-    padding: 5px 10px;
+#rightCol .inner {
+    margin: 2.5em 4px 4px 0;
+    padding: 5px;
+    padding-top: 0.8em;
+    border: 1px solid <?php echo $grey ?>;
 }
 
 /*
@@ -126,23 +140,23 @@ img {
     margin: 0 20px;
     background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/header_tm.gif') left top repeat-x;
 }
-#header h1{
+#header span#logo {
     font-size: 30px;
     font-family: "Trebuchet MS";
 }
-#header h1 a {
+#header a#logo {
     color: <?php echo $greyLightest ?>;
     text-decoration: none;
 }
-#header h1 img {
+#header #logo img {
     position: relative;
-    top: 10px;
+    top: 7px;
     left: 0;
 }
 #header #bugReporter {
     position: absolute;
-    top: 0;
-    right: 25px;
+    bottom: 0px;
+    right: -10px;
 }
 
 /*
@@ -198,6 +212,9 @@ a.breadcrumbs {
 #content li {
     padding-left: 0.5em;
 }
+#content a {
+    color: <?php echo $primaryDark ?>;
+}
 
 /*
 ==================Default Forms Styling=======================*/
@@ -226,12 +243,12 @@ Definition lists are used to display fields labels and values
 -----*/
 dl.onSide dt {
     float: left;
-    width: 150px;
+    width: 120px;
     padding-right: 20px;
     text-align: right;
 }
 dl.onSide dd{
-    margin-left: 170px;
+    margin-left: 140px;
     margin-bottom: 0.5em;
 }
 dl.onTop dd {
@@ -358,13 +375,11 @@ a.langFlag {
     background: none;
 }
 pre.codeExample {
-    margin: 0.5em 8em 0.5em 2em;
     padding: 1em;
     background-color: <?php echo $greyLight ?>;
     border: 1px solid <?php echo $greyDark ?>;
     border-left: 5px solid <?php echo $greyDark ?>;
     font-size: 1em;
-    overflow: auto;
 }
 
 /*

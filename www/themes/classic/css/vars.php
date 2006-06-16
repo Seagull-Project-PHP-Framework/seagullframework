@@ -1,5 +1,5 @@
 <?php
-    $fontFamily             = 'verdana, sans-serif';
+    $fontFamily             = 'arial, sans-serif';
     $fontFamilyAlt          = 'arial';
     $fontSize               = 'small';
 
@@ -21,10 +21,14 @@
     $greyLight              = '#EEEEEE'; //
     $greyLightest           = '#FFFFFF'; //
 
-/* Columns
+/* Columns widths set in px
     ------------------------------------------------- */
-    $leftColWidth           = '15em';
-    $rightColWidth          = '15em';
+    $mainWrapperWidth       = 900;
+    $leftColWidth           = 180;
+    $rightColWidth          = 180;
+    /* middle col width will be calculated */
+    
+    $contentMinHeight       = '320px';
 
 /* Messages and errors
     ------------------------------------------------- */
