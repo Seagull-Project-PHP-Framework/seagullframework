@@ -3,7 +3,7 @@
     <input type="hidden" name="frmDelete[]" value="{instantMessage.instant_message_id}" />
 
     <h1 class="pageTitle">{translate(sectionTitle)}</h1>
-    <span flexy:if="msgGet()">{msgGet()}</span>
+    <div class="message">{msgGet()}</div>
     {if:instantMessage}
 
     <table class="wide">

@@ -24,7 +24,7 @@ function selchkAll(chk, i) {
 </script>
 <flexy:include src="resourceChooser.html" />
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
+<div class="message">{msgGet()}</div>
 {if:pager}<flexy:include src="pager.html" />{end:}
 
 <form name="users" method="post" flexy:ignore id="users">

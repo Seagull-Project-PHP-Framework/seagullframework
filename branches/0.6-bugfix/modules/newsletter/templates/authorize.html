@@ -1,5 +1,5 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
+<div class="message">{msgGet()}</div>
 
 <form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
     <input type="hidden" name="action" value="authorize" />
