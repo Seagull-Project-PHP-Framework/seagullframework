@@ -1,4 +1,3 @@
-
 /******************************************************************************/
 /*                        BLOCKS STYLE CSS FILE                               */
 /******************************************************************************/
@@ -27,7 +26,10 @@ Date   : 2006/03/20
 }
 .block .content {
     padding: 0.4em;
-    font-size: 0.8em;
+    font-size: 0.9em;
+}
+#leftCol .content a {
+    color: <?php echo $primaryDark ?>;
 }
 /*
 =====================Lang Switcher Block======================*/
@@ -38,17 +40,17 @@ Date   : 2006/03/20
 /*
 ====================Top Navigation Block======================*/
 #top-nav {
-    background: <?php echo $greyLightest ?>;
+    background: <?php echo $primaryLight ?>;
     border: 2px solid <?php echo $greyLightest ?>;
     border-top: none;
 }
 #top-nav .inner {
     height: 2.2em;
-    padding-left: 15em;
+    padding-left: <?php echo $leftColWidth . 'px' ?>;
     border: 1px solid <?php echo $grey ?>;
 }
 #top-nav ul {
-    
+
 }
 #top-nav li {
     float: left;
@@ -56,10 +58,9 @@ Date   : 2006/03/20
 #top-nav li a {
     display: block;
     padding: 0.5em 1em;
-    border-left: 1px solid <?php echo $greyLightest ?>;
     border-right: 1px solid <?php echo $greyLightest ?>;
     font-weight: bold;
-    color: <?php echo $primary ?>;
+    color: <?php echo $primaryDark ?>;
 }
 #top-nav li a:hover, #top-nav li.current a {
     background-color: <?php echo $primary ?>;

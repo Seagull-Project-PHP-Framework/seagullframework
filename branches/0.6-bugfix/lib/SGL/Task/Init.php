@@ -298,6 +298,20 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_SetGlobals extends SGL_Task
+{
+    function run($data)
+    {
+        $GLOBALS['_SGL']['BANNED_IPS'] =        array();
+        $GLOBALS['_SGL']['ERRORS'] =            array();
+        $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_SetupPearErrorCallback extends SGL_Task
 {
     function run($conf)
@@ -339,10 +353,10 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
  */
 class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
-    function run(&$input)
+    function run($conf)
     {
         //  start PHP error handler
-        if ($this->conf['debug']['customErrorHandler']) {
+        if ($conf['debug']['customErrorHandler']) {
 	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
 	        $eh = & new SGL_ErrorHandler();
 	        $eh->startHandler();
@@ -351,8 +365,6 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
         //  clean start for logs
         error_log(' ');
         error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
-
-        $this->processRequest->process($input);
     }
 }
 
@@ -373,21 +385,6 @@ class SGL_Task_SetBaseUrl extends SGL_Task
             require_once dirname(__FILE__)  . '/Install.php';
             SGL_Task_SetBaseUrlMinimal::run();
         }
-    }
-}
-
-
-/**
- * @package Task
- */
-class SGL_Task_SetGlobals extends SGL_Task
-{
-    function run($data)
-    {
-        $GLOBALS['_SGL']['BANNED_IPS'] =        array();
-        $GLOBALS['_SGL']['ERRORS'] =            array();
-        $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
-        $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
     }
 }
 
