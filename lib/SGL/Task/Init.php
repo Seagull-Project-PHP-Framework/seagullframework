@@ -339,7 +339,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
  */
 class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
-    function process(&$input)
+    function run(&$input)
     {
         //  start PHP error handler
         if ($this->conf['debug']['customErrorHandler']) {
