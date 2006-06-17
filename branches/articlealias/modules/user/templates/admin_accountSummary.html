@@ -1,0 +1,32 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)} :&nbsp;</span>
+    <a class="action reorder" href="{makeUrl(#edit#,#userpassword#,#user#)}">{translate(#change password#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="frmMyAccount" action="" method="post" flexy:ignore id="frmMyAccount">
+        <h3>{user.username}</h3>
+        <fieldset class="inside">
+            <p>
+                <label>{translate(#Role#)}</label>
+                <span>{user.role_name}</span>
+            </p>
+            <p>
+                <label>{translate(#Date Registered#)}</label>
+                <span>{formatDatePretty(user.date_created)}</span>
+            </p>
+            <p>
+                <label>{translate(#Last Login#)}</label>
+                <span>{if:login.last_login} {formatDatePretty(login.last_login)} {else:}{translate(#first login in progress#)}{end:}</span>
+            </p>
+            <p>
+                <label>{translate(#Current IP Address#)}</label>
+                <span>{remote_ip}</span>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

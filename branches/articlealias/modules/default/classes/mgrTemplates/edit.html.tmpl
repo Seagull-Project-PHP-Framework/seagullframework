@@ -1,0 +1,24 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form method="post" flexy:ignore>
+<input type="hidden" name="action" value="{action}" />
+<input type="hidden" name="%mgrName%_id" value="{%mgrName%.%mgrName%_id}" />
+
+<table class="wide">
+    <tr>
+        <td align="center">
+            <table>
+                %field_html%
+                <tr>
+                    <td colspan="2" align="center">
+                        <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
+                        <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}"
+                            onClick="document.location.href='{makeUrl(#list#,#%mgrName%#,#%moduleName%#):h}'" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</form>
