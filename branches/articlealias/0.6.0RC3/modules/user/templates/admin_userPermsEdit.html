@@ -1,0 +1,40 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('updatePerms');">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('updatePerms');">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#user#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)} {translate(#for user id#)} {userID}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" action="" name="updatePerms" flexy:ignore id="updatePerms">
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="updatePerms" />
+            <input type="hidden" name="frmModuleId" value="{moduleId}" />
+            <input type="hidden" name="user[usr_id]" value="{userID}" />
+        </fieldset>
+
+        <fieldset class="inside">
+            <p>
+                <a href="javascript:applyToAllCheckboxes('updatePerms', 'frmPerms[]', false)" class="uncheckAll">{translate(#uncheck all#,#ucfirst#)}</a>
+                <a href="javascript:applyToAllCheckboxes('updatePerms', 'frmPerms[]', true)" class="checkAll">{translate(#check all#,#ucfirst#)}</a>
+                <label for="moduleSelector">{translate(#Select a module#)}</label>
+                <select id="moduleSelector"
+                        onChange="javascript:document.location.href='{makeUrl(#editPerms#,#user#,#user#)}frmUserID/{userID}/#' +this.value;" />
+                    <option value="header"> &ndash;&ndash;{translate(#all#,#ucfirst#)} &ndash;&ndash;</option>
+                    {generateSelect(aModulesList,currentModule):h}
+                </select>
+            </p>
+        </fieldset>
+        {foreach:aModules,moduleId}
+        <fieldset class="inside" id="{moduleId[id]}">
+            <a href="#header" class="floatRight">{translate(#top#,#ucfirst#)}</a>
+            <h3>{moduleId[name]}</h3>
+            {moduleId[perms]:h}
+        </fieldset>
+        {end:}
+    </form>
+    <div class="spacer"></div>
+</div>

@@ -1,0 +1,50 @@
+<form name="users" method="post" flexy:ignore id="userImport" action="">
+<input type="hidden" name="action" value="insertImportedUsers">
+
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="wide">
+        <tr>
+            <td valign="top">
+                <p class="title">{translate(#userfile#)}</p>
+                <p>{translate(#Use the document manager to upload CSV files.#)}</p>
+            </td>
+            <td class="title">
+                <div class="error" flexy:if="error[csvFile]">{translate(error[csvFile])}</div>
+                <select name="frmCsvFile" size="5">
+                    {generateSelect(aFiles):h}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="title">{translate(#organisation#,#ucfirst#)}</p>
+                <p>{translate(#Import users into selected organisation.#)}</p>
+            </td>
+            <td>
+            <select name="frmOrgId">
+                {generateSelect(aOrgs,organisation):h}
+            </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="title">{translate(#role#,#ucfirst#)}</p>
+                <p>{translate(#User will be assigned to selected role.#)}</p>
+            </td>
+            <td>
+            <select name="frmRoleId">
+                {generateSelect(aRoles,role):h}
+            </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input class="wideButton" type="submit" name="submitted" value="{translate(#process file#)}">
+                <input class="wideButton" type="button" value="{translate(#Cancel#)}"
+                        onclick="javascript:document.location.href='{makeUrl(##,#user#,#user#)}'" />
+            <td>
+        </tr>
+    </table>
+</form>
