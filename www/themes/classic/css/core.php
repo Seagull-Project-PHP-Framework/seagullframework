@@ -26,6 +26,7 @@ body {
     color: <?php echo $greyDarkest ?>;
     background-color: <?php echo $grey ?>;
     text-align: center;
+	background-image: url(../images/grey_bgnd.gif);
 }
 ul {
     list-style: none;
@@ -234,6 +235,15 @@ input, select, textarea {
 textarea {
     font-family: <?php echo $fontFamily ?>;
     font-size: 0.9em;
+}
+
+input[type="text"], input[type="password"]
+{
+	border-top: 1px solid #7c7c7c;
+	border-left: 1px solid #c3c3c3;
+	border-right: 1px solid #c3c3c3;
+	border-bottom: 1px solid #ddd;
+	background: #fff url(../images/fieldbg.gif) repeat-x top;
 }
 
 /*
