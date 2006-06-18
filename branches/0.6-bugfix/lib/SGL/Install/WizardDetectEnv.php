@@ -82,6 +82,10 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $GLOBALS['_SGL']['runner'] = $runner;
 
         $this->addElement('checkbox', 'detectEnv', 'Detect Env?', 'Yes');
+        $this->addElement('static', 'colourKey', 'Legend', 'Errors are displayed in '.
+            '<span style="color: red; font-weight: bold;">red</span>, recommendations in '.
+            '<span style="color: orange; font-weight: bold;">yellow</span> and success in '.
+            '<span style="color: green; font-weight: bold;">green</span>');
         $this->registerRule('environmentOk','function','environmentOk');
         $this->addRule('detectEnv', 'please fix the listed errors', 'environmentOk');
 
