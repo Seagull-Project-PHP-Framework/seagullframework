@@ -55,6 +55,12 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             if (useExistingData != null) {
                 toggleLangList();
             }
+
+            //  disable dbLoginName for mysql default
+            var dbLoginName = document.getElementById('dbLoginNameElement');
+            if (dbLoginName != null) {
+                dbLoginName.disabled = true;
+            }
         }
 
         function toggleLangList(myCheckbox)
@@ -107,9 +113,28 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
                 }
             }
         }
+
+        function copyValueToPortElement(elem)
+        {
+            var portElement = document.getElementById('targetPortElement');
+            portElement.value = elem.value;
+        }
+
+        function toggleDbNameForLogin(enable)
+        {
+            var dbLoginName = document.getElementById('dbLoginNameElement');
+            if (enable) {
+                dbLoginName.value = '';
+                dbLoginName.disabled = false;
+            } else {
+                dbLoginName.value = 'not required for MySQL login';
+                dbLoginName.disabled = true;
+            }
+
+        }
     </script>
 </head>
-<body onLoad="javascript:init()" id="content">
+<body onLoad="javascript:init();" id="content">
 
 <div id="sgl">
 <!-- Logo and header -->

@@ -56,7 +56,7 @@ function canConnectToDbServer()
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
         ? ':' . $aFormValues['dbPort']['port']
         : '';
-    $dbName = (!empty($aFormValues['dbName']) && ($aFormValues['dbName'] != 'not required for MySQL'))
+    $dbName = (!empty($aFormValues['dbName']) && ($aFormValues['dbName'] != 'not required for MySQL login'))
                 ? '/'.$aFormValues['dbName']
                 : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
@@ -102,15 +102,20 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'host' => 'localhost',
             'dbProtocol'  => array('protocol' => 'unix'),
             'dbType'  => array('type' => 'mysql_SGL'),
+            'dbPortChoices'  => array('portOption' => 3306),
             'dbPort'  => array('port' => 3306),
-            'dbName'  => 'not required for MySQL',
+            'dbName'  => 'not required for MySQL login',
             ));
 
         //  type
-        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
-        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
-        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
+        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
+            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');
+        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
+            'onClick="toggleDbNameForLogin(false);"');
+        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
+            'onClick="toggleDbNameForLogin(true);"');
+        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+            'onClick="toggleDbNameForLogin(true);"');
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
@@ -130,16 +135,21 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
 
         //  port
         unset($radio);
-        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (MySQL default)", 3306);
-        $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
-        $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
-        $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
-        $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
+        $radio[] = &$this->createElement('radio', 'portOption', 'TCP port: ',"3306 (MySQL default)",
+            3306, 'onClick="copyValueToPortElement(this);"');
+        $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
+            5432, 'onClick="copyValueToPortElement(this);"');
+        $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
+            1521, 'onClick="copyValueToPortElement(this);"');
+        $this->addGroup($radio, 'dbPortChoices', 'TCP port:', '<br />');
+        $this->addElement('text',  'dbPort[port]',    '', 'id="targetPortElement"');
+        #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');
 
         //  credentials
         $this->addElement('text',  'user',    'Database username: ');
         $this->addElement('password', 'pass', 'Database password: ');
-        $this->addElement('text',  'dbName',    'Database name: ');
+        $this->addElement('text',  'dbName',    'Database name: ', array(
+            'id' => 'dbLoginNameElement', 'size'=> 25));
         $this->addRule('user', 'Please specify the db username', 'required');
 
         //  test db connect
