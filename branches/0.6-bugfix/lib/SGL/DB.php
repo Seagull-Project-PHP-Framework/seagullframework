@@ -76,13 +76,13 @@ class SGL_DB
         }
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
-
             $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
                 $msg = 'Cannot connect to DB, check your credentials, exiting ...';
-                if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
-                    $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be able to run the setup again.';
+                if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php') && defined('SGL_INSTALLED')) {
+                    $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be'.
+                    ' able to run the setup again.';
                 }
                 $err = PEAR::raiseError($msg,
                     SGL_ERROR_DBFAILURE, $fatal);
