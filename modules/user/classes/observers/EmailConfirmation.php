@@ -46,7 +46,7 @@ class EmailConfirmation extends SGL_Observer
                     'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
                         $moduleName . '/email_registration_admin.php',
                     'username'      => $oUser->username,
-                    'activationUrl'      => 'http://seagullproject.org/user/',
+                    'activationUrl'      => SGL_BASE_URL.'/user/',
             );
             $notification = & new SGL_Emailer($options);
             $notification->prepare();
