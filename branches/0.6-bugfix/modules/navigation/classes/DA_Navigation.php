@@ -316,7 +316,8 @@ class DA_Navigation extends SGL_Manager
             WHERE section_id = $id";
         $result = $this->dbh->limitQuery($query,0,1);
         $row =& $result->fetchRow();
-        return $row->uri_alias;
+        $result = (is_object($row)) ? $row->uri_alias : false;
+        return $result;
     }
 
     function updateUriAlias($aliasName, $target)
