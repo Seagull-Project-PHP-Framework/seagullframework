@@ -141,7 +141,7 @@ class SGL_Date
 
             } elseif ($_SESSION['aPrefs']['dateFormat'] == 'DE') {
                 // German date format
-                $output = $date->format('%d.%B.%Y %H:%M');
+                $output = $date->format('%d. %B %Y %H:%M');
 
             } else {
                 //  else UK and US
