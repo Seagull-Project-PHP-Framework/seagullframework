@@ -3,7 +3,7 @@
 
 body, td, pre {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-size: 13px;
 }
 
 body {
@@ -12,6 +12,11 @@ body {
 
 .mceVisualAid {
 	border: 1px dashed #BBBBBB !important;
+}
+
+div.mceVisualAid {
+	background-image:url('../images/spacer.gif');
+	visibility: visible !important;
 }
 
 .mceItemAnchor {
