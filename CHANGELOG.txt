@@ -9,6 +9,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+23-06-06    Email and username uniqueness enforced on updates (malber)
 23-06-06    Upgraded TinyFck to 0.12 (Elijah Insua)
 18-06-06    Improved setup wizard: any port can be specified, irrelevant fields
             are disabled

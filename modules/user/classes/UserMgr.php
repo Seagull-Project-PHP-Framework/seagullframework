@@ -183,6 +183,8 @@ class UserMgr extends RegisterMgr
         //  get default values for new users
         $defaultRoleId = $this->conf['UserMgr']['defaultRoleId'];
         $output->user->role_id = $defaultRoleId;
+        $output->user->username_orig = '';
+        $output->user->email_orig = '';
     }
 
     function _cmd_insert(&$input, &$output)
@@ -216,6 +218,8 @@ class UserMgr extends RegisterMgr
         $output->template = 'userAdd.html';
         $oUser = $this->da->getUserById($input->userID);
         $output->user = $oUser;
+        $output->user->username_orig = $oUser->username;
+        $output->user->email_orig = $oUser->email;
     }
 
     function _cmd_update(&$input, &$output)
