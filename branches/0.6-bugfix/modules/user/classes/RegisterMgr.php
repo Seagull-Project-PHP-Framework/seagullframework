@@ -102,8 +102,18 @@ class RegisterMgr extends SGL_Manager
                     $aErrors['username'] = 'username min length';
                 }
                 //  username must be unique
-                if ($input->action == 'insert' && !$this->da->isUniqueUsername($input->user->username)) {
-                    $aErrors['username'] = 'This username already exist in the DB, please choose another';
+                $msg = 'This username already exist in the DB, please choose another';
+                //      on insert
+                if ($input->action == 'insert'
+                        && !$this->da->isUniqueUsername($input->user->username)) {
+                    $aErrors['username'] = $msg;
+                }
+                //      on update
+                if ($input->action == 'update'
+                        && !empty($input->user->username_orig)
+                        && $input->user->username_orig != $input->user->username
+                        && !$this->da->isUniqueUsername($input->user->username)) {
+                    $aErrors['username'] = $msg;
                 }
             }
             //  only verify password and uniqueness of username/email on inserts
@@ -132,13 +142,22 @@ class RegisterMgr extends SGL_Manager
             if (empty($input->user->country)) {
                 $aErrors['country'] = 'You must enter your country';
             }
+
+            $emailNotUniqueMsg = 'This email already exist in the DB, please choose another';
             if (empty($input->user->email)) {
                 $aErrors['email'] = 'You must enter your email';
             } elseif (!$v->email($input->user->email)) {
                 $aErrors['email'] = 'Your email is not correctly formatted';
+
             //  email must be unique
-            } elseif ($input->action == 'insert' && !$this->da->isUniqueEmail($input->user->email)) {
-                    $aErrors['email'] = 'This email already exist in the DB, please choose another';
+            } elseif ($input->action == 'insert'
+                    && !$this->da->isUniqueEmail($input->user->email)) {
+                $aErrors['email'] = $emailNotUniqueMsg;
+            } elseif ($input->action == 'update'
+                    && !empty($input->user->email_orig)
+                    && $input->user->email_orig != $input->user->email
+                    && !$this->da->isUniqueEmail($input->user->email)) {
+                $aErrors['email'] = $emailNotUniqueMsg;
             }
             if (empty($input->user->security_question)) {
                 $aErrors['security_question'] = 'You must choose a security question';

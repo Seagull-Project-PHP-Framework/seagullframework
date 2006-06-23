@@ -101,6 +101,8 @@ class AccountMgr extends RegisterMgr
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_Session::getUid());
         $output->user = $oUser;
+        $output->user->username_orig = $oUser->username;
+        $output->user->email_orig = $oUser->email;
     }
 
     function _cmd_update(&$input, &$output)

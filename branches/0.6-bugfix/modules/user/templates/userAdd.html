@@ -2,14 +2,16 @@
     <p>
     {if:isAdd}
     <input name="action" type="hidden" value="insert" />
-    {if:redir}
-    <input type="hidden" name="redir" value="{redir}" />
-    {end:}
+        {if:redir}
+        <input type="hidden" name="redir" value="{redir}" />
+        {end:}
     {else:}
     <input name="action" type="hidden" value="update" />
     <input name="user[usr_id]" type="hidden" value="{user.usr_id}" />
     <input name="user[role_id_orig]" type="hidden" value="{user.role_id}" />
     <input name="user[organisation_id_orig]" type="hidden" value="{user.organisation_id}" />
+    <input name="user[username_orig]" type="hidden" value="{user.username_orig}" />
+    <input name="user[email_orig]" type="hidden" value="{user.email_orig}" />
     {end:}
     </p>
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
