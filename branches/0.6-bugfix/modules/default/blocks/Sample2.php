@@ -21,7 +21,7 @@ class Default_Block_Sample2
         $text = <<< HTML
 <p class="alignCenter">
 <a href="http://seagullproject.org/export/rss/">
-    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" align="absmiddle"/>
+    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" />
 </a>
 </p>
 HTML;
