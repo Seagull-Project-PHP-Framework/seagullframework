@@ -15,9 +15,19 @@ class RequestTest extends UnitTestCase {
         $this->UnitTestCase('Request Test');
     }
 
+    function setup()
+    {
+
+    }
+
+    function teardown()
+    {
+        $_REQUEST = array();
+    }
+
     function testAdd()
     {
-        $req = &SGL_Request::singleton();
+        $req = &SGL_Request::singleton($forceNew = true);
         $count = count($req->getAll());
         $aParams = array('foo' => 'fooValue', 'bar' => 'barValue');
         $req->add($aParams);

@@ -72,11 +72,11 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function &singleton()
+    function &singleton($forceNew = false)
     {
         static $instance;
 
-        if (!isset($instance)) {
+        if (!isset($instance) || $forceNew) {
             $instance = new SGL_Request();
             $err = $instance->init();
         }
