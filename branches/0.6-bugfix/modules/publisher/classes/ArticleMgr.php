@@ -127,6 +127,13 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  do a check for TinyFCK uploads
+        if (!is_writeable(SGL_WEB_ROOT.'/images/Image')) {
+            SGL::raiseMsg('The ' . SGL_WEB_ROOT . '/images/Image folders does ' .
+            'not appear to be writable, please give the webserver permissions ' .
+            'to write to it', false, SGL_MESSAGE_INFO);
+        }
+
         //  get cat name for reschooser title
         require_once 'DB/DataObject.php';
         $category = DB_DataObject::factory($this->conf['table']['category']);
