@@ -23,6 +23,6 @@
         'You must fill in your comment' => 'You must fill in your comment',
         'Your email is not correctly formatted' => 'Your email is not correctly formatted',
         'You must enter your email' => 'You must enter your email',
-        'You must enter the number to the left in this field' => 'You must enter the number to the left in this field',
+        'You must enter the number in this field' => 'You must enter the number in this field',
     );
 ?>
