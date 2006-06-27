@@ -9,7 +9,7 @@
         'Type of enquiry' => 'Type of enquiry',
         'Comment' => 'Comment',
         'Contact Enquiry from' => 'Contact Enquiry from',
-        'Enter Captcha' => 'Please enter the number shown below in the field to the right of the number',
+        'Enter Captcha' => 'Please enter the number shown below in the relevant field',
         'aContactType' => array(
             'General enquiry' => 'General enquiry',
             'Get a quote' => 'Get a quote',
