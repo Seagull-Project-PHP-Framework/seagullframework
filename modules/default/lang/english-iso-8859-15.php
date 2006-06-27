@@ -123,7 +123,7 @@
 
 // Status
         'Enabled' => 'Enabled',
-        'Disable' => 'Disable',
+        'disable' => 'disable',
         'Disabled' => 'Disabled',
         'You must select an element to delete' => 'You must select an element to delete',
         'no results found' => 'no results found',
@@ -489,10 +489,10 @@ $defaultWords['templates'] = 'templates';
 $defaultWords['translations'] = 'translations';
 
 /* --- PEAR::Pager --- */
-$defaultWords['altPrev'] = 'Previous'; 
-$defaultWords['altNext'] = 'Next'; 
-$defaultWords['altPage'] = 'Page'; 
-$defaultWords['prevImg'] = '&laquo; previous'; 
-$defaultWords['nextImg'] = 'next &raquo;'; 
+$defaultWords['altPrev'] = 'Previous';
+$defaultWords['altNext'] = 'Next';
+$defaultWords['altPage'] = 'Page';
+$defaultWords['prevImg'] = '&laquo; previous';
+$defaultWords['nextImg'] = 'next &raquo;';
 
 ?>
