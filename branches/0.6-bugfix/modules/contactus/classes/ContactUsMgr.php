@@ -119,7 +119,7 @@ class ContactUsMgr extends SGL_Manager
                 require_once SGL_CORE_DIR . '/Captcha.php';
                 $captcha = new SGL_Captcha();
                 if (!$captcha->validateCaptcha($input->contact->captcha)) {
-                    $aErrors['captcha'] = 'You must enter the number to the left in this field';
+                    $aErrors['captcha'] = 'You must enter the number in this field';
                 }
                 $input->captcha = $captcha->generateCaptcha();
                 $input->useCaptcha = true;
