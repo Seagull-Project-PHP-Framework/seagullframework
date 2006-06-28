@@ -211,6 +211,16 @@ EOF;
         $ret = in_array($var, $disAllowedKeys);
         return $ret;
     }
+
+    function testOringActions()
+    {
+        $action = 'insert';
+        $this->assertTrue($action == ('update' || 'insert'));
+
+        $action = 'bar';
+        //  fails
+        //$this->assertFalse($action == ('update' || 'insert'));
+    }
 }
 
 
