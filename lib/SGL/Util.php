@@ -172,10 +172,15 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
-        //  match all folders except CVS
+        //  match all folders except admin themes
         $ret = SGL_Util::listDir(SGL_THEME_DIR, FILE_LIST_DIRS, $sort = FILE_SORT_NONE,
-                create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
+                array('SGL_Util', 'themeFilterCallback'));
         return $ret;
+    }
+
+    function themeFilterCallback($str)
+    {
+         return (stristr($str, '_admin')) ? false : true;
     }
 
     /**
