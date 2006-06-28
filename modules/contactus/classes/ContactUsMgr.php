@@ -83,13 +83,15 @@ class ContactUsMgr extends SGL_Manager
                 $input->contact->enquiry_type = $req->get('enquiry_type');
             }
         }
-        $input->token = $req->get('token');
+        if ($this->conf['ContactUsMgr']['usePostToken']) {
+            $input->token = $req->get('token');
+        }
 
         $aErrors = array();
         if ($input->submitted) {
 
             //  check form security token generated in display
-            if ($input->token != SGL_Session::get('token')) {
+            if ($this->conf['ContactUsMgr']['usePostToken'] && $input->token != SGL_Session::get('token')) {
                 SGL::logMessage('Invalid POST from ' . gethostbyaddr($_SERVER['REMOTE_ADDR']), PEAR_LOG_ALERT);
                 SGL::raiseMsg('Invalid POST source');
                 $aParams = array(
@@ -146,8 +148,10 @@ class ContactUsMgr extends SGL_Manager
         $output->aContactType = SGL_String::translate('aContactType');
 
         //  generate one-time token for additional form security
-        $output->token = md5(time());
-        SGL_Session::set('token', $output->token);
+        if ($this->conf['ContactUsMgr']['usePostToken']) {
+            $output->token = md5(time());
+            SGL_Session::set('token', $output->token);
+        }
     }
 
     function _cmd_send(&$input, &$output)
