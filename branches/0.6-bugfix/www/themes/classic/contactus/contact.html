@@ -43,9 +43,11 @@
 
             {if:useCaptcha}
             <dt><label for="contact_captcha">{translate(#Enter Captcha#)}</label></dt>
-            <span class="error" flexy:if="error[captcha]">{translate(error[captcha])}</span>
-            <p style="font-size: 4pt; font-weight: bold;"><pre>{captcha}</pre></p>
-            <input type="text" id="contact_captcha" name="contact[captcha]" size="30" />
+            <dd>
+                <span class="error" flexy:if="error[captcha]">{translate(error[captcha])}</span>
+                <pre>{captcha}</pre>
+                <input type="text" id="contact_captcha" name="contact[captcha]" size="30" />
+            </dd>
             {end:}
 
             <dt>&nbsp;</dt>
