@@ -677,19 +677,19 @@ div.close span {
     text-align: left;
 }
 .errorContainer div{
-    width: 80%;
+    width: auto;
     margin: 0;
+    padding: 5px 0;
     border: none;
 }
 .errorContainer .errorHeader {
+    padding-left: 30px;
     background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
-    text-align: center;
     text-transform: uppercase ;
     font-size: 1.2em;
     font-weight: bold;
     letter-spacing: 0.3em;
     color: <?php echo $errorMessage ?>;
-
 }
 .errorContainer .errorContent {
 
