@@ -28,7 +28,7 @@ ul {
 p {
     margin-bottom: 0.5em;
 }
-a, a:visited {
+a {
     color: <?php echo $linkColor ?>;
     text-decoration: <?php echo $linkDecoration ?>;
 }
