@@ -155,7 +155,7 @@ class SGL_Output
         }
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
@@ -189,7 +189,7 @@ class SGL_Output
         $isChecked = $checked ? ' checked' : '';
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
