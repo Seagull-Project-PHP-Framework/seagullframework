@@ -114,7 +114,11 @@ class SGL_Emailer
             return false;
         }
         $this->html = $this->headerTemplate . $body . $this->footerTemplate;
-        $this->headers['From'] = $this->options['fromEmail'];
+        if (!empty($this->options['fromRealName'])) {
+            $this->headers['From'] = $this->options['fromRealName'] . ' <' . $this->options['fromEmail'] . '>';
+        } else {
+            $this->headers['From'] = $this->options['fromEmail'];
+        }
         $this->headers['Subject'] = $this->options['subject'];
         $this->headers['Return-Path'] = $this->options['fromEmail'];
         $this->headers['To'] = $this->options['toEmail'];
