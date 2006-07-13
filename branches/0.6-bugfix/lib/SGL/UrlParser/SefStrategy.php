@@ -251,7 +251,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                             } else {
                                 $qsParamValue = $aList[$idx][$aElems[0]][$aElems[1]];
                             }
-                        } elseif (is_a($output, 'SGL_Output') && isset($output->{$listKey})) {
+                        } elseif (is_a($output, 'SGL_Output') && !empty($listKey) && isset($output->{$listKey})) {
                             $qsParamValue = $output->{$listKey}; // pass $output property
                         } else {
                             //  see blocks/SiteNews, not called from template
