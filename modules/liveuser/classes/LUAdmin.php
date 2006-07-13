@@ -38,7 +38,7 @@ class LUAdmin
             return $admin->getErrors();  
         }
 
-        $admin->perm->init($staticConf['permContainer']);
+        //$admin->perm->init($staticConf['permContainer']);
         
         /*
         $logconf = array('mode' => 0666, 'timeFormat' => '%X %x');
