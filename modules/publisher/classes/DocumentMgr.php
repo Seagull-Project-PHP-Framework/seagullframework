@@ -275,6 +275,7 @@ class DocumentMgr extends FileMgr
             $htmlOptions = $menu->toHtml();
             $output->aCategories = $htmlOptions;
             $output->currentCat = $document->category_id;
+
             $output->breadCrumbs = $menu->getBreadCrumbs($document->category_id, false);
         }
         $output->asset = $document;

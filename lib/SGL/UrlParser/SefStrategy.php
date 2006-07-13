@@ -74,22 +74,17 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             }
         }
 
-        if (count($aUriParts)) {
-            $str = strtolower(array_shift($aUriParts));
-            $aParsedUri['moduleName'] = (preg_match('/start_debug/', $str))
-                ? ''
-                :$str;
-            $mgrCopy = array_shift($aUriParts);
-            $aParsedUri['managerName'] = strtolower($mgrCopy);
-        } else {
-            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
-            $aParsedUri['managerName'] = $conf['site']['defaultManager'];
-        }
+        $str = strtolower(array_shift($aUriParts));
+        $aParsedUri['moduleName'] = (preg_match('/start_debug/', $str))
+            ? ''
+            :$str;
+        $mgrCopy = array_shift($aUriParts);
+        $aParsedUri['managerName'] = strtolower($mgrCopy);
 
         //  if no manager name, must be default manager, ie, has same name as module
         //  the exception is when the moduleName comes from the conf
-        if (empty($aParsedUri['managerName'])
-                || preg_match('/start_debug/', $aParsedUri['managerName'])) {
+        if ((empty($aParsedUri['managerName']))
+                || (preg_match('/start_debug/', $aParsedUri['managerName']))) {
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
         }
 
