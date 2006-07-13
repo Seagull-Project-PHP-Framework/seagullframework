@@ -29,8 +29,7 @@
         'queries'=>'queries',
         'allocated'=>'allocated',
         'Powered by' => 'Powered by',
-        'Seagull framework homepage' => 'Seagull framework homepage',
-        'Seagull Framework' => 'Seagull Framework',
+        'Seagull PHP Framework' => 'Seagull PHP Framework',
 
 /*  GENERAL MESSAGES    */
         'authorisation failed' => 'You do not have sufficient privileges to view this area.',
