@@ -2,8 +2,8 @@
 
 require_once 'LiveUser/Admin.php';
 
-define('OPC_DEFAULT_APPLICATION', 1);
-define('OPC_DEFAULT_AREA', 1);
+define('SEAGULL_DEFAULT_APPLICATION', 1);
+define('SEAGULL_DEFAULT_AREA', 1);
 
 /**
  * LiveUsers administration - common class

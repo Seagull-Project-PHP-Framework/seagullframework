@@ -373,7 +373,7 @@ class LURightsMgr extends SGL_Manager
     function _cmd_buildRightData(&$input)
     {
         $data = array(
-            'area_id' => OPC_DEFAULT_AREA,
+            'area_id' => SEAGULL_DEFAULT_AREA,
             'right_define_name' => LUAdmin::convertToConstant($input->right['right_define_name']),
         );                
         return $data;

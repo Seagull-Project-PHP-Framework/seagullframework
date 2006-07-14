@@ -1,122 +1,38 @@
--- 
---  `liveuser_applications`
--- 
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'messaging', 'Messaging', 'The ''Messaging'' module contains classes for sending internal Instant Messages, managing external email sending, and managing your contacts.', NULL, '48/module_messaging.png', '', NULL, NULL, NULL);
 
-INSERT INTO `liveuser_applications` VALUES (1, 'OPC');
+SELECT @moduleId := MAX(module_id) FROM module;
 
--- 
---  `liveuser_area_admin_areas`
--- 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'luusersmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'luusersmgr_cmd_editgroups', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'luusersmgr_cmd_updategroups', '', @moduleId);
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_editrights', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_updaterights', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_editmemebers', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lugroupsmgr_cmd_updatemembers', '', @moduleId);
 
--- 
---  `liveuser_areas`
--- 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_editperms', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'lurightsmgr_cmd_updateperms', '', @moduleId);
 
-INSERT INTO `liveuser_areas` VALUES (1, 1, 'BACKEND');
+-- Application
+INSERT INTO `liveuser_applications` VALUES ({SGL_NEXT_ID}, 'SEAGULL');
 
--- 
---  `liveuser_group_subgroups`
--- 
-
-
--- 
---  `liveuser_grouprights`
--- 
-
-INSERT INTO `liveuser_grouprights` VALUES (38, 9, 1);
-INSERT INTO `liveuser_grouprights` VALUES (38, 6, 1);
-INSERT INTO `liveuser_grouprights` VALUES (38, 8, 1);
-INSERT INTO `liveuser_grouprights` VALUES (36, 9, 1);
-INSERT INTO `liveuser_grouprights` VALUES (36, 4, 1);
-INSERT INTO `liveuser_grouprights` VALUES (36, 6, 1);
-INSERT INTO `liveuser_grouprights` VALUES (36, 8, 1);
-
--- 
---  `liveuser_groups`
--- 
-
-INSERT INTO `liveuser_groups` VALUES (38, 1, 'MODERATOR');
-INSERT INTO `liveuser_groups` VALUES (36, 1, 'GUEST');
-
--- 
---  `liveuser_groups_seq`
--- 
-
-INSERT INTO `liveuser_groups_seq` VALUES (38);
-
--- 
---  `liveuser_groupusers`
--- 
-
-INSERT INTO `liveuser_groupusers` VALUES (0, 38);
-
--- 
---  `liveuser_perm_users`
--- 
-
-INSERT INTO `liveuser_perm_users` VALUES (1, '1', 1, '0');
-INSERT INTO `liveuser_perm_users` VALUES (2, '2', 1, '0');
-
--- 
---  `liveuser_right_implied`
--- 
+-- Areas
+INSERT INTO `liveuser_areas` VALUES ({SGL_NEXT_ID}, 1, 'BACKEND');
 
 
--- 
---  `liveuser_rights`
--- 
 
-INSERT INTO `liveuser_rights` VALUES (30, 1, 'HUMAN_RIGHT', 'N', 'N', 'human right', '');
-
--- 
---  `liveuser_rights_seq`
--- 
-
-INSERT INTO `liveuser_rights_seq` VALUES (30);
-
--- 
---  `liveuser_translations`
--- 
-
-INSERT INTO `liveuser_translations` VALUES (5, 25, 4, 'en_iso_8859_15', 'dsf', 'sdf');
-INSERT INTO `liveuser_translations` VALUES (6, 26, 4, 'en_iso_8859_15', 'dsf', 'sdf');
-INSERT INTO `liveuser_translations` VALUES (12, 38, 3, 'en_iso_8859_15', 'moderator', 'User with permission to edit content');
-INSERT INTO `liveuser_translations` VALUES (9, 30, 4, 'en_iso_8859_15', 'Human right', 'All people have their rights and lefts');
-INSERT INTO `liveuser_translations` VALUES (10, 36, 3, 'en_iso_8859_15', 'guest', 'unauthorized users');
-
--- 
---  `liveuser_translations_seq`
--- 
-
-INSERT INTO `liveuser_translations_seq` VALUES (12);
-
--- 
---  `liveuser_userrights`
--- 
-
-
--- 
---  `liveuser_users`
--- 
-
-
--- 
---  `right_permission`
--- 
-
-INSERT INTO `right_permission` VALUES (7, 4, 52);
-INSERT INTO `right_permission` VALUES (8, 4, 55);
-INSERT INTO `right_permission` VALUES (15, 4, 3);
-INSERT INTO `right_permission` VALUES (14, 4, 4);
-INSERT INTO `right_permission` VALUES (13, 4, 1);
-INSERT INTO `right_permission` VALUES (12, 4, 2);
-INSERT INTO `right_permission` VALUES (16, 4, 7);
-INSERT INTO `right_permission` VALUES (17, 4, 6);
-INSERT INTO `right_permission` VALUES (26, 30, 55);
-INSERT INTO `right_permission` VALUES (25, 30, 52);
-INSERT INTO `right_permission` VALUES (24, 30, 104);
-INSERT INTO `right_permission` VALUES (31, 30, 5);
-INSERT INTO `right_permission` VALUES (32, 30, 51);
-INSERT INTO `right_permission` VALUES (33, 30, 86);
-INSERT INTO `right_permission` VALUES (34, 30, 90);
