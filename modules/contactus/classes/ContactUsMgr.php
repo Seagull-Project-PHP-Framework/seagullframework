@@ -161,9 +161,9 @@ class ContactUsMgr extends SGL_Manager
         SGL_DB::setConnection();
         //  1. Take data from validated contact object and pass
         //  to sendEmail() method
-        $bEmailSent = $this->sendEmail($input->contact, $input->moduleName);
+        $ok = $this->sendEmail($input->contact, $input->moduleName);
         //  2. If email sending is successfull:
-        if ($bEmailSent) {
+        if (!PEAR::isError($ok)) {
 
             // and module config allows to log contacts
             if ($this->conf['ContactUsMgr']['logContacts']) {

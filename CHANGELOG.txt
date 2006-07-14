@@ -4,6 +4,9 @@ CHANGELOG
 | VERSION: 0.6.0        |
 +-----------------------+
 BUGFIXES
+14-07-06    Email sending returns PEAR errors on fails, this was not checked
+            properly
+14-07-06    Updates fixed on generated modules
 12-06-06    Fixed bug where detect missing perms didn't work on windows installs
             (Marian Seitner)
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
