@@ -1,5 +1,5 @@
         $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
-        $%mgrName%->%mgrName%_id = $input->%mgrName%_id;
+        $%mgrName%->%mgrName%_id = $input->%mgrName%Id;
         $%mgrName%->find(true);
         $%mgrName%->setFrom($input->%mgrName%);
         $success = $%mgrName%->update();
