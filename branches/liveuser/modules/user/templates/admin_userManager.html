@@ -40,11 +40,8 @@
                         <th width="5%">{translate(#Role#)}</th>
                         <th width="7%"><a href="{makeUrl(#list#,#user#,#user#,##,#frmSortBy|is_acct_active||frmSortOrder|sortOrder#)}" title="{translate(#Sort by#)} {translate(#Status#)}">{translate(#Status#)}</a>{if:sort_is_acct_active}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
                         <th width="12%">{translate(#Password#)}</th>
-                        
-<!--
-                        <th width="12%">{translate(#Permissions#)}</th>
--->
                         <th width="12%">{translate(#Groups#)}</th>
+                        <th width="12%">{translate(#Permissions#)}</th>
                         <th width="10%">{translate(#Logins#)}</th>
                     </tr>
                 </thead>
@@ -78,13 +75,11 @@
                             <input type="button" class="sgl-button" name="frmReset" value="{translate(#Edit#)}"
                                 onclick="javascript:document.location.href='{makeUrl(#editGroups#,#luusers#,#liveuser#)}user_id/{aValue[usr_id]}'" />
                         </td>      
-<!---                                          
                         <td flexy:if="!isAdmin(aValue[role_id])">
                             <input type="button" class="sgl-button" name="frmReset" value="{translate(#change#)}"
                                 onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
                         </td>
                         <td flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
-                        --->
                         <td ><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#list#)}</a></td>
                     </tr>
                     <tr flexy:if="!aPagedData[data]">
