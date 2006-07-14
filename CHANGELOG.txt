@@ -12,6 +12,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+14-07-06    Installer description and keywords correctly added to meta tags (getconfused)
 14-07-06    Admin screen done for FAQs (Matt Flaherty)
 27-06-06    Made post form token optional
 27-06-06    SGL_Util::getAllThemes() no longer returns admin themes
