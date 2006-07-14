@@ -57,7 +57,7 @@ class AdminFaqMgr extends FaqMgr
         parent::FaqMgr();
 
         $this->pageTitle = 'FAQ Manager';
-        $this->template  = 'faqListAdmin.html';
+        $this->template  = 'faqList.html';
 
         $this->_aActionsMapping =  array(
             'add'           => array('add'),
@@ -76,13 +76,17 @@ class AdminFaqMgr extends FaqMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         parent::validate($req, $input);
-        $input->aDelete   = $req->get('frmDelete');
         $input->faqId     = $req->get('frmFaqId');
         $input->items     = $req->get('_items');
-        $input->submitted = $req->get('submitted');
         $input->faq       = (object)$req->get('faq');
 
-        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+        // Misc.
+        $input->submitted   = $req->get('submitted');
+        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->aDelete     = $req->get('frmDelete');
+        $input->isAdd       = $req->get('isadd');
+
+        if ($input->submitted && in_array($input->action, array('insert', 'update'))) {
             if (empty($input->faq->question)) {
                 $aErrors['question'] = 'Please fill in a question';
             }
@@ -113,6 +117,7 @@ class AdminFaqMgr extends FaqMgr
         $output->template  = 'faqEdit.html';
         $output->action    = 'insert';
         $output->pageTitle = $this->pageTitle . ' :: Add';
+        $output->isAdd     = true;
     }
 
     function _cmd_insert(&$input, &$output)
@@ -198,6 +203,7 @@ class AdminFaqMgr extends FaqMgr
 
         $output->pageTitle = $this->pageTitle . ' :: Reorder';
         $output->template  = 'faqReorder.html';
+        $output->action    = 'reorderUpdate';
         $faqList = DB_DataObject::factory($this->conf['table']['faq']);
         $faqList->orderBy('item_order');
         $result = $faqList->find();
@@ -237,8 +243,28 @@ class AdminFaqMgr extends FaqMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        parent::_cmd_list($input, $output);
-        $output->pageTitle = $this->pageTitle . ' :: Browse';
+        $output->template = 'faqList.html';
+        $query = "SELECT * FROM {$this->conf['table']['faq']} ORDER BY item_order";
+
+        $limit = $_SESSION['aPrefs']['resPerPage'];
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+
+        //  determine if pagination is required
+        $output->aPagedData = $aPagedData;
+        if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+            $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 }
 
