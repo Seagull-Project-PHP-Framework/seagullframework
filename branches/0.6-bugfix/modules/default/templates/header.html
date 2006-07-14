@@ -5,6 +5,8 @@
     <title flexy:if="leadArticle[title]">{conf[site][name]} :: {leadArticle[title]}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
     <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
     <meta name="robots" content="ALL" />
     <meta name="copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="rating" content="General" />
@@ -22,6 +24,7 @@
         var SGL_JS_DATETEMPLATE="{getDateFormat()}";
         var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
         var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
+
     {scriptClose:h}
 
     {if:isAdmin()}
