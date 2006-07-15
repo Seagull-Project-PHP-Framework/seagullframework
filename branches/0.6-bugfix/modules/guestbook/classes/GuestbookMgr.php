@@ -93,6 +93,15 @@ class GuestbookMgr extends SGL_Manager
             if (empty($input->guestbook->message)) {
                 $aErrors['message'] = 'Please, fill in the message text';
             }
+            if ($this->conf['GuestbookMgr']['useCaptcha']) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                if (!$captcha->validateCaptcha($input->guestbook->captcha)) {
+                    $aErrors['captcha'] = 'You must enter the number in this field';
+                }
+                $input->captcha = $captcha->generateCaptcha();
+                $input->useCaptcha = true;
+            }
         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
@@ -116,6 +125,13 @@ class GuestbookMgr extends SGL_Manager
 
         //  build ordering select object
         $output->guestbook = DB_DataObject::factory($this->conf['table']['guestbook']);
+        
+        if ($this->conf['GuestbookMgr']['useCaptcha']) {
+            require_once SGL_CORE_DIR . '/Captcha.php';
+            $captcha = new SGL_Captcha();
+            $output->captcha = $captcha->generateCaptcha();
+            $output->useCaptcha = true;
+        }
     }
 
     function _cmd_insert(&$input, &$output)
@@ -133,6 +149,10 @@ class GuestbookMgr extends SGL_Manager
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
+        }
+        
+        if($this->conf['GuestbookMgr']['sendNotificationEmail']) {
+            $this->sendEmail($newEntry, $input->moduleName);
         }
     }
 
@@ -157,6 +177,29 @@ class GuestbookMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
+    }
+    
+    function sendEmail($oEntry, $moduleName)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR . '/Emailer.php';
+
+        $options = array(
+                'toEmail'         => $this->conf['email']['info'],
+                'toRealName'      => 'Admin',
+                'fromEmail'       => "\"{$oEntry->name}\" <{$oEntry->email}>",
+                'fromEmailAdress' => $oEntry->email,
+                'fromRealName'    => $oEntry->name,
+                'replyTo'         => $oEntry->email,
+                'subject'         => SGL_String::translate('New guestbook entry in') .' '. $this->conf['site']['name'],
+                'deleteURL'       => SGL_Output::makeUrl('delete','guestbookadmin','guestbook',array(),'frmDelete[]|'.$oEntry->guestbook_id),
+                'body'            => $oEntry->message,
+                'template'        => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
+                    $moduleName . '/email_guestbook_notification.php',
+        );
+        $message = & new SGL_Emailer($options);
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
 }
 ?>
