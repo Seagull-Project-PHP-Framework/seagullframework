@@ -87,4 +87,16 @@ $words['Please fill in the list field'] = 'Please fill in the list field';
 $words['Max lenght for list field is 32 characters'] = 'Max lenght for list field is 32 characters';
 $words['Max lenght for description field is 128 characters'] = 'Max lenght for description field is 128 characters';
 $words['This list name already exists'] = 'This list name already exists';
+$words['Guestbook Information'] = 'Guestbook Information';
+$words['Adress Book'] = 'Adress Book';
+$words['Guestbook List'] = 'Guestbook List';
+$words['Delete Selected'] = 'Delete Selected';
+$words['List Name'] = 'List Name';
+$words['Subscriber Details'] = 'Subscriber Details';
+$words['Export Subscriber'] = 'Export Subscriber';
+$words['This email is already subscribed'] = 'This email is already subscribed';
+$words['Action request'] = 'Action request';
+$words['Select newsletter where you want to subscribe'] = 'Select newsletter where you want to subscribe';
+$words['Newsletter List'] = 'Newsletter List';
+
 ?>
