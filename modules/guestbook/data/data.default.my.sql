@@ -7,6 +7,12 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookmgr_cmd_list', '', @modu
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookmgr_cmd_add', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookmgr_cmd_insert', '', @moduleId);
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookadminmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookadminmgr_cmd_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookadminmgr_cmd_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookadminmgr_cmd_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'guestbookadminmgr_cmd_delete', '', @moduleId);
+
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'guestbookmgr';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);

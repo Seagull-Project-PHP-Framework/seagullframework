@@ -7,7 +7,7 @@
         <div class="guestBookEntry">
             <p>{aValue[name]}</p>
             <p>{aValue[date_created]}</p>
-            <p>{aValue[email]}</p>
+            <p>{this.plugin(#emailObfuscator#,aValue[email]):h}</p>
             <p>{aValue[message]:h}</p>
             <hr />
         </div>

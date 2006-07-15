@@ -11,7 +11,7 @@
         <tr>
             <td>
                 {translate(#Name#)}: <strong>{aValue[name]}</strong>&nbsp;
-                {translate(#Email#)}: <b>{aValue[email]}</b>
+                {translate(#Email#)}: <b>{this.plugin(#emailObfuscator#,aValue[email]):h}</b>
             </td>
         </tr>
         <tr>

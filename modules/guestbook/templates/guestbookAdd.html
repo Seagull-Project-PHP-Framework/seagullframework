@@ -27,6 +27,15 @@
                     <textarea cols="40" rows="7" name="guestbook[message]">{guestbook.message}</textarea>
                 </td>
             </tr>
+            <tr flexy:if="useCaptcha">
+                <th align="left">{translate(#Verify#)}:</th>
+                <td>
+                   {translate(#Enter Captcha#)}<br />
+                   <font style="font-size: 4pt; font-weight: bold"><pre>{captcha}</pre></font>
+                   <div class="error" flexy:if="error[captcha]">{translate(error[captcha])}</div>
+                   <input class="full" type="text" name="guestbook[captcha]" size="30" />
+               </td>
+            </tr>
             <tr>
                 <td colspan="2" align="center">
                     <input class="wideButton" type="submit" name="submitted" value="{translate(#Add#)}" />
