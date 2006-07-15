@@ -238,7 +238,7 @@ class ContactUsMgr extends SGL_Manager
         $options = array(
                 'toEmail'         => $this->conf['email']['info'],
                 'toRealName'      => 'Admin',
-                'fromEmail'       => "\"{$contacterName}\" <{$oContact->email}>",
+                'fromEmail'       => $oContact->email,
                 'fromEmailAdress' => $oContact->email,
                 'fromRealName'    => $contacterName,
                 'replyTo'         => $oContact->email,
