@@ -1,0 +1,68 @@
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form method="post" action="" name="main_form" flexy:ignore>
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="updateRights" />
+            <input type="hidden" name="group_id" value="{group.group_id}" />
+            <input type="hidden" name="AddfrmGroupRights" />
+            <input type="hidden" name="RemovefrmGroupRights" /> 
+            <input type="hidden" name="AddfrmRemainingRights" /> 
+            <input type="hidden" name="RemovefrmRemainingRights" />
+        </fieldset>
+        <fieldset class="noBorder">
+            <table class="full">
+                <tr>
+                  	<td align="center" colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                  	<td align="center" colspan="2">
+                	<b>Changing Rights Assignments for <strong>{group.name}</strong></b>
+                	</td>
+                </tr>
+                <tr>
+                  	<td align="center" colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                  <th width="30%" nowrap>Group Name</TH>
+                  <td class="left" width="70%">{group.name}</TD>
+                </tr>
+                <tr>
+                    <th width="30%" nowrap>Rights</TH>
+                    <td width="70%">
+                        <table>
+                            <tr><td>others</td><td>&nbsp;</td><td>selected '{group.name}' rights</td></tr>
+                            <tr>
+                                <td>
+                                    <select name="frmRemainingRights" size="10" multiple>
+                                        {remainingRightsOptions:h}
+                                    </select>
+                                </td>
+                                <td align="center">
+                                    <input type="button" name="add" value="add >>" onclick="MoveOption('frmRemainingRights','frmGroupRights','Add');" /><br />
+                                    <input type="button" name="remove" value="<< remove" onclick="MoveOption('frmGroupRights','frmRemainingRights','Remove');" />
+                                </td>
+                                <td>
+                                    <select name="frmGroupRights" size="10" multiple>
+                                        {groupRightOptions:h}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%" colspan="2" align="center" nowrap>
+                        <input class="wideButton" name="submitted" value="Submit" type="submit" onclick="lockChanges();" />
+                		<input class="wideButton" type="button" value="{translate(#Cancel#)}" 
+                            onClick="javascript:document.location.href='{makeUrl(##,#lugroups#,#liveuser#)}'" />
+                    </td>
+                </tr>
+            </fieldset>
+        </table>
+    </form>
+    <div class="spacer"></div>
+</div>
