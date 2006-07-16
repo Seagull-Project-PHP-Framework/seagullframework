@@ -497,6 +497,8 @@ $words = array(
     'There was a problem with your session, please login again'      => 'There was a problem with your session which may have timed out, please login again',
     'Only logged on users have access to this area, please register' => 'Only logged on users have access to this area, please register',
     'Registration has been disabled'                                 => 'Registration has been disabled',
+    
+    'Groups' => 'Groups',
 );
 
 ?>

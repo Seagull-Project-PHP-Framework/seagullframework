@@ -33,6 +33,7 @@ class LUAdmin
         $staticConf = &LUAdmin::getConfig();
         
         $admin = &LUAdmin::factory($staticConf);
+        $admin->init();
         $ok = $admin->setAdminPermContainer();
         if (!$ok) {
             return $admin->getErrors();  
@@ -79,9 +80,13 @@ class LUAdmin
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                     SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-        
-      
+
         $db->setFetchMode(DB_FETCHMODE_ASSOC);
+
+        // options for permission package
+        $options['sessionTimeout']     = $_SESSION['aPrefs']['sessionTimeout'];
+        $options['sessionMaxLifetime'] = $conf['site']['sessionMaxLifetime'];
+        $options['authTable']          = $conf['table']['user'];
         
         $luConf =
             array(
@@ -100,16 +105,16 @@ class LUAdmin
                     array(
                         'type'          => 'DB',
 //                        'name'          => 'DB_Local',
-                        'loginTimeout'  => 0,
-                        'expireTime'    => 3600,
+                        'loginTimeout'  => $options['sessionTimeout'],
+                        'expireTime'    => $options['sessionMaxLifetime'],
                         'idleTime'      => 1800,
                         'dsn'           => $dsn,
                         'allowDuplicateHandles' => false,
                         'authTable'     => 'liveuser_users',
                             'authTableCols' => array(
                                 'required' => array(
-                                    'auth_user_id' => array('type' => 'text',   'name' => 'auth_user_id'),
-                                    'handle'       => array('type' => 'text',   'name' => 'handle'),
+                                    'auth_user_id' => array('type' => 'text',   'name' => 'usr_id'),
+                                    'handle'       => array('type' => 'text',   'name' => 'username'),
                                     'passwd'       => array('type' => 'text',   'name' => 'passwd'),
                                 ),
                                 'optional' => array(
@@ -153,7 +158,7 @@ class LUAdmin
                             'prefix' => 'liveuser_',
                             'tables' => array(),
                             'fields' => array(),
-                             'force_seq' => false
+                            'force_seq' => false
                         ),
                     ),
                 ),
@@ -253,7 +258,7 @@ class LUAdmin
         $query = "
                 SELECT      lgu.group_id, lt.name
                 FROM        {$this->conf['table']['liveuser_groups']} lg, 
-                            ( $this->conf['table']['liveuser_groupusers']} lgu 
+                            {$this->conf['table']['liveuser_groupusers']} lgu 
                 LEFT JOIN   liveuser_translations lt ON lt.section_id = lg.group_id 
                 WHERE       lg.group_id = lgu.group_id
                 AND         lt.section_type = ".LIVEUSER_SECTION_GROUP."
@@ -267,7 +272,7 @@ class LUAdmin
               
         return $aGroups;
     }
-    
+
     /**
      * Retrieve all rights
      *
