@@ -260,13 +260,14 @@ class LUAdmin
         }
         
         $query = "
-                SELECT  lgu.group_id, lt.name
-                FROM    liveuser_groups lg, liveuser_groupusers lgu 
-                LEFT JOIN liveuser_translations lt ON lt.section_id = lg.group_id 
-                WHERE   lg.group_id = lgu.group_id
-                AND lt.section_type = ".LIVEUSER_SECTION_GROUP."
-                AND lgu.perm_user_id = " . $userId . "
-                ORDER BY lt.name";
+                SELECT      lgu.group_id, lt.name
+                FROM        {$this->conf['table']['liveuser_groups']} lg, 
+                            ( $this->conf['table']['liveuser_groupusers']} lgu 
+                LEFT JOIN   liveuser_translations lt ON lt.section_id = lg.group_id 
+                WHERE       lg.group_id = lgu.group_id
+                AND         lt.section_type = ".LIVEUSER_SECTION_GROUP."
+                AND         lgu.perm_user_id = " . $userId . "
+                ORDER BY    lt.name";
         
         $dbh = &SGL_DB::singleton();
         
@@ -285,18 +286,16 @@ class LUAdmin
      */
     function getAllRightsAsArray()
     {
-        $query = '  SELECT
-                        liveuser_rights.right_id AS right_id,
-                        liveuser_rights.right_define_name AS right_define_name,
-                        liveuser_applications.application_define_name AS application_define_name,
-                        liveuser_areas.area_define_name AS area_define_name
-                    FROM
-                        liveuser_rights,
-                        liveuser_areas,
-                        liveuser_applications
-                    WHERE
-                        liveuser_rights.area_id = liveuser_areas.area_id
-                        AND liveuser_areas.application_id = liveuser_applications.application_id';
+        $query = "
+            SELECT  lr.right_id AS right_id,
+                    lr.right_define_name AS right_define_name,
+                    lapp.application_define_name AS application_define_name,
+                    larea.area_define_name AS area_define_name
+            FROM    {$this->conf['table']['liveuser_rights']} lr,
+                    {$this->conf['table']['liveuser_areas']} larea,
+                    {$this->conf['table']['liveuser_applications']} lapp
+            WHERE   lr.area_id = larea.area_id
+            AND     larea.application_id = lapp.application_id";
         
         $dbh = &SGL_DB::singleton();
         
