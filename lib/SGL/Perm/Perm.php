@@ -42,7 +42,17 @@ class SGL_Perm
      * @return mixed Perm object or false on error
      */
     function &factoryPerm($type) {
-        
+
+        switch (strtolower($type)) {
+        case 'liveuser':
+            $type = 'LiveUser';
+            break;
+        case 'standard':
+        default:
+            $type = 'Standard';
+            break;
+        }
+
         $class = 'Perm_' . $type;
         $classfile = '/Perm/Container/' . $type . '.php';
 
@@ -63,12 +73,12 @@ class SGL_Perm
         }
         */
 
-        // options for permission package
-        $options['handle']             = $user->username;
-        $options['password']           = $user->passwd;
-        $options['sessionTimeout']     = $_SESSION['aPrefs']['sessionTimeout'];
-        $options['sessionMaxLifetime'] = $conf['site']['sessionMaxLifetime'];
-        $options['authTable']          = $conf['table']['user'];
+        // options for permission package   
+        $options['handle']              = $user->username;
+        $options['password']            = $user->passwd;
+        $options['sessionTimeout']      = $_SESSION['aPrefs']['sessionTimeout'];
+        $options['sessionMaxLifetime']  = $conf['site']['sessionMaxLifetime'];
+        $options['authTable']           = $conf['table']['user'];
 
         // If class exists, return a new instance of it.
         if (class_exists($class)) {
