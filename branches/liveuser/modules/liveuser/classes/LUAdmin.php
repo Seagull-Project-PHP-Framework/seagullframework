@@ -33,7 +33,6 @@ class LUAdmin
         $staticConf = &LUAdmin::getConfig();
         
         $admin = &LUAdmin::factory($staticConf);
-        $admin->init();
         $ok = $admin->setAdminPermContainer();
         if (!$ok) {
             return $admin->getErrors();  
