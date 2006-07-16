@@ -116,7 +116,7 @@ class LUGroupsMgr extends SGL_Manager
             } else {            
             
 //                LUAdmin::rebuildRightsConstants();            
-                SGL::raiseMsg('Group was successfully added');
+                SGL::raiseMsg('Group was successfully added', true, SGL_MESSAGE_INFO);
                 
             }
         }
@@ -178,7 +178,7 @@ class LUGroupsMgr extends SGL_Manager
             } else {            
             
 //                LUAdmin::rebuildRightsConstants();            
-                SGL::raiseMsg('Group was successfully updated');
+                SGL::raiseMsg('Group was successfully updated', true, SGL_MESSAGE_INFO);
                 
             }
         }          
@@ -236,7 +236,7 @@ class LUGroupsMgr extends SGL_Manager
                     if ($result === false) {
                         LUAdmin::raiseError($admin);                        
                     } else {
-                        SGL::raiseMsg('Group(s) was successfully deleted');                    
+                        SGL::raiseMsg('Group(s) was successfully deleted', true, SGL_MESSAGE_INFO);                    
                     }     
                 }
             }
@@ -296,7 +296,7 @@ class LUGroupsMgr extends SGL_Manager
             $result = $this->_cmd_changeAssignments($aRightsToRemove, $input->group_id, SGL_LIVEUSER_RIGHT_REMOVE);
         }
         if ($result) {
-            SGL::raiseMsg('group assignments successfully updated');
+            SGL::raiseMsg('group assignments successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('error updating rights');
         }
@@ -450,7 +450,7 @@ class LUGroupsMgr extends SGL_Manager
         }
         
         if ($result) {
-            SGL::raiseMsg('group assignments successfully updated');
+            SGL::raiseMsg('group assignments successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Error inserting Permissions to Rights link');  
         }

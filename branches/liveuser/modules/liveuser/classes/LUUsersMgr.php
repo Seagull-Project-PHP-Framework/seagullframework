@@ -89,7 +89,7 @@ class LUUsersMgr extends SGL_Manager
         }
         
         if ($result) {
-            SGL::raiseMsg('user assignments successfully updated');
+            SGL::raiseMsg('user assignments successfully updated', false, SGL_MESSAGE_INFO);
             SGL_HTTP::redirect(array('moduleName'=>'user','managerName'=>'user','action' => 'list'));         
         } else {
             SGL::raiseError("Error updating user permissions");        
