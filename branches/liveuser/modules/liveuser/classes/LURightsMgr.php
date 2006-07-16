@@ -17,7 +17,7 @@ class LURightsMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
         $this->module       = 'liveuser';
-        $this->pageTitle    = 'Liveuser Rights Manager';
+        $this->pageTitle    = 'Rights Manager';
         $this->template     = 'luRightsList.html';
 
         $this->_aActionsMapping =  array(

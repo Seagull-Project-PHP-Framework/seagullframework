@@ -19,8 +19,8 @@
         'Members' => 'Members',
         'Rights' => 'Rights',
         'add group' => 'add group',
-        'Liveuser Groups Manager :: Members' => 'Liveuser Groups Manager :: Members',
-        'Liveuser Groups Manager :: Rights' => 'Liveuser Groups Manager :: Rights',
+        'Groups Manager :: Members' => 'Groups Manager :: Members',
+        'Groups Manager :: Rights' => 'Groups Manager :: Rights',
         'Group Manager :: Change assignments' => 'Group Manager :: Change assignments',
         'Group ID' => 'Group ID',
         
@@ -28,13 +28,20 @@
         'Right Constant' => 'Right Constant',
         'Group Constant' => 'Group Constant',
         'Right ID' => 'Right ID',
-        'Liveuser Rights Manager :: Permissions' => 'Liveuser Rights Manager :: Permissions',
+        'Rights Manager :: Permissions' => 'Rights Manager :: Permissions',
         
         'You must enter a name' => 'You must enter a name',
         'You must enter a "define name"' => 'You must enter a "define name"',
         'You must enter a description' => 'You must enter a description',
         
-        'Liveuser Rights Manager' => 'Liveuser Rights Manager',
-        'Liveuser Groups Manager' => 'Liveuser Groups Manager',
+        'Rights Manager' => 'Rights Manager',
+        'Groups Manager' => 'Groups Manager',
+        'New Group' => 'New Group',
+        'Groups Manager :: Rights' => 'Groups Manager :: Rights',
+        'Groups Manager :: Members' => 'Groups Manager :: Members',
+        'Define name' => 'Define name',
+        'New Right' => 'New Right',
+        
+        
     );
 ?>
