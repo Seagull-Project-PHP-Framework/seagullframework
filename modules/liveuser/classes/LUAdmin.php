@@ -37,15 +37,6 @@ class LUAdmin
         if (!$ok) {
             return $admin->getErrors();  
         }
-
-        //$admin->perm->init($staticConf['permContainer']);
-        
-        /*
-        $logconf = array('mode' => 0666, 'timeFormat' => '%X %x');
-        $logger = &Log::factory('file', 'liveuser_test.log', 'ident', $logconf);
-        $admin->addErrorLog($logger);
-        $GLOBALS['_LIVEUSER_DEBUG'] = true;
-        */
         
         return $admin;
     }
