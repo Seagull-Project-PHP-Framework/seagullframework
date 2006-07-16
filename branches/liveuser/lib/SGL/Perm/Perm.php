@@ -20,13 +20,14 @@ class SGL_Perm
      * @static 
      * @return mixed Perm object Only if initialize else false
      */ 
-    function singletonPerm($type = 'default')
+    function singleton($type = 'default')
     {
         static $perm;
         
         if($type == 'default') {
-            $conf = &$GLOBALS['_SGL']['CONF'];
-            $type = $conf['authentication']['permissionPackage'];
+            $c = &SGL_Config::singlton();
+            $this->conf = $c->getAll();
+            $type = $this->conf['authentication']['permissionPackage'];
         }
         if(!isset($perm[$type])) {
             $perm[$type] =& SGL_Perm::factoryPerm($type);
@@ -85,7 +86,7 @@ class SGL_Perm
      * @return int
      */
     function checkRight($right_id, $type = 'default') {
-        $perm =& SGL_Perm::singletonPerm($type);
+        $perm =& SGL_Perm::singleton($type);
         
         if($perm) {
             return $perm->checkRight($right_id);
@@ -109,7 +110,7 @@ class SGL_Perm
         }
         
         if($uid <= 0) {
-            $uid = SGL_HTTP_Session::getUid();
+            $uid = SGL_Session::getUid();
         }
         
         if(!$user) {

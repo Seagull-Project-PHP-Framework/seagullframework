@@ -1,15 +1,12 @@
 <?php
 
-class Perm_standard
+class Perm_Standard
 {
     var $container;
     
     var $editGroupUrl = '';
     
-    function Perm_standard($options)
-    {
-        // nothing here
-    }
+    function Perm_Standard($options) {}
       
     function &readRights() 
     {
@@ -18,7 +15,7 @@ class Perm_standard
        
     function checkRight()
     {
-        if(Session::getAuthLevel() == SGL_ADMIN) {
+        if(SGL_Session::getAuthLevel() == SGL_ADMIN) {
             return true;
         } else {
             return false;

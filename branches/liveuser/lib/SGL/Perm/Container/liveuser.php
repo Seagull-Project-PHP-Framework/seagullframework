@@ -1,6 +1,6 @@
 <?php
 
-require_once 'LiveUser.php';
+require_once 'LiveUser/Admin.php';
 
 /**
  * LiveUser perm container
@@ -24,9 +24,26 @@ class Perm_LiveUser
     function Perm_LiveUser($options)
     {
           
-        $dbh = &SGL_DB::singleton();
-        $conf = & $GLOBALS['_SGL']['CONF'];        
+        $c      = &SGL_Config::singleton();
+        $conf   = $c->getAll();        
+
+        $dsn = SGL_DB::getDsn();      
+        if ($dsn['phptype'] == 'mysql_SGL') {
+            $dsn['phptype'] = 'mysql';
+        }
+
+        $dbSingleton = &SGL_DB::singleton(); // get as a copy
         
+        // clone it - because we are changing assocMode
+        $dbh = clone($dbSingleton);
+        
+        if (PEAR::isError($dbh)) {
+            SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
+                    SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
+        }
+      
+        $dbh->setFetchMode(DB_FETCHMODE_ASSOC);
+
         $this->options = array(
             'autoInit'       => true,
             'login' => array(
@@ -35,33 +52,71 @@ class Perm_LiveUser
             'logout' => array(
                 'destroy'  => true,
              ),
-            'authContainers' => array(
-                                    array(
-                                        'type'          => 'SGLAuth',
-                                        'loginTimeout'  => $options['sessionTimeout'],
-                                        'expireTime'    => $options['sessionMaxLifetime'],
-                                        'idleTime'      => 1800,
-                                        'allowDuplicateHandles' => 0,
-                                        'passwordEncryptionMode' => 'MD5',
-                                        'authTable'     => $options['authTable'],
-                                        'authTableCols' => array(
-                                            'required'  => array(
-                                                'auth_user_id' => array('name' => 'usr_id',   'type' => 'text'),
-                                                'handle'       => array('name' => 'username', 'type' => 'text'),
-                                                'passwd'       => array('name' => 'passwd',   'type' => 'text'),
-                                            ),
-                                            'optional' => array(
-                                                'lastlogin'    => array('name' => 'lastlogin',      'type' => 'timestamp'),
-                                                'is_active'    => array('name' => 'is_acct_active', 'type' => 'boolean')
-                                            ),
-                                        ),
-                                    ),
+            'authContainers' => array( 'DB' =>
+                array(
+                    'type'          => 'DB',
+                    'loginTimeout'  => $options['sessionTimeout'],
+                    'expireTime'    => $options['sessionMaxLifetime'],
+                    'idleTime'      => 1800,
+                    'dsn'           => $dsn,
+                    'allowDuplicateHandles' => false,
+                    'authTable'     => 'liveuser_users',
+                        'authTableCols' => array(
+                            'required' => array(
+                                'auth_user_id' => array('type' => 'text',   'name' => 'usr_id'),
+                                'handle'       => array('type' => 'text',   'name' => 'username'),
+                                'passwd'       => array('type' => 'text',   'name' => 'passwd'),
+                            ),
+                            'optional' => array(
+                                'is_active'      => array('type' => 'boolean', 'name' => 'is_active'),
+                                'lastlogin'      => array('type' => 'timestamp', 'name' => 'lastlogin'),
+                                'owner_user_id'  => array('type' => 'integer',   'name' => 'owner_user_id'),
+                                'owner_group_id' => array('type' => 'integer',   'name' => 'owner_group_id')
+                            ),
+                            'custom' => array (
+                                'name'  => array('type' => 'text',    'name' => 'name'),
+                                'email' => array('type' => 'text',    'name' => 'email'),
+                            ),
+                        ),
+                   'storage' => array(
+                        'dsn' => $dsn,
+                        'alias' => array(
+                            'lastlogin' => 'lastlogin',
+                            'is_active' => 'is_active',
+                        ),
+                        'fields' => array(
+                            'lastlogin' => 'timestamp',
+                            'is_active' => 'boolean',
+                        ),
+                        'tables' => array(
+                            'users' => array(
+                                'fields' => array(
+                                    'lastlogin' => false,
+                                    'is_active' => false,
                                 ),
-            'permContainer'  => array(
-                                    'type'  => 'Complex',
-                                    'storage' => array('DB' => array('connection' => $dbh, 'prefix'     => 'liveuser_')),
-                                ),
-            'session'        => array('name' => $conf['cookie']['name']),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'permContainer' => array(
+                'type'  => 'Complex',                   
+                'alias' => array(),
+                'storage' => array(
+                    'DB' => array(
+                        'connection' => $dbh, 
+                        'dsn' => $dsn,
+                        'prefix' => 'liveuser_',
+                        'tables' => array(),
+                        'fields' => array(),
+                        'force_seq' => false
+                    ),
+                ),
+            ),
+            'session'  => array(
+                'name'     => $conf['cookie']['name'],
+                'varname'  => 'ludata'
+            ),
             'handle'         => $options['handle'],
             'password'       => $options['password'],
         );
@@ -76,8 +131,9 @@ class Perm_LiveUser
         if ($options === null) {
             $options = &$this->options;
         }
-        $this->container = &LiveUser::factory($options, $options['handle'], $options['password']);
-        if (!empty($this->container)) {
+        $this->container = &LiveUser_Admin::factory($options, $options['handle'], $options['password']);
+
+        if (!empty($this->container) && $this->container->init()) {
             $this->initialized = true;
         } else {
             // todo: add error handling
@@ -107,12 +163,17 @@ class Perm_LiveUser
         if ($userId !== null) {
             $this->container->_perm->permUserId = $userId;
         }
-        $rightIds = $this->container->_perm->readRights();
+
+        $aRights = $this->container->getRights();
+
+        foreach ($aRights as $key => $aValue) {
+            $aRightIds[] = $aValue['right_id'];
+        }
         
         // write into session
-        $_SESSION['liveuserRights'] = $rightIds;
+        $_SESSION['liveuserRights'] = $aRightIds;
         
-        return $rightIds;
+        return $aRightIds;
     }
       
     /**
@@ -155,8 +216,7 @@ class Perm_LiveUser
             return array();
         }
         
-        $rightsIds = array_keys($rights);
-        $rightIn = implode(',', $rightsIds);
+        $rightIn = implode(',', $rights);
         
         $whereInClause = ' right_id IN (' . $rightIn . ')';
         
