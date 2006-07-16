@@ -71,10 +71,11 @@
                             <input type="button" class="sgl-button" name="frmReset" value="{translate(#reset#)}"
                                 onclick="javascript:document.location.href='{makeUrl(#requestPasswordReset#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
                         </td>
-                        <td>
+                        <td flexy:if="!isAdmin(aValue[role_id])">
                             <input type="button" class="sgl-button" name="frmReset" value="{translate(#Edit#)}"
                                 onclick="javascript:document.location.href='{makeUrl(#editGroups#,#luusers#,#liveuser#)}user_id/{aValue[usr_id]}'" />
                         </td>      
+                        <td flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
                         <td flexy:if="!isAdmin(aValue[role_id])">
                             <input type="button" class="sgl-button" name="frmReset" value="{translate(#change#)}"
                                 onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
