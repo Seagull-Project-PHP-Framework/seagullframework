@@ -1,6 +1,6 @@
 BEGIN;
 
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'messaging', 'Messaging', 'The ''Messaging'' module contains classes for sending internal Instant Messages, managing external email sending, and managing your contacts.', NULL, '48/module_messaging.png', '', NULL, NULL, NULL);
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'liveuser', 'LiveUser', 'The ''LiveUser'' module allows users to belong to multiple groups and the creations of rights.', NULL, '48/module_messaging.png', '', NULL, NULL, NULL);
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'luusersmgr', '', (SELECT max(module_id) FROM module));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'luusersmgr_cmd_editgroups', '', (SELECT max(module_id) FROM module));
