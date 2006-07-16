@@ -100,8 +100,9 @@ class LURightsMgr extends SGL_Manager
                 LUAdmin::raiseError($admin);
             } else {            
             
+//  TODO: check this out!
 //                LUAdmin::rebuildRightsConstants();            
-                SGL::raiseMsg('Right was successfully added');
+                SGL::raiseMsg('Right was successfully added', true, SGL_MESSAGE_INFO);
                 
             }
         }
@@ -153,8 +154,9 @@ class LURightsMgr extends SGL_Manager
                 LUAdmin::raiseError($admin);
             } else {            
             
+//  TODO: check this out
 //                LUAdmin::rebuildRightsConstants();            
-                SGL::raiseMsg('Right was successfully updated');
+                SGL::raiseMsg('Right was successfully updated', true, SGL_MESSAGE_INFO);
                 
             }
         }         
@@ -205,7 +207,7 @@ class LURightsMgr extends SGL_Manager
                         if ($result === false) {
                             LUAdmin::raiseError($admin);                        
                         } else {
-                            SGL::raiseMsg('Right(s) was successfully deleted');                    
+                            SGL::raiseMsg('Right(s) was successfully deleted', true, SGL_MESSAGE_INFO);                    
                         }     
                     
                     }
@@ -265,7 +267,7 @@ class LURightsMgr extends SGL_Manager
             $result = $this->_cmd_changeRightsAssignments($aPermsToRemove, $input->right_id, SGL_LIVEUSER_PERM_REMOVE);
         }
         if ($result) {
-            SGL::raiseMsg('right assignments successfully updated');
+            SGL::raiseMsg('right assignments successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError("Error inserting Permissions to Rights link");            
         }
