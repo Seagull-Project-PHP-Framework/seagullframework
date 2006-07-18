@@ -180,10 +180,10 @@ EOF;
 
                 //  get extra info
                 $dbh = & SGL_DB::singleton();
-                $lastQuery = $dbh['last_query'];
+                $lastQuery = $dbh->last_query;
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
-                $aExtraInfo['lastSQL'] = isset($dbh['last_query']) ?
-                    $dbh['last_query'] : null;
+                $aExtraInfo['lastSQL'] = isset($dbh->last_query) ?
+                    $dbh->last_query : null;
                 $aExtraInfo['userID'] = SGL_Session::get('uid');
                 $aExtraInfo['clientData']['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
                 $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
