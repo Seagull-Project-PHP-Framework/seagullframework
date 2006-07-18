@@ -9,14 +9,14 @@
 /*******************************************************/
 
 	#calendar_area{
-		background-color:#F6F5F2;
+		background-color:#f6f5f2;
 		padding:10px;
 		margin:0;
 	}
 	#calendar_title{
 		font-size:1.2em;
 		font-weight:normal;
-		color:#333333;
+		color:#333;
 		margin:0 20px 0 20px;
 		padding:0;
 		vertical-align:baseline;
@@ -51,10 +51,10 @@
 
 /*  Calendars   */
 	#all_calendars table{
-		width:700px;
-		background-color:#FFFFFF;
+		width:650px;
+		background-color:#fff;
 		padding:1px;
-		border:1px solid #CCCCCC;
+		border:1px solid #ccc;
 		margin:0 auto 0 0;
 	}
 	#all_calendars caption{
@@ -67,10 +67,10 @@
 		font-size: 1em;
 		color:#067CA0;
 		background:#666666;
-		border-bottom: 1px solid #CCCCCC;
-		border-right: 1px solid #CCCCCC;
-		border-top: 1px solid #FFFFFF;
-		border-left: 1px solid #FFFFFF;
+		border-bottom: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+		border-top: 1px solid #fff;
+		border-left: 1px solid #fff;
 		width: 14%;
 		font-weight:normal;
 		background-image:url("<?php echo $baseUrl; ?>/images/cal_days_bg.jpg");
@@ -88,39 +88,39 @@
 		font-size: 0.9em;
 		font-weight: bold;
 		background:#EFF9FC;
-		border:1px solid #A1D8E9;
+		border:1px solid #a1d8e9;
 	}
 
 	td.other_month {
 		font-size: 0.9em;
 		font-weight: bold;
-		background:#FFFBE7;
+		background:#fffbe7;
 
 	}
 	td.selected {
 		font-size: 0.9em;
 		font-weight: bold;
-		background: #85C7DC;
-		color:#FFFFFF
+		background: #85c7dc;
+		color:#fff
 	}
 	td.today {
 		font-size: 0.9em;
 		font-weight: bold;
-		background: #EFDC35;
+		background: #efdc35;
 	}
 	td a{
-		color:#333333;
+		color:#333;
 		padding:2px;
 		text-decoration:none;
 	}
 	td a:hover{
-		background-color:#0B9AC6;
-		color:#FFFFFF;
+		background-color:#0b9ac6;
+		color:#fff;
 	}
 	div.event_drop_shadow{
 		padding:0 1px 1px 0;
-		background-color:#999999;
-		border:1px solid #BCD41B;
+		background-color:#999;
+		border:1px solid #bcd41b;
 	}
 	div.eventDiv{
 		background-color:#AEEF4F;
@@ -128,14 +128,14 @@
 		background-position:top left;
 		background-repeat:repeat-x;
 		padding:4px;
-		border:1px solid #E9FACF;
+		border:1px solid #e9facf;
 	}
 	div.eventDiv a{
-		color:#3A3A3A;
+		color:#3a3a3a;
 		padding:2px;
 	}
 	div.eventDiv a:hover{
-		color:#FFFFFF;
+		color:#fff;
 		background-color:transparent;
 	}
 
@@ -146,7 +146,7 @@
 	td.event{
 		font-size: 0.9em;
 		font-weight: bold;
-		background:#D1CDBC;
+		background:#d1cdbc;
 	}
 
 
@@ -163,10 +163,10 @@
 		float:left;
 	}
 	#dv_calendar table{
-		background-color:#FFFFFF;
-		border:1px solid #CCCCCC;
+		background-color:#fff;
+		border:1px solid #ccc;
 		padding:1px;
-		width:700px;
+		width:650px;
 	}
 	#dv_calendar tr{
 		margin:0;
@@ -176,13 +176,13 @@
 		background-color:#FFFF99;
 		padding:8px;
 		width:60px;
-		border-top:1px dashed #CCCCCC;
+		border-top:1px dashed #ccc;
 	}
 	#dv_calendar td{
 		padding:8px;
 		height:20px;
 		margin:1px 0 1px 0;
-		border-top:1px dashed #CCCCCC;
+		border-top:1px dashed #ccc;
 	}
 
 	td.dv_event_block{
@@ -201,7 +201,7 @@
 		font-size:0.9em;
 	}
 	td.dv_event_block a:hover{
-		color:#FFFFFF;
+		color:#fff;
 		background-color:transparent;
 	}
 /*******************************************************/
@@ -241,7 +241,7 @@
 		background-image:url("<?php echo $baseUrl; ?>/images/event_view_desc_bg.jpg");
 		background-position:top left;
 		background-repeat:repeat-x;
-		background-color:#FFFFFF;
+		background-color:#fff;
 	}
 
 	#event_img{
@@ -278,14 +278,14 @@
 	div.content_box_ds{
 		padding:0 1px 1px 0;
 		background-color:#ACABA9;
-		border-right:1px solid #C0C0C0;
-		border-bottom:1px solid #C0C0C0;
+		border-right:1px solid #c0c0c0;
+		border-bottom:1px solid #c0c0c0;
 		margin:0 0 20px 0;
 	}
 	div.content_box{
 		padding:0;
-		border:1px solid #96BBC6;
-		background-color:#EFF9FC;
+		border:1px solid #96bbc6;
+		background-color:#eff9fc;
 	}
 	div.content_box_content{
 		padding:6px;
@@ -294,14 +294,14 @@
 		margin:4px 0 10px 0;
 	}
 	div.content_box h1{
-		color:#179DB5;
+		color:#179db5;
 		font-size:0.8em;
 		font-weight:bold;
 		margin:0;
 		padding:0;
 	}
 	p.heading_text{
-		color:#000000;
+		color:#000;
 		font-weight:bold;
 		font-size:1em;
 		margin:0;
@@ -309,8 +309,8 @@
 	}
 	p.body_text{
 		padding:4px 4px 4px 0;
-		background-color:#FFFFFF;
-		border:1px solid #EFF9FC;
+		background-color:#fff;
+		border:1px solid #eff9fc;
 		color:#333333;
 		font-size:0.9em;
 		margin:0;
@@ -378,7 +378,7 @@
 		border-right:0;
 		border-top:1px solid #999791;
 		border-bottom:6px solid #F3F3EC;
-		background-color:#FFFFFF;
+		background-color:#fff;
 		color:#92A60C;
 	}
 	#events_table a{
@@ -416,8 +416,8 @@
 		margin:10px 0 25px 0;
 		padding:5px;
 		text-align:center;
-    	background-color:#F0FFD9;
-    	border:1px solid #C6D7AA;
+    	background-color:#f0ffd9;
+    	border:1px solid #c6d7aa;
     	height: 75px;
 	}
 
@@ -474,7 +474,7 @@
 		background-repeat:repeat-x;
 		padding:4px;
 		border:1px solid #999999;
-		border-top:1px solid #FFFFFF;
+		border-top:1px solid #fff;
 	}
 	#event_search select, input{
 		margin:0 0 -3px 0;
@@ -492,10 +492,10 @@
 		font-size: 1em;
 		color:#333333;
 		background:#666666;
-		border-bottom: 1px solid #CCCCCC;
-		border-right: 1px solid #CCCCCC;
-		border-top: 1px solid #FFFFFF;
-		border-left: 1px solid #FFFFFF;
+		border-bottom: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+		border-top: 1px solid #fff;
+		border-left: 1px solid #fff;
 		font-weight:normal;
 		background-image:url("<?php echo $baseUrl; ?>/images/cal_event_bg.jpg");
 		background-position:top left;
@@ -531,8 +531,8 @@
 		background-repeat:repeat-x;
 		padding:4px;
 		border:1px solid #999999;
-		border-top:1px solid #FFFFFF;
-		border-left:1px solid #FFFFFF;
+		border-top:1px solid #fff;
+		border-left:1px solid #fff;
 	}
 	#add_edit_form textarea{
 		margin:0;
@@ -559,7 +559,7 @@
 		color:#333333;
 		font-size:0.9em;
 		padding:2px;
-		background-color:#ffffff;
+		background-color:#fff;
 		width:400px;
 		margin:0 0 10px 0;
 	}
@@ -589,10 +589,10 @@
 		font-size: 1em;
 		color:#333333;
 		background:#666666;
-		border-bottom: 1px solid #CCCCCC;
-		border-right: 1px solid #CCCCCC;
-		border-top: 1px solid #FFFFFF;
-		border-left: 1px solid #FFFFFF;
+		border-bottom: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+		border-top: 1px solid #fff;
+		border-left: 1px solid #fff;
 		font-weight:normal;
 		background-image:url("<?php echo $baseUrl; ?>/images/cal_days_bg.jpg");
 		background-position:top left;
@@ -656,7 +656,7 @@
 		border-right:0;
 		border-top:1px solid #999791;
 		border-bottom:6px solid #F3F3EC;
-		background-color:#FFFFFF;
+		background-color:#fff;
 		color:#855F48;
 	}
 	.default_table a{
