@@ -53,7 +53,7 @@
             <p>
                 <label for="search[roles]">{translate(#Role#)}</label>
                 <span class="error" flexy:if="error[roles]">{translate(error[roles])}</span>
-                <select name="search[roles]" id="search[roles]" multiple="multiple" size="3">
+                <select name="search[roles][]" id="search[roles]" multiple="multiple" size="3">
                     {generateSelect(aRoles,user.role_id):h}
                 </select>
             </p>
