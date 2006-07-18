@@ -653,7 +653,7 @@ class UserMgr extends RegisterMgr
                     if (is_a($res, 'PEAR_Error')) {
                         $this->dbh->rollback();
                         $results[$userId] = 0; //log result for user
-                        continue;
+                        continue 2;
                     }
                 }
             }
