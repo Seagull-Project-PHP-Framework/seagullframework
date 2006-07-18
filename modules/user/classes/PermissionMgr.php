@@ -398,7 +398,8 @@ class PermissionMgr extends SGL_Manager
         foreach ($filePerms as $k => $filePerm) {
             $found = false;
             foreach ($dbPerms as $k2 => $dbPerm) {
-                if ($dbPerm['name'] == $filePerm['perm']) {
+                if (($dbPerm['module_name'] == $filePerm['module_name'])
+                        && ($dbPerm['name'] == $filePerm['perm'])) {
                     $found = true;
                     break;
                 }
@@ -407,8 +408,8 @@ class PermissionMgr extends SGL_Manager
             //  delimited value used for form submission
             if (!$found) {
 
-                //  ignore 'redirect*' type perms
-                if (preg_match("/redirect/", $filePerm['perm'])) {
+                //  ignore 'redirectTo*' type perms
+                if (preg_match("/redirectTo/i", $filePerm['perm'])) {
                     continue;
                 }
                 $permType = (strpos($filePerm['perm'], '_') === false) ? 'class' : 'method';
@@ -484,7 +485,7 @@ class PermissionMgr extends SGL_Manager
 
         $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
         $aFiles = array();
-        
+
         //only scan in registered modules for *Mgr.php
         foreach ($aRegisteredModules as $module) {
             $aFindArgs = array(
@@ -503,7 +504,7 @@ class PermissionMgr extends SGL_Manager
             } else {
                 continue;
             }
-            
+
             //  grab module name from path (platform independent)
             preg_match('/(\\w+)[\\\\\/]classes[\\\\\/]/', $file, $moduleName);
             if (isset($moduleName[1])) {
@@ -511,7 +512,7 @@ class PermissionMgr extends SGL_Manager
             } else {
                 continue;
             }
-            
+
             //  load file as string (note: just for curiosity, I tried reading
             //  line by line and 1K and 4K chunks, so I wouldn't have to load the whole file
             //  and file_get_contents was a little faster! ...and it's 1 line of code
@@ -521,8 +522,8 @@ class PermissionMgr extends SGL_Manager
             $pos1 = strpos($t, '$this->_aActionsMapping');
             if ($pos1 === false) {
                 continue;
-            } 
-            
+            }
+
             //  search for closing semicolon
             $pos2 = strpos($t, ';', $pos1);
             if ($pos2 === false) {
@@ -556,7 +557,7 @@ class PermissionMgr extends SGL_Manager
                     'module_name' => $moduleName);
             }
         }
-        
+
         return $aPermsFound;
     }
 }
