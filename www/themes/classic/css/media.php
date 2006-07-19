@@ -1,5 +1,5 @@
 /*******************************************************/
-/* CMS / FILE MANAGER  								   */
+/* MEDIA / FILE MANAGER  							   */
 /*******************************************************/
 /*******************************************************/
 /* NAVIGATION FOR MODULE							   */
@@ -8,46 +8,30 @@
 /* Main Module Navigation  */
 	#module_navigation{
 		margin:10px 0 25px 0;
-		padding:10px;
+		padding:5px;
 		text-align:center;
-		height:40px;
+    	background-color:#f0ffd9;
+    	border:1px solid #c6d7aa;
+    	height: 75px;
 	}
+
+	#module_navigation li{
+        display: inline;
+        list-style-type: none;
+		float:left;
+		margin:0 16px 0 6px;
+	}
+
 	#module_navigation span{
 		margin:8px 0 0 0;
 		display:block;
 	}
-	#module_navigation img{
-		margin:auto 0 -8px 0;
-	}	
-	#module_navigation a{
-		font-size:0.9em;
-		color:#333333;
-		text-decoration:none;
-		font-weight:bold;
-	}
-	#module_navigation a:hover{
-		color:#729602;
-	}	
-	
-	#module_navigation ul{
-		list-style-type:none;
-		margin:0;
-		padding:0;
-	}
-	#module_navigation li{
-		float:left;
-		margin:0 16px 0 6px;
-	}
-	li.spacer{
-		padding:0;
-	}
-	
-/* MODULE NAVIGATION BG */
-#module_navigation{
-	background-color:#F0FFD9;
-	border:1px solid #C6D7AA;
-}
 
+
+	/* Hides from IE Mac \*/
+	* html #module_navigation {height: 1%;}
+	#event_navigation{display:block;}
+	/* End Hack */
 
 /*******************************************************/
 /* SELECT FILE TYPE - NARROW RESULTS                   */
@@ -58,10 +42,11 @@
 		padding:10px;
 		background-color:#E0EFB8;
 		border:1px solid #C3CEA5;
+    	height: 75px;
 	}
 	#view_type img{
 		margin:auto 0 -8px 0;
-	}	
+	}
 	#view_type a{
 		font-size:0.9em;
 		color:#333333;
@@ -69,12 +54,12 @@
 	}
 	#view_type a:hover{
 		color:#0066CC;
-	}	
+	}
 	#view_type:after{
-		content: "."; 
-		display: block; 
-		height: 0; 
-		clear: both; 
+		content: ".";
+		display: block;
+		height: 0;
+		clear: both;
 		visibility:hidden;
 	}
 	#view_type{display: inline-block;}
@@ -82,7 +67,7 @@
 	* html #view_type {height: 1%;}
 	#view_type{display:block;}
 	/* End Hack */
-	
+
 
 	#view_type span{
 		float:left;
@@ -109,7 +94,7 @@
 	.file_type_icon{
 		float:left;
 	}
-	
+
 	#keyword_div{
 		float:left;
 		margin:12px 10px 0 0;
@@ -123,9 +108,9 @@
 	#submit_div{
 		float:left;
 		margin:12px 10px 0 0;
-		
+
 	}
-	
+
 
 /*******************************************************/
 /* THUMBNAIL CREATION                                  */
@@ -155,7 +140,7 @@ div.complete_thumb_highlighted input{
 	padding:1px;
 	background-color:#FFFFFF;
 	vertical-align:bottom;
-}	
+}
 div.thumb{
 	float:left;
 	border-bottom:1px solid #E5E5E5;
@@ -173,7 +158,7 @@ div.thumb{
 	padding:8px 0 0 0;
 	clear:both;
 	float:left;
-} 
+}
 
 .thumb_title h1{
 	margin:0;
@@ -205,9 +190,9 @@ div.thumb{
 }
 img.overlap{
 	margin:-40px 0 0 0;
-	display:block;		
+	display:block;
 	position:relative;
-	top:42px; 
+	top:42px;
 	left:2px;
 	z-index:3;
 }
@@ -227,3 +212,99 @@ div.selection_options > label{
 	font-size:0.9em;
 	font-weight:bold;
 }
+
+
+/*******************************************************/
+/* MEDIA LIST                                          */
+/*******************************************************/
+
+	.default_table{
+		margin:0;
+		padding:10px;
+		background-color:#F3F3EC;
+		border:1px solid #999791;
+	}
+	.default_table table{
+		margin:0;
+		padding:0;
+		border:0;
+		width:100%;
+	}
+	.default_table caption{
+		color:#9CB20A;
+		font-size:1em;
+		text-align:left;
+		margin:0 0 10px 0;
+	}
+	.default_table th{
+		margin:0;
+		padding:3px;
+		text-align:left;
+		color:#666666;
+		font-weight:bold;
+		border:0;
+	}
+	.default_table tr{
+		margin:0;
+		padding:0;
+		text-align:left;
+	}
+	.default_table td{
+		margin:0;
+		padding:3px 10px 3px 3px ;
+		border-left:0;
+		border-right:0;
+		border-top:1px solid #999791;
+		border-bottom:6px solid #F3F3EC;
+		background-color:#fff;
+		color:#855F48;
+	}
+	.default_table a{
+		color:#0066CC;
+		text-decoration:underline;
+	}
+	.default_table a:hover{
+		color:#CC3300;
+	}
+	td.icon_in_table{
+		text-align:center;
+	}
+
+/*******************************************************/
+/* MEDIA ADD                                          */
+/*******************************************************/
+	#add_edit_form form{
+		margin:0;
+		padding:10px;
+	}
+	#add_edit_form label{
+		font-weight:bold;
+		color:#333333;
+		font-size:0.9em;
+		margin:0;
+		padding:0;
+		background-color:#f0ffd9;
+		background-image:url("<?php echo $baseUrl; ?>/images/cal_event_bg_2.jpg");
+		background-position:top left;
+		background-repeat:repeat-x;
+		padding:4px;
+		border:1px solid #999999;
+		border-top:1px solid #fff;
+		border-left:1px solid #fff;
+	}
+	#add_edit_form textarea{
+		margin:0;
+		padding:0;
+	}
+	#add_edit_form input, select{
+		border:1px solid #999999;
+		padding:2px;
+		font-size:0.9em;
+		color:#333333;
+	}
+	.form_section{
+		margin:10px 0 0 0;
+		background-color:#f0ffd9;
+		border:1px solid #D0DCE0;
+		padding:10px;
+	}
