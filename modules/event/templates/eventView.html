@@ -1,0 +1,112 @@
+
+<div id="module_header">
+	<h1>Full Event Information</h1>
+</div>
+<flexy:include src="eventModuleNav.html" />
+
+<div id="an_event">
+
+<div class="event_status_icon">
+	{if:event.status}
+		<img src="{webRoot}/themes/{theme}/images/icons/locked.png" alt="{valueObj.status}" />
+		Only you can view this event.
+	{else:}
+		<img src="{webRoot}/themes/{theme}/images/icons/unlocked.png" alt="{valueObj.status}" />
+		This event is available to the public.
+	{end:}
+</div>
+
+	<div class="left_col">
+		<div class="content_box_ds">
+			<div class="content_box">
+				<div id="event_details">
+					<div class="info_section">
+						<h1>Event Title</h1>
+						<p class="heading_text">{event.name}</p>
+					</div>
+
+					<div class="info_section">
+						<div id="event_dates">
+							<div class="float_half">
+								<h1>{translate(#Start Date#)}</h1>
+								<p class="body_text">{formatDate(event.start_date)}</p>
+							</div>
+							<div class="float_half">
+								<h1>{translate(#Expiry Date#)}</h1>
+								<p class="body_text">{formatDate(event.end_date)}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="info_section">
+						<h1>Event Description</h1>
+						<p class="body_text"><strong>{event.description:h}</strong></p>
+					</div>
+
+					<div class="info_section">
+						<h1>Venue Address</h1>
+						<p class="body_text">
+						{this.plugin(#formatAddress#,address):h}
+						</p>
+					</div>
+
+					<div class="info_section">
+						<h1>Venue Web Site</h1>
+						<p class="body_text">
+						  <a href="{event._location_id.website}" title="click here to visit the venue web site">
+						      {event._location_id.website}
+						  </a>
+						</p>
+					</div>
+
+					<div class="info_section">
+						<h1>Telephone</h1>
+						<p class="body_text">{event._location_id.telephone}</p>
+					</div>
+
+					<div class="info_section">
+						<h1>Admission Price</h1>
+						<p class="body_text">{event.ticket_cost}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="content_box_ds">
+			<div class="content_box">
+
+				<div class="content_box_content">
+					<div class="info_section">
+						<h1>Associated Files</h1>
+						{foreach:aFileData,k,data}
+                            <p class="body_text">
+							<img src="{webRoot}/themes/{theme}/images/icons/16x16_icons/download.png" alt="Add" border="0" />
+							<a href="{makeUrl(#setDownload#,#media#,#media#,aFileData,#frmMediaId|media_id#,k)}">{data.name}</a>
+							<span>{data.file_type_name} {formatBytes(data.file_size)}</span>
+					    {end:}
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="right_col">
+
+		<div class="content_box_ds">
+			<div class="content_box">
+				<div id="event_img">
+				{if:imageName}
+					<img src="{makeUrl(#view#,#media#,#media#)}frmMediaId/{imageId}/" alt="Image of event" border="0" />
+		        {else:}
+                    <img src="{webRoot}/themes/{theme}/images/no_image_lrg.jpg" alt="Image of event" border="0" />
+                {end:}
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
