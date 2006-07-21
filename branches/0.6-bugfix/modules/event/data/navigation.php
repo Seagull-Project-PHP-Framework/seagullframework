@@ -15,7 +15,7 @@ SGL_NODE_GROUP nodes.
 
 */
 $aSections = array(
-    array (
+/*    array (
       'title'           => 'Events',
       'parent_id'       => SGL_NODE_ADMIN,
       'uriType'         => 'dynamic',
@@ -47,7 +47,7 @@ $aSections = array(
       'add_params'      => '',
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
-        ),
+        ),*/
 // user
     array (
       'title'           => 'Events',
