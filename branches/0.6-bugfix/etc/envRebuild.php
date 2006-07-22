@@ -125,6 +125,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_CreateAdminUser());
+        $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
         set_time_limit(120);
