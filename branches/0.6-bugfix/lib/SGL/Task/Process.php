@@ -779,6 +779,8 @@ class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
 
             //  and execution time
             $output->executionTime = getSystemTime() - @SGL_START_TIME;
+        } else {
+            $output->executionTime = 0;
         }
         //  send memory consumption to output
         if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
