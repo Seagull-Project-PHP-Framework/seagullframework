@@ -106,7 +106,8 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbPort'  => array('port' => 3306),
             'dbName'  => 'not required for MySQL login',
             ));
-
+        $this->setDefaults(overrideDefaultInstallSettings());
+        
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
             "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');

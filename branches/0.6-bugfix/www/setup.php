@@ -72,6 +72,19 @@ module setup
     - register module in registry
 */
 
+// This adds default values for the installer form, based on a
+// ini-file.
+function overrideDefaultInstallSettings()
+{
+    if (file_exists(SGL_PATH.'/etc/customInstallDefaults.ini')) {
+        $customInstallDefaults = parse_ini_file(SGL_PATH.'/etc/customInstallDefaults.ini', false);
+        $ret = $customInstallDefaults;
+    } else {
+        $ret = array();
+    }
+    return $ret;
+}
+
 //  initialise
 
 //  set initial paths according to install type

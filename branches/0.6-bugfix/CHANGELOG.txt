@@ -12,6 +12,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+27-07-06    Added possibility to custimise defaults in installer (Eric Persson)
 27-07-06    Minimal modules and no sample data are now defaults
 27-07-06    Removed dependencies between blocks and sections, you can now install
             blocks only when the relevant module is installed
