@@ -188,24 +188,17 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateDatabase());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
-
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_BuildNavigation());
-
         $runner->addTask(new SGL_Task_LoadBlockData());
-
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());
-
         $runner->addTask(new SGL_Task_SyncSequences());
-
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
-//        $runner->addTask(new SGL_Task_SyncSequences());
-//        $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
