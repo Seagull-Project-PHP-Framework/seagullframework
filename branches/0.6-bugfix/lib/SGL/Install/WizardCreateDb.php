@@ -124,8 +124,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'name' => 'seagull',
             'prefix' => 'not implemented yet',
-            'installAllModules' => true,
-            'insertSampleData' => true,
+            'installAllModules' => false,
+            'insertSampleData' => false,
             ));
 
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
