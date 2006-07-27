@@ -127,7 +127,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
             'installAllModules' => false,
             'insertSampleData' => false,
             ));
-
+        $this->setDefaults(overrideDefaultInstallSettings());
+        
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
 
         //  skip db creation

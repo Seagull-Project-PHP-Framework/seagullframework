@@ -76,7 +76,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
                 ? '@WEB_DIR@/Seagull/www'
                 : SGL_PATH . '/www',
             ));
-
+        $this->setDefaults(overrideDefaultInstallSettings());
+        
         //  setup admin user
         $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
