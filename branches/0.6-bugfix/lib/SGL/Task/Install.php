@@ -203,7 +203,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.pg.sql';
             $this->filename2 = '/data.default.pg.sql';
             $this->filename3 = '/data.sample.pg.sql';
-            $this->filename4 = '/constraints.pg.sql';
+            $this->filename4 = '/data.block.pg.sql';
+            $this->filename5 = '/constraints.pg.sql';
             break;
 
         case 'mysql':
@@ -211,7 +212,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
             $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/constraints.my.sql';
+            $this->filename4 = '/data.block.my.sql';
+            $this->filename5 = '/constraints.my.sql';
             break;
 
         case 'mysql_SGL':
@@ -219,7 +221,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
             $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/constraints.my.sql';
+            $this->filename4 = '/data.block.my.sql';
+            $this->filename5 = '/constraints.my.sql';
             break;
 
         case 'oci8_SGL':
@@ -227,23 +230,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.oci.sql';
             $this->filename2 = '/data.default.oci.sql';
             $this->filename3 = '/data.sample.oci.sql';
-            $this->filename4 = '/constraints.oci.sql';
-            break;
-
-        case 'maxdb_SGL':
-            $this->dbType = 'maxdb_SGL';
-            $this->filename1 = '/schema.mx.sql';
-            $this->filename2 = '/data.default.mx.sql';
-            $this->filename3 = '/data.sample.mx.sql';
-            $this->filename4 = '/constraints.mx.sql';
-            break;
-
-        case 'db2_SGL':
-            $this->dbType = 'db2';
-            $this->filename1 = '/schema.db2.sql';
-            $this->filename2 = '/data.default.db2.sql';
-            $this->filename3 = '/data.sample.db2.sql';
-            $this->filename4 = '/constraints.db2.sql';
+            $this->filename4 = '/data.block.oci.sql';
+            $this->filename5 = '/constraints.oci.sql';
             break;
         }
 
@@ -512,6 +500,34 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 /**
  * @package Task
  */
+class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        $this->setup();
+
+        $statusText = 'loading block data';
+        $this->updateHtml('status', $statusText);
+
+        //  Go back and load each module's default data, if there is a sql file in /data
+        foreach ($data['aModuleList'] as $module) {
+            $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+
+            //  Load the module's data
+            if (file_exists($modulePath . $this->filename4)) {
+                $result = SGL_Sql::parseAndExecute($modulePath . $this->filename4, 0);
+                $displayHtml = $result ? $this->success : $this->failure;
+                $this->updateHtml($module . '_dataBlock', $displayHtml);
+            } else {
+                $this->updateHtml($module . '_dataBlock', $this->noFile);
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
 {
     function run($data)
@@ -525,8 +541,8 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             //  Go back and load module foreign keys/constraints, if any
             foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
-                if (file_exists($modulePath . $this->filename4)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename4, 0);
+                if (file_exists($modulePath . $this->filename5)) {
+                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename5, 0);
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {

@@ -80,6 +80,7 @@ class MaintenanceMgr extends SGL_Manager
         $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->cache       = ($req->get('frmCache')) ? $req->get('frmCache') : array();
+        $input->useSampleData  = ($req->get('frmSampleData')) ? 1 : 0;
 
         if ($input->submitted) {
             if ($req->get('action') == '' || $req->get('action') == 'list') {
@@ -167,8 +168,7 @@ class MaintenanceMgr extends SGL_Manager
 
         $data = array(
             'createTables' => 1,
-            'insertSampleData' => 1,
-            'installAllModules' => 1,
+            'insertSampleData' => $input->useSampleData,
             'adminUserName' => 'admin',
             'adminPassword' => 'admin',
             'adminFirstName' => 'Demo',
@@ -188,15 +188,24 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateDatabase());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
+
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+
+        $runner->addTask(new SGL_Task_LoadBlockData());
+
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());
+
+        $runner->addTask(new SGL_Task_SyncSequences());
+
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
+//        $runner->addTask(new SGL_Task_SyncSequences());
+//        $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());

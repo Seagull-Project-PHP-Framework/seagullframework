@@ -48,10 +48,11 @@
                 <input type="checkbox" name="frmCache[translations]" value="1" />{translate(#translations#,#ucfirst#)}
                 <input type="checkbox" name="frmCache[uri]" value="1" /><acronym>URI</acronym>
             </p>
-            <p class="center">
+            <div class="center">
                 <input type="checkbox" name="checkAll" id="checkAll"
-                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />{translate(#select all#,#ucfirst#)}
-            </p>
+                       onClick="javascript:applyToAllCheckboxes('caches', false, this.checked)" />
+                <label for="checkAll">{translate(#select all#,#ucfirst#)}</label>
+            </div>
             <div class="center">
                 <p class="error" flexy:if="error[nothingChecked]">
                     {error[nothingChecked]}
@@ -67,10 +68,14 @@
             <p class="center">
                 WARNING: This will drop your database and create your Seagull environment from
                 discovered data files.  It will only work correctly if your current database user
-                has full privileges, ie to drop and create databases.<br />
+                has full privileges, ie to drop and create databases.
+            </p>
+            <div class="center">
                 <input type="hidden" name="action" value="rebuildSeagull" />
                 <input type="submit" class="sgl-button"name="submit" value="{translate(#Rebuild Seagull#)}" />
-            </p>
+                <input type="checkbox" name="frmSampleData" id="sampleData" value="1" />
+                <label for="sampleData">with sample data</label>
+            </div>
         </fieldset>
     </form>
     <div class="spacer"></div>
