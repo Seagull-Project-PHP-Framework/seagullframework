@@ -12,6 +12,9 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+27-07-06    Removed dependencies between blocks and sections, you can now install
+            blocks only when the relevant module is installed
+27-07-06    Rebuilding Seagull can now be done with or without sample data
 26-07-06    Moved all navigation from default SQL data to PHP arrays (see
             $module/data/navigation.php)
 15-07-06    Enhancements to newsletter module (Rares Benea)
