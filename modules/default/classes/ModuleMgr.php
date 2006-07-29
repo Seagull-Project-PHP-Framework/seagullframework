@@ -325,26 +325,36 @@ class ModuleMgr extends SGL_Manager
         // if there are modules, determine whether installed
         if (count($aPagedData['data'])) {
             require_once SGL_CORE_DIR . '/Sql.php';
-
-            $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
             foreach ($aPagedData['data'] as $k => $aModule) {
-                $schemaFile =  SGL_MOD_DIR . '/' . $aModule['name']  . '/data/schema.'.$dbShortname.'.sql';
-                $aTables[] = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
+                $aPagedData['data'][$k]['isInstalled'] = $this->_isInstalled($aModule['name']);
             }
-#print '<pre>';print_r($aTables);
         }
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function _isInstalled()
+    function _isInstalled($moduleName)
     {
-        SGL_Sql::extractTableNamesPerSchema($filename);
+        //  get installed tables to compare against
+        static $aInstalledTables, $dbShortname;
+        if (!isset($aInstalledTables)) {
+            $aInstalledTables = $this->dbh->getListOf('tables');
+            $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
+        }
+        //  get all table defined in this module's schema
+        $schemaFile =  SGL_MOD_DIR . '/' . $moduleName . '/data/schema.'.$dbShortname.'.sql';
+        $aTablesByModule = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
+        //  check to see tables in existing db correspond to those specified in schema
+        foreach ($aTablesByModule as $tablename) {
+            if (!in_array($tablename, $aInstalledTables)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 ?>
