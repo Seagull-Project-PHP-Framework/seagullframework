@@ -172,6 +172,7 @@ class ModuleMgr extends SGL_Manager
         }
 
     }
+
     function _cmd_overview(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -321,11 +322,16 @@ class ModuleMgr extends SGL_Manager
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
-        // if there are modules, clean up output
+        // if there are modules, determine whether installed
         if (count($aPagedData['data'])) {
+            require_once SGL_CORE_DIR . '/Sql.php';
+
+            $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
             foreach ($aPagedData['data'] as $k => $aModule) {
-                $aPagedData['data'][$k]['is_configurable'] = $aModule['is_configurable'] ? 'yes' : 'no';
+                $schemaFile =  SGL_MOD_DIR . '/' . $aModule['name']  . '/data/schema.'.$dbShortname.'.sql';
+                $aTables[] = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
             }
+#print '<pre>';print_r($aTables);
         }
         //  determine if pagination is required
         $output->aPagedData = $aPagedData;
@@ -334,6 +340,11 @@ class ModuleMgr extends SGL_Manager
         }
 
         $output->addOnLoadEvent("switchRowColorOnHover()");
+    }
+
+    function _isInstalled()
+    {
+        SGL_Sql::extractTableNamesPerSchema($filename);
     }
 }
 ?>

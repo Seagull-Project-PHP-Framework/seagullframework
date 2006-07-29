@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/../Sql.php';
+
 /**
  * Test suite.
  *
@@ -67,6 +69,87 @@ EOF;
         return $sql;
     }
 
+    function testExtractTablenameFromCreateStatement()
+    {
+        $sql = <<< EOF
+/*==============================================================*/
+/* Table: block                                                 */
+/*==============================================================*/
+create table if not exists block
+(
+   block_id                       int                            not null,
+   name                           varchar(64),
+   title                          varchar(32),
+   title_class                    varchar(32),
+   body_class                     varchar(32),
+   blk_order                      smallint,
+   position                       varchar(16),
+   is_enabled                     smallint,
+   is_cached                      smallint,
+   params                         longtext,
+   primary key (block_id)
+);
+
+/*==============================================================*/
+/* Table: block_assignment                                      */
+/*==============================================================*/
+create table if not exists block_assignment
+(
+   block_id                       int                            not null,
+   section_id                     int                            not null,
+   primary key (block_id, section_id)
+);
+
+/*==============================================================*/
+/* Index: block_assignment_fk                                   */
+/*==============================================================*/
+create index block_assignment_fk on block_assignment
+(
+   block_id
+EOF;
+        $aLines = explode("\n", $sql);
+        foreach ($aLines as $line) {
+            $aTableNames[] = SGL_Sql::extractTableNameFromCreateStatement($line);
+        }
+        $aTableNames = array_filter($aTableNames); //remove blanks
+        $this->assertEqual(count($aTableNames), 2); // doesn't catch index
+    }
+
+    function testExtractTableNameFromCreateStatement1()
+    {
+        $str = 'create table block';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'block');
+    }
+
+    function testExtractTableNameFromCreateStatement2()
+    {
+        $str = 'create table `block';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'block');
+    }
+
+    function testExtractTableNameFromCreateStatement3()
+    {
+        $str = 'create table if not exists block';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'block');
+    }
+
+    function testExtractTableNameFromCreateStatement4()
+    {
+        $str = 'create table if not exists `block`';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'block');
+    }
+
+    function testExtractExecuteFromSqlParse()
+    {
+        $schemaFile =  SGL_MOD_DIR . '/default/data/schema.my.sql';
+        $res = SGL_Sql::parse($schemaFile, E_ALL, array('SGL_Sql', 'execute'));
+        $this->assertTrue(strlen($res) > 2000); // a parsed ~ 2k file is returned
+    }
+
     function testRemoveNonAlphaChars()
     {
         $foo = 'this is (foo - )';
@@ -110,6 +193,8 @@ EOF;
     {
         $aFilters = array('Foo1', 'Bar1', 'Baz');
         $code = '$process = ';
+        $closeParens = '';
+        $filters = '';
         foreach ($aFilters as $filter) {
             $filters .= "new $filter(\n";
             $closeParens .= ')';

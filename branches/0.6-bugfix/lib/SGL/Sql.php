@@ -57,21 +57,16 @@ class SGL_Sql
      * @param   string  $filename   File with SQL statements to execute
      * @return  void
      */
-    function parseAndExecute($filename, $errorReporting = E_ALL)
+    function parse($filename, $errorReporting = E_ALL, $executerCallback = null)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
+        $originalErrorLevel = error_reporting();
         error_reporting($errorReporting);
 
         if (! ($fp = fopen($filename, 'r')) ) {
             return false;
         }
-        // Get database handle based on working config.ini
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
-            $locator->register('DB', $dbh);
-        }
+
         $sql = '';
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -85,6 +80,7 @@ class SGL_Sql
         }
 
         // Iterate through each line in the file.
+        $aLines = array();
         while (!feof($fp)) {
 
             // Read lines, concat together until we see a semi-colon
@@ -103,8 +99,8 @@ class SGL_Sql
             }
 #END:FIXME
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
-                $tableName = SGL_Sql::extractTableName($line);
-                $nextId = $dbh->nextId($tableName);
+                $tableName = SGL_Sql::extractTableNameFromInsertStatement($line);
+                $nextId = SGL_Sql::getNextId($tableName);
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
             $sql .= $line;
@@ -112,29 +108,58 @@ class SGL_Sql
             if (!preg_match("/;\s*$/", $sql)) {
                 continue;
             }
-
             // strip semi-colons for MaxDB, Oracle and mysql 3.23
             if ($conf['db']['type'] == 'oci8_SGL' || $conf['db']['type'] == 'odbc' || $isMysql323) {
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
             // Execute the statement.
-            $res = $dbh->query($sql);
-
-            if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
-                return $res;
-            } elseif (DB::isError($res)) {
-
-                // Print out info on bad statements
-                echo '<pre>'.$res->getMessage().'</pre>';
-                echo '<pre>'. $res->getUserInfo() . '</pre>';
+            if (!is_null($executerCallback) && is_callable($executerCallback)) {
+                $res = call_user_func_array(
+                    array($executerCallback[0], $executerCallback[1]), $sql);
+                //  handle error
+                if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
+                    return $res;
+                } elseif (DB::isError($res)) {
+                    // Print out info on bad statements
+                    echo '<pre>'.$res->getMessage().'</pre>';
+                    echo '<pre>'. $res->getUserInfo() . '</pre>';
+                }
             }
+            $aLines[] = $sql;
             $sql = '';
         }
         fclose($fp);
-        return true;
+        //  reset orig error level
+        error_reporting($originalErrorLevel);
+        return implode("\n", $aLines);
     }
 
-    function extractTableName($str)
+    function execute($sql)
+    {
+        // Get database handle based on working config.ini
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        $res = $dbh->query($sql);
+        return $res;
+    }
+
+    function getNextId($tableName)
+    {
+        // Get database handle based on working config.ini
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh->nextId($tableName);
+    }
+
+    function extractTableNameFromInsertStatement($str)
     {
         $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
         preg_match($pattern, $str, $matches);
@@ -142,10 +167,49 @@ class SGL_Sql
         return $tableName;
     }
 
+    function extractTableNameFromCreateStatement($str)
+    {
+        $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?(\w+)(\W+)?/i';
+        preg_match($pattern, $str, $matches);
+        $tableName = $matches[5];
+        return $tableName;
+    }
+
     function rewriteWithAutoIncrement($str, $nextId)
     {
         $res = str_replace('{SGL_NEXT_ID}', $nextId, $str);
         return $res;
+    }
+
+    function extractTableNamesFromSchemaFile($file)
+    {
+        $aLines = file($file);
+        $aTablesNames = array();
+        foreach ($aLines as $line) {
+            if (preg_match("/create table/i", $line)) {
+                $aTablesNames[] = SGL_Sql::extractTableNameFromCreateStatement($line);
+            }
+        }
+        return $aTablesNames;
+    }
+
+    function getDbShortnameFromType($dbType)
+    {
+        switch ($dbType) {
+        case 'pgsql':
+            $shortName = 'pg';
+            break;
+
+        case 'mysql_SGL':
+        case 'mysql':
+            $shortName = 'my';
+            break;
+
+        case 'oci8_SGL':
+            $shortName = 'oci';
+            break;
+        }
+        return $shortName;
     }
 }
 ?>

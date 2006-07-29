@@ -81,7 +81,7 @@ function STR_init()
         );
 
     // set error reporting as verbose as possible
-    error_reporting(E_ALL ^ E_NOTICE);
+    error_reporting(E_ALL);
 
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {

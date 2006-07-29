@@ -91,7 +91,7 @@ class STR_TestEnv
 
         if (is_array($aSchemaFiles) && count($aSchemaFiles)) {
             foreach ($aSchemaFiles as $schemaFile) {
-                SGL_Sql::parseAndExecute(STR_PATH .'/'. $schemaFile);
+                SGL_Sql::parse(STR_PATH .'/'. $schemaFile, E_ALL, array('SGL_Sql', 'execute'));
             }
         }
         //  ensure db_do environment setup correctly for simpletest
@@ -111,7 +111,7 @@ class STR_TestEnv
 
         if (is_array($aDataFiles) && count($aDataFiles)) {
             foreach ($aDataFiles as $dataFile) {
-                SGL_Sql::parseAndExecute(STR_PATH .'/'. $dataFile);
+                SGL_Sql::parse(STR_PATH .'/'. $dataFile, E_ALL, array('SGL_Sql', 'execute'));
             }
         }
     }

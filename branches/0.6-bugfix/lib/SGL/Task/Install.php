@@ -404,7 +404,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
             //  load 'sequence' table
             if ($this->conf['db']['type'] == 'mysql_SGL') {
-                $result = SGL_Sql::parseAndExecute(SGL_ETC_DIR . '/sequence.my.sql', 0);
+                $result = SGL_Sql::parse(SGL_ETC_DIR . '/sequence.my.sql', 0, array('SGL_Sql', 'execute'));
             }
 
             //  Load each module's schema, if there is a sql file in /data
@@ -413,7 +413,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
                 //  Load the module's schema
                 if (file_exists($modulePath . $this->filename1)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename1, 0);
+                    $result = SGL_Sql::parse($modulePath . $this->filename1, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_schema', $displayHtml);
                 } else {
@@ -456,7 +456,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename2, 0);
+                    $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_data', $displayHtml);
                 } else {
@@ -486,7 +486,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename3)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename3, 0);
+                    $result = SGL_Sql::parse($modulePath . $this->filename3, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_dataSample', $displayHtml);
                 } else {
@@ -515,7 +515,7 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
 
             //  Load the module's data
             if (file_exists($modulePath . $this->filename4)) {
-                $result = SGL_Sql::parseAndExecute($modulePath . $this->filename4, 0);
+                $result = SGL_Sql::parse($modulePath . $this->filename4, 0, array('SGL_Sql', 'execute'));
                 $displayHtml = $result ? $this->success : $this->failure;
                 $this->updateHtml($module . '_dataBlock', $displayHtml);
             } else {
@@ -542,7 +542,7 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
                 if (file_exists($modulePath . $this->filename5)) {
-                    $result = SGL_Sql::parseAndExecute($modulePath . $this->filename5, 0);
+                    $result = SGL_Sql::parse($modulePath . $this->filename5, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {
