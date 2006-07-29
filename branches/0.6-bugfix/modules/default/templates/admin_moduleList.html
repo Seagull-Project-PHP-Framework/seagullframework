@@ -37,6 +37,7 @@
             <tbody>
             {if:aPagedData[data]}
                 <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                    {if:aValue[isInstalled]}
                     <td>{aValue[module_id]}</td>
                     <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}.gif" alt="" /></td>
                     <td class="left">
@@ -48,6 +49,19 @@
                             <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
                         </a>
                     </td>
+                    {else:}
+                    <td>{aValue[module_id]}</td>
+                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}.gif" alt="" /></td>
+                    <td class="left">
+                        <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
+                    </td>
+                    <td class="left desc disabled">{aValue[description]}</td>
+                    <td>
+                        <a class="disabled" href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}" title="{translate(#disable#)} {aValue[title]}">
+                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
+                        </a>
+                    </td>
+                    {end:}
                 </tr>
             {else:}
                 <tr>
