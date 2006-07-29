@@ -28,7 +28,7 @@ class SqlTest extends UnitTestCase {
     function testParseData()
     {
         $file = dirname(__FILE__) . '/test.data.sql';
-        $ret = $this->sql->parseAndExecute($file);
+        $ret = $this->sql->parse($file, E_ALL, array('SGL_Sql', 'execute'));
     }
 
     function testParseOutTablename()
@@ -50,30 +50,30 @@ class SqlTest extends UnitTestCase {
     function testextractTableNamesWithFuzz()
     {
         $partialSql = "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
-        $res = $this->sql->extractTableName($partialSql);
+        $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
 
         $partialSql = "INSERT INTO `module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
-        $res = $this->sql->extractTableName($partialSql);
+        $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
 
         $partialSql = "INSERT INTO `module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
-        $res = $this->sql->extractTableName($partialSql);
+        $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
 
         $partialSql = "INSERT INTO ` module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
-        $res = $this->sql->extractTableName($partialSql);
+        $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
 
         $partialSql = "INSERT INTO 'module' VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
-        $res = $this->sql->extractTableName($partialSql);
+        $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
     }
 
     function xtestParseSchema()
     {
         $file = dirname(__FILE__) . '/test.schema.sql';
-        $ret = $this->sql->parseAndExecute($file);
+        $ret = $this->sql->parse($file, E_ALL, array('SGL_Sql', 'execute'));
     }
 }
 ?>
