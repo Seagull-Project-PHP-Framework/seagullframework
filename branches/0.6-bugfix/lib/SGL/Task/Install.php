@@ -295,25 +295,6 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
 /**
  * @package Task
  */
-class SGL_Task_DropDatabase extends SGL_Task
-{
-    function run($data)
-    {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-
-        $dbh = & SGL_DB::singleton();
-        $query = 'DROP DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
-        $res = $dbh->query($query);
-        if (PEAR::isError($res)) {
-            SGL_Install_Common::errorPush($res);
-        }
-    }
-}
-
-/**
- * @package Task
- */
 class SGL_Task_CreateDatabase extends SGL_Task
 {
     function run($data)
@@ -324,6 +305,25 @@ class SGL_Task_CreateDatabase extends SGL_Task
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName = true);
         $dbh = & SGL_DB::singleton($dsn);
         $query = 'CREATE DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
+        $res = $dbh->query($query);
+        if (PEAR::isError($res)) {
+            SGL_Install_Common::errorPush($res);
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_DropDatabase extends SGL_Task
+{
+    function run($data)
+    {
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
+        $dbh = & SGL_DB::singleton();
+        $query = 'DROP DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
         $res = $dbh->query($query);
         if (PEAR::isError($res)) {
             SGL_Install_Common::errorPush($res);
