@@ -250,11 +250,10 @@ class EventMgr extends SGL_Manager
     function getAttachmentCount($eventId)
     {
         $query = "
-            SELECT COUNT(*)
-            FROM `event-media`
-            WHERE event_id = $eventId
-            AND is_event_image = 0
-            ";
+            SELECT  COUNT(*)
+            FROM    `{$this->conf['table']['event-media']}`
+            WHERE   event_id = $eventId
+            AND     is_event_image = 0";
         $count = $this->dbh->getOne($query);
         return $count;
     }
@@ -262,12 +261,11 @@ class EventMgr extends SGL_Manager
     function isEventImage($eventId)
     {
         $query = "
-            SELECT m.name, m.file_name, m.media_id
-            FROM `event-media` em
-            JOIN media m ON m.media_id = em.media_id
-            WHERE event_id = $eventId
-            AND is_event_image = 1
-            ";
+            SELECT  m.name, m.file_name, m.media_id
+            FROM    `{$this->conf['table']['event-media']}` em
+            JOIN    {$this->conf['table']['media']} m ON m.media_id = em.media_id
+            WHERE   event_id = $eventId
+            AND     is_event_image = 1";
         $oMediaRow = $this->dbh->getRow($query);
         return is_null($oMediaRow) ? false : $oMediaRow;
     }
@@ -275,11 +273,10 @@ class EventMgr extends SGL_Manager
     function getMediaIdsByEvent($eventId)
     {
         $query = "
-            SELECT media_id
-            FROM `event-media`
-            WHERE event_id = $eventId
-            AND is_event_image = 0
-            ";
+            SELECT  media_id
+            FROM    `{$this->conf['table']['event-media']}`
+            WHERE   event_id = $eventId
+            AND     is_event_image = 0";
         return $this->dbh->getCol($query);
     }
 
@@ -287,17 +284,15 @@ class EventMgr extends SGL_Manager
     {
         $ids = implode(',', $aMediaIds);
         $query = "
-            SELECT m.media_id,
-                m.name, file_size, mime_type,
-                m.date_created, description,
-                mt.name AS file_type_name,
-                u.username AS media_added_by
-            FROM
-                {$this->conf['table']['media']} m
-            JOIN file_type mt ON mt.file_type_id = m.file_type_id
-            LEFT JOIN usr u ON u.usr_id = m.added_by
-            WHERE m.media_id IN($ids)
-            ";
+            SELECT      m.media_id,
+                        m.name, file_size, mime_type,
+                        m.date_created, description,
+                        mt.name AS file_type_name,
+                        u.username AS media_added_by
+            FROM        {$this->conf['table']['media']} m
+            JOIN        {$this->conf['table']['file_type']} mt ON mt.file_type_id = m.file_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
+            WHERE       m.media_id IN($ids)";
         return $this->dbh->getAll($query);
     }
 
@@ -432,14 +427,12 @@ class EventMgr extends SGL_Manager
             : '';
 
         $query = "
-            SELECT
-                e.event_id, e.name, description, e.type_id, et.name AS event_type_name,
-                start_date, end_date, e.location_id, l.name AS location_name, ticket_cost,
-                status, date_created, last_updated, created_by
-            FROM event e
-            JOIN location l ON l.location_id = e.location_id
-            JOIN event_type et ON et.event_type_id = e.type_id
-        ";
+            SELECT  e.event_id, e.name, description, e.type_id, et.name AS event_type_name,
+                    start_date, end_date, e.location_id, l.name AS location_name, ticket_cost,
+                    status, date_created, last_updated, created_by
+            FROM    {$this->conf['table']['event']} e
+            JOIN    {$this->conf['table']['location']} l ON l.location_id = e.location_id
+            JOIN    {$this->conf['table']['event_type']} et ON et.event_type_id = e.type_id";
         $query .= $this->buildWhereConditions(array($dateConstraint, $termConstraint,
             $eventConstraint, $locationConstraint));
 
@@ -457,10 +450,9 @@ class EventMgr extends SGL_Manager
 
     function getEventTypes()
     {
-        $query = '
+        $query = "
             SELECT  event_type_id, name
-            FROM    event_type
-            ';
+            FROM    {$this->conf['table']['event_type']}";
         return $this->dbh->getAssoc($query);
     }
 
@@ -469,17 +461,16 @@ class EventMgr extends SGL_Manager
         $currentUid = SGL_Session::getUid();
         $query = "
             SELECT  location_id, l.name
-            FROM    location l
-            WHERE   usr_id = $currentUid;
-            ";
+            FROM    {$this->conf['table']['location']} l
+            WHERE   usr_id = $currentUid";
         return $this->dbh->getAssoc($query);
 
 //            SELECT  location_id, l.name, l.email, l.telephone, l.fax,
 //                    l.website, location_type.name AS location_type,
 //                    a.addr_1, a.addr_2, a.addr_3, a.city, a.region, a.country, a.post_code
-//            FROM    location l
-//            JOIN    address a ON a.address_id = l.address_id
-//            JOIN    location_type ON location_type.location_type_id = l.type_id
+//            FROM    {$this->conf['table']['location']} l
+//            JOIN    {$this->conf['table']['address']} a ON a.address_id = l.address_id
+//            JOIN    {$this->conf['table']['location_type']} ON location_type.location_type_id = l.type_id
 //            WHERE   usr_id = 1;
     }
 }

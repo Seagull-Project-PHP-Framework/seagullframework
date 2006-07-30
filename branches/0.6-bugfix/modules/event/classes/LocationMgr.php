@@ -208,10 +208,9 @@ class LocationMgr extends SGL_Manager
 
     function getLocationTypes()
     {
-        $query = '
+        $query = "
             SELECT  location_type_id, name
-            FROM    location_type
-            ';
+            FROM    {$this->conf['table']['location_type']}";
         return $this->dbh->getAssoc($query);
     }
 }

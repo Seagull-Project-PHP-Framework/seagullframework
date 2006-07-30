@@ -461,16 +461,15 @@ class MediaMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
 //        $query = "
-//            SELECT m.media_id,
-//                m.name, file_size, mime_type,
-//                m.date_created, description,
-//                mt.name AS file_type_name,
-//                u.username AS media_added_by
-//            FROM
-//                {$this->conf['table']['media']} m
-//            JOIN file_type mt ON mt.file_type_id = m.file_type_id
-//            LEFT JOIN usr u ON u.usr_id = m.added_by
-//            ORDER BY m.date_created DESC";
+//            SELECT    m.media_id,
+//                      m.name, file_size, mime_type,
+//                      m.date_created, description,
+//                      mt.name AS file_type_name,
+//                      u.username AS media_added_by
+//            FROM      {$this->conf['table']['media']} m
+//            JOIN      {$this->conf['table']['file_type']} mt ON mt.file_type_id = m.file_type_id
+//            LEFT JOIN {$this->conf['table']['user']} u ON u.usr_id = m.added_by
+//            ORDER BY  m.date_created DESC";
 //        $output->results = $this->dbh->getAll($query);
         $output->addOnLoadEvent('remoteHW.getMediaByFileType()');
     }
@@ -513,7 +512,7 @@ class MediaMgr extends FileMgr
 
         $query = "
             SELECT  name
-            FROM    " . $this->conf['table']['file_type'] . "
+            FROM    {$this->conf['table']['file_type']}
             WHERE   file_type_id = $fileTypeId";
         return $this->dbh->getOne($query);
     }

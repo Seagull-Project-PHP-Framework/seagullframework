@@ -25,7 +25,8 @@ CREATE TABLE `event-media` (
   `event_id` int(11) NOT NULL default '0',
   `media_id` int(11) NOT NULL default '0',
   `is_event_image` smallint(6) NOT NULL default '0',
-  PRIMARY KEY  (`event_id`,`media_id`)
+  PRIMARY KEY  (`event_id`),
+  KEY   (`media_id`)
 ) TYPE=MyISAM;
 
 CREATE TABLE `address` (
