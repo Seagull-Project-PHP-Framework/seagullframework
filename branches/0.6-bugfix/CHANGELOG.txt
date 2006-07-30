@@ -12,6 +12,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+30-07-06    A big update to the Polish translation (Thomas)
 30-07-06    XML_Parser error avoided by inspecting allow_url_fopen setting
             (Steven Stremciuc)
 29-07-06    Extracted execution from SGL_Sql::parseAndExecute(), added ability to
