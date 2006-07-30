@@ -19,8 +19,8 @@ class Export_Block_SampleRss
 
     function getBlockContent()
     {
-        if (ini_get('safe_mode')) {
-            return 'Cannot request remote feed in safe_mode ;-(';
+        if (ini_get('safe_mode') || !ini_get('allow_url_fopen')) {
+            return 'Cannot request remote feed with safe_mode on or allow_url_fopen off';
         }
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
