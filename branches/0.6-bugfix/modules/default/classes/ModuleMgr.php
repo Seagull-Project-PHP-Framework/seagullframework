@@ -232,19 +232,6 @@ class ModuleMgr extends SGL_Manager
         $output->template  = 'modulesDetected.html';
     }
 
-    function _cmd_add(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->pageTitle = 'Module Manager :: Add';
-        $output->action = 'insert';
-        $output->template  = 'moduleEdit.html';
-
-        $module = new stdClass();
-        $module->icon = "48/module_default.png";
-        $output->aModules = array($module);
-    }
-
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -258,8 +245,21 @@ class ModuleMgr extends SGL_Manager
                 $ok = $this->da->addModule($oModule);
             }
         }
-        SGL::raiseMsg('Module successfully added to the manager.', true,
+        SGL::raiseMsg('Module successfully registered', true,
             SGL_MESSAGE_INFO);
+    }
+
+    function _cmd_add(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->pageTitle = 'Module Manager :: Add';
+        $output->action = 'insert';
+        $output->template  = 'moduleEdit.html';
+
+        $module = new stdClass();
+        $module->icon = "48/module_default.png";
+        $output->aModules = array($module);
     }
 
     function _cmd_edit(&$input, &$output)
@@ -299,23 +299,27 @@ class ModuleMgr extends SGL_Manager
         //  get module name
         $oModule = $this->da->getModuleById($input->moduleId);
 
-        //  de-register module
-        $rm = DB_DataObject::factory($this->conf['table']['module']);
-        $rm->get($input->moduleId);
-        $ok = $rm->delete();
-
         //  delete module files
+        $msg = 'The module\'s directory does not appear to be writable and therefore
+            could not be removed, please give the webserver permissions to write to it';
         $moduleDir =  SGL_MOD_DIR . '/' . $oModule->name;
         if (is_writable($moduleDir)) {
             require_once 'System.php';
             $success = System::rm(array('-r', $moduleDir));
-        } else {
-            SGL::raiseError('The module\'s directory does not appear to be writable, please give the
-                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
         }
-        if ($ok && $success) {
-            SGL::raiseMsg('The module was successfully removed', false,
-                SGL_MESSAGE_INFO);
+
+        //  de-register module
+        if (isset($success) && $success == true) {
+            $rm = DB_DataObject::factory($this->conf['table']['module']);
+            $rm->get($input->moduleId);
+            $ok = $rm->delete();
+        }
+
+        if (isset($ok) && $ok == true
+                && isset($success) && $success == true) {
+            SGL::raiseMsg('The module was successfully removed', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseMsg($msg, false, SGL_MESSAGE_ERROR);
         }
     }
 
@@ -380,10 +384,13 @@ class ModuleMgr extends SGL_Manager
             $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
         }
         //  get all table defined in this module's schema
-        $schemaFile =  SGL_MOD_DIR . '/' . $moduleName . '/data/schema.'.$dbShortname.'.sql';
-        //  some modules, like export, don't have schema and don't need installing
+        $dataDir =  SGL_MOD_DIR . '/' . $moduleName . '/data';
+        $schemaFile =  '/' . $dataDir . '/schema.'.$dbShortname.'.sql';
+        //  Some modules, like export, don't have schema and don't need installing.
+        //  is_file($dataDir) is for cases, on delete, where some web-writable files
+        //  are deleted, but not all
         if (!is_file($schemaFile)) {
-            return true;
+            return is_file($dataDir) ? true : false ;
         }
         $aTablesByModule = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
         //  check to see tables in existing db correspond to those specified in schema
