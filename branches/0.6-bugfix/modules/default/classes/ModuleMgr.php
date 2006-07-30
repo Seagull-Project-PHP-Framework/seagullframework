@@ -65,10 +65,12 @@ class ModuleMgr extends SGL_Manager
             'add'       => array('add'),
             'detect'    => array('detect'),
             'insert'    => array('insert', 'redirectToDefault'),
+            'install'   => array('install', 'redirectToDefault'),
             'edit'      => array('edit'),
             'update'    => array('update', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
             'uninstall' => array('uninstall', 'redirectToDefault'),
+            'deregister'=> array('deregister', 'redirectToDefault'),
             'list'      => array('list'),
             'overview'  => array('overview'),
         );
@@ -262,6 +264,47 @@ class ModuleMgr extends SGL_Manager
         $output->aModules = array($module);
     }
 
+    function _cmd_install(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  get module name
+        $oModule = $this->da->getModuleById($input->moduleId);
+
+        $data = array(
+            'createTables' => 1,
+            'insertSampleData' => 1,
+            'aModuleList' => array($oModule->name),
+            'moduleInstall' => true,
+            );
+        define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
+        require_once SGL_CORE_DIR . '/Task/Install.php';
+        $runner = new SGL_TaskRunner();
+        $runner->addData($data);
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new SGL_Task_LoadBlockData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $ok = $runner->main();
+
+        //  de-register original module placeholder
+        if ($ok) {
+            $rm = DB_DataObject::factory($this->conf['table']['module']);
+            $rm->get($input->moduleId);
+            $ok = $rm->delete();
+        }
+        SGL::raiseMsg('Module successfully installed', false, SGL_MESSAGE_INFO);
+    }
+
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -290,6 +333,17 @@ class ModuleMgr extends SGL_Manager
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
+    }
+
+    function _cmd_deregister(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        //  de-register module
+        $rm = DB_DataObject::factory($this->conf['table']['module']);
+        $rm->get($input->moduleId);
+        $ok = $rm->delete();
+
+        SGL::raiseMsg('The module was successfully de-registered', false, SGL_MESSAGE_INFO);
     }
 
     function _cmd_delete(&$input, &$output)
@@ -337,7 +391,11 @@ class ModuleMgr extends SGL_Manager
             $sql = file_get_contents($dropFile);
             $res = SGL_Sql::execute($sql);
         }
-        SGL::raiseMsg('The module was successfully de-registered', false,
+
+        //  delete related navigation
+        //  remove config keys
+
+        SGL::raiseMsg('The module was successfully uninstalled', false,
             SGL_MESSAGE_INFO);
     }
 
