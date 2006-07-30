@@ -826,7 +826,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
 
         require_once 'DB/DataObject/Generator.php';
         ob_start();
-        // remove original dbdo keys file as it is unable to update  an existing file
+        // remove original dbdo keys file as it is unable to update an existing file
         $keysFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.ini';
         unlink($keysFile);
 
@@ -854,10 +854,12 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
 
         // remove original dbdo links file
         $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-        if (is_file($linksFile)) {
-            unlink($linksFile);
+        //  only remove when not installing modules, ie for sgl-rebuild
+        if (empty($data['moduleInstall'])) {
+            if (is_file($linksFile)) {
+                unlink($linksFile);
+            }
         }
-
         $linkData = '';
         foreach ($data['aModuleList'] as $module) {
             $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
@@ -867,8 +869,14 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
             }
         }
         if (!empty($linkData)) {
-            $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-            $ok = file_put_contents($target, $linkData);
+            if (!$handle = fopen($linksFile, 'a+')) {
+                SGL_Install_Common::errorPush(
+                    PEAR::raiseError('could not open links file for writing'));
+            }
+            if (fwrite($handle, $linkData) === false) {
+                SGL_Install_Common::errorPush(
+                    PEAR::raiseError('could not write to file' . $linksFile));
+            }
         }
     }
 }

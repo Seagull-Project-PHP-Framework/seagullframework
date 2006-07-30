@@ -21,8 +21,8 @@
                     <th width="3%">ID</th>
                     <th width="5%">&nbsp;</th>
                     <th width="12%" class="left">{translate(#Title#)}</th>
-                    <th width="75%" class="left">{translate(#Description#)}</th>
-                    <th width="5%">{translate(#action#,#ucfirst#)}</th>
+                    <th width="65%" class="left">{translate(#Description#)}</th>
+                    <th width="15%">{translate(#action#,#ucfirst#)}</th>
                 </tr>
             </thead>
             {if:aPagedData[data]}
@@ -77,12 +77,19 @@
 
                     <!--ACTION-->
                     <td>
+                        <!--INSTALL-->
                         <a href="{makeUrl(#install#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
-                           title="{translate(#install#)} {aValue[title]}"
-                           onclick="return confirmDeleteWithMsg('{translate(#module deletion msg#)}')" >
+                           title="{translate(#install#)} {aValue[title]}" >
                             <img src="{webRoot}/themes/{theme}/images/16/edit_add.png" alt="{translate(#install#)}" />
                         </a>
 
+                        <!--DEREGISTER-->
+                        <a href="{makeUrl(#deregister#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
+                           title="{translate(#deregister#)} {aValue[title]}" >
+                            <img src="{webRoot}/themes/{theme}/images/16/action_deregister.gif" alt="{translate(#deregister#)}" />
+                        </a>
+
+                        <!--DELETE-->
                         <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
                            title="{translate(#remove#)} {aValue[title]}"
                            onclick="return confirmDeleteWithMsg('{translate(#module deletion msg#)}')" >

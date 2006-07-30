@@ -53,6 +53,7 @@
         'Active' => 'Active',
         'install' => 'install',
         'uninstall' => 'uninstall',
+        'deregister' => 'deregister',
         'remove' => 'remove',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
