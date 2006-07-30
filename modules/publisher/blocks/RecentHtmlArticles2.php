@@ -89,7 +89,7 @@ class Publisher_Block_RecentHtmlArticles2
                 AND     i.item_id = ia.item_id
                 AND     i.item_id = ia2.item_id
                 AND     i.start_date < '" . SGL_Date::getTime() . "'
-                AND     i.expiry_date  > '" . SGL_Date::getTime() . "'
+                AND     (i.expiry_date  > '" . SGL_Date::getTime() . "' OR i.expiry_date IS NULL)
                 AND     itm.field_name = 'title'
                 AND     it.item_type_id  = 2
                 AND     itm.field_type != itm2.field_type
