@@ -839,11 +839,6 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
             SGL_Install_Common::errorPush(
                 PEAR::raiseError('generating DB_DataObject entities failed'));
         }
-        //  copy over links file
-//        $target = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-//        if (!file_exists($target)) {
-//            @copy(SGL_PATH . '/etc/links.ini.dist', $target);
-//        }
     }
 }
 
@@ -859,7 +854,9 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
 
         // remove original dbdo links file
         $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-        unlink($linksFile);
+        if (is_file($linksFile)) {
+            unlink($linksFile);
+        }
 
         $linkData = '';
         foreach ($data['aModuleList'] as $module) {
