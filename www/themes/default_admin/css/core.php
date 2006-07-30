@@ -796,9 +796,7 @@ a.clearSearch:hover {
     text-decoration: none;
     color: <?php echo $tertiaryDarkest ?>;
 }
-#moduleList a.disabled, #moduleList  a.disabled:visited {
-    color: grey;
-}
-.disabled {
+
+.disabled, a.disabled, a.disabled:visited {
     color: grey;
 }
