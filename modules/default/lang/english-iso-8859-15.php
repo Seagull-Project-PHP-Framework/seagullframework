@@ -164,7 +164,7 @@
         'Delete' => 'Delete',
         'With selected module(s)' => 'With selected module(s)', //table footer
         'Add a module' => 'Add a module',
-        'Module successfully added to the manager.' => 'Module successfully added to the manager.',
+        'Module successfully registered.' => 'Module successfully  registered',
         'Module(s) successfully removed.' => 'Module(s) successfully removed.',
         'Configurable' => 'Configurable',
         'Description' => 'Description',
