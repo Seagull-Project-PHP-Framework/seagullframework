@@ -44,11 +44,16 @@
         'Please fill in the indicated fields' => 'Please fill in all the indicated fields and try again',
         'Your alert has been sent successfully' => 'Your alert has been sent successfully',
         'Are you sure you want to delete this' => 'Are you sure you want to delete this',
+        'module deregister msg' => 'An attempt will be made to drop this module\\\'s tables and data, are you sure you want to proceed?',
+        'module deletion msg' => 'An attempt will be made to delete this module\\\'s files from your filesystem, are you sure you want to proceed?',
 
 /*  MODULE MGR */
         'Module' => 'Module',
         'Module list' => 'Module list',
         'Active' => 'Active',
+        'install' => 'install',
+        'uninstall' => 'uninstall',
+        'remove' => 'remove',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
         'The name of the module must be the exact name of the folder containing files, beware of case sensiveness' => 'The name of the module must be the exact name of the folder containing files, beware of case sensiveness',
@@ -180,7 +185,7 @@
 
 /*
 
-ConfigMrg
+ConfigMgr
 Author: Rafael Ferreira Silva <rafael@webphp.com.br>
 
 */

@@ -68,6 +68,7 @@ class ModuleMgr extends SGL_Manager
             'edit'      => array('edit'),
             'update'    => array('update', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
+            'uninstall' => array('uninstall', 'redirectToDefault'),
             'list'      => array('list'),
             'overview'  => array('overview'),
         );
@@ -295,11 +296,44 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        //  get module name
+        $oModule = $this->da->getModuleById($input->moduleId);
+
+        //  de-register module
         $rm = DB_DataObject::factory($this->conf['table']['module']);
         $rm->get($input->moduleId);
-        $rm->delete();
+        $ok = $rm->delete();
 
-        SGL::raiseMsg('module successfully unregistered', false,
+        //  delete module files
+        $moduleDir =  SGL_MOD_DIR . '/' . $oModule->name;
+        if (is_writable($moduleDir)) {
+            require_once 'System.php';
+            $success = System::rm(array('-r', $moduleDir));
+        } else {
+            SGL::raiseError('The module\'s directory does not appear to be writable, please give the
+                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+        }
+        if ($ok && $success) {
+            SGL::raiseMsg('The module was successfully removed', false,
+                SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _cmd_uninstall(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  drop tables
+        require_once SGL_CORE_DIR . '/Sql.php';
+        $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
+        //  get all table defined in this module's schema
+        $oModule = $this->da->getModuleById($input->moduleId);
+        $dropFile =  SGL_MOD_DIR . '/' . $oModule->name . '/data/drop.'.$dbShortname.'.sql';
+        if (is_file($dropFile)) {
+            $sql = file_get_contents($dropFile);
+            $res = SGL_Sql::execute($sql);
+        }
+        SGL::raiseMsg('The module was successfully de-registered', false,
             SGL_MESSAGE_INFO);
     }
 
@@ -347,6 +381,10 @@ class ModuleMgr extends SGL_Manager
         }
         //  get all table defined in this module's schema
         $schemaFile =  SGL_MOD_DIR . '/' . $moduleName . '/data/schema.'.$dbShortname.'.sql';
+        //  some modules, like export, don't have schema and don't need installing
+        if (!is_file($schemaFile)) {
+            return true;
+        }
         $aTablesByModule = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
         //  check to see tables in existing db correspond to those specified in schema
         foreach ($aTablesByModule as $tablename) {
