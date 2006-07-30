@@ -1,0 +1,1 @@
+DROP TABLE document, document_type, item, item_addition, item_type, item_type_mapping, category;

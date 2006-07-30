@@ -297,11 +297,9 @@ class ModuleMgr extends SGL_Manager
         $ok = $runner->main();
 
         //  de-register original module placeholder
-        if ($ok) {
-            $rm = DB_DataObject::factory($this->conf['table']['module']);
-            $rm->get($input->moduleId);
-            $ok = $rm->delete();
-        }
+        $rm = DB_DataObject::factory($this->conf['table']['module']);
+        $rm->get($input->moduleId);
+        $ok = $rm->delete();
         SGL::raiseMsg('Module successfully installed', false, SGL_MESSAGE_INFO);
     }
 
