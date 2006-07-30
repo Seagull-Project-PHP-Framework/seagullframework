@@ -272,17 +272,17 @@ Use the PEAR naming standard which observes the following rules:
 
     MyClass.php //  any file with a class definition
     file.php    //  any file with procedural code
-    
-Follow the Java one-class-per-file convention unless it is considerably 
+
+Follow the Java one-class-per-file convention unless it is considerably
 inconvient to do so, ie, for performance reasons.
 
 Note the psuedo name-spacing convention to ensure class name uniqueness:
 
     Foo/Bar/Baz.php         // filename
     class Foo_Bar_Baz  {}   // classname
-    
+
 This convention is especially important for all files in your lib directory.
-    
+
 See the PEAR repository for many examples.
 
 Database Naming Conventions
@@ -291,8 +291,8 @@ Database Naming Conventions
 All database tables used by Seagull applications need to
 make sure that their table and field names work in all databases.  Many
 databases reserve words like 'uid', 'user', etc. for internal use, and forbid
-words that are SQL keywords (SELECT, WHERE, etc.).  Also, all table and field 
-names should be lowercase, with underscores ('_') to separate words, to avoid 
+words that are SQL keywords (SELECT, WHERE, etc.).  Also, all table and field
+names should be lowercase, with underscores ('_') to separate words, to avoid
 case sensitivity issues.  Also, all SQL keywords should be uppercase, here is
 an example:
 
@@ -303,7 +303,7 @@ should be also be singular (username).
 
 Foreign Key Naming Conventions
 ==============================
-If table_foo.field_foo references table_bar.field_bar, write the constraint 
+If table_foo.field_foo references table_bar.field_bar, write the constraint
 as follows:
 
 ALTER TABLE table_foo ADD CONSTRAINT FK_table_bar_field_bar FOREIGN KEY (field_foo)
@@ -507,3 +507,10 @@ Loops
 -----
 Make sure that you do not continue to define the same variable within a
 loop. Instead, declare the variable a single time before the loop is run.
+
+
+Preferred PHP Conventions
+=========================
+
+Instead of file_exists() use is_file(), the former returns true for directories
+which can be misleading.
