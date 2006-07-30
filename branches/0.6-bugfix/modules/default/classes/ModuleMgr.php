@@ -290,7 +290,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_SyncSequences()); // only needed for section table
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
@@ -390,8 +390,10 @@ class ModuleMgr extends SGL_Manager
             $res = SGL_Sql::execute($sql);
         }
 
+        //  delete perms records
         //  delete related navigation
         //  remove config keys
+        //  remove dbdo links
 
         SGL::raiseMsg('The module was successfully uninstalled', false,
             SGL_MESSAGE_INFO);
