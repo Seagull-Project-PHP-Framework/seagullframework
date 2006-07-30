@@ -88,18 +88,17 @@ class FileAssocMgr extends SGL_Manager
 
         $output->template = 'fileAssocList.html';
         $query = "
-            SELECT m.media_id,
-                m.name, file_size, mime_type,
-                m.date_created, description,
-                ft.name AS file_type_name,
-                u.username AS media_added_by,
-                m.file_type_id
-            FROM
-                {$this->conf['table']['media']} m
-            JOIN file_type ft ON ft.file_type_id = m.file_type_id
-            LEFT JOIN usr u ON u.usr_id = m.added_by
-            WHERE m.file_type_id = " . $input->fileTypeId . "
-            ORDER BY m.date_created DESC";
+            SELECT      m.media_id,
+                        m.name, file_size, mime_type,
+                        m.date_created, description,
+                        ft.name AS file_type_name,
+                        u.username AS media_added_by,
+                        m.file_type_id
+            FROM        {$this->conf['table']['media']} m
+            JOIN        {$this->conf['table']['file_type']} ft ON ft.file_type_id = m.file_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
+            WHERE       m.file_type_id = " . $input->fileTypeId . "
+            ORDER BY    m.date_created DESC";
         $aMedia = $this->dbh->getAll($query);
         $output->nextAction = 'associateToUser';
         $output->aMedia = $aMedia;
@@ -117,19 +116,18 @@ class FileAssocMgr extends SGL_Manager
             ? " $glue m.file_type_id = " . $input->fileTypeId
             : '';
         $query = "
-            SELECT m.media_id,
-                m.name, file_size, mime_type,
-                m.date_created, description,
-                ft.name AS file_type_name,
-                u.username AS media_added_by,
-                m.file_type_id
-            FROM
-                {$this->conf['table']['media']} m
-            JOIN file_type ft ON ft.file_type_id = m.file_type_id
-            LEFT JOIN usr u ON u.usr_id = m.added_by
+            SELECT      m.media_id,
+                        m.name, file_size, mime_type,
+                        m.date_created, description,
+                        ft.name AS file_type_name,
+                        u.username AS media_added_by,
+                        m.file_type_id
+            FROM        {$this->conf['table']['media']} m
+            JOIN        {$this->conf['table']['file_type']} ft ON ft.file_type_id = m.file_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
             $mediaConstraint
             $fileTypeConstraint
-            ORDER BY m.date_created DESC";
+            ORDER BY    m.date_created DESC";
         $aMedia = $this->dbh->getAll($query);
         $entity = (is_null($input->eventId))
             ? 'Artwork'
@@ -160,11 +158,10 @@ class FileAssocMgr extends SGL_Manager
     function isDefaultImage($mediaId)
     {
         $query = "
-            SELECT is_default_image
-            FROM `artwork-media`
-            WHERE media_id = $mediaId
-            AND is_default_image = 1
-            ";
+            SELECT  is_default_image
+            FROM    `artwork-media`
+            WHERE   media_id = $mediaId
+            AND     is_default_image = 1";
         $yes = $this->dbh->getOne($query);
         return $yes;
     }
@@ -172,12 +169,11 @@ class FileAssocMgr extends SGL_Manager
     function isAssociatedToEventImage($mediaId, $eventId, $isEventImage)
     {
         $query = "
-            SELECT media_id
-            FROM `event-media`
-            WHERE media_id = $mediaId
-            AND event_id = $eventId
-            AND is_event_image = 1
-            ";
+            SELECT  media_id
+            FROM    {$this->conf['table']['event-media']}
+            WHERE   media_id = $mediaId
+            AND     event_id = $eventId
+            AND     is_event_image = 1";
         $yes = $this->dbh->getOne($query);
         return $yes;
     }
@@ -185,11 +181,10 @@ class FileAssocMgr extends SGL_Manager
     function isAssociatedToEvent($mediaId, $eventId)
     {
         $query = "
-            SELECT media_id
-            FROM `event-media`
-            WHERE media_id = $mediaId
-            AND event_id = $eventId
-            ";
+            SELECT  media_id
+            FROM    {$this->conf['table']['event-media']}
+            WHERE   media_id = $mediaId
+            AND     event_id = $eventId";
         $yes = $this->dbh->getOne($query);
         return $yes;
     }
@@ -197,11 +192,10 @@ class FileAssocMgr extends SGL_Manager
     function isAssociatedToArtwork($mediaId, $artworkId)
     {
         $query = "
-            SELECT media_id
-            FROM `artwork-media`
-            WHERE media_id = $mediaId
-            AND artwork_id = $artworkId
-            ";
+            SELECT  media_id
+            FROM    `artwork-media`
+            WHERE   media_id = $mediaId
+            AND     artwork_id = $artworkId";
         $yes = $this->dbh->getOne($query);
         return $yes;
     }
@@ -222,25 +216,24 @@ class FileAssocMgr extends SGL_Manager
         //  first delete existing associations for this event id
         $isEventImage = ($input->isEventImage) ? 1 : 0;
         $query = "
-            DELETE FROM `event-media`
-            WHERE event_id = $input->eventId
-            AND is_event_image = $isEventImage
-            ";
+            DELETE FROM {$this->conf['table']['event-media']}
+            WHERE       event_id = $input->eventId
+            AND         is_event_image = $isEventImage";
         $ok = $this->dbh->query($query);
 
         //  then add new ones
         if (count($input->aAssocIds)) {
             if ($isEventImage) {
                 $mediaId = $input->aAssocIds[0];
-                $query = "INSERT INTO `event-media` VALUES(
-                          $input->eventId, $mediaId, $isEventImage
-                        )";
+                $query = "
+                    INSERT INTO {$this->conf['table']['event-media']}
+                    VALUES      ($input->eventId, $mediaId, $isEventImage)";
                 $ok = $this->dbh->query($query);
             } else {
                 foreach ($input->aAssocIds as $mediaId) {
-                    $query = "INSERT INTO `event-media` VALUES(
-                              $input->eventId, $mediaId, $isEventImage
-                            )";
+                    $query = "
+                        INSERT INTO {$this->conf['table']['event-media']}
+                        VALUES      ($input->eventId, $mediaId, $isEventImage)";
                     $ok = $this->dbh->query($query);
                 }
             }
@@ -252,18 +245,17 @@ class FileAssocMgr extends SGL_Manager
         //  first delete existing associations for this artworkId id
         $query = "
             DELETE FROM `artwork-media`
-            WHERE artwork_id = $input->artworkId
-            AND media_type_id = $input->mediaTypeId
-            ";
+            WHERE       artwork_id = $input->artworkId
+            AND         media_type_id = $input->mediaTypeId";
         $ok = $this->dbh->query($query);
 
         if (count($input->aAssocIds)) {
             //  then add new ones
             foreach ($input->aAssocIds as $mediaId) {
                 $isDefaultImage = ($input->defaultImgId == $mediaId) ? 1 : 0;
-                $query = "INSERT INTO `artwork-media` VALUES(
-                          $input->artworkId, $mediaId, $input->mediaTypeId, $isDefaultImage
-                        )";
+                $query = "
+                    INSERT INTO `artwork-media`
+                    VALUES      ($input->artworkId, $mediaId, $input->mediaTypeId, $isDefaultImage)";
                 $ok = $this->dbh->query($query);
             }
         }
