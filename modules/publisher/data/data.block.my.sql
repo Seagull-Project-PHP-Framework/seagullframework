@@ -28,8 +28,8 @@ INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Publisher_Block_Html', 'Donate', '',
 
 SELECT @blockIdSiteNews := block_id FROM block WHERE name = 'Publisher_Block_SiteNews';
 SELECT @blockIdRecentHtmlArticles2 := block_id FROM block WHERE name = 'Publisher_Block_RecentHtmlArticles2';
-SELECT @blockIdSeagullGear := block_id FROM block WHERE name = 'Publisher_Block_Html';
-SELECT @blockIdDonate := block_id FROM block WHERE name = 'Publisher_Block_Html';
+SELECT @blockIdSeagullGear := block_id FROM block WHERE title = 'Seagull Gear';
+SELECT @blockIdDonate := block_id FROM block WHERE title = 'Donate';
 
 INSERT INTO `block_assignment` VALUES (@blockIdSiteNews, 0);
 INSERT INTO `block_assignment` VALUES (@blockIdRecentHtmlArticles2, 0);
