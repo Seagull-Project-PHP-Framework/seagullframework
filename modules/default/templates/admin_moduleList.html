@@ -22,7 +22,7 @@
                     <th width="5%">&nbsp;</th>
                     <th width="12%" class="left">{translate(#Title#)}</th>
                     <th width="75%" class="left">{translate(#Description#)}</th>
-                    <th width="5%">{translate(#disable#,#ucfirst#)}</th>
+                    <th width="5%">{translate(#action#,#ucfirst#)}</th>
                 </tr>
             </thead>
             {if:aPagedData[data]}
@@ -54,8 +54,10 @@
 
                     <!--ACTION-->
                     <td>
-                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}" title="{translate(#disable#)} {aValue[title]}">
-                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
+                        <a href="{makeUrl(#uninstall#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
+                           title="{translate(#uninstall#)} {aValue[title]}"
+                           onclick="return confirmDeleteWithMsg('{translate(#module deregister msg#)}')" >
+                            <img src="{webRoot}/themes/{theme}/images/16/edit_remove.png" alt="{translate(#uninstall#)}" />
                         </a>
                     </td>
                     {else:}
@@ -75,8 +77,16 @@
 
                     <!--ACTION-->
                     <td>
-                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}" title="{translate(#disable#)} {aValue[title]}">
-                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#disable#)}" />
+                        <a href="{makeUrl(#install#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
+                           title="{translate(#install#)} {aValue[title]}"
+                           onclick="return confirmDeleteWithMsg('{translate(#module deletion msg#)}')" >
+                            <img src="{webRoot}/themes/{theme}/images/16/edit_add.png" alt="{translate(#install#)}" />
+                        </a>
+
+                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
+                           title="{translate(#remove#)} {aValue[title]}"
+                           onclick="return confirmDeleteWithMsg('{translate(#module deletion msg#)}')" >
+                            <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#remove#)}" />
                         </a>
                     </td>
                     {end:}

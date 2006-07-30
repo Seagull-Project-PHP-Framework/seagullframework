@@ -91,6 +91,15 @@ function confirmDelete(item, formName)
         return false;
 }
 
+function confirmDeleteWithMsg(msg)
+{
+    var agree = confirm(msg);
+    if (agree)
+        return true;
+    else
+        return false;
+}
+
 function confirmSave(formName)
 {
     var evalFormName = eval('document.' + formName)
