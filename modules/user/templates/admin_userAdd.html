@@ -61,7 +61,7 @@
                 <select name="user[organisation_id]" id="user[organisation_id]">
                     {generateSelect(aOrgs,user.organisation_id):h}
                 </select>
-            </p>    
+            </p>
                 {end:}
             {end:}
         </fieldset>
@@ -128,7 +128,7 @@
                 </select>
             </p>
         </fieldset>
-        
+
         <fieldset class="inside">
             <h3>{translate(#Security#)}</h3>
             <p>
@@ -144,14 +144,12 @@
                 <input type="text" class="longText" name="user[security_answer]" id="user[security_answer]" value="{user.security_answer}" />
             </p>
             {if:isAdmin()}
-                {if:!isEqual(user.usr_id,#1#)}
             <p>
                 <label for="user[role_id]">{translate(#Role#)}</label>
                 <select name="user[role_id]" id="user[role_id]">
                     {generateSelect(aRoles,user.role_id):h}
                 </select>
             </p>
-                {end:}
             {end:}
         </fieldset>
         <p class="helpRequire">
