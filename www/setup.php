@@ -183,10 +183,7 @@ class ActionProcess extends HTML_QuickForm_Action
 
         if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
-        } elseif (isset($data['installAllModules'])) { // CLI
-            $data['aModuleList'] = SGL_Install_Common::getModuleList();
-            SGL_Error::pop();
-        } elseif (!isset($data['installAllModules']) || PEAR::isError($dbh)) { // a new install
+        } elseif (PEAR::isError($dbh)) { // a new install
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
             SGL_Error::pop();
         } else {

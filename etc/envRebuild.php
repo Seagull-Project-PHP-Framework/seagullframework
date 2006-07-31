@@ -98,7 +98,6 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $data = array(
             'createTables' => 1,
             'insertSampleData' => 1,
-            'installAllModules' => 1,
             'adminUserName' => 'admin',
             'adminPassword' => 'admin',
             'adminRealName' => 'Demo Admin',

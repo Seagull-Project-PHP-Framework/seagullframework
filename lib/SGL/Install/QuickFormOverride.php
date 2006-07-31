@@ -83,17 +83,14 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         function toggleOptionsWhenUsingExistingDb(myCheckbox)
         {
             var myCheckbox = document.getElementById('useExistingData').checked;
-            var allModules = document.getElementById('installAllModules');
             var sampleData = document.getElementById('insertSampleData');
             var storeTransInDb = document.getElementById('storeTranslationsInDB')
 
             if (myCheckbox != null) {
                 if (myCheckbox) {
-                    allModules.disabled = true;
                     sampleData.disabled = true;
                     storeTransInDb.disabled = true;
                 } else {
-                    allModules.disabled = false;
                     sampleData.disabled = false;
                     storeTransInDb.disabled = false;
                 }
