@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.0        |
 +-----------------------+
 BUGFIXES
+30-07-06    Fixed bug where admins details could not be saved (jwang1973)
 14-07-06    Email sending returns PEAR errors on fails, this was not checked
             properly
 14-07-06    Updates fixed on generated modules
