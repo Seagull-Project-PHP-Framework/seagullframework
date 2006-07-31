@@ -124,11 +124,10 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'name' => 'seagull',
             'prefix' => 'not implemented yet',
-            'installAllModules' => false,
             'insertSampleData' => false,
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
-        
+
         $this->addElement('header', null, 'Database Setup: page 4 of 5');
 
         //  skip db creation
@@ -150,10 +149,6 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         //  db prefix
         $this->addElement('text', 'prefix', 'Table prefix: ', 'id=prefix');
-
-        //  install all modules?
-        $this->addElement('checkbox', 'installAllModules', 'Install all modules?',
-            'Yes (If box is not ticked, only 4 core modules will be installed)', 'id=installAllModules');
 
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
