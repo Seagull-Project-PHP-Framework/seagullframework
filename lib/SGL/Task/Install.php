@@ -334,12 +334,10 @@ class SGL_Task_DropDatabase extends SGL_Task
 /**
  * @package Task
  */
-class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
+class SGL_Task_PrepareInstallationProgressTable extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        require_once SGL_CORE_DIR . '/Sql.php';
-
         SGL_Install_Common::printHeader('Building Database');
 
         if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
@@ -362,7 +360,12 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             $out = '<table class="wide">
                         <tr>
                             <th class="alignCenter">Module</th>
-                            <th class="alignCenter">Create Table</th>
+                            ';
+            if (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0) {
+            $out .=        '<th class="alignCenter">Drop Table</th>
+                           ';
+            }
+            $out .=        '<th class="alignCenter">Create Table</th>
                             <th class="alignCenter">Load Default Data</th>
                             ';
             if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
@@ -379,7 +382,12 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             foreach ($data['aModuleList'] as $module) {
                 $out = '<tr>
                             <td class="title">' . ucfirst($module) . '</td>
-                            <td id="' . $module . '_schema" class="alignCenter"></td>
+                            ';
+                if (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0) {
+                $out .=    '<td id="' . $module . '_drop" class="alignCenter"></td>
+                           ';
+                }
+                $out .=    '<td id="' . $module . '_schema" class="alignCenter"></td>
                             <td id="' . $module . '_data" class="alignCenter"></td>
                             ';
                 if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
@@ -398,15 +406,94 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 echo '</table>';
                 flush();
             }
+        }
+    }
+}
 
-            $statusText .= ', creating and loading tables';
+/**
+ * @package Task
+ */
+class SGL_Task_DropTables extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        require_once SGL_CORE_DIR . '/Sql.php';
+
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1
+                && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
+            $this->setup();
+
+            $statusText = 'dropping existing tables';
+            $this->updateHtml('status', $statusText);
+
+            $dbh = & SGL_DB::singleton();
+
+            //  drop 'sequence' table
+            if ($this->conf['db']['type'] == 'mysql_SGL') {
+                $aSeqTableName = SGL_Sql::extractTableNamesFromSchemaFile(SGL_ETC_DIR . '/sequence.my.sql');
+                foreach ($aSeqTableName as $seqTableName) {
+                    $query = 'DROP TABLE '. $seqTableName;
+                    $seqResult = $dbh->query($query);
+                    if (PEAR::isError($seqResult, DB_ERROR_NOSUCHTABLE)) {
+                        SGL_Error::pop();
+                    }
+                }
+            }
+            //  Load each module's schema, if there is a sql file in /data
+            foreach ($data['aModuleList'] as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+
+                //  Load the module's schema
+                if (file_exists($modulePath . $this->filename1)) {
+                    $aTableNames = SGL_Sql::extractTableNamesFromSchemaFile($modulePath . $this->filename1);
+                    $tableExists = true;
+                    $dropSucceeded = true;
+                    foreach ($aTableNames as $tableName) {
+                        $query = "DROP TABLE `$tableName`";
+                        $result = $dbh->query($query);
+                        if (PEAR::isError($result)) {
+                            if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
+                                SGL_Error::pop();
+                                $tableExists = false;
+                            } else {
+                                $dropSucceeded = false;
+                            }
+                        }
+                    }
+                    if (!$dropSucceeded) {
+                        $displayHtml = $this->failure;
+                    } elseif (!$tableExists) {
+                        $displayHtml = $this->noFile;
+                    } else {
+                        $displayHtml = $this->success;
+                    }
+                    $this->updateHtml($module . '_drop', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_drop', $this->noFile);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+        require_once SGL_CORE_DIR . '/Sql.php';
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
+            $this->setup();
+
+            $statusText = 'creating and loading tables';
             $this->updateHtml('status', $statusText);
 
             //  load 'sequence' table
             if ($this->conf['db']['type'] == 'mysql_SGL') {
                 $result = SGL_Sql::parse(SGL_ETC_DIR . '/sequence.my.sql', 0, array('SGL_Sql', 'execute'));
             }
-
             //  Load each module's schema, if there is a sql file in /data
             foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
@@ -504,22 +591,25 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        $this->setup();
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1
+            && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
+            $this->setup();
 
-        $statusText = 'loading block data';
-        $this->updateHtml('status', $statusText);
+            $statusText = 'loading block data';
+            $this->updateHtml('status', $statusText);
 
-        //  Go back and load each module's default data, if there is a sql file in /data
-        foreach ($data['aModuleList'] as $module) {
-            $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+            //  Go back and load each module's default data, if there is a sql file in /data
+            foreach ($data['aModuleList'] as $module) {
+                $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
 
-            //  Load the module's data
-            if (file_exists($modulePath . $this->filename4)) {
-                $result = SGL_Sql::parse($modulePath . $this->filename4, 0, array('SGL_Sql', 'execute'));
-                $displayHtml = $result ? $this->success : $this->failure;
-                $this->updateHtml($module . '_dataBlock', $displayHtml);
-            } else {
-                $this->updateHtml($module . '_dataBlock', $this->noFile);
+                //  Load the module's data
+                if (file_exists($modulePath . $this->filename4)) {
+                    $result = SGL_Sql::parse($modulePath . $this->filename4, 0, array('SGL_Sql', 'execute'));
+                    $displayHtml = $result ? $this->success : $this->failure;
+                    $this->updateHtml($module . '_dataBlock', $displayHtml);
+                } else {
+                    $this->updateHtml($module . '_dataBlock', $this->noFile);
+                }
             }
         }
     }
@@ -567,29 +657,33 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
 
     function run($data)
     {
-        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
-        $da = & DA_Navigation::singleton();
+        if (array_key_exists('createTables', $data) && $data['createTables'] == 1
+                && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
 
-        foreach ($data['aModuleList'] as $module) {
-            $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
-            if (file_exists($navigationPath)) {
-                require_once $navigationPath;
-                foreach ($aSections as $aSection) {
+            require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+            $da = & DA_Navigation::singleton();
 
-                    //  check if section is designated as child to last insert
-                    if ($aSection['parent_id'] == SGL_NODE_GROUP) {
-                        $aSection['parent_id'] = $this->groupId;
-                    }
-                    $id = $da->addSimpleSection($aSection);
-                    if (!PEAR::isError($id)) {
-                        if ($aSection['parent_id'] == SGL_NODE_ADMIN
-                                || $aSection['parent_id'] == SGL_NODE_USER) {
-                            $this->groupId = $id;
-                        } else {
-                            $this->childId = $id;
+            foreach ($data['aModuleList'] as $module) {
+                $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
+                if (file_exists($navigationPath)) {
+                    require_once $navigationPath;
+                    foreach ($aSections as $aSection) {
+
+                        //  check if section is designated as child to last insert
+                        if ($aSection['parent_id'] == SGL_NODE_GROUP) {
+                            $aSection['parent_id'] = $this->groupId;
                         }
-                    } else {
-                        SGL_Install_Common::errorPush($id);
+                        $id = $da->addSimpleSection($aSection);
+                        if (!PEAR::isError($id)) {
+                            if ($aSection['parent_id'] == SGL_NODE_ADMIN
+                                    || $aSection['parent_id'] == SGL_NODE_USER) {
+                                $this->groupId = $id;
+                            } else {
+                                $this->childId = $id;
+                            }
+                        } else {
+                            SGL_Install_Common::errorPush($id);
+                        }
                     }
                 }
             }
