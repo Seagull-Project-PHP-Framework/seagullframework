@@ -197,6 +197,8 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_CreateConfig());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
+        $runner->addTask(new SGL_Task_DropTables());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_SyncSequences());

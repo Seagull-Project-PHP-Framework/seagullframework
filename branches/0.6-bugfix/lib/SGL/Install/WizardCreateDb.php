@@ -85,12 +85,16 @@ function canCreateDb()
 
     } elseif ($skipDbCreation) {
 
-        // if DB exists, detect if tables exist
-        $tables = $dbh->getListOf('tables');
-        if (!count($tables)) {
-            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+        if (isset($aFormValues['useExistingData']) && $aFormValues['useExistingData'] == 1) {
+            // if DB exists, detect if tables exist
+            $tables = $dbh->getListOf('tables');
+            if (!count($tables)) {
+                $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+            } else {
+                $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 0;
+            }
         } else {
-            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 0;
+            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
         }
         return true;
 
