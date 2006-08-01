@@ -449,7 +449,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                     $tableExists = true;
                     $dropSucceeded = true;
                     foreach ($aTableNames as $tableName) {
-                        $query = "DROP TABLE `$tableName`";
+                        $query = 'DROP TABLE ' . $dbh->quoteIdentifier($tableName);
                         $result = $dbh->query($query);
                         if (PEAR::isError($result)) {
                             if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
