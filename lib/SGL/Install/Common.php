@@ -97,7 +97,6 @@ class SGL_Install_Common
         return $version;
     }
 
-
     /**
      * Returns html head section of page, only used for 'enter passwd for
      * access setup' screen
