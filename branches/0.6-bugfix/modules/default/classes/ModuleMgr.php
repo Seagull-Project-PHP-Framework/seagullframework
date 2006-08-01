@@ -382,21 +382,29 @@ class ModuleMgr extends SGL_Manager
         //  drop tables
         require_once SGL_CORE_DIR . '/Sql.php';
         $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
-        //  get all table defined in this module's schema
+        //  get all tables defined in this module's schema
         $oModule = $this->da->getModuleById($input->moduleId);
-        $dropFile =  SGL_MOD_DIR . '/' . $oModule->name . '/data/drop.'.$dbShortname.'.sql';
-        if (is_file($dropFile)) {
-            $sql = file_get_contents($dropFile);
-            $res = SGL_Sql::execute($sql);
+
+        //  disallow uninstalling default modules
+        require_once SGL_CORE_DIR. '/Install/Common.php';
+        SGL_Install_Common::getMinimumModuleList();
+        if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
+            SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
+                SGL_MESSAGE_ERROR);
+        } else {
+            $dropFile =  SGL_MOD_DIR . '/' . $oModule->name . '/data/drop.'.$dbShortname.'.sql';
+            if (is_file($dropFile)) {
+                $sql = file_get_contents($dropFile);
+                $res = SGL_Sql::execute($sql);
+            }
+            //  delete perms records
+            //  delete related navigation
+            //  remove config keys
+            //  remove dbdo links
+
+            SGL::raiseMsg('The module was successfully uninstalled', false,
+                SGL_MESSAGE_INFO);
         }
-
-        //  delete perms records
-        //  delete related navigation
-        //  remove config keys
-        //  remove dbdo links
-
-        SGL::raiseMsg('The module was successfully uninstalled', false,
-            SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
