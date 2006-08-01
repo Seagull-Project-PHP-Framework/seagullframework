@@ -39,13 +39,13 @@
 
 function appRootExists()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];
     return file_exists($aFormValues['installRoot']);
 }
 
 function webRootExists()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];
     return file_exists($aFormValues['webRoot']);
 }
 
@@ -57,7 +57,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
+        $this->addElement('header',     null, 'Create Admin User: page 6 of 6');
 
         //  set defaults
         $this->setDefaults(array(

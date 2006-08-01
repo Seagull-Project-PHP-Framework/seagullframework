@@ -61,7 +61,7 @@ class WizardLicenseAgreement extends HTML_QuickForm_Page
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
 
-        $this->addElement('header',     null, 'Seagull License Agreement: page 1 of 5');
+        $this->addElement('header',     null, 'Seagull License Agreement: page 1 of 6');
         $this->addElement('textarea',   'license', null, array('rows' => 15, 'cols' => 80));
 
         $radio[] = &$this->createElement('radio', 'agree',     '', "I accept the terms of the license agreement", 'yes');

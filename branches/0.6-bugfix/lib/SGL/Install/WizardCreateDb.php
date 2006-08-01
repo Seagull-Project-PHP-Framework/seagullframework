@@ -39,8 +39,8 @@
 
 function canCreateDb()
 {
-    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page3'],
-        $_SESSION['_installationWizard_container']['values']['page4']);
+    $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page4'],
+        $_SESSION['_installationWizard_container']['values']['page5']);
 
     $skipDbCreation = (bool)@$aFormValues['skipDbCreation'];
 
@@ -89,12 +89,12 @@ function canCreateDb()
             // if DB exists, detect if tables exist
             $tables = $dbh->getListOf('tables');
             if (!count($tables)) {
-                $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+                $_SESSION['_installationWizard_container']['values']['page5']['createTables'] = 1;
             } else {
-                $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 0;
+                $_SESSION['_installationWizard_container']['values']['page5']['createTables'] = 0;
             }
         } else {
-            $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+            $_SESSION['_installationWizard_container']['values']['page5']['createTables'] = 1;
         }
         return true;
 
@@ -111,7 +111,7 @@ function canCreateDb()
 
     } else {
         //  if new db, set flag to create tables
-        $_SESSION['_installationWizard_container']['values']['page4']['createTables'] = 1;
+        $_SESSION['_installationWizard_container']['values']['page5']['createTables'] = 1;
         return true;
     }
 }
@@ -132,7 +132,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
 
-        $this->addElement('header', null, 'Database Setup: page 4 of 5');
+        $this->addElement('header', null, 'Database Setup: page 5 of 6');
 
         //  skip db creation
         $this->addElement('checkbox', 'skipDbCreation', 'Use existing Db?',
