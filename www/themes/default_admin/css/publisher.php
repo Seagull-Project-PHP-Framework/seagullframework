@@ -84,3 +84,9 @@ img.calendar{
 #editAsset textarea.longText {
     height: 6em;
 }
+
+/*
+-- contentTypeAdd.html / contentTypeEdit.html ---------------------------------------*/
+#addContentType p input.longText, #editContentType p input.longText {
+    width: 60%;
+}
