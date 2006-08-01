@@ -32,65 +32,57 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | WizardDetectEnv.php                                                       |
+// | WizardCreateAdminUser.php                                                 |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Author:   Steven Stremciuc <steve@freeslacker.net>                        |
 // +---------------------------------------------------------------------------+
-// $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-function environmentOk()
+function authFileExists()
 {
-    if (SGL_Install_Common::errorsExist()) {
-        return false;
-    } else {
-        // cleanup data for storage
-        $oTask = $GLOBALS['_SGL']['runner'];
-        $aSummary = array();
-        foreach ($oTask->aTasks as $oTask) {
-            $aSummary[$oTask->key] = $oTask->aData;
+    if (file_exists(SGL_PATH . '/AUTH.txt')) {
+        $file = file_get_contents(SGL_PATH . '/AUTH.txt');
+        if (strpos($file, $_SESSION['authString']) !== false) {
+            return true;
+        } else {
+            return array('authFile' => '* Authorisation string not found in AUTH.txt file');
         }
-        $serialized = serialize($aSummary);
-        @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
-        return true;
+    } else {
+        return array('authFile' => '* AUTH.txt file does not exist');
     }
 }
 
 /**
  * @package Install
  */
-class WizardDetectEnv extends HTML_QuickForm_Page
+class WizardSetupAuth extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->setDefaults(array(
-            'detectEnv' => 1,
-            ));
-        $this->setDefaults(overrideDefaultInstallSettings());
-        
-        $this->addElement('header',     null, 'Detect Environment: page 3 of 6');
 
-        $runner = new SGL_TaskRunner();
-        $runner->addTask(new SGL_Task_GetLoadedModules());
-        $runner->addTask(new SGL_Task_GetPhpEnv());
-        $runner->addTask(new SGL_Task_GetPhpIniValues());
-        $runner->addTask(new SGL_Task_GetFilesystemInfo());
-        $runner->addTask(new SGL_Task_GetPearInfo());
+        if (!isset($_SESSION['authString'])) {
+            $_SESSION['authString'] = md5(rand());
+        }
 
-        $html = $runner->main();
+        $this->addElement('header',     null, 'Seagull Setup Authorisation: page 2 of 6');
 
-        //  store global copy for error callback
-        $GLOBALS['_SGL']['runner'] = $runner;
+        $this->addElement('static', 'authFile', 'Authenticate',
+            'This step is a simple authentication check to make sure the owner of ' .
+            'this site is performing this installation.<br />' .
+            '<br />' .
+            'All that is required for you to do is to create a text file named <b>AUTH.txt</b> ' .
+            'containing the following randomly generated string of characters and place it ' .
+            'in the root directory of the Seagull application. This is the same ' .
+            'directory that has the INSTALL.txt, README.txt, and VERSION.txt files.<br />' .
+            '<br />' .
+            '<b>' . $_SESSION["authString"] . '</b><br />' .
+            '<br />' .
+            'To simplify things for you, you can <a href="setup.php?download=1">click on this link to download the AUTH.txt ' .
+            'file</a>. Once you download the file, simply place it in the root ' .
+            'directory of this Seagull application.');
 
-        $this->addElement('checkbox', 'detectEnv', 'Detect Env?', 'Yes');
-        $this->addElement('static', 'colourKey', 'Legend', 'Errors are displayed in '.
-            '<span style="color: red; font-weight: bold;">red</span>, recommendations in '.
-            '<span style="color: orange; font-weight: bold;">yellow</span> and success in '.
-            '<span style="color: green; font-weight: bold;">green</span>');
-        $this->registerRule('environmentOk','function','environmentOk');
-        $this->addRule('detectEnv', 'please fix the listed errors', 'environmentOk');
-
-        $this->addElement('static',  'env', null, $html);
+        $this->addElement('hidden', 'authString', $_SESSION['authString']);
+        $this->addFormRule('authFileExists');
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');

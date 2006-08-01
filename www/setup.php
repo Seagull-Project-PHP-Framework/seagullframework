@@ -109,6 +109,18 @@ SGL_FrontController::init();
 session_start();
 $_SESSION['ERRORS'] = array();
 
+//  check if requesting auth.txt download
+if (isset($_GET['download']) && $_GET['download'] == 1) {
+    if (isset($_SESSION['authString'])) {
+        header("Content-Type: text/plain");
+        header("Content-Length: " . strlen($_SESSION['authString']));
+        header("Content-Description: Download AUTH.txt to your computer.");
+        header("Content-Disposition: attachment; filename=AUTH.txt");
+        print $_SESSION['authString'];
+        exit;
+    }
+}
+
 //  reroute to front controller
 if (isset($_GET['start'])) {
 
@@ -157,6 +169,7 @@ require_once 'HTML/QuickForm/Action/Display.php';
 
 //  load wizard screens and qf overrides
 require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardSetupAuth.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardDetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
@@ -223,10 +236,11 @@ class ActionProcess extends HTML_QuickForm_Action
 //  start wizard
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
-$wizard->addPage(new WizardDetectEnv('page2'));
-$wizard->addPage(new WizardTestDbConnection('page3'));
-$wizard->addPage(new WizardCreateDb('page4'));
-$wizard->addPage(new WizardCreateAdminUser('page5'));
+$wizard->addPage(new WizardSetupAuth('page2'));
+$wizard->addPage(new WizardDetectEnv('page3'));
+$wizard->addPage(new WizardTestDbConnection('page4'));
+$wizard->addPage(new WizardCreateDb('page5'));
+$wizard->addPage(new WizardCreateAdminUser('page6'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller

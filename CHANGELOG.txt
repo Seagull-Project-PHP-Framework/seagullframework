@@ -13,6 +13,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+01-08-05    Added a security step in installer (Steven Stremciuc)
 01-08-05    Implemented admin GUI for ContentTypeMgr (AJ Tarachanowicz)
 30-07-06    A big update to the Polish translation (Thomas Osmialowski)
 30-07-06    XML_Parser error avoided by inspecting allow_url_fopen setting
