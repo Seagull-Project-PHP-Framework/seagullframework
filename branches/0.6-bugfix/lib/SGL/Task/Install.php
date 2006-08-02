@@ -304,7 +304,7 @@ class SGL_Task_CreateDatabase extends SGL_Task
 
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName = true);
         $dbh = & SGL_DB::singleton($dsn);
-        $query = 'CREATE DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
+        $query = 'CREATE DATABASE ' . $dbh->quoteIdentifier($this->conf['db']['name']);
         $res = $dbh->query($query);
         if (PEAR::isError($res)) {
             SGL_Install_Common::errorPush($res);
@@ -323,7 +323,7 @@ class SGL_Task_DropDatabase extends SGL_Task
         $this->conf = $c->getAll();
 
         $dbh = & SGL_DB::singleton();
-        $query = 'DROP DATABASE '. SGL_DB_QUOTE . $this->conf['db']['name'] . SGL_DB_QUOTE;
+        $query = 'DROP DATABASE ' . $dbh->quoteIdentifier($this->conf['db']['name']);
         $res = $dbh->query($query);
         if (PEAR::isError($res)) {
             SGL_Install_Common::errorPush($res);
@@ -432,7 +432,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             if ($this->conf['db']['type'] == 'mysql_SGL') {
                 $aSeqTableName = SGL_Sql::extractTableNamesFromSchemaFile(SGL_ETC_DIR . '/sequence.my.sql');
                 foreach ($aSeqTableName as $seqTableName) {
-                    $query = 'DROP TABLE '. $seqTableName;
+                    $query = 'DROP TABLE '. $dbh->quoteIdentifier($seqTableName);
                     $seqResult = $dbh->query($query);
                     if (PEAR::isError($seqResult, DB_ERROR_NOSUCHTABLE)) {
                         SGL_Error::pop();
