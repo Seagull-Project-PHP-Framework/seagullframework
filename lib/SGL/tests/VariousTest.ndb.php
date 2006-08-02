@@ -1,5 +1,4 @@
 <?php
-
 require_once dirname(__FILE__) . '/../Sql.php';
 
 /**
@@ -16,58 +15,69 @@ class VariousTest extends UnitTestCase {
         $this->UnitTestCase('Various Test');
     }
 
-    function testParseAndExecute()
+    /**
+     * This test is focused on the regexs used for parsing the
+     * data files in the data directories
+     */
+    function testSqlParse()
     {
-        $sql = <<< EOF
-INSERT INTO item_type VALUES (5,'Static Html Article');
+    /** preg_match() returns the number of times pattern matches.
+     * That will be either 0 times (no match) or 1 time because preg_match()
+     * will stop searching after the first match. preg_match_all() on the
+     * contrary will continue until it reaches the end of subject.
+     * preg_match() returns FALSE if an error occurred.
+     */
+        $target1 = "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', 'default/maintenance', '48/module_default.png', '', NULL, NULL, NULL);";
+        $target2 = "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', 'default/maintenance', '48/module_default.png', '', NULL, NULL, NULL);";
+        $target3 = "-- Comment for test a double dash regex";
+        $target4 = "   -- Comment for test a double dash regex with spaces";
+        $target5 = "# Comment for test a hash regex";
+        $target6 = "   # Comment for test a hash regex with spaces";
+        /* FALSE != 0 as a total number of matches */
+        /* We should know if preg_match is failing for some reason */
+        $this->assertNotIdentical(false, preg_match("/insert/i", $target1),'preg_match returned error');
+        $this->assertNotIdentical(false, preg_match("/\{SGL_NEXT_ID\}/", $target2),'preg_match returned error');
+        $this->assertNotIdentical(false, preg_match("/^\s*(--)|^\s*#/", $target3),'preg_match returned error');
+        $this->assertNotIdentical(false, preg_match("/^\s*(--)|^\s*#/", $target4),'preg_match returned error');
+        $this->assertNotIdentical(false, preg_match("/^\s*(--)|^\s*#/", $target5),'preg_match returned error');
+        $this->assertNotIdentical(false, preg_match("/^\s*(--)|^\s*#/", $target6),'preg_match returned error');
+        /* Each of these should return (int) 1,
+         * but since we're using them as Bools,
+         * we should check for (bool) TRUE to pass the test
+         *
+         * This is the loose type checking test
+         */
+        $this->assertEqual(true, preg_match("/insert/i", $target1),'Did not find \'insert\' in: '.$target1);
+        $this->assertEqual(true, preg_match("/\{SGL_NEXT_ID\}/", $target2),'Did not find {SGL_NEXT_ID} in: '.$target2);
+        $this->assertEqual(true, preg_match("/^\s*(--)/", $target3),'Did not find -- in: '.$target3);
+        $this->assertEqual(true, preg_match("/^\s*(--)/", $target4),'Did not find -- in: '.$target4);
+        $this->assertEqual(true, preg_match("/^\s*#/", $target5),'Did not find -- in: '.$target5);
+        $this->assertEqual(true, preg_match("/^\s*#/", $target6),'Did not find -- in: '.$target6);
+        /* Let's try to combine some of the conditionals */
+        $compound = preg_match("/insert/i", $target1) && preg_match("/\{SGL_NEXT_ID\}/", $target1);
+        $this->assertEqual(true,  $compound,"compound conditional fails with");
+        $this->assertEqual(true, preg_match("/insert/i", $target1) && preg_match("/\{SGL_NEXT_ID\}/", $target1),"compound conditional fails");
+        $this->assertEqual(true, preg_match("/^\s*(--)|^\s*#/", $target3),"compound conditional fails");
+        $this->assertEqual(true, preg_match("/^\s*(--)|^\s*#/", $target6),"compound conditional fails");
 
-#
-# Dumping data for table `item_type_mapping`
-#
-
-
-INSERT INTO item_type_mapping VALUES (3,2,'title',0);
-INSERT INTO item_type_mapping VALUES (4,2,'bodyHtml',2);
-EOF;
-        $aLines = explode("\n", $sql);
-        $ret = $this->parse1($aLines);
-//        print '<pre>'; print_r($ret);
-
-        $ret = $this->parse2($aLines);
-//        print '<pre>'; print_r($ret);
+        /*
+         * This is the type casted checking test
+         * Type casting to (bool) looking for them to be identical matches
+         */
+        $this->assertIdentical(true, (bool) preg_match("/insert/i", $target1),'Did not find \'insert\' in: '.$target1);
+        $this->assertIdentical(true, (bool) preg_match("/\{SGL_NEXT_ID\}/", $target2),'Did not find {SGL_NEXT_ID} in: '.$target2);
+        $this->assertIdentical(true, (bool) preg_match("/^\s*(--)/", $target3),'Did not find -- in: '.$target3);
+        $this->assertIdentical(true, (bool) preg_match("/^\s*(--)/", $target4),'Did not find -- in: '.$target4);
+        $this->assertIdentical(true, (bool) preg_match("/^\s*#/", $target5),'Did not find -- in: '.$target5);
+        $this->assertIdentical(true, (bool) preg_match("/^\s*#/", $target6),'Did not find -- in: '.$target6);
+        /* Let's try to combine some of the conditionals */
+        $compound = preg_match("/insert/i", $target1) && preg_match("/\{SGL_NEXT_ID\}/", $target1);
+        $this->assertIdentical(true,  $compound,"compound conditional fails with");
+        $this->assertIdentical(true, (bool) preg_match("/insert/i", $target1) && preg_match("/\{SGL_NEXT_ID\}/", $target1),"compound conditional fails");
+        $this->assertIdentical(true, (bool) preg_match("/^\s*(--)|^\s*#/", $target3),"compound conditional fails");
+        $this->assertIdentical(true, (bool) preg_match("/^\s*(--)|^\s*#/", $target6),"compound conditional fails");
     }
 
-    function parse1($aLines)
-    {
-        $sql = '';
-        foreach ($aLines as $line) {
-            $line = trim($line);
-            $cmt  = substr($line, 0, 2);
-            if ($cmt == '--' || trim($cmt) == '#') {
-                continue;
-            }
-            $sql .= $line;
-            if (!preg_match("/;\s*$/", $sql)) {
-                continue;
-            }
-        }
-        return $sql;
-    }
-
-    function parse2($aLines)
-    {
-        $sql = '';
-        foreach ($aLines as $line) {
-            if (preg_match("/^\s*(--)|^\s*#/", $line)) {
-                continue;
-            }
-            $sql .= $line;
-            if (!preg_match("/;\s*$/", $sql)) {
-                continue;
-            }
-        }
-        return $sql;
-    }
 
     function testExtractTablenameFromCreateStatement()
     {
