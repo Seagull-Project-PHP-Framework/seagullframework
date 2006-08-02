@@ -1,1 +1,0 @@
-DROP TABLE event, event_type, `event-media`, address, location, location_type;
