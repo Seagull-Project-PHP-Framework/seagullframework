@@ -16,9 +16,12 @@
        'No expire' => 'Nie wygasaj±cy',
 
 /*  MODULE MGR  */
-        'Module Manager' => 'Menad¿er modu³u',
-        'Module Manager :: Add' => 'Menad¿er modu³u :: Dodaj',
-        'Module Manager :: Edit' => 'Module Manager :: Edytuj',
+        'Module Manager' => 'Menad¿er Modu³u',
+        'Module Manager :: Add' => 'Menad¿er Modu³u :: Dodaj',
+        'Module Manager :: Edit' => 'Manad¿er Modu³u :: Edytuj',
+        'Detect New Modules' => 'Wykryj nowe modu³y',
+        'WARNING: This will drop your database' => 'UWAGA: Opcja ta spowoduje usuniêcie danych z bazy i stworzenie od nowa baz Seagulla. Zostanie ona wykonana poprawnie, tylko wtedy, je¿eli obecny u¿ytkownik ma pe³ne uprawnienia do kasowania i tworzenia bazy danych.',
+        'with sample data' => 'z przyk³adowymi danymi',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Menad¿er konfiguracji',
@@ -41,22 +44,22 @@
         'authorisation failed' => 'Nie masz wystarczaj±cych uprawnieñ do przegl±dania tej strefy',
         'authentication required' => 'Musisz byæ zalogowany. Wpisz swoj± nazwê i has³o poni¿ej',
         'session timeout' => 'Twoja sesja wygas³a, proszê ponowiæ logowanie',
-        'You have been successfully logged out' => 'Zosta³e¶ poprawnie wylogowany',
+        'You have been successfully logged out' => 'Zosta³e¶ wylogowany',
         'password emailed out' => 'Nowe has³o zosa³o przes³ane na adres email podany przy rejestracji',
         'email not in system' => 'Podany email nie zosta³ odnaleziony w bazie, proszê spróbowaæ ponownie',
-        'email submitted successfully' => 'Twój email zosta³ poprawnie przes³any',
-        'There was a problem sending the email' => 'Wyst±pi³ problem w przes³aniu emaila',
+        'email submitted successfully' => 'Twój email zosta³ przes³any',
+        'There was a problem sending the email' => 'Wyst±pi³ problem w przes³aniu email\'a',
         'message ID not recognised' => 'ID wiadomo¶ci nie zosta³o rozpoznane',
         'Please fill in the indicated fields' => 'Proszê wype³niæ wszystkie wymagane pola i spróbowaæ ponownie',
-        'Your alert has been sent successfully' => 'Twój alarm zosta³ poprawnie przes³any',
+        'Your alert has been sent successfully' => 'Twoje ostrze¿enie zosta³o przes³ane',
         'Are you sure you want to delete this' => 'Czy jeste¶ pewny, ¿e chcesz usun±æ ten element',
 
 /*  MODULE MGR */
         'Module' => 'Modu³',
         'Module list' => 'Lista modu³u',
         'Active' => 'Aktywny',
-        'module successfully updated' => 'Informacja zosta³a poprawnie zmieniona',
-        'module successfully removed' => 'Modu³ zosta³ poprawnie usuniêty',
+        'module successfully updated' => 'Informacja zosta³a zmieniona',
+        'module successfully removed' => 'Modu³ zosta³ usuniêty',
         'The name of the module must be the exact name of the folder containing files, beware of case sensiveness' => 'Nazwa modu³u musi byæ taka sama jak nazwa katalogu zawieraj±cego pliki, uwa¿aj na wielko¶æ liter',
         'Here you can write what you want' => 'Tutaj mo¿esz zapisaæ co chcesz',
 
@@ -350,7 +353,7 @@ $defaultWords['Back to Maintenance'] = 'Powrót';
 $defaultWords['Congratulations, the target translation appears to be up to date'] = 'Gratulujê, t³umaczenie jest najnowsze';
 $defaultWords['translation successfully updated'] = 't³umaczenie zosta³o uaktualnione';
 $defaultWords['There was a problem updating the translation'] = 'Wyst±pi³ problem z uaktualnieniem t³umaczenia';
-$defaultWords['Data Objects rebuilt successfully'] = 'Data Objects zosta³y poprawnie od¶wie¿one';
+$defaultWords['Data Objects rebuilt successfully'] = 'Data Objects zosta³y od¶wie¿one';
 $defaultWords['Cache files successfully deleted'] = 'Pliki tymczasowe zosta³y usuniête';
 $defaultWords['Manage Translations'] = 'Menad¿er T³umaczeñ';
 $defaultWords['Check all modules for'] = 'Sprawd¼ modu³y';
@@ -362,7 +365,7 @@ $defaultWords['no file'] = 'brak pliku';
 $defaultWords['new strings'] = 'nowy tekst';
 $defaultWords['old strings'] = 'stary tekst';
 $defaultWords['File not writeable'] = 'Plik nie ma atrybutu do zapisu';
-$defaultWords['Sequences rebuilt successfully'] = 'Sekwencja zosta³a poprawnie odbudowana';
+$defaultWords['Sequences rebuilt successfully'] = 'Sekwencja zosta³a odbudowana';
 $defaultWords['Rebuild DB Sequences'] = 'Od¶wie¿ sekwencjê DB';
 $defaultWords['Rebuild Sequences Now'] = 'Od¶wie¿ sekwencjê';
 $defaultWords['validate'] = 'sprawd¼';
@@ -387,7 +390,7 @@ $defaultWords['Create Templates'] = 'Stwórz szablon';
 $defaultWords['Create ini file'] = 'Stwórz plik ini';
 $defaultWords['Create language files'] = 'Stwórz pliki jêzykowe';
 $defaultWords['Create Module Now'] = 'Stwórz Modu³';
-$defaultWords['Module files successfully created'] = 'Pliki modu³u zosta³y poprawnie stworzone';
+$defaultWords['Module files successfully created'] = 'Pliki modu³u zosta³y stworzone';
 $defaultWords['The source translation has'] = 'T³umaczenia ¼ród³owe maj±';
 $defaultWords['elements'] = 'elementów';
 $defaultWords['The target translation has'] = 'Docelowo t³umaczenie ma';
@@ -480,7 +483,7 @@ $defaultWords['Custom filter chain'] = 'Ustaw szereg filtra';
 $defaultWords['Create CRUD actions'] = 'Utwórz akcje CRUD';
 $defaultWords['Broadcast message'] = 'Wiadomo¶æ sieciowa';
 $defaultWords['Rebuild Seagull'] = 'Przebuduj Seagull';
-$defaultWords['Module Manager :: Discovered'] = 'Menad¿er Modu³u :: Odkryty';
+$defaultWords['Module Manager :: Discovered'] = 'Menad¿er Modu³u :: Wykryte modu³y';
 $defaultWords['Register this module?'] = 'Zarejestrowaæ ten modu³?';
 $defaultWords['DataObject debug level'] = 'Poziom debugowania DataObject';
 $defaultWords['Please choose a simple, single word'] = 'Proszê wybraæ proste, pojedyncze s³owo dla nazwy modu³u bêdzie u¿yte w URLu';

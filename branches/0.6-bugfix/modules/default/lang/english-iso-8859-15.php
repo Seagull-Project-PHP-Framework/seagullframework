@@ -15,6 +15,9 @@
         'Module Manager' => 'Module Manager',
         'Module Manager :: Add' => 'Module Manager :: Add',
         'Module Manager :: Edit' => 'Module Manager :: Edit',
+        'Detect New Modules' => 'Detect New Modules',
+        'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
+        'with sample data' => 'with sample data',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',

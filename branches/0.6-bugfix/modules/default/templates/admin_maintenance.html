@@ -66,15 +66,13 @@
         <h3>{translate(#Rebuild Seagull#)}</h3>
         <fieldset class="inside">
             <p class="center">
-                WARNING: This will drop your database and create your Seagull environment from
-                discovered data files.  It will only work correctly if your current database user
-                has full privileges, ie to drop and create databases.
+                {translate(#WARNING: This will drop your database#)}
             </p>
             <div class="center">
                 <input type="hidden" name="action" value="rebuildSeagull" />
                 <input type="submit" class="sgl-button"name="submit" value="{translate(#Rebuild Seagull#)}" />
                 <input type="checkbox" name="frmSampleData" id="sampleData" value="1" />
-                <label for="sampleData">with sample data</label>
+                <label for="sampleData">{translate(#with sample data#)}</label>
             </div>
         </fieldset>
     </form>
