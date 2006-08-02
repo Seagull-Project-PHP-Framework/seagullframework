@@ -922,7 +922,9 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         ob_start();
         // remove original dbdo keys file as it is unable to update an existing file
         $keysFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.ini';
-        $ok = unlink($keysFile);
+        if (is_file($keysFile)) {
+            $ok = unlink($keysFile);
+        }
 
         $generator = new DB_DataObject_Generator();
         $generator->start();
