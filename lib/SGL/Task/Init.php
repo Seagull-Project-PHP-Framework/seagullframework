@@ -283,9 +283,6 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
             define('SGL_BASE_URL', $conf['site']['baseUrl']);
 
-            $char = ($conf['db']['type'] == 'pgsql') ? '"' : '`';
-            define('SGL_DB_QUOTE', $char);
-
             //  add additional search paths
             if (!empty($conf['path']['additionalIncludePath'])) {
                 $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
