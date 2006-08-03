@@ -29,7 +29,7 @@ function setDisplayType()
         <table class="full">
             <thead>
                 <tr class="infos">
-                    <td class="right" colspan="9">
+                    <td class="right" colspan="7">
                     &nbsp;
                     </td>
                 </tr>
@@ -118,13 +118,14 @@ function setDisplayType()
                 </tr>
             {else:}
                 <tr>
-                    <td colspan="9">{translate(#no results found#)}</td>
+                    <td colspan="7">{translate(#no results found#)}</td>
                 </tr>
             {end:}
             </tbody>
         </table>
     </div>
 </div>
+
 <form id="displayControl" flexy:ignore>
 <p><input type="hidden" id="displayDeRegisteredModules" name="displayDeRegisteredModules" value="" /></p>
 </form>
