@@ -320,9 +320,9 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            //  delete perms records
-            //  delete related navigation
-            //  remove config keys
+            //  delete perms records DELETE FROM permission WHERE module_id = $id
+            //  delete related navigation DELETE FROM section WHERE title = $title
+            //  remove config table keys
             //  remove dbdo links
 
             SGL::raiseMsg('The module was successfully uninstalled', false,
