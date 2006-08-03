@@ -392,10 +392,14 @@ class ModuleMgr extends SGL_Manager
             SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
                 SGL_MESSAGE_ERROR);
         } else {
-            $dropFile =  SGL_MOD_DIR . '/' . $oModule->name . '/data/drop.'.$dbShortname.'.sql';
-            if (is_file($dropFile)) {
-                $sql = file_get_contents($dropFile);
-                $res = SGL_Sql::execute($sql);
+            $schema =  SGL_MOD_DIR . '/' . $oModule->name . '/data/schema.'.$dbShortname.'.sql';
+            if (is_file($schema)) {
+                $aTableNames = SGL_Sql::extractTableNamesFromSchemaFile($schema);
+
+                foreach ($aTableNames as $tableName) {
+                    $query = 'DROP TABLE ' . $this->dbh->quoteIdentifier($tableName);
+                    $result = $this->dbh->query($query);
+                }
             }
             //  delete perms records
             //  delete related navigation
