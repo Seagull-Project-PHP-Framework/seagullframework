@@ -86,18 +86,10 @@ class SGL_Sql
             // Read lines, concat together until we see a semi-colon
             $line = fgets($fp, 32768);
 
-            // Check if '--' comment line.  Fixes Problem with commented Postgres SQL statements
-            // This avoids printing bogus errors to screen when we try to execute a comment only
-#            if (preg_match("/^\s*(--)|^\s*#/", $line)) {
-#                continue;
-#            }
-#FIXME: the above code fails in certain situations, write tests to improve regex
-            #$line = trim($line);
-            $cmt  = substr($line, 0, 2);
-            if ($cmt == '--' || preg_match("/^#/", $cmt)) {
+            // Check for various comment types
+            if (preg_match("/^\s*(--)|^\s*#/", $line)) {
                 continue;
             }
-#END:FIXME
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableNameFromInsertStatement($line);
                 $nextId = SGL_Sql::getNextId($tableName);
