@@ -234,7 +234,7 @@ function doSub()
 
 var delimiter = ":";
 
-function MoveOption (MoveFrom, MoveTo, ToDo)
+function MoveOption(MoveFrom, MoveTo, ToDo)
 {
   var SelectFrom = eval('document.main_form.'+MoveFrom);
   var SelectTo = eval('document.main_form.'+MoveTo);
@@ -264,7 +264,7 @@ function MoveOption (MoveFrom, MoveTo, ToDo)
   }
 }
 
-function checkDuplicates (AddListContainer, RemoveListContainer)
+function checkDuplicates(AddListContainer, RemoveListContainer)
 {
     var AddList = eval('document.main_form.'+AddListContainer);
     var RemoveList = eval('document.main_form.'+RemoveListContainer);

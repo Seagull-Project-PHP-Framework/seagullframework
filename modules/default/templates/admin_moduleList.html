@@ -1,7 +1,16 @@
+<script type="text/javascript">
+function setDisplayType()
+{
+    var myCheckbox = document.getElementById('frmSwitcher').checked;
+    var myswitch = document.getElementById('displayDeRegisteredModules');
+    myswitch.value = (myCheckbox) ? 1 : 0;
+    document.getElementById('displayControl').submit();
+}
+</script>
+
 <div id="manager-actions">
     <span>{translate(#Action#)}: &nbsp;</span>
-    <a class="action reorder" href="{makeUrl(#detect#,#module#,#default#)}">{translate(#Detect New Modules#)}</a>
-    <a class="action add" href="{makeUrl(#add#,#module#,#default#)}">{translate(#Add#)}</a>
+    <a class="action reorder" href="{makeUrl(#list#,#module#,#default#)}">{translate(#Refresh Module Listing#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -10,88 +19,97 @@
     </div>
     <div class="fieldsetlike" id="moduleList">
         <h3>{translate(#Module list#)}</h3>
+
+        <div>
+            <input flexy:ignore type="checkbox" name="frmSwitcher" id="frmSwitcher"
+                   onclick="javascript:setDisplayType()" flexy:raw="{deRegisteredModulesChecked}" />
+            show de-registered modules
+        </div>
+
         <table class="full">
             <thead>
                 <tr class="infos">
                     <td class="right" colspan="9">
-                    {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                    &nbsp;
                     </td>
                 </tr>
                 <tr>
-                    <th width="3%">ID</th>
-                    <th width="5%">&nbsp;</th>
-                    <th width="12%" class="left">{translate(#Title#)}</th>
-                    <th width="65%" class="left">{translate(#Description#)}</th>
+                    <th width="5%">&nbsp;</th><!--IMAGE-->
+                    <th width="10%" class="left">{translate(#Title#)}</th>
+                    <th width="55%" class="left">{translate(#Description#)}</th>
+                    <th width="5%">Maintainer</th>
+                    <th width="5%">License</th>
+                    <th width="5%">State</th>
                     <th width="15%">{translate(#action#,#ucfirst#)}</th>
                 </tr>
             </thead>
-            {if:aPagedData[data]}
-            <tfoot>
-                <tr class="infos">
-                    <td class="right" colspan="9">
-                    {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
-                    </td>
-                </tr>
-            </tfoot>
-            {end:}
+
             <tbody>
-            {if:aPagedData[data]}
-                <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
-                    {if:aValue[isInstalled]}
-                    <!--ID-->
-                    <td>{aValue[module_id]}</td>
+            {if:aModules}
+                <tr class="{switchRowClass()}" flexy:foreach="aModules,key,oValue">
+                    {if:oValue.isInstalled}
 
                     <!--MODULE IMAGE-->
-                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}.gif" alt="" /></td>
+                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{oValue.name}.gif" alt="" /></td>
 
                     <!--EDIT MODULE LINK-->
                     <td class="left">
-                        <a href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
+                        <a href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}">{oValue.title}</a>
                     </td>
 
                     <!--DESCRIPTION-->
-                    <td class="left desc">{aValue[description]}</td>
+                    <td class="left desc">{oValue.description}</td>
+
+                    <!--MAINTAINER-->
+                    <td class="left desc">{oValue.maintainers}</td>
+
+                    <!--LICENSE-->
+                    <td class="left desc">{oValue.license}</td>
+
+                    <!--STATE-->
+                    <td class="left desc">{oValue.state}</td>
 
                     <!--ACTION-->
                     <td>
-                        <a href="{makeUrl(#uninstall#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
-                           title="{translate(#uninstall#)} {aValue[title]}"
+                        <a href="{makeUrl(#uninstall#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}"
+                           title="{translate(#uninstall#)} {oValue.title}"
                            onclick="return confirmDeleteWithMsg('{translate(#module deregister msg#)}')" >
                             <img src="{webRoot}/themes/{theme}/images/16/edit_remove.png" alt="{translate(#uninstall#)}" />
                         </a>
                     </td>
                     {else:}
-                    <!--ID-->
-                    <td>{aValue[module_id]}</td>
 
                     <!--MODULE IMAGE-->
-                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{aValue[name]}_disabled.gif" alt="" /></td>
+                    <td><img src="{webRoot}/themes/{theme}/images/16/module_{oValue.name}_disabled.gif" alt="" /></td>
 
                     <!--EDIT MODULE LINK-->
                     <td class="left">
-                        <a class="disabled" href="{makeUrl(#edit#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}">{aValue[title]}</a>
+                        <a class="disabled" href="{makeUrl(#edit#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}">{oValue.title}</a>
                     </td>
 
                     <!--DESCRIPTION-->
-                    <td class="left desc disabled">{aValue[description]}</td>
+                    <td class="left desc disabled">{oValue.description}</td>
+
+                    <!--MAINTAINER-->
+                    <td class="left desc">{oValue.maintainers}</td>
+
+                    <!--LICENSE-->
+                    <td class="left desc">{oValue.license}</td>
+
+                    <!--STATE-->
+                    <td class="left desc">{oValue.state}</td>
 
                     <!--ACTION-->
                     <td>
                         <!--INSTALL-->
-                        <a href="{makeUrl(#install#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
-                           title="{translate(#install#)} {aValue[title]}" >
+                        <a href="{makeUrl(#install#,#module#,#default#,aModules,#frmModuleName|name#,key)}"
+                           title="{translate(#install#)} {oValue.title}" >
                             <img src="{webRoot}/themes/{theme}/images/16/edit_add.png" alt="{translate(#install#)}" />
                         </a>
-
-                        <!--DEREGISTER-->
-                        <a href="{makeUrl(#deregister#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
-                           title="{translate(#deregister#)} {aValue[title]}" >
-                            <img src="{webRoot}/themes/{theme}/images/16/action_deregister.gif" alt="{translate(#deregister#)}" />
-                        </a>
-
+                        &nbsp;
                         <!--DELETE-->
-                        <a href="{makeUrl(#delete#,#module#,#default#,aPagedData[data],#frmModuleId|module_id#,key)}"
-                           title="{translate(#remove#)} {aValue[title]}"
+                        <a href="{makeUrl(#delete#,#module#,#default#,aModules,#frmModuleName|name#,key)}"
+                           title="{translate(#remove#)} {oValue.title}"
                            onclick="return confirmDeleteWithMsg('{translate(#module deletion msg#)}')" >
                             <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#remove#)}" />
                         </a>
@@ -107,3 +125,6 @@
         </table>
     </div>
 </div>
+<form id="displayControl" flexy:ignore>
+<p><input type="hidden" id="displayDeRegisteredModules" name="displayDeRegisteredModules" value="" /></p>
+</form>
