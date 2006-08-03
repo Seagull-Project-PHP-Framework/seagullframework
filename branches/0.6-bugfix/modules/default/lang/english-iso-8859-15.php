@@ -15,7 +15,7 @@
         'Module Manager' => 'Module Manager',
         'Module Manager :: Add' => 'Module Manager :: Add',
         'Module Manager :: Edit' => 'Module Manager :: Edit',
-        'Detect New Modules' => 'Detect New Modules',
+        'Refresh Module Listing' => 'Refresh Module Listing',
         'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
         'with sample data' => 'with sample data',
 
@@ -60,7 +60,7 @@
         'remove' => 'remove',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
-        'The name of the module must be the exact name of the folder containing files, beware of case sensiveness' => 'The name of the module must be the exact name of the folder containing files, beware of case sensiveness',
+        'The name of the module must be the exact name of the folder containing files, beware of case sensitivity' => 'The name of the module must be the exact name of the folder containing files, beware of case sensitivity',
         'Here you can write what you want' => 'Here you can write what you want',
 
 /*  NEWSLETTER BLOCK */

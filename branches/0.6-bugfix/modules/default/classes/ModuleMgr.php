@@ -97,14 +97,16 @@ class ModuleMgr extends SGL_Manager
         }
         $input->aDelete         = $req->get('frmDelete');
         $input->moduleId        = $req->get('frmModuleId');
+        $input->moduleName      = $req->get('frmModuleName');
         $aModules               = $req->get('module');
+        $input->displayDeRegisteredModules = $req->get('displayDeRegisteredModules');
 
-        if (count($aModules)) {
-            foreach ($aModules as $k => $module) {
-                $input->module[$k] = (object)$module;
-                $input->module[$k]->is_configurable = (isset($input->module[$k]->is_configurable)) ? 1 : 0;
-            }
-        }
+//        if (count($aModules)) {
+//            foreach ($aModules as $k => $module) {
+//                $input->module[$k] = (object)$module;
+//                $input->module[$k]->is_configurable = (isset($input->module[$k]->is_configurable)) ? 1 : 0;
+//            }
+//        }
 
         $input->submitted       = $req->get('submitted');
 
@@ -148,6 +150,8 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aAdminUris = SGL_Util::getAllModuleDirs($onlyRegistered = false);
+        $output->deRegisteredModulesChecked = ($output->displayDeRegisteredModules)
+            ? ' checked="checked"' : '';
     }
 
     function _cmd_syncModules($aModules)
@@ -176,105 +180,89 @@ class ModuleMgr extends SGL_Manager
 
     }
 
-    function _cmd_overview(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+//    function _cmd_overview(&$input, &$output)
+//    {
+//        SGL::logMessage(null, PEAR_LOG_DEBUG);
+//
+//        $aModules = $this->da->getAllModules();
+//        if (!PEAR::isError($aModules)) {
+//
+//            //  ensure modules installed with pear packager are in db
+//            #$this->_syncModules($aModules);
+//
+//            $ret = array();
+//            foreach ($aModules as $k => $oModule) {
+//
+//                //  split module/manager values out as object properties
+//                if (strpos($oModule->admin_uri, '/') !== false) {
+//                    list($oModule->module, $oModule->manager) = explode('/', $oModule->admin_uri);
+//
+//                } elseif (!empty($oModule->admin_uri)) {
+//                    $oModule->module = $oModule->admin_uri;
+//                    $oModule->manager = '';
+//                } else {
+//                    $oModule->module = '';
+//                    $oModule->manager = '';
+//                }
+//                $oModule->bgnd = ($oModule->is_configurable) ? 'bgnd' : 'outline';
+//                $oModule->breakRow = !((count($ret)+1) % SGL_ICONS_PER_ROW);
+//                $ret[] = $oModule;
+//            }
+//            $output->aModules = $ret;
+//        } else {
+//            SGL::raiseError('getting module list failed', SGL_ERROR_NODATA);
+//        }
+//    }
 
-        $aModules = $this->da->getAllModules();
-        if (!PEAR::isError($aModules)) {
+//    function _cmd_detect(&$input, &$output)
+//    {
+//        SGL::logMessage(null, PEAR_LOG_DEBUG);
+//
+//        $aAllModules = SGL_Util::getAllModuleDirs($onlyRegistered = false);
+//        $aRegisteredModules = SGL_Util::getAllModuleDirs();
+//        $aDiff = array_diff($aAllModules, $aRegisteredModules);
+//
+//        $aModules = array();
+//        foreach ($aDiff as $modulename) {
+//            $module = new stdClass();
+//            $module->name = $modulename;
+//            $module->description = 'your description here ...';
+//            $module->icon = "48/module_default.png";
+//            $aModules[] = $module;
+//        }
+//
+//        $output->pageTitle = 'Module Manager :: Discovered';
+//        $output->action = 'insert';
+//        $output->mode = 'detect';
+//        $output->aModules = $aModules;
+//        $output->template  = 'modulesDetected.html';
+//    }
 
-            //  ensure modules installed with pear packager are in db
-            #$this->_syncModules($aModules);
-
-            $ret = array();
-            foreach ($aModules as $k => $oModule) {
-
-                //  split module/manager values out as object properties
-                if (strpos($oModule->admin_uri, '/') !== false) {
-                    list($oModule->module, $oModule->manager) = explode('/', $oModule->admin_uri);
-
-                } elseif (!empty($oModule->admin_uri)) {
-                    $oModule->module = $oModule->admin_uri;
-                    $oModule->manager = '';
-                } else {
-                    $oModule->module = '';
-                    $oModule->manager = '';
-                }
-                $oModule->bgnd = ($oModule->is_configurable) ? 'bgnd' : 'outline';
-                $oModule->breakRow = !((count($ret)+1) % SGL_ICONS_PER_ROW);
-                $ret[] = $oModule;
-            }
-            $output->aModules = $ret;
-        } else {
-            SGL::raiseError('getting module list failed', SGL_ERROR_NODATA);
-        }
-    }
-
-    function _cmd_detect(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $aAllModules = SGL_Util::getAllModuleDirs($onlyRegistered = false);
-        $aRegisteredModules = SGL_Util::getAllModuleDirs();
-        $aDiff = array_diff($aAllModules, $aRegisteredModules);
-
-        $aModules = array();
-        foreach ($aDiff as $modulename) {
-            $module = new stdClass();
-            $module->name = $modulename;
-            $module->description = 'your description here ...';
-            $module->icon = "48/module_default.png";
-            $aModules[] = $module;
-        }
-
-        $output->pageTitle = 'Module Manager :: Discovered';
-        $output->action = 'insert';
-        $output->mode = 'detect';
-        $output->aModules = $aModules;
-        $output->template  = 'modulesDetected.html';
-    }
-
-    function _cmd_insert(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->template = 'moduleList.html';
-
-        foreach ($input->module as $module) {
-            if (isset($module->register)) {
-                $oModule = $this->da->getModuleById();
-                $oModule->setFrom($module);
-                $ok = $this->da->addModule($oModule);
-            }
-        }
-        SGL::raiseMsg('Module successfully registered', true,
-            SGL_MESSAGE_INFO);
-    }
-
-    function _cmd_add(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->pageTitle = 'Module Manager :: Add';
-        $output->action = 'insert';
-        $output->template  = 'moduleEdit.html';
-
-        $module = new stdClass();
-        $module->icon = "48/module_default.png";
-        $output->aModules = array($module);
-    }
+//    function _cmd_insert(&$input, &$output)
+//    {
+//        SGL::logMessage(null, PEAR_LOG_DEBUG);
+//
+//        $output->template = 'moduleList.html';
+//
+//        foreach ($input->module as $module) {
+//            if (isset($module->register)) {
+//                $oModule = $this->da->getModuleById();
+//                $oModule->setFrom($module);
+//                $ok = $this->da->addModule($oModule);
+//            }
+//        }
+//        SGL::raiseMsg('Module successfully registered', true,
+//            SGL_MESSAGE_INFO);
+//    }
 
     function _cmd_install(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get module name
-        $oModule = $this->da->getModuleById($input->moduleId);
-
         $data = array(
             'createTables' => 1,
             'insertSampleData' => 1,
-            'aModuleList' => array($oModule->name),
+            'aModuleList' => array($input->moduleName),
             'moduleInstall' => true,
             );
         define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
@@ -296,11 +284,50 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $ok = $runner->main();
 
-        //  de-register original module placeholder
-        $rm = DB_DataObject::factory($this->conf['table']['module']);
-        $rm->get($input->moduleId);
-        $ok = $rm->delete();
+        //  check for errors
+
         SGL::raiseMsg('Module successfully installed', false, SGL_MESSAGE_INFO);
+    }
+
+    function _cmd_uninstall(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  drop tables
+        require_once SGL_CORE_DIR . '/Sql.php';
+        $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
+        //  get all tables defined in this module's schema
+        $oModule = $this->da->getModuleById($input->moduleId);
+
+        //  disallow uninstalling default modules
+        require_once SGL_CORE_DIR. '/Install/Common.php';
+        SGL_Install_Common::getMinimumModuleList();
+        if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
+            SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
+                SGL_MESSAGE_ERROR);
+        } else {
+            $schema =  SGL_MOD_DIR . '/' . $oModule->name . '/data/schema.'.$dbShortname.'.sql';
+            if (is_file($schema)) {
+                $aTableNames = SGL_Sql::extractTableNamesFromSchemaFile($schema);
+
+                foreach ($aTableNames as $tableName) {
+                    $query = 'DROP TABLE ' . $this->dbh->quoteIdentifier($tableName);
+                    $result = $this->dbh->query($query);
+                }
+            }
+            //  de-register module
+            $rm = DB_DataObject::factory($this->conf['table']['module']);
+            $rm->get($input->moduleId);
+            $ok = $rm->delete();
+
+            //  delete perms records
+            //  delete related navigation
+            //  remove config keys
+            //  remove dbdo links
+
+            SGL::raiseMsg('The module was successfully uninstalled', false,
+                SGL_MESSAGE_INFO);
+        }
     }
 
     function _cmd_edit(&$input, &$output)
@@ -348,66 +375,19 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get module name
-        $oModule = $this->da->getModuleById($input->moduleId);
-
         //  delete module files
         $msg = 'The module\'s directory does not appear to be writable and therefore
             could not be removed, please give the webserver permissions to write to it';
-        $moduleDir =  SGL_MOD_DIR . '/' . $oModule->name;
+        $moduleDir =  SGL_MOD_DIR . '/' . $input->moduleName;
         if (is_writable($moduleDir)) {
             require_once 'System.php';
             $success = System::rm(array('-r', $moduleDir));
         }
 
-        //  de-register module
         if (isset($success) && $success == true) {
-            $rm = DB_DataObject::factory($this->conf['table']['module']);
-            $rm->get($input->moduleId);
-            $ok = $rm->delete();
-        }
-
-        if (isset($ok) && $ok == true
-                && isset($success) && $success == true) {
             SGL::raiseMsg('The module was successfully removed', false, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseMsg($msg, false, SGL_MESSAGE_ERROR);
-        }
-    }
-
-    function _cmd_uninstall(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  drop tables
-        require_once SGL_CORE_DIR . '/Sql.php';
-        $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
-        //  get all tables defined in this module's schema
-        $oModule = $this->da->getModuleById($input->moduleId);
-
-        //  disallow uninstalling default modules
-        require_once SGL_CORE_DIR. '/Install/Common.php';
-        SGL_Install_Common::getMinimumModuleList();
-        if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
-            SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
-                SGL_MESSAGE_ERROR);
-        } else {
-            $schema =  SGL_MOD_DIR . '/' . $oModule->name . '/data/schema.'.$dbShortname.'.sql';
-            if (is_file($schema)) {
-                $aTableNames = SGL_Sql::extractTableNamesFromSchemaFile($schema);
-
-                foreach ($aTableNames as $tableName) {
-                    $query = 'DROP TABLE ' . $this->dbh->quoteIdentifier($tableName);
-                    $result = $this->dbh->query($query);
-                }
-            }
-            //  delete perms records
-            //  delete related navigation
-            //  remove config keys
-            //  remove dbdo links
-
-            SGL::raiseMsg('The module was successfully uninstalled', false,
-                SGL_MESSAGE_INFO);
         }
     }
 
@@ -417,31 +397,31 @@ class ModuleMgr extends SGL_Manager
 
         $output->template = 'moduleList.html';
         $query = "SELECT * FROM {$this->conf['table']['module']} ORDER BY name";
-
-        $limit = $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-            'spacesBeforeSeparator' => 0,
-            'spacesAfterSeparator'  => 0,
-            'curPageSpanPre'        => '<span class="currentPage">',
-            'curPageSpanPost'       => '</span>',
-        );
-        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+        $aModules = $this->dbh->getAll($query);
 
         // if there are modules, determine whether installed
-        if (count($aPagedData['data'])) {
+        if (count($aModules)) {
             require_once SGL_CORE_DIR . '/Sql.php';
-            foreach ($aPagedData['data'] as $k => $aModule) {
-                $aPagedData['data'][$k]['isInstalled'] = $this->_isInstalled($aModule['name']);
+            foreach ($aModules as $k => $oModule) {
+                $aModules[$k]->isInstalled = $this->_isInstalled($oModule->name);
             }
         }
-        //  determine if pagination is required
-        $output->aPagedData = $aPagedData;
-        if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
-            $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        if ($input->displayDeRegisteredModules) {
+            $aAllModules = SGL_Util::getAllModuleDirs($onlyRegistered = false);
+            $aRegisteredModules = SGL_Util::getAllModuleDirs();
+            $aDiff = array_diff($aAllModules, $aRegisteredModules);
+
+            $aDeRegisteredModules = array();
+            foreach ($aDiff as $modulename) {
+                $module = new stdClass();
+                $module->name = $module->title = $modulename;
+                $module->isInstalled = false;
+                $module->description = 'Details available when installed ...';
+                $aDeRegisteredModules[] = $module;
+            }
+            $aModules = array_merge($aModules, $aDeRegisteredModules);
         }
+        $output->aModules = $aModules;
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
@@ -453,14 +433,15 @@ class ModuleMgr extends SGL_Manager
             $aInstalledTables = $this->dbh->getListOf('tables');
             $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
         }
-        //  get all table defined in this module's schema
+        //  get alls table defined in this module's schema
         $dataDir =  SGL_MOD_DIR . '/' . $moduleName . '/data';
         $schemaFile =  '/' . $dataDir . '/schema.'.$dbShortname.'.sql';
+        $dataFile =  '/' . $dataDir . '/data.default.'.$dbShortname.'.sql';
         //  Some modules, like export, don't have schema and don't need installing.
         //  is_file($dataDir) is for cases, on delete, where some web-writable files
         //  are deleted, but not all
         if (!is_file($schemaFile)) {
-            return is_file($dataDir) ? true : false ;
+            return is_file($dataFile) ? true : false ;
         }
         $aTablesByModule = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
         //  check to see tables in existing db correspond to those specified in schema

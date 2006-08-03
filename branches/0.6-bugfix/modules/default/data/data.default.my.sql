@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', 'default/maintenance', '48/module_default.png', '', NULL, NULL, NULL);
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'default', 'Default', 'The ''Default'' module includes functionality that is needed in every install, for example, configuration and interface language manangement, and module management.', 'default/maintenance', '48/module_default.png', 'Demian Turner', NULL, 'BSD', 'beta');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
@@ -17,7 +17,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'configmgr_cmd_update', 'Permissio
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'defaultmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'defaultmgr_cmd_list', '', @moduleId);
-#INSERT INTO permission VALUES (11, 'defaultmgr_cmd_showNews', '', @moduleId);
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_list', NULL, @moduleId);

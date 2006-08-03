@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'event', 'Events', 'For managing calendar and event functionality.', NULL, '48/module_contactus.png', '', NULL, NULL, NULL);
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'event', 'Events', 'For managing calendar and event functionality.', NULL, '48/module_contactus.png', 'Demian Turner', NULL, 'GPL', 'devel');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
