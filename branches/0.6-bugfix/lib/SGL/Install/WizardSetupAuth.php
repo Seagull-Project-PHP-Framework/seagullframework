@@ -61,7 +61,7 @@ class WizardSetupAuth extends HTML_QuickForm_Page
         $this->_formBuilt = true;
 
         if (!isset($_SESSION['authString'])) {
-            $_SESSION['authString'] = md5(rand());
+            $_SESSION['authString'] = md5($_SERVER['HTTP_HOST'] . SGL_PATH);
         }
 
         $this->addElement('header',     null, 'Seagull Setup Authorisation: page 2 of 6');
