@@ -81,7 +81,7 @@ class BugMgr extends SGL_Manager
         $this->validated    = true;
         $input->error       = null;
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = 'masterMinimal.html';
+        $input->masterTemplate = 'masterLeftCol.html';
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->submitted   = $req->get('submitted');

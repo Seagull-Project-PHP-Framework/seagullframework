@@ -121,9 +121,11 @@
 
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',
-        'send bug report' => 'send bug report',
         'First Name' => 'First Name',
         'Last Name' => 'Last Name',
+        'Severity of bug' => 'Severity of bug',
+        'Comment' => 'Comment',
+        'Your environment' => 'Your environment',
         'You must fill in your description' => 'You must fill in your description',
         'You must fill in your comment' => 'You must fill in your comment',
         'Your email is not correctly formatted' => 'Your email is not correctly formatted',
