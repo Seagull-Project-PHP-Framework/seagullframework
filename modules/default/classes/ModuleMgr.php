@@ -306,21 +306,25 @@ class ModuleMgr extends SGL_Manager
             SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
                 SGL_MESSAGE_ERROR);
         } else {
-            $schema =  SGL_MOD_DIR . '/' . $oModule->name . '/data/schema.'.$dbShortname.'.sql';
-            if (is_file($schema)) {
-                $aTableNames = SGL_Sql::extractTableNamesFromSchemaFile($schema);
 
-                foreach ($aTableNames as $tableName) {
-                    $query = 'DROP TABLE ' . $this->dbh->quoteIdentifier($tableName);
-                    $result = $this->dbh->query($query);
-                }
-            }
+            $data = array(
+                'aModuleList' => array($oModule->name),
+                'moduleId' => $oModule->module_id,
+                'createTables' => 1,
+                );
+            define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
+            require_once SGL_CORE_DIR . '/Task/Install.php';
+            $runner = new SGL_TaskRunner();
+            $runner->addData($data);
+            $runner->addTask(new SGL_Task_DropTables());
+            $runner->addTask(new SGL_Task_RemoveSampleData());
+            $ok = $runner->main();
+
             //  de-register module
             $rm = DB_DataObject::factory($this->conf['table']['module']);
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            //  delete perms records DELETE FROM permission WHERE module_id = $id
             //  delete related navigation DELETE FROM section WHERE title = $title
             //  remove config table keys
             //  remove dbdo links

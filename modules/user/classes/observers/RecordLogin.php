@@ -14,7 +14,7 @@ class RecordLogin extends SGL_Observer
             $login->usr_id = $uid;
             $login->date_time = SGL_Date::getTime(true);
             $login->remote_ip = $_SERVER['REMOTE_ADDR'];
-            $login->insert();
+            $ok = $login->insert();
         }
     }
 }

@@ -587,6 +587,30 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 /**
  * @package Task
  */
+class SGL_Task_RemoveSampleData extends SGL_Task
+{
+    function run($data)
+    {
+        require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
+        $da = & DA_Default::singleton();
+
+        //  get perms associated with module
+        $aPermNames = $da->getPermNamesByModuleId($data['moduleId']);
+
+        //  delete role_permissions
+        foreach ($aPermNames as $permName) {
+            $permId = $da->getPermissionIdByPermName($permName);
+            $ok = $da->deleteRolePermissionByPermId($permId);
+        }
+        //  then delete perms
+        $ok = $da->deletePermsByModuleId($data['moduleId']);
+
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
 {
     function run($data)
