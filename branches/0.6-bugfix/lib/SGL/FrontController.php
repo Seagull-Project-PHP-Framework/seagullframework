@@ -147,9 +147,9 @@ class SGL_FrontController
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
         $init->addTask(new SGL_Task_SetGlobals());
+        $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetupPearErrorCallback());
         $init->addTask(new SGL_Task_SetupCustomErrorHandler());
-        $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->main();
