@@ -393,7 +393,7 @@ pre.codeExample {
 }
 
 /*
-========================Miscellaneous=========================*/
+========================Miscellaneous2=========================*/
 
 .tipOwner {
     position: relative;

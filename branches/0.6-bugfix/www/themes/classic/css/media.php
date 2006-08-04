@@ -62,10 +62,16 @@
 		clear: both;
 		visibility:hidden;
 	}
-	#view_type{display: inline-block;}
-	/* Hides from IE Mac \*/
-	* html #view_type {height: 1%;}
-	#view_type{display:block;}
+	#view_type{
+	   display: inline-block;
+	}
+	/* Hides from IE Mac */
+	* html #view_type {
+	   height: 1%;
+	}
+	#view_type{
+	   display:block;
+	}
 	/* End Hack */
 
 
