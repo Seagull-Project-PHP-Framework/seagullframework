@@ -312,7 +312,7 @@ dd .error {
     border: 2px solid <?php echo $primaryDark ?>;
     color: <?php echo $primary ?>;
 }
-.error {
+.error, .required {
     color: <?php echo $error ?>;
 }
 
