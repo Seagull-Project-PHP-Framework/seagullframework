@@ -67,6 +67,13 @@ class DefaultMgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
         $input->pageTitle   = $this->pageTitle;
+
+        // congratulate user on successful install their first visit
+        $input->welcome     = $req->get('welcome');
+        if ($input->welcome) {
+            SGL::raiseMsg('Congratulations, install successful!', false, SGL_MESSAGE_INFO);
+        }
+
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
     }
 
