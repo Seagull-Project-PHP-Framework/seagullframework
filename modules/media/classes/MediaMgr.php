@@ -228,8 +228,6 @@ class MediaMgr extends FileMgr
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-		$output->addOnLoadEvent("new Effect.BlindUp($('view_type'),'blind')");
     }
 
     function ensureUploadDirWritable($targetDir)
@@ -471,6 +469,7 @@ class MediaMgr extends FileMgr
 //            LEFT JOIN {$this->conf['table']['user']} u ON u.usr_id = m.added_by
 //            ORDER BY  m.date_created DESC";
 //        $output->results = $this->dbh->getAll($query);
+        $output->addOnLoadEvent("new Effect.BlindUp($('view_type'),'blind')");
         $output->addOnLoadEvent('remoteHW.getMediaByFileType()');
     }
 

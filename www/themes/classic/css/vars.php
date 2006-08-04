@@ -9,6 +9,7 @@
 
     $secondary              = '#0099CC'; // blue
     $secondaryDark          = '#2666A3'; //
+    $secondaryDarker        = '#184a84'; // darker blue
     $secondaryLight         = '#E5F8FF'; //
 
     $tertiary               = '#CC0099'; // cyan
@@ -27,7 +28,7 @@
     $leftColWidth           = 180;
     $rightColWidth          = 180;
     /* middle col width will be calculated */
-    
+
     $contentMinHeight       = '320px';
 
 /* Messages and errors
@@ -54,10 +55,15 @@
     $blocksBackgroundTitle  = $greyLightest;
     $blocksColorBody        = $greyLightest; // ^ ^ ^
     $blocksColorTitle       = $greyLightest; // | | |
-    
+
 /* Table related vars
     ------------------------------------------------- */
     $tableRowLight          = $greyLightest;
     $tableRowDark           = $grey;
+
+/* Button related vars
+    ------------------------------------------------- */
+    $button     = '#ffffff #333333 #333333 #ffffff';
+    $buttonAlt     = '#333333 #ffffff #ffffff #333333';
 
 ?>
