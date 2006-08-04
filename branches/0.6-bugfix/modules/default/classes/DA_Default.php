@@ -155,12 +155,56 @@ class DA_Default extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $permId = ($permId === null) ? 0 : $permId;
-        $query = "  SELECT  module_id
-                    FROM    {$this->conf['table']['permission']}
-                    WHERE   permission_id = $permId
+        $query = "
+            SELECT  module_id
+            FROM    {$this->conf['table']['permission']}
+            WHERE   permission_id = $permId
                 ";
         $moduleId = $this->dbh->getOne($query);
         return $moduleId;
+    }
+
+    function getPermissionIdByPermName($permName)
+    {
+        $query = "
+            SELECT  permission_id
+            FROM    {$this->conf['table']['permission']}
+            WHERE   name = '$permName'
+                ";
+        $permId = $this->dbh->getOne($query);
+        return $permId;
+    }
+
+    function deleteRolePermissionByPermId($permId)
+    {
+        $query = "
+            DELETE FROM {$this->conf['table']['role_permission']}
+            WHERE permission_id = $permId
+                ";
+        return $this->dbh->query($query);
+    }
+
+    function deletePermsByModuleId($moduleId)
+    {
+        $query = "
+            DELETE
+            FROM {$this->conf['table']['permission']}
+            WHERE module_id = " . $moduleId;
+        $ok = $this->dbh->query($query);
+        return $ok;
+    }
+
+    function getPermNamesByModuleId($moduleId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "
+            SELECT  name
+            FROM    {$this->conf['table']['permission']}
+            WHERE   module_id = $moduleId
+                ";
+        $aPermNames = $this->dbh->getCol($query);
+        return $aPermNames;
     }
 
     function getPackagesByChannel($channel='phpkitchen')
