@@ -745,7 +745,10 @@ class SGL_Task_RemoveNavigation extends SGL_Task
             if (file_exists($navigationPath)) {
                 require_once $navigationPath;
                 foreach ($aSections as $aSection) {
-                    $ok = $da->deleteSectionByTitle($aSection['title']);
+                    $sectionId = $da->getSectionIdByTitle($aSection['title']);
+                    if ($sectionId) {
+                        $ok = $da->deleteSectionById($sectionId);
+                    }
                 }
             }
         }
