@@ -326,7 +326,6 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            //  remove config table keys
             //  remove dbdo links
 
             SGL::raiseMsg('The module was successfully uninstalled', false,
