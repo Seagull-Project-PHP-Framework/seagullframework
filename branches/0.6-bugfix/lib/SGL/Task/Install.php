@@ -428,8 +428,8 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
 
             $dbh = & SGL_DB::singleton();
 
-            //  drop 'sequence' table
-            if ($this->conf['db']['type'] == 'mysql_SGL') {
+            //  drop 'sequence' table unless we're installing a module
+            if ($this->conf['db']['type'] == 'mysql_SGL' && !($data['moduleInstall'])) {
                 $aSeqTableName = SGL_Sql::extractTableNamesFromSchemaFile(SGL_ETC_DIR . '/sequence.my.sql');
                 foreach ($aSeqTableName as $seqTableName) {
                     $query = 'DROP TABLE '. $dbh->quoteIdentifier($seqTableName);
@@ -714,6 +714,29 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
         }
     }
 }
+
+/**
+ * @package Task
+ */
+class SGL_Task_RemoveNavigation extends SGL_Task
+{
+    function run($data)
+    {
+        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+        $da = & DA_Navigation::singleton();
+
+        foreach ($data['aModuleList'] as $module) {
+            $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
+            if (file_exists($navigationPath)) {
+                require_once $navigationPath;
+                foreach ($aSections as $aSection) {
+                    $ok = $da->deleteSectionByTitle($aSection['title']);
+                }
+            }
+        }
+    }
+}
+
 
 /**
  * @package Task

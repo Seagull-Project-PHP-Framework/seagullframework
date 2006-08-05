@@ -298,7 +298,6 @@ class ModuleMgr extends SGL_Manager
         $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
         //  get all tables defined in this module's schema
         $oModule = $this->da->getModuleById($input->moduleId);
-
         //  disallow uninstalling default modules
         require_once SGL_CORE_DIR. '/Install/Common.php';
         SGL_Install_Common::getMinimumModuleList();
@@ -311,6 +310,7 @@ class ModuleMgr extends SGL_Manager
                 'aModuleList' => array($oModule->name),
                 'moduleId' => $oModule->module_id,
                 'createTables' => 1,
+                'moduleInstall' => true,
                 );
             define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
             require_once SGL_CORE_DIR . '/Task/Install.php';
@@ -318,6 +318,7 @@ class ModuleMgr extends SGL_Manager
             $runner->addData($data);
             $runner->addTask(new SGL_Task_DropTables());
             $runner->addTask(new SGL_Task_RemoveSampleData());
+            $runner->addTask(new SGL_Task_RemoveNavigation());
             $ok = $runner->main();
 
             //  de-register module
@@ -325,7 +326,6 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            //  delete related navigation DELETE FROM section WHERE title = $title
             //  remove config table keys
             //  remove dbdo links
 
