@@ -1027,6 +1027,17 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
             }
         }
         if (!empty($linkData)) {
+            //  first check to ensure key doesn't exist if a module is being installed
+            if (!empty($data['moduleInstall'])) {
+                $aOrigData = parse_ini_file($linksFile, true);
+                $aNewData = parse_ini_file($linksPath, true);
+                foreach ($aNewData as $key => $aValues) {
+                    if (array_key_exists($key, $aOrigData)) {
+                        //  key already exists, so return instead of adding it
+                        return;
+                    }
+                }
+            }
             if (!$handle = fopen($linksFile, 'a+')) {
                 SGL_Install_Common::errorPush(
                     PEAR::raiseError('could not open links file for writing'));
