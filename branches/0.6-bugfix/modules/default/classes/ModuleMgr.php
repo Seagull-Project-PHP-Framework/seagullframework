@@ -326,8 +326,6 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            //  remove dbdo links
-
             SGL::raiseMsg('The module was successfully uninstalled', false,
                 SGL_MESSAGE_INFO);
         }
