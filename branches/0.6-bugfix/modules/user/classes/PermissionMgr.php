@@ -120,7 +120,7 @@ class PermissionMgr extends SGL_Manager
             $input->pageTitle = ($input->action == 'update')
                 ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
-            $input->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+            $input->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
             if (!empty($input->perm->module_id)) {
                 $input->currentModule = $input->perm->module_id;
             }
@@ -136,7 +136,7 @@ class PermissionMgr extends SGL_Manager
         $output->perm = DB_DataObject::factory($this->conf['table']['permission']);
 
         // setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $input->permId;
     }
 
@@ -278,7 +278,7 @@ class PermissionMgr extends SGL_Manager
         $output->perm = $oPerm;
 
         //  setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $this->da->getModuleIdByPermId($input->permId);
     }
 
@@ -371,7 +371,7 @@ class PermissionMgr extends SGL_Manager
         $output->addOnLoadEvent("switchRowColorOnHover()");
 
         //  setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $output->moduleId;
    }
 

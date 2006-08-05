@@ -105,7 +105,7 @@ class DA_Default extends SGL_Manager
      * @param integer $type
      * @return array
      */
-    function retrieveAllModules($type = '')
+    function getModuleHash($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -164,26 +164,14 @@ class DA_Default extends SGL_Manager
         return $moduleId;
     }
 
-    function getPermissionIdByPermName($permName)
-    {
-        $query = "
-            SELECT  permission_id
-            FROM    {$this->conf['table']['permission']}
-            WHERE   name = '$permName'
-                ";
-        $permId = $this->dbh->getOne($query);
-        return $permId;
-    }
-
-    function deleteRolePermissionByPermId($permId)
-    {
-        $query = "
-            DELETE FROM {$this->conf['table']['role_permission']}
-            WHERE permission_id = $permId
-                ";
-        return $this->dbh->query($query);
-    }
-
+    /**
+     * Give the module ID, delete relevant perms.
+     *
+     * @param integer $moduleId
+     * @return boolean
+     *
+     * @todo move to DA_User
+     */
     function deletePermsByModuleId($moduleId)
     {
         $query = "
@@ -243,8 +231,39 @@ class DA_Default extends SGL_Manager
         return $ok;
     }
 
-//    function updateGuiTranslations($aTrans, $langID, $module)
-//    {
-//        SGL_Translation::updateGuiTranslation($aTrans, $langID, $module);
-//    }
+    /**
+     * Given the perm name, return the perm ID.
+     *
+     * @param string $permName
+     * @return integer
+     *
+     * @todo move to DA_User
+     */
+    function getPermissionIdByPermName($permName)
+    {
+        $query = "
+            SELECT  permission_id
+            FROM    {$this->conf['table']['permission']}
+            WHERE   name = '$permName'
+                ";
+        $permId = $this->dbh->getOne($query);
+        return $permId;
+    }
+
+    /**
+     * Given the perm ID, delete the relevant record from role_permission.
+     *
+     * @param integer $permId
+     * @return mixed
+     *
+     * @todo move to DA_User
+     */
+    function deleteRolePermissionByPermId($permId)
+    {
+        $query = "
+            DELETE FROM {$this->conf['table']['role_permission']}
+            WHERE permission_id = $permId
+                ";
+        return $this->dbh->query($query);
+    }
 }

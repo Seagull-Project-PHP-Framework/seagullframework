@@ -471,7 +471,7 @@ class UserMgr extends RegisterMgr
         $output->template = 'userPermsEdit.html';
 
         //  build module filter
-        $aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $input->moduleId;
 
         $aUserPerms = $this->da->getPermsByUserId($input->userID);
