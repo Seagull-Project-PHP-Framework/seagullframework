@@ -92,7 +92,7 @@ $aSections = array(
       'perms'           => SGL_GUEST,
         ),
     array (
-      'title'           => 'Home',
+      'title'           => 'Admin Home',
       'parent_id'       => SGL_NODE_USER,
       'uriType'         => 'dynamic',
       'module'          => 'default',
