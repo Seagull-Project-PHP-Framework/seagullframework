@@ -429,7 +429,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             $dbh = & SGL_DB::singleton();
 
             //  drop 'sequence' table unless we're installing a module
-            if ($this->conf['db']['type'] == 'mysql_SGL' && !($data['moduleInstall'])) {
+            if ($this->conf['db']['type'] == 'mysql_SGL' && (empty($data['moduleInstall']))) {
                 $aSeqTableName = SGL_Sql::extractTableNamesFromSchemaFile(SGL_ETC_DIR . '/sequence.my.sql');
                 foreach ($aSeqTableName as $seqTableName) {
                     $query = 'DROP TABLE '. $dbh->quoteIdentifier($seqTableName);
@@ -466,6 +466,21 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                         $displayHtml = $this->noFile;
                     } else {
                         $displayHtml = $this->success;
+                    }
+
+                    //  remove tablename in Config
+                    if (isset($data['moduleInstall'])) {
+                        $c = &SGL_Config::singleton();
+                        foreach ($aTableNames as $tableName) {
+                            $c->remove(array('table', $tableName));
+                        }
+                        //  save
+                        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+                        $ok = $c->save($configFile);
+
+                        if (PEAR::isError($ok)) {
+                            SGL_Install_Common::errorPush($ok);
+                        }
                     }
                     $this->updateHtml($module . '_drop', $displayHtml);
                 } else {
