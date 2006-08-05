@@ -13,6 +13,8 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+05-08-06    Renamed DA_Default::retrieveAllModules to DA_Default::getModuleHash()
+            to improve clarity
 02-08-06    Added regex tests for SGL_Sql::parse() (Randy Casburn)
 01-08-06    Added a security step in installer (Steven Stremciuc)
 01-08-06    Implemented admin GUI for ContentTypeMgr (AJ Tarachanowicz)
