@@ -290,6 +290,28 @@ class DA_Navigation extends SGL_Manager
         }
     }
 
+    function deleteSectionByTitle($title)
+    {
+        $sectionId = $this->getSectionIdByTitle($title);
+
+        //  remove section
+        if ($sectionId) {
+            $ok = $this->nestedSet->deleteNode($sectionId);
+            return $ok;
+        }
+    }
+
+    function getSectionIdByTitle($title)
+    {
+        $query = "
+            SELECT section_id
+            FROM {$this->conf['table']['section']}
+            WHERE title = '$title'";
+
+        $result = $this->dbh->getOne($query);
+        return $result;
+    }
+
     function deleteAliasBySectionId($sectionId)
     {
         $query = "
