@@ -602,7 +602,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 /**
  * @package Task
  */
-class SGL_Task_RemoveSampleData extends SGL_Task
+class SGL_Task_RemoveDefaultData extends SGL_Task
 {
     function run($data)
     {

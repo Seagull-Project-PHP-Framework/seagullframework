@@ -317,7 +317,7 @@ class ModuleMgr extends SGL_Manager
             $runner = new SGL_TaskRunner();
             $runner->addData($data);
             $runner->addTask(new SGL_Task_DropTables());
-            $runner->addTask(new SGL_Task_RemoveSampleData());
+            $runner->addTask(new SGL_Task_RemoveDefaultData());
             $runner->addTask(new SGL_Task_RemoveNavigation());
             $ok = $runner->main();
 
