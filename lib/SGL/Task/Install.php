@@ -203,7 +203,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.pg.sql';
             $this->filename2 = '/data.default.pg.sql';
             $this->filename3 = '/data.sample.pg.sql';
-            $this->filename4 = '/data.block.pg.sql';
+            $this->filename4 = '/data.block.add.pg.sql';
             $this->filename5 = '/constraints.pg.sql';
             break;
 
@@ -212,7 +212,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
             $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/data.block.my.sql';
+            $this->filename4 = '/data.block.add.my.sql';
             $this->filename5 = '/constraints.my.sql';
             break;
 
@@ -221,7 +221,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
             $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/data.block.my.sql';
+            $this->filename4 = '/data.block.add.my.sql';
             $this->filename5 = '/constraints.my.sql';
             break;
 
@@ -230,7 +230,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename1 = '/schema.oci.sql';
             $this->filename2 = '/data.default.oci.sql';
             $this->filename3 = '/data.sample.oci.sql';
-            $this->filename4 = '/data.block.oci.sql';
+            $this->filename4 = '/data.block.add.oci.sql';
             $this->filename5 = '/constraints.oci.sql';
             break;
         }
@@ -650,6 +650,31 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
                     $this->updateHtml($module . '_dataBlock', $this->noFile);
                 }
             }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_RemoveBlockData extends SGL_UpdateHtmlTask
+{
+    function run($data)
+    {
+
+        $this->setup();
+
+        //  Go back and load each module's default data, if there is a sql file in /data
+        foreach ($data['aModuleList'] as $module) {
+            $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
+
+            //  remove the module's block data
+            //  switch 'add' to 'remove'
+            $filename = str_replace('add', 'remove', $this->filename4);
+            if (is_file($modulePath . $filename)) {
+                $result = SGL_Sql::parse($modulePath . $filename, 0, array('SGL_Sql', 'execute'));
+            }
+
         }
     }
 }

@@ -319,6 +319,8 @@ class ModuleMgr extends SGL_Manager
             $runner->addTask(new SGL_Task_DropTables());
             $runner->addTask(new SGL_Task_RemoveDefaultData());
             $runner->addTask(new SGL_Task_RemoveNavigation());
+            $runner->addTask(new SGL_Task_RemoveBlockData());
+            $runner->addTask(new SGL_Task_SyncSequences());
             $ok = $runner->main();
 
             //  de-register module
