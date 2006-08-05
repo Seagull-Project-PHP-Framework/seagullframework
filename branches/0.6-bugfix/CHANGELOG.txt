@@ -13,6 +13,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+05-08-06    Implemented full module install/uninstall for admin users
 05-08-06    Renamed DA_Default::retrieveAllModules to DA_Default::getModuleHash()
             to improve clarity
 02-08-06    Added regex tests for SGL_Sql::parse() (Randy Casburn)
@@ -23,7 +24,7 @@ IMPROVEMENTS
             (Steven Stremciuc)
 29-07-06    Extracted execution from SGL_Sql::parseAndExecute(), added ability to
             extract all table names from a schema file
-27-07-06    Added possibility to custimise defaults in installer (Eric Persson)
+27-07-06    Added possibility to customise defaults in installer (Eric Persson)
 27-07-06    Minimal modules and no sample data are now defaults
 27-07-06    Removed dependencies between blocks and sections, you can now install
             blocks only when the relevant module is installed
