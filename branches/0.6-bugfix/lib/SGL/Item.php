@@ -671,13 +671,20 @@ class SGL_Item
      * @access  public
      * @param   boolean $bPublished Item published
      * @param   string  $language   Language
-     * @return  mixed   $html       HTML Output
+     * @return  mixed   $html       HTML Output or false if article not loaded
+     * by constructor.
+     * @see init()
      */
     function preview($bPublished = false, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!is_null($language)) {
+            //if article is not loaded user does not have permission to view
+            if (!$this->id) {
+                return false;
+            }
+            
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id, i.category_id
@@ -882,18 +889,21 @@ class SGL_Item
                 $language = SGL_Translation::getLangID();
             }
             $ret = $item->preview($bPublished, $language);
-            if (!is_a($ret, 'PEAR_Error')) {
-                $ret['creatorName'] = $item->creatorName;
-                $ret['createdByID'] = $item->createdByID;
-                $ret['startDate'] = $item->startDate;
-                $ret['type'] = $item->type;
-                return $ret;
-            } else {
-                return $ret;
+
+            //if article is not loaded user does not have permission to view
+            if (!empty($ret)) {
+                if (!is_a($ret, 'PEAR_Error')) {
+                    $ret['creatorName'] = $item->creatorName;
+                    $ret['createdByID'] = $item->createdByID;
+                    $ret['startDate'] = $item->startDate;
+                    $ret['type'] = $item->type;
+                    return $ret;
+                } else {
+                    return $ret;
+                }
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
