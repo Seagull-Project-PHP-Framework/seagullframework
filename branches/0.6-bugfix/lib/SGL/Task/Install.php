@@ -429,7 +429,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             $dbh = & SGL_DB::singleton();
 
             //  drop 'sequence' table unless we're installing a module
-            if ($this->conf['db']['type'] == 'mysql_SGL' && (empty($data['moduleInstall']))) {
+            if ($this->conf['db']['type'] == 'mysql_SGL' && !array_key_exists('moduleInstall', $data)) {
                 $aSeqTableName = SGL_Sql::extractTableNamesFromSchemaFile(SGL_ETC_DIR . '/sequence.my.sql');
                 foreach ($aSeqTableName as $seqTableName) {
                     $query = 'DROP TABLE '. $dbh->quoteIdentifier($seqTableName);
