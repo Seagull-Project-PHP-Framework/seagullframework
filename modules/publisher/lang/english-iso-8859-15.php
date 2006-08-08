@@ -92,6 +92,7 @@
         'You must select a file to upload' => 'You must select a file to upload',
         'There was an error attempting to download the file' => 'There was an error attempting to download the file',
         'The specified file does not appear to exist' => 'The specified file does not appear to exist',
+        'You do not have read permissions for this file' => 'You do not have read permissions for this file',
         'Please select a file to upload' => 'Please select a file to upload',
         
 /*  CONTENT TYPE MGR */
@@ -122,6 +123,10 @@
 
 /* WIKISCRAPE MGR */
         'WikiScrape Manager' => 'WikiScrape Manager',
+/* DOCUMENT BROWSER */
+        'Document Browser' => 'Document Browser',
+        'view' => 'view',
+        'download' => 'download',
 
     );
 ?>

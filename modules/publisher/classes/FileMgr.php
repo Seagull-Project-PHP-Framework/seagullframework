@@ -40,6 +40,7 @@
 
 require_once 'DB/DataObject.php';
 require_once SGL_CORE_DIR . '/Download.php';
+require_once SGL_CORE_DIR . '/Category.php';
 
 /**
  * For basic file operations.
@@ -72,23 +73,25 @@ class FileMgr extends SGL_Manager
         //  form vars
         $input->action          = $req->get('action');
         $input->submitted       = $req->get('submitted');
-        $input->assetID         = $req->get('frmAssetID');
+        $input->assetId         = $req->get('frmAssetID');
     }
 
     function _cmd_download(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $document = DB_DataObject::factory($this->conf['table']['document']);
-        $document->get($input->assetID);
+        $document = $this->getDocument($input->assetId);
+        if (PEAR::isError($document)) {
+            return $document;
+        }
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $mimeType = $document->mime_type;
-        $dl = &new SGL_Download();
-        $dl->setFile($fileName);
-        $dl->setContentType($mimeType);
-        $dl->setContentDisposition(HTTP_DOWNLOAD_ATTACHMENT, $document->name);
-        $dl->setAcceptRanges('none');
-        $error = $dl->send();
+        $download = &new SGL_Download();
+        $download->setFile($fileName);
+        $download->setContentType($mimeType);
+        $download->setContentDisposition(HTTP_DOWNLOAD_ATTACHMENT, $document->name);
+        $download->setAcceptRanges('none');
+        $error = $download->send();
         if (PEAR::isError($error)) {
             SGL::raiseError('There was an error attempting to download the file',
                 SGL_ERROR_NOFILE);
@@ -99,21 +102,33 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        // for the case PHP is compiled without gzip support
+        // redirect to standard download method
+        if (!function_exists('gzcompress'))  {
+            return SGL::raiseError('You need PHP compiled with zlib to use this feature',
+                SGL_ERROR_INVALIDCALL);
+        }
         require_once SGL_LIB_DIR . '/other/Zip.php';
-        $document = DB_DataObject::factory($this->conf['table']['document']);
-        $document->get($input->assetID);
+        $document = $this->getDocument($input->assetId);
+        if (PEAR::isError($document)) {
+            return $document;
+        }
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
         $buffer = file_get_contents($fileName);
         $zip = & new Zip();
         $zip->addFile($buffer, basename($fileName));
         $fileData = $zip->file();
-        $dl = &new SGL_Download();
-        $dl->setData($fileData);
-        $dl->setContentType('application/zip');
-        $dl->setContentDisposition(HTTP_DOWNLOAD_ATTACHMENT, $document->name . '.zip');
-        $dl->setAcceptRanges('none');
-        $dl->setContentTransferEncoding('binary');
-        $error = $dl->send();
+        $download = &new SGL_Download();
+        $download->setData($fileData);
+        $download->setContentType('application/zip');
+        $download->setContentDisposition(HTTP_DOWNLOAD_ATTACHMENT, $document->name . '.zip');
+        $download->setAcceptRanges('none');
+        $download->setContentTransferEncoding('binary');
+        $error = $download->send();
+        if (PEAR::isError($error)) {
+            SGL::raiseError('There was an error attempting to download the file',
+                SGL_ERROR_NOFILE);
+        }
         exit;
     }
 
@@ -121,27 +136,55 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'docBlank.html';
-        $document = DB_DataObject::factory($this->conf['table']['document']);
-        $document->get($input->assetID);
-        $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
-        if (!@is_file($fileName)) {
-            SGL::raiseError('The specified file does not appear to exist',
-                SGL_ERROR_NOFILE);
-            return false;
+        $document = $this->getDocument($input->assetId);
+        if (PEAR::isError($document)) {
+            return $document;
         }
+        $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
+        $output->template = 'docBlank.html';
         $mimeType = $document->mime_type;
-        $dl = &new SGL_Download();
-        $dl->setFile($fileName);
-        $dl->setContentType($mimeType);
-        $dl->setContentDisposition(HTTP_DOWNLOAD_INLINE, $document->name);
-        $dl->setAcceptRanges('none');
-        $error = $dl->send();
+        $download = &new SGL_Download();
+        $download->setFile($fileName);
+        $download->setContentType($mimeType);
+        $download->setContentDisposition(HTTP_DOWNLOAD_INLINE, $document->name);
+        $download->setAcceptRanges('none');
+        $error = $download->send();
         if (PEAR::isError($error)) {
             SGL::raiseError('There was an error displaying the file',
                 SGL_ERROR_NOFILE);
         }
         exit;
+    }
+
+   /*
+    * Returns an DB_DataObject Object containing document data.
+    *
+    * Checks if the file exists and the user has read perms.
+    *
+    * @param assetId ID of Document
+    */
+    function getDocument($assetId)
+    {
+        $document = DB_DataObject::factory($this->conf['table']['document']);
+        $document->get($assetId);
+
+        //  check if user has rights for the category the file is in.
+        $category = new SGL_Category();
+        $category->load($document->category_id);
+        if (!$category->hasPerms()) {
+            return SGL::raiseError(
+                'You do not have read permissions for this file',
+                SGL_ERROR_INVALIDAUTH);
+        }
+
+
+        $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
+        if (!@is_file($fileName)) {
+            return SGL::raiseError(
+                'The specified file does not appear to exist',
+                SGL_ERROR_NOFILE);
+        }
+        return $document;
     }
 }
 ?>
