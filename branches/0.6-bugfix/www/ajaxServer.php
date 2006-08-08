@@ -10,7 +10,6 @@ define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
 
 require_once $rootDir .'/lib/SGL/FrontController.php';
 SGL_FrontController::init();
-require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
 require_once 'HTML/AJAX/Server.php';
 
 class AutoServer extends HTML_AJAX_Server
@@ -20,8 +19,16 @@ class AutoServer extends HTML_AJAX_Server
 
 	function initMediaDAO()
 	{
+        require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
 		$da = & MediaDAO::singleton();
 		$this->registerClass($da);
+	}
+
+	function initEcommAjaxProvider()
+	{
+        require_once SGL_MOD_DIR . '/ecomm/classes/EcommAjaxProvider.php';
+		$provider = & EcommAjaxProvider::singleton();
+		$this->registerClass($provider);
 	}
 }
 
