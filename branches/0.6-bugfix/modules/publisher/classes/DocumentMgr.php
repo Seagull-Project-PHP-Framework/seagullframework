@@ -96,7 +96,7 @@ class DocumentMgr extends FileMgr
         $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom'):0;
         $input->catID           = $req->get('frmCatID');
         $input->docCatID        = $req->get('frmDocumentCatID');
-        $input->assetID         = $req->get('frmAssetID');
+        $input->assetId         = $req->get('frmAssetID');
         $input->catChangeToID   = $req->get('frmCategoryChangeToID');
         $input->deleteArray     = $req->get('frmDelete');
         $input->queryRange      = $req->get('frmQueryRange');
@@ -266,7 +266,7 @@ class DocumentMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'documentMgrEdit.html';
         $document = DB_DataObject::factory($this->conf['table']['document']);
-        $document->get($input->assetID);
+        $document->get($input->assetId);
         $document->getLinks('link_%s');
 
         //  prepare breadcrumbs and category changer
@@ -300,7 +300,7 @@ class DocumentMgr extends FileMgr
             return false;
         }
         $document = DB_DataObject::factory($this->conf['table']['document']);
-        $document->get($input->assetID);
+        $document->get($input->assetId);
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
         $document->name = SGL_String::censor($document->name);
