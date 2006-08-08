@@ -243,7 +243,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
-                            $aElems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
+                            $aElems = array_filter(preg_split('/[^a-z_0-9]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
 
                                 //  variable is of type $output->org['organisation_id'] = 'foo';
