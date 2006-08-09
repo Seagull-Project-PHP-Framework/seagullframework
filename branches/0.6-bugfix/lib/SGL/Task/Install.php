@@ -69,7 +69,7 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 /**
  * @package Task
  */
-class SGL_Task_InstallerSetup extends SGL_Task
+class SGL_Task_SetTimeout extends SGL_Task
 {
     function run($data)
     {

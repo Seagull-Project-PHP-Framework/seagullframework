@@ -166,22 +166,29 @@ class MaintenanceMgr extends SGL_Manager
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
         $installPassword = trim(substr($aLines[1], 1));
 
+        //  retrieve translation settings
+        $transContainer = ($this->conf['translation']['container'] == 'db') ? 1 : 0;
+        $transLanguage  = str_replace('_','-', explode(',', $this->conf['translation']['installedLanguages']));
+
         $data = array(
-            'createTables' => 1,
-            'insertSampleData' => $input->useSampleData,
-            'adminUserName' => 'admin',
-            'adminPassword' => 'admin',
-            'adminFirstName' => 'Demo',
-            'adminLastName' => 'Admin',
-            'adminEmail' => 'demian@phpkitchen.com',
-            'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
-            'serverName' =>  SGL_SERVER_NAME,
-            'installPassword' => $installPassword,
+            'createTables'          => 1,
+            'insertSampleData'      => $input->useSampleData,
+            'adminUserName'         => 'admin',
+            'adminPassword'         => 'admin',
+            'adminFirstName'        => 'Demo',
+            'adminLastName'         => 'Admin',
+            'adminEmail'            => 'demian@phpkitchen.com',
+            'aModuleList'           => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'serverName'            =>  SGL_SERVER_NAME,
+            'installPassword'       => $installPassword,
+            'storeTranslationsInDB' => $transContainer,
+            'installLangs'          => $transLanguage,
             );
 
         define('SGL_ADMIN_REBUILD', 1);
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_DropDatabase());
@@ -192,6 +199,7 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
@@ -204,11 +212,10 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
-        set_time_limit(120);
         $ok = $runner->main();
 
         if (PEAR::isError($ok)) {
-            return $res;
+            return $ok;
         } else {
             SGL::raiseMsg('Environment rebuilt successfully', false, SGL_MESSAGE_INFO);
         }
