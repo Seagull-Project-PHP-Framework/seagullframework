@@ -84,6 +84,16 @@ class SGL_EnvSummaryTask extends SGL_Task
                 ? get_cfg_var("cfg_file_path")
                 : "<strong>php.ini not available</strong>";
             $html .= '<tr><td colspan="3"><strong>Note:</strong> Your php configuration file (php.ini) is located at: ' . $cfg_file_path . '</td></tr>';
+
+            // check if open_basedir is set and warn user
+            $open_basedir = ini_get('open_basedir');
+            if (!empty($open_basedir)) {
+                $html .= '<tr><td colspan="3"><span style="color: orange; font-weight: bold;">Warning:</span> ' .
+                         'This server seems to be using the <strong>open_basedir</strong> php setting to limit ' .
+                         'all file operations to the following directory: <strong>' . $open_basedir . '</strong>. ' .
+                         'This may cause your installation and application ' .
+                         'to work incorrectly.</td></tr>';
+            }
         }
         if (!$this->mandatory) {
             $html .= '<tr><td>&nbsp;</td><td><em>Recommended</em></td><td><em>Actual</em></td></tr>'.EOL;
