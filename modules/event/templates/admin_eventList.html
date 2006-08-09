@@ -12,7 +12,7 @@
                 <thead>
                     <tr class="infos">
                         <td class="left" colspan="9">
-                            <input type="button" class="sgl-button" value="{translate(#new event#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#event#,#calendar#)}'" />
+                            <input type="button" class="sgl-button" value="{translate(#new event#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#event#,#event#)}'" />
                         </td>
                     </tr>
                     <tr>
@@ -35,7 +35,7 @@
                         <td align="center">{valueObj.end_date}</td>
                         <td align="center">{valueObj.status}</td>
                         <td align="center">
-                            <a href="{makeUrl(#edit#,#event#,#calendar#,results,#frmEventId|event_id#,key)}">
+                            <a href="{makeUrl(#edit#,#event#,#event#,results,#frmEventId|event_id#,key)}">
                                 <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
                             </a>
                         </td>
