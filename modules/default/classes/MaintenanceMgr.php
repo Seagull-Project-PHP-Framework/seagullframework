@@ -199,6 +199,7 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
