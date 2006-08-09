@@ -797,7 +797,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
             $this->setup();
 
-            $statusText .= 'loading languages';
+            $statusText = 'loading languages';
             $this->updateHtml('status', $statusText);
 
             //  fetch available languages

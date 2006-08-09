@@ -94,20 +94,36 @@ class SGL_Rebuild extends SGL_ProcessRequest
             SGL::raiseError('This script can only be run from command line',
                 SGL_ERROR_INVALIDCALL, PEAR_ERROR_DIE);
         }
+        //  get config singleton
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        //  retrieve Install password
+        $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
+        $installPassword = trim(substr($aLines[1], 1));
+
+        //  retrieve translation settings
+        $transContainer = ($conf['translation']['container'] == 'db') ? 1 : 0;
+        $transLanguage  = str_replace('_','-', explode(',', $conf['translation']['installedLanguages']));
 
         $data = array(
             'createTables' => 1,
             'insertSampleData' => 1,
             'adminUserName' => 'admin',
             'adminPassword' => 'admin',
-            'adminRealName' => 'Demo Admin',
+            'adminFirstName' => 'Demo',
+            'adminLastName' => 'Admin',
             'adminEmail' => 'demian@phpkitchen.com',
             'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
             'serverName' => isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'localhost',
+            'installPassword'       => $installPassword,
+            'storeTranslationsInDB' => $transContainer,
+            'installLangs'          => $transLanguage,
             );
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_DropDatabase());
@@ -118,6 +134,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
@@ -129,7 +146,6 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner->addTask(new SGL_Task_CreateMemberUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
-        set_time_limit(120);
         $ok = $runner->main();
     }
 }
