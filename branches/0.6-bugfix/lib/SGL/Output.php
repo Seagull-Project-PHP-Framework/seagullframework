@@ -239,14 +239,14 @@ class SGL_Output
      *
      * @access  public
      * @param   array   $elements   array of  values or radio button
-     * @param   array   $selected   array selected key ... single array with only zero index , i am need in array
+     * @param   string  $selected   selected key (there can be only one selected element in a radio list)
      * @param   string  $groupname  usually an array name that will contain all elements
-     * @param   integer $newline    how many columns to display for this radio group
+     * @param   integer $newline    how many columns to display for this radio group (one if not informed)
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
-     * @param     boolean $inTable    true for adding table formatting
+     * @param   boolean $inTable    true for adding table formatting
      * @return  string  $html       a list of radio buttons
      */
-    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true, $options = null)
+    function generateRadioList($elements, $selected, $groupname, $newline = false, $inTable = true, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (!is_array($elements) || (isset($options) && !is_array($options))) {
@@ -259,7 +259,7 @@ class SGL_Output
         $i = 0;
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
@@ -267,13 +267,15 @@ class SGL_Output
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
-                if ($selected[0] == $k ){
+                if ($selected == $k ){
                     $html .= " checked";
                 }
                 $html .= " />$v ";
-                $modvalue = $i % $newline;
-                if ($modvalue == 0 ) {
-                    $html .= "<br/>\n";
+                if ($newline) {
+                    $modvalue = $i % $newline;
+                    if ($modvalue == 0 ) {
+                        $html .= "<br/>\n";
+                    }
                 }
             }
         } else {
@@ -282,16 +284,18 @@ class SGL_Output
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
-                if ($selected[0] == $k ) {
+                if ($selected == $k ) {
                     $html .= " checked ";
                 }
                 $html .= " />$v </td>\n";
-                $modvalue = $i % $newline;
-                if ( $modvalue == 0 ) {
-                    if ($i < $elementcount){
-                        $html .="</tr>\n<tr>";
-                    } else {
-                        $html .="</tr>\n";
+                if ($newline) {                
+                    $modvalue = $i % $newline;
+                    if ( $modvalue == 0 ) {
+                        if ($i < $elementcount){
+                            $html .="</tr>\n<tr>";
+                        } else {
+                            $html .="</tr>\n";
+                        }
                     }
                 }
             }
