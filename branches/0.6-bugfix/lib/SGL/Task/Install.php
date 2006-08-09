@@ -1078,6 +1078,21 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
     }
 }
 
+class SGL_Task_SymLinkWwwData extends SGL_Task
+{
+    function run($data = null)
+    {
+        foreach ($data['aModuleList'] as $module) {
+            $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
+            if (file_exists($wwwDir)) {
+                if (is_writable(SGL_WEB_ROOT . "/$module")) {
+                    $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                }
+            }
+        }
+    }
+}
+
 /**
  * @package Task
  */

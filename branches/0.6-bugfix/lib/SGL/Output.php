@@ -628,5 +628,17 @@ class SGL_Output
         $argv = func_get_args();
         return @call_user_func_array('sprintf', $argv);
     }
+
+    function makeCssLink($theme, $navStylesheet, $moduleName)
+    {
+        //  check first if CSS file exists in module
+        if (is_file(SGL_MOD_DIR . "/$moduleName/www/css/$moduleName.php")) {
+            $ret = SGL_BASE_URL . "/themes/$theme/css/style.php?navStylesheet=$navStylesheet&moduleName=$moduleName&isSymlink=1";
+        //  else default to standard css loading with modulename passed as param
+        } else {
+            $ret = SGL_BASE_URL . "/themes/$theme/css/style.php?navStylesheet=$navStylesheet&moduleName=$moduleName";
+        }
+        return $ret;
+    }
 }
 ?>
