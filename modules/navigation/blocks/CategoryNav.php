@@ -43,7 +43,6 @@
  * @package block
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
- * @since   PHP 4.1
  */
 class Navigation_Block_CategoryNav
 {
@@ -51,6 +50,7 @@ class Navigation_Block_CategoryNav
     function init($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->javascriptSrc[] = 'TreeMenu.js';
         return $this->getBlockContent();
     }
 
@@ -61,7 +61,6 @@ class Navigation_Block_CategoryNav
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
         $menu = & new MenuBuilder('ExplorerBsd');
         $menu->setStartId(0);
-        //$html = '<img src="' . SGL_BASE_URL . '/themes/' . $theme . '/images/pixel.gif" width="165" height="1" alt="" /><br />';
         $html = $menu->toHtml();
         return $html;
     }

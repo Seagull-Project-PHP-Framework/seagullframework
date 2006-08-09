@@ -92,7 +92,7 @@ class ArticleMgr extends SGL_Manager
         $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
             ? 'jscalendar/lang/calendar-'. $lang . '.js'
             : 'jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc   = array('TreeMenu.js','jscalendar/calendar.js',$jscalendarLangFile, 'jscalendar/calendar-setup.js');
+        $input->javascriptSrc   = array('jscalendar/calendar.js',$jscalendarLangFile, 'jscalendar/calendar-setup.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
