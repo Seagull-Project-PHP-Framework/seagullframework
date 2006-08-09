@@ -71,7 +71,6 @@ class DocumentViewMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = $this->masterTemplate;
         $input->template        = $this->template;
-        $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'summary';

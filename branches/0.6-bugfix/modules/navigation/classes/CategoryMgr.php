@@ -83,7 +83,6 @@ class CategoryMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterLeftCol.html';
         $input->template        = $this->template;
-        $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
         $input->submitted       = $req->get('submitted');

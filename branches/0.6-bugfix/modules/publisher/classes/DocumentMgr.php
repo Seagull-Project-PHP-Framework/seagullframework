@@ -88,7 +88,6 @@ class DocumentMgr extends FileMgr
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterLeftCol.html';
         $input->template        = $this->template;
-        $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
