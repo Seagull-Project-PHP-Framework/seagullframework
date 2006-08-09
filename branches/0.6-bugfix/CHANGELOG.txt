@@ -15,6 +15,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+09-08-06    Default RSS block now configurable (Werner Krauss)
 09-08-06    Implemented open_basedir detection (Steven Stremciuc)
 06-08-06    Added perms on category file views (Werner Krauss)
 06-08-06    Implemented improved wizard functionality based on PEAR's

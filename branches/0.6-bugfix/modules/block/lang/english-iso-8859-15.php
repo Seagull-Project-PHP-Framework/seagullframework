@@ -90,5 +90,11 @@
         // Login2 Block
         'Login template name' => 'Login template name',
         'Logout template name' => 'Logout template name',
+        
+        // Show RSS Block
+        'RSS resource' => 'RSS resource',
+        'URI of RSS feed' => 'URI of RSS feed',
+        'Items to show' => 'Items to show',
+        'Number of Items to show' => 'Number of Items to show',
     );
 ?>
