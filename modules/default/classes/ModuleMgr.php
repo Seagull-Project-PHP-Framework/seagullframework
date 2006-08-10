@@ -282,6 +282,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
         $ok = $runner->main();
 
         //  check for errors
