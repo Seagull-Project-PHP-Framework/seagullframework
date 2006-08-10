@@ -112,17 +112,18 @@ class DocumentMgr extends FileMgr
         $input->isAdmin = (SGL_Session::getRoleId() == SGL_ADMIN)
             ? true
             : false;
-
         //  request values for save upload
         $input->document = (object)$req->get('document');
         $input->document->orig_name = (isset($input->document->orig_name))
             ? $input->document->orig_name
             : '';
+
         $input->assetName = (isset($input->document->name) && $input->document->name != '')
             ? $input->document->name
             : $input->document->orig_name;
 
         //  if document has been uploaded
+        $editFailure = false;
         if ($input->assetFileArray) {
             if ($input->assetFileName != '') {
                 $ext = end(explode('.', $input->assetFileName));
@@ -138,12 +139,31 @@ class DocumentMgr extends FileMgr
             } else {
                 $aErrors[] = 'You must select a file to upload';
             }
+        //  or edited
+        } elseif ($input->submitted) {
+            if (empty($input->document->name)) {
+                $aErrors[] = 'Your file must have a name';
+            } else {
+                $ext = end(explode('.', $input->document->name));
+                //  check uploaded file is of valid type
+                if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
+                    $aErrors[] = 'Error: Not a recognised file type';
+                }
+            }
+            $document = DB_DataObject::factory($this->conf['table']['document']);
+            $document->get($input->assetId);
+            $document->getLinks('link_%s');
+            $input->asset->link_added_by = $document->link_added_by;
+            $input->asset->link_document_type_id = $document->link_document_type_id;
+            $editFailure = true;
         }
 
         //  if form submitted and errors exist
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg($aErrors[0]);
-            $input->template = 'documentMgrAdd.html';
+            $input->template = ($editFailure)
+                ? 'documentMgrEdit.html'
+                : 'documentMgrAdd.html';
             $input->error = $aErrors;
 
             //  prepare breadcrumbs and category changer for popup window
@@ -195,7 +215,7 @@ class DocumentMgr extends FileMgr
 
             //  check id dir exists, create if not
             if (!is_writable(SGL_UPLOAD_DIR)) {
-                include_once 'System.php';
+                require_once 'System.php';
                 $success = System::mkDir(array(SGL_UPLOAD_DIR));
                 if (!$success) {
                     SGL::raiseError('The upload directory does not appear to be writable, please give the
@@ -300,6 +320,7 @@ class DocumentMgr extends FileMgr
         }
         $document = DB_DataObject::factory($this->conf['table']['document']);
         $document->get($input->assetId);
+        $lastKnownName = $document->name;
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
         $document->name = SGL_String::censor($document->name);
@@ -307,7 +328,12 @@ class DocumentMgr extends FileMgr
         $document->update();
 
         //  if file has been renamed
-        if ($input->document->orig_name != $document->name) {
+        //  and we're following a failed submission
+        if (!$input->document->orig_name) {
+            rename( SGL_UPLOAD_DIR . '/' . $lastKnownName,
+                    SGL_UPLOAD_DIR . '/' . $document->name);
+        //  or just a straight rename
+        } elseif ($input->document->orig_name != $document->name) {
             rename( SGL_UPLOAD_DIR . '/' . $input->document->orig_name,
                     SGL_UPLOAD_DIR . '/' . $document->name);
         }
