@@ -437,10 +437,10 @@ class ModuleMgr extends SGL_Manager
             $aInstalledTables = $this->dbh->getListOf('tables');
             $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
         }
-        //  get alls table defined in this module's schema
-        $dataDir =  SGL_MOD_DIR . '/' . $moduleName . '/data';
-        $schemaFile =  '/' . $dataDir . '/schema.'.$dbShortname.'.sql';
-        $dataFile =  '/' . $dataDir . '/data.default.'.$dbShortname.'.sql';
+        //  gets all tables defined in this module's schema
+        $dataDir = SGL_MOD_DIR . '/' . $moduleName . '/data';
+        $schemaFile = $dataDir . '/schema.'.$dbShortname.'.sql';
+        $dataFile = $dataDir . '/data.default.'.$dbShortname.'.sql';
         //  Some modules, like export, don't have schema and don't need installing.
         //  is_file($dataDir) is for cases, on delete, where some web-writable files
         //  are deleted, but not all
