@@ -99,7 +99,9 @@ class ModuleMgr extends SGL_Manager
         $input->moduleId        = $req->get('frmModuleId');
         $input->moduleName      = $req->get('frmModuleName');
         $aModules               = $req->get('module');
-        $input->displayDeRegisteredModules = $req->get('displayDeRegisteredModules');
+        $input->displayDeRegisteredModules = ($req->get('displayDeRegisteredModules') != null )
+            ? $req->get('displayDeRegisteredModules')
+            : SGL_Session::get('displayDeRegisteredModules');
 
 //        if (count($aModules)) {
 //            foreach ($aModules as $k => $module) {
@@ -144,6 +146,10 @@ class ModuleMgr extends SGL_Manager
 //            }
 //            $this->validated = false;
 //        }
+
+        //put some vars to session
+        SGL_Session::set('displayDeRegisteredModules', 
+            $input->displayDeRegisteredModules);
     }
 
     function display(&$output)
