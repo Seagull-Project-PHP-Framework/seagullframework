@@ -32,63 +32,89 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | ConfigMgr.php                                                             |
+// | ModuleConfigMgr.php                                                       |
 // +---------------------------------------------------------------------------+
-// | Author:   Eric Persson <eric@persson.tm    >                                  |
+// | Author:    Julien Casanova <julien_casanova@yahoo.fr>                     |
 // +---------------------------------------------------------------------------+
 // $Id$
 
-require_once 'Config.php';
-require_once 'Validate.php';
 
 /**
- * To manage administering modules config files.
+ * Module config manager.
  *
  * @package default
- * @author  Eric Persson <eric@persson.tm>
+ * @author  Julien Casanova <julien_casanova@yahoo.fr>
  * @version $Revision:$
  */
 class ModuleConfigMgr extends SGL_Manager
 {
-
     function ModuleConfigMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
-        $this->pageTitle = 'Module Config Manager';
-        $this->masterTemplate = 'master.html';
-        $this->template = 'moduleConfigEdit.html';
+
+        $this->pageTitle    = 'Module Config Manager';
+        $this->template     = 'moduleConfigEdit.html';
+        $this->da           = &DA_Default::singleton();
 
         $this->_aActionsMapping =  array(
             'edit'      => array('edit'),
-            'update'    => array('update'),
+            'update'    => array('update', 'redirectToDefault')
         );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->aStyleFiles      = SGL_Util::getStyleFiles();
+
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
-        $input->masterTemplate  = 'masterMinimal.html';
-        $input->module          = $req->get('module');
+        $input->masterTemplate  = $this->masterTemplate;
+        $input->template        = $this->template;
+        $input->module          = (object) $req->get('module');
+        $input->moduleNameId    = $req->get('frmModule');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'edit';
         $input->config          = $req->get('config');
+        
+        $input->submitted       = $req->get('submitted');
 
-        $this->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->module . '/conf.ini');
-        if (!$this->_existConfig()){
-            $aErrors[] = 'The config file ' . $this->moduleConfigFile . ' does not exist.';
+        $aErrors = array();
+        if (empty($input->moduleNameId)) {
+            $aErrors[] = 'You must select a module to edit';
+        } else {
+            if (!$this->da->moduleIsRegistered($input->moduleNameId)) {
+                $aErrors[] = 'This module is not registered or does not exist';
+            } else {
+                $input->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->moduleNameId . '/conf.ini');
+                //  Default validation on module conf file
+                if (!is_file($input->moduleConfigFile) || !is_readable($input->moduleConfigFile)) {
+                    $aErrors[] = 'The config file ' . $input->moduleConfigFile . ' does not exist or is not readable.';
+                } elseif (!is_writable($input->moduleConfigFile)) {
+                    $aErrors[] = 'The config file ' . $input->moduleConfigFile . ' is not writable. Check files permissions.';
+                }
+            }
         }
-        if (!$this->_writableConfig()) {
-            $aErrors[] = 'The config file ' . $this->moduleConfigFile . ' is not writable.';
+        //  Validate fields
+        if ($input->submitted) {
+            $aFields = array(
+                'name' => 'Please, specify a name',
+                'title' => 'Please, specify a title',
+                'description' => 'Please, specify a description'
+            );
+            if (!empty($input->module)) {
+                foreach ($aFields as $field => $errorMsg) {
+                    if (empty($input->module->$field)) {
+                        $aErrors[$field] = $errorMsg;
+                    }
+                }
+            }
         }
 
-        //  if errors have occured
+        //  If errors have occured
         if (isset($aErrors) && count($aErrors)) {
-            SGL::raiseMsg('Please fill in the indicated fields');
+            SGL::raiseMsg('Some errors occured. Please see following message(s)');
             $input->error = $aErrors;
-            $input->template = 'configEdit.html';
+            $input->template = 'moduleConfigEdit.html';
             $this->validated = false;
         }
     }
@@ -96,48 +122,120 @@ class ModuleConfigMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->config = $this->_loadConfig();
+
         $output->template = 'moduleConfigEdit.html';
+
+        // get module to display its properties
+        $output->module = $this->da->getModuleByName($input->moduleNameId);
+
+        // then get its config file
+        $moduleConfig = & SGL_ParamHandler::singleton($input->moduleConfigFile);
+        $config = $moduleConfig->read();
+
+        // Try to identify type of parameters
+        $aConfig = array();
+        foreach ($config as $section => $aParams) {
+            $this->_prepareParamsToEdit($aParams);
+            $aConfig[$section] = $aParams;
+        }
+        $output->config = $aConfig;
     }
 
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = SGL_Config::singleton();
-        $c->replace($input->config);
+        // First update module properties
+        $oModule = DB_DataObject::factory($this->conf['table']['module']);
+        $oModule->get('name', $input->moduleNameId);
+        $oModule->setFrom($input->module);
+        $success = $oModule->update();
 
+        if ($success !== false) {
+            SGL::raiseMsg('module successfully updated', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
+
+        // Then update module config parameters
+        $config = & SGL_ParamHandler::singleton($input->moduleConfigFile);
+
+        $aConfig = array();
+        foreach ($input->config as $section => $aParams) {
+            $this->_prepareParamsToUpdate($aParams);
+            $aConfig[$section] = $aParams;
+        }
         //  write configuration to file
-        $ok = $c->save($this->moduleConfigFile);
-        if (PEAR::isError($ok)) {
-            SGL::raiseMsg('config info successfully updated');
+        $ok = $config->write($aConfig);
+        if (!is_a($ok, 'PEAR_Error')) {
+            SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem saving your configuration, make sure the conf.ini is writable',
                 SGL_ERROR_FILEUNWRITABLE);
         }
     }
 
-    function _existConfig(){
-            if (file_exists($this->moduleConfigFile) && is_readable($this->moduleConfigFile)) {
-                return true;
-            } else {
-                return false;
+    function _prepareParamsToEdit(&$aParams)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        foreach ($aParams as $key => $value) {
+            $oParam = new stdClass();
+            switch ($key) {
+                case 'requiresAuth':
+                case 'adminGuiAllowed':
+                case 'setHeaders':
+                case 'enabled':
+                    $oParam->type = 'bool';
+                    break;
+                default:
+                    $oParam->type = 'string';
+                    break;
             }
+            $oParam->value = $value;
+            $aParams[$key] = $oParam;
+        }
+        return $aParams;
     }
 
-    function _writableConfig()
+    function _prepareParamsToUpdate(&$aParams)
     {
-            if (is_writable($this->moduleConfigFile)) {
-                return true;
-            } else {
-                return false;
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        foreach ($aParams as $key => $param) {
+            switch ($param['type']) {
+                case 'bool':
+                    $value = ($param['value'] == 1) ? 'true' : 'false';
+                    break;
+                default:
+                    $value = $param['value'];
+                    break;
             }
+            $aParams[$key] = $value;
+        }
+        return $aParams;
     }
 
-    function _loadConfig()
+    /**
+     * Specific redirect for this Manager.
+     *
+     * @param object $input
+     * @param object $output
+     */
+    function _cmd_redirectToDefault(&$input, &$output)
     {
-        $moduleConfig = SGL_Config::singleton();
-        return $moduleConfig->load($this->moduleConfigFile);
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            $aParams = array(
+                'managerName' => 'module'
+            );
+            SGL_HTTP::redirect($aParams);
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
     }
 }
 ?>

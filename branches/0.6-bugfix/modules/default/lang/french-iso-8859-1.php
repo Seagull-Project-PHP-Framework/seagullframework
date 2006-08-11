@@ -400,6 +400,7 @@ $defaultWords['Publish'] = 'Publier';
 $defaultWords['user profile'] = 'profil utilisateur';
 $defaultWords['The name of the module must be the exact name of the folder containing files, beware of case sensiveness'] = 'Le nom du module doit correspondre exactement au nom du répertoire qui contient les fichiers, attention à bien respecter la casse (majuscules/minuscules)';
 $defaultWords['Here you can write what you want'] = 'Vous pouvez saisir ce que vous voulez';
+$defaultWords['Simply provide an icon'] = 'Il vous suffit de placer l\'icône souhaitée dans "www/themes/default_admin/images/16" et de lui donner le nom "module_$nomDuModule.gif"';
 $defaultWords['PEAR Manager'] = 'Gestionnaire de packages PEAR';
 $defaultWords['Choose channel'] = 'Choisir un canal';
 $defaultWords['List installed packages'] = 'Lister les packages installés';
