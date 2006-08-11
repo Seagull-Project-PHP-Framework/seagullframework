@@ -25,6 +25,10 @@ body {
 ul {
     list-style: none;
 }
+dl {
+    margin: 0.5em 0;
+    line-height: 140%;
+}
 p {
     margin-bottom: 0.5em;
 }
@@ -378,6 +382,40 @@ fieldset p label {
     text-align: right;
     padding-right: 20px;
     color: <?php echo $primaryDark ?>;
+}
+fieldset textarea {
+    font-family: <?php echo $fontFamily ?>;
+}
+input.smallText {
+    width: 70px;
+}
+input.mediumText, textarea.mediumText, select.mediumText {
+    width: 120px;
+}
+input.longText, textarea.longText {
+    width: 450px;
+}
+/* --
+Definition lists (<dl>) will progressively replace "p label" to display fields labels and values
+-----*/
+dl.onSide dt {
+    float: left;
+    width: 120px;
+    text-align: right;
+}
+dl.onSide dt label {
+    padding-right: 15px;
+}
+dl.onSide dd{
+    margin-left: 140px;
+    margin-bottom: 0.5em;
+}
+dl.onTop dd {
+    margin: 0;
+}
+dl.buttonsBottom {
+    clear: both;
+    float: left;
 }
 
 /*
@@ -747,6 +785,9 @@ p.errorBlock input, p.errorBlock select {
 .center {
     text-align: center;
 }
+.altFont {
+    font-family: <?php echo $fontFamilyAlt ?>;
+}
 .hide {
     display: none;
 }
@@ -796,7 +837,6 @@ a.clearSearch:hover {
     text-decoration: none;
     color: <?php echo $tertiaryDarkest ?>;
 }
-
 .disabled, a.disabled, a.disabled:visited {
     color: grey;
 }

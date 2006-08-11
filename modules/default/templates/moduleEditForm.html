@@ -1,41 +1,33 @@
-<fieldset class="inside">
-    {if:isEqual(mode,#detect#)}
-        <p>
-            <label for="module[{k}][register]">{translate(#Register this module?#)}</label>
-            <input type="checkbox" name="module[{k}][register]" id="module[{k}][register]"  />
-        </p>
-    {end:}
-    <p>
-        <label class="tipOwner" for="module[{k}][name]">{translate(#Name#)}
+<dl class="onSide" flexy:ignore>
+    <dt>
+        <label class="tipOwner" for="module_name">{translate(#Name#)}
             <span class="tipText">{translate(#The name of the module must be the exact name of the folder containing files, beware of case sensitivity#)}</span>
         </label>
-        <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
-        <input type="text" class="text" name="module[{k}][name]" id="module[{k}][name]" value="{module.name}" />
-    </p>
-    <p>
-        <label class="tipOwner" for="module[{k}][title]">{translate(#Title#)}
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+        <input type="text" class="text" name="module[name]" id="module_name" value="{module.name}" />
+    </dd>
+    <dt>
+        <label class="tipOwner" for="module[title">{translate(#Title#)}
             <span class="tipText">{translate(#Here you can write what you want#)}</span>
         </label>
-        <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
-        <input type="text" class="text" name="module[{k}][title]" id="module[{k}][title]" value="{module.title}" />
-    </p>
-    <p>
-        <label for="module[{k}][is_configurable]">{translate(#Configurable#)}</label>
-        <input type="checkbox" name="module[{k}][is_configurable]" id="module[{k}][is_configurable]"  flexy:ignore flexy:raw="{isConfigurable}" />
-    </p>
-    <p>
-        <label for="module[{k}][description]">{translate(#Description#)}</label>
-        <span class="error" flexy:if="error[description]">{translate(error[description])}</span>
-        <input type="text" name="module[{k}][description]" id="module[{k}][description]" value="{module.description}" />
-    </p>
-    <p>
-        <label for="module[{k}][admin_uri]">{translate(#Admin URI#)}</label>
-        <span class="error" flexy:if="error[admin_uri]">{translate(error[admin_uri])}</span>
-        <input type="text" class="text" name="module[{k}][admin_uri]" id="module[{k}][admin_uri]" value="{module.name}" />
-    </p>
-    <p>
-        <label for="module[{k}][icon]">{translate(#Icon#)}</label>
-        <span class="error" flexy:if="error[icon]">{translate(error[icon])}</span>
-        <input type="text" class="text" name="module[{k}][icon]" id="module[{k}][icon]" value="{module.icon}" />
-    </p>
-</fieldset>
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+        <input type="text" class="text" name="module[title]" id="module[title" value="{module.title}" />
+    </dd>
+    <dt>
+        <label for="module_description">{translate(#Description#)}</label>
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[description]">{translate(error[description])}</div>
+        <textarea class="longText" name="module[description]" id="module_description">{module.description}</textarea>
+    </dd>
+    <dt>
+        <label>{translate(#Icon#)}</label>
+    </dt>
+    <dd>
+        <span>{translate(#Simply provide an icon#)}</span>
+    </dd>
+</dl>

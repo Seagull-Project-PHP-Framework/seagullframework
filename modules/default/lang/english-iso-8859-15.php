@@ -19,6 +19,10 @@
         'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
         'with sample data' => 'with sample data',
 
+/*  MODULE CONFIG MGR  */
+        'Module Config Manager' => 'Module Config Manager',
+        'Some errors occured. Please see following message(s)' => 'Some errors occured. Please see following message(s)',
+
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',
         'config info successfully updated' => 'Config info successfully updated',
@@ -62,6 +66,7 @@
         'module successfully removed' => 'Module successfully removed',
         'The name of the module must be the exact name of the folder containing files, beware of case sensitivity' => 'The name of the module must be the exact name of the folder containing files, beware of case sensitivity',
         'Here you can write what you want' => 'Here you can write what you want',
+        'Simply provide an icon' => 'Simply provide an icon named "module_$moduleName.gif" in "www/themes/default_admin/images/16"',
 
 /*  NEWSLETTER BLOCK */
         'E-mail' => 'E-mail',

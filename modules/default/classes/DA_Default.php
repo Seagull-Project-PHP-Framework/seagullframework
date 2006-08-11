@@ -219,6 +219,15 @@ class DA_Default extends SGL_Manager
         return $oModule;
     }
 
+    function getModuleByName($name = null)
+    {
+        $oModule = DB_DataObject::factory($this->conf['table']['module']);
+        if (!is_null($name)) {
+            $oModule->get('name', $name);
+        }
+        return $oModule;
+    }
+
     function addModule($oModule)
     {
         SGL_DB::setConnection();
