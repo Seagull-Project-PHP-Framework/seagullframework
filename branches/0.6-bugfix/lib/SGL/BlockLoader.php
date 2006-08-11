@@ -186,7 +186,14 @@ class SGL_BlockLoader
                 $blockClass = $oBlock->name;
                 preg_match('/^(.*)_.*_(.*)$/', $blockClass, $aMatches);
                 @$blockPath = strtolower($aMatches[1]) . '/blocks/' . $aMatches[2];
-                require_once SGL_MOD_DIR . '/' . $blockPath . '.php';
+                if (file_exists(SGL_MOD_DIR . '/' . $blockPath . '.php')) {
+                    require_once SGL_MOD_DIR . '/' . $blockPath . '.php';
+                } else {
+                    unset($this->_aData[$index]);
+                    SGL::raiseError('cannot load ' . $blockClass . '; '
+                        . $blockPath . '.php does not exist',
+                        SGL_ERROR_NOFILE);
+                }
                 if (!class_exists($blockClass)) {
                     unset($this->_aData[$index]);
                     SGL::raiseError($blockClass . ' is not a valid block classname',
