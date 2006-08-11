@@ -1086,6 +1086,9 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
+                    if (file_exists(SGL_WEB_ROOT . "/$module")) {
+                        unlink(SGL_WEB_ROOT . "/$module");
+                    }
                     $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                 }
             }
