@@ -212,7 +212,7 @@ class SGL_Emailer
     */
     function cleanMailInjection($headers)
     {
-        $regex = "#(<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r|Content-Type:|bcc:|to:|cc:).*#i";
+         $regex = "#((<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r)\S).*#i";
         // strip all possible "additional" headers from the values
         if (is_array($headers)) {
             foreach ($headers as $key => $value) {
