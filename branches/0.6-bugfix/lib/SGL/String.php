@@ -304,22 +304,6 @@ class SGL_String
     }
 
     /**
-     * Primarily used for obfuscating email addresses to prevent spam
-     * harvesting. Since it is URL-encoded, this can be used only in the href
-     * part of a <a> tag (mailto: scheme).
-     *
-     * @param string $str String to encode
-     * @return string $encoded Encoded string
-     */
-    function obfuscate($str)
-    {
-        $encoded = bin2hex($str);
-        $encoded = chunk_split($encoded, 2, '%');
-        $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
-        return $encoded;
-    }
-
-    /**
      * Encode a given character to a decimal or hexadecimal HTML entity or
      * to an hexadecimal URL-encoded symbol.
      *
@@ -369,6 +353,22 @@ class SGL_String
 
     /**
      * Primarily used for obfuscating email addresses to prevent spam
+     * harvesting. Since it is URL-encoded, this can be used only in the href
+     * part of a <a> tag (mailto: scheme).
+     *
+     * @param string $str String to encode
+     * @return string $encoded Encoded string
+     */
+    function obfuscate($str)
+    {
+        $encoded = bin2hex($str);
+        $encoded = chunk_split($encoded, 2, '%');
+        $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
+        return $encoded;
+    }
+
+    /**
+     * Primarily used for obfuscating email addresses to prevent spam
      * harvesting.
      *
      * @param string $str String to encode
@@ -394,6 +394,57 @@ class SGL_String
         );
         return $encoded;
      }
+
+    /**
+     * Lightweight function to obfuscate mail addresses: substitutes @ and dots
+     * in the domain part with a string.
+     *
+     * @access  public
+     * @param   string $address
+     * @return  string
+     *
+     * @author Riccardo Magliocchetti <riccardo@datahost.it>
+     */
+    function obfuscate3($address)
+    {
+        $at = '(at)';
+        $dot = '(dot)';
+
+        $len = strlen($address);
+        $pos = strpos($address, '@');
+        $name = substr($address, 0, $pos-$len);
+
+        /* Trick to avoid the regex */
+        $domain = $at . substr($address, $pos+1);
+        $domain = preg_replace('/\./', $dot, $domain);
+
+        return $name . $domain;
+    }
+
+    /**
+     * Munge email addresses swapping plain text with html char entities as
+     * explained here: http://perso.crans.org/~raffo/aem/index.php.
+     *
+     * @access  public
+     * @param   string $address
+     * @return  string
+     *
+     * @author Riccardo Magliocchetti <riccardo@datahost.it>
+     */
+    function mungeMailAddress($address)
+    {
+        $len = strlen($address);
+        $aOld = str_split($address);
+        $aMunged = array();
+
+        for ($i = 0; $i < $len; $i++) {
+            $aMunged[$i] =  "&#" . ord($aOld[$i]) . ";";
+        }
+
+        $munged = implode('' ,$aMunged);
+
+        return $munged;
+    }
 
     /**
      * Returns a shortened version of text string resolved by word boundaries.
@@ -422,7 +473,6 @@ class SGL_String
         }
         return  $ret;
     }
-
 
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
