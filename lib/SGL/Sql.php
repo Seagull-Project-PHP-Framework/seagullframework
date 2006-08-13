@@ -180,9 +180,15 @@ class SGL_Sql
         return $res;
     }
 
-    function extractTableNamesFromSchemaFile($file)
+    function extractTableNamesFromSchema($data)
     {
-        $aLines = file($file);
+        if (is_file($data)) {
+            $aLines = file($file);
+        } elseif (is_string($data)) {
+            $aLines = explode("\n", $data);
+        } else {
+            return SGL::raiseError('unexpected input', SGL_ERROR_INVALIDARGS);
+        }
         $aTablesNames = array();
         foreach ($aLines as $line) {
             if (preg_match("/create table/i", $line)) {

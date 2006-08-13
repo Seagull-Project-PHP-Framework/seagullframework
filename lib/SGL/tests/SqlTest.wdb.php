@@ -178,12 +178,12 @@ create index block_assignment_fk on block_assignment
 (
    block_id
 EOF;
-        $aLines = explode("\n", $sql);
-        foreach ($aLines as $line) {
-            $aTableNames[] = SGL_Sql::extractTableNameFromCreateStatement($line);
-        }
-        $aTableNames = array_filter($aTableNames); //remove blanks
-        $this->assertEqual(count($aTableNames), 2); // doesn't catch index
+        $aRes[] = SGL_Sql::extractTableNamesFromSchema($sql);
+
+        $aTableNames = $aRes[0]; // get first key
+        $this->assertEqual(count($aTableNames), 2);
+        $this->assertTrue(in_array('block', $aTableNames));
+        $this->assertTrue(in_array('block_assignment', $aTableNames));
     }
 
     function testExtractTableNameFromCreateStatement1()
