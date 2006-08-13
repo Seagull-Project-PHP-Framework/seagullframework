@@ -183,7 +183,7 @@ class SGL_Sql
     function extractTableNamesFromSchema($data)
     {
         if (is_file($data)) {
-            $aLines = file($file);
+            $aLines = file($data);
         } elseif (is_string($data)) {
             $aLines = explode("\n", $data);
         } else {
