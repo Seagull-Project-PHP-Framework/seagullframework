@@ -213,7 +213,8 @@ class SimpleDriver
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->conf      = $outputData->conf;
+        $c = &SGL_Config::singleton();
+        $this->conf      = $c->getAll();
         $this->da        = &DA_Navigation::singleton();
         $this->req       = $outputData->request;
         $this->output    = &$outputData;
