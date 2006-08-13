@@ -1,6 +1,5 @@
 <script type="text/javascript" src="{webRoot}/js/openWin.js"></script>
 <div id="manager-actions">
-    <a class="action add" onclick="javascript:openWin('{makeUrl(#addressBook#,#list#,#newsletter#)}','AddresBook',400,260,'yes')">{translate(#Adress Book#)}</a>
     <a class="action upload" href="javascript:formSubmit('NewsletterMgr','submitted',1,1)">{translate(#Send#)}</a>
 </div>
 <div id="content">
@@ -22,13 +21,13 @@
 	             <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
 	             <input id="frmMail" type="text" name="frmEmail" size="40" value="{email}" />
 	         </p>
-<!-- 
+
 	         <p>
 				<label for="frmGroups[]"><span class="required"></span>{translate(#To groups#)}</label>
 				<span class="error" flexy:if="error[group]">{translate(error[group])}</span>
-				{generateCheckboxList(roleList,groups,#frmGroups[]#):h}
+				<div id="newsletterLists">{generateCheckboxList(roleList,groups,#frmGroups[]#):h}</div>
 	         </p>
--->	         
+	         
 	         <p>
 			   	<label for="frmNewsList[]"><span class="required"></span>{translate(#To newslists#)}</label>
 			   	<span class="error" flexy:if="error[newslist]">{translate(error[newslist])}</span>

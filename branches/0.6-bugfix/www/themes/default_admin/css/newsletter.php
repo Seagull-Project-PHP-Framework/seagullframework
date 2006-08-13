@@ -31,6 +31,10 @@
 	width: 130px;
 }
 
+#newsletterGroups {
+    padding-left: 180px;
+}
+
 #newsletterLists {
 	padding-left: 180px;
 }

@@ -651,7 +651,7 @@ class ListMgr extends NewsletterMgr
             if (strlen($tmpEmail) > 0 && !in_array($tmpEmail, $aRecipients)) {
                 $aRecipients[] = $tmpEmail;
             }
-        }
+        };
 
         if (count($aRecipients) < 1) {
             SGL::raiseError('Problem sending email: no recipients', SGL_ERROR_EMAILFAILURE);
