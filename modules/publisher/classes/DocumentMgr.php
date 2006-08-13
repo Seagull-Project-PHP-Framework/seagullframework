@@ -61,13 +61,8 @@ class DocumentMgr extends FileMgr
 
         $this->pageTitle    = 'Document Manager';
         $this->template     = 'documentManager.html';
-        $this->_aAllowedFileTypes = array(
-            'gif', 'jpeg', 'jpg', 'png',
-            'doc', 'rtf', 'txt', 'pdf',
-            'ppt', 'pps', 'xls', 'htm',
-            'html', 'csv',
-        );
-
+        $this->_aAllowedFileTypes = explode(',',$this->conf['DocumentMgr']['allowedFileTypes']);
+        
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
@@ -117,7 +112,9 @@ class DocumentMgr extends FileMgr
         $input->document->orig_name = (isset($input->document->orig_name))
             ? $input->document->orig_name
             : '';
-
+        $input->document->name = (isset($input->document->name))
+            ? $input->document->name
+            : '';
         $input->assetName = (isset($input->document->name) && $input->document->name != '')
             ? $input->document->name
             : $input->document->orig_name;
@@ -139,8 +136,8 @@ class DocumentMgr extends FileMgr
             } else {
                 $aErrors[] = 'You must select a file to upload';
             }
-        //  or edited
-        } elseif ($input->submitted) {
+        //  or renamed
+        } elseif ($input->document->name != $input->document->orig_name) {
             if (empty($input->document->name)) {
                 $aErrors[] = 'Your file must have a name';
             } else {
@@ -149,13 +146,27 @@ class DocumentMgr extends FileMgr
                 if (!in_array(strtolower($ext), $this->_aAllowedFileTypes)) {
                     $aErrors[] = 'Error: Not a recognised file type';
                 }
+                //  ... and does not exist in uploads dir
+                if (is_readable(SGL_UPLOAD_DIR . '/' . $input->document->name)) {
+                    $aErrors[] = 'Error: A file with this name already exists';
+                }
             }
-            $document = DB_DataObject::factory($this->conf['table']['document']);
-            $document->get($input->assetId);
-            $document->getLinks('link_%s');
-            $input->asset->link_added_by = $document->link_added_by;
-            $input->asset->link_document_type_id = $document->link_document_type_id;
-            $editFailure = true;
+            // if new document...       
+            if ($input->action == 'insert') {
+                $input->assetTypeName = $this->_getType($input->document->document_type_id);
+                $input->document->name = $input->document->orig_name;
+            } else {
+            // if editing existing document get data from db
+                $document = DB_DataObject::factory($this->conf['table']['document']);
+                $document->get($input->assetId);
+                $document->getLinks('link_%s');
+                
+                // preserve other changed values
+                $document->description = $input->document->description;
+                
+                $input->asset = $document;
+                $editFailure = true;
+            }
         }
 
         //  if form submitted and errors exist
@@ -170,10 +181,13 @@ class DocumentMgr extends FileMgr
             $menu = & new MenuBuilder('SelectBox');
             $htmlOptions = $menu->toHtml();
             $input->aCategories = $htmlOptions;
-            $input->currentCat = $input->docCatID;
+            
+            //preserve changed category
+            $input->currentCat = ($input->action == 'add')
+                ? $input->docCatID
+                : $input->catChangeToID;
             $input->breadCrumbs = $menu->getBreadCrumbs($input->docCatID, false);
-//  FIXME
-            $input->save = '';
+            $input->save = ($input->action == 'insert') ? true : false;
             $input->assetTypeID = '';
             $this->validated = false;
         }
@@ -226,7 +240,11 @@ class DocumentMgr extends FileMgr
             copy($_FILES['assetFile']['tmp_name'], SGL_UPLOAD_DIR . '/' . $input->assetFileName);
             $output->save = "true";
             $output->assetTypeID = $this->_mime2AssetType($input->assetFileType);
+            $output->document->mime_type = $input->assetFileType;
+            $output->document->document_type_id = $output->assetTypeID;
             $output->assetTypeName = $this->_getType($output->assetTypeID);
+            $output->document->name = $input->assetFileName;
+            $output->document->file_size =  $input->assetFileSize;
             if ($input->isAdmin) {
                 //  prepare breadcrumbs and category changer
                 $menu = & new MenuBuilder('SelectBox');
