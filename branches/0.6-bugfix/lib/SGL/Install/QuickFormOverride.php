@@ -33,7 +33,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
     <link rel="help" href="http://trac.seagullproject.org/" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
+    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/installer.php" />
 
     <script type="text/javascript">
 
@@ -137,7 +137,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="$baseUrl" title="Home">
-        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" />
     </a>
 </div>
 <p>&nbsp;</p>
