@@ -1,4 +1,8 @@
 <?php
+$words['Adress Book'] = 'Adressbuch';
+$words['Delete Selected'] = 'Ausgewählte Löschen';
+$words['This email is already subscribed'] = 'Diese E-Mail Adresse ist schon beim Newsletter angemeldet';
+$words['Select newsletter where you want to subscribe'] = 'Bitte wählen Sie den Newsletter aus';
 $words['Please enter your name and e-mail address and select the newsletters that you want to subscribe.'] = 'Bitte geben Sie Ihren Namen und Ihre E-Mailadresse an und wählen Sie den Newsletter aus den Sie abbonieren möchten';
 $words['Newsletter'] = 'Newsletter';
 $words['Subscribe'] = 'Eintragen';

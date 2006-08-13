@@ -1,4 +1,7 @@
 <?php
+$words['Faq list'] = 'FAQs anzeigen';
+$words['edit faq'] = 'FAQs bearbeiten';
+$words['reorder faqs'] = 'FAQs neu ordnen';
 $words['FAQ Manager :: Reorder'] = 'FAQ Manager :: Neu Ordnen';
 $words['FAQ Manager :: Add'] = 'FAQ Manager :: Hinzufügen';
 $words['FAQ Manager :: Edit'] = 'FAQ Manager :: Bearbeiten';
@@ -13,7 +16,6 @@ $words['Please fill in a question'] = 'Bitte geben Sie eine Frage ein';
 $words['Please fill in an answer'] = 'Bitte geben Sie die dazugehörige Antwort ein';
 $words['Question'] = 'Frage';
 $words['Answer'] = 'Antwort';
-$words['FAQ ID'] = 'FAQ ID';
 $words['Date created'] = 'Erstellungsdatum';
 $words['Questions'] = 'Fragen';
 $words['Answers'] = 'Antworten';
@@ -21,7 +23,6 @@ $words['Q'] = 'F';
 $words['A'] = 'A';
 $words['No FAQs found'] = 'Keine FAQ\'s gefunden';
 $words['new faq'] = 'neue FAQ';
-$words['id'] = 'Nr';
 $words['FAQ'] = 'Frage';
 $words['Order'] = 'Reihenfolge';
 $words['reorder'] = 'neu sortieren';
