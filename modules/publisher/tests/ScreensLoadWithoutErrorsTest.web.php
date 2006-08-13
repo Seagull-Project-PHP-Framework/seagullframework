@@ -35,23 +35,23 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  publisher
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: Articles');
+        $this->assertTitle('Seagull Framework :: Article Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: Articles');
+        $this->assertTitle('Seagull Framework :: Article Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/document/');
-        $this->assertTitle('Seagull Framework :: Files');
+        $this->assertTitle('Seagull Framework :: Document Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/frmCatID/1/');
-        $this->assertTitle('Seagull Framework :: Categories');
+        $this->assertTitle('Seagull Framework :: Category Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/action/reorder/');
-        $this->assertTitle('Seagull Framework :: Categories');
+        $this->assertTitle('Seagull Framework :: Category Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 #        $this->showHeaders();
     }
