@@ -7,12 +7,13 @@
     <meta http-equiv="Content-Language" content="{currLang}" />
     <meta name="keywords" content="{conf[site][keywords]}" />
     <meta name="description" content="{conf[site][description]}" />
-    <meta name="robots" content="ALL" />
+    <meta name="robots" content="all" />
     <meta name="copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="rating" content="General" />
     <meta name="generator" content="Seagull Framework" />
+    <link rel="shortcut icon" type="images/x-icon" href="{webRoot}/favicon.ico" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/themes/{theme}/css/style.php?navStylesheet={conf[navigation][stylesheet]}&amp;moduleName={moduleName}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{makeCssLink(theme,conf[navigation][stylesheet],moduleName)}" />
 
     {scriptOpen:h}
         var SGL_JS_WEBROOT="{webRoot}";
@@ -22,12 +23,12 @@
         var SGL_JS_CURRURL="{currUrl}";
         var SGL_JS_THEME="{theme}";
         var SGL_JS_DATETEMPLATE="{getDateFormat()}";
-        var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
-        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
-
     {scriptClose:h}
 
     {if:isAdmin()}
+    {scriptOpen:h}
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+    {scriptClose:h}
     <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
     {end:}
     <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>
@@ -127,4 +128,4 @@
 {else:}
 <body onload="{onLoad}">
 {end:}
-<div id="sgl">
+    <div id="outer-wrapper">
