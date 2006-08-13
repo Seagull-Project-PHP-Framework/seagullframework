@@ -92,9 +92,10 @@ class DocumentViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  check if user has perms to view this category
         $this->category->load($input->catId);
-        $hasPerms = $this->category->hasPerms();
-        if (PEAR::isError($hasPerms)) {
-            return $hasPerms;
+        if (! $this->category->hasPerms()) {
+            SGL::raiseError('You do not have read permissions for this category',
+                SGL_ERROR_INVALIDAUTH); ;
+            return false;
         }
         $limit = $_SESSION['aPrefs']['resPerPage'];
 
