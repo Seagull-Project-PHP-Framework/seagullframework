@@ -19,11 +19,11 @@ class NavigationScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  navigation
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/section/');
-        $this->assertTitle('Seagull Framework :: Manage navigation');
+        $this->assertTitle('Seagull Framework :: Section Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/section/action/add/');
-        $this->assertTitle('Seagull Framework :: Manage navigation');
+        $this->assertTitle('Seagull Framework :: Section Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/navstyle/action/list/');
