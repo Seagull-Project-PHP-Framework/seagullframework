@@ -117,12 +117,12 @@ class UrlStrategySefTest extends UnitTestCase
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
 
-        //  assert expected keys present
-        $this->assertTrue(!array_key_exists('moduleName', $ret));
-        $this->assertTrue(!array_key_exists('managerName', $ret));
+        //  assert expected keys present, default module + mgr values
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
 
         //  assert expected values present
-        $this->assertEqual($ret, array());
+        $this->assertEqual(count($ret), 2);
     }
 
     //  test Zend debug GET noise [position 2]

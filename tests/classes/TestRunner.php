@@ -46,7 +46,7 @@ require_once 'SimpleTest/mock_objects.php';
 require_once 'SimpleTest/reporter.php';
 require_once 'SimpleTest/web_tester.php';
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL);
 
 /**
  * A class for running tests.

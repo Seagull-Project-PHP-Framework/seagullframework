@@ -74,7 +74,7 @@ class SGL_Sql
         $isMysql323 = false;
         if ($conf['db']['type'] == 'mysql_SGL' || $conf['db']['type'] == 'mysql') {
             $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
-            if (ereg('3.23', $aEnvData['db_info']['version'])) {
+            if (isset($aEnvData['db_info']) && ereg('3.23', $aEnvData['db_info']['version'])) {
                 $isMysql323 = true;
             }
         }
@@ -159,6 +159,13 @@ class SGL_Sql
         return $tableName;
     }
 
+    /**
+     * Given a CREATE TABLE string, will extract the table name.
+     *
+     * @param string $str
+     * @return string
+     * @todo consider using SQL_Parser, 19kb lib
+     */
     function extractTableNameFromCreateStatement($str)
     {
         $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?(\w+)(\W+)?/i';
