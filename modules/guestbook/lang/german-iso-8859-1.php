@@ -1,4 +1,14 @@
 <?php
+$words['List'] = 'Anzeigen';
+$words['Date'] = 'Datum';
+$words['New Entry'] = 'Neuer Eintrag';
+$words['Guestbook List'] = 'Gästebuch Anzeigen';
+$words['Guestbook Details'] = 'Gästebuch Details';
+$words['Entry deleted successfully'] = 'Eintrag erfolgreich gelöscht';
+$words['Enter Captcha'] = 'Bitte geben Sie die Nummer im Feld unterhalb ein';
+$words['You must enter the number in this field'] = 'Bitte geben Sie die Nummer in dieses Feld ein';
+$words['Verify'] = 'Kontrolle';
+$words['New guestbook entry in'] = 'Neuer Gästebucheintrag auf';
 $words['Guestbook Manager'] = 'Gästebuch Manager';
 $words['Guestbook Manager :: Add'] = 'Gästebuch Manager :: Hinzufügen';
 $words['No Guestbook entries found'] = 'Keine Gästebucheinträge gefunden';
