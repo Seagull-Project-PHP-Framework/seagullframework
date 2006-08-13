@@ -2,7 +2,7 @@
 /*                         MAIN LAYOUT CSS FILE                               */
 /******************************************************************************/
 /*
-Theme  : Classic Seagull Theme
+Theme  : Default Seagull Theme
 Author : Julien Casanova <julien_casanova@yahoo.fr>
 Version: 1.0
 Date   : 2006/03/20
