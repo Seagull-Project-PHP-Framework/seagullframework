@@ -1,36 +1,42 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
 <form name="frmLogin" method="post" action="" id="frmLogin" flexy:ignore>
-    <p><input type="hidden" name="action" value="login" /></p>
-    <input type="hidden" name="redir" value="{redir}" />
+    <fieldset class="noBorder">
+        <input type="hidden" name="action" value="login" />
+        <input type="hidden" name="redir" value="{redir}" />
 
-    <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <div class="message">{msgGet()}</div>
-
-    <div class="messageContainer">
-        <div class="messageHeader">
-            {translate(#Authorisation Required#)}
-        </div>
-        <div class="messageContent">
-            <div>
-                <span class="error">*&nbsp;</span>{translate(#Username#)}
+        <dl class="onSide">
+            <dt>
+                <label for="frm_username"><span class="required">*&nbsp;</span>{translate(#Username#)}</label>
+            </dt>
+            <dd>
                 <div class="error" flexy:if="error[username]">
                     {translate(error[username])}
                 </div>
-                <input type="text" name="frmUsername" value="{username}" maxlength="36" />
-            </div>
-
-            <div>
-                <span class="error">*&nbsp;</span>{translate(#Password#)}
-
+                <input type="text" name="frmUsername" id="frm_username" value="{username}" maxlength="36" />
+            </dd>
+            <dt>
+                <label for="frm_password"><span class="required">*&nbsp;</span>{translate(#Password#)}</label>
+            </dt>
+            <dd>
                 <div class="error" flexy:if="error[password]">
                     {translate(error[password])}
                 </div>
-                <input type="password" name="frmPassword" value="{password}" maxlength="24" />
-            </div>
-
-            <p><input type="submit" name="submitted" value="{translate(#Login#)}" /> <!-- onclick="javascript:lockButtons(this.form)"--></p>
-            <p>{if:conf[RegisterMgr][enabled]}<a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>&nbsp;&nbsp;&nbsp;&nbsp;{end:} <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
-        </div>
-
-        <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
-    </div>
+                <input type="password" name="frmPassword" id="frm_password" value="{password}" maxlength="24" />
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd>    
+                <input type="submit" class="wideButton" name="submitted" value="{translate(#Login#)}" />
+            </dd>
+            <dd flexy:if="conf[RegisterMgr][enabled]">
+                <a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>
+            </dd>
+            <dd>
+                <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a>
+            </dd>
+        </dl>
+        <p><span class="required">*</span> {translate(#denotes required field#)}</span></span>
+    </fieldset>
+    <div class="spacer" style="height:130px"></div>
 </form>
