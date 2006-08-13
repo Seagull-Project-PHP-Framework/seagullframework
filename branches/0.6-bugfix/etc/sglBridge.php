@@ -7,15 +7,11 @@ class TestRunnerInit extends SGL_FrontController
 {
     function run()
     {
+        define('SGL_TEST_MODE', true);
+
         if (!defined('SGL_INITIALISED')) {
             SGL_FrontController::init();
         }
-
-        //  get config singleton
-        $c = &SGL_Config::singleton();
-        $c->set('debug', array('customErrorHandler' => false));
-        $conf = $c->getAll();
-
         //  assign request to registry
         $input = &SGL_Registry::singleton();
         $req = SGL_Request::singleton();

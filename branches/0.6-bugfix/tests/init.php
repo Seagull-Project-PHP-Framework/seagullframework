@@ -81,7 +81,7 @@ function STR_init()
         );
 
     // set error reporting as verbose as possible
-    error_reporting(E_ALL);
+    $ok = error_reporting(E_ALL);
 
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
@@ -128,7 +128,5 @@ function parseIniFile()
 
 //  main
 STR_init();
-require_once 'PEAR.php';
-
 $conf = $GLOBALS['_STR']['CONF'];
 ?>

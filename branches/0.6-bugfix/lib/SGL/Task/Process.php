@@ -378,18 +378,19 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         //  if lang var passed in request
         if (isset($lang) && array_key_exists($lang, $aLanguages)) {
             $_SESSION['aPrefs']['language'] = $lang;
+        } elseif (isset($_SESSION['aPrefs']['language'])) {
+            $lang = $_SESSION['aPrefs']['language'];
+
+        //  set english as default language
         } else {
-            $lang = @$_SESSION['aPrefs']['language'];
+            $lang = $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
         }
         //  resolve current language from GET or session, assign to $language
-        $language = @$aLanguages[$lang][1];
-        if (empty($language)) {
-            $language = 'english-iso-8859-15';
-            $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
-        }
+        $language = $aLanguages[$lang][1];
+
         //  fetch default translation
-        $langID = str_replace('-', '_', $lang);
-        $defaultWords = SGL_Translation::getTranslations('default', $langID);
+        $langId = str_replace('-', '_', $lang);
+        $defaultWords = SGL_Translation::getTranslations('default', $langId);
 
         //  fetch module translations
         $moduleName = ($req->get('moduleName'))
@@ -397,7 +398,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
             : $this->conf['site']['defaultManager'];
 
         if ($moduleName != 'default') {
-            $words = SGL_Translation::getTranslations($moduleName, $langID);
+            $words = SGL_Translation::getTranslations($moduleName, $langId);
         }
         //  if current module is not the default module
         if (isset($words)) {
