@@ -13,6 +13,9 @@
             'perPage'   => $limit,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+        if (PEAR::isError($aPagedData)) {
+            return false;
+        }
         $output->aPagedData = $aPagedData;
         $output->totalItems = $aPagedData['totalItems'];
 
