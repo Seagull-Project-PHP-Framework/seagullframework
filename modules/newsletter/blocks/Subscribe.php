@@ -104,7 +104,7 @@ class Newsletter_Block_Subscribe
                         </tr>
                         <tr>
                             <td colspan="2"><strong>' . SGL_String::translate('Action') . ':</strong><br />
-                              <input type="radio" name="action" value="subscribe" checked>
+                              <input type="radio" name="action" value="subscribe" checked="checked">
                               ' . SGL_String::translate('Subscribe') . ' <br />
                               <input type="radio" name="action" value="unsubscribe">
                               ' . SGL_String::translate('Unsubscribe') . '<br>
