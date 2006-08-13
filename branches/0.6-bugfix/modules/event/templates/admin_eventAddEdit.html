@@ -55,11 +55,11 @@
                 <label align="left">{translate(#Hide event?#)}:</label>
                 <label class="error" flexy:if="error[status]">{translate(error[hide_event])}</label>
                 {if:event.hide_event}
-                    {translate(#Yes#)} <input type="radio" name="event[status]" value="1" checked>
+                    {translate(#Yes#)} <input type="radio" name="event[status]" value="1" checked="checked">
                     {translate(#No#)}  <input type="radio" name="event[status]" value="0">
                 {else:}
                     {translate(#Yes#)} <input type="radio" name="event[status]" value="1">
-                    {translate(#No#)}  <input type="radio" name="event[status]" value="0" checked>
+                    {translate(#No#)}  <input type="radio" name="event[status]" value="0" checked="checked">
                 {end:}
             </p>
 
