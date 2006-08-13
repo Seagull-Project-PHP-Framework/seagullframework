@@ -16,6 +16,7 @@ BUGFIXES
 30-05-06    Fixed bug where dbdo links creation task was missing from install, only
             available on rebuild
 IMPROVEMENTS
+13-08-06    Classic theme replaces 'default', 'default' deleted
 10-08-06    Module config files can now be edited via admin GUI
             (Julien Casanova)
 10-08-06    Improved header injection testing as per
