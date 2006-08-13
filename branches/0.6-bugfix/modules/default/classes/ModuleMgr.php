@@ -148,7 +148,7 @@ class ModuleMgr extends SGL_Manager
 //        }
 
         //put some vars to session
-        SGL_Session::set('displayDeRegisteredModules', 
+        SGL_Session::set('displayDeRegisteredModules',
             $input->displayDeRegisteredModules);
     }
 
@@ -307,7 +307,6 @@ class ModuleMgr extends SGL_Manager
         $oModule = $this->da->getModuleById($input->moduleId);
         //  disallow uninstalling default modules
         require_once SGL_CORE_DIR. '/Install/Common.php';
-        SGL_Install_Common::getMinimumModuleList();
         if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
             SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
                 SGL_MESSAGE_ERROR);
@@ -453,7 +452,7 @@ class ModuleMgr extends SGL_Manager
         if (!is_file($schemaFile)) {
             return is_file($dataFile) ? true : false ;
         }
-        $aTablesByModule = SGL_Sql::extractTableNamesFromSchemaFile($schemaFile);
+        $aTablesByModule = SGL_Sql::extractTableNamesFromSchema($schemaFile);
         //  check to see tables in existing db correspond to those specified in schema
         foreach ($aTablesByModule as $tablename) {
             if (!in_array($tablename, $aInstalledTables)) {

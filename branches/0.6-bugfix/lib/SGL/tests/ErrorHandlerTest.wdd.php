@@ -53,7 +53,7 @@ class ErrorHandlerTest extends UnitTestCase
     }
 
     //  this doesn't work because sgl's custom error handler gets overridden by simpletest's
-    function xtestSglRaiseError()
+    function testSglRaiseError()
     {
         SGL::raiseError('test PEAR error msg', SGL_ERROR_INVALIDARGS);
         $this->assertTrue(count($GLOBALS['_SGL']['ERRORS']));
