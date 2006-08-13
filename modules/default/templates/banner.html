@@ -3,7 +3,7 @@
             <div class="wrapLeft">
                 <div class="wrapRight">
                     <div class="wrap">
-                        <a id="logo" href="{webRoot}" title="{translate(#Home#)}">
+                        <a id="logo" href="{webRoot}/{conf[site][frontScriptName]}" title="{translate(#Home#)}">
                         {if:conf[site][showLogo]}
                         <img src="{webRoot}/themes/{theme}/images/{conf[site][showLogo]}" alt="{conf[site][name]} Logo" />
                         {else:}
@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div> <!-- close header -->
-        
+
         <!-- top navigation -->
         <div id="top-nav">
             <div class="inner">
@@ -29,7 +29,7 @@
             </div>
         </div> <!-- close top-nav -->
         <div id="breadcrumbs">
-            <div class="inner"> 
+            <div class="inner">
                 <div id="breadcrumb">
                 {foreach:blocksMainBreadcrumb,key,valueObj}
                     {valueObj.content:h}
@@ -41,6 +41,6 @@
                 <div class="spacer">&nbsp;</div>
             </div>
         </div>
-        
+
         <!-- Main layout -->
         <div id="inner-wrapper">
