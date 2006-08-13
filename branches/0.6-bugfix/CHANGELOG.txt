@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.0        |
 +-----------------------+
 BUGFIXES
+13-08-06    Fixed portuguese translation encoding
 05-08-06    Fixed error returned when requesting a non-existent article
             (AJ Tarachanowicz)
 30-07-06    Fixed bug where admins details could not be saved (jwang1973)
