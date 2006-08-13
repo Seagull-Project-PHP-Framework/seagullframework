@@ -220,47 +220,6 @@ class ModuleMgr extends SGL_Manager
 //        }
 //    }
 
-//    function _cmd_detect(&$input, &$output)
-//    {
-//        SGL::logMessage(null, PEAR_LOG_DEBUG);
-//
-//        $aAllModules = SGL_Util::getAllModuleDirs($onlyRegistered = false);
-//        $aRegisteredModules = SGL_Util::getAllModuleDirs();
-//        $aDiff = array_diff($aAllModules, $aRegisteredModules);
-//
-//        $aModules = array();
-//        foreach ($aDiff as $modulename) {
-//            $module = new stdClass();
-//            $module->name = $modulename;
-//            $module->description = 'your description here ...';
-//            $module->icon = "48/module_default.png";
-//            $aModules[] = $module;
-//        }
-//
-//        $output->pageTitle = 'Module Manager :: Discovered';
-//        $output->action = 'insert';
-//        $output->mode = 'detect';
-//        $output->aModules = $aModules;
-//        $output->template  = 'modulesDetected.html';
-//    }
-
-//    function _cmd_insert(&$input, &$output)
-//    {
-//        SGL::logMessage(null, PEAR_LOG_DEBUG);
-//
-//        $output->template = 'moduleList.html';
-//
-//        foreach ($input->module as $module) {
-//            if (isset($module->register)) {
-//                $oModule = $this->da->getModuleById();
-//                $oModule->setFrom($module);
-//                $ok = $this->da->addModule($oModule);
-//            }
-//        }
-//        SGL::raiseMsg('Module successfully registered', true,
-//            SGL_MESSAGE_INFO);
-//    }
-
     function _cmd_install(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -327,6 +286,7 @@ class ModuleMgr extends SGL_Manager
             $runner->addTask(new SGL_Task_RemoveNavigation());
             $runner->addTask(new SGL_Task_RemoveBlockData());
             $runner->addTask(new SGL_Task_SyncSequences());
+            $runner->addTask(new SGL_Task_UnLinkWwwData());
             $ok = $runner->main();
 
             //  de-register module
