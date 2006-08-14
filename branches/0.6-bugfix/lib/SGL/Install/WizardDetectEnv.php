@@ -67,7 +67,7 @@ class WizardDetectEnv extends HTML_QuickForm_Page
             'detectEnv' => 1,
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
-        
+
         $this->addElement('header',     null, 'Detect Environment: page 3 of 6');
 
         $runner = new SGL_TaskRunner();
@@ -75,7 +75,9 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $runner->addTask(new SGL_Task_GetPhpEnv());
         $runner->addTask(new SGL_Task_GetPhpIniValues());
         $runner->addTask(new SGL_Task_GetFilesystemInfo());
-        $runner->addTask(new SGL_Task_GetPearInfo());
+        if (!SGL::isMinimalInstall()) {
+            $runner->addTask(new SGL_Task_GetPearInfo());
+        }
 
         $html = $runner->main();
 
