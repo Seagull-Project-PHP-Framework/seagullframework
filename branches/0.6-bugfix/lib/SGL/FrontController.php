@@ -159,7 +159,10 @@ class SGL_FrontController
     function loadRequiredFiles()
     {
         $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
-        if (is_file($cachedLibs) && defined('SGL_CACHE_LIBS')) {
+        $cachedLibsEnabled = (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true)
+            ? true
+            : false;
+        if (is_file($cachedLibs) && $cachedLibsEnabled) {
             require_once $cachedLibs;
         } else {
             $coreLibs = dirname(__FILE__);
@@ -190,8 +193,7 @@ class SGL_FrontController
             $fileCache = '';
             foreach ($aRequiredFiles as $file) {
                 require_once $file;
-
-                if (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true) {
+                if ($cachedLibsEnabled) {
                     // 270kb vs 104kb
                     if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
                         $fileCache .= php_strip_whitespace($file);
@@ -200,7 +202,7 @@ class SGL_FrontController
                     }
                 }
             }
-            if (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true) {
+            if ($cachedLibsEnabled) {
                 $ok = file_put_contents($cachedLibs, $fileCache);
             }
         }
