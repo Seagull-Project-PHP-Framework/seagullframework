@@ -205,9 +205,6 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/modules/randommsg
     rm -rf $PROJECT_NAME/modules/user/tests
 
-
-
-
     rm -rf $PROJECT_NAME/tests
     rm -rf $PROJECT_NAME/www/js/html_ajax
     rm -rf $PROJECT_NAME/www/js/jcalc
@@ -216,8 +213,6 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/www/js/scriptaculous
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
-
-    #remove non-mysql data files
 
     #remove non english language
     moduleList=`ls $PROJECT_NAME/modules`;
@@ -232,6 +227,7 @@ function pruneMinimal()
         done;
     done;
 
+    #remove non-mysql data files
     for moduleName in $moduleList;
     do
         dataList=`ls $PROJECT_NAME/modules/$moduleName/data`;
