@@ -157,21 +157,26 @@ class WizardCreateDb extends HTML_QuickForm_Page
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
 
-        $this->addElement('header', null, 'Translation Setup');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $this->addElement('header', null, 'Translation Setup');
 
-        //  store translation in db
-        $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
-            'Yes (This option allows for multi-lingual articles in addition to interface translations)',
-                array('id' => 'storeTranslationsInDB', 'onClick' => 'javascript:toggleLangList()'));
+            //  store translation in db
+            $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
+                'Yes (This option allows for multi-lingual articles in addition to interface translations)',
+                    array('id' => 'storeTranslationsInDB', 'onClick' => 'javascript:toggleLangList()'));
 
-        //  load available languages
-        $this->addElement('select', 'installLangs', 'If yes, which language(s): ',
-            SGL_Util::getLangsDescriptionMap(), array('multiple' => 'multiple', 'id' => 'installLangs'));
+            //  load available languages
+            $this->addElement('select', 'installLangs', 'If yes, which language(s): ',
+                SGL_Util::getLangsDescriptionMap(), array('multiple' => 'multiple', 'id' => 'installLangs'));
 
-        //  store translation in db
-        $this->addElement('checkbox', 'addMissingTranslationsToDB', 'EXPERIMENTAL - Add missing Translations to Database?',
-            'Yes', "id = addMissingTranslationsToDB");
-
+            //  store translation in db
+            $this->addElement('checkbox', 'addMissingTranslationsToDB', 'EXPERIMENTAL - Add missing Translations to Database?',
+                'Yes', "id = addMissingTranslationsToDB");
+        } else {
+            $this->addElement('hidden', 'a', 'aa', "id = storeTranslationsInDB");
+            $this->addElement('hidden', 'b', 'bb', "id = installLangs");
+            $this->addElement('hidden', 'c', 'cc', "id = addMissingTranslationsToDB");
+        }
         //  test db creation
         $this->registerRule('canCreateDb','function','canCreateDb');
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
