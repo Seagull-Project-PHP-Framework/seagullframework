@@ -373,6 +373,17 @@ class SGL
         SGL_Install_Common::printFooter();
         exit();
      }
+
+     /**
+      * Returns true if a minimal version of Seagull has been installed.
+      *
+      * @static
+      * @return boolean
+      */
+     function isMinimalInstall()
+     {
+        return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
+     }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {
