@@ -102,6 +102,10 @@ class DocumentMgr extends FileMgr
         $input->assetFileType         = $input->assetFileArray['type'];
         $input->assetFileTmpName      = $input->assetFileArray['tmp_name'];
         $input->assetFileSize         = $input->assetFileArray['size'];
+        // filename can be different than original filename...
+        $input->assetFileName = ($this->conf['DocumentMgr']['formatFileName'])
+            ? SGL_String::censor(ucfirst(strtolower($input->assetFileName)))
+            : SGL_String::censor($input->assetFileName);
 
         //  determine user type
         $input->isAdmin = (SGL_Session::getRoleId() == SGL_ADMIN)
@@ -115,6 +119,10 @@ class DocumentMgr extends FileMgr
         $input->document->name = (isset($input->document->name))
             ? $input->document->name
             : '';
+        // censor / format document name:
+        $input->document->name = ($this->conf['DocumentMgr']['formatFileName'])
+            ? SGL_String::censor(ucfirst(strtolower($input->document->name)))
+            : SGL_String::censor($input->document->name);
         $input->assetName = (isset($input->document->name) && $input->document->name != '')
             ? $input->document->name
             : $input->document->orig_name;
@@ -186,6 +194,9 @@ class DocumentMgr extends FileMgr
                 ? $input->docCatID
                 : $input->catChangeToID;
             $input->breadCrumbs = $menu->getBreadCrumbs($input->docCatID, false);
+            $input->document->name = ($input->action == 'insert') 
+                ? $input->document->orig_name 
+                : $input->document->name; 
             $input->save = ($input->action == 'insert') ? true : false;
             $input->assetTypeID = '';
             $this->validated = false;
@@ -283,7 +294,6 @@ class DocumentMgr extends FileMgr
         $asset->document_id = $this->dbh->nextId($this->conf['table']['document']);
         $asset->category_id = $input->docCatID;
         $asset->date_created  = SGL_Date::getTime();
-        $asset->name = SGL_String::censor(ucfirst(strtolower($asset->name)));
         $asset->description = SGL_String::censor($asset->description);
         if ($asset->insert()) {
             SGL::raiseMsg('The asset has successfully been added', true, SGL_MESSAGE_INFO);
@@ -340,7 +350,6 @@ class DocumentMgr extends FileMgr
         $lastKnownName = $document->name;
         $document->setFrom($input->document);
         $document->category_id = $input->docCatID;
-        $document->name = SGL_String::censor($document->name);
         $document->description = SGL_String::censor($document->description);
         $document->update();
 
