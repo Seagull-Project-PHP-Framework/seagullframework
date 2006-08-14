@@ -250,11 +250,16 @@ function pruneMinimal()
 function createTarball()
 {
     # rename folder to current release
-    mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
+    if [ $MINIMAL_INSTALL ]; then
+        ARCHIVE_NAME=$PROJECT_NAME-$RELEASE_NAME-minimal
+    else
+        ARCHIVE_NAME=$PROJECT_NAME-$RELEASE_NAME
+    fi
+    mv $PROJECT_NAME $ARCHIVE_NAME
 
     # tar and zip
-    tar cvf $PROJECT_NAME-$RELEASE_NAME.tar $PROJECT_NAME-$RELEASE_NAME
-    gzip -f $PROJECT_NAME-$RELEASE_NAME.tar
+    tar cvf $ARCHIVE_NAME.tar $ARCHIVE_NAME
+    gzip -f $ARCHIVE_NAME.tar
 }
 
 ##############################
@@ -396,14 +401,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 createMinimalFlag
 
@@ -413,7 +418,9 @@ if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
 fi
 
-#createTarball
+createTarball
+
+echo $ARCHIVE_NAME
 
 #uploadToSfWholePackage
 
