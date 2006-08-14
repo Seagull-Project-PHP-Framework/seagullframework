@@ -98,17 +98,6 @@ function checkPreviousVersions()
 }
 
 ##############################
-# create minimal flag
-##############################
-function createMinimalFlag()
-{
-    if [ $MINIMAL_INSTALL ]; then
-      touch MINIMAL_INSTALL.txt
-      exit 1
-    fi
-}
-
-##############################
 # tag release
 ##############################
 function tagRelease()
@@ -127,11 +116,22 @@ function exportSvn()
 }
 
 ##############################
+# create minimal flag
+##############################
+function createMinimalFlag()
+{
+    if [ $MINIMAL_INSTALL ]; then
+      touch $PROJECT_NAME/MINIMAL_INSTALL.txt
+    fi
+}
+
+##############################
 # prune developer
 ##############################
 function pruneDeveloper()
 {
-
+    #foo
+    echo test;
 }
 
 ##############################
@@ -154,6 +154,17 @@ function pruneMinimal()
     rm -f $PROJECT_NAME/etc/release.sh
     rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
     rm -f $PROJECT_NAME/etc/sglBridge.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.de.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.fr.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.it.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.pl.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.ru.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.de.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.it.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.pl.php
+    rm -rf $PROJECT_NAME/lib/pear/I18Nv2.php
+    rm -rf $PROJECT_NAME/lib/pear/OLE.php
+    rm -rf $PROJECT_NAME/lib/pear/Translation2.php
     rm -rf $PROJECT_NAME/lib/pear/Text/Statistics.php
     rm -rf $PROJECT_NAME/lib/pear/Text/Word.php
     rm -rf $PROJECT_NAME/lib/SGL/Column.php
@@ -167,10 +178,10 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/etc/sql_upgrades
     rm -rf $PROJECT_NAME/lib/other
     rm -rf $PROJECT_NAME/lib/pear/Calendar
-    rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
+    rm -rf $PROJECT_NAME/lib/pear/HTML/AJAX
     rm -rf $PROJECT_NAME/lib/pear/HTTP/Download
     rm -rf $PROJECT_NAME/lib/pear/HTTP/Request
-    rm -rf $PROJECT_NAME/lib/pear/HTTP/I18Nv2
+    rm -rf $PROJECT_NAME/lib/pear/I18Nv2
     rm -rf $PROJECT_NAME/lib/pear/Image
     rm -rf $PROJECT_NAME/lib/pear/Net/UserAgent
     rm -rf $PROJECT_NAME/lib/pear/OLE
@@ -361,18 +372,20 @@ checkArgs
 
 #checkPreviousVersions
 
-createMinimalFlag
-
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvn
+#exportSvn
+
+createMinimalFlag
 
 #pruneDeveloper
 
-#pruneMinimal
+if [ $MINIMAL_INSTALL ]; then
+    pruneMinimal
+fi
 
 #createTarball
 
