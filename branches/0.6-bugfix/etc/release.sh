@@ -6,6 +6,9 @@
 # +---------------------------------------------------------------------------+
 # | execute from seagull svn repository root                                  |
 # +---------------------------------------------------------------------------+
+# | Usage: ./release.sh revision_num release_name                             |
+# +---------------------------------------------------------------------------+
+
 ##############################
 # init vars + binaries
 ##############################
@@ -26,6 +29,7 @@ FTP_REMOTE_DIR=incoming
 # Get the tag name from the command line:
 REVISION_NUM=$1
 RELEASE_NAME=$2
+MINIMAL_INSTALL=$3
 PROJECT_NAME=seagull
 SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
@@ -39,9 +43,10 @@ SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
 function usage()
 {
       echo ""
-      echo "Usage: ./release.sh revision_num release_name"
+      echo "Usage: ./release.sh revision_num release_name [minimal_install]"
       echo "    where \"revision_num\" is the $PROJECT_NAME svn revision number (e.g. 226)"
       echo "    and \"release_name\" is the release name (e.g. 0.4.5) which gives the full name \"seagull-0.4.5\""
+      echo "    the optional 3 parameter, 'min', will create a minimal install"
 }
 
 ##############################
@@ -93,6 +98,17 @@ function checkPreviousVersions()
 }
 
 ##############################
+# create minimal flag
+##############################
+function createMinimalFlag()
+{
+    if [ $MINIMAL_INSTALL ]; then
+      touch MINIMAL_INSTALL.txt
+      exit 1
+    fi
+}
+
+##############################
 # tag release
 ##############################
 function tagRelease()
@@ -102,21 +118,49 @@ function tagRelease()
 }
 
 ##############################
-# export svn and package
+# export svn
 ##############################
-function exportSvnAndPackage()
+function exportSvn()
 {
     # export release
     $SVN export --force $SVN_REPO_URL -r $REVISION_NUM $PROJECT_NAME
+}
+
+##############################
+# prune developer
+##############################
+function pruneDeveloper()
+{
+
+}
+
+##############################
+# prune minimal
+##############################
+function pruneMinimal()
+{
+    # remove unwanted files
+    rm -f $PROJECT_NAME/etc/convertCategories.php
+    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
+    rm -f $PROJECT_NAME/etc/Flexy2Smarty.php
+    rm -f $PROJECT_NAME/etc/flexy2SmartyRunner.php
+    rm -f $PROJECT_NAME/etc/generatePackageSimpleTest.php
+    rm -f $PROJECT_NAME/etc/generatePearPackageXml.php
+    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME/etc/ociTableDrop.sh
+    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME/etc/phpDocCli.sh
+    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
+    rm -f $PROJECT_NAME/etc/release.sh
+    rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
+    rm -f $PROJECT_NAME/etc/sglBridge.php
 
     # remove unwanted dirs
-#    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
-#    rm -f $PROJECT_NAME/etc/demoReload.sh
-#    rm -f $PROJECT_NAME/etc/generatePackage.php
-#    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
-#    rm -f $PROJECT_NAME/etc/release.sh
-#    rm -rf $PROJECT_NAME/lib/SGL/tests
-#    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -rf $PROJECT_NAME/docs
+    rm -rf $PROJECT_NAME/etc/mtce
+    rm -rf $PROJECT_NAME/etc/sql_upgrades
+    rm -rf $PROJECT_NAME/lib/SGL/tests
+    rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/lib/pear/Calendar
     rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
     rm -rf $PROJECT_NAME/lib/pear/Image
@@ -131,6 +175,13 @@ function exportSvnAndPackage()
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
 
+}
+
+##############################
+# create tarball
+##############################
+function createTarball()
+{
     # rename folder to current release
     mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
 
@@ -278,16 +329,24 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
+
+createMinimalFlag
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvn
 
-uploadToSfWholePackage
+#pruneDeveloper
+
+#pruneMinimal
+
+#createTarball
+
+#uploadToSfWholePackage
 
 #generateApiDocs
 
