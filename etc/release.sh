@@ -274,7 +274,7 @@ user $FTP_USERNAME $FTP_PASSWORD
 bin
 has
 cd $FTP_REMOTE_DIR
-put $PROJECT_NAME-$RELEASE_NAME.tar.gz
+put $ARCHIVE_NAME.tar.gz
 bye
 EOF
 }
@@ -285,10 +285,10 @@ EOF
 function generateApiDocs()
 {
     #make apiDocs script executable
-    chmod 755 $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
+    chmod 755 $ARCHIVE_NAME/etc/phpDocCli.sh
 
     #execute phpDoc
-    $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
+    $ARCHIVE_NAME/etc/phpDocCli.sh
 
     # rename folder
     mv seagullApiDocs seagullApiDocs-$RELEASE_NAME
@@ -420,17 +420,15 @@ fi
 
 createTarball
 
-echo $ARCHIVE_NAME
+uploadToSfWholePackage
 
-#uploadToSfWholePackage
+generateApiDocs
 
-#generateApiDocs
+packageApiDocs
 
-#packageApiDocs
+uploadToSfApiDocs
 
-#uploadToSfApiDocs
-
-#scpApiDocsToSglSite
+scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 
