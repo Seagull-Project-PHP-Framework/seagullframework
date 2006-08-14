@@ -154,27 +154,57 @@ function pruneMinimal()
     rm -f $PROJECT_NAME/etc/release.sh
     rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
     rm -f $PROJECT_NAME/etc/sglBridge.php
+    rm -rf $PROJECT_NAME/lib/pear/Text/Statistics.php
+    rm -rf $PROJECT_NAME/lib/pear/Text/Word.php
+    rm -rf $PROJECT_NAME/lib/SGL/Column.php
+    rm -rf $PROJECT_NAME/lib/SGL/DataGrid.php
+    rm -rf $PROJECT_NAME/lib/SGL/DataSource.php
+    rm -rf $PROJECT_NAME/lib/SGL/SQLDataSource.php
 
     # remove unwanted dirs
     rm -rf $PROJECT_NAME/docs
     rm -rf $PROJECT_NAME/etc/mtce
     rm -rf $PROJECT_NAME/etc/sql_upgrades
-    rm -rf $PROJECT_NAME/lib/SGL/tests
-    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -rf $PROJECT_NAME/lib/other
     rm -rf $PROJECT_NAME/lib/pear/Calendar
     rm -rf $PROJECT_NAME/lib/pear/HTML_AJAX
+    rm -rf $PROJECT_NAME/lib/pear/HTTP/Download
+    rm -rf $PROJECT_NAME/lib/pear/HTTP/Request
+    rm -rf $PROJECT_NAME/lib/pear/HTTP/I18Nv2
     rm -rf $PROJECT_NAME/lib/pear/Image
+    rm -rf $PROJECT_NAME/lib/pear/Net/UserAgent
+    rm -rf $PROJECT_NAME/lib/pear/OLE
+    rm -rf $PROJECT_NAME/lib/pear/PHP
+    rm -rf $PROJECT_NAME/lib/pear/Translation2
+    rm -rf $PROJECT_NAME/lib/pear/Validate
+    rm -rf $PROJECT_NAME/lib/SGL/tests
+    rm -rf $PROJECT_NAME/modules/blog
+    rm -rf $PROJECT_NAME/modules/contactus
+    rm -rf $PROJECT_NAME/modules/documentor
+    rm -rf $PROJECT_NAME/modules/ecomm
+    rm -rf $PROJECT_NAME/modules/event
+    rm -rf $PROJECT_NAME/modules/export
+    rm -rf $PROJECT_NAME/modules/faq
+    rm -rf $PROJECT_NAME/modules/gallery2
+    rm -rf $PROJECT_NAME/modules/guestbook
+    rm -rf $PROJECT_NAME/modules/media
+    rm -rf $PROJECT_NAME/modules/messaging
+    rm -rf $PROJECT_NAME/modules/newsletter
+    rm -rf $PROJECT_NAME/modules/publisher
+    rm -rf $PROJECT_NAME/modules/randommsg
+    rm -rf $PROJECT_NAME/modules/user/tests
 
+    #remove non-mysql data files
+    #remove non english language
+
+    rm -rf $PROJECT_NAME/tests
     rm -rf $PROJECT_NAME/www/js/html_ajax
-
-    #datagrid js libs
-    rm -rf $PROJECT_NAME/www/js/overlib
     rm -rf $PROJECT_NAME/www/js/jcalc
-
-    #themes that are incomplete
+    rm -rf $PROJECT_NAME/www/js/jscalendar
+    rm -rf $PROJECT_NAME/www/js/overlib
+    rm -rf $PROJECT_NAME/www/js/scriptaculous
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
-
 }
 
 ##############################
@@ -338,7 +368,7 @@ createMinimalFlag
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 #pruneDeveloper
 

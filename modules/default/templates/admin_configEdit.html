@@ -135,6 +135,7 @@ function toggleTransElements() {
                 </label>
                 <input type="text" name="conf[site][wysiwygEditor]" id="conf[site][wysiwygEditor]" value="{conf[site][wysiwygEditor]}" />
             </p>
+            {if:!isMinimalInstall}
             <p>
                 <label class="tipOwner" for="conf[site][extendedLocale]">{translate(#Extended locale support#)}
                 <span class="tipText">{translate(#locale support info#)}</span>
@@ -147,6 +148,7 @@ function toggleTransElements() {
                 </label>
                 <input type="text" name="conf[site][localeCategory]" id="conf[site][localeCategory]" value="{conf[site][localeCategory]}" />
             </p>
+            {end:}
             <p>
                 <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
                 <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
