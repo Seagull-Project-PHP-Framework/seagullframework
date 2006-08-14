@@ -90,9 +90,12 @@ class ArticleMgr extends SGL_Manager
         //  select appropriate jscalendar lang file depending on prefs defined language
         $lang = SGL::getCurrentLang();
         $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
-            ? 'jscalendar/lang/calendar-'. $lang . '.js'
-            : 'jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc   = array('jscalendar/calendar.js',$jscalendarLangFile, 'jscalendar/calendar-setup.js');
+            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
+            : 'js/jscalendar/lang/calendar-en.js';
+        $input->javascriptSrc   = array(
+            'js/jscalendar/calendar.js',
+            $jscalendarLangFile,
+            'js/jscalendar/calendar-setup.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';

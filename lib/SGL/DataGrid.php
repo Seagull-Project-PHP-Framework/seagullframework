@@ -826,24 +826,22 @@ class SGL_DataGrid {
             $output->masterTemplate = 'blank.html';
             $output->print = true;
         }
-        $output->javascriptSrc = array('dataGrid.js', 'overlib/overlib.js');
+        $output->javascriptSrc = array('js/dataGrid.js', 'js/overlib/overlib.js');
         $output->path = SGL_BASE_URL;
         $output->dataGridData->$dataGrigSetName->emptyTitle= $this->emptyTitle;
         if ($this->dataGridDeleteMessage <> '') {
             $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage =
-                                                   $this->dataGridDeleteMessage;
+                $this->dataGridDeleteMessage;
         } else {
             $output->dataGridData->$dataGrigSetName->dataGridDeleteMessage =
-                               SGL_string::translate('Do you want to delete: ');
+                SGL_string::translate('Do you want to delete: ');
         }
-
         $emptyFilters = true;
         foreach ($this->filters as $key=>$value) {
             if ($value !== '') {
                 $emptyFilters = false;
             }
         }
-
         if ($emptyFilters) {
             if ($this->allRows > 9) {
                 $output->dataGridData->$dataGrigSetName->showFilters = true;

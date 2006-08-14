@@ -30,7 +30,7 @@
     <script type="text/javascript" src="{$result->webRoot}/js/mainPublic.js"></script>
 
     {foreach from=$result->javascriptSrc item="file"}
-    <script type="text/javascript" src="{$result->webRoot}/js/{$file}"></script>
+    <script type="text/javascript" src="{$result->webRoot}/{$file}"></script>
     {/foreach}
 
     {if $result->wysiwyg}

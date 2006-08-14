@@ -81,10 +81,12 @@ class EventMgr extends SGL_Manager
         //  select appropriate jscalendar lang file depending on prefs defined language
         $lang = SGL::getCurrentLang();
         $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
-            ? 'jscalendar/lang/calendar-'. $lang . '.js'
-            : 'jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc = array('jscalendar/calendar.js', $jscalendarLangFile,
-            'jscalendar/calendar-setup.js');
+            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
+            : 'js/jscalendar/lang/calendar-en.js';
+        $input->javascriptSrc = array(
+            'js/jscalendar/calendar.js',
+            $jscalendarLangFile,
+            'js/jscalendar/calendar-setup.js');
         if ($input->submitted) {
             if ($input->action == 'searchResults') {
                 if (!empty($input->search->query) && strlen($input->search->query) < 3) {
