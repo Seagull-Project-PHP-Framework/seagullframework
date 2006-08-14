@@ -134,9 +134,9 @@ function hideCombox(comboxId)
             </p>
             <p>
                 <label>{translate(#Article type#)}</label>
-                <select name="frmArticleTypeID"
-                        onchange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeID/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeID) + '/';" />
-                    {generateSelect(aArticleTypes,dataTypeID):h}
+                <select name="frmArticleTypeFilter"
+                        onchange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeFilter/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeFilter) + '/';" />
+                    {generateSelect(aArticleTypes,articleTypeFilter):h}
                 </select>
             </p>
         </fieldset>

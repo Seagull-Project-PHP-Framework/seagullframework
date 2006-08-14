@@ -101,6 +101,8 @@ class ArticleMgr extends SGL_Manager
         $input->articleCatID    = (int)$req->get('frmArticleCatID');
         $input->catChangeToID   = (int)$req->get('frmCategoryChangeToID');
         $input->dataTypeID      = $req->get('frmArticleTypeID');
+        $input->articleTypeFilter = ($req->get('frmArticleTypeFilter'))
+                                    ? (int)$req->get('frmArticleTypeFilter') : 1;
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
@@ -407,7 +409,7 @@ class ArticleMgr extends SGL_Manager
         $aResult = SGL_Item::retrievePaginated(
             $input->catID,
             $bPublished = false,
-            $input->dataTypeID,
+            $input->articleTypeFilter,
             $input->queryRange,
             $input->from);
 
