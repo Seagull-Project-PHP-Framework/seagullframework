@@ -154,7 +154,6 @@ class DocumentMgr extends FileMgr
             // if new document...       
             if ($input->action == 'insert') {
                 $input->assetTypeName = $this->_getType($input->document->document_type_id);
-                $input->document->name = $input->document->orig_name;
             } else {
             // if editing existing document get data from db
                 $document = DB_DataObject::factory($this->conf['table']['document']);
