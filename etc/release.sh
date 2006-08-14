@@ -205,8 +205,8 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/modules/randommsg
     rm -rf $PROJECT_NAME/modules/user/tests
 
-    #remove non-mysql data files
-    #remove non english language
+
+
 
     rm -rf $PROJECT_NAME/tests
     rm -rf $PROJECT_NAME/www/js/html_ajax
@@ -216,6 +216,36 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/www/js/scriptaculous
     rm -rf $PROJECT_NAME/www/savant
     rm -rf $PROJECT_NAME/www/smarty
+
+    #remove non-mysql data files
+
+    #remove non english language
+    moduleList=`ls $PROJECT_NAME/modules`;
+    for moduleName in $moduleList;
+    do
+        langList=`ls $PROJECT_NAME/modules/$moduleName/lang`;
+        for langName in $langList;
+        do
+            if [ $langName != "english-iso-8859-15.php" ]; then
+                rm -f $PROJECT_NAME/modules/$moduleName/lang/$langName;
+            fi
+        done;
+    done;
+
+    for moduleName in $moduleList;
+    do
+        dataList=`ls $PROJECT_NAME/modules/$moduleName/data`;
+        pg_pattern='pg';
+        oci_pattern='oci';
+        for file in $dataList;
+        do
+            if echo "$file" | grep -q "$pg_pattern"; then
+                rm -f $PROJECT_NAME/modules/$moduleName/data/$file;
+            elif echo "$file" | grep -q "$oci_pattern"; then
+                rm -f $PROJECT_NAME/modules/$moduleName/data/$file;
+            fi
+        done;
+    done;
 }
 
 ##############################
