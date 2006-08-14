@@ -34,7 +34,7 @@
 // +---------------------------------------------------------------------------+
 // | GuestbookMgr.php                                                          |
 // +---------------------------------------------------------------------------+
-// | Author:   Boris Kerbikov <boris@techdatasolutions.com>                    |
+// | Author:   Rares Benea <rbenea@bluestardesign.ro>                          |
 // +---------------------------------------------------------------------------+
 // $Id: GuestbookMgr.php,v 1.22 2005/01/21 00:26:16 demian Exp $
 
@@ -125,7 +125,7 @@ class GuestbookMgr extends SGL_Manager
 
         //  build ordering select object
         $output->guestbook = DB_DataObject::factory($this->conf['table']['guestbook']);
-        
+
         if ($this->conf['GuestbookMgr']['useCaptcha']) {
             require_once SGL_CORE_DIR . '/Captcha.php';
             $captcha = new SGL_Captcha();
@@ -150,7 +150,7 @@ class GuestbookMgr extends SGL_Manager
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
-        
+
         if($this->conf['GuestbookMgr']['sendNotificationEmail']) {
             $this->sendEmail($newEntry, $input->moduleName);
         }
@@ -178,7 +178,7 @@ class GuestbookMgr extends SGL_Manager
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
     }
-    
+
     function sendEmail($oEntry, $moduleName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

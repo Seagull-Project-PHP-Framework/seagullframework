@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'gallery2', 'Gallery', 'Use the ''Gallery'' to manage image albums and galleries.', 'gallery2', 'publisher.png', '', NULL, NULL, NULL);
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'gallery2', 'Gallery', 'The ''Gallery'' module is a wrapper that allows you to seamlessly integrate Gallery2 into Seagull, see http://trac.seagullproject.org/wiki/Integration/Gallery.', 'gallery2', 'publisher.png', 'Matti Tahvonen', NULL, 'BSD', 'beta');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
