@@ -107,16 +107,19 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbName'  => 'not required for MySQL login',
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
-        
+
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
             "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
             'onClick="toggleDbNameForLogin(false);"');
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
-            'onClick="toggleDbNameForLogin(true);"');
-        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-            'onClick="toggleDbNameForLogin(true);"');
+
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
+                'onClick="toggleDbNameForLogin(true);"');
+            $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+                'onClick="toggleDbNameForLogin(true);"');
+        }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
@@ -138,10 +141,12 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         unset($radio);
         $radio[] = &$this->createElement('radio', 'portOption', 'TCP port: ',"3306 (MySQL default)",
             3306, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
-            5432, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
-            1521, 'onClick="copyValueToPortElement(this);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
+                5432, 'onClick="copyValueToPortElement(this);"');
+            $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
+                1521, 'onClick="copyValueToPortElement(this);"');
+        }
         $this->addGroup($radio, 'dbPortChoices', 'TCP port:', '<br />');
         $this->addElement('text',  'dbPort[port]',    '', 'id="targetPortElement"');
         #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');
