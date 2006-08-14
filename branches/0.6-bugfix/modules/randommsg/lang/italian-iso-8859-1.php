@@ -1,8 +1,8 @@
 <?php
 $words['Please enter one or more messages'] = 'Immetti uno o più messaggi';
 $words['Please select a file to upload'] = 'Seleziona un file da inviare';
-$words['RndMsg Manager :: Add'] = 'Gestore RndMsg :: Aggiungi';
-$words['RndMsg Manager :: Browse'] = 'Gestore RndMsg :: Elenco';
+$words['RndMsg Manager :: Add'] = 'Gestione RndMsg :: Aggiungi';
+$words['RndMsg Manager :: Browse'] = 'Gestione RndMsg :: Elenco';
 $words['Message'] = 'Messaggio';
 $words['With selected message(s)'] = 'Con i messaggi selezionati';
 $words['Add messages'] = 'Aggiungi messaggi';

@@ -3,9 +3,9 @@
 
 BEGIN;
 
-#
-# Dumping data for table block
-#
+-- 
+--  Dumping data for table block
+-- 
 
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Default_Block_SampleRight1', 'Sample Right Block', '', '', 5, 'Right', 0, 0, 'N;');
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Default_Block_Calendar', 'Calendar', '', '', 5, 'Left', 0, 1, 'N;');
