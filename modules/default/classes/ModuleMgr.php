@@ -281,10 +281,12 @@ class ModuleMgr extends SGL_Manager
             require_once SGL_CORE_DIR . '/Task/Install.php';
             $runner = new SGL_TaskRunner();
             $runner->addData($data);
+            $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
             $runner->addTask(new SGL_Task_DropTables());
             $runner->addTask(new SGL_Task_RemoveDefaultData());
             $runner->addTask(new SGL_Task_RemoveNavigation());
             $runner->addTask(new SGL_Task_RemoveBlockData());
+            $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
             $runner->addTask(new SGL_Task_SyncSequences());
             $runner->addTask(new SGL_Task_UnLinkWwwData());
             $ok = $runner->main();
