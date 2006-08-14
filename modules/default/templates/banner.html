@@ -35,9 +35,11 @@
                     {valueObj.content:h}
                 {end:}
                 </div>
+                {if:!isMinimalInstall}
                 <div id="lang-switcher">
                     {getLangSwitcher(currUrl,webRoot,theme):h}
                 </div>
+                {end:}
                 <div class="spacer">&nbsp;</div>
             </div>
         </div>
