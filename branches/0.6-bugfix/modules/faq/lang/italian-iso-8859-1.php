@@ -1,4 +1,7 @@
 <?php
+$words['Faq list'] = 'Lista FAQ';
+$words['edit faq'] = 'Modifica FAQ';
+$words['reorder faqs'] = 'riordina FAQ';
 $words['FAQs'] = 'Domande frequenti';
 $words['FAQ Manager'] = 'Gestore Domande frequenti';
 $words['FAQ Manager :: Browse'] = 'Gestore Domande frequenti :: Elenco';
@@ -9,7 +12,6 @@ $words['Please fill in a question'] = 'Inserisci la domanda';
 $words['Please fill in an answer'] = 'Inserisci la risposta';
 $words['Question'] = 'Domanda';
 $words['Answer'] = 'Risposta';
-$words['FAQ ID'] = 'FAQ ID';
 $words['Date created'] = 'Data creazione';
 $words['Questions'] = 'Domande';
 $words['Answers'] = 'Risposte';
@@ -18,7 +20,6 @@ $words['A'] = 'R';
 $words['No FAQs found'] = 'Nessuna domanda trovata';
 $words['new faq'] = 'nuova domanda';
 $words['reorder'] = 'riordina';
-$words['id'] = 'id';
 $words['FAQ'] = 'FAQ';
 $words['Order'] = 'Ordine';
 $words['With selected faq(s)'] = 'Con le domande selezionate';

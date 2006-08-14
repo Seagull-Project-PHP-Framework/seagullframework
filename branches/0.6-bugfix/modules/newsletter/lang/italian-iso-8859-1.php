@@ -1,4 +1,16 @@
 <?php
+$words['Please enter your name and e-mail address and select the newsletters that you want to subscribe.'] = 'Immetti il tuo indirizzo e-mail e seleziona la newsletter che vuoi sottoscrivere';
+$words['Guestbook Information'] = 'Guestbook Information';
+$words['Adress Book'] = 'Rubrica indirizzi';
+$words['Guestbook List'] = 'Lista Guestbook';
+$words['Delete Selected'] = 'Elimina selezionati';
+$words['List Name'] = 'Lista nomi';
+$words['Subscriber Details'] = 'Dettagli sottoscrizione';
+$words['Export Subscriber'] = 'Esporta iscritti';
+$words['This email is already subscribed'] = 'Questo indirizzo e-mail è già stato usato';
+$words['Action request'] = 'Azione richiesta';
+$words['Select newsletter where you want to subscribe'] = 'Seleziona la newsletter alla quale ti vuoi iscrivere';
+$words['Newsletter List'] = 'Lista Newsletters';
 $words['Subscriber updated successfully'] = 'Iscritto aggiornato';
 $words['Subscriber deleted successfully'] = 'Iscritto eliminato';
 $words['Total users'] = 'Totale iscritti';
