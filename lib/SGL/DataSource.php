@@ -11,9 +11,8 @@ define('SGL_DATAGRID_DELTA_LINKS_PAGE', 1);
 /**
  * SGL_DataGridDataSource
  * For selecting and preparing manually added data
- * @package SGL_DataGridDataSource
+ * @package SGL
  * @author Varico
- * @copyright Copyright (c) 2004, Varico, Poznan, Poland
  * @version $Id
  * @access public
  **/
@@ -86,7 +85,7 @@ class SGL_DataGridDataSource {
     /**
      * SGL_DataGridDataSource::setFilter()
      * Filter dataGrid data in _itemsData array
-     * @param array $filtersArray - given from dataGrid with filter values 
+     * @param array $filtersArray - given from dataGrid with filter values
                     for each filterable column
      * @access public
      * @return void
@@ -110,13 +109,13 @@ class SGL_DataGridDataSource {
                              || $filter == "")) {
                                     $numberOfFitFilters++; //filter match
                         }
-                    } elseif (($filter == "")||(strstr(strtoupper($data[$keyFilter]), 
+                    } elseif (($filter == "")||(strstr(strtoupper($data[$keyFilter]),
                                                             strtoupper($filter)))) {
                             $numberOfFitFilters++; //filter match
                     }
                 }
                 //if all filters match in row
-                if ($numberOfFitFilters == $numberOfFilters) { 
+                if ($numberOfFitFilters == $numberOfFilters) {
                     $newItemData[] = $data; //add this row to new data array
                 }
             }
@@ -190,7 +189,7 @@ class SGL_DataGridDataSource {
                         }
 
                         //set summary of actual column
-                        $summarys[$column->dbName] = 
+                        $summarys[$column->dbName] =
                             number_format($summaryOfPage, 2, '.', '');
                     }
                 }
@@ -208,10 +207,10 @@ class SGL_DataGridDataSource {
 
                         //set summary of actual column
                         if ($counter>0) {
-                            $summarys[$column->dbName] = 
+                            $summarys[$column->dbName] =
                                 number_format(($summaryOfPage/$counter), 2, '.', '');
                         } else {
-                            $summarys[$column->dbName] = 
+                            $summarys[$column->dbName] =
                                 number_format($summaryOfPage, 2, '.', '');
                         }
                     }
