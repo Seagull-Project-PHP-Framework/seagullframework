@@ -7,11 +7,12 @@
 include 'DataSource.php';
 
 /**
- * SGL_DataGridSQLDataSource
+ * SGL_DataGridSQLDataSource.
+ *
  * For selecting and preparing selected from database data
- * @package SGL_DataGridSQLDataSource
+ *
+ * @package SGL
  * @author Varico
- * @copyright Copyright (c) 2004, Varico, Poznan, Poland
  * @version $Id
  * @access public
  **/

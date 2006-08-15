@@ -68,31 +68,49 @@ function checkPreviousVersions()
 {
     # Check that the release directory doesn't already exist (fresh export):
     if [ -d "/tmp/$SVN_REPO_LEAF_FOLDER_NAME" ]; then
-      echo "Removing last $PROJECT_NAME export ..."
+      echo "Removing last $SVN_REPO_LEAF_FOLDER_NAME export ..."
       rm -rf /tmp/$SVN_REPO_LEAF_FOLDER_NAME
     fi
 
     # Check that the release directory doesn't already exist:
     if [ -d "/tmp/$PROJECT_NAME-$RELEASE_NAME" ]; then
-      echo "Removing last $PROJECT_NAME renamed export ..."
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME renamed export ..."
       rm -rf /tmp/$PROJECT_NAME-$RELEASE_NAME
+    fi
+
+    # Check that the release directory doesn't already exist:
+    if [ -d "/tmp/$PROJECT_NAME" ]; then
+      echo "Removing last $PROJECT_NAME renamed export ..."
+      rm -rf /tmp/$PROJECT_NAME
+    fi
+
+    # Check that the minimal release directory doesn't already exist:
+    if [ -d "/tmp/$PROJECT_NAME-$RELEASE_NAME-minimal" ]; then
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME-minimal renamed export ..."
+      rm -rf /tmp/$PROJECT_NAME-$RELEASE_NAME-minimal
     fi
 
     # Check that the last tarball doesn't exist:
     if [ -e "/tmp/$PROJECT_NAME-$RELEASE_NAME.tar.gz" ]; then
-      echo "Removing last $PROJECT_NAME tarball ..."
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME.tar.gz ..."
       rm -f /tmp/$PROJECT_NAME-$RELEASE_NAME.tar.gz
+    fi
+
+    # Check that the last tarball doesn't exist:
+    if [ -e "/tmp/$PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz" ]; then
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz ..."
+      rm -f /tmp/$PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz
     fi
 
     # Check that the last apiDocs dir doesn't exist:
     if [ -d "/tmp/seagullApiDocs-$RELEASE_NAME" ]; then
-      echo "Removing last seagull apiDocs dir ..."
+      echo "Removing last seagullApiDocs-$RELEASE_NAME ..."
       rm -rf /tmp/seagullApiDocs-$RELEASE_NAME
     fi
 
     # Check that the last apiDocs tarball doesn't exist:
     if [ -e "/tmp/seagullApiDocs-$RELEASE_NAME.tar.gz" ]; then
-      echo "Removing last seagull apiDocs tarball ..."
+      echo "Removing last seagullApiDocs-$RELEASE_NAME.tar.gz ..."
       rm -f /tmp/seagullApiDocs-$RELEASE_NAME.tar.gz
     fi
 }
@@ -130,8 +148,9 @@ function createMinimalFlag()
 ##############################
 function pruneDeveloper()
 {
-    #foo
-    echo test;
+    # remove GPL modules
+    rm -rf $PROJECT_NAME/modules/media
+    rm -rf $PROJECT_NAME/modules/event
 }
 
 ##############################
@@ -192,19 +211,15 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/modules/blog
     rm -rf $PROJECT_NAME/modules/contactus
     rm -rf $PROJECT_NAME/modules/documentor
-    rm -rf $PROJECT_NAME/modules/ecomm
-    rm -rf $PROJECT_NAME/modules/event
     rm -rf $PROJECT_NAME/modules/export
     rm -rf $PROJECT_NAME/modules/faq
     rm -rf $PROJECT_NAME/modules/gallery2
     rm -rf $PROJECT_NAME/modules/guestbook
-    rm -rf $PROJECT_NAME/modules/media
     rm -rf $PROJECT_NAME/modules/messaging
     rm -rf $PROJECT_NAME/modules/newsletter
     rm -rf $PROJECT_NAME/modules/publisher
     rm -rf $PROJECT_NAME/modules/randommsg
     rm -rf $PROJECT_NAME/modules/user/tests
-
     rm -rf $PROJECT_NAME/tests
     rm -rf $PROJECT_NAME/www/js/html_ajax
     rm -rf $PROJECT_NAME/www/js/jcalc
@@ -401,14 +416,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvn
+#exportSvn
 
 createMinimalFlag
 
@@ -420,13 +435,13 @@ fi
 
 createTarball
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 

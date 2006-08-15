@@ -4,6 +4,7 @@
 //http://www.varico.com ... since 1989
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 // this library depends on PEAR's SQL_Parser and Spreadsheet_Excel_Writer
 
 // KK 26940 count of rows comes from aPrefs
@@ -12,11 +13,10 @@ define ('SGL_DATAGRID_ALL_ROWS_IN_SELECT', 10000);
 require_once 'Column.php';
 
 /**
- * SGL_DataGrid
- * For browsing tables
- * @package DataGrid
+ * SGL_DataGrid for browsing tables.
+ *
+ * @package SGL
  * @author Varico
- * @copyright Copyright (c) 2004, Varico, Poznan, Poland
  * @version $Id: DataGrid.php,v 1.28.2.2 2006/03/20 08:42:33 danielk Exp $
  * @access public
  **/

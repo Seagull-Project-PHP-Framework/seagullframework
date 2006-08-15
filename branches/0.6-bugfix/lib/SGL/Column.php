@@ -6,11 +6,12 @@
 
 
 /**
- * SGL_DataGridColumn
+ * SGL_DataGridColumn.
+ *
  * For creating columns to dataGrid and updating them by specified methods
- * @package SGL_DataGridColumn
+ *
+ * @package SGL
  * @author Varico
- * @copyright Copyright (c) 2005
  * @version $Id: DataGridColumn.php,v 1.4 2005/10/28 11:26:15 krzysztofk Exp $
  * @access public
  **/
@@ -98,27 +99,27 @@ class SGL_DataGridColumn {
     function addAction($params)
     {
         if (isset($params['name'])) {
-            $object->name = $params['name']; 
+            $object->name = $params['name'];
         } else {
             $object->name = '';
         }
         if (isset($params['img'])) {
-            $object->img = $params['img']; 
+            $object->img = $params['img'];
         } else {
             $object->img = '';
         }
         if (isset($params['url'])) {
-            $object->url = $params['url']; 
-        } else { 
+            $object->url = $params['url'];
+        } else {
             $object->url = '';
         }
         if (isset($params['tips'])) {
-            $object->tips = $params['tips']; 
+            $object->tips = $params['tips'];
         } else {
             $object->tips = '';
         }
         if (isset($params['javaCode'])) {
-            $object->javaCode = $params['javaCode']; 
+            $object->javaCode = $params['javaCode'];
         } else {
             $object->javaCode = '';
         }

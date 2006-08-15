@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -47,7 +47,7 @@ require_once 'HTML/QuickForm/Controller.php';
 require_once 'HTML/QuickForm/Renderer/Default.php';
 
 /**
- * Inherit from HTML_QuickForm_Controller to build 
+ * Inherit from HTML_QuickForm_Controller to build
  * multi-page forms (wizards).
  *
  * @package SGL
@@ -58,7 +58,7 @@ class SGL_WizardController extends HTML_QuickForm_Controller
 {
    /**
     * Extracts the names of the current page and the current action from
-    * HTTP request data. 
+    * HTTP request data.
     *
     * @access public
     * @return array     first element is page name, second is action name
@@ -70,7 +70,7 @@ class SGL_WizardController extends HTML_QuickForm_Controller
         }
         $names = array_map('preg_quote', array_keys($this->_pages));
         $regex = '/^_qf_(' . implode('|', $names) . ')_(.+?)(_x)?$/';
-        
+
     $count = 0;
     // This section of the code could most likely be improved ...
     // Basically we are collecting the action vars from $_REQUEST
@@ -91,12 +91,12 @@ class SGL_WizardController extends HTML_QuickForm_Controller
         {
             if ( (preg_match("/next/", $p)) || (preg_match("/back/", $p)) )
             {
-                $matches = $arr;    
+                $matches = $arr;
                 break;
             }
             else if (preg_match("/display/", $p))
             {
-                $matches = $arr;    
+                $matches = $arr;
             }
         }
                 return array($matches[1], $matches[2]);
@@ -114,15 +114,15 @@ class SGL_WizardController extends HTML_QuickForm_Controller
 
 /**
  * The action handles the HTTP redirect to a specific page.
- * 
- * @package SGL_Wizard_Controller
+ *
+ * @package SGL
  * @version $Revision: 1.4 $
  */
-class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump 
+class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
 {
    /**
     * Extracts the names of the current page and the current action from
-    * HTTP request data, strips off all query string vars. 
+    * HTTP request data, strips off all query string vars.
     *
     * @access public
     * @return array     first element is page name, second is action name
@@ -147,10 +147,10 @@ class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
         $action = $current->getAttribute('action');
 
     // simply remove all query string vars ...
-    // NOTE:  this may only work with Seagull SEF Url Handler, may need to 
+    // NOTE:  this may only work with Seagull SEF Url Handler, may need to
     // be expanded to deal with other URL Handlers
     $action = preg_replace("/\?.*/", "", $action);
-    
+
         $url    = $action . (false === strpos($action, '?')? '?': '&') .
                   $current->getButtonName('display') . '=true' .
                   ((!defined('SID') || '' == SID || ini_get('session.use_only_cookies'))? '': '&' . SID);
@@ -161,11 +161,11 @@ class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
 
 /**
  * Class representing an action to perform on HTTP request. The Controller
- * will select the appropriate Action to call on the request and call its 
+ * will select the appropriate Action to call on the request and call its
  * perform() method. The subclasses of this class should implement all the
  * necessary business logic.
- * 
- * @package SGL_Wizard_Controller
+ *
+ * @package SGL
  * @version $Revision: 1.1 $
  */
 class SGL_WizardControllerProcess extends HTML_QuickForm_Action
@@ -173,9 +173,9 @@ class SGL_WizardControllerProcess extends HTML_QuickForm_Action
    /**
     * Processes the request, assigning controller output to var for
     * rendering.
-    * 
+    *
     * @access public
-    * @param  object HTML_QuickForm_Page    the current form-page 
+    * @param  object HTML_QuickForm_Page    the current form-page
     * @param  string    Current action name, as one Action object can serve multiple actions
     */
     function perform(&$page, $actionName)
@@ -189,19 +189,18 @@ class SGL_WizardControllerProcess extends HTML_QuickForm_Action
 
 /**
  * This action handles the output of the form.
- * 
- * 
+ *
  * @author  Alexey Borzov <avb@php.net>
- * @package HTML_QuickForm_Controller
+ * @package SGL
  * @version $Revision: 1.5 $
  */
 class SGL_WizardControllerDisplay extends HTML_Quickform_Action_Display
 {
    /**
     * Actually outputs the form.
-    * 
+    *
     * This assigns the wizard output to a variable for rendering
-    * 
+    *
     * @access public
     * @param  object HTML_QuickForm_Page  the page being processed
     */
