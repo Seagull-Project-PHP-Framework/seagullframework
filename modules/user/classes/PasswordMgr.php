@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PasswordMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -135,19 +135,12 @@ class PasswordMgr extends SGL_Manager
             list($passwd, $oUser) = $aRet;
             $bEmailSent = $this->sendPassword($oUser, $passwd);
             if ($bEmailSent) {
-                //  redirect
                 SGL::raiseMsg('password emailed out', true, SGL_MESSAGE_INFO);
-                $aParams = array(
-                    'moduleName'    => 'default',
-                    'managerName'   => 'default',
-                    );
-                SGL_HTTP::redirect($aParams);
             } else {
                 SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
             }
         //  credentials not recognised
         } else {
-            //  redirect
             SGL::raiseMsg('email not in system');
         }
     }
@@ -155,7 +148,15 @@ class PasswordMgr extends SGL_Manager
     function _cmd_redirectToEdit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_HTTP::redirect(array('action' => 'edit'));
+
+        //  if no errors have occured, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect(array('action' => 'edit'));
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'docBlank.html';
+        }
     }
 
     function _resetPassword($userId)
@@ -171,20 +172,31 @@ class PasswordMgr extends SGL_Manager
         return array($passwd, $oUser);
     }
 
+    /**
+     * Wrapper for emailing password.
+     *
+     * @static
+     * @param object $oUser
+     * @param string $passwd
+     * @return boolean
+     */
     function sendPassword($oUser, $passwd)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once SGL_CORE_DIR . '/Emailer.php';
 
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         $options = array(
-                'toEmail'   => $oUser->email,
-                'fromEmail' => $this->conf['email']['admin'],
-                'replyTo'   => $this->conf['email']['admin'],
-                'subject'   => 'Password reminder from ' . $this->conf['site']['name'],
-                'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
-                    . '/user/email_forgot.php',
-                'username'  => $oUser->username,
-                'password'  => $passwd,
+            'toEmail'   => $oUser->email,
+            'fromEmail' => $conf['email']['admin'],
+            'replyTo'   => $conf['email']['admin'],
+            'subject'   => 'Password reminder from ' . $conf['site']['name'],
+            'template'  => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme']
+                . '/user/email_forgot.php',
+            'username'  => $oUser->username,
+            'password'  => $passwd,
         );
         $message = & new SGL_Emailer($options);
         $ok = $message->prepare();

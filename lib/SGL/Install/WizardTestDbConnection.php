@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardTestDbConnection.php                                                |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 
 function canConnectToDbServer()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page3'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page4'];
 
     $socket = (isset($aFormValues['dbProtocol']['protocol'])
                 && $aFormValues['dbProtocol']['protocol'] == 'unix'
@@ -47,7 +47,7 @@ function canConnectToDbServer()
         ? '(' . $aFormValues['socket'] . ')'
         : '';
 
-	$protocol = isset($aFormValues['dbProtocol']['protocol']) 
+	$protocol = isset($aFormValues['dbProtocol']['protocol'])
         ? $aFormValues['dbProtocol']['protocol'] . $socket
         : '';
     $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
@@ -56,7 +56,7 @@ function canConnectToDbServer()
                 && ($aFormValues['dbProtocol']['protocol'] == 'tcp'))
         ? ':' . $aFormValues['dbPort']['port']
         : '';
-    $dbName = (!empty($aFormValues['dbName']) && ($aFormValues['dbName'] != 'not required for MySQL'))
+    $dbName = (!empty($aFormValues['dbName']) && ($aFormValues['dbName'] != 'not required for MySQL login'))
                 ? '/'.$aFormValues['dbName']
                 : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
@@ -72,33 +72,54 @@ function canConnectToDbServer()
         SGL_Install_Common::errorPush($dbh);
         return false;
     } else {
+        //  detect and store DB info
+        if (preg_match("/mysql/", $dbh->phptype)) {
+            $mysqlVersion = mysql_get_server_info();
+        }
+        $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+        $aEnvData['db_info'] = array(
+            'dbDriver' => $dbh->phptype,
+            'version' => isset($mysqlVersion) ? $mysqlVersion : '',
+            );
+        $serialized = serialize($aEnvData);
+        @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardTestDbConnection extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header', null, 'Test DB Connection: page 3 of 5');
+        $this->addElement('header', null, 'Test DB Connection: page 4 of 6');
 
-        //  FIXME: use detect.php info to supply sensible defaults
+        //  FIXME: use env.php info to supply sensible defaults
         $this->setDefaults(array(
             'host' => 'localhost',
             'dbProtocol'  => array('protocol' => 'unix'),
             'dbType'  => array('type' => 'mysql_SGL'),
+            'dbPortChoices'  => array('portOption' => 3306),
             'dbPort'  => array('port' => 3306),
-            'dbName'  => 'not required for MySQL',
+            'dbName'  => 'not required for MySQL login',
             ));
+        $this->setDefaults(overrideDefaultInstallSettings());
 
         //  type
-        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',"mysql_SGL (all sequences in one table)", 'mysql_SGL');
-        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql');
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql');
-#        $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL');
-#        $radio[] = &$this->createElement('radio', 'type',     '', "maxdb", 'maxdb_SGL');
-#        $radio[] = &$this->createElement('radio', 'type',     '', "db2", 'db2_SGL');
+        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
+            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');
+        $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
+            'onClick="toggleDbNameForLogin(false);"');
+
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
+                'onClick="toggleDbNameForLogin(true);"');
+            $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+                'onClick="toggleDbNameForLogin(true);"');
+        }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
@@ -118,18 +139,23 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
 
         //  port
         unset($radio);
-        $radio[] = &$this->createElement('radio', 'port',     'TCP port: ',"3306 (MySQL default)", 3306);
-        $radio[] = &$this->createElement('radio', 'port',     '',"5432 (Postgres default)", 5432);
-#        $radio[] = &$this->createElement('radio', 'port',     '',"1521 (Oracle default)", 1521);
-#        $radio[] = &$this->createElement('radio', 'port',     '',"7210 (MaxDB default)", 7210);
-#        $radio[] = &$this->createElement('radio', 'port',     '',"50001 (DB2 default)", 50001);
-        $this->addGroup($radio, 'dbPort', 'TCP port:', '<br />');
-        $this->addGroupRule('dbPort', 'Please specify a db port', 'required');
+        $radio[] = &$this->createElement('radio', 'portOption', 'TCP port: ',"3306 (MySQL default)",
+            3306, 'onClick="copyValueToPortElement(this);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
+                5432, 'onClick="copyValueToPortElement(this);"');
+            $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
+                1521, 'onClick="copyValueToPortElement(this);"');
+        }
+        $this->addGroup($radio, 'dbPortChoices', 'TCP port:', '<br />');
+        $this->addElement('text',  'dbPort[port]',    '', 'id="targetPortElement"');
+        #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');
 
         //  credentials
         $this->addElement('text',  'user',    'Database username: ');
         $this->addElement('password', 'pass', 'Database password: ');
-        $this->addElement('text',  'dbName',    'Database name: ');
+        $this->addElement('text',  'dbName',    'Database name: ', array(
+            'id' => 'dbLoginNameElement', 'size'=> 25));
         $this->addRule('user', 'Please specify the db username', 'required');
 
         //  test db connect

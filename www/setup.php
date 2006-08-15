@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -63,7 +63,7 @@ module setup
 - choose modules and permissions must be created and set at install time
 - attempt to
     - uncompress
-    - move to correct locatin
+    - move to correct location
     - apply user perms
     - apply prefs
     - add module's db tables to Config
@@ -71,6 +71,19 @@ module setup
     - add 'section' or 'screen' navigation links
     - register module in registry
 */
+
+// This adds default values for the installer form, based on a
+// ini-file.
+function overrideDefaultInstallSettings()
+{
+    if (file_exists(SGL_PATH.'/etc/customInstallDefaults.ini')) {
+        $customInstallDefaults = parse_ini_file(SGL_PATH.'/etc/customInstallDefaults.ini', false);
+        $ret = $customInstallDefaults;
+    } else {
+        $ret = array();
+    }
+    return $ret;
+}
 
 //  initialise
 
@@ -85,10 +98,33 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $varDir = dirname(__FILE__) . '/../var';
 }
 
-session_start();
+//  check for lib cache
+define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
+    ? true
+    : false);
+
+//  are we doing a minimal install?
+define('SGL_MINIMAL_INSTALL', (is_file($rootDir . '/MINIMAL_INSTALL.txt'))
+    ? true
+    : false);
+
 require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
 SGL_FrontController::init();
+session_start();
+$_SESSION['ERRORS'] = array();
+
+//  check if requesting auth.txt download
+if (isset($_GET['download']) && $_GET['download'] == 1) {
+    if (isset($_SESSION['authString'])) {
+        header("Content-Type: text/plain");
+        header("Content-Length: " . strlen($_SESSION['authString']));
+        header("Content-Description: Download AUTH.txt to your computer.");
+        header("Content-Disposition: attachment; filename=AUTH.txt");
+        print $_SESSION['authString'];
+        exit;
+    }
+}
 
 //  reroute to front controller
 if (isset($_GET['start'])) {
@@ -103,7 +139,7 @@ if (isset($_GET['start'])) {
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 
-    header('Location: '.SGL_BASE_URL.'/index.php');
+    header('Location: '.SGL_BASE_URL.'/index.php/default/welcome/1');
     exit;
 }
 
@@ -136,14 +172,9 @@ require_once 'HTML/QuickForm/Action/Next.php';
 require_once 'HTML/QuickForm/Action/Back.php';
 require_once 'HTML/QuickForm/Action/Display.php';
 
-require_once 'DB.php';
-
-//  load SGL libs
-require_once SGL_PATH . '/lib/SGL/DB.php';
-require_once SGL_PATH . '/lib/SGL/Config.php';
-
 //  load wizard screens and qf overrides
 require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardSetupAuth.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardDetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
@@ -151,8 +182,8 @@ require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 
 //  load tasks
-require_once SGL_PATH . '/lib/SGL/Install/Tasks/DetectEnv.php';
-require_once SGL_PATH . '/lib/SGL/Install/Tasks/Install.php';
+require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
+require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
 class ActionProcess extends HTML_QuickForm_Action
 {
@@ -160,25 +191,49 @@ class ActionProcess extends HTML_QuickForm_Action
     {
         $data = $page->controller->exportValues();
 
+        //  is this a rebuild?
+        $dbh = & SGL_DB::singleton();
+        $res = false;
+        if (!PEAR::isError($dbh)) {
+            $query = 'SELECT COUNT(*) FROM module';
+            $res = $dbh->getOne($query);
+        }
+
+        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
+            $data['aModuleList'] = SGL_Install_Common::getModuleList();
+        } elseif (PEAR::isError($dbh)) { // a new install
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop();
+        } else {
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop();
+        }
+
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_CreateConfig());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
+        $runner->addTask(new SGL_Task_DropTables());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
-        $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
-        set_time_limit(120);
         $ok = $runner->main();
     }
 }
@@ -186,10 +241,11 @@ class ActionProcess extends HTML_QuickForm_Action
 //  start wizard
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
-$wizard->addPage(new WizardDetectEnv('page2'));
-$wizard->addPage(new WizardTestDbConnection('page3'));
-$wizard->addPage(new WizardCreateDb('page4'));
-$wizard->addPage(new WizardCreateAdminUser('page5'));
+$wizard->addPage(new WizardSetupAuth('page2'));
+$wizard->addPage(new WizardDetectEnv('page3'));
+$wizard->addPage(new WizardTestDbConnection('page4'));
+$wizard->addPage(new WizardCreateDb('page5'));
+$wizard->addPage(new WizardCreateAdminUser('page6'));
 
 // We actually add these handlers here for the sake of example
 // They can be automatically loaded and added by the controller

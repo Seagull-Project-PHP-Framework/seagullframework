@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Jacob Singh                                        |
+// | Copyright (c) 2006, Jacob Singh                                        |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Locale.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -75,6 +75,7 @@ class SGL_Locale
                 $langCode = SGL::getCurrentLang();
 
                 $uid = SGL_Session::getUid();
+                require_once 'I18Nv2/Negotiator.php';
                 if ($uid && isset($langCode)) {
                     $dbh = &SGL_DB::singleton();
                     $c = &SGL_Config::singleton();
@@ -84,7 +85,6 @@ class SGL_Locale
                     $country = strtoupper($country);
 
                     if (!$country) {
-                        require_once 'I18Nv2/Negotiator.php';
                         $neg = &new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }

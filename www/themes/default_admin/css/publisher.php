@@ -39,7 +39,7 @@
     width: 80px;
     text-align: left;
 }
-#articleAddContent p input {
+#articleAddContent p input.longText {
     width: 80%;
 }
 #articleAddContent span.tipText {
@@ -83,4 +83,10 @@ img.calendar{
 }
 #editAsset textarea.longText {
     height: 6em;
+}
+
+/*
+-- contentTypeAdd.html / contentTypeEdit.html ---------------------------------------*/
+#addContentType p input.longText, #editContentType p input.longText {
+    width: 60%;
 }

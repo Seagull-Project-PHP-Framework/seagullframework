@@ -4,11 +4,12 @@
     <title>{conf[site][name]} :: {translate(pageTitle):h}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
     <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
     <meta name="robots" content="ALL" />
     <meta name="copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="rating" content="General" />
     <meta name="generator" content="Seagull Framework v{versionAPI}" />
-    <link rel="icon" type="image/gif" href="{webRoot}/themes/{theme}/images/favicon.gif" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
     <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/themes/{theme}/css/style.php?navStylesheet=adminMenu_vertical&amp;moduleName={moduleName}&amp;isFormSubmitted={submitted}" />
 
@@ -21,6 +22,8 @@
         var SGL_JS_THEME="{theme}";
         var SGL_JS_ADMINGUI="1";
         var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+        var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
+        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
     {scriptClose:h}
 
     <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
@@ -28,7 +31,7 @@
     <script type="text/javascript" src="{webRoot}/js/hack-IE-hover.js"></script>
 
     {foreach:javascriptSrc,file}
-    <script type="text/javascript" src="{webRoot}/js/{file}"></script>
+    <script type="text/javascript" src="{webRoot}/{file}"></script>
     {end:}
 
     {if:wysiwyg}

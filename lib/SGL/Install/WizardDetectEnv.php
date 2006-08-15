@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardDetectEnv.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -43,13 +43,21 @@ function environmentOk()
     if (SGL_Install_Common::errorsExist()) {
         return false;
     } else {
-        //  store output for later processing
-        $serialized = serialize($GLOBALS['_SGL']['runner']);
+        // cleanup data for storage
+        $oTask = $GLOBALS['_SGL']['runner'];
+        $aSummary = array();
+        foreach ($oTask->aTasks as $oTask) {
+            $aSummary[$oTask->key] = $oTask->aData;
+        }
+        $serialized = serialize($aSummary);
         @file_put_contents(SGL_VAR_DIR . '/env.php', $serialized);
         return true;
     }
 }
 
+/**
+ * @package Install
+ */
 class WizardDetectEnv extends HTML_QuickForm_Page
 {
     function buildForm()
@@ -58,15 +66,18 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'detectEnv' => 1,
             ));
+        $this->setDefaults(overrideDefaultInstallSettings());
 
-        $this->addElement('header',     null, 'Detect Environment: page 2 of 5');
+        $this->addElement('header',     null, 'Detect Environment: page 3 of 6');
 
         $runner = new SGL_TaskRunner();
         $runner->addTask(new SGL_Task_GetLoadedModules());
         $runner->addTask(new SGL_Task_GetPhpEnv());
         $runner->addTask(new SGL_Task_GetPhpIniValues());
         $runner->addTask(new SGL_Task_GetFilesystemInfo());
-        $runner->addTask(new SGL_Task_GetPearInfo());
+        if (!SGL::isMinimalInstall()) {
+            $runner->addTask(new SGL_Task_GetPearInfo());
+        }
 
         $html = $runner->main();
 
@@ -74,6 +85,10 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $GLOBALS['_SGL']['runner'] = $runner;
 
         $this->addElement('checkbox', 'detectEnv', 'Detect Env?', 'Yes');
+        $this->addElement('static', 'colourKey', 'Legend', 'Errors are displayed in '.
+            '<span style="color: red; font-weight: bold;">red</span>, recommendations in '.
+            '<span style="color: orange; font-weight: bold;">yellow</span> and success in '.
+            '<span style="color: green; font-weight: bold;">green</span>');
         $this->registerRule('environmentOk','function','environmentOk');
         $this->addRule('detectEnv', 'please fix the listed errors', 'environmentOk');
 

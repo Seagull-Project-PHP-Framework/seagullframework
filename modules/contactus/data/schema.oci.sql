@@ -16,3 +16,6 @@ create table contact_us
 	user_comment         CLOB                 null,
 	constraint PK_CONTACT_US primary key (contact_us_id)
 );
+
+create sequence contact_us_seq;
+

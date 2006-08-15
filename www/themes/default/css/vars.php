@@ -1,56 +1,69 @@
 <?php
-    $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';
+    $fontFamily             = 'arial, sans-serif';
+    $fontFamilyAlt          = 'arial';
     $fontSize               = 'small';
 
-    $primary                = '#99cc00'; // lime green
-    $primaryLight           = '#bbe713'; // light green
-    $primaryText            = '#e6ffa2'; // pale white for text on lime green
-    $primaryTextLight       = '#ffffff'; // white
-    $secondaryLight         = '#e5f1ff'; // baby blue
-    $secondary              = '#9dcdfe'; // blue
-    $secondaryMedium        = '#3399ff'; // medium blue
-    $secondaryDark          = '#006699'; // dark blue
+    $primary                = '#99CC00'; // lime green
+    $primaryDark            = '#66A326'; //
+    $primaryLight           = '#EEF7D4'; //
+
+    $secondary              = '#0099CC'; // blue
+    $secondaryDark          = '#2666A3'; //
     $secondaryDarker        = '#184a84'; // darker blue
-    $tertiary               = '#d9d9d9'; // normal gray
-    $tertiaryLight          = '#eeeeee'; // light gray
-    $tertiaryMedium         = '#bcbcbc'; // medium gray
-    $tertiaryDark           = '#999999'; // dark gray
-    $tertiaryDarker         = '#3f3f3f'; // darker gray
+    $secondaryLight         = '#E5F8FF'; //
 
-    $blocksMarginTop        = '107px';
-    $blocksWidthLeft        = '180px';
-    $blocksWidthRight       = '180px';
-    $blocksBorderBody       = $tertiaryMedium;
-    $blocksBorderTitle      = $tertiaryMedium;
-    $blocksBackgroundBody   = $tertiaryLight;
-    $blocksBackgroundTitle  = $primary;
-    $blocksColorBody        = $secondaryDarker;
-    $blocksColorTitle       = $primaryTextLight;
+    $tertiary               = '#CC0099'; // cyan
+    $tertiaryDark           = '#A32666'; //
+    $tertiaryLight          = '#FFE5F8'; //
 
-    $tableRowLight          = 'transparent';
-    $tableRowDark           = $tertiaryLight;
+    $grey                   = '#BBBBBB'; // grey
+    $greyDark               = '#666666'; //
+    $greyDarkest            = '#000000'; //
+    $greyLight              = '#EEEEEE'; //
+    $greyLightest           = '#FFFFFF'; //
 
-    /* Publisher */
-    $sectionHeaderBackground = $tertiary;
-    $sectionHeaderColor     = $secondaryDarker;
-    $colHeaderBackground    = $tertiaryLight;
-    $colHeaderColor         = $secondaryDarker;
-    $navigatorBackground    = $tertiaryDarker;
-    $navigatorColor         = $tertiaryMedium;
-    
-    $forApproval            = '#ff0000';
-    $approved               = '#ff9933';
-    $published              = '#00cc00';
-    $archived               = '#909090';
-    
-    $error                  = '#ffcc00';
-    $errorLight             = '#ffff99';
-    $errorDark              = '#ff9600';
-    $errorText              = $secondaryDarker;
-    $errorTextLight         = '#ffffcc';
-    $errorTextMedium        = '#ff0000';
+/* Columns widths set in px
+    ------------------------------------------------- */
+    $mainWrapperWidth       = 900;
+    $leftColWidth           = 180;
+    $rightColWidth          = 180;
+    /* middle col width will be calculated */
 
-    /* Button like border colors */
+    $contentMinHeight       = '320px';
+
+/* Messages and errors
+    ------------------------------------------------- */
+    $error                  = '#FF3300'; //
+
+/* Links related vars
+    ------------------------------------------------- */
+    $linkColor              = $secondary;
+    $linkDecoration         = 'none';
+    $linkHoverColor         = $secondary;
+    $linkHoverDecoration    = 'underline';
+
+/* Borders related vars
+    ------------------------------------------------- */
+    $borderDark             = $greyDark;
+    $borderLight            = $greyLightest;
+
+/* Block related vars
+    ------------------------------------------------- */
+    $blocksBorderBody       = $greyLightest;
+    $blocksBorderTitle      = $greyLightest;
+    $blocksBackgroundBody   = $greyLightest; // not used yet
+    $blocksBackgroundTitle  = $greyLightest;
+    $blocksColorBody        = $greyLightest; // ^ ^ ^
+    $blocksColorTitle       = $greyLightest; // | | |
+
+/* Table related vars
+    ------------------------------------------------- */
+    $tableRowLight          = $greyLightest;
+    $tableRowDark           = $grey;
+
+/* Button related vars
+    ------------------------------------------------- */
     $button     = '#ffffff #333333 #333333 #ffffff';
     $buttonAlt     = '#333333 #ffffff #ffffff #333333';
+
 ?>

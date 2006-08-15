@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -62,6 +62,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->_aActionsMapping =  array(
             'dbgen'     => array('dbgen'),
             'rebuildSequences' => array('rebuildSequences'),
+            'rebuildSeagull' => array('rebuildSeagull'),
             'clearCache' => array('clearCache'),
             'checkLatestVersion' => array('checkLatestVersion', 'redirectToDefault'),
             'list'      => array('list'),
@@ -79,6 +80,7 @@ class MaintenanceMgr extends SGL_Manager
         $input->submitted   = $req->get('submitted');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->cache       = ($req->get('frmCache')) ? $req->get('frmCache') : array();
+        $input->useSampleData  = ($req->get('frmSampleData')) ? 1 : 0;
 
         if ($input->submitted) {
             if ($req->get('action') == '' || $req->get('action') == 'list') {
@@ -99,10 +101,14 @@ class MaintenanceMgr extends SGL_Manager
     //  regenerate dataobject entity files
     function _cmd_dbgen(&$input, &$output)
     {
-        require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
-        $res = SGL_Task_CreateDataObjectEntities::run();
+        require_once SGL_CORE_DIR . '/Task/Install.php';
+
+        //  First regenerate entities files
+        $resEntities = SGL_Task_CreateDataObjectEntities::run();
+        //  Then regenerate links file
+        $data['aModuleList'] = SGL_Util::getAllModuleDirs($onlyRegistered = true);
+        $resLinks = SGL_Task_CreateDataObjectLinkFile::run($data);
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
-        SGL::logMessage($res, PEAR_LOG_DEBUG);
     }
 
     function _cmd_checkLatestVersion(&$input, &$output)
@@ -136,12 +142,82 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/Install/Tasks/Install.php';
+        require_once SGL_CORE_DIR . '/Task/Install.php';
         $res = SGL_Task_SyncSequences::run();
         if (PEAR::isError($res)) {
             return $res;
         } else {
             SGL::raiseMsg('Sequences rebuilt successfully', true, SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _cmd_rebuildSeagull(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!preg_match("/mysql/", $this->dbh->phptype)) {
+            SGL::raiseMsg('This operation is currently only supported for MySQL',
+                false, SGL_MESSAGE_INFO);
+            return false;
+        }
+        require_once SGL_CORE_DIR . '/Task/Install.php';
+
+        //  retrieve Install password
+        $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
+        $installPassword = trim(substr($aLines[1], 1));
+
+        //  retrieve translation settings
+        $transContainer = ($this->conf['translation']['container'] == 'db') ? 1 : 0;
+        $transLanguage  = str_replace('_','-', explode(',', $this->conf['translation']['installedLanguages']));
+
+        $data = array(
+            'createTables'          => 1,
+            'insertSampleData'      => $input->useSampleData,
+            'adminUserName'         => 'admin',
+            'adminPassword'         => 'admin',
+            'adminFirstName'        => 'Demo',
+            'adminLastName'         => 'Admin',
+            'adminEmail'            => 'demian@phpkitchen.com',
+            'aModuleList'           => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'serverName'            =>  SGL_SERVER_NAME,
+            'installPassword'       => $installPassword,
+            'storeTranslationsInDB' => $transContainer,
+            'installLangs'          => $transLanguage,
+            );
+
+        define('SGL_ADMIN_REBUILD', 1);
+        $runner = new SGL_TaskRunner();
+        $runner->addData($data);
+        $runner->addTask(new SGL_Task_SetTimeout());
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_DropDatabase());
+        $runner->addTask(new SGL_Task_CreateDatabase());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new SGL_Task_LoadBlockData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
+        $runner->addTask(new SGL_Task_CreateFileSystem());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
+        $runner->addTask(new SGL_Task_CreateAdminUser());
+        $runner->addTask(new SGL_Task_CreateMemberUser());
+        $runner->addTask(new SGL_Task_InstallerCleanup());
+
+        $ok = $runner->main();
+
+        if (PEAR::isError($ok)) {
+            return $ok;
+        } else {
+            SGL::raiseMsg('Environment rebuilt successfully', false, SGL_MESSAGE_INFO);
         }
     }
 
@@ -152,13 +228,24 @@ class MaintenanceMgr extends SGL_Manager
         $msg = '';
         if (array_key_exists('templates', $input->cache)) {
             require_once 'System.php';
-            $theme = $_SESSION['aPrefs']['theme'];
-            $dir = SGL_CACHE_DIR . "/tmpl/$theme";
-            $aFiles = System::find(array($dir, "-name", "*"));
-
-            //  remove last element found which is the theme folder
-            array_pop($aFiles);
-            if (!@System::rm($aFiles)) {
+            $tmplDir = SGL_CACHE_DIR . "/tmpl/";
+            $aDirs = System::find(array($tmplDir, "-maxdepth", 1));
+            //  exclude last element found which is the containing tmpl folder itself
+            array_pop($aDirs);
+            foreach ($aDirs as $dir) {
+                $aFiles = System::find(array($dir, "-name", "*"));
+                //  exclude last element found which is the theme folder
+                array_pop($aFiles);
+                if (!@System::rm($aFiles)) {
+                    SGL::raiseError('There was a problem deleting the files',
+                        SGL_ERROR_FILEUNWRITABLE);
+                } else {
+                    SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
+                }
+            }
+        }
+        if (array_key_exists('translations', $input->cache)) {
+            if (SGL_Translation::clearCache() === false) {
                 SGL::raiseError('There was a problem deleting the files',
                     SGL_ERROR_FILEUNWRITABLE);
             } else {

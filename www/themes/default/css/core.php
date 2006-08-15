@@ -1,425 +1,406 @@
-body {
+/******************************************************************************/
+/*                         MAIN LAYOUT CSS FILE                               */
+/******************************************************************************/
+/*
+Theme  : Default Seagull Theme
+Author : Julien Casanova <julien_casanova@yahoo.fr>
+Version: 1.0
+Date   : 2006/03/20
+*/
+
+/*
+==========================General=============================*/
+html {
+    height: 100%;
+    margin-bottom: 1px;
+}
+body, h1, h2, h3, h4, p, ul, li, form, fieldset {
     margin: 0;
     padding: 0;
-    font: <?php echo $fontSize ?> <?php echo $fontFamily ?>;
-    color: <?php echo $tertiaryDarker ?>;
-    background: <?php echo $primaryTextLight ?>;
 }
-
-/******************************* LAYOUT : HEADER ******************************/
-
-#sgl #header {
-    background-color: <?php echo $primary ?>;
-    height: 60px;
-}
-#sgl #logo {
-    float: left;
-    margin: 5px 0 0 10px;
-    font-size: 2em;
-    font-weight: normal;
-    color: <?php echo $primaryTextLight ?>;
-    text-decoration: none;
-}
-#sgl #logo img {
-    vertical-align: middle;
-    /* Workaround for Opera */
-    vertical-align: text-middle;
-}
-#sgl #login {
-    float: right;
-    margin: 10px 10px 0 0;
-    font-size: 0.9em;
-    color: <?php echo $primaryTextLight ?>;
-    /* Workaround for IE hiding bottom border of logAction. */
-    height: 50%;
-}
-#sgl #login a {
-    padding: 0 5px;
-    text-decoration: none;
-    color: <?php echo $primaryTextLight ?>;
-}
-#sgl #login a:hover {
-    text-decoration: underline;
-}
-#sgl #login #logAction {
-    margin-left: 0.5em;
-    padding: 0.2em;
-    border: 1px solid transparent;
-    border-color: <?php echo $button ?>;
-}
-
-/****************************** LAYOUT : MAIN *********************************/
-
-#sgl #container {
-    top: <?php echo $blocksMarginTop ?>;
-}
-
-/************************ LAYOUT : LEFT & RIGHT BLOCKS ************************/
-
-#sgl #leftSidebar, #sgl #rightSidebar {
-    position: absolute;
-    margin-top: <?php echo $blocksMarginTop ?>;
-    top: 0;
-    z-index: 1;
-}
-#sgl #leftSidebar {
-    width: <?php echo $blocksWidthLeft ?>;
-    left: 0;
-}
-#sgl #rightSidebar {
-    width: <?php echo $blocksWidthRight ?>;
-    right: 0;
-}
-#sgl .blockContainer {
-    margin: 4px 1px 0 1px;
-}
-#sgl .blockHeader {
-    background-color: <?php echo $blocksBackgroundTitle ?>;
-    color: <?php echo $blocksColorTitle ?>;
-    line-height: 1.5em;
-    font-weight: bold;
-    text-align: center;
-    border: 1px solid <?php echo $blocksBorderTitle ?>;
+body {
+    font-size: <?php echo $fontSize ?>;
+    font-family: <?php echo $fontFamily ?>;
     margin: 0;
-}
-#sgl .blockContent {
-    background-color: <?php echo $blocksBackgroundBody ?>;
-    color: <?php echo $blocksColorBody ?>;
-    font-size: 0.9em;
-    padding: 10px;
-    border: 1px solid <?php echo $blocksBorderBody ?>;
-    border-top: none;
-}
-
-/*************************** LAYOUT : MIDDLE BLOCKS ***************************/
-
-#sgl #content, #sgl #content-nocols, #sgl #content-leftcol, #sgl #content-rightcol {
-    position: relative;
-    margin: 0 <?php echo $blocksWidthRight; ?> 0 <?php echo $blocksWidthLeft ?>;
-    width: auto;
-    min-width: 20%;
-    font-size: 0.9em;
-    /*z-index: 2;*/
-    padding: 0 20px;
-}
-#sgl #content #options {
-    float: right;
-    width: 28%;
-}
-#sgl #content-nocols {
-    margin: 0;
-}
-#sgl #content-leftcol {
-    margin: 0 0 0 <?php echo $blocksWidthLeft ?>;
-}
-#sgl #content-rightcol {
-    margin: 0 <?php echo $blocksWidthRight ?> 0 0;
-}
-/* Holly Hack here so that tooltips don't act screwy:
- * http://www.positioniseverything.net/explorer/threepxtest.html */
-/* Hide next from Mac IE plus non-IE \*/
-* html #sgl #content {
-    height: 1%;
-}
-/* End hide from IE5/mac plus non-IE */
-
-/******************************* LAYOUT : FOOTER ******************************/
-
-#sgl #footer {
-    position: relative;
-    float: middle;
-    clear: both;
-    margin-bottom: 5px;
-    padding-top: 10px;
-    font-size: 0.8em;
+    padding: 10px 0;
+    color: <?php echo $greyDarkest ?>;
+    background-color: <?php echo $grey ?>;
     text-align: center;
+	background-image: url(../images/grey_bgnd.gif);
 }
-
-/***************************** CONTENT : HEADINGS *****************************/
-
-h1 {
-    font-size: 2em;
-    font-weight: normal;
+ul {
+    list-style: none;
 }
-h1.pageTitle {
-    font-weight: normal;
-    text-align: center;
-    color: <?php echo $secondaryDarker ?>;
+dl {
+    margin: 0.5em 0;
+    line-height: 140%;
 }
-h2 {
-    font-size: 1.5em;
+p {
+    margin-bottom: 0.5em;
 }
-h3 {
-    font-size: 1.25em;
-}
-h4 {
-    font-size: 1em;
-}
-.pageTitle {
-    color: <?php echo $secondaryDarker ?>;
-    font-size: 1.75em;
-    font-weight: normal;
-}
-
-/***************************** CONTENT : ANCHORS ******************************/
-
 a {
-    color: <?php echo $secondaryMedium ?>;
-    font-weight: bold;
-}
-a:visited {
-    color: <?php echo $tertiaryDark ?>;
+    color: <?php echo $linkColor ?>;
+    text-decoration: <?php echo $linkDecoration ?>;
 }
 a:hover {
-    color: <?php echo $secondaryDarker ?>;
-    text-decoration: none;
+    color: <?php echo $linkHoverColor ?>;
+    text-decoration: <?php echo $linkHoverDecoration ?>;
 }
-
-/***************************** CONTENT : TABLES *******************************/
-
-#content table {
-    border: none;
-    /* This is not a typo, we want first set a fallback for IE, then set the
-     * real margin for real browsers ;) */
-    margin: 0 5%;
-    margin: 0 auto;
-}
-td, th {
-    padding: 2px;
-}
-th {
-    background-color: <?php echo $tertiaryLight ?>;
-    color: <?php echo $tertiaryDarker ?>;
-    text-align: left;
-    font-size: 1.1em;
-    line-height: 1.75em;
-}
-#imRead {
-    background-color: <?php echo $tertiaryMedium ?>;
-}
-
-/******************************* CONTENT : BLOCKS *****************************/
-
-img.blocksAvatar {
-    /* move the image up to be flush with bottom of title */
-    position: relative;
-    top: -5px;
-    float: right;
-    padding-left: 5px;
-    align: left;
-}
-.navWidget {
-    overflow: auto;
-}
-.options-block {
-    margin: 20px 0;
-}
-
-/*************************** CONTENT : MISCELLANEOUS **************************/
-
-acronym {
-    cursor: help;
-}
-hr {
-    border: none;
-    border-bottom: 1px solid <?php echo $tertiary ?>;
+a:focus {
+    outline: none;
 }
 img {
     border: none;
 }
-.codeExample {
-    background: #f7f7f7;
-    border: 1px solid <?php echo $tertiary ?>;
-    margin: 1em 1.75em;
-    padding: 0.25em;
-    overflow: auto;
-    font-size: large;
+
+/*
+======================Global layaout==========================*/
+#outer-wrapper {
+    max-width: 1000px;
+    width: 900px;
+    margin: 0 auto;
+    text-align: left;
 }
-.alignCenter {
+#header {
+    position: relative;
+}
+#top-nav {
+    position: relative;
+}
+#inner-wrapper {
+    clear: both;
+    width: 896px;
+    /* 896 is for mainWrapper width - borders width : 900 - (2 x 2) */
+}
+#footer {
+    clear: both;
+}
+
+/*
+======================2 Cols Fluid============================*/
+#middleCol {
+    float: left;
+    background: <?php echo $greyLightest ?>;
+}
+#middleCol .inner {
+    padding: 5px 10px;
+}
+#ensureMinHeight {
+    float: left;
+    width: 1px;
+    height: <?php echo $contentMinHeight ?>;
+}
+#layout-3Cols #middleCol {
+    width: <?php echo ($mainWrapperWidth - $leftColWidth - $rightColWidth - 6) . 'px' ?>;
+    /* 6 is for borders width : (2+1) x 2 */
+}
+#layout-leftCol #middleCol {
+    width: <?php echo ($mainWrapperWidth - $leftColWidth - 6) . 'px' ?>;
+}
+#layout-rightCol #middleCol {
+    width: <?php echo ($mainWrapperWidth - $rightColWidth -6) . 'px' ?>;
+}
+#layout-noCols #middleCol {
+    width: <?php echo ($mainWrapperWidth -6) . 'px' ?>;
+}
+#leftCol {
+    float: left;
+    width: <?php echo $leftColWidth . 'px' ?>;
+    /*background: url('<?php echo $baseUrl ?>/images/backgrounds/v4-bubbles.png') left top no-repeat;*/
+}
+#leftCol .inner {
+    padding: 5px;
+    padding-top: 0.8em;
+}
+#rightCol {
+    float: right;
+    width: <?php echo $rightColWidth . 'px' ?>;
+    background: <?php echo $greyLightest ?>;
+}
+#rightCol .inner {
+    margin: 2.5em 4px 4px 0;
+    padding: 5px;
+    padding-top: 0.8em;
+    border: 1px solid <?php echo $grey ?>;
+}
+
+/*
+=========================Header===============================*/
+#header {
+    border-bottom: 2px solid <?php echo $greyLightest ?>;
+}
+#header .wrapLeft {
+    background: url('<?php echo $baseUrl ?>/images/backgrounds/header_tl.gif') left top no-repeat;
+}
+#header .wrapRight {
+    background: url('<?php echo $baseUrl ?>/images/backgrounds/header_tr.gif') right top no-repeat;
+}
+#header .wrap {
+    position: relative;
+    height: 70px;
+    margin: 0 20px;
+    background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/header_tm.gif') left top repeat-x;
+}
+#header span#logo {
+    font-size: 30px;
+    font-family: "Trebuchet MS";
+}
+#header a#logo {
+    color: <?php echo $greyLightest ?>;
+    text-decoration: none;
+}
+#header #logo img {
+    position: relative;
+    top: 7px;
+    left: 0;
+}
+#header #bugReporter {
+    position: absolute;
+    bottom: 0px;
+    right: -10px;
+}
+
+/*
+======================Inner Wrapper===========================*/
+#inner-wrapper {
+    background: <?php echo $greyLightest ?>;
+    border: 2px solid <?php echo $greyLightest ?>;
+    border-top: none;
+}
+#inner-wrapper .inner-container {
+    border: 1px solid <?php echo $grey ?>;
+    background: url('<?php echo $baseUrl ?>/images/backgrounds/column_tm.gif') left top repeat-x;
+}
+
+/*
+=======================Breadcrumbs============================*/
+#breadcrumbs {
+    background: <?php echo $greyLightest ?>;
+    border: 2px solid <?php echo $greyLightest ?>;
+    border-top: none;
+    font-family: <?php echo $fontFamilyAlt ?>;
+    font-size: 0.8em;
+}
+#breadcrumbs .inner {
+    padding: 0.4em 0 0.4em 1em;
+    border: 1px solid <?php echo $grey ?>;
+}
+#breadcrumb {
+    float: left;
+}
+a.breadcrumbs {
+    font-weight: bold;
+    color: <?php echo $primaryDark ?>;
+}
+
+/*
+======================Main Content============================*/
+#content h1 {
+    font-size: 1.2em;
+}
+#content h1.pageTitle {
+    margin: 0em 0 1em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid <?php echo $greyDark ?>;
+    color: <?php echo $greyDark ?>;
+}
+#content ul {
+    margin: 0.5em 0 0.5em 1em;
+    padding-left: 0.5em;
+    list-style-position: inside;
+    list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
+}
+#content li {
+    padding-left: 0.5em;
+}
+#content a {
+    color: <?php echo $primaryDark ?>;
+}
+
+/*
+==================Default Forms Styling=======================*/
+form {
+
+}
+fieldset {
+    padding: 10px 0;
+    border: none;
+}
+
+/*
+===================Form Elements Styling======================*/
+input, select, textarea {
+    font-size: 0.9em;
+}
+textarea {
+    font-family: <?php echo $fontFamily ?>;
+    font-size: 0.9em;
+}
+
+input[type="text"], input[type="password"]
+{
+	border-top: 1px solid #7c7c7c;
+	border-left: 1px solid #c3c3c3;
+	border-right: 1px solid #c3c3c3;
+	border-bottom: 1px solid #ddd;
+	background: #fff url(../images/fieldbg.gif) repeat-x top;
+}
+
+/*
+====================Form Fields Layout========================*/
+/* --
+Definition lists are used to display fields labels and values
+-----*/
+dl.onSide dt {
+    float: left;
+    width: 120px;
+    padding-right: 20px;
+    text-align: right;
+}
+dl.onSide dd{
+    margin-left: 140px;
+    margin-bottom: 0.5em;
+}
+dl.onTop dd {
+    margin: 0;
+}
+dd .error {
+    display: block;
+}
+
+/*
+==================Default Tables Styling======================*/
+
+
+/*
+=========================Footer===============================*/
+#footer .wrapLeft {
+    background: url('<?php echo $baseUrl ?>/images/backgrounds/footer_bl.gif') left bottom no-repeat;
+}
+#footer .wrapRight {
+    background: url('<?php echo $baseUrl ?>/images/backgrounds/footer_br.gif') right bottom no-repeat;
+}
+#footer .wrap {
+    position: relative;
+    margin: 0 20px;
+    padding: 10px 0 5px;
+    background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/footer_bm.gif') left bottom repeat-x;
     text-align: center;
 }
-.backLight {
-    background-color: <?php echo $tableRowLight ?>;
+#footer p {
+    margin-bottom: 0.1em;
+    color: <?php echo $greyDark ?>;
+    font-size: 0.8em;
 }
-.backDark {
-    background-color: <?php echo $tableRowDark ?>;
+
+/*
+======================Messages & Errors=======================*/
+.message {
+    text-align: center;
 }
-.bold {
+.message div {
+    width: 60%;
+    margin: 1em auto;
+    padding: 0.5em;
+    -moz-border-radius: 0.3em;
+}
+.errorMessage {
+    border: 2px solid <?php echo $error ?>;
+    color: <?php echo $error ?>;
+}
+.infoMessage {
+    border: 2px solid <?php echo $primaryDark ?>;
+    color: <?php echo $primary ?>;
+}
+.error, .required {
+    color: <?php echo $error ?>;
+}
+
+/* PEAR Errors
+  --------------------*/
+div.errorContainer {
+    width: 80%;
+    margin: 1em auto;
+    padding: 0.5em;
+    border: 2px solid <?php echo $error ?>;
+    -moz-border-radius: 0.3em;
+    font-family: <?php echo $fontFamilyAlt ?>;
+}
+div.errorHeader {
+    margin-bottom: 0.5em;
+    font-size: 1.1em;
+    text-transform: uppercase;
     font-weight: bold;
+    letter-spacing: 0.3em;
+    color: <?php echo $error ?>;
 }
-.error {
-    color: <?php echo $errorTextMedium ?>;
+div.errorContent {
+    text-align: left;
+}
+
+/*
+============================Flags=============================*/
+a.langFlag {
+    margin: 0 5px;
+}
+
+/*
+========================Miscellaneous=========================*/
+.floatLeft {
+    float: left;
+}
+.floatRight {
+    float: right;
+}
+.clear {
+    clear: both;
+}
+.spacer {
+    clear: both;
+    visibility: hidden;
+    line-height: 1px;
+}
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
 }
 .hide {
     display: none;
 }
-.small {
-    font-size: 0.8em;
-}
 .narrow {
-    width: 60%;
-}
-.wide {
-    width: 90%;
+    width: 45%;
 }
 .full {
     width: 100%;
 }
-.detail {
-    color: <?php echo $tertiaryDark ?>;
-    font-weight: normal;
-    font-size: 0.8em;
-}
-.navigator {
-    color: <?php echo $navigatorColor ?>;
-    background-color: <?php echo $navigatorBackground ?>;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: right;
-    line-height: 18px;
-}
-.pager {
-    background-color: <?php echo $errorTextLight ?>;
-    white-space: nowrap;
-    text-align: center;
-    width: 90%;
-    margin: 0 auto;
-    padding: 2px 0;
-    border: 1px dashed <?php echo $errorDark ?>;
-}
-.title {
-    color: <?php echo $tertiaryDark ?>;
-    font-weight: normal;
-    font-size: 1.5em;
-}
-.toolBtnSeparate {
-    margin-left: 20px;
-}
-.treeMenuDefault {
-    font-size: 11px;
-}
-.dateSelector {
-    cursor: pointer;
-}
-
-/******************************* CONTENT : FORMS ******************************/
-
-fieldset {
-    width: 80%;
-    margin: 0 auto;
-    color: <?php echo $secondaryDarker ?>;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-legend {
-    color: <?php echo $secondaryDarker ?>;
-}
-.fieldName, .fieldNameWrap {
-    background-color: <?php echo $tertiaryLight ?>;
-    color: <?php echo $secondaryDarker ?>;
-    font-weight: bold;
-    text-align: left;
-    width: 35%;
-}
-.fieldName {
-    white-space: nowrap;
-}
-.fieldValue {
-    background-color: <?php echo $primaryTextLight ?>;
-    line-height: 16px;
-    text-align: left;
-    width: 65%;
-}
-.noBorder {
-    border: none;
-    font-size: 10px;
-}
-.narrowButton {
-    text-align: center;
-    width: 9em;
-}
 .wideButton {
-    text-align: center;
-    width: 13em;
+    width: 8em;
+}
+.noBg {
+    background: none;
+}
+pre.codeExample {
+    padding: 1em;
+    background-color: <?php echo $greyLight ?>;
+    border: 1px solid <?php echo $greyDark ?>;
+    border-left: 5px solid <?php echo $greyDark ?>;
+    font-size: 1em;
 }
 
-/***************************** CONTENT : MESSAGES *****************************/
-
-.errorContainer, .messageContainer {
-    margin: 0 auto;
-    width: 50%;
-}
-.errorHeader {
-    background-color: <?php echo $error ?>;
-    color: <?php echo $errorTextLight ?>;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-align: center;
-    text-transform: uppercase;
-}
-.errorContent {
-    border: 1px dotted <?php echo $errorDark ?>;
-    border-top: 1px solid <?php echo $error ?>;
-    color: <?php echo $errorText ?>;
-    background-color: <?php echo $errorLight ?>;
-    text-align: left;
-    padding: 0 10px;
-}
-.errorMessage {
-    margin: 0 auto;
-    border: 1px dotted <?php echo $errorDark ?>;
-    background-color: <?php echo $errorLight ?>;
-    text-align: center;
-    width: 60%;
-}
-.messageHeader {
-    color: <?php echo $primaryTextLight ?>;
-    background-color: <?php echo $primary ?>;
-    font-weight: bold;
-    font-size: 1.2em;
-    line-height: 1.5em;
-    text-align: center;
-}
-.messageContent {
-    background-color: <?php echo $primaryTextLight ?>;
-    color: <?php echo $secondaryDarker ?>;
-    border: 1px solid <?php echo $primary ?>;
-    text-align: center;
-}
-.messageContent div {
-    padding: 5px;
-}
-.message div{
-    margin: 0 15% 10px;
-    padding: 5px;
-    background-color: <?php echo $primaryTextLight ?>;
-    color: <?php echo $secondaryDarker ?>;
-    text-align: center;
-}
-.infoMessage {
-    border: 1px solid <?php echo $primary ?>;
-}
-.errorMessage {
-    border: 1px solid <?php echo $errorDark ?>;
-}
-
-/* /////////////// Lists /////////////// */
-
-ul.noindent {
-    margin-left: 5px;
-    padding-left: 5px;
-}
-ul.bullets li {
-    list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
-}
-
-/* /////////////// Tooltips /////////////// */
+/*
+========================Miscellaneous2=========================*/
 
 .tipOwner {
     position: relative;
     cursor: help;
-    /* IE :hover javascript workaround */
+    <?php if ($browserFamily == 'MSIE') {?>
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
+    <?php } ?>
 }
 .tipOwner .tipText {
     display: none;
@@ -433,47 +414,17 @@ ul.bullets li {
     text-align: center;
     width: 15em;
     padding: 2px 5px;
+    <?php if ($browserFamily == 'Gecko') {?>
     -moz-opacity: 0.85;
+    <?php } else if ($browserFamily == 'MSIE') {?>
     filter: alpha(opacity=85);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=85);
+    <?php } ?>
 }
 .tipOwner:hover .tipText {
     display: block;
 }
 
-/******************************* DEPRECATED ***********************************/
-
-.bgnd {
-    background-color: <?php echo $secondaryLight ?>;
-    border: 1px solid <?php echo $tertiaryDark ?>;
-}
-.bgnd a, a.noDecoration {
-    text-decoration: none;
-}
-.bgnd a {
-    color: <?php echo $secondaryDarker ?>;
-    font-weight: normal;
-}
-.moduleOverview {
-    width: 20.5em;
-    height: 8em;
-}
-.newsItem {
-    border: 1px solid <?php echo $tertiaryDark ?>;
-    margin: 0 auto;
-    padding: 0 10px 10px 10px;
-    background-color: <?php echo $errorTextLight ?>;
-}
-.pinstripe table {
-    background-color: <?php echo $tertiaryLight ?>;
-    width: 90%;
-}
-.pinstripe td {
-    background-color: <?php echo $primaryTextLight ?>;
-}
-.pinstripe img {
-    padding: 10px;
-}
-.pinstripe button {
-    padding: 10px 0;
-}
+/*
+TO REMOVE WHEN ALL TEMPLATES ARE CONSOLIDATED
+======================Default Theme BC========================*/

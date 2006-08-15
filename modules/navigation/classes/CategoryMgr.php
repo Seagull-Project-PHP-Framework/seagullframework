@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | CategoryMgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -83,7 +83,6 @@ class CategoryMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterLeftCol.html';
         $input->template        = $this->template;
-        $input->javascriptSrc   = array('TreeMenu.js');
 
         //  form vars
         $input->submitted       = $req->get('submitted');

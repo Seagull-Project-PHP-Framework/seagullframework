@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Article.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -60,9 +60,11 @@ class Publisher_Block_Article
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blockOutput          = new SGL_Output();
-        $blockOutput->theme   = $output->theme;
-        $blockOutput->isAdmin = $blockOutput->isAdmin();
+        $blockOutput            = new SGL_Output();
+        $blockOutput->theme     = $output->theme;
+        $blockOutput->isAdmin   = $output->isAdmin();
+        $blockOutput->imagesDir = $output->imagesDir;
+        $blockOutput->redir     = isset($output->redir) ? $output->redir : '';
 
         //  set block params
         if (array_key_exists('articleId', $aParams)) {

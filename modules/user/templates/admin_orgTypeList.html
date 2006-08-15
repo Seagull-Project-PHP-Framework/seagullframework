@@ -17,12 +17,12 @@
                     <tr>
                         <th width="3%">
                             <span class="tipOwner">
-                                <span class="tipText" id="becareful">Be Careful !</span>
+                                <span class="tipText" id="becareful">{translate(#Be Careful!#)}</span>
                                 <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('orgTypes', 'frmDelete[]', this.checked)" />
                             </span>
                         </th>
                         <th width="10%"><a href="{makeUrl(#list#,#orgType#,#user#,##,#frmSortBy|id||frmSortOrder|sortOrder#)}">{translate(#ID#)}</a></th>
-                        <th width="82%" class="left"><a class="left" href="{makeUrl(#list#,#orgType#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Org Type Name#)}</a></th>
+                        <th width="82%" class="left"><a class="left" href="{makeUrl(#list#,#orgType#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -35,7 +35,7 @@
                     </tr>
                 </tbody>
             </table>
-            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete#)}" onClick="return confirmSubmit('{translate(#organisation type#)}', 'orgTypes')" />
+            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation type#)}', 'orgTypes')" />
         </fieldset>
     </form>
     <div class="spacer"></div>

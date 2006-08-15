@@ -15,6 +15,13 @@
         'Module Manager' => 'Module Manager',
         'Module Manager :: Add' => 'Module Manager :: Add',
         'Module Manager :: Edit' => 'Module Manager :: Edit',
+        'Refresh Module Listing' => 'Refresh Module Listing',
+        'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
+        'with sample data' => 'with sample data',
+
+/*  MODULE CONFIG MGR  */
+        'Module Config Manager' => 'Module Config Manager',
+        'Some errors occured. Please see following message(s)' => 'Some errors occured. Please see following message(s)',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',
@@ -29,12 +36,11 @@
         'queries'=>'queries',
         'allocated'=>'allocated',
         'Powered by' => 'Powered by',
-        'Seagull framework homepage' => 'Seagull framework homepage',
-        'Seagull Framework' => 'Seagull Framework',
+        'Seagull PHP Framework' => 'Seagull PHP Framework',
 
 /*  GENERAL MESSAGES    */
-        'insufficient rights' => 'You do not have sufficient privileges to view this area.',
-        'authorization required' => 'You need to login to use this feature.  Fill your username and password below.',
+        'authorisation failed' => 'You do not have sufficient privileges to view this area.',
+        'authentication required' => 'You need to login to use this feature.  Fill your username and password below.',
         'session timeout' => 'Your session has timed out, please login again',
         'You have been successfully logged out' => 'You have been successfully logged out',
         'password emailed out' => 'A new password has been emailed to the address you registered with',
@@ -45,15 +51,22 @@
         'Please fill in the indicated fields' => 'Please fill in all the indicated fields and try again',
         'Your alert has been sent successfully' => 'Your alert has been sent successfully',
         'Are you sure you want to delete this' => 'Are you sure you want to delete this',
+        'module deregister msg' => 'An attempt will be made to drop this module\\\'s tables and data, are you sure you want to proceed?',
+        'module deletion msg' => 'An attempt will be made to delete this module\\\'s files from your filesystem, are you sure you want to proceed?',
 
 /*  MODULE MGR */
         'Module' => 'Module',
         'Module list' => 'Module list',
         'Active' => 'Active',
+        'install' => 'install',
+        'uninstall' => 'uninstall',
+        'deregister' => 'deregister',
+        'remove' => 'remove',
         'module successfully updated' => 'Module info successfully updated',
         'module successfully removed' => 'Module successfully removed',
-        'The name of the module must be the exact name of the folder containing files, beware of case sensiveness' => 'The name of the module must be the exact name of the folder containing files, beware of case sensiveness',
+        'The name of the module must be the exact name of the folder containing files, beware of case sensitivity' => 'The name of the module must be the exact name of the folder containing files, beware of case sensitivity',
         'Here you can write what you want' => 'Here you can write what you want',
+        'Simply provide an icon' => 'Simply provide an icon named "module_$moduleName.gif" in "www/themes/default_admin/images/16"',
 
 /*  NEWSLETTER BLOCK */
         'E-mail' => 'E-mail',
@@ -113,9 +126,11 @@
 
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',
-        'send bug report' => 'send bug report',
         'First Name' => 'First Name',
         'Last Name' => 'Last Name',
+        'Severity of bug' => 'Severity of bug',
+        'Comment' => 'Comment',
+        'Your environment' => 'Your environment',
         'You must fill in your description' => 'You must fill in your description',
         'You must fill in your comment' => 'You must fill in your comment',
         'Your email is not correctly formatted' => 'Your email is not correctly formatted',
@@ -123,7 +138,7 @@
 
 // Status
         'Enabled' => 'Enabled',
-        'Disable' => 'Disable',
+        'disable' => 'disable',
         'Disabled' => 'Disabled',
         'You must select an element to delete' => 'You must select an element to delete',
         'no results found' => 'no results found',
@@ -138,18 +153,18 @@
         'at time' => 'at',
 
         'aMonths' => array(
-            13 => 'January',
-            14 => 'February',
-            15 => 'March',
-            16 => 'April',
-            17 => 'May',
-            18 => 'June',
-            19 => 'July',
-            20 => 'August',
-            21 => 'September',
-            22 => 'October',
-            23 => 'November',
-            24 => 'December'
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
         ),
 /*
   Author: Michael willemot <michael@sotto.be>
@@ -160,7 +175,7 @@
         'Delete' => 'Delete',
         'With selected module(s)' => 'With selected module(s)', //table footer
         'Add a module' => 'Add a module',
-        'Module successfully added to the manager.' => 'Module successfully added to the manager.',
+        'Module successfully registered.' => 'Module successfully  registered',
         'Module(s) successfully removed.' => 'Module(s) successfully removed.',
         'Configurable' => 'Configurable',
         'Description' => 'Description',
@@ -181,7 +196,7 @@
 
 /*
 
-ConfigMrg
+ConfigMgr
 Author: Rafael Ferreira Silva <rafael@webphp.com.br>
 
 */
@@ -275,8 +290,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)'=>'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)',
         'The name of your Seagull index file'=>'The name of your Seagull index file',
         'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir',
-        'This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)'=>'This is the module that will be loaded if none are specified, ie, when you call index.php (FC only)',
-        'This is the manager class that will be loaded if none are specified (FC only)'=>'This is the manager class that will be loaded if none are specified (FC only)',
+        'This is the module that will be loaded if none are specified, ie, when you call index.php'=>'This is the module that will be loaded if none are specified, ie, when you call index.php',
+        'This is the manager class that will be loaded if none are specified'=>'This is the manager class that will be loaded if none are specified - use the shortname, ie use "faq" and not "FaqMgr"',
         'Disable navigation altogether with this switch'=>'Disable navigation altogether with this switch',
         'Use this option to choose from various menu types - currently only 1 provided'=>'Use this option to choose from various menu types - currently only 1 provided',
         'Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager'=>'Defines the appearance of the navigation menu. Preview and make additional changes in the navigation module manager',
@@ -469,5 +484,30 @@ $defaultWords['is not writeable.'] = 'is not writeable.';
 $defaultWords['does not exist.'] = 'does not exist.';
 $defaultWords['Please change file permissions before editing.'] = 'Please change file permissions before editing.';
 $defaultWords['Please create it.'] = 'Please create it.';
+$defaultWords['Default theme'] = 'Default theme';
+$defaultWords['Additional Include Path'] = 'Additional Include Path';
+$defaultWords['Custom filter chain'] = 'Custom filter chain';
+$defaultWords['Create CRUD actions'] = 'Create CRUD Actions';
+$defaultWords['Broadcast message'] = 'Broadcast message';
+$defaultWords['Rebuild Seagull'] = 'Rebuild Seagull';
+$defaultWords['Module Manager :: Discovered'] = 'Module Manager :: Discovered';
+$defaultWords['Register this module?'] = 'Register this module?';
+$defaultWords['DataObject debug level'] = 'DataObject debug level';
+$defaultWords['Please choose a simple, single word'] = 'Please choose a simple, single word for your module name, it will be used in URIs.';
+$defaultWords['Please give the webserver write permissions to the modules directory'] = 'Please give the webserver write permissions to the modules directory';
+$defaultWords['The manager, which can be'] = 'The manager, which can be one of several per module, is the controller object, so if you want it to deliver pizzas call it PizzaMgr.';
+$defaultWords['Module Directory Override'] = 'Module Directory Override';
+$defaultWords['Upload Directory Override'] = 'Upload Directory Override';
+$defaultWords['Submit login'] = 'Submit login';
+$defaultWords['select all'] = 'select all';
+$defaultWords['templates'] = 'templates';
+$defaultWords['translations'] = 'translations';
+
+/* --- PEAR::Pager --- */
+$defaultWords['altPrev'] = 'Previous';
+$defaultWords['altNext'] = 'Next';
+$defaultWords['altPage'] = 'Page';
+$defaultWords['prevImg'] = '&laquo; previous';
+$defaultWords['nextImg'] = 'next &raquo;';
 
 ?>

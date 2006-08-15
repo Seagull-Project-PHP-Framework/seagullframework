@@ -1,12 +1,12 @@
-<span class="breadcrumbs">
+
+{translate(#You are here#)}:
 {foreach:breadcrumbs,valueObj}
     {if:valueObj.link}
         <a href="{valueObj.link:h}" class="breadcrumbs">{valueObj.title}</a>
     {else:}
-        {valueObj.title}
+        <span>{valueObj.title}</span>
     {end:}
     {if:!valueObj.end}
-        <img src="{webRoot}/themes/{theme}/images/bullet.gif" alt="">
+        >
     {end:}
 {end:}
-</span>

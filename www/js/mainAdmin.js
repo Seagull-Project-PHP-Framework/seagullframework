@@ -234,7 +234,7 @@ function doSub()
 
 var delimiter = ":";
 
-function MoveOption (MoveFrom, MoveTo, ToDo)
+function MoveOption(MoveFrom, MoveTo, ToDo)
 {
   var SelectFrom = eval('document.main_form.'+MoveFrom);
   var SelectTo = eval('document.main_form.'+MoveTo);
@@ -264,7 +264,7 @@ function MoveOption (MoveFrom, MoveTo, ToDo)
   }
 }
 
-function checkDuplicates (AddListContainer, RemoveListContainer)
+function checkDuplicates(AddListContainer, RemoveListContainer)
 {
     var AddList = eval('document.main_form.'+AddListContainer);
     var RemoveList = eval('document.main_form.'+RemoveListContainer);
@@ -372,49 +372,4 @@ function contains(tmpVal, tmpArray)
         }
     }
     return false;
-}
-
-/**
- * Checks/unchecks all tables, modified from phpMyAdmin
- *
- * @param   string   the form name
- * @param   boolean  whether to check or to uncheck the element
- *
- * @return  boolean  always true
- */
-function setCheckboxes(the_form, element_name, do_check)
-{
-    var elts      = (typeof(document.forms[the_form].elements[element_name]) != 'undefined')
-                  ? document.forms[the_form].elements[element_name]
-                  : '';
-    var elts_cnt  = (typeof(elts.length) != 'undefined')
-                  ? elts.length
-                  : 0;
-
-    if (elts_cnt) {
-        for (var i = 0; i < elts_cnt; i++) {
-            elts[i].checked = do_check;
-        }
-    } else {
-        elts.checked        = do_check;
-    }
-    return true;
-}
-
-/**
- * Launches the above function depending on the status of a trigger checkbox
- *
- * @param   string   the form name
- * @param   string   the element name
- * @param   boolean   the status of trigger checkbox
- *
- * @return  void
- */
-function applyToAllCheckboxes(formName, elementName, isChecked)
-{
-    if(isChecked) {
-        setCheckboxes(formName, elementName, true)
-    } else {
-        setCheckboxes(formName, elementName, false)
-    }
 }

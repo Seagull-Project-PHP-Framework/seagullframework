@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_Navigation.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -49,8 +49,6 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
 class DA_Navigation extends SGL_Manager
 {
     var $_params  = array();
-    var $_message = '';
-    var $_aUriAliases = array();
 
     /**
      * Constructor - set default resources.
@@ -84,9 +82,6 @@ class DA_Navigation extends SGL_Manager
 
         $this->nestedSet = &new SGL_NestedSet($this->_params);
 
-        //  load Uri Aliases
-        $this->_aUriAliases = $this->getAllAliases();
-
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = &SGL_Translation::singleton('admin');
@@ -100,12 +95,12 @@ class DA_Navigation extends SGL_Manager
      * @static
      * @return  DA_Navigation reference to DA_Navigation object
      */
-    function &singleton()
+    function &singleton($forceNew = false)
     {
         static $instance;
 
         // If the instance is not there, create one
-        if (!isset($instance)) {
+        if (!isset($instance) || $forceNew) {
             $instance = new DA_Navigation();
         }
         return $instance;
@@ -116,23 +111,23 @@ class DA_Navigation extends SGL_Manager
      *
      * @access  public
      *
-     * @param   int $sectionId  Parent section id
+     * @param   int $parentId  Parent section id
      * @return  array
      */
-   function getSectionsFromParent($sectionId = 0)
+   function getSectionsByParentId($parentId = 0)
     {
         $query = "
             SELECT * FROM {$this->conf['table']['section']}
-            WHERE parent_id = " . $sectionId . '
+            WHERE parent_id = " . $parentId . '
             ORDER BY order_id';
 
-        $result = $this->dbh->query($query);
-        if (DB::isError($result, DB_ERROR_NOSUCHTABLE)) {
+        $result = $this->dbh->getAll($query);
+        if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
                 please delete the config file from the var directory and try the install again',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
-        if (DB::isError($result)) {
+        if (PEAR::isError($result)) {
             SGL::raiseError('Cannot connect to DB, check your credentials, exiting ...',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);
         }
@@ -187,19 +182,21 @@ class DA_Navigation extends SGL_Manager
             } else {
                 $section['uriType'] = ($section['is_static']) ? 'static' : 'dynamic';
 
-                //  parse url details
+                //  parse uri details
                 $parsed = SGL_Url::parseResourceUri($section['resource_uri']);
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                $c = &SGL_Config::singleton();
-                $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
-                $c->merge($moduleConf);
-                $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
-                if ($className) {
-                    $section['manager'] = $className . '.php';
-                } else {
-                    SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
+                if (DA_Default::moduleIsRegistered($parsed['module'])) {
+                    $c = &SGL_Config::singleton();
+                    $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
+                    $c->merge($moduleConf);
+                    $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);
+                    if ($className) {
+                        $section['manager'] = $className . '.php';
+                    } else {
+                        SGL::raiseMsg('Manager was not found', true, SGL_MESSAGE_WARNING);
+                    }
                 }
 
                 //  represent additional params as string
@@ -285,13 +282,23 @@ class DA_Navigation extends SGL_Manager
             if ($this->conf['translation']['container'] == 'db') {
                 $this->trans->remove($section['trans_id'], 'nav');
             }
-
             //  remove section
             $this->nestedSet->deleteNode($sectionId);
 
             //  remove alias
             $this->deleteAliasBySectionId($sectionId);
         }
+    }
+
+    function getSectionIdByTitle($title)
+    {
+        $query = "
+            SELECT section_id
+            FROM {$this->conf['table']['section']}
+            WHERE title = '$title'";
+
+        $result = $this->dbh->getOne($query);
+        return $result;
     }
 
     function deleteAliasBySectionId($sectionId)
@@ -317,9 +324,11 @@ class DA_Navigation extends SGL_Manager
         $query = "
             SELECT uri_alias
             FROM {$this->conf['table']['uri_alias']}
-            WHERE section_id = $id
-            LIMIT 1";
-        return $this->dbh->getOne($query);
+            WHERE section_id = $id";
+        $result = $this->dbh->limitQuery($query,0,1);
+        $row =& $result->fetchRow();
+        $result = (is_object($row)) ? $row->uri_alias : false;
+        return $result;
     }
 
     function updateUriAlias($aliasName, $target)
@@ -333,14 +342,20 @@ class DA_Navigation extends SGL_Manager
         return $this->dbh->query($query);
     }
 
-    function isUriAliasDuplicated($aliasName, $sectionId = null) {
-        $sectionId2 = @$this->_aUriAliases[$aliasName]->section_id;
-        if ((!$sectionId && $sectionId2)
-            || ($sectionId2 && $sectionId && $sectionId2 != $sectionId)) {
-            return SGL_ERROR_INVALIDREQUEST;
+    function isUriAliasDuplicated($aliasName, $sectionId = null)
+    {
+        //  load URI aliases
+        $aUriAliases = $this->getAllAliases();
+        $sectionId2 = isset($aUriAliases[$aliasName])
+            ? (integer)$aUriAliases[$aliasName]->section_id
+            : false;
+        if ((is_null($sectionId) && is_int($sectionId2)) ||
+            (is_int($sectionId2) && is_int($sectionId) && $sectionId2 != $sectionId)) {
+            $ret = true;
         } else {
-            return false;
+            $ret = false;
         }
+        return $ret;
     }
 
     function addUriAlias($id, $aliasName, $target)
@@ -348,11 +363,25 @@ class DA_Navigation extends SGL_Manager
         $aliasName = $this->dbh->quoteSmart($aliasName);
         $query = "
             INSERT INTO {$this->conf['table']['uri_alias']}
-            (uri_alias_id, uri_alias, section_id)
+                (uri_alias_id, uri_alias, section_id)
             VALUES($id, $aliasName, $target)";
         return $this->dbh->query($query);
     }
 
+    /*
+    Returns following data structure:
+
+    Array
+    (
+        [my_alias] => stdClass Object
+            (
+                [uri_alias] => my_alias
+                [resource_uri] => block/block
+                [section_id] => 69
+            )
+
+    )
+    */
     function getAllAliases()
     {
         $query = "
@@ -369,12 +398,11 @@ class DA_Navigation extends SGL_Manager
      * Returns all sections.
      *
      * @access  public
-     *
      * @return  array
      */
     function getSectionTree()
     {
-        $this->nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
+        $this->nestedSet->setImage('folder', 'images/treeNav/file.png');
         $sectionNodes = $this->nestedSet->getTree();
 
         //  fetch translations title
@@ -444,8 +472,6 @@ class DA_Navigation extends SGL_Manager
     function addSection(&$section)
     {
         $this->prepareSection($section);
-        $msgAdditional = null;
-        $msgType       = SGL_MESSAGE_INFO;
 
         //  prepare resource_uri string for alias format
         if ($section['uri_alias_enable'] && !empty($section['uri_alias'])) {
@@ -453,9 +479,6 @@ class DA_Navigation extends SGL_Manager
             if (!$this->isUriAliasDuplicated($aliasName)) {
                 $aliasNextId = $this->dbh->nextId($this->conf['table']['uri_alias']);
                 $section['resource_uri'] = 'uriAlias:' . $aliasNextId .':' . $section['resource_uri'];
-            } else {
-                $msgType = SGL_MESSAGE_WARNING;
-                $msgAdditional = ' but alias creation failed as there can be no duplicates';
             }
         }
 
@@ -478,15 +501,47 @@ class DA_Navigation extends SGL_Manager
         } else { //  error
             return false;
         }
-        $this->_message = "Section successfully added";
 
         //  deal with potential alias to add
         if (isset($aliasNextId)) {
             $target = $nodeId;
             $ok = $this->addUriAlias($aliasNextId, $aliasName, $target);
         }
-        $this->_message .= $msgAdditional;
-        return $msgType;
+        return true;
+    }
+
+
+    /**
+     * For installer purposes, returns insert ID.
+     *
+     * @param array $section
+     */
+    function addSimpleSection(&$section)
+    {
+        $separator = '/';
+
+        //  strip extension and 'Mgr'
+        $simplifiedMgrName = SGL_Inflector::getSimplifiedNameFromManagerName($section['manager']);
+        $actionPair = (!(empty($section['actionMapping'])) && ($section['actionMapping'] != 'none'))
+            ? 'action' . $separator . $section['actionMapping'] . $separator
+            : '';
+        $section['resource_uri'] =
+            $section['module'] . $separator .
+            $simplifiedMgrName . $separator .
+            $actionPair;
+
+        //  remove trailing slash/ampersand if one is present
+        if (substr($section['resource_uri'], -1) == $separator) {
+            $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
+        }
+        //  fetch next id
+        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']);
+
+        //  set translation id for nav title
+        $section['trans_id'] = $sectionNextId;
+        $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
+
+        return $nodeId;
     }
 
     /**
@@ -500,8 +555,6 @@ class DA_Navigation extends SGL_Manager
     function updateSection(&$section)
     {
         $this->prepareSection($section);
-        $msgAdditional = null;
-        $msgType       = SGL_MESSAGE_INFO;
 
         //  prepare resource_uri string for alias format
         if ($section['uri_alias_enable'] && !empty($section['uri_alias'])) {
@@ -515,9 +568,6 @@ class DA_Navigation extends SGL_Manager
                     $ok = $this->updateUriAlias($aliasName, $section['section_id']);
                 }
                 $section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$section['resource_uri'];
-            } else {
-                $msgType = SGL_MESSAGE_WARNING;
-                $msgAdditional = ' but alias creation failed as there can be no duplicates';
             }
         }
 
@@ -556,28 +606,23 @@ class DA_Navigation extends SGL_Manager
         switch ($section['parent_id']) {
         case $section['parent_id_original']:
             //  usual case, no change => do nothing
-            $this->_message = 'Section details successfully updated';
             break;
 
         case $section['section_id']:
             //  cannot be parent to self => display user error
-            $this->_message = 'Section details updated, no data changed';
             break;
 
         case 0:
             //  move the section, make it into a root node, just above its own root
             $thisNode = $this->nestedSet->getNode($section['section_id']);
             $moveNode = $this->nestedSet->moveTree($section['section_id'], $thisNode['root_id'], 'BE');
-            $this->_message = 'Section details successfully updated';
             break;
 
         default:
             //  move the section under the new parent
             $moveNode = $this->nestedSet->moveTree($section['section_id'], $section['parent_id'], 'SUB');
-            $this->_message = 'Section details successfully updated';
         }
-        $this->_message .= $msgAdditional;
-        return $msgType;
+        return true;
     }
 
     /**
@@ -621,7 +666,7 @@ class DA_Navigation extends SGL_Manager
             break;
 
         case 'uriAddon':
-            $string = 'uriAddon:' . $section['addon'] . ':' . @serialize($input->aParams);
+            $string = 'uriAddon:' . $section['addon'] . ':' . @serialize($section['aParams']);
             $section['resource_uri'] = $string;
             break;
 
@@ -637,7 +682,7 @@ class DA_Navigation extends SGL_Manager
                 $section['module'] . $separator .
                 $simplifiedMgrName . $separator .
                 $actionPair;
-            break;
+                break;
         }
 
         //  deal with additional params
@@ -669,18 +714,6 @@ class DA_Navigation extends SGL_Manager
             }
             $section['perms'] = implode(',', $aRoles);
         }
-    }
-
-    /**
-     * Returns message.
-     *
-     * @access  private
-     *
-     * @return  string
-     */
-    function getMessage()
-    {
-        return $this->_message;
     }
 }
 ?>

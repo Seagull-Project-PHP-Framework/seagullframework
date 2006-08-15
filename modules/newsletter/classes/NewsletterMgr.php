@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | NewsletterMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -114,13 +114,13 @@ class NewsletterMgr extends SGL_Manager
                 }
             }
 
-            if (!empty($input->name) and preg_match("([^\w\s])",$input->name)) {
+            if (!empty($input->name) && preg_match("([^\w\s])",$input->name)) {
                 $aErrors['name'] = 'Invalid input supplied to list name';
             }
 
 
             if ($input->action == 'subscribe' or $input->action == 'unsubscribe') {
-                if (!empty($input->listName) and is_array($input->listName) and count($input->listName) > 0) {
+                if (!empty($input->listName) && is_array($input->listName) && count($input->listName)) {
                     foreach ($input->listName as $list) {
                         if (!array_key_exists($list,$input->validNewsList)) {
                             $aErrors['listName'] = 'Invalid input supplied to list name';
@@ -219,7 +219,7 @@ class NewsletterMgr extends SGL_Manager
                         $output->emailAddress = $input->email;
                         $output->emailList = $input->validNewsList[$list]['name'];
                         $output->emailKey = $oList->action_key;
-                        $ret = $this->_cmd_send($input, $output);
+                        $ret = $this->_send($input, $output);
                         if (!$ret) {
                            SGL::logMessage('Unable to send subscribe message to: '.$input->email);
                         }
@@ -234,9 +234,9 @@ class NewsletterMgr extends SGL_Manager
                 SGL::raiseMsg('Unable to subscribe you to some lists');
             } else {
                 if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-                    SGL::raiseMsg('Thank you subscribe email confirmation');
+                    SGL::raiseMsg('Thank you subscribe email confirmation', true, SGL_MESSAGE_INFO);
                 } else {
-                    SGL::raiseMsg('Thank you subscribe');
+                    SGL::raiseMsg('Thank you subscribe', true, SGL_MESSAGE_INFO);
                 }
             }
         }
@@ -302,9 +302,9 @@ class NewsletterMgr extends SGL_Manager
             SGL::raiseMsg('Unable to unsubscribe you to some lists');
         } else {
             if ($this->conf['NewsletterMgr']['emailConfirmation']) {
-                SGL::raiseMsg('Thank you unsubscribe email confirmation');
+                SGL::raiseMsg('Thank you unsubscribe email confirmation', true, SGL_MESSAGE_INFO);
             } else {
-                SGL::raiseMsg('Thank you unsubscribe');
+                SGL::raiseMsg('Thank you unsubscribe', true, SGL_MESSAGE_INFO);
             }
         }
     }
@@ -344,7 +344,8 @@ class NewsletterMgr extends SGL_Manager
             $oList->last_updated = SGL_Date::getTime();
             $success = $oList->update();
             if ($success) {
-                SGL::raiseMsg('Authorization accepted! Thank you for subscribing to our newsletter.');
+                SGL::raiseMsg('Authorization accepted! Thank you for subscribing to our newsletter.',
+                 true, SGL_MESSAGE_INFO);
                 return;
             }
         }
@@ -353,7 +354,8 @@ class NewsletterMgr extends SGL_Manager
         if ($oList->action_request == 'unsubscribe') {
             $success = $oList->delete();
             if ($success) {
-                SGL::raiseMsg('Authorization accepted! You were unsubscribed from our newsletter.');
+                SGL::raiseMsg('Authorization accepted! You were unsubscribed from our newsletter.',
+                 true, SGL_MESSAGE_INFO);
                 return;
             }
         }
@@ -365,7 +367,8 @@ class NewsletterMgr extends SGL_Manager
             $oList->last_updated = SGL_Date::getTime();
             $success = $oList->update();
             if ($success) {
-                SGL::raiseMsg('Authorization accepted! Thank you for updating your subscription.');
+                SGL::raiseMsg('Authorization accepted! Thank you for updating your subscription.',
+                 true, SGL_MESSAGE_INFO);
                 return;
             }
         }
@@ -380,7 +383,7 @@ class NewsletterMgr extends SGL_Manager
     * @access public
     *
     */
-    function _cmd_send(&$input, &$output)
+    function _send(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -403,7 +406,7 @@ class NewsletterMgr extends SGL_Manager
 
         if ($success) {
             //  redirect on success
-            SGL::raiseMsg('Newsletter sent successfully');
+            SGL::raiseMsg('Newsletter sent successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
         }

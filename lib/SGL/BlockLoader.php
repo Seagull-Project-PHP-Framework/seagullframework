@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockLoader.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -186,7 +186,14 @@ class SGL_BlockLoader
                 $blockClass = $oBlock->name;
                 preg_match('/^(.*)_.*_(.*)$/', $blockClass, $aMatches);
                 @$blockPath = strtolower($aMatches[1]) . '/blocks/' . $aMatches[2];
-                @include_once SGL_MOD_DIR . '/' . $blockPath . '.php';
+                if (file_exists(SGL_MOD_DIR . '/' . $blockPath . '.php')) {
+                    require_once SGL_MOD_DIR . '/' . $blockPath . '.php';
+                } else {
+                    unset($this->_aData[$index]);
+                    SGL::raiseError('cannot load ' . $blockClass . '; '
+                        . $blockPath . '.php does not exist',
+                        SGL_ERROR_NOFILE);
+                }
                 if (!class_exists($blockClass)) {
                     unset($this->_aData[$index]);
                     SGL::raiseError($blockClass . ' is not a valid block classname',

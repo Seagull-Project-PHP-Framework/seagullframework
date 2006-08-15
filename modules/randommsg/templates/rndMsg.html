@@ -1,10 +1,10 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
+<div class="message">{msgGet()}</div>
+<br />
+{if:pager}<flexy:include src="pager.html" />{end:}
 
 <form name="rndmsgs" method="post" flexy:ignore id="rndmsgs">
-    <input type="hidden" name="action" value="delete" /><br />
-    {if:pager}<flexy:include src="pager.html" />{end:}
-
+    <input type="hidden" name="action" value="delete" />
     <table class="wide">
         <tr>
             <td colspan="2">
@@ -23,7 +23,8 @@
         </tr>
 
         <tr>
-            <td colspan="3">{translate(#With selected message(s)#)}: 
+            <td colspan="2">
+                {translate(#With selected message(s)#)}: 
                 <input type="submit" name="delete" value="{translate(#Delete#)}" onclick="return confirmSubmit('message', 'rndmsgs')" />
             </td>
         </tr>

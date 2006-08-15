@@ -24,7 +24,7 @@ class SGL_XML_RPC_Remote
         $_args = $args = func_get_args();
         $server_host = $this->conf['server_host'];
 
-        if (!@include_once 'XML/RPC.php') {
+        if (!@require_once 'XML/RPC.php') {
             return PEAR::raiseError("For this remote PEAR operation you need to install the XML_RPC package");
         }
         //  remove method name

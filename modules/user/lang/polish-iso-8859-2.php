@@ -1,364 +1,504 @@
 <?php
-$words['<< remove'] = '<< usuñ';
-$words['Retrieve password'] = 'Odzyskaj has³o';
+/*
+  Language-file polish-iso-8859-2.php
+  Author: Tomasz Osmialowski <ichtis@gmail.com>
+*/
+$words = array(
 
-$words['Submit'] = 'Zapisz';
-$words['reset'] = 'resetuj';
-$words['Email'] = 'Email';
-$words['Edit'] = 'Edycja';
-$words['edit'] = 'edycja';
+/* Account MGR */
 
-$words['Username'] = 'Nazwa u¿ytkownika';
-$words['Password'] = 'Has³o';
-$words['Login'] = 'Zaloguj';
+    // title
+    'My Account'                   => 'Moje konto',
+    'My Profile :: Edit'           => 'Mój profil :: edycja',
 
-$words['Not Registered'] = 'Zaloguj';
-$words['Forgot Password'] = 'Przypomnij has³o';
-$words['denotes required field'] = 'wymagane pola';
+    // summary form (admin template)
+    'Role'                         => 'Rola',
+    'Date Registered'              => 'Data rejestracji',
+    'Last Login'                   => 'Ostatnie logowanie',
+    'first login in progress'      => 'pierwsza sesja',
+    'Current IP Address'           => 'Adres IP',
+    'change password'              => 'Zmieñ has³o',
+    // + user template
+    'My Profile'                   => 'Mój Profil',
+    'Preferences'                  => 'Konfiguracja',
+    'Password'                     => 'Has³o',
+    'edit preferences'             => 'konfiguracja',
+    'view profile'                 => 'poka¿ profil',
+    'No results found for that ID' => 'Nie znaleziono wyników o tym ID',
 
-$words['Enter the email address you registered with'] = 'Podaj adres email do rejestracji';
-$words['retrieve'] = 'cofnij';
-$words['You must enter a username'] = 'Musisz podaæ nazwê u¿ytkownika';
-$words['You must enter a password'] = 'Musisz podaæ has³o';
-$words['There was a problem with your session, please login again'] = 'Czas trwania sesji zosta³ przekroczony, proszê zalogowaæ siê ponownie';
-$words['Only logged on users have access to this area, please register'] = 'Tylko zalogowani u¿ytkownicy maj± dostêp do tej strefy, proszê siê zalogowaæ';
-$words['username/password not recognized'] = 'Podana nazwa u¿ytkownika i has³o nie zosta³y poprawnie rozpoznane, proszê spróbowaæ ponownie';
-$words['User Manager'] = 'Zarz±dzanie U¿ytkownikiem';
-$words['User Manager :: Browse'] = 'Zarz±dzanie U¿ytkownikiem :: Podgl±d';
-$words['User Manager :: Edit'] = 'Zarz±dzanie U¿ytkownikiem :: Edycja';
-$words['User Manager :: Edit permissions'] = 'Zarz±dzanie U¿ytkownikiem :: Edycja uprawnieñ';
-$words['User Manager :: Add'] = 'Zarz±dzanie U¿ytkownikiem :: Dodawanie';
-$words['User Manager :: Reset password'] = 'Zarz±dzanie U¿ytkownikiem :: Resetowanie has³a';
-$words['User Manager :: Search'] = 'Zarz±dzanie U¿ytkownikiem :: Wyszukiwanie';
-$words['User Manager :: Change status'] = 'Zarz±dzanie U¿ytkownikiem :: Zmiana statusu';
-$words['My Profile :: Edit'] = 'Mój Profil :: Edycja';
-$words['Change Password'] = 'Zmiana has³a';
-$words['User ID'] = 'ID u¿ytkownika';
-$words['Confirm Password'] = 'Potwierd¼ has³o';
-$words['First Name'] = 'Imiê';
-$words['Last Name'] = 'Nazwisko';
-$words['Dealer'] = 'Firma';
-$words['Company'] = 'Firma';
-$words['Position'] = 'Stanowisko';
-$words['Mobile'] = 'Telefon komórkowy';
-$words['Account active'] = 'Konto aktywne';
-$words['You must enter an email'] = 'Musisz podaæ email';
-$words['Your email address in not of the correct format'] = 'Format twojego email`a jest niepoprawny';
-$words['Your passwords do not match'] = 'Twoje has³o nie jest poprawne';
-$words['add user'] = 'dodaj u¿ytkownika';
-$words['add group'] = 'dodaj grupê';
-$words['add organisation'] = 'dodaj organizacjê';
-$words['asset type'] = 'typ dokumentu';
-$words['Select'] = 'Zaznacz';
-$words['Status'] = 'Status';
-$words['Active'] = 'Aktywny';
-$words['Disabled'] = 'Wy³±czony';
-$words['check if active'] = 'sprawd¼ czy aktywny';
-$words['users'] = 'u¿ytkownicy';
-$words['New User'] = 'Nowy U¿ytkownik';
-$words['Full Name'] = 'Pe³na Nazwa';
-$words['Password updated successfully'] = 'Has³o zosta³o zmienione';
-$words['With selected user(s)'] = 'Z zaznaczonych u¿ytkowników';
-$words['return to profile edit'] = 'powrót do edycji profilu';
-$words['Change password'] = 'Zmiana has³a';
-$words['Original password'] = 'Aktualne has³o';
-$words['New password'] = 'Nowe has³o';
-$words['Confirm'] = 'Potwierd¼';
-$words['Notify me by email'] = 'Powiadom mnie na email';
-$words['Resetting password for'] = 'Resetuj has³o dla';
-$words['Notify user'] = 'Powiadom u¿ytkownika';
-$words['My Account'] = 'Moje konto';
-$words['My Profile'] = 'Mój profil';
-$words['Preference Manager :: Browse'] = 'Zarz±dzanie Preferencjami :: Podgl±d';
-$words['Preference Manager :: Edit'] = 'Zarz±dzanie Preferencjami :: Edycja';
-$words['Preference Manager :: Add'] = 'Zarz±dzanie Preferencjami :: Dodawanie';
-$words['prefs'] = 'preferencje';
-$words['add preference'] = 'dodaj preferencjê';
-$words['preference'] = 'preferencja';
-$words['Pref ID'] = 'ID preferencji';
-$words['Name'] = 'Nazwa';
-$words['Default value'] = 'Standardowa warto¶æ';
-$words['With selected pref(s)'] = 'Z zaznaczonymi preferencjami';
-$words['Details'] = 'Szczegó³y';
-$words['pref successfully added'] = 'Preferencja zosta³a dodana';
-$words['pref successfully updated'] = 'Preferencja zosta³a zmieniona';
-$words['You must enter a preference name'] = 'Musisz podaæ nazwê preferencji';
-$words['You must enter a default value'] = 'Musisz podaæ standardow± warto¶æ';
-$words['pref successfully deleted'] = 'Preferencja zosta³a wykasowana';
-$words['Group Membership'] = 'Przynale¿no¶æ do grupy';
-$words['Date Registered'] = 'Data rejestracji';
-$words['Last Login'] = 'Ostatnie logowanie';
-$words['Current IP Address'] = 'Adres IP';
-$words['view profile'] = 'poka¿ profil';
-$words['edit preferences'] = 'edytuj preferencje';
-$words['No results found'] = 'Nie znaleziono wyników';
-$words['No results found for that ID'] = 'Nie znaleziono wyników o tym ID';
-$words['edit these values'] = 'Edycja warto¶ci';
-$words['County/State/Province'] = 'Pañstwo/Województwo';
-$words['General'] = 'Ogólne';
-$words['Theme'] = 'Szablon';
-$words['Change what this site looks like'] = 'Okre¶la wygl±d ca³ego serwisu';
-$words['Date format'] = 'Format daty';
-$words['UK format is dd/mm/yyyy and US is mm/dd/yyyy'] = 'Format UK to dd/mm/yyyy, a US  to mm/dd/yyyy';
-$words['Interface language'] = 'Jêzyk intefejsu';
-$words['Session timeout'] = 'Czas trwania sesji';
-$words['Session timeout tooltip'] = 'Dla bezpieczeñstwa czas trwania sesji bêdzie trwa³, a¿ do zamkniêcia przegl±darki, jednak mo¿esz okre¶liæ maksymalny czas jej trwania';
-$words['Locale'] = 'Lokalizacja';
-$words['Timezone'] = 'Strefa czasowa';
-$words['Locale tooltip'] = 'Zbyt wiele wpisów w li¶cie, zobacz dokumentacjê PHP, aby siê wiêcej dowiedzieæ: http://www.php.net/manual/en/function.setlocale.php';
-$words['Character set'] = 'Kodowanie znaków';
-$words['Character set tooltip'] = 'Podaj swój system kodowania znaków, jednak Seagull jeszcze nie wspiera wielko bajtowego systemu kodowania';
-$words['Results per page'] = 'Ilo¶æ wyników na stronie';
-$words['Show execution times?'] = 'Pokazaæ czas wykonania skryptu?';
-$words['Preferences'] = 'Konfiguracje';
-$words['User Preferences'] = 'Konfiguracje U¿ytkownika';
-$words['Organisation Preferences'] = 'Konfiguracje Organizacji';
-$words['Register'] = 'Rejestracja';
-$words['Personal Details'] = 'Szczegó³y';
-$words['Company Name'] = 'Nazwa Firmy';
-$words['Location'] = 'Lokalizacja';
-$words['Address 1'] = 'Adres 1';
-$words['Address 2'] = 'Adres 2';
-$words['Address 3'] = 'Adres 3';
-$words['City'] = 'Miasto';
-$words['State/Province'] = 'Województwo';
-$words['ZIP/Postal Code'] = 'Kod pocztowy';
-$words['Country'] = 'Pañstwo';
-$words['Contact'] = 'Kontakt';
-$words['Telephone'] = 'Telefon';
-$words['Fax'] = 'Fax';
-$words['Security'] = 'Bezpieczeñstwo';
-$words['Security question'] = 'Pytanie bezpieczeñstwa';
-$words['Answer'] = 'Odpowied¼';
-$words['Is Active?'] = 'Jest aktywny?';
-$words[' check if active'] = 'sprawd¼ czy jest aktywny';
-$words['Reset password now'] = 'Resetuj has³o';
-$words['aSecurityQuestions'][0] = '';
-$words['aSecurityQuestions'][1] = 'Imiê ulubionego zwierzêcia';
-$words['aSecurityQuestions'][2] = 'Wa¿na data (dd/mm/yyyy)';
-$words['aSecurityQuestions'][3] = 'Wa¿ne miejsce';
-$words['aSecurityQuestions'][4] = 'Nazwisko panieñskie matki';
-$words['aSecurityQuestions'][5] = 'Ulubiony film';
-$words['aSecurityQuestions'][6] = 'Ulubiona piosenka';
-$words['aSecurityQuestions'][7] = 'Ulubiony napój';
-$words['return to browse'] = 'powrót do podgl±du';
-$words['back to Account'] = 'powrót do konta';
-$words['change password'] = 'zmieñ has³o';
-$words['This email already exist in the DB, please choose another'] = 'Podany email ju¿ istnieje w bazie danych, proszê podaæ inny';
-$words['This username already exist in the DB, please choose another'] = 'Podana nazwa u¿ytkownika ju¿ istnieje w bazie danych, proszê podaæ inn±';
-$words['Your email is not correctly formatted'] = 'Z³y format email`a';
-$words['You must enter your email'] = 'Musisz podaæ email';
-$words['You must enter a new password'] = 'Musisz podaæ nowe has³o';
-$words['You must enter your original password'] = 'Musisz podaæ aktualne has³o';
-$words['Password must be between 5 to 10 characters'] = 'Has³o musi zawieraæ od 5 do 10 znaków';
-$words['Passwords are not the same'] = 'Has³a nie s± takie same';
-$words['You have entered your original password incorrectly'] = 'Podane aktualne has³o jest niepoprawne';
-$words['Please confirm password'] = 'Proszê potwierdziæ has³o';
-$words['username min length'] = 'Nazwa u¿ytkownika musi zawieraæ wiêcej ni¿ 5 alfanumeryczne znaki bez odstêpów';
-$words['You must enter your first name'] = 'Musisz podaæ imiê';
-$words['You must enter your last name'] = 'Musisz podaæ nazwisko';
-$words['You must enter your company name'] = 'Musisz podaæ nazwê firmy';
-$words['You must enter at least address 1'] = 'Musisz podaæ co najmniej jeden adres';
-$words['You must enter your city'] = 'Musisz podaæ miasto';
-$words['You must enter your state/province'] = 'Musisz podaæ województwo';
-$words['You must enter your ZIP/Postal Code'] = 'Musisz podaæ kod pocztowy';
-$words['You must enter your country'] = 'Musisz podaæ pañstwo';
-$words['You must enter your telephone number'] = 'Musisz podaæ numer telefonu';
-$words['You must choose a security question'] = 'Musisz wybraæ pytanie bezpieczeñstwa';
-$words['You must provide a security answer'] = 'Musisz podaæ odpowied¼ na wybrane pytanie bezpieczeñstwa';
-$words['Thanks for registering with'] = 'Dziêkujemy za zarejestrowanie';
-$words['Dear'] = 'Drogi';
-$words['You are being sent this email because you just registered, your logon details are as follows'] = 'Otrzyma³e¶ ten email poniewa¿ dokona³e¶ rejestracji, twoje szczegó³y logowania s± dostêpne poni¿ej';
-$words['Your registration is being reviewed'] = 'Twoja rejestracja zosta³a przyjêta, zostaniesz wkrótce powiadomiony';
-$words['Your username is'] = 'Twoja nazwa u¿ytkownika to';
-$words['Your password is'] = 'Twoje has³o to';
-$words['New Registration at'] = 'Nowa rejestracja w';
-$words['The following user has just registered'] = 'U¿ytkownik zosta³ zarejestrowany';
-$words['to enable the new user\'s account'] = 'uruchomienie konta nowego u¿ytkownika';
-$words['username'] = 'Nazwa u¿ytkownika';
-$words['Click'] = 'Kliknij';
-$words['here'] = 'tutaj';
-$words['to logon to the'] = 'aby siê zalogowaæ do';
-$words['site now'] = 'strony.';
-$words['Password Reminder'] = 'Przypomnienie has³a';
-$words['You are being sent this email because'] = 'Otrzyma³e¶ tego email`a, poniewa¿ wybra³e¶ opcjê przypomnienia has³a.';
-$words['Your new password is'] = 'Twoje nowe has³o to';
-$words['Group Manager'] = 'Zarz±dzanie Grup±';
-$words['Group Manager :: Browse'] = 'Zarz±dzanie Grup± :: Podgl±d';
-$words['Group Manager :: Edit'] = 'Zarz±dzanie Grup± :: Edycja';
-$words['Group Manager :: New Group'] = 'Zarz±dzanie Grup± :: Nowa grupa';
-$words['Organisation Manager'] = 'Zarz±dzanie Organizacj±';
-$words['Organisation Manager :: Browse'] = 'Zarz±dzanie Organizacj± :: Podgl±d';
-$words['Organisation Manager :: Edit'] = 'Zarz±dzanie Organizacj± :: Edycja';
-$words['Organisation Manager :: New Organisation'] = 'Zarz±dzanie Organizacj± :: Nowa organizacja';
-$words['groups'] = 'grupy';
-$words['Group'] = 'Grupa';
-$words['Organisation'] = 'Organizacja';
-$words['organisation'] = 'organizacja';
-$words['organisations'] = 'organizacje';
-$words['Org ID'] = 'ID organizacji';
-$words['Org Name'] = 'Nazwa organizacji';
-$words['You must enter an organisation name'] = 'Musisz podaæ nazwê organizacji';
-$words['organisation successfully added'] = 'Organizacja zosta³a dodana';
-$words['The organisation has successfully been updated'] = 'Organizacja zosta³a zmieniona';
-$words['The organisation has successfully been updated, no data changed'] = 'Organizacja zosta³a zmieniona, bez zmiany danych';
-$words['The selected organisation(s) have successfully been deleted'] = 'Zaznaczone organizacje zosta³y usuniête';
-$words['Group ID'] = 'ID grupy';
-$words['Group Name'] = 'Nazwa Grupy';
-$words['Add'] = 'Dodaj';
-$words['Current Category'] = 'Wybrana kategoria';
-$words['Manage'] = 'Zatrz±dzaj';
+    // profile form (admin template)
+    'Personal Details'        => 'Szczegó³y',
+    'Username'                => 'U¿ytkownik',
+    'First Name'              => 'Imiê',
+    'Last Name'               => 'Nazwisko',
+    'Contact'                 => 'Kontakt',
+    'Location'                => 'Lokalizacja',
+    'Address 1'               => 'Adres 1',
+    'Address 2'               => 'Adres 2',
+    'Address 3'               => 'Adres 3',
+    'City'                    => 'Miasto',
+    'Country'                 => 'Pañstwo',
+    'Telephone'               => 'Telefon',
+    'Mobile'                  => 'Tel. komórkowy',
+    'County/State/Province'   => 'Pañstwo/Województwo',
+    'ZIP/Postal Code'         => 'Kod pocztowy',
+    // + user template
+    'Company'                 => 'Nazwa Firmy',
+    'edit these values'       => 'Edycja',
 
-$words['You must enter a group name'] = 'Musisz podaæ nazwê grupy';
+    // edit form
+    'edit user'          => 'Edycja u¿ytkownika',
+    'Confirm Password'   => 'Potwierd¼ has³o',
+    'Organisation name'  => 'Nazwa organizacji',
+    'Is Active?'         => 'Czy aktywny?',
+    'Security'           => 'Bezpieczeñstwo',
+    'Security question'  => 'Pytanie bezpieczeñstwa',
+    'Answer'             => 'Odpowied¼',
+
+    'aSecurityQuestions' => array(
+        0 => '',
+        1 => 'Imiê ulubionego zwierzêcia',
+        2 => 'Wa¿na data (dd.mm.rrrr)',
+        3 => 'Wa¿ne miejsce',
+        4 => 'Nazwisko panieñskie matki',
+        5 => 'Ulubiony film',
+        6 => 'Ulubiona piosenka',
+        7 => 'Ulubiony napój'
+    ),
+
+    // messages
+    'profile successfully updated' => 'Szczegó³y profilu zosta³y poprawnie zapisane',
+
+    // validate
+    'You must enter a username'             => 'Musisz podaæ nazwê u¿ytkownika',
+    'username min length'                   => 'Nazwa u¿ytkownika musi zawieraæ wiêcej ni¿ 5 alfanumerycznych znaków bez odstêpów', // 'Your username must be alphanumeric with at least 5 characters and no spaces',
+
+    'You must enter at least address 1'     => 'Musisz podaæ co najmniej jeden adres',
+    'You must enter your city'              => 'Musisz podaæ miasto',
+    'You must enter your state/province'    => 'Musisz podaæ województwo',
+
+    'Please enter a company name'           => 'Proszê podaæ nazwê firmy',
+    'You must enter your ZIP/Postal Code'   => 'Musisz podaæ kod pocztowy',
+    'You must enter your country'           => 'Musisz podaæ pañstwo',
+    'Your email is not correctly formatted' => 'Z³y format emaila',
+    'You must enter your email'             => 'Musisz podaæ email',
+    'You must choose a security question'   => 'Musisz wybraæ pytanie bezpieczeñstwa',
+    'Please enter a telephone number'       => 'Musisz podaæ numer telefonu',
+    'You must provide a security answer'    => 'Musisz podaæ odpowied¼ na wybrane pytanie bezpieczeñstwa',
 
 
+/* Register MRG */
 
-$words['The group has successfully been updated'] = 'Grupa zosta³a zmieniona';
-$words['The group membership has successfully been modified'] = 'Przynale¿no¶æ do grupy zosta³o zmienione';
-$words['The selected group(s) have successfully been deleted'] = 'Zaznaczone grupy zosta³y usuniête';
-$words['The group has successfully been added'] = 'Grupa zosta³a dodana';
-$words['Description'] = 'Opis';
-$words['Edit Group'] = 'Edycja grupy';
-$words['Change Group Assignments'] = 'Zmieñ przynale¿no¶æ do grupy';
-$words['With selected group(s)'] = 'Z zaznaczonymi grupami';
-$words['Group Description'] = 'Opis grupy';
-$words['Members'] = 'Uczestnik';
-$words['Changing Group Assignments for'] = 'Zmieñ przynale¿no¶æ do grupy dla';
-$words['others'] = 'inni';
-$words['add >>'] = 'dodaj >>';
-$words['Editing Details for Group'] = 'Edycja szczegó³ów dla grupy';
-$words['User Profile'] = 'Profil U¿ytkownika';
-$words['back to contacts'] = 'powrót do kontaktów';
-$words['none given'] = 'nic nie otrzymano';
-$words['Real Name'] = 'Prawdziwa nazwa';
-$words['Lives in'] = 'Mieszka w';
-$words['Member Since'] = 'Uczestnik od';
-$words['first login in progress'] = 'pierwsza sesji w dzia³aniu';
-$words['Posting Stats for User'] = 'Ustaw status dla u¿ytkownika';
-$words['Total Articles'] = 'Wszystkich artyku³ów';
-$words['Total Comments'] = 'Wszystkich komentarzy';
-$words['coming soon ...'] = 'wkrótce dostêpne ...';
-$words['Message'] = 'Wiadomo¶æ';
-$words['send message'] = 'wy¶lij wiadomo¶æ';
-$words['Contacts'] = 'Kontakty';
-$words['add to contacts'] = 'dodaj do kontaktów';
-$words['details successfully updated'] = 'Szczegó³y u¿ytkownika zosta³y zmienione';
-$words['org details successfully updated'] = 'Szczegó³y organizacji zosta³y zmienione';
-$words['user successfully deleted'] = 'Zaznaczeni u¿ytkownicy zostali usuniêci';
-$words['user successfully added'] = 'U¿ytkownik zosta³ dodany';
-$words['user successfully registered'] = 'Rejestracja przebieg³a poprawnie.  Proszê sprawdziæ swój email z pro¶b± o potwiedzenie has³a';
-$words['group successfully updated'] = 'Grupa zosta³a zmieniona';
-$words['group assign successfully updated'] = 'Przypisanie do grupy zosta³o zmienione';
-$words['profile successfully updated'] = 'Szczegó³y profilu zosta³y zmienione';
-$words['Authorisation Required'] = 'Wymagana autoryzacja dostêpu';
-$words['search'] = 'szukaj';
-$words['import users'] = 'zaimportuj u¿ytkowników';
-$words['sync perms with role'] = 'zsynchronizuj uprawnienia dla ról';
-$words['add missing perms'] = 'dodaj wymagane uprawnienia';
-$words['remove extra perms'] = 'usuñ dodatkowe uprawnienia';
-$words['complete sync'] = 'zakoñcz synchronizacjê';
-$words['(each users current)'] = '(u¿ytkownicy przypisani do roli)';
-$words['Register Date'] = 'Data rejestracji';
-$words['Search'] = 'Szukaj';
-$words['Search Criteria'] = 'Szukaj wg kryteriów';
-$words['manage organisation types'] = 'zarz±dzaj typami organizacji';
-$words['list organisations'] = 'lista organizacji';
+    // title
+    'Register' => 'Rejestracja',
 
-$words['clear search'] = 'wyczy¶æ wyszukiwarkê';
-$words['Role'] = 'Rola';
-$words['role'] = 'rola';
-$words['add role'] = 'dodaj rolê';
-$words['Role Manager'] = 'Zarz±dzanie Rolami';
-$words['Role Manager :: Browse'] = 'Zarz±dzanie Rolami :: Podgl±d';
-$words['Role Manager :: Add'] = 'Zarz±dzanie Rolami :: Dodaj';
-$words['Role Manager :: Edit'] = 'Zarz±dzanie Rolami :: Edycja';
-$words['Role Manager :: Permissions'] = 'Zarz±dzanie Rolami :: Uprawnienia';
-$words['roles'] = 'role';
-$words['Role ID'] = 'ID roli';
-$words['Name'] = 'Nazwa';
-$words['Description'] = 'Opis';
-$words['You must enter an role name'] = 'Musisz podaæ nazwê roli';
-$words['role successfully duplicated'] = 'Rola zosta³a zduplikowana';
-$words['role successfully added'] = 'Rola zosta³a dodana';
-$words['role successfully updated'] = 'Rola zosta³a zmieniona';
-$words['role successfully deleted'] = 'Rola zosta³a usuniêta';
-$words['role successfully deleted but please note, admin/unassigned roles cannot be deleted'] = 'Rola zosta³a usuniêta, ale rola admina nie mo¿e byæ usuniêta';
-$words['role assignments successfully updated'] = 'Przypisanie roli zosta³o zmienione';
+    // validation
+    'You must enter a password'                                    => 'Musisz podaæ has³o',
+    'Please confirm password'                                      => 'Proszê potwierdziæ has³o',
+    'Password must be between 5 to 10 characters'                  => 'Has³o musi zawieraæ od 5 do 10 znaków',
+    'Passwords are not the same'                                   => 'Has³a nie s± takie same',
+    'This email already exist in the DB, please choose another'    => 'Podany email ju¿ istnieje w bazie danych, proszê podaæ inny',
+    'This username already exist in the DB, please choose another' => 'Podana nazwa u¿ytkownika ju¿ istnieje w bazie danych, proszê podaæ inn±',
 
-/*  PERM MGR   */
-$words['You must enter a permission name'] = 'Musisz podaæ nazwê uprawnienia';
-$words['perms'] = 'uprawnienia';
-$words['Permission Manager :: Browse'] = 'Zarz±dzenie Uprawnieniami :: Podgl±d';
-$words['Permission Manager :: Add'] = 'Zarz±dzenie Uprawnieniami :: Dodaj';
-$words['Permission Manager :: Edit'] = 'Zarz±dzenie Uprawnieniami :: Edycja';
-$words['Permission Manager :: Detect & Add'] = 'Zarz±dzenie Uprawnieniami :: Wykryj i dodaj';
-$words['Perm ID'] = 'ID uprawnienia';
-$words['permission'] = 'Uprawnienie';
-$words['perm successfully added'] = 'Uprawnienie zosta³o dodane';
-$words['perm successfully updated'] = 'Uprawnienia zosta³y zmienione';
-$words['perm successfully deleted'] = 'Uprawnienia zosta³y usuniête';
-$words['add permission'] = 'dodaj uprawnienie';
-$words['perm(s) successfully added'] = 'Uprawnienia zosta³y dodane';
-$words['detected perms description'] = 'Lista uprawnieñ w module zosta³a wykryta, ale jeszcze nie zosta³a dodana do systemu.';
-$words['detect & add permissions'] = 'wykryj i dodaj';
-$words['No perms were selected'] = 'Brak zaznaczonych uprawnieñ';
-$words['orphaned perms description'] = 'Lista uprawnieñ w bazie zosta³a wykryta, ale nie istnieje w module.';
-$words['remove orphaned'] = 'usuñ osierocone';
-$words['You must select a user to sync'] = 'Musisz zaznaczyæ u¿ytkownika do synchronizacji';
-$words['Are you sure you want to sync this user(s)?'] = 'Czy chcesz zsynchronizowaæ uzytkownika?';
+    // messages
+    'user successfully registered' => 'Rejestracja przebieg³a poprawnie. Proszê sprawdziæ swój email z pro¶b± o potwierdzenie has³a',
 
-/* User Import*/
-$words['User Import Manager'] = 'Zarz±dzanie importem u¿ytkowników';
-$words['userfile'] = 'Podaj plik';
-$words['organisation'] = 'Organizacja';
-$words['role'] = 'Rola';
-$words['process file'] = 'przetwarzanie pliku';
+    // XXX mail templates here
 
-/* User Import*/
-$words['OrgType Manager'] = 'Zarz±dzanie typami organizacji';
-$words['list organisation types'] = 'lista typów organizacji';
-$words['add organisation type'] = 'dodaj typ organizacji';
-$words['Org Type ID'] = 'ID typu organizacji';
-$words['organisation type'] = 'typ organizacji';
-$words['Org Type Name'] = 'Nazwa typu organizacji';
-$words['Org type(s) deleted successfully'] = 'Typ organizacji zosta³ usuniêty';
-$words['You must enter an organisation type name'] = 'Musisz podaæ nazwê typu organizacji';
-$words['No data was updated'] = 'Brak danych do zmiany';
-$words['Organisation type saved successfully'] = 'Typ organizacji zosta³ zapisany';
-$words['Organisation type has been updated successfully'] = 'Typ organizacji zosta³ zmieniony';
-$words['user(s) found']='znaleziono u¿ytkowników';
-$words['change']='zmieñ';
-$words['Type']='Typ';
-$words['Website']='Strona';
-$words['Browse']='Podgl±d';
-$words['With selected organisation(s)']='Z zaznaczonych organizacji';
-$words['duplicate']='duplikuj';
-$words['all']='wszystkie';
-$words['With selected permission(s)']='Z zaznaczonych uprawnieñ';
-$words['filter by module']='filtruj modu³';
-$words['Default Role']='Standardowa rola';
-$words['Organisation Manager :: Add']='Zarz±dzanie Organizacjami :: Dodaj';
-$words['Parent Org']='Organizacja nadrzêdna';
-$words['Detected Perms']='Wykryte uprawnienia';
-$words['Detected Orphaned Perms']='Wykryte osierocone uprawnienia';
-$words['Permission Manager :: Detect Orphaned']='Zarz±dzanie uprawnieniami :: Wykrywanie osieroconych';
 
-/* Login Data */
-$words['User Manager :: Login Data']='Zarz±dzanie U¿ytkownikiem :: £adowanie danych';
-$words['Login Time']='Czas logowania';
-$words['Remote IP']='Zdalny IP';
-$words['Deleted successfully']='Usuniêcie zakoñczone';
-$words['Are you sure?']='Czy jeste¶ pewien?';
-$words['Logins']='Logowania';
+/* Password MRG */
 
-/* status notifications */
-$words['You are being sent this email because your new account status is now']='Otrzyma³e¶ ten email poniewa¿ twoje konto ma teraz status';
-$words['active']='aktywny';
-$words['disabled']='wy³±czony';
-$words['Changing status for']='Zmieñ status dla';
-$words['Current status is']='Aktualny status jest';
-$words['Disable Now']='Wy³±cz';
-$words['Enable Now']='W³±cz';
-$words['Status changed successfully']='Status zosta³ zmieniony';
+    // titles
+    'Retrieve password' => 'Odzyskaj has³o',
+
+    // list
+    'Enter the email address you registered with' => 'Podaj adres email podany przy rejestracji',
+    'retrieve' => 'odzyskaj',
+
+
+/* UserPassword */
+
+    // titles
+    'Change Password' => 'Zmiana has³a',
+
+    // form
+    'Original password'  => 'Aktualne has³o',
+    'New password'       => 'Nowe has³o',
+    'Confirm'            => 'Potwierd¼',
+    'Notify me by email' => 'Powiadom mnie na email',
+
+    // messages
+    'Password updated successfully' => 'Has³o zosta³o zmienione',
+
+    // validation
+    'You must enter your original password'                 => 'Musisz podaæ aktualne has³o',
+    'You must enter a new password'                         => 'Musisz podaæ nowe has³o',
+    'You have entered your original password incorrectly'   => 'Podane aktualne has³o jest niepoprawne',
+
+
+/* Login MRG */
+
+    // title
+    'Login' => 'Zaloguj',
+
+    // form
+    'Authorisation Required' => 'Wymagana autoryzacja dostêpu',
+
+    // validation
+    'username/password not recognized' => 'Podana nazwa u¿ytkownika i has³o nie zosta³y poprawnie rozpoznane, proszê spróbowaæ ponownie', // 'Your username/password combination has not been recognized, please try again',
+
+    // XXX: other messages are defined in default lang file for now :/
+
+
+/* UserPreference MGR */
+
+    // title
+    'User Preferences' => 'Konfiguracja u¿ytkownika',
+
+    // form (admin template)
+    'Theme'                                        => 'Szablon',
+    'Change what this site looks like'             => 'Okre¶la wygl±d ca³ego serwisu',
+    'Date format'                                  => 'Format daty',
+    'UK format is dd/mm/yyyy and US is mm/dd/yyyy' => 'Format UK to dd/mm/rrrr, a US  to mm/dd/rrrr',
+    'Interface language'                           => 'Jêzyk interfejsu',
+    'Session timeout'                              => 'Czas trwania sesji',
+    'Session timeout tooltip'                      => 'Dla bezpieczeñstwa czas trwania sesji bêdzie trwa³, a¿ do zamkniêcia przegl±darki, jednak mo¿esz okre¶liæ maksymalny czas jej trwania', // 'As a security measure your session will end once you close the browser, however, you can set the max duration of your session within this time',
+    'Locale'                                       => 'Lokalizacja',
+    'Timezone'                                     => 'Strefa czasowa',
+    'Results per page'                             => 'Ilo¶æ wyników na stronie',
+    'Show execution times?'                        => 'Pokazaæ czas wykonania skryptu?',
+    // + user template
+    'General'                                      => 'Ogólne',
+
+    // messages
+    'details successfully updated' => 'Konfiguracja zosta³a zapisana',
+
+
+/* Profile MGR */
+
+    // titile
+    'User Profile' => 'Profil u¿ytkownika',
+
+    // form
+    'Real Name'                => 'Nazwisko i imiê',
+    'Lives in'                 => 'Mieszka w',
+    'Member Since'             => 'Uczestnik od',
+    'none given'               => 'b/d',
+    'Posting Stats for User'   => 'Ustaw status dla u¿ytkownika',
+    'Total Articles'           => 'Wszystkich artyku³ów',
+    'Total Comments'           => 'Wszystkich komentarzy',
+    'coming soon ...'          => 'wkrótce dostêpne ...',
+
+     // messaging
+    'back to contacts' => 'powrót do kontaktów',
+    'Message'          => 'Wiadomo¶æ',
+    'send message'     => 'wy¶lij wiadomo¶æ',
+    'Contacts'         => 'Kontakty',
+    'add to contacts'  => 'dodaj do kontaktów',
+
+
+/* OrgPreferences MGR */
+
+    // title
+    'Organisation Preferences' => 'Konfiguracja organizacji',
+
+    // form
+    'Preferences for org' => 'Konfiguracja organizacji',
+
+    // messages
+    'org details successfully updated' => 'Szczegó³y organizacji zosta³y zmienione',
+
+
+/* OrgType MGR */
+
+    // titles
+    'OrgType Manager'           => 'Menad¿er typu organizacji',
+    'OrgType Manager :: Browse' => 'Menad¿er typu organizacji :: Podgl±d',
+    'OrgType Manager :: Add'    => 'Menad¿er typu organizacji :: Dodaj',
+    'OrgType Manager :: Edit'   => 'Menad¿er typu organizacji :: Edycja',
+
+    // list
+    'Organisation Type list'    => 'Lista typów organizacji',
+    'Add organisation type'     => 'Dodaj typ organizacji',
+    'organisation type'         => 'typ organizacji',
+    'Be Careful!'               => 'B±d¼ ostro¿ny!',
+
+    // form
+    'New organisation'          => 'Nowa organizacja',
+    'New organisation type'     => 'Nowy typ organizacji',
+    'Edit organisation'         => 'Edycja organizacji',
+
+    // validation
+    'You must enter an organisation type name' => 'Musisz podaæ nazwê organizacji',
+
+    // messages
+    'No data was updated'                             => 'Brak danych do zmiany',
+    'Org type(s) deleted successfully'                => 'Typ organizacji zosta³ usuniêty',
+    'Organisation type saved successfully'            => 'Typ organizacji zosta³ zapisany',
+    'Organisation type has been updated successfully' => 'Typ organizacji zosta³ zmieniony',
+    'No organisations found' => 'Nie znaleziono organizacji',
+
+
+/* Org MGR */
+
+    // title
+    'Organisation Manager'           => 'Menad¿er Organizacji',
+    'Organisation Manager :: Browse' => 'Menad¿er Organizacji :: Podgl±d',
+    'Organisation Manager :: Add'    => 'Menad¿er Organizacji :: Dodaj',
+    'Organisation Manager :: Edit'   => 'Menad¿er Organizacji :: Edycja',
+
+    // list
+    'Organisation list'    => 'Lista organizacji',
+    'Website'              => 'Strona www',
+    'change'               => 'zmieñ',
+    'organisation'         => 'organizacja',
+
+    // form
+    'New organisation'     => 'Nowa organizacja',
+    'Edit organisation'    => 'Edycja organizacji',
+    'Details'              => 'Szczegó³y',
+    'Description'          => 'Opis',
+    'Parent Org'           => 'Nadrzêdna organizacja',
+    'Default Role'         => 'Standardowa rola',
+
+    // validation
+    'You must enter an organisation name' => 'Musisz podaæ nazwê organizacji',
+
+    // messages
+    'organisation successfully added'                                                     => 'Organizacja zosta³a dodana',
+    'The selected organisation(s) have successfully been deleted'                         => 'Zaznaczone organizacje zosta³y usuniête',
+    'The selected organisation cannot be deleted because there are users relating to it'  => 'Zaznaczone %s organizacje nie zosta³y usuniête, bo istnij± u¿ytkownicy przy³±czeni do niej!',
+    'The organisation has successfully been updated'                                      => 'Organizacja zosta³a zmieniona',
+    'The organisation has successfully been updated, no data changed'                     => 'Organizacja zosta³a zmieniona, bez zmiany danych',
+
+
+/* Preference MGR */
+
+    // titles
+    'Preference Manager'           => 'Menad¿er Preferencji',
+    'Preference Manager :: Browse' => 'Menad¿er Preferencji :: Podgl±d',
+    'Preference Manager :: Add'    => 'Menad¿er Preferencji :: Dodaj',
+    'Preference Manager :: Edit'   => 'Menad¿er Preferencji :: Edycja',
+
+    // list
+    'Default value' => 'Standardowa warto¶æ',
+    'preference'    => 'preferencja',
+
+    // form
+    'New preference'     => 'Nowa preferencja',
+    'Editing preference' => 'Edycja preferencji',
+
+    // validation
+    'You must enter a default value'   => 'Musisz podaæ standardow± warto¶æ',
+    'You must enter a preference name' => 'Musisz podaæ nazwê preferencji',
+
+    // messages
+    'pref successfully deleted' => 'Preferencja zosta³a wykasowana',
+    'pref successfully updated' => 'Preferencja zosta³a zmieniona',
+    'pref successfully added'   => 'Preferencja zosta³a dodana',
+
+
+/* Permission MGR */
+
+    // titles
+    'Permission Manager'                    => 'Menad¿er Uprawnieñ',
+    'Permission Manager :: Browse'          => 'Menad¿er Uprawnieñ :: Podgl±d',
+    'Permission Manager :: Add'             => 'Menad¿er Uprawnieñ :: Dodaj',
+    'Permission Manager :: Edit'            => 'Menad¿er Uprawnieñ :: Edycja',
+    'Permission Manager :: Detect & Add'    => 'Menad¿er Uprawnieñ :: Wykryj i dodaj',
+    'Permission Manager :: Detect Orphaned' => 'Menad¿er Uprawnieñ :: Wykryj osierocone',
+
+    // list
+    'New permission'           => 'Nowe uprawnienie',
+    'Editing permission'       => 'Edycja uprawnieñ',
+    'detect & add permissions' => 'wykryj i dodaj',
+    'remove orphaned'          => 'usuñ osierocone',
+    'filter by module'         => 'filtruj wg modu³u',
+    'all'                      => 'wszystkie',
+    'permission'               => 'uprawnienie',
+
+    // add / edit form
+    'Module'                   => 'Modu³',
+
+    // detect perms / remove orphaned
+    'Detected Perms'             => 'Wykryj uprawnienia',
+    'Detected Orphaned Perms'    => 'Wykryj osierocone uprawnienia',
+    'orphaned perms description' => 'Wy¶wietla uprawnienia zapisane w bazie, ale które nie istniej± w modu³ach.', // 'The listed permissions were detected in the database, but do not exist in the modules.',
+    'detected perms description' => 'Wy¶wietla uprawnienia wykryte w modu³ach, ale które nie zosta³y dodane jeszcze do bazy.', // 'The listed permissions were detected in the modules, but have not been added to the system yet.',
+
+    // validation
+    'You must enter a permission name' => 'Musisz podaæ nazwê uprawnienia',
+
+    // messages
+    'perm already defined'                      => 'Uprawnienie ju¿ zosta³o zdefiniowane',
+    'perm successfully added'                   => 'Uprawnienia zosta³o dodane',
+    'perm(s) successfully added'                => 'Uprawnienia zosta³y dodane',
+    'perm successfully deleted'                 => 'Uprawnienia zosta³y usuniête',
+    'perm successfully updated'                 => 'Uprawnienia zosta³y zmienione',
+
+/* Role MGR */
+
+    // titles
+    'Role Manager'                => 'Menad¿er Ról',
+    'Role Manager :: Browse'      => 'Menad¿er Ról :: Podgl±d',
+    'Role Manager :: Add'         => 'Menad¿er Ról :: Dodaj',
+    'Role Manager :: Edit'        => 'Menad¿er Ról :: Edycja',
+    'Role Manager :: Permissions' => 'Menad¿er Ról :: Uprawnienia',
+
+    // list
+    'New Role'   => 'Nowa rola',
+    'duplicate'  => 'powiel',
+    'role'       => 'rola',
+    'permission' => 'uprawnienie',
+
+    // add / edit / perms assignment
+    'Editing role'                        => 'Edycja ról',
+    'Changing permission assignments for' => 'Zmiana uprawnieñ przypisanych dla',
+    'Remaining permissions'               => 'Pozosta³e uprawnienia',
+    'Selected permissions for'            => 'Zaznaczone uprawnienia dla',
+    'remove'                              => 'usuñ',
+
+    // validation
+    'You must enter a role name' => 'Musisz podaæ nazwê roli',
+
+    // messages
+    'role successfully added'                                                             => 'Rola zosta³a dodana',
+    'role successfully updated'                                                           => 'Rola zosta³a zmieniona',
+    'role successfully deleted'                                                           => 'Rola zosta³a usuniêta',
+    'role successfully deleted but please note, admin/unassigned roles cannot be deleted' => 'Rola zosta³a usuniêta, ale proszê zauwa¿yæ, ¿e usuniêcie roli administratora nie jest mo¿liwe',
+    'role successfully duplicated'                                                        => 'Rola zosta³a powielona',
+    'role assignments successfully updated'                                               => 'Przypisanie roli zosta³o zmienione',
+
+
+/* UserSearch MGR */
+
+    // titles
+    'User Manager :: Search' => 'Menad¿er u¿ytkownika :: Wyszukiwanie',
+
+    // list
+    'Search Criteria' => 'Kryteria wyszukiwania',
+    'Role name'       => 'Nazwa roli',
+    'User ID'         => 'ID u¿ytkownika',
+    'Organisation'    => 'Organizacja',
+    'Register Date'   => 'Data rejestracji',
+
+    // validation
+    'You must select a valid date' => 'Musisz podaæ poprawnie datê',
+    'You must select a date'       => 'Musisz wybraæ datê',
+
+
+/* UserImport MGR */
+
+    // titles
+    'User Import Manager' => 'Menad¿er importu u¿ytkowników',
+
+    // list
+    'userfile'                                                         => 'Wprowad¼ plik',
+    'Use the document manager to upload CSV files.'                    => 'U¿yj menad¿er dokumentów do przes³ania plików CSV.',
+    'Import users into selected organisation.'                         => 'Importuj u¿ytkowników do wybranej organizacji.',
+    'User will be assigned to selected role.'                          => 'U¿ytkownik zosta³ przypisany do wybranej roli.',
+    'You should first upload at least one csv file in your upload dir' => 'Powiniene¶ najpierw przes³aæ co najmniej jeden plik CSV do przes³ania',
+
+    // validation
+    'Please select a file.'              => 'Proszê wybraæ plik.',
+    'Please select the organisation'     => 'Proszê wybraæ organizacjê',
+    'Please select the role'             => 'Proszê wybraæ rolê',
+
+
+/* User MGR */
+
+    // titles
+    'User Manager'                     => 'Menad¿er u¿ytkowników',
+    'User Manager :: Browse'           => 'Menad¿er u¿ytkowników :: Przegl±d',
+    'User Manager :: Login Data'       => 'Menad¿er u¿ytkowników :: Dane logowania',
+    'User Manager :: Edit'             => 'Menad¿er u¿ytkowników :: Edycja',
+    'User Manager :: Edit permissions' => 'Menad¿er u¿ytkowników :: Edycja uprawnieñ',
+    'User Manager :: Add'              => 'Menad¿er u¿ytkowników :: Dodaj',
+    'User Manager :: Reset password'   => 'Menad¿er u¿ytkowników :: Resetuj has³o',
+    'User Manager :: Change status'    => 'Menad¿er u¿ytkowników :: Zmieñ status',
+
+    // list
+    'New User'             => 'Nowy u¿ytkownik',
+    'Search'               => 'Wyszukaj',
+    'Import users'         => 'Importuj u¿ytkowników',
+    'User list'            => 'Lista u¿ytkowników',
+    'user(s) found'        => 'znaleziono u¿ytkowników',
+    'clear search'         => 'wyczy¶æ wyszukiwanie',
+    'Logins'               => 'Logowania',
+    'list'                 => 'lista',
+    'Change status'        => 'Zmieñ status',
+    'No users found'       => 'Nie znaleziono u¿ytkowników',
+    'Synchronise'          => 'Synchronizuj',
+    '(each users current)' => '(ka¿dego u¿ytkownika do wybranej roli)',
+    'sync perms with role' => 'synchronizuj uprawnienia',
+    'add missing perms'    => 'dodaj brakuj±ce uprawnienia',
+    'remove extra perms'   => 'usuñ dodatkowe uprawnienia',
+    'complete sync'        => 'pe³na synchronizacja',
+
+    // add / edit
+    'add user'             => 'dodaj u¿ytkownika',
+    'check if active'      => 'zaznacz, je¶li aktywny',
+
+    // login data
+    'Connection list'      => 'Lista po³±czeñ',
+    'Login Time'           => 'Czas logowania',
+    'Remote IP'            => 'Adres IP',
+    'Are you sure?'        => 'Czy jeste¶ pewien?',
+
+    // status change
+    'Disable Now'          => 'Wy³±cz teraz',
+    'Enable Now'           => 'W³±cz teraz',
+    'active'               => 'aktywny',
+    'disabled'             => 'wy³±czony',
+    'Changing status for'  => 'Zmieñ status dla',
+    'Current status is'    => 'Obecny status to',
+    'Enable user'          => 'Uaktywnij u¿ytkownika',
+    'Disable user'         => 'Wy³±cz u¿ytkownika',
+    'Notify user'          => 'Powiadom u¿ytkownika',
+
+    // reset
+    'Reset password now'                   => 'Resetuj has³o teraz',
+    'Resetting password for'               => 'Resetuj has³o dla',
+    'Reset password info'                  => 'Pamiêtaj, je¿eli resetujesz has³o dla administratora, musisz byæ pewny poprawno¶ci adresu email (mo¿esz to zrobiæ edytuj±c dane administratora), oraz ¿e system ma poprawnie skonfigurow± wysy³kê emaili.', // 'Remember, if you\'re resetting the password for the admin user, make sure you correctly specify the email address the new password will go to (hit "edit" for the admin user), and that your system is correctly setup to send and receive email.',
+
+    // change permissions
+    'for user id'            => 'dla u¿ytkownika o ID',
+    'Select a module'        => 'Zaznacz modu³',
+
+    // messages
+    'user successfully added'              => 'U¿ytkownik zosta³ dodany',
+    'Deleted successfully'                 => 'Zaznaczone wpisy zosta³y usuniête',
+    'Status changed successfully'          => 'Status zosta³ zmieniony',
+    'user successfully deleted'            => 'Zaznaczeni u¿ytkownicy zostali usuniêci',
+    'The user has been successfully added' => 'U¿ytkownik zosta³ dodany',
+
+
+/**
+ * Mail templates
+ */
+    'Thanks for registering with'            => 'Dziêkujemy za zarejestrowanie',
+    'username'                               => 'Nazwa u¿ytkownika',
+    'Dear'                                   => 'Witaj',
+    'You are being sent this email because your new account status is now' => 'Otrzyma³e¶ ten email, poniewa¿ twoje konto ma teraz status',
+    'Click'                                  => 'Kliknij',
+    'here'                                   => 'tutaj',
+    'to logon to the'                        => 'aby siê zalogowaæ do',
+    'site now'                               => 'strony.',
+    'You are being sent this email because you just registered, your logon details are as follows' => 'Otrzyma³e¶ ten email poniewa¿ dokona³e¶ rejestracji, twoje parametry logowania s± dostêpne poni¿ej',
+    'Your username is'                       => 'Twoja nazwa u¿ytkownika to',
+    'Your password is'                       => 'Twoje has³o to',
+    'Your registration is being reviewed'    => 'Twoja rejestracja zosta³a przyjêta, zostaniesz wkrótce powiadomiony',
+    'Password Reminder'                      => 'Przypomnienie has³a',
+    'You are being sent this email because'  => 'Otrzyma³e¶ ten email, poniewa¿ wybra³e¶ opcjê przypomnienia has³a.',
+    'Your new password is'                   => 'Twoje has³o to',
+    'New Registration at'                    => 'Nowa rejestracja w',
+    'The following user has just registered' => 'U¿ytkownik zosta³ zarejestrowany',
+    'to enable the new users account'        => 'uruchomienie konta nowego u¿ytkownika',
+
+    // not found anywhere, but I suppose, that somewhere it is used
+    'There was a problem with your session, please login again'      => 'Czas trwania sesji zosta³ przekroczony, proszê zalogowaæ siê ponownie',
+    'Only logged on users have access to this area, please register' => 'Tylko zalogowani u¿ytkownicy maj± dostêp do tej strefy, proszê siê zalogowaæ',
+    'Registration has been disabled'                                 => 'Rejestracja zosta³y wy³±czona',
+);
 
 ?>

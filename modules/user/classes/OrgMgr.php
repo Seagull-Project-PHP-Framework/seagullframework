@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | OrgMgr.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -129,7 +129,7 @@ class OrgMgr extends SGL_Manager
         $input->aDelete         = $req->get('frmDelete');
 
         $aErrors = array();
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             $v = & new Validate();
             if (empty($input->org->name)) {
                 $aErrors['name'] = 'You must enter an organisation name';
@@ -192,13 +192,15 @@ class OrgMgr extends SGL_Manager
 
             //  get array of section node objects and add images for folder-tree display
             $nestedSet = new SGL_NestedSet($this->_params);
-            $output->orgHierOptions = $this->_generateOrgNodesOptions($nestedSet->getTree(), @$output->org->parent_id);
+            $output->orgHierOptions = $this->_generateOrgNodesOptions($nestedSet->getTree(),
+                @$output->org->parent_id);
         }
     }
 
     function _cmd_add(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->isAdd = true;
         $output->template = 'orgEdit.html';
         $output->pageTitle = $input->pageTitle . ' :: Add';
@@ -209,10 +211,6 @@ class OrgMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $input->pageTitle . ' :: Add';
-        if (!SGL::objectHasState($input->org)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         //  handle org hierarchy
         $nestedSet = new SGL_NestedSet($this->_params);
 
@@ -241,6 +239,7 @@ class OrgMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'orgEdit.html';
 
         //  get DB_NestedSet_Node array for this org

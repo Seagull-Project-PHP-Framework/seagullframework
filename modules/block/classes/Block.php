@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Block.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -46,8 +46,6 @@ require_once 'DB/DataObject.php';
  *
  * @package block
  * @author  Gilles Laborderie <gillesl@users.sourceforge.net>
- * @version $Revision: 1.11 $
- * @since   PHP 4.1
  */
 class Block
 {
@@ -152,7 +150,8 @@ class Block
      *
      *
      * @param    array | object  $from
-     * @param    string  $format eg. map xxxx_name to $object->name using 'xxxx_%s' (defaults to %s - eg. name -> $object->name
+     * @param    string  $format eg. map xxxx_name to $object->name using 'xxxx_%s'
+     *                               (defaults to %s - eg. name -> $object->name
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
@@ -178,7 +177,6 @@ class Block
         if (isset($from->$property)) {
             $this->roles = $from->$property;
         }
-
         return true;
     }
 
@@ -240,7 +238,9 @@ class Block
         $this->block->block_id = $block_id;
 
         // Find next available blk_order for targetted column
-        $query = "SELECT MAX( blk_order ) FROM {$this->conf['table']['block']} WHERE position = '" . $this->block->position . "'";
+        $query = "
+            SELECT MAX( blk_order ) FROM {$this->conf['table']['block']}
+            WHERE position = '" . $this->block->position . "'";
         $next_order = (int)$this->dbh->getOne($query) + 1;
         $this->block->blk_order = $next_order;
 

@@ -2,7 +2,12 @@
 
 require_once 'HTML/QuickForm/Action/Display.php';
 
-//  subclass the default 'display' handler to customize the output
+
+/**
+ * Subclass the default 'display' handler to customize the output
+ *
+ * @package Install
+ */
 class ActionDisplay extends HTML_QuickForm_Action_Display
 {
     function perform(&$page, $actionName)
@@ -20,25 +25,20 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-    <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <title>Seagull Framework :: Installation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
     <meta http-equiv="Content-Language" content="en" />
     <meta name="ROBOTS" content="ALL" />
-    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
+    <link rel="help" href="http://trac.seagullproject.org/" title="Seagull Documentation." />
+    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/installer.php" />
 
     <script type="text/javascript">
-        function disableLangList()
-        {
-            var foo = document.getElementById('installLangs');
-            var bar = document.getElementById('addMissingTranslationsToDB');
-            if (foo != null) {
-                foo.disabled = true;
-                bar.disabled = true;
-            }
 
+        function init()
+        {
             //  temp measure
             var prefix = document.getElementById('prefix');
             if (prefix != null) {
@@ -49,6 +49,17 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             var useExistingData = document.getElementById('useExistingData');
             if (useExistingData != null) {
                 useExistingData.disabled = true;
+            }
+
+            //  toggle lang list disabled by default
+            if (useExistingData != null) {
+                toggleLangList();
+            }
+
+            //  disable dbLoginName for mysql default
+            var dbLoginName = document.getElementById('dbLoginNameElement');
+            if (dbLoginName != null) {
+                dbLoginName.disabled = true;
             }
         }
 
@@ -72,17 +83,14 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         function toggleOptionsWhenUsingExistingDb(myCheckbox)
         {
             var myCheckbox = document.getElementById('useExistingData').checked;
-            var allModules = document.getElementById('installAllModules');
             var sampleData = document.getElementById('insertSampleData');
             var storeTransInDb = document.getElementById('storeTranslationsInDB')
 
             if (myCheckbox != null) {
                 if (myCheckbox) {
-                    allModules.disabled = true;
                     sampleData.disabled = true;
                     storeTransInDb.disabled = true;
                 } else {
-                    allModules.disabled = false;
                     sampleData.disabled = false;
                     storeTransInDb.disabled = false;
                 }
@@ -102,15 +110,34 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
                 }
             }
         }
+
+        function copyValueToPortElement(elem)
+        {
+            var portElement = document.getElementById('targetPortElement');
+            portElement.value = elem.value;
+        }
+
+        function toggleDbNameForLogin(enable)
+        {
+            var dbLoginName = document.getElementById('dbLoginNameElement');
+            if (enable) {
+                dbLoginName.value = '';
+                dbLoginName.disabled = false;
+            } else {
+                dbLoginName.value = 'not required for MySQL login';
+                dbLoginName.disabled = true;
+            }
+
+        }
     </script>
 </head>
-<body onLoad="javascript:disableLangList()" id="content">
+<body onLoad="javascript:init();" id="content">
 
 <div id="sgl">
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="$baseUrl" title="Home">
-        <img src="$baseUrl/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" />
     </a>
 </div>
 <p>&nbsp;</p>
@@ -120,8 +147,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 </table>
 </form>
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
+    Powered by <a href="http://seagullproject.org/" title="Seagull framework homepage">Seagull Framework</a>
     </div>
+</div>
 </body>
 </html>
 _HTML

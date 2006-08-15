@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | init.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -81,7 +81,7 @@ function STR_init()
         );
 
     // set error reporting as verbose as possible
-    error_reporting(E_ALL ^ E_NOTICE);
+    $ok = error_reporting(E_ALL);
 
     // Ensure that the initialisation has not been run before
     if (!(isset($GLOBALS['_STR']['CONF']))) {
@@ -119,6 +119,7 @@ function parseIniFile()
         if (!copy(STR_PATH . '/tests/test.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini.php')) {
             die('ERROR WHEN COPYING CONFIG FILE TO ' . STR_TMP_DIR . '/test.conf.ini.php');
         }
+        @chmod(STR_TMP_DIR . '/test.conf.ini.php', 0666);
         define('TEST_ENVIRONMENT_NO_CONFIG', true);
         $ret = parse_ini_file($configPath . '/test.conf.ini.php', true);
     }
@@ -127,7 +128,5 @@ function parseIniFile()
 
 //  main
 STR_init();
-require_once 'PEAR.php';
-
 $conf = $GLOBALS['_STR']['CONF'];
 ?>

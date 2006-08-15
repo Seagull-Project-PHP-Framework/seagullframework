@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Item.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -147,6 +147,9 @@ class SGL_Item
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = & SGL_Translation::singleton('admin');
+            if (is_null($language)) {
+                $language = SGL_Translation::getFallbackLangID();
+            }
         }
 
         if ($itemID >= 0) {
@@ -170,26 +173,23 @@ class SGL_Item
 
         //  get default fields
         $query = "
-            SELECT  u.username,
-                    i.created_by_id,
-                    i.updated_by_id,
-                    i.date_created,
-                    i.last_updated,
-                    i.start_date,
-                    i.expiry_date,
-                    i.item_type_id,
-                    it.item_type_name,
-                    i.category_id,
-                    i.status
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['user']} u,
-                    {$this->conf['table']['category']} c
-            WHERE   it.item_type_id = i.item_type_id
-            AND     i.created_by_id = u.usr_id
-            AND     i.item_id = $itemID
-            AND     i.category_id = c.category_id
-            AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
+            SELECT      u.username,
+                        i.created_by_id,
+                        i.updated_by_id,
+                        i.date_created,
+                        i.last_updated,
+                        i.start_date,
+                        i.expiry_date,
+                        i.item_type_id,
+                        it.item_type_name,
+                        i.category_id,
+                        i.status
+            FROM        {$this->conf['table']['item']} i
+            LEFT JOIN   {$this->conf['table']['item_type']} it ON i.item_type_id = it.item_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON i.created_by_id = u.usr_id
+            LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
+            WHERE       i.item_id = $itemID
+            AND         $roleId NOT IN (COALESCE(c.perms, '-1'))
                 ";
         $result = $this->dbh->query($query);
         if (!DB::isError($result)) {
@@ -594,7 +594,7 @@ class SGL_Item
 
         switch($fieldType) {
         case 0:     // field type = single line
-            $formHTML = "<input type='text' id='frmFieldName_$fieldName' name='frmFieldName[]' value=\"$fieldValue\" />";
+            $formHTML = "<input type='text' class='longText' id='frmFieldName_$fieldName' name='frmFieldName[]' value=\"$fieldValue\" />";
             $formHTML .= "<input type='hidden' name='frmDataItemID[]' value='$fieldID' />";
             break;
 
@@ -671,13 +671,20 @@ class SGL_Item
      * @access  public
      * @param   boolean $bPublished Item published
      * @param   string  $language   Language
-     * @return  mixed   $html       HTML Output
+     * @return  mixed   $html       HTML Output or false if article not loaded
+     * by constructor.
+     * @see init()
      */
     function preview($bPublished = false, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!is_null($language)) {
+            //if article is not loaded user does not have permission to view
+            if (!$this->id) {
+                return false;
+            }
+            
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id, i.category_id
@@ -727,7 +734,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "
-            SELECT  ia.item_addition_id, itm.field_name, ia.addition, itm.item_type_mapping_id
+            SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id
             FROM    {$this->conf['table']['item_addition']} ia,
                     {$this->conf['table']['item_type']} it,
                     {$this->conf['table']['item_type_mapping']} itm
@@ -739,7 +746,9 @@ class SGL_Item
         $result = $this->dbh->query($query);
 
         while (list($fieldID, $fieldName, $fieldValue, $trans_id) = $result->fetchRow(DB_FETCHMODE_ORDERED)) {
-            if ($this->conf['translation']['container'] == 'db') {
+            if ($this->conf['translation']['container'] == 'db'
+                && !empty($trans_id))
+            {
                 $fieldValue = $this->trans->get($trans_id, 'content', $this->languageID);
             }
             $html[$fieldName] = $fieldValue;
@@ -843,6 +852,9 @@ class SGL_Item
 
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
+        if (PEAR::isError($aResult)) {
+            return $aResult;
+        }
         $aArticleList = $aResult['data'];
 
         //  get most recent article, if array is non-empty,
@@ -877,18 +889,21 @@ class SGL_Item
                 $language = SGL_Translation::getLangID();
             }
             $ret = $item->preview($bPublished, $language);
-            if (!is_a($ret, 'PEAR_Error')) {
-                $ret['creatorName'] = $item->creatorName;
-                $ret['createdByID'] = $item->createdByID;
-                $ret['startDate'] = $item->startDate;
-                $ret['type'] = $item->type;
-                return $ret;
-            } else {
-                return $ret;
+
+            //if article is not loaded user does not have permission to view
+            if (!empty($ret)) {
+                if (!is_a($ret, 'PEAR_Error')) {
+                    $ret['creatorName'] = $item->creatorName;
+                    $ret['createdByID'] = $item->createdByID;
+                    $ret['startDate'] = $item->startDate;
+                    $ret['type'] = $item->type;
+                    return $ret;
+                } else {
+                    return $ret;
+                }
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -914,8 +929,8 @@ class SGL_Item
         }
 
         if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
+            return SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
         //  if published flag set, only return published articles
         $isPublishedClause = ($bPublished)?
@@ -929,30 +944,25 @@ class SGL_Item
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
         $query = "
-            SELECT  i.item_id,
-                    ia.addition,
-                    ia.trans_id,
-                    u.username,
-                    i.date_created,
-                    i.start_date,
-                    i.expiry_date,
-                    i.status
-            FROM    {$this->conf['table']['item']} i,
-                    {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it,
-                    {$this->conf['table']['item_type_mapping']} itm,
-                    {$this->conf['table']['user']} u,
-                    {$this->conf['table']['category']} c
+            SELECT      i.item_id,
+                        ia.addition,
+                        ia.trans_id,
+                        u.username,
+                        i.date_created,
+                        i.start_date,
+                        i.expiry_date,
+                        i.status
+            FROM        {$this->conf['table']['item']} i
+            LEFT JOIN   {$this->conf['table']['item_addition']} ia ON i.item_id = ia.item_id
+            LEFT JOIN   {$this->conf['table']['item_type']} it ON i.item_type_id = it.item_type_id
+            LEFT JOIN   {$this->conf['table']['item_type_mapping']} itm ON it.item_type_id = itm.item_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON i.updated_by_id = u.usr_id
+            LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
             WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-            AND     i.updated_by_id = u.usr_id
-            AND     it.item_type_id  = itm.item_type_id
-            AND     i.item_id = ia.item_id
-            AND     i.item_type_id = it.item_type_id
             AND     itm.field_name = 'title'" .         /*  match item addition type, 'title'    */
             $typeWhereClause .                          //  match datatype
             $rangeWhereClause .
             $isPublishedClause . "
-            AND     i.category_id = c.category_id
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
             ORDER BY i.$orderBy DESC
             ";
@@ -968,14 +978,15 @@ class SGL_Item
             'curPageSpanPost'       => '</span>',
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
-
         if ($this->conf['translation']['container'] == 'db') {
             foreach ($aPagedData['data'] as $k => $aValues) {
-                $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getLangID()))
-                    ? $translation
-                    : $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getFallbackLangID());
+                if (($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getLangID()))
+                ||  ($title = $this->trans->get($aValues['trans_id'], 'content',
+                        SGL_Translation::getFallbackLangID())))
+                {
+                    $aPagedData['data'][$k]['addition'] = $title;
+                }
             }
         }
         return $aPagedData;

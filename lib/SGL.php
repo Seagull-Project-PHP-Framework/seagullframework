@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -38,9 +38,6 @@
 // |            Gilles Laborderie <gillesl@users.sourceforge.net>              |
 // +---------------------------------------------------------------------------+
 // $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
-
-require_once dirname(__FILE__)  . '/SGL/DB.php';
-require_once dirname(__FILE__)  . '/SGL/String.php';
 
 /**
  * Provides a set of static utility methods used by most modules.
@@ -65,6 +62,18 @@ class SGL
         $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
         $sessLang = $_SESSION['aPrefs']['language'];
         return $aLangs[$sessLang][2];
+    }
+
+    /**
+     * Returns current encoding, ie, utf-8.
+     *
+     * @access  public
+     * @static
+     * @return string   charset codepage
+     */
+    function getCurrentCharset()
+    {
+        return $GLOBALS['_SGL']['CHARSET'];
     }
 
     /**
@@ -322,7 +331,7 @@ class SGL
       * If not, tries with the default file (English).
       * In either case, load it into the GLOBALS and return the array.
       *
-      * @param string $fileType 'states' or 'countries'
+      * @param string $fileType 'states' or 'countries' or 'counties'
       * @return array reference
       *
       * @author  Philippe Lhoste <PhiLho(a)GMX.net>
@@ -331,7 +340,7 @@ class SGL
      {
          SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-         if ($fileType != 'countries' && $fileType != 'states') {
+         if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
              SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
              return;
          }
@@ -343,6 +352,9 @@ class SGL
          require_once $file;
 
          $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+         if (is_array($a)) {
+            asort($a);
+         }
          return $a;
      }
 
@@ -360,6 +372,17 @@ class SGL
         }
         SGL_Install_Common::printFooter();
         exit();
+     }
+
+     /**
+      * Returns true if a minimal version of Seagull has been installed.
+      *
+      * @static
+      * @return boolean
+      */
+     function isMinimalInstall()
+     {
+        return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
      }
 }
 

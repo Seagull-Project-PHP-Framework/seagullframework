@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -67,19 +67,28 @@ class SGL_Output
         return SGL_String::translate($key, $filter, $aParams);
     }
 
-    function get($key)
+    function getLangSwitcher($currUrl = '', $webRoot = '', $theme = '')
     {
-        if (isset($this->aProps[$key])) {
-            $ret = $this->aProps[$key];
-        } else {
-            $ret = null;
-        }
-        return $ret;
-    }
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+        $aInstalledLangs = str_replace('_', '-', explode(',', $conf['translation']['installedLanguages']));
+        $imageDir = "$webRoot/themes/$theme/images/flags/";
+        $hasLangParam = preg_match('/lang=/', $currUrl);
+        $aLangs  = SGL_Util::getLangsDescriptionMap();
+        $langSwitcher  = '';
 
-    function set($key, $value)
-    {
-        $this->aProps[$key] = $value;
+        foreach ($aLangs as $k => $v) {
+            if (in_array($k, $aInstalledLangs)
+                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
+                $link = ($hasLangParam)
+                    ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
+                    : $currUrl . "?lang=$k";
+                preg_match('/(.+) \(.+\)/', $v, $matches);
+                $langSwitcher .= "<a class='langFlag' id='$k' href='$link'><img src='$imageDir$k.png' alt='$matches[1]' title='speak $matches[1] please'/></a>";
+            }
+        }
+
+        return $langSwitcher;
     }
 
     /**
@@ -146,7 +155,7 @@ class SGL_Output
         }
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
@@ -180,7 +189,7 @@ class SGL_Output
         $isChecked = $checked ? ' checked' : '';
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
@@ -230,14 +239,14 @@ class SGL_Output
      *
      * @access  public
      * @param   array   $elements   array of  values or radio button
-     * @param   array   $selected   array selected key ... single array with only zero index , i am need in array
+     * @param   string  $selected   selected key (there can be only one selected element in a radio list)
      * @param   string  $groupname  usually an array name that will contain all elements
-     * @param   integer $newline    how many columns to display for this radio group
+     * @param   integer $newline    how many columns to display for this radio group (one if not informed)
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
-     * @param 	boolean $inTable    true for adding table formatting
+     * @param   boolean $inTable    true for adding table formatting
      * @return  string  $html       a list of radio buttons
      */
-    function generateRadioList($elements, $selected, $groupname, $newline, $inTable = true, $options = null)
+    function generateRadioList($elements, $selected, $groupname, $newline = false, $inTable = true, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (!is_array($elements) || (isset($options) && !is_array($options))) {
@@ -250,7 +259,7 @@ class SGL_Output
         $i = 0;
         $optionsString = '';
         if (isset($options)) {
-            foreach ($aValues as $k => $v) {
+            foreach ($options as $k => $v) {
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
@@ -258,13 +267,15 @@ class SGL_Output
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
-                if ($selected[0] == $k ){
+                if ($selected == $k ){
                     $html .= " checked";
                 }
                 $html .= " />$v ";
-                $modvalue = $i % $newline;
-                if ($modvalue == 0 ) {
-                    $html .= "<br/>\n";
+                if ($newline) {
+                    $modvalue = $i % $newline;
+                    if ($modvalue == 0 ) {
+                        $html .= "<br/>\n";
+                    }
                 }
             }
         } else {
@@ -273,16 +284,18 @@ class SGL_Output
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
-                if ($selected[0] == $k ) {
+                if ($selected == $k ) {
                     $html .= " checked ";
                 }
                 $html .= " />$v </td>\n";
-                $modvalue = $i % $newline;
-                if ( $modvalue == 0 ) {
-                    if ($i < $elementcount){
-                        $html .="</tr>\n<tr>";
-                    } else {
-                        $html .="</tr>\n";
+                if ($newline) {                
+                    $modvalue = $i % $newline;
+                    if ( $modvalue == 0 ) {
+                        if ($i < $elementcount){
+                            $html .="</tr>\n<tr>";
+                        } else {
+                            $html .="</tr>\n";
+                        }
                     }
                 }
             }
@@ -377,7 +390,9 @@ class SGL_Output
     function getNoExpiryCheckbox($aDate,$sFormName)
     {
         $checked = ($aDate == null) ? 'checked' : '';
-        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName.'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '.$checked.' /> '.SGL_Output::translate('No expire');
+        return '<input type="checkbox" name="'.$sFormName.'NoExpire" id="'.$sFormName
+            .'NoExpire" value="true" onClick="time_select_reset(\''.$sFormName.'\',true);"  '
+            .$checked.' /> '.SGL_Output::translate('No expire');
     }
 
     /**
@@ -386,10 +401,13 @@ class SGL_Output
      *
      * @access  public
      * @param   boolean $isBold
+     * @param   string  $pColor optional primary color, override default
+     * @param   string  $sColor optional secondary color, override default
      * @return  string  $curRowClass string representing class found in stylesheet
      */
 
-    function switchRowClass($isBold = false, $id = 'default')
+    function switchRowClass($isBold = false, $pColor = 'backDark',
+                            $sColor = 'backLight', $id = 'default')
     {
         //  remember the last color we used
         static $curRowClass;
@@ -400,15 +418,14 @@ class SGL_Output
             $_id = $id;
         }
 
-        if ($curRowClass == 'backLight' && $isBold ) {
-            $curRowClass = 'backDark bold';
-        } elseif ($curRowClass == 'backLight') {
-            $curRowClass = 'backDark';
-        } elseif ($isBold) {
-            $curRowClass = 'backLight bold';
+        if (strpos($curRowClass, $sColor) === false) {
+            $curRowClass = $sColor;
         } else {
-            $curRowClass = 'backLight';
+            $curRowClass = $pColor;
         }
+
+        if ($isBold)
+            $curRowClass .= ' bold';
 
         return $curRowClass;
     }
@@ -547,7 +564,7 @@ class SGL_Output
     function outputBody($templateEngine = null)
     {
         if (empty($this->template)) {
-	    $this->template = 'docBlank.html';
+            $this->template = 'docBlank.html';
         }
         $this->masterTemplate = $this->template;
         $view = &new SGL_HtmlSimpleView($this, $templateEngine);
@@ -574,11 +591,21 @@ class SGL_Output
     }
 
     /**
+     * Makes new var and assign value.
+     *
+     */
+    function assign(&$a, $b)
+    {
+        $a = $b;
+        return;
+    }
+
+    /**
      * Check permission at the template level and returns true if permission
      * exists.
-	 *
-	 * Use as follows in any Flexy template:
-	 * <code>
+     *
+     * Use as follows in any Flexy template:
+     * <code>
      * {if:hasPerms(#faqmgr_delete#)} on {else:} off {end:}
      * </code>
      *
@@ -586,7 +613,7 @@ class SGL_Output
      *
      * @access  public
      * @param   string  $permName    Name of permission eg. "faqmgr_delete"
-     * @return 	boolean
+     * @return     boolean
      *
      */
     function hasPerms($permName)
@@ -604,6 +631,18 @@ class SGL_Output
     {
         $argv = func_get_args();
         return @call_user_func_array('sprintf', $argv);
+    }
+
+    function makeCssLink($theme, $navStylesheet, $moduleName)
+    {
+        //  check first if CSS file exists in module
+        if (is_file(SGL_MOD_DIR . "/$moduleName/www/css/$moduleName.php")) {
+            $ret = SGL_BASE_URL . "/themes/$theme/css/style.php?navStylesheet=$navStylesheet&moduleName=$moduleName&isSymlink=1";
+        //  else default to standard css loading with modulename passed as param
+        } else {
+            $ret = SGL_BASE_URL . "/themes/$theme/css/style.php?navStylesheet=$navStylesheet&moduleName=$moduleName";
+        }
+        return $ret;
     }
 }
 ?>

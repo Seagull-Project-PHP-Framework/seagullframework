@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Category.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -264,7 +264,7 @@ class SGL_Category
 
         //  check if category_id not set or 0
         if (!isset($category_id) || ($category_id == '0')) {
-            return FALSE;
+            return false;
         }
 
         //  get NestedSet node
@@ -274,10 +274,9 @@ class SGL_Category
         //  check if category_id does not exist
         if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
             SGL::raiseError('Invalid category ID passed', SGL_ERROR_INVALIDARGS);
-            return FALSE;
+            return false;
         }
-
-        return TRUE;
+        return true;
     }
 
     /**
@@ -325,17 +324,42 @@ class SGL_Category
 
         //  if no perms in category table for current category_id, set to empty array
         $aPerms = (isset($this->_nestedSetNode['perms']) && count($this->_nestedSetNode['perms']))
-            		? explode(',', $this->_nestedSetNode['perms'])
-             		: array();
+    		? explode(',', $this->_nestedSetNode['perms'])
+     		: array();
 
         foreach ($aRoles as $roleId => $roleName) {
-            $tmp['category_id'] = $roleId;
+            $tmp['role_id'] = $roleId;
             $tmp['name'] = $roleName;
             $tmp['isAllowed'] = (!in_array($roleId, $aPerms)) ? 1 : 0;
             $perms[] = (object)$tmp;
         }
 
         return $perms;
+    }
+
+    /**
+     * Returns true if current user has perms to view a category.
+     *
+     * Category must be loaded before using this function.
+     *
+     * @access  public
+     * @return bool
+     */
+    function hasPerms()
+    {
+        //  check if Category is not loaded
+        if (!isset($this->_nestedSetNode) || empty($this->_nestedSetNode)) {
+            return false;
+        }
+        $aPerms = $this->getPerms();
+        $roleId = SGL_Session::get('rid');
+
+        foreach ($aPerms as $perm) {
+            if ($perm->role_id == $roleId) {
+                return $perm->isAllowed;
+            }
+        }
+        return false;
     }
 
     /**
@@ -349,7 +373,7 @@ class SGL_Category
     	SGL::logMessage(null, PEAR_LOG_DEBUG);
 
     	$nestedSet = new SGL_NestedSet($this->_params);
-    	$nestedSet->setImage('folder', 'images/imagesAlt2/file.png');
+    	$nestedSet->setImage('folder', 'images/treeNav/file.png');
         $categoryTree = $nestedSet->getTree();
         $nestedSet->addImages($categoryTree);
 

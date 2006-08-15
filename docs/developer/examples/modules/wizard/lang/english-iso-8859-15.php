@@ -1,29 +1,27 @@
 <?php
     $words = array(
-/*  CONTACT US MGR  */
-        'Contact Us' => 'Contact Us',
-        'First Name' => 'First Name',
-        'Last Name' => 'Last Name',
-        'Email' => 'Email',
-        'contact intro' => 'If you would like to get in touch please fill out the following form and submit your details.',
-        'Type of enquiry' => 'Type of enquiry',
-        'Comment' => 'Comment',
-        'Contact Enquiry from' => 'Contact Enquiry from',
-        'aContactType' => array(
-            'General enquiry' => 'General enquiry',
-            'Get a quote' => 'Get a quote',
-            'Hosting info' => 'Hosting info',
-            'Site feedback' => 'Site feedback',
-            ),
-        'Page1Wiz' => 'Page 1',
-        'Page2Wiz' => 'Page 2',
-        'wizardexample' => 'Wizard Example',
-
-/*  ERROR MSGS  */
-        'You must enter your first name' => 'You must enter your first name',
-        'You must enter your last name' => 'You must enter your last name',
-        'You must fill in your comment' => 'You must fill in your comment',
-        'Your email is not correctly formatted' => 'Your email is not correctly formatted',
-        'You must enter your email' => 'You must enter your email',
-    );
+        'First name' => 'First name',
+        'Last name' => 'Last name',
+        'Next >>' => 'Next >>',
+        'Finish >>' => 'Finish >>',
+        '<< Back' => '<< Back',
+        'Client Details' => 'Client Details',
+        'Service Details' => 'Service Details',
+        'Survey' => 'Survey',
+        'Add Client Wizard' => 'Add Client Wizard',
+        'Massage' => 'Massage',
+        'Pedicure' => 'Pedicure',
+        'Manicure' => 'Manicure',
+        'Service' => 'Service',
+        'Num hours' => 'Num hours',
+        'Note:  This page uses server-side validation' => 'Note: This page uses server-side validation',
+        'Please enter the number of hours' => 'Please enter the number of hours',
+        'Please enter your first name' => 'Please enter your first name',
+        'Please enter your last name' => 'Please enter your last name',
+        'Num hours must be greater than' => 'Num hours must be greater than',
+        'Rate your service: (10 being highest)' => 'Rate your service: (10 being highest)',
+        'Would you recommend a friend?' => 'Would you recommend a friend?',
+        'Yes' => 'Yes',
+        'No' => 'No',
+        'Form Results' => 'Form Results');
 ?>

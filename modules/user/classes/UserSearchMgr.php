@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UserSearchMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -230,23 +230,18 @@ class UserSearchMgr extends SGL_Manager
                 $criteria .= " AND is_acct_active=$t ";
             }
             if (array_key_exists('roles', $s) && !empty($s['roles'])) {
-                if (!is_array($s['roles'])) {
-                    //search for one role
-                    $criteria .= " AND u.role_id = {$s['roles']} ";
-                } else {
-                    //search for multiple roles
-                    $criteria .= " AND (";
-                    $first = true;
-                    foreach ($s['roles'] as $k=>$v) {
-                        if ($first) {
-                            $first = false;
-                        } else {
-                            $criteria .= "OR ";
-                        }
-                        $criteria .= "u.role_id=$v ";
+                //search for all roles
+                $criteria .= " AND (";
+                $first = true;
+                foreach ($s['roles'] as $k=>$v) {
+                    if ($first) {
+                        $first = false;
+                    } else {
+                        $criteria .= "OR ";
                     }
-                    $criteria .= ") ";
+                    $criteria .= "u.role_id=$v ";
                 }
+                $criteria .= ") ";
             }
             if (array_key_exists('orgs', $s) && !empty($s['orgs'])) {
                 if (!is_array($s['orgs'])) {

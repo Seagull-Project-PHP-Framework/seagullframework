@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ArticleMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -76,7 +76,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (SGL_Session::getUserType() == SGL_ADMIN) {
+        if (SGL_Session::getRoleId() == SGL_ADMIN) {
             $this->isAdmin = true;
         }
         $this->template = 'articleManager.html';
@@ -90,9 +90,12 @@ class ArticleMgr extends SGL_Manager
         //  select appropriate jscalendar lang file depending on prefs defined language
         $lang = SGL::getCurrentLang();
         $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
-            ? 'jscalendar/lang/calendar-'. $lang . '.js'
-            : 'jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc   = array('TreeMenu.js','jscalendar/calendar.js',$jscalendarLangFile, 'jscalendar/calendar-setup.js');
+            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
+            : 'js/jscalendar/lang/calendar-en.js';
+        $input->javascriptSrc   = array(
+            'js/jscalendar/calendar.js',
+            $jscalendarLangFile,
+            'js/jscalendar/calendar-setup.js');
 
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
@@ -101,6 +104,8 @@ class ArticleMgr extends SGL_Manager
         $input->articleCatID    = (int)$req->get('frmArticleCatID');
         $input->catChangeToID   = (int)$req->get('frmCategoryChangeToID');
         $input->dataTypeID      = $req->get('frmArticleTypeID');
+        $input->articleTypeFilter = ($req->get('frmArticleTypeFilter'))
+                                    ? (int)$req->get('frmArticleTypeFilter') : 1;
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
         $input->aDelete         = $req->get('frmDelete');
@@ -126,6 +131,13 @@ class ArticleMgr extends SGL_Manager
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  do a check for TinyFCK uploads
+        if (!is_writeable(SGL_WEB_ROOT.'/images/Image')) {
+            SGL::raiseMsg('The ' . SGL_WEB_ROOT . '/images/Image folders does ' .
+            'not appear to be writable, please give the webserver permissions ' .
+            'to write to it', false, SGL_MESSAGE_INFO);
+        }
 
         //  get cat name for reschooser title
         require_once 'DB/DataObject.php';
@@ -268,14 +280,12 @@ class ArticleMgr extends SGL_Manager
             $output->availableLangs = $installedLanguages;
             $output->articleLang = (!empty($input->articleLang))
                 ? $input->articleLang
-                : $this->conf['translation']['fallbackLang'];
+                : SGL_Translation::getLangID();
         }
 
         //  get dynamic content
-        $output->dynaContent = (isset($input->articleLang))
-            ? $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $input->articleLang)
-            : $item->getDynamicContent($input->articleID, SGL_RET_ARRAY,
-                @$this->conf['translation']['fallbackLang']);
+        $output->dynaContent =
+            $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $output->articleLang);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
@@ -402,14 +412,14 @@ class ArticleMgr extends SGL_Manager
         $aResult = SGL_Item::retrievePaginated(
             $input->catID,
             $bPublished = false,
-            $input->dataTypeID,
+            $input->articleTypeFilter,
             $input->queryRange,
             $input->from);
 
         //  rebuild item data
         foreach ($aResult['data'] as $key => $aValues) {
             if ($aValues['username'] != SGL_Session::getUsername()
-                && SGL_Session::getUserType() != SGL_ADMIN) {
+                && SGL_Session::getRoleId() != SGL_ADMIN) {
                 //  remove articles that don't belong to the current user
                 unset($aResult['data'][$key]);
             } else {

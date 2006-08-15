@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Gallery2Mgr.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -85,11 +85,10 @@ class Gallery2Mgr extends SGL_Manager
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $g2dir            = $this->conf['Gallery2Mgr']['galleryDir'];
-        $g2embedUri       = $this->conf['Gallery2Mgr']['embedURI'];
-        $g2embedPath      = $this->conf['Gallery2Mgr']['embedPath'];
-        $g2relativeG2Path = $this->conf['Gallery2Mgr']['relativeG2Path'];
-        $g2loginRedirect  = $this->conf['Gallery2Mgr']['loginPage'];
+        $g2dir           = $this->conf['Gallery2Mgr']['g2Dir'];
+        $g2embedUri      = $this->conf['Gallery2Mgr']['embedUri'];
+        $g2Uri           = $this->conf['Gallery2Mgr']['g2Uri'];
+        $g2loginRedirect = $this->conf['Gallery2Mgr']['loginRedirect'];
         $uid = SGL_Session::getUid();
         if ($uid < 1) {
             $uid = '';
@@ -97,24 +96,23 @@ class Gallery2Mgr extends SGL_Manager
         require_once $g2dir . '/embed.php';
         /** http://gallery.menalto.com/index.php?name=PNphpBB2&file=viewtopic&t=27321#124393  **/
         $ret = GalleryEmbed::init(array(
-            'embedUri' => $g2embedUri,
-            'embedPath' => $g2embedPath,
-            'relativeG2Path' => $g2relativeG2Path,
+            'embedUri'      => $g2embedUri,
+            'g2Uri'         => $g2Uri,
             'loginRedirect' => $g2loginRedirect,
-            'activeUserId' => $uid));
+            'activeUserId'  => $uid));
 
-        if ($ret->isError()) {
+        if ($ret) {
             SGL::raiseMsg( "Creating Gallery 2 account" );
             require_once 'DB/DataObject.php';
             $user = DB_DataObject::factory($this->conf['table']['user']);
             $user->get($uid);
             $ret = GalleryEmbed::createUser($uid, array('username' => $user->username));
-            if ($ret->isError()) {
-                SGL::raiseMsg("Creation of Gallery2 user unsuccesfull(". $uid . $user->username. ")" . $ret->getAsHtml());
+            if ($ret) {
+                SGL::raiseMsg("Creation of Gallery2 user unsuccessful(". $uid . $user->username. ")" . $ret->getAsHtml());
                 return;
             }
             $ret = GalleryEmbed::login($uid);
-            if ($ret->isError()) {
+            if ($ret) {
                 SGL::raiseMsg("Creating account failed");
                 return;
             }

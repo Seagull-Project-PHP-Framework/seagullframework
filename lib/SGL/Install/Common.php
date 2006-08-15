@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,28 +30,27 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Install.php                                                               |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
-require_once dirname(__FILE__)  . '/../Misc.php';
-
-if (!isset($GLOBALS['_SGL'])) {
-    $GLOBALS['_SGL'] = array();
-    $_SESSION['ERRORS'] = array();
-}
-
 /**
  * Provides various static methods required for install routine.
- *
+ * @package Install
  */
 class SGL_Install_Common
 {
     function errorPush($error)
     {
+        if (!isset($GLOBALS['_SGL'])) {
+            $GLOBALS['_SGL'] = array();
+        }
+        if (!isset($_SESSION['ERRORS'])) {
+            $_SESSION['ERRORS'] = array();
+        }
         array_push($_SESSION['ERRORS'], $error);
     }
 
@@ -98,7 +97,6 @@ class SGL_Install_Common
         return $version;
     }
 
-
     /**
      * Returns html head section of page, only used for 'enter passwd for
      * access setup' screen
@@ -109,7 +107,7 @@ class SGL_Install_Common
      */
     function printHeader($title = '')
     {
-        if (SGL::runningFromCli()) {
+        if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
         SGL_URL::ensureWebrootSet();
@@ -121,11 +119,11 @@ class SGL_Install_Common
     <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
     <meta http-equiv="Content-Language" content="en" />
     <meta name="ROBOTS" content="ALL" />
-    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
-    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/style.php?navStylesheet=SglDefault_TwoLevel" />
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
+    <link rel="stylesheet" type="text/css" media="screen" href="$baseUrl/themes/default/css/installer.php" />
 </head>
 <body>
 
@@ -133,7 +131,7 @@ class SGL_Install_Common
 <!-- Logo and header -->
 <div id="header">
     <a id="logo" href="$baseUrl" title="Home">
-        <img src="$baseUrl/themes/default/images/logo.gif" align="absmiddle" alt="Seagull Framework Logo" /> Seagull Framework :: Installation
+        <img src="$baseUrl/themes/default/images/logo.png" align="absmiddle" alt="Seagull Framework Logo" />
     </a>
 </div>
 <h2>$title</h2>
@@ -143,12 +141,13 @@ HTML;
 
     function printFooter()
     {
-        if (SGL::runningFromCli()) {
+        if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
         $html = <<<HTML
     <div id="footer">
-    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a>
+    Powered by <a href="http://seagullproject.org/" title="Seagull framework homepage">Seagull PHP Framework</a>
+    </div>
     </div>
 </body>
 </html>
@@ -211,6 +210,11 @@ HTML;
        }
        sort($fileList);
        return $fileList;
+    }
+
+    function getMinimumModuleList()
+    {
+        return array('block', 'default', 'navigation', 'user');
     }
 }
 

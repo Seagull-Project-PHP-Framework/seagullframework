@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,13 +30,12 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | style.php                                                                 |
 // +---------------------------------------------------------------------------+
 // | Author:   John Dell <jdell@unr.edu>                                       |
 // +---------------------------------------------------------------------------+
-// $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
     // PHP Stylesheet caching headers.
     // Adapted from PEAR HTTP_Header_Cache authored by Wolfram Kriesing <wk@visionp.de>
@@ -49,7 +48,7 @@
     header('Cache-Control: public');
     header('Content-Type: text/css');
 
-    $modtimes = array();
+    $modTimes = array();
 
     if (is_file($tmp = './vars.php')) {
         $modTimes['vars'] = filemtime($tmp);
@@ -57,13 +56,24 @@
     if (is_file($tmp = './core.php')) {
         $modTimes['core'] = filemtime($tmp);
     }
+    if (is_file($tmp = './blockStyle.php')) {
+        $modTimes['blockStyle'] = filemtime($tmp);
+    }
     $frmNavStyleSheet = @$_REQUEST['navStylesheet'];
     if (is_file($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
         $modTimes['navigation'] = filemtime($navStyleSheet);
     }
     $frmModuleName = @$_REQUEST['moduleName'];
-    if (is_file($moduleName = realpath("./$frmModuleName.php"))) {
-        $modTimes['module'] = filemtime($moduleName);
+    $frmIsSymlink  = @$_REQUEST['isSymlink'];
+
+    if ($frmIsSymlink) {
+        if (is_file($moduleName = realpath("../../../$frmModuleName/css/$frmModuleName.php"))) {
+            $modTimes['module'] = filemtime($moduleName);
+        }
+    } else {
+        if (is_file($moduleName = realpath("./$frmModuleName.php"))) {
+            $modTimes['module'] = filemtime($moduleName);
+        }
     }
 
     // Get last modified time of file
@@ -88,6 +98,20 @@
     $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
 
+    // get browser family
+    $browserFamily = 'None';
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+
+    if (!empty($ua)) {
+        if (strstr($ua, 'Opera')) {
+            $browserFamily = 'Opera';
+        } elseif (strstr($ua, 'MSIE')) {
+            $browserFamily = 'MSIE';
+        } else {
+            $browserFamily = 'Gecko';
+        }
+    }
+
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);
     $aPath = explode('/', $path);
@@ -100,11 +124,16 @@
 
     require_once './vars.php';
     require_once './core.php';
+    require_once './blockStyle.php';
     if (isset($modTimes['navigation'])) {
         require_once realpath("./$frmNavStyleSheet.nav.php");
     }
     if (isset($modTimes['module'])) {
-        require_once  realpath("./$frmModuleName.php");
+        if ($frmIsSymlink) {
+            require_once realpath("../../../$frmModuleName/css/$frmModuleName.php");
+        } else {
+            require_once realpath("./$frmModuleName.php");
+        }
     }
 
     // copied from PEAR HTTP Header.php (comments stripped)
@@ -112,9 +141,12 @@
     // Changes: mktime() to gmmktime() to make work in timezones other than GMT
     function dateToTimestamp($date)
     {
-        $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'));
-        preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~', $date, $splitDate);
-        $timestamp = @gmmktime($splitDate[4], $splitDate[5], $splitDate[6], $months[$splitDate[2]]+1, $splitDate[1], $splitDate[3]);
+        $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'));
+        preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~', $date,
+            $splitDate);
+        $timestamp = @gmmktime($splitDate[4], $splitDate[5], $splitDate[6],
+            $months[$splitDate[2]]+1, $splitDate[1], $splitDate[3]);
         return $timestamp;
     }
 

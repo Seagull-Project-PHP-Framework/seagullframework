@@ -17,4 +17,11 @@ create table contact_us
    constraint PK_CONTACT_US primary key (contact_us_id)
 );
 
+-- ==============================================================
+--  Sequence: contact_us_seq
+-- ==============================================================
+
+create sequence contact_us_seq;
+
+
 COMMIT;

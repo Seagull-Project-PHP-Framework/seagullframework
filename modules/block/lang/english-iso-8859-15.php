@@ -32,7 +32,6 @@
         'Block successfully added' => 'Block successfully added',
         'Block details successfully updated' => 'Block details successfully updated',
         'The selected block(s) have successfully been deleted' => 'The selected block(s) have successfully been deleted',
-        'There was a problem, block did not validate' => 'There was a problem, block did not validate',
         'There is no block to delete' => 'There is no block to delete',
 
         // Errors
@@ -43,13 +42,11 @@
 
         // Misc
         'Block' => 'Block',
-        'Reorder instructions' => 'Change the display order by selecting an item and clicking <b>move up</b> or <b>move down</b>.<br />Be sure to click <b>Submit</b> when you\'re done.',
         'Left column' => 'Left column',
         'Right column' => 'Right column',
         'No section' => 'No section',
         'All sections' => 'All sections',
         'Unassigned' => 'Unassigned',
-        'With selected block(s)'=>'With selected block(s)',
         'Can view' => 'Can view',
         'All roles' => 'All roles',
         'Block list' => 'Block list',
@@ -86,5 +83,18 @@
         'Static Html article' => 'Static Html article',
         'Set id of static Html article' => 'Set id of static Html article',
         'Article will be rendered with this template' => 'Article will be rendered with this template',
+
+        // Html Block
+        'Html text' => 'Texte au format Html',
+
+        // Login2 Block
+        'Login template name' => 'Login template name',
+        'Logout template name' => 'Logout template name',
+        
+        // Show RSS Block
+        'RSS resource' => 'RSS resource',
+        'URI of RSS feed' => 'URI of RSS feed',
+        'Items to show' => 'Items to show',
+        'Number of Items to show' => 'Number of Items to show',
     );
 ?>

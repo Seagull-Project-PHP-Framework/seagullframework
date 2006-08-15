@@ -6,6 +6,9 @@
 # +---------------------------------------------------------------------------+
 # | execute from seagull svn repository root                                  |
 # +---------------------------------------------------------------------------+
+# | Usage: ./release.sh revision_num release_name                             |
+# +---------------------------------------------------------------------------+
+
 ##############################
 # init vars + binaries
 ##############################
@@ -26,8 +29,9 @@ FTP_REMOTE_DIR=incoming
 # Get the tag name from the command line:
 REVISION_NUM=$1
 RELEASE_NAME=$2
+MINIMAL_INSTALL=$3
 PROJECT_NAME=seagull
-SVN_REPO_LEAF_FOLDER_NAME=trunk
+SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
@@ -39,9 +43,10 @@ SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
 function usage()
 {
       echo ""
-      echo "Usage: ./release.sh revision_num release_name"
+      echo "Usage: ./release.sh revision_num release_name [minimal_install]"
       echo "    where \"revision_num\" is the $PROJECT_NAME svn revision number (e.g. 226)"
       echo "    and \"release_name\" is the release name (e.g. 0.4.5) which gives the full name \"seagull-0.4.5\""
+      echo "    the optional 3 parameter, 'min', will create a minimal install"
 }
 
 ##############################
@@ -63,31 +68,49 @@ function checkPreviousVersions()
 {
     # Check that the release directory doesn't already exist (fresh export):
     if [ -d "/tmp/$SVN_REPO_LEAF_FOLDER_NAME" ]; then
-      echo "Removing last $PROJECT_NAME export ..."
+      echo "Removing last $SVN_REPO_LEAF_FOLDER_NAME export ..."
       rm -rf /tmp/$SVN_REPO_LEAF_FOLDER_NAME
     fi
 
     # Check that the release directory doesn't already exist:
     if [ -d "/tmp/$PROJECT_NAME-$RELEASE_NAME" ]; then
-      echo "Removing last $PROJECT_NAME renamed export ..."
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME renamed export ..."
       rm -rf /tmp/$PROJECT_NAME-$RELEASE_NAME
+    fi
+
+    # Check that the release directory doesn't already exist:
+    if [ -d "/tmp/$PROJECT_NAME" ]; then
+      echo "Removing last $PROJECT_NAME renamed export ..."
+      rm -rf /tmp/$PROJECT_NAME
+    fi
+
+    # Check that the minimal release directory doesn't already exist:
+    if [ -d "/tmp/$PROJECT_NAME-$RELEASE_NAME-minimal" ]; then
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME-minimal renamed export ..."
+      rm -rf /tmp/$PROJECT_NAME-$RELEASE_NAME-minimal
     fi
 
     # Check that the last tarball doesn't exist:
     if [ -e "/tmp/$PROJECT_NAME-$RELEASE_NAME.tar.gz" ]; then
-      echo "Removing last $PROJECT_NAME tarball ..."
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME.tar.gz ..."
       rm -f /tmp/$PROJECT_NAME-$RELEASE_NAME.tar.gz
+    fi
+
+    # Check that the last tarball doesn't exist:
+    if [ -e "/tmp/$PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz" ]; then
+      echo "Removing last $PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz ..."
+      rm -f /tmp/$PROJECT_NAME-$RELEASE_NAME-minimal.tar.gz
     fi
 
     # Check that the last apiDocs dir doesn't exist:
     if [ -d "/tmp/seagullApiDocs-$RELEASE_NAME" ]; then
-      echo "Removing last seagull apiDocs dir ..."
+      echo "Removing last seagullApiDocs-$RELEASE_NAME ..."
       rm -rf /tmp/seagullApiDocs-$RELEASE_NAME
     fi
 
     # Check that the last apiDocs tarball doesn't exist:
     if [ -e "/tmp/seagullApiDocs-$RELEASE_NAME.tar.gz" ]; then
-      echo "Removing last seagull apiDocs tarball ..."
+      echo "Removing last seagullApiDocs-$RELEASE_NAME.tar.gz ..."
       rm -f /tmp/seagullApiDocs-$RELEASE_NAME.tar.gz
     fi
 }
@@ -102,28 +125,156 @@ function tagRelease()
 }
 
 ##############################
-# export svn and package
+# export svn
 ##############################
-function exportSvnAndPackage()
+function exportSvn()
 {
     # export release
     $SVN export --force $SVN_REPO_URL -r $REVISION_NUM $PROJECT_NAME
+}
+
+##############################
+# create minimal flag
+##############################
+function createMinimalFlag()
+{
+    if [ $MINIMAL_INSTALL ]; then
+      touch $PROJECT_NAME/MINIMAL_INSTALL.txt
+    fi
+}
+
+##############################
+# prune developer
+##############################
+function pruneDeveloper()
+{
+    # remove GPL modules
+    rm -rf $PROJECT_NAME/modules/media
+    rm -rf $PROJECT_NAME/modules/event
+}
+
+##############################
+# prune minimal
+##############################
+function pruneMinimal()
+{
+    # remove unwanted files
+    rm -f $PROJECT_NAME/etc/convertCategories.php
+    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
+    rm -f $PROJECT_NAME/etc/Flexy2Smarty.php
+    rm -f $PROJECT_NAME/etc/flexy2SmartyRunner.php
+    rm -f $PROJECT_NAME/etc/generatePackageSimpleTest.php
+    rm -f $PROJECT_NAME/etc/generatePearPackageXml.php
+    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME/etc/ociTableDrop.sh
+    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME/etc/phpDocCli.sh
+    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
+    rm -f $PROJECT_NAME/etc/release.sh
+    rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
+    rm -f $PROJECT_NAME/etc/sglBridge.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.de.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.fr.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.it.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.pl.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.ru.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.de.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.it.php
+    rm -rf $PROJECT_NAME/lib/data/ary.states.pl.php
+    rm -rf $PROJECT_NAME/lib/pear/I18Nv2.php
+    rm -rf $PROJECT_NAME/lib/pear/OLE.php
+    rm -rf $PROJECT_NAME/lib/pear/Translation2.php
+    rm -rf $PROJECT_NAME/lib/pear/Text/Statistics.php
+    rm -rf $PROJECT_NAME/lib/pear/Text/Word.php
+    rm -rf $PROJECT_NAME/lib/SGL/Column.php
+    rm -rf $PROJECT_NAME/lib/SGL/DataGrid.php
+    rm -rf $PROJECT_NAME/lib/SGL/DataSource.php
+    rm -rf $PROJECT_NAME/lib/SGL/SQLDataSource.php
 
     # remove unwanted dirs
-#    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
-#    rm -f $PROJECT_NAME/etc/demoReload.sh
-#    rm -f $PROJECT_NAME/etc/generatePackage.php
-#    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
-#    rm -f $PROJECT_NAME/etc/release.sh
-#    rm -rf $PROJECT_NAME/lib/SGL/tests
-#    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -rf $PROJECT_NAME/docs
+    rm -rf $PROJECT_NAME/etc/mtce
+    rm -rf $PROJECT_NAME/etc/sql_upgrades
+    rm -rf $PROJECT_NAME/lib/other
+    rm -rf $PROJECT_NAME/lib/pear/Calendar
+    rm -rf $PROJECT_NAME/lib/pear/HTML/AJAX
+    rm -rf $PROJECT_NAME/lib/pear/HTTP/Download
+    rm -rf $PROJECT_NAME/lib/pear/HTTP/Request
+    rm -rf $PROJECT_NAME/lib/pear/I18Nv2
+    rm -rf $PROJECT_NAME/lib/pear/Image
+    rm -rf $PROJECT_NAME/lib/pear/Net/UserAgent
+    rm -rf $PROJECT_NAME/lib/pear/OLE
+    rm -rf $PROJECT_NAME/lib/pear/PHP
+    rm -rf $PROJECT_NAME/lib/pear/Translation2
+    rm -rf $PROJECT_NAME/lib/pear/Validate
+    rm -rf $PROJECT_NAME/lib/SGL/tests
+    rm -rf $PROJECT_NAME/modules/blog
+    rm -rf $PROJECT_NAME/modules/contactus
+    rm -rf $PROJECT_NAME/modules/documentor
+    rm -rf $PROJECT_NAME/modules/export
+    rm -rf $PROJECT_NAME/modules/faq
+    rm -rf $PROJECT_NAME/modules/gallery2
+    rm -rf $PROJECT_NAME/modules/guestbook
+    rm -rf $PROJECT_NAME/modules/messaging
+    rm -rf $PROJECT_NAME/modules/newsletter
+    rm -rf $PROJECT_NAME/modules/publisher
+    rm -rf $PROJECT_NAME/modules/randommsg
+    rm -rf $PROJECT_NAME/modules/user/tests
+    rm -rf $PROJECT_NAME/tests
+    rm -rf $PROJECT_NAME/www/js/html_ajax
+    rm -rf $PROJECT_NAME/www/js/jcalc
+    rm -rf $PROJECT_NAME/www/js/jscalendar
+    rm -rf $PROJECT_NAME/www/js/overlib
+    rm -rf $PROJECT_NAME/www/js/scriptaculous
+    rm -rf $PROJECT_NAME/www/savant
+    rm -rf $PROJECT_NAME/www/smarty
 
+    #remove non english language
+    moduleList=`ls $PROJECT_NAME/modules`;
+    for moduleName in $moduleList;
+    do
+        langList=`ls $PROJECT_NAME/modules/$moduleName/lang`;
+        for langName in $langList;
+        do
+            if [ $langName != "english-iso-8859-15.php" ]; then
+                rm -f $PROJECT_NAME/modules/$moduleName/lang/$langName;
+            fi
+        done;
+    done;
+
+    #remove non-mysql data files
+    for moduleName in $moduleList;
+    do
+        dataList=`ls $PROJECT_NAME/modules/$moduleName/data`;
+        pg_pattern='pg';
+        oci_pattern='oci';
+        for file in $dataList;
+        do
+            if echo "$file" | grep -q "$pg_pattern"; then
+                rm -f $PROJECT_NAME/modules/$moduleName/data/$file;
+            elif echo "$file" | grep -q "$oci_pattern"; then
+                rm -f $PROJECT_NAME/modules/$moduleName/data/$file;
+            fi
+        done;
+    done;
+}
+
+##############################
+# create tarball
+##############################
+function createTarball()
+{
     # rename folder to current release
-    mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
+    if [ $MINIMAL_INSTALL ]; then
+        ARCHIVE_NAME=$PROJECT_NAME-$RELEASE_NAME-minimal
+    else
+        ARCHIVE_NAME=$PROJECT_NAME-$RELEASE_NAME
+    fi
+    mv $PROJECT_NAME $ARCHIVE_NAME
 
     # tar and zip
-    tar cvf $PROJECT_NAME-$RELEASE_NAME.tar $PROJECT_NAME-$RELEASE_NAME
-    gzip -f $PROJECT_NAME-$RELEASE_NAME.tar
+    tar cvf $ARCHIVE_NAME.tar $ARCHIVE_NAME
+    gzip -f $ARCHIVE_NAME.tar
 }
 
 ##############################
@@ -138,7 +289,7 @@ user $FTP_USERNAME $FTP_PASSWORD
 bin
 has
 cd $FTP_REMOTE_DIR
-put $PROJECT_NAME-$RELEASE_NAME.tar.gz
+put $ARCHIVE_NAME.tar.gz
 bye
 EOF
 }
@@ -149,10 +300,10 @@ EOF
 function generateApiDocs()
 {
     #make apiDocs script executable
-    chmod 755 $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
+    chmod 755 $ARCHIVE_NAME/etc/phpDocCli.sh
 
     #execute phpDoc
-    $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
+    $ARCHIVE_NAME/etc/phpDocCli.sh
 
     # rename folder
     mv seagullApiDocs seagullApiDocs-$RELEASE_NAME
@@ -189,15 +340,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_files/web/
-}
-
-##############################
-# scp changelog to sgl site
-##############################
-function scpChangelogToSglSite()
-{
-    scp $PROJECT_NAME-$RELEASE_NAME/CHANGELOG.txt demian@phpkitchen.com:/var/www/html/seagull_files/web/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/
 }
 
 ##############################
@@ -206,8 +349,8 @@ function scpChangelogToSglSite()
 function buildMinimalPearPackage()
 {
     # remove unwanted files
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
-    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/user/tests
     #rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
     #rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
@@ -229,18 +372,6 @@ function buildMinimalPearPackage()
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
 
-
-    #and their templates
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/block
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/contactus
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/documentor
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/export
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/faq
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/guestbook
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/messaging
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/newsletter
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/randommsg
 
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/publisher
@@ -275,7 +406,6 @@ function buildMinimalPearPackage()
     $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
-
 }
 
 ##############################
@@ -286,16 +416,26 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvnAndPackage
+#exportSvn
 
-uploadToSfWholePackage
+createMinimalFlag
+
+#pruneDeveloper
+
+if [ $MINIMAL_INSTALL ]; then
+    pruneMinimal
+fi
+
+createTarball
+
+#uploadToSfWholePackage
 
 generateApiDocs
 
@@ -304,8 +444,6 @@ packageApiDocs
 uploadToSfApiDocs
 
 #scpApiDocsToSglSite
-
-#scpChangelogToSglSite
 
 #buildMinimalPearPackage
 

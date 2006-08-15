@@ -93,8 +93,8 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     var $cacheDir = '/tmp/';
 
     /**
-     * Directory where to put the cache files
-     * (make sure to add a trailing slash)
+     * Enable / disable fileLocking. Can avoid cache corruption under bad
+     * circumstances.
      * @var string $cacheDir
      * @access private
      */
@@ -115,6 +115,12 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
      */
     var $cleaningFrequency = 0;
 
+    /**
+     * Name of default cache group.
+     * @var	string	$defaultGroup
+     */
+     var $defaultGroup = 'Translation2';
+
     // }}}
     // {{{ _prepare()
 
@@ -132,6 +138,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
                 'cacheDir'    => $this->cacheDir,
                 'lifeTime'    => $this->lifeTime,
                 'fileLocking' => $this->fileLocking,
+                'defaultGroup' => $this->defaultGroup,
             );
             $this->cacheLiteFunction = new Cache_Lite_Function($cache_options);
         }
@@ -309,7 +316,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     {
         if ($this->cleaningFrequency > 0) {
             if (mt_rand(1, $this->cleaningFrequency) == 1) {
-            	$this->cacheLiteFunction->clean();
+            	$this->cacheLiteFunction->clean($this->defaultGroup);
             }
         }
     }

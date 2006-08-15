@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_Publisher.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -96,9 +96,21 @@ class DA_Publisher
         return $instance;
     }
 
+    function retrievePaginatedItemType($options)
+    {
+        $query = "
+            SELECT      item_type_id, item_type_name 
+            FROM        {$this->conf['table']['item_type']}
+            WHERE       item_type_id != 1";
+
+        $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $options);
+
+        return $aPagedData;
+    }
+
     function getItemAttributesByItemId($id = null, $paginated = false)
     {
-        $contstraint = (is_null($id))
+        $constraint = (is_null($id))
             ? 'WHERE itm.item_type_id = it.item_type_id'
             : "WHERE     itm.item_type_id = $id
                AND       it.item_type_id = $id";
@@ -111,7 +123,7 @@ class DA_Publisher
                   FROM
                   	{$this->conf['table']['item_type']} it,
                   	{$this->conf['table']['item_type_mapping']} itm
-                  $contstraint";
+                  $constraint";
 
         if ($paginated) {
 	        $limit = $_SESSION['aPrefs']['resPerPage'];
@@ -131,7 +143,7 @@ class DA_Publisher
     function addItemType($name)
     {
         $id = $this->dbh->nextId($this->conf['table']['item_type']);
-        $item_type_name = $input->type['item_type_name'];
+
         $query = "
             INSERT INTO {$this->conf['table']['item_type']}
                 (item_type_id, item_type_name)

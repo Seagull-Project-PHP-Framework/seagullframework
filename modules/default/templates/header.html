@@ -5,12 +5,15 @@
     <title flexy:if="leadArticle[title]">{conf[site][name]} :: {leadArticle[title]}</title>
     <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
     <meta http-equiv="Content-Language" content="{currLang}" />
-    <meta name="robots" content="ALL" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
+    <meta name="robots" content="all" />
     <meta name="copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="rating" content="General" />
     <meta name="generator" content="Seagull Framework" />
+    <link rel="shortcut icon" type="images/x-icon" href="{webRoot}/favicon.ico" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
-    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/themes/{theme}/css/style.php?navStylesheet={conf[navigation][stylesheet]}&amp;moduleName={moduleName}" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{makeCssLink(theme,conf[navigation][stylesheet],moduleName)}" />
 
     {scriptOpen:h}
         var SGL_JS_WEBROOT="{webRoot}";
@@ -31,7 +34,7 @@
     <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>
 
     {foreach:javascriptSrc,file}
-    <script type="text/javascript" src="{webRoot}/js/{file}"></script>
+    <script type="text/javascript" src="{webRoot}/{file}"></script>
     {end:}
 
     {if:wysiwyg}
@@ -125,4 +128,4 @@
 {else:}
 <body onload="{onLoad}">
 {end:}
-<div id="sgl">
+    <div id="outer-wrapper">

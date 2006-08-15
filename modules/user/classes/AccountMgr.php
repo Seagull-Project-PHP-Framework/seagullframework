@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | AccountMgr.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -101,6 +101,8 @@ class AccountMgr extends RegisterMgr
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get(SGL_Session::getUid());
         $output->user = $oUser;
+        $output->user->username_orig = $oUser->username;
+        $output->user->email_orig = $oUser->email;
     }
 
     function _cmd_update(&$input, &$output)

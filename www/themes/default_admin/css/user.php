@@ -89,7 +89,7 @@
     text-align: left;
 }
 #frmPermScan select.longText {
-    width: 300px;
+    width: 450px;
 }
 
 /*

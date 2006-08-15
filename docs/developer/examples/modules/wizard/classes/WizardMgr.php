@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,45 +30,93 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.4                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | WizardMgr.php                                                              |
+// | WiztestMgr.php                                                            |
 // +---------------------------------------------------------------------------+
-// | Author:   Tobias Kuckuck <kuckuck@rancon.de>                           |
+// | Author: Malaney J. Hill <malaney@gmail.com>                               |
 // +---------------------------------------------------------------------------+
-// $Id: WizardMgr.php,v 1.1 2005/04/04 10:41:09 demian Exp $
+// $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
 
 /**
+ * This class demonstrates Wizard Functionality
  *
- * Initialisation of wizard
- *
- * @package wizardexample
- * @author  Tobias Kuckuck <kuckuck@rancon.de>
- * @copyright Tobias Kuckuck 2005
- * @version $Revision: 1.1 $
- * @since   PHP 4.1
+ * @package wiztest
+ * @author  Malaney J. Hill <malaney@gmail.com>
  */
-class WizardMgr extends SGL_Manager
+class WiztestMgr extends SGL_Manager
 {
-    function WizardMgr()
+    function WiztestMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
+
+        $this->pageTitle    = 'Wiztest Manager';
+        $this->template     = 'wiztestMgrList.html';
+
+        $this->_aActionsMapping =  array(
+            'wizard'    => array('wizard')
+        );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->validated    = true;
+        $input->error       = array();
+        $input->pageTitle   = $this->pageTitle;
+        $input->masterTemplate = $this->masterTemplate;
+        $input->template    = $this->template;
+        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->aDelete     = $req->get('frmDelete');
+        $input->submit      = $req->get('submitted');
 
-        // initialize wizard pages
-        SGL_Session::set('wiz_sequence', array());
-        SGL_Controller::addPage(array('managerName' => 'Page1Wiz'));
-        SGL_Controller::addPage(array('managerName' => 'Page2Wiz'));
+        //  if errors have occured
+        if (isset($aErrors) && count($aErrors)) {
+            SGL::raiseMsg('Please fill in the indicated fields');
+            $input->error = $aErrors;
+            $this->validated = false;
+        }
     }
 
-    function process(&$input, &$output)
+    function _cmd_wizard(&$input, &$output)
     {
-        SGL_Controller::startWizard();
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template = 'wizard.html';
+        $output->pageTitle = 'Add Client Wizard';
+
+        require_once SGL_LIB_DIR . '/SGL/WizardController.php';
+        require_once 'ClientWizard.php';
+    
+        // Instantiate the Controller
+        $controller =& new SGL_WizardController('clientWizard');
+    
+        // Set defaults for the form elements
+        $controller->setDefaults(array(
+        'first_name' => 'Thierry',
+        'last_name' => 'Henry'
+        ));
+    
+        // Add pages to Controller
+        $controller->addPage(new PageClientDetails('page1'));
+        $controller->addPage(new PageServiceDetails('page2'));
+        $controller->addPage(new PageSurveyDetails('page3'));
+    
+        // Add actions to controller
+        $controller->addAction('display', new SGL_WizardControllerDisplay());
+        $controller->addAction('jump', new SGL_WizardControllerJump());
+        $controller->addAction('process', new SGL_WizardControllerProcess());
+
+        // Process the request
+        $controller->run();
+
+        // Get the current page name
+        list($pageName, $actionName) = $controller->getActionName();
+        $page = $controller->getPage($pageName);
+
+        // Set page output vars
+        $output->wizardOutput = $page->wizardOutput;
+        $output->wizardData = $page->wizardData;
     }
 }
 ?>

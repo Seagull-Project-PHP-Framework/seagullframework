@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Request.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -49,20 +49,12 @@ class SGL_Request
 {
     var $aProps;
 
-    /**
-     * Sets up a request object.
-     *
-     * @return SGL_Request
-     */
-    function SGL_Request()
-    {
-
-    }
-
     function init()
     {
         if ($this->isEmpty()) {
-            $res = (!SGL::runningFromCLI()) ? $this->initHttp() : $this->initCli();
+            $res = (!SGL::runningFromCLI())
+                ? $this->initHttp()
+                : $this->initCli();
         }
         return $res;
     }
@@ -80,12 +72,11 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function &singleton()
+    function &singleton($forceNew = false)
     {
         static $instance;
 
-        // If the instance is not there, create one
-        if (!isset($instance)) {
+        if (!isset($instance) || $forceNew) {
             $instance = new SGL_Request();
             $err = $instance->init();
         }
@@ -110,13 +101,13 @@ class SGL_Request
         $cache = & SGL_Cache::singleton();
         $cacheId = md5($_SERVER['PHP_SELF']);
 
-        if ($data = $cache->get($cacheId, 'urls')) {
+        if ($data = $cache->get($cacheId, 'uri')) {
             $url = unserialize($data);
-            SGL::logMessage('url from cache', PEAR_LOG_DEBUG);
+            SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once dirname(__FILE__) . '/UrlParser/SimpleStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/AliasStrategy.php';
-            require_once dirname(__FILE__) . '/UrlParser/ClassicStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
 
             $aStrats = array(
                 new SGL_UrlParser_ClassicStrategy(),
@@ -130,8 +121,8 @@ class SGL_Request
                 return $err;
             }
             $data = serialize($url);
-            $cache->save($data, $cacheId, 'urls');
-            SGL::logMessage('url parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
+            $cache->save($data, $cacheId, 'uri');
+            SGL::logMessage('URI parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
         if (PEAR::isError($aQueryData)) {
@@ -243,7 +234,12 @@ class SGL_Request
 
     function getManagerName()
     {
-        return $this->aProps['managerName'];
+        if (isset($this->aProps['managerName'])) {
+            $ret = $this->aProps['managerName'];
+        } else {
+            $ret = 'default';
+        }
+        return $ret;
     }
 
     function getUri()

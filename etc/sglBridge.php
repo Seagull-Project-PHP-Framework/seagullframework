@@ -7,43 +7,38 @@ class TestRunnerInit extends SGL_FrontController
 {
     function run()
     {
+        define('SGL_TEST_MODE', true);
+
         if (!defined('SGL_INITIALISED')) {
             SGL_FrontController::init();
         }
-
-        //  get config singleton
-        $c = &SGL_Config::singleton();
-        $c->set('debug', array('customErrorHandler' => false));
-        $conf = $c->getAll();
-
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        $urlHandler = $conf['site']['outputUrlHandler'];
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new $urlHandler());
-
-        //  assign to registry
+        //  assign request to registry
         $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
-        $input->setRequest($req = SGL_Request::singleton());
+        $req = SGL_Request::singleton();
 
-        $process =  new SGL_Process_Init(
-                    new SGL_Process_DiscoverClientOs(
-                    new SGL_Process_SetupTestDb(
-                    new SGL_Process_SetupTestDbResource(
-                    new SGL_Process_MinimalSession(
-                    new SGL_Process_SetupLangSupport(
+        if (PEAR::isError($req)) {
+            //  stop with error page
+            SGL::displayStaticPage($req->getMessage());
+        }
+        $input->setRequest($req);
+        $output = &new SGL_Output();
+
+        $process =  new SGL_Task_Init(
+                    new SGL_Task_DiscoverClientOs(
+                    new SGL_Task_SetupTestDb(
+                    new SGL_Task_SetupTestDbResource(
+                    new SGL_Task_MinimalSession(
+                    new SGL_Task_SetupLangSupport(
                     new SGL_Void()
                    ))))));
 
-        $process->process($input);
+        $process->process($input, $output);
     }
 }
 
-class SGL_Process_SetupTestDb extends SGL_DecorateProcess
+class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         $conf = $GLOBALS['_STR']['CONF'];
 
@@ -64,13 +59,13 @@ class SGL_Process_SetupTestDb extends SGL_DecorateProcess
         $result = $dbh->query($query);
         $query = 'CREATE DATABASE ' . $conf['database']['name'];
         $result = $dbh->query($query);
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
-class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
+class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         $locator = &SGL_ServiceLocator::singleton();
         //  in case
@@ -78,20 +73,20 @@ class SGL_Process_SetupTestDbResource extends SGL_DecorateProcess
         $dbh =& STR_DB::singleton();
         $locator->register('DB', $dbh);
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 
-class SGL_Process_MinimalSession extends SGL_DecorateProcess
+class SGL_Task_MinimalSession extends SGL_DecorateProcess
 {
-    function process(&$input)
+    function process(&$input, &$output)
     {
         session_start();
         $_SESSION['uid'] = 1;
         $_SESSION['rid'] = 1;
         $_SESSION['aPrefs'] = array();
 
-        $this->processRequest->process($input);
+        $this->processRequest->process($input, $output);
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Sql.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -57,14 +57,77 @@ class SGL_Sql
      * @param   string  $filename   File with SQL statements to execute
      * @return  void
      */
-    function parseAndExecute($filename, $errorReporting = E_ALL)
+    function parse($filename, $errorReporting = E_ALL, $executerCallback = null)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
+        $originalErrorLevel = error_reporting();
         error_reporting($errorReporting);
 
         if (! ($fp = fopen($filename, 'r')) ) {
             return false;
         }
+
+        $sql = '';
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $isMysql323 = false;
+        if ($conf['db']['type'] == 'mysql_SGL' || $conf['db']['type'] == 'mysql') {
+            $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
+            if (isset($aEnvData['db_info']) && ereg('3.23', $aEnvData['db_info']['version'])) {
+                $isMysql323 = true;
+            }
+        }
+
+        // Iterate through each line in the file.
+        $aLines = array();
+        while (!feof($fp)) {
+
+            // Read lines, concat together until we see a semi-colon
+            $line = fgets($fp, 32768);
+
+            // Check for various comment types
+            if (preg_match("/^\s*(--)|^\s*#/", $line)) {
+                continue;
+            }
+            if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
+                $tableName = SGL_Sql::extractTableNameFromInsertStatement($line);
+                $nextId = SGL_Sql::getNextId($tableName);
+                $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
+            }
+            $sql .= $line;
+
+            if (!preg_match("/;\s*$/", $sql)) {
+                continue;
+            }
+            // strip semi-colons for MaxDB, Oracle and mysql 3.23
+            if ($conf['db']['type'] == 'oci8_SGL' || $conf['db']['type'] == 'odbc' || $isMysql323) {
+                $sql = preg_replace("/;\s*$/", '', $sql);
+            }
+            // Execute the statement.
+            if (!is_null($executerCallback) && is_callable($executerCallback)) {
+                $res = call_user_func_array(
+                    array($executerCallback[0], $executerCallback[1]), $sql);
+                //  handle error
+                if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
+                    return $res;
+                } elseif (DB::isError($res)) {
+                    // Print out info on bad statements
+                    echo '<pre>'.$res->getMessage().'</pre>';
+                    echo '<pre>'. $res->getUserInfo() . '</pre>';
+                }
+            }
+            $aLines[] = $sql;
+            $sql = '';
+        }
+        fclose($fp);
+        //  reset orig error level
+        error_reporting($originalErrorLevel);
+        return implode("\n", $aLines);
+    }
+
+    function execute($sql)
+    {
         // Get database handle based on working config.ini
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
@@ -72,68 +135,42 @@ class SGL_Sql
             $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
-        $sql = '';
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        // Iterate through each line in the file.
-        while (!feof($fp)) {
-
-            // Read lines, concat together until we see a semi-colon
-            $line = fgets($fp, 32768);
-
-            // Check if '--' comment line.  Fixes Problem with commented Postgres SQL statements
-            // This avoids printing bogus errors to screen when we try to execute a comment only
-#            if (preg_match("/^\s*(--)|^\s*#/", $line)) {
-#                continue;
-#            }
-#FIXME: the above code fails in certain situations, write tests to improve regex
-            #$line = trim($line);
-            $cmt  = substr($line, 0, 2);
-            if ($cmt == '--' || preg_match("/^#/", $cmt)) {
-                continue;
-            }
-#END:FIXME
-
-            if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
-                $tableName = SGL_Sql::extractTableName($line);
-                $nextId = $dbh->nextId($tableName);
-                $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
-            }
-
-            $sql .= $line;
-
-            if (!preg_match("/;\s*$/", $sql)) {
-                continue;
-            }
-
-            // replace ; for MaxDB and Oracle
-            if (($conf['db']['type'] == 'oci8_SGL') || ($conf['db']['type'] == 'odbc')){
-                $sql = preg_replace("/;\s*$/", '', $sql);
-            }
-
-            // Execute the statement.
-            $res = $dbh->query($sql);
-
-            if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
-                return $res;
-            } elseif (DB::isError($res)) {
-
-                // Print out info on bad statements
-                echo '<pre>'.$res->getMessage().'</pre>';
-                echo '<pre>'. $res->getUserInfo() . '</pre>';
-            }
-            $sql = '';
-        }
-        fclose($fp);
-        return true;
+        $res = $dbh->query($sql);
+        return $res;
     }
 
-    function extractTableName($str)
+    function getNextId($tableName)
     {
-        $pattern = '/^(INSERT INTO )(\w+)(.*);/i';
+        // Get database handle based on working config.ini
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        return $dbh->nextId($tableName);
+    }
+
+    function extractTableNameFromInsertStatement($str)
+    {
+        $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
         preg_match($pattern, $str, $matches);
-        $tableName = $matches[2];
+        $tableName = $matches[3];
+        return $tableName;
+    }
+
+    /**
+     * Given a CREATE TABLE string, will extract the table name.
+     *
+     * @param string $str
+     * @return string
+     * @todo consider using SQL_Parser, 19kb lib
+     */
+    function extractTableNameFromCreateStatement($str)
+    {
+        $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?(\w+)(\W+)?/i';
+        preg_match($pattern, $str, $matches);
+        $tableName = $matches[5];
         return $tableName;
     }
 
@@ -141,6 +178,43 @@ class SGL_Sql
     {
         $res = str_replace('{SGL_NEXT_ID}', $nextId, $str);
         return $res;
+    }
+
+    function extractTableNamesFromSchema($data)
+    {
+        if (is_file($data)) {
+            $aLines = file($data);
+        } elseif (is_string($data)) {
+            $aLines = explode("\n", $data);
+        } else {
+            return SGL::raiseError('unexpected input', SGL_ERROR_INVALIDARGS);
+        }
+        $aTablesNames = array();
+        foreach ($aLines as $line) {
+            if (preg_match("/create table/i", $line)) {
+                $aTablesNames[] = SGL_Sql::extractTableNameFromCreateStatement($line);
+            }
+        }
+        return $aTablesNames;
+    }
+
+    function getDbShortnameFromType($dbType)
+    {
+        switch ($dbType) {
+        case 'pgsql':
+            $shortName = 'pg';
+            break;
+
+        case 'mysql_SGL':
+        case 'mysql':
+            $shortName = 'my';
+            break;
+
+        case 'oci8_SGL':
+            $shortName = 'oci';
+            break;
+        }
+        return $shortName;
     }
 }
 ?>

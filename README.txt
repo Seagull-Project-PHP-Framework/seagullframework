@@ -21,7 +21,7 @@ Obtaining Seagull
 
 Further information and the latest release can be obtained at
 
-http://seagull.phpkitchen.com
+    http://seagullproject.org/
 
 
 Requirements
@@ -30,14 +30,9 @@ Requirements
 Running Seagull requires no extra extensions or configuration options, just
 the following or greater:
 
-PHP     4.1.x
+PHP     4.3.11
 MySQL   3.23.x
 Apache  1.3.x
-
-NOTE: Apache 2.x will probably work but is not recommended, same is true
-    for the PHP 4.4.x branch though previous and later version are fine. Also,
-    MySQL 4.1 branch can be difficult to get to work with PHP's mysql client libs,
-    therefore 4.0.x is recommended.
 
 
 Documentation
@@ -45,16 +40,17 @@ Documentation
 
 The API documentation is available at
 
-http://seagullfiles.phpkitchen.com/apidocs/
+    http://api.seagullproject.org/
 
 and a wiki with end-user documentation at
 
-http://trac.seagullproject.org/wiki
+    http://trac.seagullproject.org/
 
 
 Installation instructions
 -------------------------
-Just unzip and load http://web_root/seagull/www in your browser to start the wizard.
+Just unzip and load http://web_root/seagull/www in your browser to start the
+wizard.
 
 
 Licensing
@@ -67,9 +63,15 @@ COPYING.txt in this distribution.
 Credits
 -------
 Check out our Frappr site to find Seagull devs in your area:
-http://www.frappr.com/seagull/
+
+    http://www.frappr.com/seagull/
+
+Meet the community of developers, translators and maintainers, find out
+more about mailing list etiquette and see a list of sites powered by Seagull
+
+    http://trac.seagullproject.org/wiki/Community
 
 Thanks,
 
-Demian Turner
-demian@phpkitchen.com
+Demian Turner and the Seagull Team
+demian@seagullproject.org

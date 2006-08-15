@@ -46,7 +46,7 @@
     {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Save#)}</a>
     {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)" onclick="return doAttach();">{translate(#Upload#)}</a>
     {end:}
-    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">Cancel</a>
+    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
@@ -57,11 +57,11 @@
         <h3>{translate(#New Asset#)}</h3>
         <fieldset class="inside">
             <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
-            <input type="hidden" name="document[document_type_id]" value="{assetTypeID}" />
+            <input type="hidden" name="document[document_type_id]" value="{document.document_type_id}" />
             <input type="hidden" name="document[added_by]" value="{loggedOnUserID}" />
-            <input type="hidden" name="document[orig_name]" value="{assetFileName}" />
-            <input type="hidden" name="document[mime_type]" value="{assetFileType}" />
-            <input type="hidden" name="document[file_size]" value="{assetFileSize}" />
+            <input type="hidden" name="document[orig_name]" value="{document.name}" />
+            <input type="hidden" name="document[mime_type]" value="{document.mime_type}" />
+            <input type="hidden" name="document[file_size]" value="{document.file_size}" />
             {if:save}
                 <input type="hidden" name="action" value="insert" />
             {else:}
@@ -88,19 +88,19 @@
             </p>
             <p>
                 <label for="document[name]">{translate(#Asset Name#)}</label>
-                <input class="longText" type="text" name="document[name]" id="document[name]" value="{assetFileName}"/>
+                <input class="longText" type="text" name="document[name]" id="document[name]" value="{document.name}"/>
             </p>
             <p>
                 <label for="document[description]">{translate(#Description#)}</label>
-                <textarea class="longText" name="document[description]" id="document[description]"></textarea>
+                <textarea class="longText" name="document[description]" id="document[description]">{document.description}</textarea>
             </p>
             <p>
                 <label>{translate(#Size#)}</label>
-                <span>{formatBytes(assetFileSize)}</span>
+                <span>{formatBytes(document.file_size)}</span>
             </p>
             <p>
                 <label>{translate(#Mime Type#)}</label>
-                <span>{assetFileType}</span>
+                <span>{document.mime_type}</span>
             </p>
             {else:}
              <p>

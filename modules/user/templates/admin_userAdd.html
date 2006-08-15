@@ -21,6 +21,8 @@
             <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
             <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
             <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
+            <input type="hidden" name="user[username_orig]" value="{user.username_orig}" />
+            <input type="hidden" name="user[email_orig]" value="{user.email_orig}" />
         </fieldset>
 
         <h3 flexy:if="isAdd">{translate(#add user#,#ucfirst#)}</h3>
@@ -59,7 +61,7 @@
                 <select name="user[organisation_id]" id="user[organisation_id]">
                     {generateSelect(aOrgs,user.organisation_id):h}
                 </select>
-            </p>    
+            </p>
                 {end:}
             {end:}
         </fieldset>
@@ -108,7 +110,7 @@
                 <input type="text" class="longText" name="user[city]" id="user[city]" value="{user.city}" />
             </p>
             <p>
-                <label for="user[region]">{translate(#State/Province#)}</label>
+                <label for="user[region]">{translate(#County/State/Province#)}</label>
                 <select name="user[region]" id="user[region]">
                     {generateSelect(states,user.region):h}
                 </select>
@@ -126,7 +128,7 @@
                 </select>
             </p>
         </fieldset>
-        
+
         <fieldset class="inside">
             <h3>{translate(#Security#)}</h3>
             <p>
@@ -142,14 +144,12 @@
                 <input type="text" class="longText" name="user[security_answer]" id="user[security_answer]" value="{user.security_answer}" />
             </p>
             {if:isAdmin()}
-                {if:!isEqual(user.usr_id,#1#)}
             <p>
                 <label for="user[role_id]">{translate(#Role#)}</label>
                 <select name="user[role_id]" id="user[role_id]">
                     {generateSelect(aRoles,user.role_id):h}
                 </select>
             </p>
-                {end:}
             {end:}
         </fieldset>
         <p class="helpRequire">

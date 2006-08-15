@@ -16,11 +16,11 @@
             <table class="full">
                 <thead>
                     <tr class="infos">
-                        <td class="left" colspan="5">
+                        <td class="left" colspan="3">
                             {totalItems} {translate(#user(s) found#)}
                             <a class="clearSearch" href="{makeUrl(#search#,#usersearch#,#user#,##,#frmSortBy|sortBy||frmSortOrder|sortOrder#)}" flexy:if="search">{translate(#clear search#)}</a>
                         </td>
-                        <td class="right" colspan="5">
+                        <td class="right" colspan="6">
                         {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
@@ -46,7 +46,7 @@
                 </thead>
                 <tfoot>
                     <tr class="infos">
-                        <td class="right" colspan="10">
+                        <td class="right" colspan="9">
                             {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
@@ -75,7 +75,7 @@
                                 onClick="javascript:document.location.href='{makeUrl(#editPerms#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}'" />
                         </td>
                         <td flexy:if="isAdmin(aValue[role_id])">&nbsp;</td>
-                        <td ><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">list</a></td>
+                        <td ><a href="{makeUrl(#viewLogin#,#user#,##,aPagedData[data],#frmUserID|usr_id#,key)}">{translate(#list#)}</a></td>
                     </tr>
                     <tr flexy:if="!aPagedData[data]">
                         <td colspan="10">{translate(#No users found#)}</td>

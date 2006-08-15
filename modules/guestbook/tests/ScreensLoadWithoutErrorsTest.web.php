@@ -9,7 +9,6 @@ class GuestBookScreensLoadWithoutErrorsTest extends WebTestCase
         $this->conf = $c->getAll();
     }
 
-
     function testPublicScreens()
     {
         $this->addHeader('User-agent: foo-bar');

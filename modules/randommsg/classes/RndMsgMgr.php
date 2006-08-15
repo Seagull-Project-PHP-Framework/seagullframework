@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Michael Willemot                                      |
+// | Copyright (c) 2006, Michael Willemot                                      |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | RndMsgMgr.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: RndMsgMgr.php,v 1.19 2005/01/23 13:47:24 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -78,19 +77,15 @@ class RndMsgMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->error          = array();
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ?
-                               $req->get('action') : 'list';
-        $input->msgDelete   = $req->get('frmMsgDelete');
-        $input->addMsgsText = $req->get('addMsgsText');
-        $input->submitted   = ($req->get('submitted') || $req->get('upload'));
-        $input->from        = ($req->get('frmFrom')) ?
-                               $req->get('frmFrom') : 0;
-        $input->totalItems  = $req->get('totalItems');
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->msgDelete      = $req->get('frmMsgDelete');
+        $input->addMsgsText    = $req->get('addMsgsText');
+        $input->submitted      = ($req->get('submitted') || $req->get('upload'));
 
         //  request values for upload
         $input->msgUpload               = $req->get('upload');
@@ -124,9 +119,14 @@ class RndMsgMgr extends SGL_Manager
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
+            $input->error    = $aErrors;
             $input->template = 'rndMsgAdd.html';
             $this->validated = false;
+
+            // fix page title
+            if ('insert' == $input->action) {
+                $input->pageTitle = 'RndMsg Manager :: Add';
+            }
         }
     }
 
@@ -144,7 +144,7 @@ class RndMsgMgr extends SGL_Manager
         SGL_DB::setConnection();
         $output->template = 'rndMsg.html';
         if ($input->msgUpload) {
-            $aLines = $this->file2($_FILES['msgFile']['tmp_name']);
+            $aLines = $this->file2($input->msgFileTmpName);
         } else {
             $aLines = split($this->crlf, $input->addMsgsText);
         }
@@ -196,7 +196,6 @@ class RndMsgMgr extends SGL_Manager
             'mode'      => 'Sliding',
             'delta'     => 3,
             'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;

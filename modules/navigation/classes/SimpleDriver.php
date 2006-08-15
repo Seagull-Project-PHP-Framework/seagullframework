@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SimpleDriver.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -209,17 +209,18 @@ class SimpleDriver
      */
     var $_template = '';
 
-    function SimpleDriver(&$output)
+    function SimpleDriver(&$outputData)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
         $this->da        = &DA_Navigation::singleton();
-        $this->output    = &$output;
-        $this->req       = $output->get('request');
+        $this->req       = $outputData->request;
+        $this->output    = &$outputData;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
+        $this->querystring = $this->req->getUri();
 
         // set default driver params from configuration
         foreach ($this->conf['navigation'] as $key => $value) {
@@ -260,8 +261,7 @@ class SimpleDriver
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
-        $reg     = &SGL_Registry::singleton();
-        $url     = $reg->getCurrentUrl();
+        $url     = $this->output->currentUrl;
         $cache   = &SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
@@ -296,7 +296,7 @@ class SimpleDriver
                     $this->_aTranslations = &$aTranslations;
                 }
 
-                $aSectionNodes    = $this->getSectionsByRoleId($this->_startParentNode);
+                $aSectionNodes    = $this->getSectionsById($this->_startParentNode);
                 $aAllSectionNodes = $aSectionNodes;
                 $aAllCurrentPages = $this->_aAllCurrentPages;
                 $startParentNode  = $this->_startParentNode;
@@ -379,20 +379,18 @@ class SimpleDriver
      * @param   int $sectionId
      * @return  array of DataObjects_Section objects
      */
-    function getSectionsByRoleId($sectionId = 0)
+    function getSectionsById($sectionId = 0)
     {
-        $this->querystring = $this->req->getUri();
-
         // get navigation tree
-        $aSectionNodes = $this->_getSections($sectionId);
+        $aSectionNodes = $this->_getSectionsById($sectionId);
 
         // search exact matching checking
-        if ($aSectionNodes) {
+        if (is_array($aSectionNodes) && count($aSectionNodes)) {
             $this->_searchExactMatches($aSectionNodes);
 
             // if no exact matches search inexact matches
             if (!$this->_currentSectionId && !$this->_staticId) {
-                $this->_searchInExactMatches($aSectionNodes);
+                $this->_searchInexactMatches($aSectionNodes);
             }
         }
         return $aSectionNodes;
@@ -406,28 +404,26 @@ class SimpleDriver
      * @param   int $sectionId
      * @return  array of DataObjects_Section objects
      */
-    function _getSections($sectionId = 0)
+    function _getSectionsById($sectionId = 0)
     {
         $aSectionNodes = array();
 
         //  get nodes from parent node
-        $result = $this->da->getSectionsFromParent($sectionId);
+        $aNodes = $this->da->getSectionsByParentId($sectionId);
 
         //  process with each node
-        while ($result->fetchInto($sectionNode)) {
+        foreach ($aNodes as $sectionNode) {
 
             //  check permissions
             $aPerms = explode(',', $sectionNode->perms);
             if (!in_array($this->_rid, $aPerms) && !in_array(SGL_ANY_ROLE, $aPerms)) {
                 continue;
             }
-
             //  recurse if there are (potential) children--even if R - L > 1, the children might
             $sectionNode->children = false;
             if ($sectionNode->right_id - $sectionNode->left_id > 1) {
-                $sectionNode->children = $this->_getSections($sectionNode->section_id);
+                $sectionNode->children = $this->_getSectionsById($sectionNode->section_id);
             }
-
             //  check add-on
             $aSections   = array();
             if (preg_match('/^uriAddon:([^:]*):(.*)/', $sectionNode->resource_uri, $aUri)) {
@@ -474,7 +470,7 @@ class SimpleDriver
             if (preg_match('/^uriNode:([0-9]+)$/', $section->resource_uri, $aUri)) {
                 $linkedSection = (object)$this->da->getRawSectionById($aUri[1]);
                 $section->dontMatch = true;
-                if ($linkedSection &&
+                if (!empty($linkedSection->is_enabled) &&
                     (in_array($this->_rid, explode(',', $linkedSection->perms)))) {
                     $section->resource_uri = $linkedSection->resource_uri;
                 } else {
@@ -570,11 +566,11 @@ class SimpleDriver
      * @param   array $aSectionNodes
      * @return  void
      */
-    function _searchInExactMatches(&$aSectionNodes)
+    function _searchInexactMatches(&$aSectionNodes)
     {
         foreach ($aSectionNodes as $key => $section) {
             if (!empty($section->children)) {
-                $this->_searchInExactMatches($section->children);
+                $this->_searchInexactMatches($section->children);
 
                 //  if children node is current mark parent node
                 foreach ($section->children as $section2) {
@@ -680,10 +676,13 @@ class SimpleDriver
     function getCurrentSectionName()
     {
         if ($this->_currentTitle) {
-            return $this->_currentTitle;
+            $ret = $this->_currentTitle;
+        } elseif (isset($this->output->pageTitle)) {
+            $ret = $this->output->pageTitle;
         } else {
-            return $this->output->pageTitle;
+            $ret = $this->output->manager->pageTitle;
         }
+        return $ret;
     }
 
     /**

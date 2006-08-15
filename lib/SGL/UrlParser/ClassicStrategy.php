@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UrlParserClassicStrategy.php                                              |
 // +---------------------------------------------------------------------------+
@@ -166,7 +166,7 @@ class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
-                            $aElems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
+                            $aElems = array_filter(preg_split('/[^a-z_0-9]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
 
                                 //  variable is of type $output->org['organisation_id'] = 'foo';

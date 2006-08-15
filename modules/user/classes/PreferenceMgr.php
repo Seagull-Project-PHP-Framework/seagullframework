@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PreferenceMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -74,6 +74,7 @@ class PreferenceMgr extends SGL_Manager
             'US' => 'US',
             'FR' => 'FR',
             'BR' => 'BR',
+            'DE' => 'DE',
             );
         $this->aTimeouts = array(
             '900' => '15 mins',
@@ -94,6 +95,7 @@ class PreferenceMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
@@ -108,16 +110,16 @@ class PreferenceMgr extends SGL_Manager
         $input->totalItems      = $req->get('totalItems');
         $input->sortBy          = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder       = SGL_Util::getSortOrder($req->get('frmSortOrder'));
-        
+
         // This will tell HTML_Flexy which key is used to sort data
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submitted) {
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
             if (empty($input->pref->name)) {
                 $aErrors['name'] = 'You must enter a preference name';
             }
-            if (is_null($input->pref->default_value) || !strlen($input->pref->default_value)) {
+            if (empty($input->pref->default_value)) {
                 $aErrors['default_value'] = 'You must enter a default value';
             }
         }
@@ -167,10 +169,6 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->pref)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $oPref = DB_DataObject::factory($this->conf['table']['preference']);
         $oPref->setFrom($input->pref);
@@ -196,12 +194,17 @@ class PreferenceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->preferenceEdit = true;
-        $output->template = 'prefEdit.html';
-        $output->pageTitle = $this->pageTitle . ' :: Edit';
-        $oPref = DB_DataObject::factory($this->conf['table']['preference']);
-        $oPref->get($input->prefId);
-        $output->pref = $oPref;
+        if (is_null($input->prefId)) {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+        } else {
+            $output->preferenceEdit = true;
+            $output->template = 'prefEdit.html';
+            $output->pageTitle = $this->pageTitle . ' :: Edit';
+            $oPref = DB_DataObject::factory($this->conf['table']['preference']);
+            $oPref->get($input->prefId);
+            $output->pref = $oPref;
+        }
     }
 
     function _cmd_update(&$input, &$output)
@@ -228,24 +231,29 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $aToDelete = array();
-        foreach ($input->aDelete as $index => $prefId) {
-            $oPref = DB_DataObject::factory($this->conf['table']['preference']);
-            $oPref->get($prefId);
-            $oPref->delete();
-            $aToDelete[] = $prefId;
-            unset($oPref);
-        }
-        //  delete related user_prefs
-        foreach ($aToDelete as $deleteId) {
-            $oUserPref = DB_DataObject::factory($this->conf['table']['user_preference']);
-            $oUserPref->get('preference_id', $deleteId);
-            $oUserPref->delete();
-            while ($oUserPref->fetch()) {
-                $oUserPref->delete();
+        if (is_array($input->aDelete)) {
+            foreach ($input->aDelete as $index => $prefId) {
+                $oPref = DB_DataObject::factory($this->conf['table']['preference']);
+                $oPref->get($prefId);
+                $oPref->delete();
+                $aToDelete[] = $prefId;
+                unset($oPref);
             }
-            unset($oUserPref);
+            //  delete related user_prefs
+            foreach ($aToDelete as $deleteId) {
+                $oUserPref = DB_DataObject::factory($this->conf['table']['user_preference']);
+                $oUserPref->get('preference_id', $deleteId);
+                $oUserPref->delete();
+                while ($oUserPref->fetch()) {
+                    $oUserPref->delete();
+                }
+                unset($oUserPref);
+            }
+            SGL::raiseMsg('pref successfully deleted', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('pref successfully deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
@@ -253,7 +261,7 @@ class PreferenceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->pageTitle = $this->pageTitle . ' :: Browse';
-        
+
         $allowedSortFields = array('preference_id','name');
         if (  !empty($input->sortBy)
            && !empty($input->sortOrder)
@@ -262,9 +270,9 @@ class PreferenceMgr extends SGL_Manager
         } else {
             $orderBy_query = 'ORDER BY preference_id ASC ';
         }
-        
+
         $query = "
-            SELECT  preference_id, name, default_value 
+            SELECT  preference_id, name, default_value
             FROM    {$this->conf['table']['preference']}
             $orderBy_query";
 
@@ -283,7 +291,6 @@ class PreferenceMgr extends SGL_Manager
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
-
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 }

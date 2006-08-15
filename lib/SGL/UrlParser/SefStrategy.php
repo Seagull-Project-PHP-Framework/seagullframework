@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | UrlParserSefStrategy.php                                                  |
 // +---------------------------------------------------------------------------+
@@ -39,7 +39,7 @@
 // $Id: Util.php,v 1.22 2005/05/11 00:19:40 demian Exp $
 
 /**
- * Classic querystring url parser strategy.
+ * SEF querystring url parser strategy.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -74,17 +74,29 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             }
         }
 
-        $str = strtolower(array_shift($aUriParts));
-        $aParsedUri['moduleName'] = (preg_match('/start_debug/', $str))
-            ? ''
-            :$str;
-        $mgrCopy = array_shift($aUriParts);
-        $aParsedUri['managerName'] = strtolower($mgrCopy);
+        if (count($aUriParts)) {
+            $str = strtolower(array_shift($aUriParts));
+            $aParsedUri['moduleName'] = (preg_match('/start_debug/', $str))
+                ? ''
+                :$str;
+            $mgrCopy = array_shift($aUriParts);
+            $aParsedUri['managerName'] = strtolower($mgrCopy);
+        } else {
+            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
+            $aParsedUri['managerName'] = $conf['site']['defaultManager'];
+            if (!empty($conf['site']['defaultParams'])) {
+                $aParams = SGL_Url::querystringArrayToHash(
+                    explode('/', $conf['site']['defaultParams']));
+                foreach ($aParams as $k => $v) {
+                    $aParsedUri[$k] = $v;
+                }
+            }
+        }
 
         //  if no manager name, must be default manager, ie, has same name as module
         //  the exception is when the moduleName comes from the conf
-        if ((empty($aParsedUri['managerName']))
-                || (preg_match('/start_debug/', $aParsedUri['managerName']))) {
+        if (empty($aParsedUri['managerName'])
+                || preg_match('/start_debug/', $aParsedUri['managerName'])) {
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
         }
 
@@ -231,7 +243,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                         if (stristr($listKey, '[')) { // it's a hash
 
                             //  split out images[fooBar] to array(images,fooBar)
-                            $aElems = array_filter(preg_split('/[^a-z_]/i', $listKey), 'strlen');
+                            $aElems = array_filter(preg_split('/[^a-z_0-9]/i', $listKey), 'strlen');
                             if (!($aList) && is_a($output, 'SGL_Output')) {
 
                                 //  variable is of type $output->org['organisation_id'] = 'foo';
@@ -239,7 +251,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                             } else {
                                 $qsParamValue = $aList[$idx][$aElems[0]][$aElems[1]];
                             }
-                        } elseif (is_a($output, 'SGL_Output') && isset($output->{$listKey})) {
+                        } elseif (is_a($output, 'SGL_Output') && !empty($listKey) && isset($output->{$listKey})) {
                             $qsParamValue = $output->{$listKey}; // pass $output property
                         } else {
                             //  see blocks/SiteNews, not called from template
@@ -263,7 +275,6 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
         //  add session info if necessary
         SGL_Url::addSessionInfo($url);
-
         return $url;
     }
 }

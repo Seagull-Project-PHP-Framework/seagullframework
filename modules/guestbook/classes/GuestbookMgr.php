@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,19 +30,18 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | GuestbookMgr.php                                                          |
 // +---------------------------------------------------------------------------+
-// | Author:   Boris Kerbikov <boris@techdatasolutions.com>                    |
+// | Author:   Rares Benea <rbenea@bluestardesign.ro>                          |
 // +---------------------------------------------------------------------------+
 // $Id: GuestbookMgr.php,v 1.22 2005/01/21 00:26:16 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once 'DB/DataObject.php';
 
 /**
- * To allow users to contact site admins.
+ * Allows users to leave guestbook entries.
  *
  * @package guestbook
  * @author  Boris Kerbikov <boris@techdatasolutions.com>
@@ -69,35 +68,52 @@ class GuestbookMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated    = true;
-        $input->error       = array();
-        $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submitted   = $req->get('submitted');
-        $input->guestbook   = (object)$req->get('guestbook');
-        $input->from        = ($req->get('frmFrom')) ?
-                               $req->get('frmFrom') : 0;
-        $input->totalItems  = $req->get('totalItems');
 
-        if ($input->submitted) {
+        $this->validated       = true;
+        $input->error          = array();
+        $input->pageTitle      = $this->pageTitle;
+        $input->masterTemplate = $this->masterTemplate;
+        $input->template       = $this->template;
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->submitted      = $req->get('submitted');
+        $input->guestbook      = (object)$req->get('guestbook');
+
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+            require_once 'Validate.php';
+            $v = & new Validate();
+
             if (empty($input->guestbook->name)) {
                 $aErrors['name'] = 'Please, specify your name';
             }
             if (empty($input->guestbook->email)) {
                 $aErrors['email'] = 'Please, specify your email';
+            } elseif (!$v->email($input->guestbook->email)) {
+                $aErrors['email'] = 'Your email is not correctly formatted';
             }
             if (empty($input->guestbook->message)) {
                 $aErrors['message'] = 'Please, fill in the message text';
+            }
+            if ($this->conf['GuestbookMgr']['useCaptcha']) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                if (!$captcha->validateCaptcha($input->guestbook->captcha)) {
+                    $aErrors['captcha'] = 'You must enter the number in this field';
+                }
+                $input->captcha = $captcha->generateCaptcha();
+                $input->useCaptcha = true;
             }
         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
-            $input->error = $aErrors;
+            $input->error    = $aErrors;
             $input->template = 'guestbookAdd.html';
             $this->validated = false;
+
+            // save currect title
+            if ('insert' == $input->action) {
+                $input->pageTitle .= ' :: Add';
+            }
         }
     }
 
@@ -109,16 +125,19 @@ class GuestbookMgr extends SGL_Manager
 
         //  build ordering select object
         $output->guestbook = DB_DataObject::factory($this->conf['table']['guestbook']);
+
+        if ($this->conf['GuestbookMgr']['useCaptcha']) {
+            require_once SGL_CORE_DIR . '/Captcha.php';
+            $captcha = new SGL_Captcha();
+            $output->captcha = $captcha->generateCaptcha();
+            $output->useCaptcha = true;
+        }
     }
 
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->guestbook)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $newEntry = DB_DataObject::factory($this->conf['table']['guestbook']);
         $newEntry->setFrom($input->guestbook);
@@ -126,10 +145,14 @@ class GuestbookMgr extends SGL_Manager
         $newEntry->date_created = SGL_Date::getTime(true);
         $success = $newEntry->insert();
         if ($success) {
-            SGL::raiseMsg('new guestbook entry saved successfully');
+            SGL::raiseMsg('new guestbook entry saved successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
+        }
+
+        if($this->conf['GuestbookMgr']['sendNotificationEmail']) {
+            $this->sendEmail($newEntry, $input->moduleName);
         }
     }
 
@@ -148,13 +171,35 @@ class GuestbookMgr extends SGL_Manager
             'mode'      => 'Sliding',
             'delta'     => 3,
             'perPage'   => $limit,
-            'totalItems'=> $input->totalItems,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
         $output->aPagedData = $aPagedData;
         if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
             $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
         }
+    }
+
+    function sendEmail($oEntry, $moduleName)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once SGL_CORE_DIR . '/Emailer.php';
+
+        $options = array(
+                'toEmail'         => $this->conf['email']['info'],
+                'toRealName'      => 'Admin',
+                'fromEmail'       => "\"{$oEntry->name}\" <{$oEntry->email}>",
+                'fromEmailAdress' => $oEntry->email,
+                'fromRealName'    => $oEntry->name,
+                'replyTo'         => $oEntry->email,
+                'subject'         => SGL_String::translate('New guestbook entry in') .' '. $this->conf['site']['name'],
+                'deleteURL'       => SGL_Output::makeUrl('delete','guestbookadmin','guestbook',array(),'frmDelete[]|'.$oEntry->guestbook_id),
+                'body'            => $oEntry->message,
+                'template'        => SGL_THEME_DIR . '/' . $_SESSION['aPrefs']['theme'] . '/' .
+                    $moduleName . '/email_guestbook_notification.php',
+        );
+        $message = & new SGL_Emailer($options);
+        $ok = $message->prepare();
+        return ($ok) ? $message->send() : $ok;
     }
 }
 ?>

@@ -25,6 +25,10 @@ body {
 ul {
     list-style: none;
 }
+dl {
+    margin: 0.5em 0;
+    line-height: 140%;
+}
 p {
     margin-bottom: 0.5em;
 }
@@ -36,6 +40,9 @@ a:hover {
     color: <?php echo $linkHoverColor ?>;
     text-decoration: <?php echo $linkHoverDecoration ?>;
 }
+a:focus {
+    outline: none;
+}
 img {
     border: none;
 }
@@ -46,23 +53,17 @@ a.sgl-button, input.sgl-button {
     margin: 0;
     padding: 2px 4px;
     background: url('<?php echo $baseUrl ?>/images/backgrounds/bg_buttons_blue.gif') 0 50% repeat-x;
-    border: none;
-    border-style: solid;
-    border-width: 2px;
-    border-color: <?php echo $primaryLightest ?> <?php echo $primary ?> <?php echo $primary ?> <?php echo $primaryLightest ?>;
+    border: 1px outset;
     color: <?php echo $tertiaryDarkest ?>;
     font-size: 1em;
-    text-transform: capitalize;
 }
 input.sgl-button[disabled], input.sgl-button[disabled]:hover {
     background: <?php echo $tertiary ?>;
-    border-width: 2px;
-    border-color: <?php echo $tertiary ?> <?php echo $tertiaryDarkest ?> <?php echo $tertiaryDarkest ?> <?php echo $tertiary ?>;
+    border: 1px inset;
     color: <?php echo $tertiaryDarkest ?>;
 }
 a.sgl-button:hover, input.sgl-button:hover, input.sfhover {
-    border-width: 2px;
-    border-color: <?php echo $primary ?> <?php echo $primaryLightest ?> <?php echo $primaryLightest ?> <?php echo $primary ?>;
+    border: 1px inset;
     color: <?php echo $tertiaryDarkest ?>;
     text-decoration: none;
 }
@@ -124,7 +125,7 @@ a.narrow, input.narrow {
 #header #left {
     height: 60px;
     background: <?php echo $primary ?> url('<?php echo $baseUrl ?>/images/backgrounds/bg_header_blue.gif') repeat-x;
-    
+
 }
 #header h1, #header h1 a {
     float: left;
@@ -335,6 +336,9 @@ fieldset {
 fieldset.options h3 {
     visibility: hidden;
 }
+fieldset.options h3.show {
+    visibility: visible;
+}
 select, input, textarea {
     font-size: 1.1em;
     z-index: 1;
@@ -378,6 +382,40 @@ fieldset p label {
     text-align: right;
     padding-right: 20px;
     color: <?php echo $primaryDark ?>;
+}
+fieldset textarea {
+    font-family: <?php echo $fontFamily ?>;
+}
+input.smallText {
+    width: 70px;
+}
+input.mediumText, textarea.mediumText, select.mediumText {
+    width: 120px;
+}
+input.longText, textarea.longText {
+    width: 450px;
+}
+/* --
+Definition lists (<dl>) will progressively replace "p label" to display fields labels and values
+-----*/
+dl.onSide dt {
+    float: left;
+    width: 120px;
+    text-align: right;
+}
+dl.onSide dt label {
+    padding-right: 15px;
+}
+dl.onSide dd{
+    margin-left: 140px;
+    margin-bottom: 0.5em;
+}
+dl.onTop dd {
+    margin: 0;
+}
+dl.buttonsBottom {
+    clear: both;
+    float: left;
 }
 
 /*
@@ -677,19 +715,19 @@ div.close span {
     text-align: left;
 }
 .errorContainer div{
-    width: 80%;
+    width: auto;
     margin: 0;
+    padding: 5px 0;
     border: none;
 }
 .errorContainer .errorHeader {
+    padding-left: 30px;
     background-image: url('<?php echo $baseUrl ?>/images/22/dialog_error.gif');
-    text-align: center;
     text-transform: uppercase ;
     font-size: 1.2em;
     font-weight: bold;
     letter-spacing: 0.3em;
     color: <?php echo $errorMessage ?>;
-    
 }
 .errorContainer .errorContent {
 
@@ -712,7 +750,7 @@ p.errorBlock input, p.errorBlock select {
     border: 1px solid <?php echo $errorMessage ?>;
 }
 <?php
-    if ($isFormSubmitted) { ?>
+    if (!empty($isFormSubmitted)) { ?>
 .required {
     display: none;
 }
@@ -747,11 +785,17 @@ p.errorBlock input, p.errorBlock select {
 .center {
     text-align: center;
 }
+.altFont {
+    font-family: <?php echo $fontFamilyAlt ?>;
+}
 .hide {
     display: none;
 }
 .narrow {
     width: 45%;
+}
+.wide {
+    width: 60%;
 }
 .full {
     width: 100%;
@@ -792,4 +836,7 @@ a.clearSearch {
 a.clearSearch:hover {
     text-decoration: none;
     color: <?php echo $tertiaryDarkest ?>;
+}
+.disabled, a.disabled, a.disabled:visited {
+    color: grey;
 }

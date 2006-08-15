@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardCreateAdminUser.php                                                 |
 // +---------------------------------------------------------------------------+
@@ -39,28 +39,32 @@
 
 function appRootExists()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];
     return file_exists($aFormValues['installRoot']);
 }
 
 function webRootExists()
 {
-    $aFormValues = $_SESSION['_installationWizard_container']['values']['page5'];
+    $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];
     return file_exists($aFormValues['webRoot']);
 }
 
+/**
+ * @package Install
+ */
 class WizardCreateAdminUser extends HTML_QuickForm_Page
 {
     function buildForm()
     {
         $this->_formBuilt = true;
-        $this->addElement('header',     null, 'Create Admin User: page 5 of 5');
+        $this->addElement('header',     null, 'Create Admin User: page 6 of 6');
 
         //  set defaults
         $this->setDefaults(array(
             'frameworkVersion' => SGL_Install_Common::getFrameworkVersion(),
             'adminUserName' => 'admin',
-            'adminRealName' => 'Alouicious Bird',
+            'adminFirstName' => 'Alouicious',
+            'adminLastName' => 'Bird',
             'siteName'  => 'Seagull Framework',
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
@@ -72,16 +76,21 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
                 ? '@WEB_DIR@/Seagull/www'
                 : SGL_PATH . '/www',
             ));
-
+        $this->setDefaults(overrideDefaultInstallSettings());
+        
         //  setup admin user
         $this->addElement('hidden',  'frameworkVersion', '');
         $this->addElement('text',  'adminUserName', 'Admin username: ');
         $this->addElement('password',  'adminPassword', 'Admin password: ');
-        $this->addElement('text',  'adminRealName', 'Real name: ');
+        $this->addElement('password',  'adminPassword2', 'Retype admin password: ');
+        $this->addElement('text',  'adminFirstName', 'First name: ');
+        $this->addElement('text',  'adminLastName', 'Last name: ');
         $this->addElement('text',  'adminEmail', 'Email: ');
 
         $this->addRule('adminUserName', 'Please specify the admin\'s username', 'required');
         $this->addRule('adminPassword', 'Please specify the admin\'s password', 'required');
+        $this->addRule('adminPassword2', 'Please confirm the admin\'s password', 'required');
+        $this->addRule(array('adminPassword2', 'adminPassword'), 'Admin\'s passwords don\'t match', 'compare');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'required');
         $this->addRule('adminEmail', 'Please specify the admin\'s email', 'email');
 
@@ -109,7 +118,6 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
 
         //  set lang
         $aInstalledLanguages =  @$_SESSION["_installationWizard_container"]['values']['page4']['installLangs'];
-        require_once SGL_DAT_DIR . '/ary.languages.php';
         if (count($aInstalledLanguages)) {
 
             //  return only selected langs

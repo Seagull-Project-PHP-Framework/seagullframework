@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Emailer.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -84,9 +84,9 @@ class SGL_Emailer
 
         $siteName = $this->conf['site']['name'];
         $this->headerTemplate
-            = "<html><head><title>$siteName</title></head></html><body>";
+            = "<html><head><title>$siteName</title></head><body>";
         $this->footerTemplate
-            = "<table><tr><td>&nbsp;</td></tr></table></body>";
+            = "<table><tr><td>&nbsp;</td></tr></table></body></html>";
         foreach ($options as $k => $v) {
             $this->options[$k] = $v;
         }
@@ -114,8 +114,15 @@ class SGL_Emailer
             return false;
         }
         $this->html = $this->headerTemplate . $body . $this->footerTemplate;
-        $this->headers['From'] = $this->options['fromEmail'];
+        if (!empty($this->options['fromRealName'])) {
+            $this->headers['From'] = $this->options['fromRealName'] . ' <' . $this->options['fromEmail'] . '>';
+        } else {
+            $this->headers['From'] = $this->options['fromEmail'];
+        }
         $this->headers['Subject'] = $this->options['subject'];
+        $this->headers['Return-Path'] = $this->options['fromEmail'];
+        $this->headers['To'] = $this->options['toEmail'];
+        $this->headers['Reply-To'] = $this->options['replyTo'];
         return true;
     }
 
@@ -205,7 +212,7 @@ class SGL_Emailer
     */
     function cleanMailInjection($headers)
     {
-        $regex = "#(<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r|Content-Type:|bcc:|to:|cc:).*#i";
+         $regex = "#((<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r)\S).*#i";
         // strip all possible "additional" headers from the values
         if (is_array($headers)) {
             foreach ($headers as $key => $value) {

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ContentTypeMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -169,11 +169,12 @@ class ContentTypeMgr extends SGL_Manager
 
         //  insert item type into item_type table.
         $itemTypeId = $this->da->addItemType($input->type['item_type_name']);
-        if (PEAR::isError($ok)) {
+        if (PEAR::isError($itemTypeId)) {
             SGL::raiseError('There was a problem inserting the content type',
                 SGL_ERROR_NOAFFECTEDROWS);
             return false;
         }
+
         //  insert item type fields into item_type_mapping table.
         foreach ($input->type['field_name'] as $k => $name) {
       		$ok = $this->da->addItemAttributes($itemTypeId, $name,
@@ -184,7 +185,7 @@ class ContentTypeMgr extends SGL_Manager
 	            return false;
             }
         }
-        SGL::raiseMsg('content type has successfully been added');
+        SGL::raiseMsg('content type has successfully been added', true, SGL_MESSAGE_INFO);
     }
 
     /**
@@ -266,7 +267,7 @@ class ContentTypeMgr extends SGL_Manager
 	            return false;
             }
         }
-        SGL::raiseMsg('content type has successfully been updated');
+        SGL::raiseMsg('content type has successfully been updated', true, SGL_MESSAGE_INFO);
     }
 
     /**
@@ -281,43 +282,26 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $aPagedData = $this->da->getItemAttributesByItemId(null, $paginated = true);
+        $limit = $_SESSION['aPrefs']['resPerPage'];
 
-        $data = array();
-        foreach ($aPagedData['data'] as $aValues) {
-            foreach ($aValues as $key => $value) {
-                switch ($key) {
+        $pagerOptions = array(
+            'mode'     => 'Sliding',
+            'delta'    => 3,
+            'perPage'  => $limit,
+            'spacesBeforeSeparator' => 0,
+            'spacesAfterSeparator'  => 0,
+            'curPageSpanPre'        => '<span class="currentPage">',
+            'curPageSpanPost'       => '</span>',
+        );
+        $aPagedData = $this->da->retrievePaginatedItemType($pagerOptions);
 
-                case 'item_type_id':
-                    $item_type_id = $value;
-                    $data[$item_type_id]['item_type_id'] = $value;
-                    break;
-
-                case 'item_type_name':
-                    $data[$item_type_id][$key] = $value;
-                    break;
-
-                case 'item_type_mapping_id':
-                    $item_type_mapping_id = $value;
-                    break;
-
-                case 'field_name':
-                    $field_name = $value;
-                    break;
-
-                case 'field_type':
-                    $data[$item_type_id]['fields'][$item_type_mapping_id] =
-                        array($field_name => $this->fieldTypes[$value]);
-                    break;
-                }
-            }
-        }
-        //  unset data array
-        unset($aPagedData['data']);
-
-        //  set data array
-        $aPagedData['data'] = $data;
         $output->aPagedData = $aPagedData;
+
+        if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+            $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+        }
+        $output->totalItems = $aPagedData['totalItems'];
+        $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
     /**
@@ -352,7 +336,7 @@ class ContentTypeMgr extends SGL_Manager
 		            return false;
                 }
             }
-			SGL::raiseMsg('content(s) type has successfully been deleted');
+			SGL::raiseMsg('content type(s) has successfully been deleted', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ParamHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -57,7 +57,9 @@ class SGL_ParamHandler
     function &singleton($source)
     {
         static $instances;
-        if (!isset($instances)) $instances = array();
+        if (!isset($instances)) {
+            $instances = array();
+        }
 
         $signature = md5($source);
         if (!isset($instances[$signature])) {
@@ -119,7 +121,7 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
     function read()
     {
         if (is_file($this->source)) {
-            $ok = @require $this->source;
+            $ok = require $this->source;
             if ($ok) {
                 $ret = $conf;
             } else {

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ListMgr.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -62,15 +62,18 @@ class ListMgr extends NewsletterMgr
         parent::NewsletterMgr();
 
         $this->pageTitle        = 'Newsletter List Mgr';
-        $this->template         = 'newsletter.html';
+        $this->template         = 'listSubscribers.html';
         $this->da               = & DA_User::singleton();
 
         $this->_aActionsMapping =  array(
             'list'   => array('list'),      // Compose newsletter
-            'send' => array('send', 'redirectToDefault'),
+            'send' => array('send','listSubscribers'),
             'addressBook'   => array('addressBook'),
             'listSubscribers' => array('listSubscribers'),
+            'exportSubscribers' => array('exportSubscribers'),
             'editSubscriber' => array('editSubscriber'),
+            'addSubscriber'	=> array('addSubscriber'),
+            'insertSubscriber' => array('insertSubscriber','listSubscribers'),
             'updateSubscriber' => array('updateSubscriber','listSubscribers'),
             'deleteSubscriber' => array('deleteSubscriber','listSubscribers'),
             'listLists' => array('listLists'),
@@ -99,6 +102,7 @@ class ListMgr extends NewsletterMgr
         $input->body        = $req->get('frmBodyName', $allowTags = true);
         $input->oUser       = $req->get('oUser');
 
+        $input->listName    = $req->get('frmListName');
         $aGroups            = $req->get('frmGroups');
         $input->groups      = array();
         $input->roleList    = $this->da->getRoles($excludeAdmin = true);
@@ -126,8 +130,18 @@ class ListMgr extends NewsletterMgr
             }
 
             // Validation for subscriber edit
-            if (isset($input->action) and $input->action == 'updateSubscriber') {
+            if (isset($input->action) && $input->action == 'updateSubscriber') {
                 $input->template = 'editSubscriber.html';
+
+                if (!(isset($input->oUser['newsletter_id']) && $input->oUser['newsletter_id'] > 0)) {
+                    SGL::raiseError('Incorrect parameter passed to ' .
+                    __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
+                }
+            }
+
+            // Validation for subscriber add
+            if (isset($input->action) && $input->action == 'insertSubscriber' ) {
+                $input->template = 'addSubscriber.html';
                 if (isset($input->oUser['email'])) {
                     if (!$v->email($input->oUser['email'])) {
                         $aErrors['email'] = 'incorrectly formatted email';
@@ -136,21 +150,35 @@ class ListMgr extends NewsletterMgr
                     $aErrors['email'] = 'Please fill in the email field';
                 }
 
-                if (!(isset($input->oUser['newsletter_id']) and $input->oUser['newsletter_id'] > 0)) {
+                if (!(isset($input->oUser['newsletter_id']) && $input->oUser['newsletter_id'] > 0)) {
                     SGL::raiseError('Incorrect parameter passed to ' .
                     __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
                 }
+
+                if (!empty($input->listName) && is_array($input->listName) && count($input->listName)) {
+                	$input->validNewsList = $this->_getList();
+
+                    foreach ($input->listName as $list) {
+                        if (!array_key_exists($list,$input->validNewsList)) {
+                            $aErrors['listName'] = 'Invalid input supplied to list name';
+                            break;
+                        }
+                    }
+                } else {
+                    $aErrors['listName'] = 'Please select at least one newsletter';
+                }
+
             }
 
             // Validate for list edit
-            if (isset($input->action) and $input->action == 'updateList') {
+            if (isset($input->action) && $input->action == 'updateList') {
                 $input->template = 'editList.html';
-                if (isset($input->oUser['list']) and strlen(trim($input->oUser['list'])) > 0) {
+                if (isset($input->oUser['list']) && strlen(trim($input->oUser['list'])) > 0) {
 
                     if (strlen($input->oUser['list']) > 32) {
                         $aErrors['list'] = 'Max lenght for list field is 32 characters';
                     }
-                    if (!empty($input->oUser['list']) and preg_match("([^\w\s])",$input->oUser['list'])) {
+                    if (!empty($input->oUser['list']) && preg_match("([^\w\s])",$input->oUser['list'])) {
                         $aErrors['list'] = 'Invalid input supplied to list name';
                     }
                     if (!$this->_checkForDuplicateList($input->oUser['list'], $input->oUser['newsletter_id'])) {
@@ -161,18 +189,19 @@ class ListMgr extends NewsletterMgr
                     $aErrors['list'] = 'Please fill in the list field';
                 }
 
-                if (isset($input->oUser['name']) and strlen($input->oUser['name']) > 128) {
+                if (isset($input->oUser['name']) && strlen($input->oUser['name']) > 128) {
                         $aErrors['name'] = 'Max lenght for description field is 128 characters';
                 }
 
-                if (!(isset($input->oUser['newsletter_id']) and $input->oUser['newsletter_id'] > 0)) {
+                if (!(isset($input->oUser['newsletter_id']) && $input->oUser['newsletter_id'] > 0)) {
                     SGL::raiseError('Incorrect parameter passed to ' .
                     __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
                 }
             }
 
             // Validation for sending messages
-            if (isset($input->action) and $input->action == 'send') {
+            if (isset($input->action) && $input->action == 'send') {
+                $input->template = 'newsletter.html';
 
                 if (empty($input->subject)) {
                     $aErrors['subject'] = 'Please fill in the subject field';
@@ -184,8 +213,8 @@ class ListMgr extends NewsletterMgr
                 $groupSelected = false;
 
                 // Lists validation
-                if (is_array($input->newsList) and count($input->newsList)) {
-                    foreach($input->newsList as $listID) {
+                if (is_array($input->listName) && count($input->listName)) {
+                    foreach($input->listName as $listID) {
                         if (!array_key_exists($listID,$input->validNewsList)) {
 
                            // Would only happen if someone was hacking the form:
@@ -216,10 +245,10 @@ class ListMgr extends NewsletterMgr
 
                 if (empty($input->email)) {
 
-                        //  if no groups/roles have been selected, make sure there's at least one email address
-                        if (!$groupSelected) {
-                            $aErrors['email'] = 'Please include at least one email address';
-                        }
+                    //  if no groups/roles have been selected, make sure there's at least one email address
+                    if (!$groupSelected) {
+                        $aErrors['email'] = 'Please include at least one email address';
+                    }
                 } else {
                     $aRecipients = explode(';', $input->email);
                     $aRecipientsWithNulls = array_filter($aRecipients, 'strlen');
@@ -256,6 +285,17 @@ class ListMgr extends NewsletterMgr
         $output->addOnLoadEvent("document.getElementById('frmResourceChooser').newsletterCompose.disabled = true");
     }
 
+    function _cmd_addSubscriber(& $input, & $output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template = 'addSubscriber.html';
+        $input->pageTitle = 'Newsletter List Mgr';
+        $output->mode = 'Add';
+        $output->action = 'insertSubscriber';
+        $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
+        $output->oUser = (array) $oUser;
+    }
+
     /**
     * Display the list of subscribers
     *
@@ -270,17 +310,19 @@ class ListMgr extends NewsletterMgr
         $input->pageTitle = 'Newsletter List Mgr :: Subscribers';
 
         $orderBy_query = '';
-        $allowedSortFields = array('newsletter_id','list','name','email','status','action_request','last_updated','date_created');
-        if (isset($input->sortBy) and strlen($input->sortBy) > 0
-           and isset($input->sortOrder) and strlen($input->sortOrder) > 0
-           and in_array($input->sortBy, $allowedSortFields)) {
+        $allowedSortFields = array('newsletter_id','list','name','email','status',
+            'action_request','last_updated','date_created');
+        if (isset($input->sortBy) && strlen($input->sortBy) > 0
+           && isset($input->sortOrder) && strlen($input->sortOrder) > 0
+           && in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         }
 
         $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE status <> 9 ".$orderBy_query;;
 
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
+        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit,
+            'totalItems' => $input->totalItems);
         $aPagedData = SGL_DB :: getPagedData($this->dbh, $query, $pagerOptions);
 
         if (!DB::isError($aPagedData)) {
@@ -293,6 +335,27 @@ class ListMgr extends NewsletterMgr
             $output->aPagedData = $aPagedData;
         }
         $output->addOnLoadEvent("document.getElementById('frmResourceChooser').newsletterSubscribers.disabled = true");
+    }
+
+    function _cmd_exportSubscribers(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->template = 'exportSubscribers.html';
+        $input->pageTitle = 'Newsletter List Mgr :: Subscribers';
+
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT * FROM {$this->conf['table']['newsletter']} " .
+                " WHERE status = 0 " .
+                " GROUP BY email ";
+		$result = $dbh->query($query);
+
+		$output->totalItems = $result->numRows();
+		$userList = array();
+		while($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+			$userList[] = $row;
+		}
+		$output->userList = $userList;
     }
 
     /**
@@ -309,8 +372,30 @@ class ListMgr extends NewsletterMgr
 
         $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
         $oUser->get($input->newsletter_id);
-
         $output->oUser = (array) $oUser;
+        $output->action = 'updateSubscriber';
+    }
+
+    function _cmd_insertSubscriber (& $input, & $output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template = 'addSubscriber.html';
+        $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
+        foreach ($input->listName as $list) {
+	        $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
+	        $oUser->setFrom($input->oUser);
+	        $oUser->newsletter_id = $this->dbh->nextId('newsletter');
+	        $oUser->date_created = SGL_Date::getTime(true);
+	        $oUser->last_updated = SGL_Date::getTime(true);
+	        $oUser->list = $input->validNewsList[$list]['name'];
+	        $success = $oUser->insert();
+	    }
+        if ($success === false) {
+            SGL::raiseError('Incorrect parameter passed to ' .
+                __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
+        } else {
+            SGL::raiseMsg('Subscriber updated successfully', true, SGL_MESSAGE_INFO);
+        }
     }
 
     /**
@@ -326,7 +411,6 @@ class ListMgr extends NewsletterMgr
         $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
 
         $input->oUser = (object) $input->oUser;
-        $input->oUser->action_request = $input->oUser->action_request == 'empty' ? '' : $input->oUser->action_request;
 
         $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
         $oUser->get($input->oUser->newsletter_id);
@@ -344,7 +428,7 @@ class ListMgr extends NewsletterMgr
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         } else {
-            SGL::raiseMsg('Subscriber updated successfully');
+            SGL::raiseMsg('Subscriber updated successfully', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -366,9 +450,10 @@ class ListMgr extends NewsletterMgr
                 unset ($oUser);
             }
         } else {
-            SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+            SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
         }
-        SGL :: raiseMsg('Subscriber deleted successfully');
+        SGL :: raiseMsg('Subscriber deleted successfully', true, SGL_MESSAGE_INFO);
     }
 
 
@@ -387,16 +472,17 @@ class ListMgr extends NewsletterMgr
 
         $orderBy_query = '';
         $allowedSortFields = array('newsletter_id','list','name','last_updated','date_created');
-        if (isset($input->sortBy) and strlen($input->sortBy) > 0
-           and isset($input->sortOrder) and strlen($input->sortOrder) > 0
-           and in_array($input->sortBy, $allowedSortFields)) {
+        if (isset($input->sortBy) && strlen($input->sortBy) > 0
+           && isset($input->sortOrder) && strlen($input->sortOrder) > 0
+           && in_array($input->sortBy, $allowedSortFields)) {
                 $orderBy_query = 'ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         }
 
         $query = "SELECT * FROM {$this->conf['table']['newsletter']} WHERE status = 9 ".$orderBy_query;;
 
         $limit = 5 * $_SESSION['aPrefs']['resPerPage'];
-        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit, 'totalItems' => $input->totalItems);
+        $pagerOptions = array ('mode' => 'Sliding', 'delta' => 3, 'perPage' => $limit,
+            'totalItems' => $input->totalItems);
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         if (!DB::isError($aPagedData)) {
@@ -424,10 +510,8 @@ class ListMgr extends NewsletterMgr
         SGL_DB::setConnection();
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Add';
-
         $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
         $oUser->newsletter_id = $this->dbh->nextId('newsletter');
-
         $output->oUser = (array)$oUser;
     }
 
@@ -443,10 +527,8 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'editList.html';
         $input->pageTitle = 'Newsletter List Mgr :: List Edit';
-
         $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
         $oUser->get($input->newsletter_id);
-
         $output->oUser = (array) $oUser;
     }
 
@@ -499,7 +581,7 @@ class ListMgr extends NewsletterMgr
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
         } else {
-            SGL :: raiseMsg('List updated successfully');
+            SGL :: raiseMsg('List updated successfully', true, SGL_MESSAGE_INFO);
         }
     }
 
@@ -522,9 +604,10 @@ class ListMgr extends NewsletterMgr
                 unset ($oUser);
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
         }
-        SGL::raiseMsg('List deleted successfully');
+        SGL::raiseMsg('List deleted successfully', true, SGL_MESSAGE_INFO);
     }
 
 
@@ -551,8 +634,8 @@ class ListMgr extends NewsletterMgr
 
         // Add newsletter emails to the address list
         $sListRecipients = '';
-        if (is_array($input->newsList) and count($input->newsList)) {
-            foreach($input->newsList as $listID) {
+        if (is_array($input->listName) && count($input->listName)) {
+            foreach($input->listName as $listID) {
             $aListUsers = $this->_getUsersByList($input->validNewsList[$listID]['name']);
                 foreach ($aListUsers as $user) {
                     $sListRecipients .= $user['email'] . ';';
@@ -565,10 +648,10 @@ class ListMgr extends NewsletterMgr
 
         // Remove empty and duplicate emails
         foreach($tmpRecipients as $tmpEmail) {
-            if (strlen($tmpEmail) > 0 AND !in_array($tmpEmail, $aRecipients)) {
+            if (strlen($tmpEmail) > 0 && !in_array($tmpEmail, $aRecipients)) {
                 $aRecipients[] = $tmpEmail;
             }
-        }
+        };
 
         if (count($aRecipients) < 1) {
             SGL::raiseError('Problem sending email: no recipients', SGL_ERROR_EMAILFAILURE);
@@ -589,7 +672,7 @@ class ListMgr extends NewsletterMgr
         }
         if ($success) {
             //  redirect on success
-            SGL::raiseMsg('Newsletter sent successfully');
+            SGL::raiseMsg('Newsletter sent successfully', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
         }
@@ -607,8 +690,8 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $aRoles = $this->da->getRoles($excludeAdmin = true);
-
-        $output->groups = SGL_Output::generateCheckboxList($output->roleList, $input->groups, 'frmGroups[]');
+        $output->groups = SGL_Output::generateCheckboxList($output->roleList,
+            $input->groups, 'frmGroups[]');
         foreach ($aRoles as $roleId => $roleName) {
             $aAllEmailsByRole[$roleName] = $this->da->getEmailsByRole($roleId);
 
@@ -638,7 +721,8 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (empty($listName)) {
-            SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
             return false;
         }
 
@@ -673,7 +757,8 @@ class ListMgr extends NewsletterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (strlen($listName) < 0 or $listId < 1) {
-            SGL :: raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__, SGL_ERROR_INVALIDARGS);
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
             return false;
         }
 
@@ -691,6 +776,44 @@ class ListMgr extends NewsletterMgr
             return false;
         }
         return true;
+    }
+
+    /**
+    * Checks if an email is subscribed or not
+    *
+    * @access   private
+    * @author   Benea Rares <rbenea@bluestardesign.ro>
+    * @param    string      $email
+    * @param    integer     $listName   List Name
+    * @return   boolean                 true if exists, false if not exists or on error
+    *
+    */
+    function _checkIfSubscribed($email, $listName = null)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (empty($email)) {
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+                SGL_ERROR_INVALIDARGS);
+            return false;
+        }
+
+        $query = "
+            SELECT email FROM {$this->conf['table']['newsletter']}
+            WHERE email='$email' ";
+        if(empty($listID)) {
+            $query .= " AND list='$listName' ";
+        }
+
+        $result = $this->dbh->query($query);
+        if (is_a($result, 'PEAR_Error')) {
+            return false;
+        }
+
+        if ($result->numRows() > 0) {
+            return true;
+        }
+        return false;
     }
 }
 ?>

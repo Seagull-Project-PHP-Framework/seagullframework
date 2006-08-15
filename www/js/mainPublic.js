@@ -13,7 +13,8 @@ function collapseElement(display,elementId)
 
 //  Allows to highlight a row when hovering it with mouse
 //  Needs every row to have a "back..." class name
-function switchRowColorOnHover() {
+function switchRowColorOnHover()
+{
 	var table = document.getElementsByTagName("table");
     for (var i=0; i<table.length; i++) {
         var row = table[i].getElementsByTagName("tr");
@@ -73,6 +74,26 @@ function confirmSubmit(item, formName)
         return false
     }
     var agree = confirm("Are you sure you want to delete this " + item + "?");
+    if (agree)
+        return true;
+    else
+        return false;
+}
+
+function confirmDelete(item, formName)
+{
+    var evalFormName = eval('document.' + formName)
+    var flag = false
+    var agree = confirm("Are you sure you want to delete this " + item + "?");
+    if (agree)
+        return true;
+    else
+        return false;
+}
+
+function confirmDeleteWithMsg(msg)
+{
+    var agree = confirm(msg);
     if (agree)
         return true;
     else
@@ -211,5 +232,119 @@ function time_select_reset(prefix, changeBack) {
         if (changeBack == true) {
             setActive('frmExpiryDate');
         }
+    }
+}
+
+function async_load()
+{
+    var node;
+    try {
+    	// variable _asyncDom is set from JavaScript in the iframe
+        // node = top._asyncDom.cloneNode(true); // kills Safari 1.2.4
+        node = top._asyncDom;
+        // try to remove the first script element, the one that
+        // executed all document.writes().
+        node.removeChild(node.getElementsByTagName("script")[0]);
+    } catch (e) {
+        // alert(e);
+    }
+    try {
+    	// insert DOM fragment at a DIV with id "async_demo" on current page
+        document.getElementById("async_demo").appendChild(node);
+    } catch (e) {
+        try {
+        	// fallback for some non DOM compliant browsers
+            document.getElementById("async_demo").innerHTML = node.innerHTML;
+        } catch (e1) {};
+    }
+}
+
+//  calling -> makeUrl({'module':'mymodule', 'action':'generateReport', 'param2': 'foo bar'});
+function makeUrl(params)
+{
+    var rslt = SGL_JS_WEBROOT + '/' + SGL_JS_FRONT_CONTROLLER;
+    var moduleName  =  (params.module) ? params.module : '';
+    var managerName =  (params.manager) ? params.manager : moduleName;
+
+    switch (SGL_JS_URL_STRATEGY) {
+    case 'SGL_UrlParser_ClassicStrategy':
+        if (rslt.charAt(rslt.length - 1) != '?') {
+          rslt = rslt + '?';
+        }
+        rslt = rslt + 'moduleName=' + escape(moduleName) + '&managerName=' + escape(managerName) + '&';
+        for (x in params) {
+            if ((x == 'module') || (x =='manager')) {
+                continue;
+            }
+            rslt = rslt + escape(x) + '=' + escape(params[x]) + '&';
+        }
+        break;
+
+    default:
+        rslt = rslt + '/' + escape(moduleName) + '/' + escape(managerName) + '/';
+        for (x in params) {
+            if ((x == 'module') || (x =='manager')) {
+                continue;
+            }
+            rslt = rslt + escape(x) + '/' + escape(params[x]) + '/';
+        }
+        break;
+    }
+    return rslt;
+}
+
+/**
+ * Checks/unchecks all tables, modified from phpMyAdmin
+ *
+ * @param   string   the form name
+ * @param   boolean  whether to check or to uncheck the element
+ *
+ * @return  boolean  always true
+ */
+function setCheckboxes(the_form, element_name, do_check)
+{
+    var elts      = (typeof(document.forms[the_form].elements[element_name]) != 'undefined')
+                  ? document.forms[the_form].elements[element_name]
+                  : '';
+    var elts_cnt  = (typeof(elts.length) != 'undefined')
+                  ? elts.length
+                  : 0;
+    //var applyToWholeForm =
+    //alert(element_name)
+
+
+    if (elts_cnt) {
+        for (var i = 0; i < elts_cnt; i++) {
+            elts[i].checked = do_check;
+        }
+    //  tick all checkboxes per form
+    } else if (element_name == false) {
+        var f = document.forms[the_form];
+        for (var c = 0; c < f.elements.length; c++)
+        if (f.elements[c].type == 'checkbox') {
+          f.elements[c].checked = do_check;
+        }
+
+    } else {
+        elts.checked        = do_check;
+    }
+    return true;
+}
+
+/**
+ * Launches the above function depending on the status of a trigger checkbox
+ *
+ * @param   string   the form name
+ * @param   string   the element name
+ * @param   boolean   the status of triggered checkbox
+ *
+ * @return  void
+ */
+function applyToAllCheckboxes(formName, elementName, isChecked)
+{
+    if (isChecked) {
+        setCheckboxes(formName, elementName, true)
+    } else {
+        setCheckboxes(formName, elementName, false)
     }
 }

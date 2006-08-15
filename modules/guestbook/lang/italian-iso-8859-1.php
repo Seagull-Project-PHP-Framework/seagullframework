@@ -1,11 +1,21 @@
 <?php
-$words['Guestbook Manager'] = 'Gestore Lista Contatti';
-$words['Guestbook Manager :: Add'] = 'Gestore Lista Contatti :: Aggiungi';
+$words['E-Mail'] = 'E-Mail';
+$words['List'] = 'Lista';
+$words['Date'] = 'Data';
+$words['New Entry'] = 'Nuovo';
+$words['Guestbook List'] = 'Lista Guestbook';
+$words['Guestbook Details'] = 'Dettaglio';
+$words['Entry deleted successfully'] = 'Eliminazione effettuata';
+$words['Enter Captcha'] = 'Inserisci il numero';
+$words['You must enter the number in this field'] = 'Inserisci il numero visualizzato';
+$words['Verify'] = 'Verifica';
+$words['New guestbook entry in'] = 'Nuovo guest in';
+$words['Guestbook Manager'] = 'Gestione Lista Contatti';
+$words['Guestbook Manager :: Add'] = 'Gestione Lista Contatti :: Aggiungi';
 $words['No Guestbook entries found'] = 'Nessun contatto trovato';
 $words['add new entry'] = 'aggiungi un contatto';
-$words['Name'] = 'Nome';
-$words['E-Mail'] = 'E-Mail';
 $words['Message'] = 'Messaggio';
+$words['Name'] = 'Nome';
 $words['Add'] = 'Aggiungi';
 $words['Cancel'] = 'Cancella';
 $words['Please, specify your name'] = 'Manca il nome';

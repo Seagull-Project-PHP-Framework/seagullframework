@@ -18,14 +18,19 @@
             </p>
 
             <p>
-                <label for="frmCreateModule[moduleName]">{translate(#Module Name#)}</label>
-                <span class="error" flexy:if="error[moduleName]">{translate(error[moduleName])}</span>
+                <label class="tipOwner" for="frmCreateModule[moduleName]">{translate(#Module Name#)}
+                <span class="tipText">{translate(#Please choose a simple, single word#)}</span></label>
+                <span class="error" flexy:if="error[managerName]">{translate(error[managerName])}</span>
                 <input type="text" name="frmCreateModule[moduleName]" id="frmCreateModule[moduleName]"  value="{createModule.moduleName}"/>
             </p>
             <p>
-                <label for="frmCreateModule[managerName]">{translate(#Manager Name#)}</label>
+                <label class="tipOwner" for="frmCreateModule[managerName]">{translate(#Manager Name#)}
+                <span class="tipText">{translate(#The manager, which can be#)}</span></label>
                 <span class="error" flexy:if="error[managerName]">{translate(error[managerName])}</span>
                 <input type="text" name="frmCreateModule[managerName]" id="frmCreateModule[managerName]"  value="{createModule.managerName}"/>
+            </p>
+            <p>
+                <span class="error" flexy:if="error[not_writable]">{translate(error[not_writable])}</span>
             </p>
             <p>
                 <label>{translate(#Add following methods#)}</label>
@@ -40,11 +45,15 @@
             </p>
             <p>
                 <label for="frmCreateModule[createCRUD]">{translate(#Create CRUD actions#)}</label>
-                <input type="checkbox" name="frmCreateModule[createCRUD]" id="frmCreateModule[createCRUD]" value="1" checked="checked" />
+                <input type="checkbox" name="frmCreateModule[createCRUD]" id="frmCreateModule[createCRUD]" value="1" />
             </p>
             <p>
                 <label for="frmCreateModule[createTemplates]">{translate(#Create Templates#)}</label>
                 <input type="checkbox" name="frmCreateModule[createTemplates]" id="frmCreateModule[createTemplates]" value="1" checked="checked" />
+            </p>
+            <p>
+                <label for="frmCreateModule[createLangFiles]">{translate(#Create language files#)}</label>
+                <input type="checkbox" name="frmCreateModule[createLangFiles]" id="frmCreateModule[createLangFiles]" value="1" checked="checked" />
             </p>
             <p>
                 <label for="frmCreateModule[createIniFile]">{translate(#Create ini file#)}</label>

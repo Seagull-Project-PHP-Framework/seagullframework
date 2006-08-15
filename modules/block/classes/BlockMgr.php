@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockMgr.php                                                              |
 // +---------------------------------------------------------------------------+
@@ -158,6 +158,9 @@ class BlockMgr extends SGL_Manager
         $output->mode      = 'New block';
         $output->template  = 'blockEdit.html';
         $output->isAdd     = true;
+        $output->block->roles    = SGL_ANY_ROLE;
+        $output->block->sections = SGL_ANY_SECTION;
+
         $this->_editDisplay($output);
     }
 

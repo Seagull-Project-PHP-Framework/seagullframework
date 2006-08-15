@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ErrorHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -180,10 +180,10 @@ EOF;
 
                 //  get extra info
                 $dbh = & SGL_DB::singleton();
-                $lastQuery = $dbh['last_query'];
+                $lastQuery = $dbh->last_query;
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
-                $aExtraInfo['lastSQL'] = isset($dbh['last_query']) ?
-                    $dbh['last_query'] : null;
+                $aExtraInfo['lastSQL'] = isset($dbh->last_query) ?
+                    $dbh->last_query : null;
                 $aExtraInfo['userID'] = SGL_Session::get('uid');
                 $aExtraInfo['clientData']['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
                 $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];

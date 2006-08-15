@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | TranslationMgr.php                                                        |
 // +---------------------------------------------------------------------------+
@@ -191,7 +191,7 @@ class TranslationMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get hash of all modules;
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_NAME_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
 
         //  load available languages
         $output->aLangs = ($this->conf['translation']['container'] == 'file')
@@ -327,7 +327,7 @@ class TranslationMgr extends SGL_Manager
         $output->template = 'langCheckAll.html';
 
         //  get hash of all modules
-        $modules = $this->da->retrieveAllModules(SGL_RET_NAME_VALUE);
+        $modules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
 
         //  ok, now check each module
         $status['1'] = 'ok';
@@ -439,7 +439,7 @@ class TranslationMgr extends SGL_Manager
 
         //  else display error with blank template
         } else {
-            $output->template = 'translationMgr.html';
+            $output->template = 'docBlank.html';
         }
     }
 

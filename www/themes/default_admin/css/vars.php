@@ -2,6 +2,7 @@
 /* Font related vars
     ------------------------------------------------- */
     $fontFamily             = 'arial, verdana, helvetica, sans-serif';
+    $fontFamilyAlt          = 'tahoma, serif';
     $fontSize               = '12px';
 
 /* Palette scheme related vars

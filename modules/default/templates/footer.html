@@ -1,18 +1,41 @@
-</div> <!-- close sgl-main -->
+        </div> <!-- close inner-wrapper -->
 
-<div id="footer">
-    {translate(#Powered by#)} <a href="http://seagull.phpkitchen.com" title="{translate(#Seagull framework homepage#)}">{translate(#Seagull Framework#)}</a>
-    {if:isAdmin()}
-		 v{versionAPI}
-	{end:}
-	<br />
-	{if:executionTime}
-        {translate(#Execution Time#)} = {executionTime} {translate(#ms#)}{if:queryCount}, {queryCount} {translate(#queries#)} {end:}
-    {end:}
 
-    {if:conf[debug][profiling]}
-    <p>{memoryUsage} kb {translate(#allocated#)}</p>
-    {end:}
-</div>
+        <div id="footer">
+            <div class="wrapLeft">
+                <div class="wrapRight">
+                    <div class="wrap">
+                        <p>
+                        {translate(#Powered by#)} <a href="http://seagullproject.org/" title="{translate(#Seagull PHP Framework#)}">
+                        {translate(#Seagull PHP Framework#)}</a>
+                        {if:isAdmin()}
+                            v{versionAPI}
+                        {end:}
+                         - &copy;
+                        <a href="http://seagullsystems.com/" title="Seagull Systems">Seagull Systems</a> 2003-2006
+                        </p>
+                        {if:executionTime}
+                        <p>
+                        {translate(#Execution Time#)} = {executionTime} {translate(#ms#)}{if:queryCount}, {queryCount} {translate(#queries#)} {end:}
+                        </p>
+                        {end:}
+
+                        {if:conf[debug][profiling]}
+                        <p>{memoryUsage} kb {translate(#allocated#)}</p>
+                        {end:}
+
+<!--    <form name="rebuildSeagull" method="post" action="{makeUrl(##,#maintenance#,#default#)}" id="rebuildSeagull" flexy:ignore>
+        <p class="center">
+            <input type="hidden" name="action" value="rebuildSeagull" />
+            <input type="submit" class="sgl-button"name="submit" value="{translate(#Rebuild Seagull#)}" />
+        </p>
+    </form>-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- close outer-wrapper -->
 </body>
 </html>

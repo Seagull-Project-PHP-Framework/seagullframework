@@ -1,0 +1,89 @@
+<div id="module_header">
+	<h1>Manage Your Locations</h1>
+    <div class="message">{msgGet()}</div>
+</div>
+
+<flexy:include src="locationNav.html" />
+<div id="add_edit_form">
+<form method="post" flexy:ignore>
+<input type="hidden" name="action" value="{action}" />
+<input type="hidden" name="location_id" value="{location.location_id}" />
+    <div class="form_section">
+            <div class="label_div"><label for="location[name]">Location Name</label></div>
+            <input type="text" size="63" name="location[name]" value="{location.name}" />
+            <p class="errorMessage" flexy:if="error[name]">{error[name]}</p>
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[addr_1]">Address Line 1</label></div>
+            <input type="text" name="address[addr_1]" value="{location._address_id.addr_1}" size="63" />
+            <p class="errorMessage" flexy:if="error[addr_1]">{error[addr_1]}</p>
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[addr_2]">Address Line 2</label></div>
+            <input type="text" name="address[addr_2]" value="{location._address_id.addr_2}" size="63" />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[addr_3]">Address Line 3</label></div>
+            <input type="text" name="address[addr_3]" value="{location._address_id.addr_3}" size="63" />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[city]">City</label></div>
+            <input type="text" name="address[city]" value="{location._address_id.city}" size="63" />
+    </div>
+
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[region]">County</label></div>
+            <select name="address[region]">
+                {generateSelect(counties,location._address_id.region):h}
+            </select>
+            <p class="errorMessage" flexy:if="error[region]">{error[region]}</p>
+    </div>
+
+
+    <div class="form_section">
+            <div class="label_div"><label for="address[post_code]">Post Code</label></div>
+            <input type="text" name="address[post_code]" value="{location._address_id.post_code}" size="63" />
+            <p class="errorMessage" flexy:if="error[post_code]">{error[post_code]}</p>
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="location[website]">Web Site</label></div>
+            <input type="text" name="location[website]" value="{location.website}" size="63"  />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="location[email]">Email Address</label></div>
+            <input type="text" name="location[email]" value="{location.email}" size="63" />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="location[telephone]">Telephone Number</label></div>
+            <input type="text" name="location[telephone]" value="{location.telephone}" size="63" />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="location[fax]">Fax Number</label></div>
+            <input type="text" name="location[fax]" value="{location.fax}" size="63" />
+    </div>
+
+    <div class="form_section">
+            <div class="label_div"><label for="location[type_id]">Type</label></div>
+            <select name="location[type_id]">
+                {generateSelect(locations,location.type_id):h}
+            </select>
+    </div>
+
+    <div>
+		<div class="form_section">
+			<input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
+			<input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}"
+                   onClick="document.location.href='{makeUrl(#list#,#location#,#event#):h}'" />
+		</div>
+    </div>
+</form>
+</div>

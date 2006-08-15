@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | String.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -101,29 +101,26 @@ class SGL_String
     /**
      * Defines the <CR><LF> value depending on the user OS.
      *
-     * From the phpMyAdmin common library
-     *
      * @return  string   the <CR><LF> value to use
      * @access  public
-     * @author  Marc Delisle <DelislMa@CollegeSherbrooke.qc.ca>
      */
     function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $crlf = "\n";
-
-        // Win case
-        if (SGL_CLIENT_OS == 'Win') {
-            $crlf = "\r\n";
-        }
-        // Mac case
-        elseif (SGL_CLIENT_OS == 'Mac') {
-            $crlf = "\r";
-        }
-        // Others
-        else {
-            $crlf = "\n";
+        if (defined(PHP_EOL)) {
+            $crlf = PHP_EOL;
+        } else {
+            // Win case
+            if (SGL_CLIENT_OS == 'Win') {
+                $crlf = "\r\n";
+            }
+            // Mac case
+            elseif (SGL_CLIENT_OS == 'Mac') {
+                $crlf = "\r";
+            } else {
+                $crlf = "\n";
+            }
         }
         return $crlf;
     }
@@ -293,7 +290,6 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                require_once SGL_CORE_DIR . '/Translation.php';
                 $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
@@ -305,22 +301,6 @@ class SGL_String
                 : $key;
             return $key;
         }
-    }
-
-    /**
-     * Primarily used for obfuscating email addresses to prevent spam
-     * harvesting. Since it is URL-encoded, this can be used only in the href
-     * part of a <a> tag (mailto: scheme).
-     *
-     * @param string $str String to encode
-     * @return string $encoded Encoded string
-     */
-    function obfuscate($str)
-    {
-        $encoded = bin2hex($str);
-        $encoded = chunk_split($encoded, 2, '%');
-        $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
-        return $encoded;
     }
 
     /**
@@ -373,6 +353,22 @@ class SGL_String
 
     /**
      * Primarily used for obfuscating email addresses to prevent spam
+     * harvesting. Since it is URL-encoded, this can be used only in the href
+     * part of a <a> tag (mailto: scheme).
+     *
+     * @param string $str String to encode
+     * @return string $encoded Encoded string
+     */
+    function obfuscate($str)
+    {
+        $encoded = bin2hex($str);
+        $encoded = chunk_split($encoded, 2, '%');
+        $encoded = '%' . substr($encoded, 0, strlen($encoded) - 1);
+        return $encoded;
+    }
+
+    /**
+     * Primarily used for obfuscating email addresses to prevent spam
      * harvesting.
      *
      * @param string $str String to encode
@@ -398,6 +394,57 @@ class SGL_String
         );
         return $encoded;
      }
+
+    /**
+     * Lightweight function to obfuscate mail addresses: substitutes @ and dots
+     * in the domain part with a string.
+     *
+     * @access  public
+     * @param   string $address
+     * @return  string
+     *
+     * @author Riccardo Magliocchetti <riccardo@datahost.it>
+     */
+    function obfuscate3($address)
+    {
+        $at = '(at)';
+        $dot = '(dot)';
+
+        $len = strlen($address);
+        $pos = strpos($address, '@');
+        $name = substr($address, 0, $pos-$len);
+
+        /* Trick to avoid the regex */
+        $domain = $at . substr($address, $pos+1);
+        $domain = preg_replace('/\./', $dot, $domain);
+
+        return $name . $domain;
+    }
+
+    /**
+     * Munge email addresses swapping plain text with html char entities as
+     * explained here: http://perso.crans.org/~raffo/aem/index.php.
+     *
+     * @access  public
+     * @param   string $address
+     * @return  string
+     *
+     * @author Riccardo Magliocchetti <riccardo@datahost.it>
+     */
+    function mungeMailAddress($address)
+    {
+        $len = strlen($address);
+        $aOld = str_split($address);
+        $aMunged = array();
+
+        for ($i = 0; $i < $len; $i++) {
+            $aMunged[$i] =  "&#" . ord($aOld[$i]) . ";";
+        }
+
+        $munged = implode('' ,$aMunged);
+
+        return $munged;
+    }
 
     /**
      * Returns a shortened version of text string resolved by word boundaries.
@@ -426,7 +473,6 @@ class SGL_String
         }
         return  $ret;
     }
-
 
     /**
      * Returns a set number of lines of a block of html, for summarising articles.
@@ -493,6 +539,11 @@ class SGL_String
             $i++;
         }
         return $formated;
+    }
+
+    function toValidFileName($origName)
+    {
+        return SGL_String::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/

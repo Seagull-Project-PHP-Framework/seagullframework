@@ -21,7 +21,7 @@
                     <tr>
                         <th width="3%">
                             <span class="tipOwner">
-                                <span class="tipText" id="becareful">Be Careful !</span>
+                                <span class="tipText" id="becareful">{translate(#Be Careful!#)}</span>
                                 <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('roles', 'frmDelete[]', this.checked)" />
                             </span>
                         </th>
@@ -47,11 +47,15 @@
                         <td class="left">{aValue[description]}</td>
                         <td flexy:if="isAdminOrUnassigned(aValue[role_id])">&nbsp;</td>
                         <td flexy:if="!isAdminOrUnassigned(aValue[role_id])">
+                        {if:!isEqual(aValue[name],#guest#)}
                         <a href="{makeUrl(#editPerms#,#role#,#user#,aPagedData[data],#frmRoleID|role_id#,key)}" class="sgl-button">{translate(#change#)}</a>
+                        {end:}
                         </td>
                         <td flexy:if="isAdminOrUnassigned(aValue[role_id])">&nbsp;</td>
                         <td flexy:if="!isAdminOrUnassigned(aValue[role_id])">
+                        {if:!isEqual(aValue[name],#guest#)}
                         <a href="{makeUrl(#duplicate#,#role#,#user#,aPagedData[data],#frmRoleID|role_id#,key)}" class="sgl-button">{translate(#duplicate#)}</a>
+                        {end:}
                         </td>
                     </tr>
                 </tbody>

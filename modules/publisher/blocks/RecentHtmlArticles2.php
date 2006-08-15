@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | RecentHtmlArticles.php                                                    |
 // +---------------------------------------------------------------------------+
@@ -89,7 +89,7 @@ class Publisher_Block_RecentHtmlArticles2
                 AND     i.item_id = ia.item_id
                 AND     i.item_id = ia2.item_id
                 AND     i.start_date < '" . SGL_Date::getTime() . "'
-                AND     i.expiry_date  > '" . SGL_Date::getTime() . "'
+                AND     (i.expiry_date  > '" . SGL_Date::getTime() . "' OR i.expiry_date IS NULL)
                 AND     itm.field_name = 'title'
                 AND     it.item_type_id  = 2
                 AND     itm.field_type != itm2.field_type

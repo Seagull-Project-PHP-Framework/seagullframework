@@ -1,4 +1,6 @@
 <?php
+$words['Enter Captcha'] = 'Immetti li numero visualizzato';
+$words['You must enter the number in this field'] = 'Inserire il numero visibile in questo campo';
 $words['Contact Us'] = 'Contattaci';
 $words['First Name'] = 'Nome';
 $words['Last Name'] = 'Cognome';

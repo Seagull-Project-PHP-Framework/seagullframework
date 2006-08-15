@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | PermissionMgr.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: PermissionMgr.php,v 1.58 2005/05/28 13:46:30 demian Exp $
 
-require_once SGL_CORE_DIR . '/Manager.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
@@ -86,6 +85,7 @@ class PermissionMgr extends SGL_Manager
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $this->validated        = true;
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = 'masterMinimal.html';
@@ -106,12 +106,10 @@ class PermissionMgr extends SGL_Manager
         $input->{ 'sort_' . $input->sortBy } = true;
 
         $aErrors = array();
-        if ($input->submitted) {
-            if ($input->action == 'insert' || $input->action == 'update') {
-                if (empty($input->perm->name)) {
-                    $this->validated = false;
-                    $aErrors['name'] = 'You must enter a permission name';
-                }
+        if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
+            if (empty($input->perm->name)) {
+                $this->validated = false;
+                $aErrors['name'] = 'You must enter a permission name';
             }
         }
         //  if errors have occured
@@ -122,8 +120,10 @@ class PermissionMgr extends SGL_Manager
             $input->pageTitle = ($input->action == 'update')
                 ? $this->pageTitle . ' :: Edit'
                 : $this->pageTitle . ' :: Add';
-            $input->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
-            $input->currentModule = $input->perm->module_id;
+            $input->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
+            if (!empty($input->perm->module_id)) {
+                $input->currentModule = $input->perm->module_id;
+            }
         }
     }
 
@@ -136,7 +136,7 @@ class PermissionMgr extends SGL_Manager
         $output->perm = DB_DataObject::factory($this->conf['table']['permission']);
 
         // setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $input->permId;
     }
 
@@ -181,10 +181,6 @@ class PermissionMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!SGL::objectHasState($input->perm)) {
-            SGL::raiseError('No data in input object', SGL_ERROR_NODATA);
-            return false;
-        }
         SGL_DB::setConnection();
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
 
@@ -216,7 +212,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return false;
         }
         $input->template = 'permScan.html';
@@ -253,7 +249,7 @@ class PermissionMgr extends SGL_Manager
 
         //  skip insert if no perms were selected
         if (empty($input->scannedPerms) || count($input->scannedPerms) == 0) {
-            SGL::raiseMsg('No perms were selected', true, SGL_MESSAGE_WARNING);
+            SGL::raiseMsg('No perms were selected', false, SGL_MESSAGE_WARNING);
             return;
         }
         $input->template = 'permScan.html';
@@ -274,6 +270,7 @@ class PermissionMgr extends SGL_Manager
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->template = 'permEdit.html';
         $output->pageTitle = $this->pageTitle . ' :: Edit';
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
@@ -281,13 +278,14 @@ class PermissionMgr extends SGL_Manager
         $output->perm = $oPerm;
 
         //  setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $this->da->getModuleIdByPermId($input->permId);
     }
 
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oPerm = DB_DataObject::factory($this->conf['table']['permission']);
         $oPerm->get($input->perm->permission_id);
         $original = clone($oPerm);
@@ -315,7 +313,6 @@ class PermissionMgr extends SGL_Manager
             unset($oPerm);
         }
         //  deleting associated perms - taken care of by cascading deletes
-
         //  update perms superset cache
         SGL_Cache::clear('perms');
 
@@ -374,7 +371,7 @@ class PermissionMgr extends SGL_Manager
         $output->addOnLoadEvent("switchRowColorOnHover()");
 
         //  setup module combobox
-        $output->aModules = $this->da->retrieveAllModules(SGL_RET_ID_VALUE);
+        $output->aModules = $this->da->getModuleHash(SGL_RET_ID_VALUE);
         $output->currentModule = $output->moduleId;
    }
 
@@ -401,7 +398,8 @@ class PermissionMgr extends SGL_Manager
         foreach ($filePerms as $k => $filePerm) {
             $found = false;
             foreach ($dbPerms as $k2 => $dbPerm) {
-                if ($dbPerm['name'] == $filePerm['perm']) {
+                if (($dbPerm['module_name'] == $filePerm['module_name'])
+                        && ($dbPerm['name'] == $filePerm['perm'])) {
                     $found = true;
                     break;
                 }
@@ -410,8 +408,8 @@ class PermissionMgr extends SGL_Manager
             //  delimited value used for form submission
             if (!$found) {
 
-                //  ignore 'redirect*' type perms
-                if (preg_match("/redirect/", $filePerm['perm'])) {
+                //  ignore 'redirectTo*' type perms
+                if (preg_match("/redirectTo/i", $filePerm['perm'])) {
                     continue;
                 }
                 $permType = (strpos($filePerm['perm'], '_') === false) ? 'class' : 'method';
@@ -461,7 +459,8 @@ class PermissionMgr extends SGL_Manager
     }
 
    /**
-    * Scans class files and retrieves an array of class and method perms using the aAllowedActions property
+    * Scans class files of registered modules and retrieves an array of class
+    * and method perms using the aAllowedActions property
     *
     * @author  Jacob Hanson <jacdx@jacobhanson.com>
     * @copyright Jacob Hanson 2004
@@ -474,81 +473,92 @@ class PermissionMgr extends SGL_Manager
 
         //  get a list of modules in db
         $query = "SELECT module_id, name FROM {$this->conf['table']['module']}";
-		$modules = $this->dbh->getAssoc($query);
+        $modules = $this->dbh->getAssoc($query);
 
-		if (is_a($modules, 'PEAR_Error')) {
-           return SGL::raiseError('There was a problem retrieving modules',
+        if (PEAR::isError($modules)) {
+            return SGL::raiseError('There was a problem retrieving modules',
                 SGL_ERROR_NODATA);
-		}
-
-        $permsFound = array();
+        }
 
         //  scan
-        require_once  'System.php';
-        $files = System::find(array(SGL_MOD_DIR, '-maxdepth', 3, '-name' , '*.php'));
+        require_once 'System.php';
 
-        foreach ($files as $k => $v) {
-            //  only process files in 'classes' directories
-            if (stristr ($v, 'classes') === false) {
-                continue;
-            }
+        $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
+        $aFiles = array();
 
+        //only scan in registered modules for *Mgr.php
+        foreach ($aRegisteredModules as $module) {
+            $aFindArgs = array(
+                SGL_MOD_DIR . "/$module/classes",
+                '-name', '*Mgr.php');
+            $aFilesFound = System::find($aFindArgs);
+            $aFiles = array_merge($aFiles, $aFilesFound);
+        }
+
+        $aPermsFound = array();
+        foreach ($aFiles as $file) {
             //  grab class name from path (platform independent)
-            preg_match('/[\\\\\/](\\w+)\\.php/', $v, $className);
+            preg_match('/[\\\\\/](\\w+)\\.php/', $file, $className);
             if (isset($className[1])) {
                 $className = strtolower($className[1]);
             } else {
                 continue;
             }
+
             //  grab module name from path (platform independent)
-            preg_match('/(\\w+)[\\\\\/]classes[\\\\\/]/', $v, $moduleName);
+            preg_match('/(\\w+)[\\\\\/]classes[\\\\\/]/', $file, $moduleName);
             if (isset($moduleName[1])) {
                 $moduleName = strtolower($moduleName[1]);
             } else {
                 continue;
             }
+
             //  load file as string (note: just for curiosity, I tried reading
             //  line by line and 1K and 4K chunks, so I wouldn't have to load the whole file
             //  and file_get_contents was a little faster! ...and it's 1 line of code
-            $t = file_get_contents($v);
+            $t = file_get_contents($file);
 
             //  find first actionsMapping statement, if any
             $pos1 = strpos($t, '$this->_aActionsMapping');
-            if ($pos1 === false) continue;
+            if ($pos1 === false) {
+                continue;
+            }
+
+            //  search for closing semicolon
             $pos2 = strpos($t, ';', $pos1);
-            if ($pos2 === false) continue;
+            if ($pos2 === false) {
+                continue;
+            }
 
             //  narrow down to actionsMapping statement only, so preg
             //  doesn't have to work so hard
             $actionStr = substr($t, $pos1, $pos2 - $pos1);
 
             //  grab all allowed actions into an array
-            $aTmp = array();
-            preg_match_all("/[^']*'(\w*)'[^']*/s", $actionStr, $aTmp);
+            preg_match_all("/[^']*'(\w*)'[^']*/s", $actionStr, $aMatchedActions);
 
             //  remove duplicates
-            $aActions = array_unique($aTmp[1]);
+            $aMatchedActions = array_unique($aMatchedActions[1]);
 
             //  find moduleId for moduleName
             $moduleId = array_search($moduleName, $modules);
 
             //  add class perm
-            $permsFound[] = array(
+            $aPermsFound[] = array(
                 'perm' => $className,
                 'module_id' => $moduleId,
                 'module_name' => $moduleName);
 
-            //  add each method perm, if not found. store display name and a
-            //  delimited value used for form submission
-            foreach ($aActions as $k2 => $v2) {
-                $permsFound[] = array(
-                    'perm' => "{$className}_cmd_{$v2}",
+            //  add each method perm
+            foreach ($aMatchedActions as $action) {
+                $aPermsFound[] = array(
+                    'perm' => "{$className}_cmd_{$action}",
                     'module_id' => $moduleId,
                     'module_name' => $moduleName);
             }
-            unset($aActions);
         }
-        return $permsFound;
+
+        return $aPermsFound;
     }
 }
 ?>

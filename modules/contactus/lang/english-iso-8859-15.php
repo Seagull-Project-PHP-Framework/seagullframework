@@ -9,6 +9,7 @@
         'Type of enquiry' => 'Type of enquiry',
         'Comment' => 'Comment',
         'Contact Enquiry from' => 'Contact Enquiry from',
+        'Enter Captcha' => 'Please enter the number shown below in the relevant field',
         'aContactType' => array(
             'General enquiry' => 'General enquiry',
             'Get a quote' => 'Get a quote',
@@ -22,5 +23,6 @@
         'You must fill in your comment' => 'You must fill in your comment',
         'Your email is not correctly formatted' => 'Your email is not correctly formatted',
         'You must enter your email' => 'You must enter your email',
+        'You must enter the number in this field' => 'You must enter the number in this field',
     );
 ?>

@@ -1,0 +1,93 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmEditAdd','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#event#,#event#)}">{translate(#Cancel#)}</a>
+</div>
+
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form method="post" name="frmEditAdd" id="frmEditAdd" flexy:ignore>
+        <div id="optionsLinks"></div>
+        <fieldset class="inside">
+            <input type="hidden" name="action" value="{action}" />
+            <input type="hidden" name="event[updated_by]" value="{loggedOnUserID}" />
+            {if:event.event_id}
+                <input type="hidden" name="event[event_id]" value="{event.event_id}" />
+            {end:}
+
+            <p>
+                <label>{translate(#Event name#)}:</label>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+                <input type="text" name="event[name]" value="{event.name}">
+            </p>
+
+            <p>
+                <label>{translate(#Author#)}</label>
+                <span>{loggedOnUser}</span>
+            </p>
+
+            <p>
+                <label>{translate(#Start Date#)}</label>
+                <span class="error" flexy:if="error[start_date]">{translate(error[start_date])}</span>
+                <input type="hidden" name="frmStartDate" id="frmStartDate" value="{event.start_date}" />
+                <img class="calendar" id="startDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(event.start_date)}</span>
+            </p>
+            <p>
+                <label>{translate(#Expiry Date#)}</label>
+                <span class="error" flexy:if="error[end_date]">{translate(error[end_date])}</span>
+                <input type="hidden" name="frmExpiryDate" id="frmExpiryDate" value="{event.end_date}" />
+                <img class="calendar" id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(event.end_date)}</span>
+            </p>
+
+            <p>
+                <label>{translate(#Event description#)}:</label>
+                <span class="error" flexy:if="error[description]">{translate(error[description])}</span><br />
+                <textarea cols="30" rows="20" name="frmEventDesc" class="wysiwyg">{event.description:h}</textarea>
+            </p>
+
+            <p>
+                <label align="left">{translate(#Hide event?#)}:</label>
+                <label class="error" flexy:if="error[status]">{translate(error[hide_event])}</label>
+                {if:event.hide_event}
+                    {translate(#Yes#)} <input type="radio" name="event[status]" value="1" checked="checked">
+                    {translate(#No#)}  <input type="radio" name="event[status]" value="0">
+                {else:}
+                    {translate(#Yes#)} <input type="radio" name="event[status]" value="1">
+                    {translate(#No#)}  <input type="radio" name="event[status]" value="0" checked="checked">
+                {end:}
+            </p>
+
+        </fieldset>
+    </form>
+
+    <div class="spacer"></div>
+</div>
+<style type="text/css">
+@import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+</style>
+<script type="text/javascript">
+Calendar.setup(
+    {
+        inputField  : "frmStartDate",         // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmStartDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "startDateTrigger"      // ID of the button
+    }
+);
+Calendar.setup(
+    {
+        inputField  : "frmExpiryDate",        // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmExpiryDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "expiryDateTrigger"     // ID of the button
+    }
+);
+</script>

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2005, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.5                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DA_Default.php                                                            |
 // +---------------------------------------------------------------------------+
@@ -105,7 +105,7 @@ class DA_Default extends SGL_Manager
      * @param integer $type
      * @return array
      */
-    function retrieveAllModules($type = '')
+    function getModuleHash($type = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -155,12 +155,44 @@ class DA_Default extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $permId = ($permId === null) ? 0 : $permId;
-        $query = "  SELECT  module_id
-                    FROM    {$this->conf['table']['permission']}
-                    WHERE   permission_id = $permId
+        $query = "
+            SELECT  module_id
+            FROM    {$this->conf['table']['permission']}
+            WHERE   permission_id = $permId
                 ";
         $moduleId = $this->dbh->getOne($query);
         return $moduleId;
+    }
+
+    /**
+     * Give the module ID, delete relevant perms.
+     *
+     * @param integer $moduleId
+     * @return boolean
+     *
+     * @todo move to DA_User
+     */
+    function deletePermsByModuleId($moduleId)
+    {
+        $query = "
+            DELETE
+            FROM {$this->conf['table']['permission']}
+            WHERE module_id = " . $moduleId;
+        $ok = $this->dbh->query($query);
+        return $ok;
+    }
+
+    function getPermNamesByModuleId($moduleId)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $query = "
+            SELECT  name
+            FROM    {$this->conf['table']['permission']}
+            WHERE   module_id = $moduleId
+                ";
+        $aPermNames = $this->dbh->getCol($query);
+        return $aPermNames;
     }
 
     function getPackagesByChannel($channel='phpkitchen')
@@ -187,6 +219,15 @@ class DA_Default extends SGL_Manager
         return $oModule;
     }
 
+    function getModuleByName($name = null)
+    {
+        $oModule = DB_DataObject::factory($this->conf['table']['module']);
+        if (!is_null($name)) {
+            $oModule->get('name', $name);
+        }
+        return $oModule;
+    }
+
     function addModule($oModule)
     {
         SGL_DB::setConnection();
@@ -199,8 +240,39 @@ class DA_Default extends SGL_Manager
         return $ok;
     }
 
-//    function updateGuiTranslations($aTrans, $langID, $module)
-//    {
-//        SGL_Translation::updateGuiTranslation($aTrans, $langID, $module);
-//    }
+    /**
+     * Given the perm name, return the perm ID.
+     *
+     * @param string $permName
+     * @return integer
+     *
+     * @todo move to DA_User
+     */
+    function getPermissionIdByPermName($permName)
+    {
+        $query = "
+            SELECT  permission_id
+            FROM    {$this->conf['table']['permission']}
+            WHERE   name = '$permName'
+                ";
+        $permId = $this->dbh->getOne($query);
+        return $permId;
+    }
+
+    /**
+     * Given the perm ID, delete the relevant record from role_permission.
+     *
+     * @param integer $permId
+     * @return mixed
+     *
+     * @todo move to DA_User
+     */
+    function deleteRolePermissionByPermId($permId)
+    {
+        $query = "
+            DELETE FROM {$this->conf['table']['role_permission']}
+            WHERE permission_id = $permId
+                ";
+        return $this->dbh->query($query);
+    }
 }

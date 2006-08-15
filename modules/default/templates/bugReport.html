@@ -1,95 +1,72 @@
-<script type="text/javascript">
-function enableField()
-{
-    myField = document.getElementById('foo');
-    myField.disabled = false;
-}
-</script>
-
-<form id="bugReport" name="bugReport" method="post" onSubmit="enableField();" flexy:ignore="">
-    <p>
-    <input type="hidden" name="action" value="send" />
-    </p>
-    <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <span flexy:if="msgGet()">{msgGet()}</span>
-
-    <table class="wide">
-        <tr>
-            <td colspan="2">Found a bug? Please fill out and submit the form below - help us make Seagull better software. <br /> -- Thanks</td>
-        </tr>
-
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#First Name#)}:</td>
-            <td>
-                <input type="text" name="bug[reporter_first_name]" value="{bug.reporter_first_name}" size="30" />
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Last Name#)}:</td>
-            <td>
-                <input type="text" name="bug[reporter_last_name]" value="{bug.reporter_last_name}" size="30" />
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Email#)}:</td>
-            <td>
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+<form method="post" action="" id="bugReport" onsubmit="enableField();" flexy:ignore="">
+    <fieldset class="noBorder">
+        <input type="hidden" name="action" value="send" />
+        <p>Found a bug? Please fill out and submit the form below - help us make Seagull better software.<br />
+         -- Thanks
+        </p>
+        <dl class="onSide">
+            <dt>
+                <label for="bug_reporterFirstName">{translate(#First Name#)}</label>
+            </dt>
+            <dd>
+                <input type="text" class="smallText" name="bug[reporter_first_name]" id="bug_reporterFirstName" value="{bug.reporter_first_name}" />
+            </dd>
+            <dt>
+                <label for="bug_reporterLastName">{translate(#Last Name#)}</label>
+            </dt>
+            <dd>
+                <input type="text" class="smallText" name="bug[reporter_last_name]" id="bug_reporterLastName" value="{bug.reporter_last_name}" />
+            </dd>
+            <dt>
+                <label for="bug_reporterEmail"><span class="required">*&nbsp;</span>{translate(#Email#)}</label>
+            </dt>
+            <dd>
                 <div class="error" flexy:if="error[reporter_email]">
                     {translate(error[reporter_email])}
                 </div>
-                <input type="text" name="bug[reporter_email]" value="{bug.reporter_email}" size="30" />
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">Severity of bug:</td>
-            <td>
-                <select name="bug[severity]">
+                <input type="text" class="smallText" name="bug[reporter_email]" id="bug_reporterEmail" value="{bug.reporter_email}" />
+            </dd>
+            <dt>
+                <label for="bug_severity"><span class="required">*&nbsp;</span>{translate(#Severity of bug#)}</label>
+            </dt>
+            <dd>
+                <select class="smallText" name="bug[severity]" id="bug_severity">
                     {generateSelect(aSeverityTypes,bug.severity):h}
                 </select>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">Description:</td>
-            <td>
+            </dd>
+            <dt>
+                <label for="bug_description"><span class="required">*&nbsp;</span>{translate(#Description#)}</label>
+            </dt>
+            <dd>
                 <div class="error" flexy:if="error[description]">
                     {translate(error[description])}
-                </div>            
-                <input type="text" name="bug[description]" value="{bug.description}" size="61" />
-
-            </td>
-        </tr>
-        
-        <tr>
-            <td class="fieldName">Comment:</td>
-            <td>
+                </div>
+                <input type="text" class="mediumText" name="bug[description]" id="bug_description" value="{bug.description}" />
+            </dd>
+            <dt>
+                <label for="bug_comment"><span class="required">*&nbsp;</span>{translate(#Comment#)}</label>
+            </dt>
+            <dd>
                 <div class="error" flexy:if="error[comment]">
                     {translate(error[comment])}
-                </div>            
-                <textarea name="bug[comment]" cols="60" rows="5">{bug.comment}</textarea>
-            </td>
-        </tr>
-        
-        <tr>
-            <td class="fieldName">Your environment:</td>
-            <td>
-                <textarea id="foo" name="bug[environment]" cols="100" rows="11" disabled="true">
-{environment}
+                </div>
+                <textarea class="mediumText" name="bug[comment]" id="bug_comment" cols="60" rows="5">{bug.comment}</textarea>
+            </dd>
+            <dt>
+                <label>{translate(#Your environment#)}</label>
+            </dt>
+            <dd>
+                <textarea class="longText" name="bug[environment]" id="bug_environment" cols="60" rows="11" readonly="true">
+                    {environment}
                 </textarea>
-            </td>
-        </tr>
-
-        <tr>
-            <td colspan="2">
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd>
                 <input type="submit" name="submitted" class="wideButton" value="{translate(#Send it#)}" />
                 [bugs sent to bugs@phpkitchen.com]
-            </td>
-        </tr>
-    </table>
+            </dd>
+        </dl>
+    </fieldset>
 </form>
