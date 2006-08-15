@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.6.1        |
++-----------------------+
+BUGFIXES
+
+IMPROVEMENTS
+
++-----------------------+
 | VERSION: 0.6.0        |
 +-----------------------+
 BUGFIXES
@@ -62,7 +69,6 @@ IMPROVEMENTS
 30-05-06    Requiring greater than 8MB memory_limit is enforced
 30-05-06    Added Captcha lib and example implementation in contactus module
             (Steven Stremciuc)
-
 
 +-----------------------+
 | VERSION: 0.6.0RC3     |
