@@ -1,5 +1,5 @@
-/* Quick fix for installer look and feel */
 <?php
+/* Quick fix for installer look and feel */
 // Get some info from style.php
 // send default cacheing headers and content type
     header('Pragma: cache');
@@ -13,7 +13,7 @@
         if (strstr($ua, 'Opera')) {
             $browserFamily = 'Opera';
         } else if (strstr($ua, 'MSIE')) {
-            $browserFamily = 'MSIE';      
+            $browserFamily = 'MSIE';
         } else {
             $browserFamily = 'Gecko';
         }
@@ -69,12 +69,12 @@
     $colHeaderColor         = $secondaryDarker;
     $navigatorBackground    = $tertiaryDarker;
     $navigatorColor         = $tertiaryMedium;
-    
+
     $forApproval            = '#ff0000';
     $approved               = '#ff9933';
     $published              = '#00cc00';
     $archived               = '#909090';
-    
+
     $error                  = '#ffcc00';
     $errorLight             = '#ffff99';
     $errorDark              = '#ff9600';
