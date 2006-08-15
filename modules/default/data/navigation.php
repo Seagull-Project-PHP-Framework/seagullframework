@@ -1,5 +1,4 @@
 <?php
-
 $aSections = array(
     array (
       'title'           => 'General',
@@ -69,6 +68,10 @@ $aSections = array(
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
         ),
+    );
+//  dynamically add PEAR navigation if it's not a minimal install
+if (!SGL::isMinimalInstall()) {
+    $aSections[] =
     array (
       'title'           => 'PEAR Packages',
       'parent_id'       => SGL_NODE_GROUP,
@@ -79,7 +82,10 @@ $aSections = array(
       'add_params'      => '',
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
-        ),
+        );
+}
+//  then add rest of sections
+$ok = array_push($aSections,
     array (
       'title'           => 'Home',
       'parent_id'       => SGL_NODE_USER,
@@ -112,6 +118,6 @@ $aSections = array(
       'add_params'      => '',
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
-        ),
-    );
+        ));
 ?>
+
