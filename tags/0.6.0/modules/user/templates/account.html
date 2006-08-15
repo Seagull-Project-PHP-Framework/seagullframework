@@ -1,0 +1,130 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form name="account" method="post" flexy:ignore id="account">
+
+    {if:user} <!-- /////////////////////    STATUS     ////////////////////// -->
+
+    <table class="narrow">
+        <tr>
+            <th colspan="2">{translate(#Personal Details#)}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="50%">{translate(#Username#)}</td>
+            <td class="fieldvalue" width="50%">{user.username}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#First Name#)}</td>
+            <td class="fieldvalue">{user.first_name}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Last Name#)}</td>
+            <td class="fieldvalue">{user.last_name}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Company#)}</td>
+            <td class="fieldvalue">{user.company_name}</td>
+        </tr>
+    </table><!-- /////////////////////    TABLE 2:      ////////////////////// -->
+
+    <table class="narrow">
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+
+        <tr>
+            <th colspan="2">{translate(#Location#)}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="50%">{translate(#Address 1#)}</td>
+            <td class="fieldvalue" width="50%">{user.addr_1}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Address 2#)}</td>
+            <td class="fieldvalue">{if:user.addr_2} {user.addr_2} {else:}&nbsp;{end:}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Address 3#)}</td>
+            <td class="fieldvalue">{if:user.addr_3} {user.addr_3} {else:}&nbsp;{end:}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#City#)}</td>
+            <td class="fieldvalue">{user.city}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#County/State/Province#)}</td>
+            <td class="fieldvalue">{user.region}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#ZIP/Postal Code#)}</td>
+            <td class="fieldvalue">{user.post_code}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="35%">{translate(#Country#)}</td>
+            <td class="fieldvalue" width="65%">{user.country}</td>
+        </tr>
+    </table><!-- /////////////////////    TABLE 3:       ////////////////////// -->
+
+    <table class="narrow">
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+
+        <tr>
+            <th colspan="2">{translate(#Contact#)}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="35%">{translate(#Email#)}</td>
+            <td class="fieldvalue" width="65%">{user.email}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="50%">{translate(#Telephone#)}</td>
+            <td class="fieldvalue" width="50%">{user.telephone}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Mobile#)}</td>
+            <td class="fieldvalue">{user.mobile}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+    </table>
+
+    <table class="wide">
+        <tr>
+            <td colspan="2" align="center">
+                <input type="button" name="edit" value="{translate(#edit these values#)}" onclick="document.location.href='{makeUrl(#edit#,#account#,#user#)}'" />
+                <input type="button" name="edit" class="wideButton" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
+            </td>
+        </tr>
+    </table>
+    {else:} <!-- end if results loop -->
+
+    <table class="wide">
+        <tr>
+            <td align="center">
+                <h3>{translate(#No results found#)}</h3>
+            </td>
+        </tr>
+
+        <tr>
+            <td>{translate(#No results found for that ID#)}.</td>
+        </tr>
+    </table>
+    {end:}
+</form>

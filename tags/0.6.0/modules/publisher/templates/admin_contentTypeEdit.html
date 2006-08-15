@@ -1,0 +1,43 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('editContentType')" accesskey="s">{translate(#Save#)}</a>
+    {if:redir}
+        <a class="action cancel" href="javascript:document.location.href='{redir}'" accesskey="c">{translate(#Cancel#)}</a>
+    {else:}
+        <a class="action cancel" href="{makeUrl(#list#,#contenttype#,#publisher#)}" accesskey="c">{translate(#Cancel#)}</a>
+    {end:}
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form name="editContentType" action="{makeUrl(#update#,#contentType#,#publisher#)}" method="post" id="editContentType" flexy:ignore>
+        <fieldset class="hide">
+            <input type="hidden" name="frmContentTypeID" value="{contentTypeID}" />
+            <input type="hidden" name="type[item_type_name_original]" value="{type[item_type_name]}" />
+        </fieldset>
+        <h3>{translate(#Editing Content Type#)} '{type[item_type_name]}'</h3>
+        <fieldset class="inside">
+            <p>
+                <label for="type[item_type_name]">
+                    <span class="error" flexy:if="error[name]">{error[name]}</span>
+                    {translate(#Name#)}:&nbsp;
+                </label>
+                <input type="text" name="type[item_type_name]" value="{type[item_type_name]}" />
+            </p>
+            {foreach:type[fields],aKey,aValue}
+            <p>    
+                <span><input class="longText" type="text" name="type[fields][{aKey}][field_name]" value="{aValue[field_name]}" />
+                    <input type="hidden" name="type[fields][{aKey}][field_name_original]" value="{aValue[field_name]}" /></span>
+                <span><select name="type[fields][{aKey}][field_type]">
+                    {generateSelect(fieldTypes,aValue[field_type]):h}</select>
+                    <input type="hidden" name="type[fields][{aKey}][field_type_original]" value="{aValue[field_type]}" /></span>
+            </p>
+            {end:}
+        </fieldset>
+    </form>
+
+    <div class="spacer"></div>
+</div>

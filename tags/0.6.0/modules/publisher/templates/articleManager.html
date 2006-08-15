@@ -1,0 +1,46 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+<form name="newArticle" flexy:ignore id="newArticle"> 
+    {if:showPager}<flexy:include src="pager.html" />{end:}
+    <!-- TODO: Add select for user to select article type -->
+    <table class="wide">
+        <tr>
+            <td colspan="6">
+                <input type="button" name="newArticleButton" value="{translate(#New Article#)}" 
+                    onclick="javascript:document.location.href='{makeUrl(#add#,#article#,#publisher#)}frmArticleTypeID/2/'" />
+            </td>
+        </tr>
+
+        <tr>
+            <th><a class="header" href="#">{translate(#Article Name#)}</a></th>
+            <th><a class="header" href="#">{translate(#Start Date#)}</a></th>
+            <th><a class="header" href="#">{translate(#Expiry Date#)}</a></th>
+            <th><a class="header" href="#">{translate(#Modif. By#)}</a></th>
+            <th><a class="header" href="#">{translate(#Edit#)}</a></th>
+            <th><a class="header" href="#">{translate(#View#)}</a></th>
+        </tr>
+        {if:aPagedData[data]}
+        <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+            <td>{aValue[addition]}</td>
+            <td align="center">{formatDate(aValue[start_date])}</td>
+            <td align="center">{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
+            <td>{aValue[username]}</td>
+            <td align="center">
+                <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}" />
+                    <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
+                </a>
+            </td>
+            <td align="center">
+                <a  onClick="javascript:openWindow('{makeUrl(#view#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}',500,350)"
+                href="#" />
+                    <img src="{webRoot}/themes/{theme}/images/view.gif" alt="{translate(#View#)}" />
+                </a>
+            </td>
+        </tr>
+        {else:}
+        <tr>
+            <td colspan="6" align="center">{translate(#no results found#)}</td>
+        </tr>
+        {end:}
+    </table>
+</form>
