@@ -524,7 +524,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             }
 
             //  catch 'table already exists' error
-            if (DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
+            if (isset($result) && DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
                 if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
                     die('Tables already exist, DB error');
                 } else {
