@@ -120,4 +120,3 @@ $ok = array_push($aSections,
       'perms'           => SGL_ADMIN,
         ));
 ?>
-
