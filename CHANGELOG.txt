@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
 

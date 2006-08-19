@@ -168,7 +168,8 @@ class SGL_Sql
      */
     function extractTableNameFromCreateStatement($str)
     {
-        $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?(\w+)(\W+)?/i';
+        //  main pattern, 5th group, matches any alphanum char plus _ and -
+        $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
         preg_match($pattern, $str, $matches);
         $tableName = $matches[5];
         return $tableName;
