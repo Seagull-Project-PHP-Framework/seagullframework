@@ -14,22 +14,29 @@ require_once 'HTML/AJAX/Server.php';
 
 class AutoServer extends HTML_AJAX_Server
 {
-	// this flag must be set for your init methods to be used
-	var $initMethods = true;
+    // this flag must be set for your init methods to be used
+    var $initMethods = true;
 
-	function initMediaDAO()
-	{
+    function initMediaDAO()
+    {
         require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
-		$da = & MediaDAO::singleton();
-		$this->registerClass($da);
-	}
+        $da = & MediaDAO::singleton();
+        $this->registerClass($da);
+    }
 
-	function initEcommAjaxProvider()
-	{
+    function initEcommAjaxProvider()
+    {
         require_once SGL_MOD_DIR . '/ecomm/classes/EcommAjaxProvider.php';
-		$provider = & EcommAjaxProvider::singleton();
-		$this->registerClass($provider);
-	}
+        $provider = & EcommAjaxProvider::singleton();
+        $this->registerClass($provider);
+    }
+
+    function initCmsAjaxProvider()
+    {
+        require_once SGL_MOD_DIR . '/cms/classes/CmsAjaxProvider.php';
+        $provider = & CmsAjaxProvider::singleton();
+        $this->registerClass($provider);
+    }
 }
 
 $server = new AutoServer();
