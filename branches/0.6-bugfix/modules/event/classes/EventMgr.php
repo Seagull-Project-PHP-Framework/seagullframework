@@ -87,6 +87,7 @@ class EventMgr extends SGL_Manager
             'js/jscalendar/calendar.js',
             $jscalendarLangFile,
             'js/jscalendar/calendar-setup.js');
+
         if ($input->submitted) {
             if ($input->action == 'searchResults') {
                 if (!empty($input->search->query) && strlen($input->search->query) < 3) {
@@ -240,7 +241,7 @@ class EventMgr extends SGL_Manager
                 $event->getLinks();
                 $event->attachmentCount = $this->getAttachmentCount($event->event_id);
                 $oImage = $this->isEventImage($event->event_id);
-                $event->isEventImg = ($this->isEventImage($event->event_id) === false)
+                $event->isEventImg = ($oImage === false)
                     ? 'not set'
                     : $oImage->name;
                 $aEvents[] = clone($event);
