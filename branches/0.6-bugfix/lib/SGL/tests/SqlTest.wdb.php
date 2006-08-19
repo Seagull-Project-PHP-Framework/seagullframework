@@ -214,6 +214,20 @@ EOF;
         $this->assertEqual($tableName, 'block');
     }
 
+    function testExtractTableNameFromCreateStatement5()
+    {
+        $str = 'create table `block`';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'block');
+    }
+
+    function testExtractTableNameFromCreateStatement6()
+    {
+        $str = 'CREATE TABLE `event-media` (';
+        $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
+        $this->assertEqual($tableName, 'event-media');
+    }
+
     function testExtractExecuteFromSqlParse()
     {
         $schemaFile =  SGL_MOD_DIR . '/default/data/schema.my.sql';
