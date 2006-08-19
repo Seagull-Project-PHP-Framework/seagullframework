@@ -49,7 +49,7 @@
     header('Cache-Control: public');
     header('Content-Type: text/css');
 
-    $modtimes = array();
+    $modTimes = array();
 
     if (is_file($tmp = './vars.php')) {
         $modTimes['vars'] = filemtime($tmp);
@@ -57,13 +57,24 @@
     if (is_file($tmp = './core.php')) {
         $modTimes['core'] = filemtime($tmp);
     }
+    if (is_file($tmp = './blockStyle.php')) {
+        $modTimes['blockStyle'] = filemtime($tmp);
+    }
     $frmNavStyleSheet = @$_REQUEST['navStylesheet'];
     if (is_file($navStyleSheet = realpath("./$frmNavStyleSheet.nav.php"))) {
         $modTimes['navigation'] = filemtime($navStyleSheet);
     }
     $frmModuleName = @$_REQUEST['moduleName'];
-    if (is_file($moduleName = realpath("./$frmModuleName.php"))) {
-        $modTimes['module'] = filemtime($moduleName);
+    $frmIsSymlink  = @$_REQUEST['isSymlink'];
+
+    if ($frmIsSymlink) {
+        if (is_file($moduleName = realpath("../../../$frmModuleName/css/$frmModuleName.php"))) {
+            $modTimes['module'] = filemtime($moduleName);
+        }
+    } else {
+        if (is_file($moduleName = realpath("./$frmModuleName.php"))) {
+            $modTimes['module'] = filemtime($moduleName);
+        }
     }
 
     // Get last modified time of file
@@ -95,7 +106,7 @@
     if (!empty($ua)) {
         if (strstr($ua, 'Opera')) {
             $browserFamily = 'Opera';
-        } else if (strstr($ua, 'MSIE')) {
+        } elseif (strstr($ua, 'MSIE')) {
             $browserFamily = 'MSIE';      
         } else {
             $browserFamily = 'Gecko';
@@ -119,11 +130,16 @@
 
     require_once './vars.php';
     require_once './core.php';
+    require_once './blockStyle.php';
     if (isset($modTimes['navigation'])) {
         require_once realpath("./$frmNavStyleSheet.nav.php");
     }
     if (isset($modTimes['module'])) {
-        require_once  realpath("./$frmModuleName.php");
+        if ($frmIsSymlink) {
+            require_once realpath("../../../$frmModuleName/css/$frmModuleName.php");
+        } else {
+            require_once realpath("./$frmModuleName.php");
+        }
     }
 
     // copied from PEAR HTTP Header.php (comments stripped)
@@ -131,9 +147,12 @@
     // Changes: mktime() to gmmktime() to make work in timezones other than GMT
     function dateToTimestamp($date)
     {
-        $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'));
-        preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~', $date, $splitDate);
-        $timestamp = @gmmktime($splitDate[4], $splitDate[5], $splitDate[6], $months[$splitDate[2]]+1, $splitDate[1], $splitDate[3]);
+        $months = array_flip(array('Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'));
+        preg_match('~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~', $date,
+            $splitDate);
+        $timestamp = @gmmktime($splitDate[4], $splitDate[5], $splitDate[6],
+            $months[$splitDate[2]]+1, $splitDate[1], $splitDate[3]);
         return $timestamp;
     }
 
