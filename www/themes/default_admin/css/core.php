@@ -706,6 +706,10 @@ div.close span {
 .error, .required {
     color: <?php echo $errorMessage ?>;
 }
+.warning {
+    color: <?php echo $warningMessage ?>;
+    font-size: 1.2em;
+}
 
 /*-- PHP Errors by ErrorHandler.php -----------------------------*/
 
