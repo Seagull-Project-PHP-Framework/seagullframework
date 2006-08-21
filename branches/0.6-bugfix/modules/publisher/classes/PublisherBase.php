@@ -64,9 +64,9 @@ class PublisherBase
                 $sessionInfo = '&' . $sessionInfo;
         }
         if ($input->queryRange == 'all') {
-            $html = "<a href='".SGL_Url::makeLink()."frmQueryRange/thisCategory" . $sessionInfo . "'>" . SGL_String::translate('whole DB') . "</a>";
+            $html = "<a href='".SGL_Url::makeLink()."frmQueryRange/thisCategory/" . $sessionInfo . "'>" . SGL_String::translate('whole DB') . "</a>";
         } else {
-            $html = "<a href='".SGL_Url::makeLink()."frmQueryRange/all" . $sessionInfo . "'>" . SGL_String::translate('this category') . "</a>";
+            $html = "<a href='".SGL_Url::makeLink()."frmQueryRange/all/" . $sessionInfo . "'>" . SGL_String::translate('this category') . "</a>";
         }
         return $html;
     }
