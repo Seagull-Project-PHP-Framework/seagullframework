@@ -1,5 +1,5 @@
 -- Last edited: Pierpaolo Toniolo 29-03-2006
--- Data dump for /messaging
+-- Data dump for /navigation
 
 BEGIN;
 
