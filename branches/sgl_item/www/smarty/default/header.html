@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{$result->currLang}" xml:lang="{$result->currLang}">
+<head>
+    {if $result->leadArticle[title]}
+	<title>{$result->conf.site.name} :: {$result->currentSectionName}</title>
+    {else}
+	<title>{$result->conf.site.name} :: {$result->currentSectionName}</title>
+    {/if}
+    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Language" content="{$result->currLang}" />
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Rating" content="General" />
+    <meta name="Generator" content="Seagull Framework v{versionAPI}" />
+    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="{$result->webRoot}/themes/{$result->theme}/css/style.php?navStylesheet={$result->conf.navigation.stylesheet}&amp;moduleName={$result->moduleName}" />
+
+    <script type="text/javascript">
+        var SGL_JS_WEBROOT="{$result->webRoot}";
+        var SGL_JS_WINHEIGHT={$result->conf.popup.winHeight};
+        var SGL_JS_WINWIDTH={$result->conf.popup.winWidth};
+        var SGL_JS_SESSID="{$result->sessID}";
+        var SGL_JS_CURRURL="{$result->currUrl}";
+    </script>
+
+    {if $result->isAdmin()}
+    <script type="text/javascript" src="{$result->webRoot}/js/mainAdmin.js"></script>
+    {/if}
+    <script type="text/javascript" src="{$result->webRoot}/js/mainPublic.js"></script>
+
+    {foreach from=$result->javascriptSrc item="file"}
+    <script type="text/javascript" src="{$result->webRoot}/{$file}"></script>
+    {/foreach}
+
+    {if $result->wysiwyg}
+    {if $result->wysiwyg_htmlarea}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/htmlarea/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{$result->webRoot}/htmlarea/htmlarea.js"></script>
+    <script type="text/javascript">
+        HTMLArea.loadPlugin("CharacterMap");
+        function initDocument()
+        {
+            var config = new HTMLArea.Config();
+            config.toolbar = [
+        		[ "fontname", "space",
+        		  "fontsize", "space",
+        		  "formatblock", "space",
+        		  "bold", "italic", "underline", "strikethrough", "separator",
+        		  "subscript", "superscript", "separator",
+        		  "copy", "cut", "paste", "space"],
+        		[ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
+        		  "lefttoright", "righttoleft", "separator",
+        		  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
+        		  "forecolor", "hilitecolor", "separator",
+        		  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
+        		  "popupeditor", "separator", "showhelp"]
+            ];
+            var editor = new HTMLArea("frmBodyName", config);
+            editor.registerPlugin(CharacterMap);
+            editor.generate();
+        }
+        HTMLArea.onload = initDocument;
+    </script>
+    {/if}
+    {if $result->wysiwyg_xinha}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/xinha/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{$result->webRoot}/xinha/htmlarea.js"></script>
+    <script type="text/javascript" src="{$result->webRoot}/xinha/sgl_config.js"></script>
+    {/if}
+    {if $result->wysiwyg_fck}
+    <script type="text/javascript" src="{$result->webRoot}/fck/fckeditor.js"></script>
+
+    <script type="text/javascript">
+        function fck_init()
+        {
+            {if:wysiwygElementName}
+        	var oFCKeditor = new FCKeditor('{wysiwygElementName}');
+        	{else:}
+        	var oFCKeditor = new FCKeditor('frmBodyName');
+        	{end:}
+    		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
+    		oFCKeditor.ReplaceTextarea() ;
+        }
+    </script>
+    {/if}
+    {/if}
+</head>
+{if !$result->onLoad}
+<body>
+{else}
+<body onload="{$result->onLoad}">
+{/if}
+<div id="sgl">

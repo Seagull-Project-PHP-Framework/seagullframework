@@ -1,0 +1,100 @@
+INSTALL INSTRUCTIONS FOR SEAGULL FRAMEWORK
+==========================================
+
+Seagull is organised so there's minimum fuss involved setting it up for the
+first time.  The main thing you need to do is:
+
+** MAKE THE seagull/var DIRECTORY WRITABLE BY THE WEBSERVER **
+
+This document makes reference to an [web-doc-root] which typically is
+
+    /var/www/html on Linux and
+    C:\Program Files\Apache Group\Apache\htdocs on Windows
+
+QUICKSTART
+==========
+
+1.  Download the archive called 'Seagull: whole package' from Sourceforge and
+    uncompress it.  You will get a folder called seagull-<version_no>, rename
+    this to seagull and place it in your web document root.
+
+2.  Make the following directory writable by the webserver
+
+        [web-doc-root]/seagull/var
+
+3.  Navigate to [web-doc-root]/seagull/www in a browser, depending on how you've
+    set your document root this could be
+
+        http://localhost/seagull/www
+
+4.  Follow the steps set out by the interactive installer
+
+
+DETAILED INSTRUCTIONS
+=====================
+
+1.  Download the archive called 'Seagull: whole package' from Sourceforge and
+    uncompress it.  You will get a folder called seagull-<version_no>, rename
+    this to seagull
+
+2.  Make the [web-doc-root]/seagull/var directory writable by the webserver.  If
+    *nix, you can achieve this by making the user the webserver runs under
+    owner of the seagull/var directory, so if your webserver runs as
+    'nobody':
+
+    $ chmod 777 [web-doc-root]/seagull/var
+
+    [OPTIONAL] If you'd like to be able to upload images using the WYSIWYG editor
+    in Publisher you'll need to make the following directory writable by the
+    webserver too:
+
+    $ chmod -R 777 [web-doc-root]/seagull/www/images
+
+3.  Next configure your webserver to serve pages from Seagull's www directory.
+    You generally have the following options:
+
+    - if you setup a virtual host in Apache, point it to the
+
+        [web-doc-root]/seagull/www
+
+      directory.  Your seagull domain will look like
+
+        http://seagull.example.com
+
+    - if you're on a shared server, install Seagull at the root level. Your
+      seagull domain will look like
+
+        http://example.com/seagull/www
+
+    - to setup an installation locally, put the Seagull directory in your web
+      folder. Your seagull domain will look like
+
+        http://localhost/seagull/www/
+
+4.  Once you launch Seagull by requesting http://<seagull-domain>/index.php in
+    a web browser, an installer routine will create the schema and populate the
+    database with the required default data.  Currently MySQL, PostgreSQL and Oracle
+    schemas are provided.
+
+    If you have any problems during the install routine, delete the config file
+    created by the system in the var directory, and the file called
+    INSTALL_COMPLETE.php, and start again.  Typical problems are:
+
+    - providing incorrect db login details
+    - not setting write perms to the var directory
+    - trying to import data when a database doesn't exist
+    - trying to import data when the default data already exists
+
+5.  Login by clicking the login link in the top right corner and entering the
+    relevant admin credentials you specified during installation.  Using the
+    admin section you can begin to put Seagull to work.
+
+
+See the project homepage for more info: http://seagullproject.org/ or check
+out the wiki for Seagull resources/info: http://trac.seagullproject.org/
+
+To become familiar with Seagull try some of the tutorials:
+
+http://trac.seagullproject.org/wiki/WikiStart#Tutorials
+
+Thanks for using Seagull!

@@ -1,0 +1,39 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" href="javascript:formSubmit('NewsletterCompose','submitted',1,1)">{translate(#Send#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+<form method="post" name="NewsletterCompose" flexy:ignore id="NewsletterCompose">
+    <input type="hidden" name="action" value="insert">
+        <fieldset class="inside">
+            <h3>{translate(#Please enter your name and e-mail address and select the newsletters that you want to subscribe.#)}</h3>
+		     <p>
+	               <label for="frmName"><span class="required">*</span>{translate(#Name#)}</label>
+	               <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+	               <input id="frmName" type="text" name="frmName" size="40" value="{name}" />
+	         </p>
+	         <p>
+	               <label for="frmEmail"><span class="required">*</span>{translate(#E-mail#)}</label>
+	               <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+	               <input id="frmEmail" type="text" name="frmEmail" size="40" value="{email}" />
+	         </p>
+	         <p>
+	               <label for="frmListName"><span class="required"></span>{translate(#List#)}</label>
+	               <span class="error" flexy:if="error[list]">{translate(error[list])}</span>
+				   {this.plugin(#generateCheckboxNewsList#,validNewsList,listName,#frmListName[]#):h}
+	         </p>
+	         <p>
+		         <strong>{translate(#Action#)}:</strong> 
+		         <label><input type="radio" name="action" value="subscribe" checked="checked">
+		         {translate(#Subscribe#)} 
+		         <input type="radio" name="action" value="unsubscribe">
+		         {translate(#Unsubscribe#)}</label>
+	         </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

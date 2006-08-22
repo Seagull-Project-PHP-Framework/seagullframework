@@ -1,0 +1,19 @@
+<h1 class="pageTitle">Error: page not found</h1>
+{if:isAdmin()}
+<div class="message">{msgGet()}</div>
+{end:}
+<p>Sorry, the page you requested does not exist.</p>
+<p>Perhaps one of those pages may be of help</p>
+<p>If you think the admin should be alerted of this error, feel free to submit the following form</p>
+<form method="post" action="" id="frmErrorPageNotFound">
+    <fieldset class="inside">
+        <dl>
+            <dt>Email</dt>
+            <dd><input type="text" size="74" /></dd>
+            <dt>Message</dt>
+            <dd><textarea cols="60" rows="8" onfocus="this.innerHTML=''">Type your message here. Any information you can provide to help us improve our site is highly appreciated</textarea></dd>
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" /></dd>
+        </dl>
+    </fieldset>
+</form>
