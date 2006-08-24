@@ -128,17 +128,20 @@ class ArticleViewMgr extends SGL_Manager
         }
 
         // Set current category id to the category id for this article
-        $input->catID = $ret['category_id'];
+        // checks if current category is in array, if not use first item
+        // pass to $output so it's used in display() and related blocks
+        $output->catID = in_array($input->catID,$ret['category_id'])
+            ? $input->catID : $ret['category_id'][0];
         $output->leadArticle = $ret;
 
         if ($output->leadArticle['type'] != 'Static Html Article') {
 
             // Retrieving a list of related articles for $input->catID
             $output->articleList = SGL_Item::getItemListByCatID(
-                $input->catID, $input->dataTypeID, $this->mostRecentArticleID);
+                $output->catID, $input->dataTypeID, $this->mostRecentArticleID);
 
             // and related documents
-            $output->documentList = PublisherBase::getDocumentListByCatID($input->catID);
+            $output->documentList = PublisherBase::getDocumentListByCatID($output->catID);
         } else {
             $output->staticArticle = true;
         }
