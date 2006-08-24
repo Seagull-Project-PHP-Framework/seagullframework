@@ -77,11 +77,16 @@ class ArticleViewMgr extends SGL_Manager
         $input->template        = $this->template;
  
         //  form vars
-        $input->action          = ($req->get('action')) ? $req->get('action') : 'view';
         $input->articleID       = ($req->get('frmArticleID'))
                                     ? (int)$req->get('frmArticleID')
                                     : (int)SGL_Session::get('articleID');
         $input->catID           = (int)$req->get('frmCatID');
+        
+        // some automagic for action: 
+        // if no action is defined but a category is passed switch to summary 
+        $input->action          = ($req->get('action')) 
+                                      ? $req->get('action') 
+                                      : (($input->catID) ? 'summary' : 'view');
         $input->from            = ($req->get('frmFrom')) ? (int)$req->get('frmFrom'):0;
         $input->dataTypeID      = ($req->get('frmDataTypeID'))
                                       ? $req->get('frmDataTypeID')
