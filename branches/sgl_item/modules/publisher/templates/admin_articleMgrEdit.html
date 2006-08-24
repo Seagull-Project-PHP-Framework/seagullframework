@@ -53,13 +53,13 @@
         <fieldset class="options" id="articleAddOptions">
             <h3>{translate(#Editing options#)}</h3>
             {if:aCategories}
-            <p>
+            <p flexy:if=breadCrumbs>
                 <label>{translate(#Category#)}</label>
                 <span>{breadCrumbs:h}</span>
             </p>
             <p>
                 <label>{translate(#Change Category#)}</label>
-                <select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select>
+                <select name="frmCategoryChangeToID[]" multiple="multiple">{generateSelect(aCategories,aCurrentCat,#true#):h}</select>
             </p>
             {end:}
             <p>

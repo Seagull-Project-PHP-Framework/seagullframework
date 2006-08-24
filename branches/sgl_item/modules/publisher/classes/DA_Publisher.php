@@ -119,7 +119,8 @@ class DA_Publisher
         			it.item_type_name,
         			itm.item_type_mapping_id,
         			itm.field_name,
-        			itm.field_type
+        			itm.field_type,
+                    itm.is_translateable
                   FROM
                   	{$this->conf['table']['item_type']} it,
                   	{$this->conf['table']['item_type_mapping']} itm
@@ -143,7 +144,6 @@ class DA_Publisher
     function addItemType($name)
     {
         $id = $this->dbh->nextId($this->conf['table']['item_type']);
-
         $query = "
             INSERT INTO {$this->conf['table']['item_type']}
                 (item_type_id, item_type_name)

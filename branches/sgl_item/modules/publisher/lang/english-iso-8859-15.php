@@ -46,6 +46,8 @@
         'select a category' => 'select a category',
         'choose' => 'choose',
         'close' => 'close',
+        'Reorder' => 'Reorder',
+        'Items reordered successfully' => 'Items reordered successfully',
         
 /* ArticleViewMgr */
         'Article Browser' => 'Article Browser',
@@ -104,6 +106,7 @@
         'Add New Content Type' => 'Add New Content Type',
         'With selected content type(s)' => 'With selected content type(s)',
         'content type has successfully been added' => 'content type has successfully been added',
+        'content type has successfully been deleted' => 'content type has successfully been deleted',        
         'content type has successfully been updated' => 'content type has successfully been updated',
         'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'=>'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:',
         'What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'=>'What you see when you click the \'Articles\' tab in the front end is a document collection. Creating articles of type \'Html Article\' allows you to place your content in a hierarchy that you build using the \'Categories\' button above. This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the \'Related Articles\' box on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the \'Related Documents\' box.',
@@ -114,8 +117,7 @@
         'Contributed by' =>'Contributed by',
         'contributed by' =>'contributed by',
         'full story'=> 'Continue reading',
-        'Editing Content Type' => 'Editing Content Type',
-        'content type(s) has successfully been deleted' => 'content type(s) has successfully been deleted',
+        
         // types
         'Title'    => 'Title',
         'BodyHtml' => 'HTML text',

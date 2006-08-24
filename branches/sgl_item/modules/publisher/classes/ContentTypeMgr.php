@@ -73,7 +73,12 @@ class ContentTypeMgr extends SGL_Manager
         $this->template     = 'contentTypeList.html';
         $this->da = &DA_Publisher::singleton();
 
-        $this->fieldTypes   = array('0' => 'single line', '1' => 'textarea', '2' => 'HTML textarea');
+        $this->fieldTypes   = array(
+            '0' => 'single line', 
+            '1' => 'textarea', 
+            '2' => 'HTML textarea',
+            '3' => 'Yes / No',
+            '4' => 'DateTime');
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -136,6 +141,9 @@ class ContentTypeMgr extends SGL_Manager
         for ($x = 1; $x <= $totalFields; $x++) {
             $output->totalFields[$x] = $x;
         }
+        if ($output->action == 'add') {
+            $output->type['fields'] = $output->totalFields;
+        }
         $output->fieldTypes = $this->fieldTypes;
     }
 
@@ -151,7 +159,8 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'contentTypeAdd.html';
+        $output->template = 'contentTypeEdit.html';
+        $output->formAction = 'insert';
     }
 
     /**
@@ -176,9 +185,9 @@ class ContentTypeMgr extends SGL_Manager
         }
 
         //  insert item type fields into item_type_mapping table.
-        foreach ($input->type['field_name'] as $k => $name) {
-      		$ok = $this->da->addItemAttributes($itemTypeId, $name,
-      		    $input->type['field_type'][$k]);
+        foreach ($input->type['fields'] as $attributeId => $aItemAttributes) {
+      		$ok = $this->da->addItemAttributes($itemTypeId, $aItemAttributes['field_name'],
+      		    $aItemAttributes['field_type']);
             if (PEAR::isError($ok)) {
 	            SGL::raiseError('There was a problem updating the content attributes',
 	                SGL_ERROR_NOAFFECTEDROWS);
@@ -201,6 +210,7 @@ class ContentTypeMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'contentTypeEdit.html';
+        $output->formAction = 'update';
         $aRes = $this->da->getItemAttributesByItemId($input->contentTypeID);
 
         $data = array();
@@ -282,26 +292,51 @@ class ContentTypeMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $limit = $_SESSION['aPrefs']['resPerPage'];
+        $aPagedData = $this->da->getItemAttributesByItemId(null, $paginated = true);
 
-        $pagerOptions = array(
-            'mode'     => 'Sliding',
-            'delta'    => 3,
-            'perPage'  => $limit,
-            'spacesBeforeSeparator' => 0,
-            'spacesAfterSeparator'  => 0,
-            'curPageSpanPre'        => '<span class="currentPage">',
-            'curPageSpanPost'       => '</span>',
-        );
-        $aPagedData = $this->da->retrievePaginatedItemType($pagerOptions);
+        $data = array();
+        foreach ($aPagedData['data'] as $aValues) {
+            foreach ($aValues as $key => $value) {
+                switch ($key) {
 
-        $output->aPagedData = $aPagedData;
+                case 'item_type_id':
+                    $item_type_id = $value;
+                    $data[$item_type_id]['item_type_id'] = $value;
+                    break;
 
-        if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
-            $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+                case 'item_type_name':
+                    $data[$item_type_id][$key] = $value;
+                    break;
+
+                case 'item_type_mapping_id':
+                    $item_type_mapping_id = $value;
+                    break;
+
+                case 'field_name':
+                    $field_name = $value;
+                    break;
+
+                case 'field_type':
+                    $field_type = $this->fieldTypes[$value];
+                    break;
+                case 'is_translateable':
+                    $isTranslateable = ($value === 0) ? 'no' : 'yes';
+                    $field = array(
+                        'name'      => $field_name,
+                        'type'      => $field_type,
+                        'isTranslateable' => $isTranslateable);
+//                        $field_name => $this->fieldTypes[$value],
+                    $data[$item_type_id]['fields'][$item_type_mapping_id] = $field;
+
+                }
+            }
         }
-        $output->totalItems = $aPagedData['totalItems'];
-        $output->addOnLoadEvent("switchRowColorOnHover()");
+        //  unset data array
+        unset($aPagedData['data']);
+
+        //  set data array
+        $aPagedData['data'] = $data;
+        $output->aPagedData = $aPagedData;
     }
 
     /**

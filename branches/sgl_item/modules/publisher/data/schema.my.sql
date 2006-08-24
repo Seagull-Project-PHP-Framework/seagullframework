@@ -125,6 +125,7 @@ create table if not exists item_type_mapping
    item_type_id                   int                            not null,
    field_name                     varchar(64),
    field_type                     smallint,
+   is_translateable               int(1)                         not null    default '1',
    primary key (item_type_mapping_id)
 );
 
@@ -164,4 +165,31 @@ create table if not exists category (
 create index parent_fk on category
 (
    parent_id
+);
+
+/*==============================================================*/
+/* Table: item_category_mapping                                 */
+/*==============================================================*/
+create table item_category_mapping (
+  item_id         int(11)     NOT NULL     default '0',
+  category_id     int(11)     NOT NULL     default '0',
+  order_id        int(11)     NOT NULL     default '0'
+);
+
+
+/*==============================================================*/
+/* Index: item_category_mapping_category_id_fk                  */
+/*==============================================================*/
+create index item_category_mapping_category_id_fk on
+item_category_mapping
+(
+   category_id
+);
+
+/*==============================================================*/
+/* Index: item_category_mapping_item_id_fk                      */
+/*==============================================================*/
+create index item_category_mapping_item_id_fk on item_category_mapping
+(
+   item_id
 );

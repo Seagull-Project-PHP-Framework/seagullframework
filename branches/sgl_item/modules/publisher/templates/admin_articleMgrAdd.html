@@ -40,7 +40,7 @@
             </p>
             <p>
                 <label>{translate(#Change Category#)}</label>
-                <select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select>
+                <select name="frmCategoryChangeToID[]" multiple="multiple">{generateSelect(aCategories,currentCat,#true#):h}</select>
             </p>
             {end:}
             <p>

@@ -1,1 +1,18 @@
 Changelog for sgl_item branch
+FIXME: Make publisher module to be installed automatically on installation / rebuild sgl
+
+
+2006-08-24: Merge from private svn repro
+    * SGL_Item::retrievePaginated() has now a search filter and is more configurable (Werner Krauss)
+    * item can belong to multiple categories (Werner Krauss)
+    * merged ContentTypeMgr add and edit templates
+FIXME: move to admin theme!
+    * ContentTypeMgr: added new fieldtype: datetime (Werner Krauss)
+ 	* Updated Schema and Demo Data
+ 	* Item fields have a flag if they are translateable or not. This means a 
+ 	  field can automatically have the same value for all languages (Werner Krauss)
+FIXME: no GUI implementation yet
+FIXME: changing this flag in running system causes problems with existing data
+ 	* Added some helper methods, e.g. usesWysiwyg() to determine if wysiwyg editor is
+ 	  needed for the current item. Useful in ArticleMgr::Add() and Edit() (Werner Krauss)
+ 	* ContentTypeMgr: added new field type: YesNo, a boolean radio pair (Werner Krauss) 	

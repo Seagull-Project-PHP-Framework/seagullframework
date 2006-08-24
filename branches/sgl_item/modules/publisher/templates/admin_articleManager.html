@@ -149,7 +149,11 @@ function hideCombox(comboxId)
             <table class="full">
                 <thead>
                     <tr class="infos">
-                        <td class="right" colspan="9">
+                    	{if:showOrderKeys}
+          		            <td class="right" colspan="11">
+                        {else:}
+                            <td class="right" colspan="9">
+                        {end:}
                         {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
@@ -161,7 +165,8 @@ function hideCombox(comboxId)
                             </span>
                          </th>
                         <th width="3%">{translate(#ID#)}</th>
-                        <th width="40%" class="left"><a href="#">{translate(#Article Name#)}</a></th>
+                        <th width="35%" class="left"><a href="#">{translate(#Article Name#)}</a></th>
+                        <th width="5%" colspan="2" flexy:if=showOrderKeys>{translate(#Reorder#)}</th>
                         <th width="12%"><a href="#">{translate(#Start Date#)}</a></th>
                         <th width="12%"><a href="#">{translate(#Expiry Date#)}</a></th>
                         <th width="10%"><a href="#">{translate(#Modif. By#)}</a></th>
@@ -173,7 +178,11 @@ function hideCombox(comboxId)
                 {if:aPagedData[data]}
                 <tfoot>
                     <tr class="infos">
-                        <td class="right" colspan="9">
+                    	{if:showOrderKeys}
+          		            <td class="right" colspan="11">
+                        {else:}
+                            <td class="right" colspan="9">
+                        {end:}
                         {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
                         </td>
                     </tr>
@@ -187,6 +196,20 @@ function hideCombox(comboxId)
                         <td class="left">
                             <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}">{aValue[addition]}</a>
                         </td>
+                        <td flexy:if=showOrderKeys>
+                        	{if:aValue[showMoveUp]}
+                        		<a href="{makeUrl(#reorder#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id||frmTargetID|moveUp||frmCatID|catID#,key)}"><img src="{webRoot}/themes/{theme}/images/16/move_up.gif" alt="{translate(#move up#)}" title="{translate(#move up#)}"></a>
+                       		{else:}
+                       			<img src="{webRoot}/themes/{theme}/images/16/move_up_dead.gif" alt="{translate(#move up#)}">
+                       		{end:}
+                    	</td>
+                        <td flexy:if=showOrderKeys>
+                        	{if:aValue[showMoveDown]}
+                        		<a href="{makeUrl(#reorder#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id||frmTargetID|moveDown||frmCatID|catID#,key)}"><img src="{webRoot}/themes/{theme}/images/16/move_down.gif" alt="{translate(#move down#)}" title="{translate(#move down#)}"></a>
+                       		{else:}
+                       			<img src="{webRoot}/themes/{theme}/images/16/move_down_dead.gif" alt="{translate(#move down#)}">
+                       		{end:}
+                    	</td>                        
                         <td>{formatDate(aValue[start_date])}</td>
                         <td>{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
                         <td>{aValue[username]}</td>

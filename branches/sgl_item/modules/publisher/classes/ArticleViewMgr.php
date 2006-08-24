@@ -144,12 +144,14 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $aResult = SGL_Item::retrievePaginated(
-            $input->catID,
-            $bPublish = true,
-            $input->dataTypeID,
-            '',
-            $input->from,
-            'start_date');
+            array(
+                'catID'     => $input->catID,
+                'bPublish'  => true,
+                'dataTypeID'    => $input->dataTypeID,
+                'from'      => $input->from,
+                'orderBy'   => 'start_date'
+            )
+        );
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];

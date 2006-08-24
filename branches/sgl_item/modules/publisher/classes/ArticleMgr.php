@@ -69,6 +69,7 @@ class ArticleMgr extends SGL_Manager
             'changeStatus'    => array('changeStatus', 'redirectToDefault'),
             'list'      => array('list'),
             'view'      => array('view'),
+            'reorder'   => array('reorder', 'redirectToDefault'),
         );
     }
 
@@ -101,13 +102,14 @@ class ArticleMgr extends SGL_Manager
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->from            = ($req->get('frmFrom')) ? $req->get('frmFrom'):0;
         $input->catID           = (int)$req->get('frmCatID');
-        $input->articleCatID    = (int)$req->get('frmArticleCatID');
-        $input->catChangeToID   = (int)$req->get('frmCategoryChangeToID');
+        $input->articleCatID    = (array)$req->get('frmArticleCatID');
+        $input->catChangeToID   = (array)$req->get('frmCategoryChangeToID');
         $input->dataTypeID      = $req->get('frmArticleTypeID');
         $input->articleTypeFilter = ($req->get('frmArticleTypeFilter'))
                                     ? (int)$req->get('frmArticleTypeFilter') : 1;
         $input->status          = $req->get('frmStatus');
         $input->articleID       = (int)$req->get('frmArticleID');
+        $input->targetID        = (int)$req->get('frmTargetID');
         $input->aDelete         = $req->get('frmDelete');
         $input->articleLang     = $req->get('frmArticleLang');
         $input->availableLangs  = $req->get('frmAvailableLangs');
@@ -158,10 +160,6 @@ class ArticleMgr extends SGL_Manager
         $output->template   = 'articleMgrAdd.html';
         $output->pageTitle .= ' :: Add';
 
-        //  don't show wysiwyg for 'news' articles
-        if ($input->dataTypeID != 4) {
-            $output->wysiwyg = true;
-        }
         $output->todaysDate = SGL_Date::getTime();
 
         //  initialise input array with current date/time
@@ -191,19 +189,23 @@ class ArticleMgr extends SGL_Manager
 
         //  use site language to create all articles
         $item = & new SGL_Item();
+        $item->set('typeID',$input->dataTypeID);
         $output->articleLang = SGL_Translation::getFallbackLangID();
         $output->dynaFields = $item->getDynamicFields($input->dataTypeID,
             SGL_RET_ARRAY, $output->articleLang);
+
+        //  don't show wysiwyg for 'news' articles
+        if ($item->usesWysiwyg()) {
+            $output->wysiwyg = true;
+        }
 
         //  generate breadcrumbs and change category select
         $menu = & new MenuBuilder('SelectBox');
         $htmlOptions = $menu->toHtml();
 
-        //  only display categories if 'html article' type is chosen
-        if ($input->dataTypeID == 2) {
-            $output->aCategories = $htmlOptions;
-            $output->currentCat = $input->catID;
-        }
+        $output->aCategories = $htmlOptions;
+        $output->currentCat = $input->catID;
+        
         $output->breadCrumbs = $menu->getBreadCrumbs($input->catID, false);
     }
 
@@ -219,7 +221,7 @@ class ArticleMgr extends SGL_Manager
         //  check for missing article id
         if (empty($input->catID)) {
             SGL::logMessage('Category ID has been lost, FIXME', PEAR_LOG_NOTICE);
-            $input->catID = 1;
+            $input->catID = array(1);
         }
         $item = & new SGL_Item();
         $item->set('createdByID', $input->createdByID);
@@ -231,13 +233,21 @@ class ArticleMgr extends SGL_Manager
 
         $item->set('typeID', $input->dataTypeID);
         $item->set('catID', $input->catID);
+        //TODO: for now set every article as published. make configurable later...
+        $item->set('statusID', SGL_STATUS_PUBLISHED);
 
         //  addMetaInfo
-        $insertID = $item->addMetaItems();
+        $itemID = $item->addMetaItems();
 
-        //  addDataItems
-        $item->addDataItems($insertID, $input->aDataItemID, $input->aDataItemValue,
-            $input->aDataItemType, $input->articleLang);
+        //  create array for SGL_Item::updateDataItems()
+        $aItemData[$itemID]['language']   = $input->articleLang;
+        foreach ($input->aDataItemID as $key => $value) {
+            $aItemData[$itemID]['data'][$value]['type'] = array_key_exists($value,$input->aDataItemType)
+                ? $input->aDataItemType[$value]
+                : null;
+            $aItemData[$itemID]['data'][$value]['value'] = $input->aDataItemValue[$key];
+        }
+        $item->addDataItems($aItemData);
 
         SGL::raiseMsg('Article successfully added', true, SGL_MESSAGE_INFO);
     }
@@ -249,11 +259,11 @@ class ArticleMgr extends SGL_Manager
         $output->template = 'articleMgrEdit.html';
         $output->pageTitle .= ' :: Edit';
 
+        $item = & new SGL_Item(array('itemID' => $input->articleID));
         //  don't show wysiwyg for 'news' articles
-        if ($input->dataTypeID != 4) {
+        if ($item->usesWysiwyg()) {
             $output->wysiwyg = true;
         }
-        $item = & new SGL_Item($input->articleID);
 
         //  prepare date selectors
         $output->dateSelectorStart =
@@ -280,12 +290,14 @@ class ArticleMgr extends SGL_Manager
             $output->availableLangs = $installedLanguages;
             $output->articleLang = (!empty($input->articleLang))
                 ? $input->articleLang
-                : SGL_Translation::getLangID();
+                : $this->conf['translation']['fallbackLang'];
         }
 
         //  get dynamic content
-        $output->dynaContent =
-            $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $output->articleLang);
+        $output->dynaContent = (isset($input->articleLang))
+            ? $item->getDynamicContent($input->articleID, SGL_RET_ARRAY, $input->articleLang)
+            : $item->getDynamicContent($input->articleID, SGL_RET_ARRAY,
+                @$this->conf['translation']['fallbackLang']);
 
         //  generate flesch html link
         $output->fleschLink = $this->conf['site']['baseUrl']
@@ -327,12 +339,11 @@ class ArticleMgr extends SGL_Manager
         $menu = & new MenuBuilder('SelectBox');
         $htmlOptions = $menu->toHtml();
 
-        //  only display categories if 'html article' type is chosen
-        if ($item->typeID == 2) {
-            $output->aCategories = $htmlOptions;
-            $output->currentCat = $item->catID;
-        }
-        $output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
+        $output->aCategories = $htmlOptions;
+        $output->aCurrentCat = $item->get('catID');
+        
+//FIXME: what to do with breadcrumbs in edit mode? do we need them?
+        //$output->breadCrumbs = $menu->getBreadCrumbs($item->catID, false);
     }
 
     function _cmd_update(&$input, &$output)
@@ -348,13 +359,12 @@ class ArticleMgr extends SGL_Manager
             SGL::logMessage('Category ID has been lost, FIXME', PEAR_LOG_NOTICE);
             $input->articleCatID = 1;
         }
-        $item = & new SGL_Item($input->articleID);
+
+        $item = & new SGL_Item(array('itemID' => $input->articleID));
         $item->set('lastUpdatedById', $input->createdByID);
 
-        //  only update catID if it's  a dynamic html article
-        if ($item->get('typeID') == 2) {
-            $item->set('catID', $input->articleCatID);
-        }
+        $item->set('catID', $input->articleCatID);
+        
         $item->set('lastUpdated', SGL_Date::getTime());
         $item->set('startDate', $input->aStartDate);
         $item->set('expiryDate', $input->noExpiry ? NULL : $input->aExpiryDate);
@@ -363,8 +373,15 @@ class ArticleMgr extends SGL_Manager
         //  updateMetaItems
         $item->updateMetaItems();
 
+        //  create array for SGL_Item::updateDataItems()
+        $aItemData[$input->articleID]['language']   = $input->articleLang;
+        foreach ($input->aDataItemID as $key => $value) {
+            $aItemData[$input->articleID]['data'][$value]['type'] = $input->aDataItemType[$value];
+            $aItemData[$input->articleID]['data'][$value]['value'] = $input->aDataItemValue[$key];
+        }
+
         //  updateDataItems
-        $item->updateDataItems($input->aDataItemID, $input->aDataItemValue, $input->aDataItemType, $input->articleLang);
+        $item->updateDataItems($aItemData);
 
         SGL::raiseMsg('Article successfully updated', true, SGL_MESSAGE_INFO);
 
@@ -378,7 +395,7 @@ class ArticleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $item = & new SGL_Item($input->articleID);
+        $item = & new SGL_Item(array('itemID' => $input->articleID));
         $item->changeStatus($input->status);
         $output->template = 'articleManager.html';
         SGL::raiseMsg('Article status has been successfully changed', true, SGL_MESSAGE_INFO);
@@ -391,6 +408,23 @@ class ArticleMgr extends SGL_Manager
         $item->delete($input->aDelete);
 
         SGL::raiseMsg('The selected article(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
+    }
+    
+    function _cmd_reorder(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $aMoveTo = array('BE' => 'up',
+                         'AF' => 'down');
+        if (isset($input->articleID, $input->targetID)) {
+            $item = & new SGL_Item(array('itemID' => $input->articleID));
+            $item->moveItem($input->catID, $input->targetID);
+        } else {
+            SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+            break;
+        }
+        //  clear cache so a new cache file is built reflecting changes
+        SGL::raiseMsg('Items reordered successfully', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_view(&$input, &$output)
@@ -410,11 +444,14 @@ class ArticleMgr extends SGL_Manager
 
         //  grab article with template type from session preselected
         $aResult = SGL_Item::retrievePaginated(
-            $input->catID,
-            $bPublished = false,
-            $input->articleTypeFilter,
-            $input->queryRange,
-            $input->from);
+            array(
+                'catID'         => $input->catID,
+                'bPublished'    => false,
+                'dataTypeID'    => $input->dataTypeID,
+                'queryRange'    => $input->queryRange,
+                'from'          => $input->from
+            )
+        );
 
         //  rebuild item data
         foreach ($aResult['data'] as $key => $aValues) {
@@ -430,7 +467,38 @@ class ArticleMgr extends SGL_Manager
                         $aValues['status']);
             }
         }
-
+        
+        // generate arrows for reordering only when watching articles inside a category
+        if ($input->queryRange == 'thisCategory' && SGL_Session::getRoleId() == SGL_ADMIN){
+            $output->showOrderKeys = true;
+            $current = '';
+            //check if prev page exists
+            //FIXME: how to get prev order id? see below...
+            //$prev = ($aResult['page_numbers']['current'] > 1) ? '<prev order id>' : '';
+            $prev = '';
+            foreach ($aResult['data'] as $key => $aValues) {
+                $current = $aValues['order_id'];
+                if ($prev !== '') {
+                    $aResult['data'][$key]['moveUp'] = $prev;
+                    // we must invent a flag here, cause flexy doesn't show the up arrow when $targetID === 0
+                    $aResult['data'][$key]['showMoveUp'] = true;
+                }
+                //what's the next element?
+                //FIXME: check if "next page" exists
+                if (array_key_exists($key + 1, $aResult['data'])
+                //FIXME: don't have order_id of next element
+                //order_id isn't just incremented cause what
+                //if element isn't visible (expiry date reached etc.) 
+                //  ||  $aResult['page_numbers']['current'] < $aResult['page_numbers']['total']
+                ) {
+                    $aResult['data'][$key]['moveDown'] = $aResult['data'][$key + 1]['order_id'];
+                    $aResult['data'][$key]['showMoveDown'] = true;                
+                }
+                
+                $prev = $current;
+            }        
+        }
+        
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];
             $output->pager = ($aResult['totalItems'] <= $limit) ? false : true;
