@@ -38,7 +38,6 @@
 // $Id: DocumentorMgr.php,v 1.12 2005/01/03 10:49:47 demian Exp $
 
 require_once SGL_CORE_DIR . '/Item.php';
-require_once SGL_MOD_DIR . '/publisher/classes/ArticleMgr.php';
 require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
 
 /**
@@ -85,16 +84,13 @@ class DocumentorMgr extends SGL_Manager
         $output->bulletList = $menu->toHtml();
         $output->lastUpdated = date("l dS of F Y h:i:s A");
 
-        //  retrieve articles
-        $articles = & new ArticleMgr();
-
         //  grab article with template type from session preselected
-        $aResult = $articles->retrieveAll($dataTypeID = 1, $queryRange = 'all');
-        $articles->add($aResult);
-        $output->articles = $articles->aElements;
+        $aResult = $this->retrieveAll($dataTypeID = 1, $queryRange = 'all');
+        $this->add($aResult);
+        $output->articles = $this->aElements;
 
         for ($x = 0; $x < count($output->articles); $x++) {
-            $item = & new SGL_Item($output->articles[$x]->item_id);
+            $item = & new SGL_Item(array('itemID' => $output->articles[$x]->item_id));
             $preview = $item->manualPreview();
             $link = str_replace(' ', '_', $preview['title']);
             $title = $preview['title'];
@@ -103,6 +99,59 @@ class DocumentorMgr extends SGL_Manager
             $output->preview[] = (object)$preview;
             unset($item);
         }
+    }
+    
+    /**
+     * Add article objects to elements array for counting.
+     *
+     * @access  public
+     * @param   mixed   $mElement
+     * @return  void
+     */
+    function add($mElement)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $this->aElements = $mElement;
+    }
+   /**
+     * Gets full list of articles, for Documentor.
+     *
+     * @access  public
+     * @param   int     $dataTypeID template ID of article, ie, new article, weather article, etc.
+     * @param   string  $queryRange flag to indicate if results limited to specific category
+     * @return  array   $aResult        returns array of article objects, pager data, and show page flag
+     * @see     retrievePaginated()
+     */
+    function retrieveAll($dataTypeID, $queryRange)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        //  if user only wants contents from current category, add where clause
+        $rangeWhereClause   = ($queryRange == 'all') ?'' : "AND i.category_id = $catID";
+        $typeWhereClause    = ($dataTypeID == 1) ?'' : "AND  it.item_type_id  = '$dataTypeID'";
+        $query = "
+            SELECT  i.item_id,
+                    ia.addition,
+                    u.username,
+                    i.date_created,
+                    i.start_date,
+                    i.expiry_date
+            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
+                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
+
+            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
+            AND     i.updated_by_id = u.usr_id
+            AND     it.item_type_id  = itm.item_type_id
+            AND     i.item_id = ia.item_id
+            AND     i.item_type_id = it.item_type_id
+            AND     itm.field_name = 'title'                /* match item addition type, 'title'    */ " .
+            $typeWhereClause . "                            /* match datatype */
+            AND     i.status  > " . SGL_STATUS_DELETED . "  /* don't list items marked as deleted */ " .
+            $rangeWhereClause . "
+            ORDER BY i.date_created DESC
+                ";
+        $aArticles = $this->dbh->getAll($query);
+        return $aArticles;
     }
 }
 ?>

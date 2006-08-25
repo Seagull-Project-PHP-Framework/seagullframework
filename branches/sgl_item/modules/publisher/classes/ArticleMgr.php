@@ -515,47 +515,7 @@ class ArticleMgr extends SGL_Manager
         }
     }
 
-    /**
-     * Gets full list of articles, for Documentor.
-     *
-     * @access  public
-     * @param   int     $dataTypeID template ID of article, ie, new article, weather article, etc.
-     * @param   string  $queryRange flag to indicate if results limited to specific category
-     * @return  array   $aResult        returns array of article objects, pager data, and show page flag
-     * @see     retrievePaginated()
-     */
-    function retrieveAll($dataTypeID, $queryRange)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //  if user only wants contents from current category, add where clause
-        $rangeWhereClause   = ($queryRange == 'all') ?'' : "AND i.category_id = $catID";
-        $typeWhereClause    = ($dataTypeID == 1) ?'' : "AND  it.item_type_id  = '$dataTypeID'";
-        $query = "
-            SELECT  i.item_id,
-                    ia.addition,
-                    u.username,
-                    i.date_created,
-                    i.start_date,
-                    i.expiry_date
-            FROM    {$this->conf['table']['item']} i, {$this->conf['table']['item_addition']} ia,
-                    {$this->conf['table']['item_type']} it, {$this->conf['table']['item_type_mapping']} itm, {$this->conf['table']['user']} u
-
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-            AND     i.updated_by_id = u.usr_id
-            AND     it.item_type_id  = itm.item_type_id
-            AND     i.item_id = ia.item_id
-            AND     i.item_type_id = it.item_type_id
-            AND     itm.field_name = 'title'                /* match item addition type, 'title'    */ " .
-            $typeWhereClause . "                            /* match datatype */
-            AND     i.status  > " . SGL_STATUS_DELETED . "  /* don't list items marked as deleted */ " .
-            $rangeWhereClause . "
-            ORDER BY i.date_created DESC
-                ";
-        $aArticles = $this->dbh->getAll($query);
-        return $aArticles;
-    }
-
+ 
     /**
      * Returns hash of template types.
      *
@@ -576,18 +536,6 @@ class ArticleMgr extends SGL_Manager
         return $templateTypes;
     }
 
-    /**
-     * Add article objects to elements array for counting.
-     *
-     * @access  public
-     * @param   mixed   $mElement
-     * @return  void
-     */
-    function add($mElement)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->aElements = $mElement;
-    }
 
     function _generateActionLinks($itemID, $itemStatusID)
     {
