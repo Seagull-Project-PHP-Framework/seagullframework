@@ -1034,6 +1034,10 @@ class SGL_Item
                         $fieldID, $fieldName, $fieldValue, $this->typeID);
                     $html['category_id'] = $catId;
                 }
+                //FIXME: fallback for old installations.
+                //afaik it's better to convert everything to item-category-mapping table,
+                //so we only have arrays of categories for an item
+                //remove later
                 $html['category_id'] =  (empty($html['category_id']))
                     ? $this->getCategories()
                     : $html['category_id'];
@@ -1174,7 +1178,14 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  grab article with template type from session preselected
-        $aResult = SGL_Item::retrievePaginated($catID, $bPublished = true, $dataTypeID);
+        
+        $aResult = SGL_Item::retrievePaginated(
+            array(
+                'catID'     => $catID,
+                'bPublish'  => true,
+                'dataTypeID'    => $dataTypeID,
+            )
+        );
         if (PEAR::isError($aResult)) {
             return $aResult;
         }
@@ -1234,16 +1245,16 @@ class SGL_Item
      *
      * @access  public
      * @static
-     * @param   array $options
-     * @param   int   $options[dataTypeID] template ID of article, ie, news article, weather article, etc.
-     * @param   string  $options[queryRange] flag to indicate if results limited to specific category
-     * @param   int     $options[catID]      optional cat ID to limit results to
-     * @param   int     $options[from]       row ID offset for pagination
-     * @param   string  $options[orderBy]    column to sort on
-     * @param   array   $options[search]     id of field to search, text to search
-     * @param   array   $options[perPage]    nr of results to serve. If emtpy default value from prevs are used
+     * @param   array   $options
+     * @param   int     $options['dataTypeID'] template ID of article, ie, news article, weather article, etc.
+     * @param   string  $options['queryRange'] flag to indicate if results limited to specific category
+     * @param   int     $options['catID']      optional cat ID to limit results to
+     * @param   int     $options['from']       row ID offset for pagination
+     * @param   string  $options['orderBy']    column to sort on
+     * @param   array   $options['search']     id of field to search, text to search
+     * @param   boolean $options['disablePager']  retrieve all items or paged data. Default to false (pageing enabled)  
+     * @param   array   $options['perPage']    nr of results to serve. If emtpy default value from prevs are used
      * @return  array   $aResult    returns array of article objects, pager data, and show page flag
-     * @see     retrieveAll()
      */
     function retrievePaginated($options)
     {
@@ -1251,7 +1262,8 @@ class SGL_Item
 
         $aAllowedSearchOperators = array ('=','>','<','<=','>=','=>','=<');
         if (is_array($options) && !array_key_exists('catID', $options)) {
-            SGL::raiseError('Invalid parameters', SGL_ERROR_INVALIDARGS);
+            SGL::raiseError('Invalid parameterspassed to '  . __CLASS__ . '::' .
+                    __FUNCTION__, SGL_ERROR_INVALIDARGS);
         } elseif (is_array($options)) {
             $catID = $options['catID'];
             $bPublished = (array_key_exists('bPublished', $options))
@@ -1355,7 +1367,8 @@ class SGL_Item
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
             ORDER BY $orderBy $orderDirection
             ";
-
+            
+//FIXME: remove debug code
 //var_dump($query);
 //die;
 
@@ -1363,7 +1376,12 @@ if (array_key_exists('debug',$options) && $options['debug'] == true) {
     echo $query;
 }
 
-            $limit =  (array_key_exists('perPage', $options)) ? $options['perPage'] :$_SESSION['aPrefs']['resPerPage'];
+            $limit =  (array_key_exists('perPage', $options)) 
+                ? $options['perPage'] 
+                :$_SESSION['aPrefs']['resPerPage'];
+            $disablePager = (bool)(array_key_exists('disablePager', $options))
+                ? $options['disablePager']
+                : false;
             $pagerOptions = array(
                 'mode'     => 'Sliding',
                 'delta'    => 3,
@@ -1373,7 +1391,7 @@ if (array_key_exists('debug',$options) && $options['debug'] == true) {
                 'curPageSpanPre'        => '<span class="currentPage">',
                 'curPageSpanPost'       => '</span>',
             );
-            $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+            $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions, $disablePager);
             if ($this->conf['translation']['container'] == 'db') {
                 foreach ($aPagedData['data'] as $k => $aValues) {
                     if (($title = $this->trans->get($aValues['trans_id'], 
@@ -1389,122 +1407,26 @@ if (array_key_exists('debug',$options) && $options['debug'] == true) {
         }
     }
 
-        /**
+    /**
      * Gets list of all articles in a category.
      * 
-     * @todo merge with retrievePaginated() as it's pretty much the same sql
-     *
-     * @access  public
-     * @static
-     * @param   int     $dataTypeID template ID of article, ie, news article, weather article, etc.
-     * @param   string  $queryRange flag to indicate if results limited to specific category
-     * @param   int     $catID      optional cat ID to limit results to
-     * @param   int     $from       row ID offset for pagination
-     * @param   string  $orderBy    column to sort on
-     * @return  array   $aResult    returns array of article objects, pager data, and show page flag
-     * @see     retrieveAll()
+     * @deprecated use retrievePaginated() instead
+     * @see     retrievePaginated()
      */
     function retrieveAll($options)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($options) && !array_key_exists('catID', $options)) {
-            SGL::raiseError('Invalid parameters', SGL_ERROR_INVALIDARGS);
-        } elseif (is_array($options)) {
-            $catID = $options['catID'];
-            $bPublished = (array_key_exists('bPublished', $options))
-                ? $options['bPublished']
-                : false;
-            $dataTypeID = (array_key_exists('dataTypeID', $options))
-                ? $options['dataTypeID']
-                : 1;
-            $queryRange = (array_key_exists('queryRange', $options))
-                ? $options['queryRange']
-                : 'thisCategory';
-            $from = (array_key_exists('from', $options)) ? $options['from'] : '';
-            $orderBy = (array_key_exists('orderBy', $options))
-                ? 'i.'.$options['orderBy']
-                : 'icm.order_id';
+            SGL::raiseError('Invalid parameters passed to '  . __CLASS__ . '::' .
+                    __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-        
+        $options['disablePager'] = true;
         if (!isset($this)) {
             new SGL_Item();
         }
-
-        if (!is_numeric($catID) || !is_numeric($dataTypeID)) {
-            return SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
-                __FUNCTION__, SGL_ERROR_INVALIDARGS);
-        }
-        //  if published flag set, only return published articles
-        $isPublishedClause = ($bPublished)?
-            ' AND i.status  = ' . SGL_STATUS_PUBLISHED :
-            ' AND i.status  > ' . SGL_STATUS_DELETED ;
-
-        //  if user only wants contents from current category, add where clause
-        $rangeWhereClause   = ($queryRange == 'all')?'' : " AND icm.category_id = $catID";
-        $roleId = SGL_Session::get('rid');
-
-        //  dataTypeID 1 = all template types, otherwise only a specific one
-        $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
-        $orderID = ($queryRange != 'all') ? ', icm.order_id' : '';
-
-           $query = "
-                SELECT  DISTINCT
-                        i.item_id,
-                        ia.addition,
-                        ia.trans_id,
-                        u.username,
-                        i.date_created,
-                        i.start_date,
-                        i.expiry_date,
-                        i.status" .
-                        $orderID . "
-            FROM        {$this->conf['table']['item']} i
-            LEFT JOIN   {$this->conf['table']['item_addition']} ia ON i.item_id = ia.item_id
-            LEFT JOIN   {$this->conf['table']['item_type']} it ON i.item_type_id = it.item_type_id
-            LEFT JOIN   {$this->conf['table']['item_type_mapping']} itm ON it.item_type_id = itm.item_type_id
-            LEFT JOIN   {$this->conf['table']['item_category_mapping']} icm ON i.item_id = icm.item_id
-            LEFT JOIN   {$this->conf['table']['user']} u ON i.updated_by_id = u.usr_id
-            LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
-            WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-            AND     itm.field_name = 'title'" .         /*  match item addition type, 'title'    */
-            $typeWhereClause .                          //  match datatype
-            $rangeWhereClause .
-            $isPublishedClause . "
-            AND     icm.category_id = c.category_id
-            AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
-            ORDER BY i.$orderBy DESC
-            ";
-
-        $aPagedData = array();
-        $aPagedData['data'] = $this->dbh->getAll($query, array(), DB_FETCHMODE_ASSOC);
-
-//NOTE: i don't like to see untranslated items... maybe make this configurable. werner
-
-       /* if ($this->conf['translation']['container'] == 'db') {
-            foreach ($aPagedData['data'] as $k => $aValues) {
-                $aPagedData['data'][$k]['trans_id'] = ($translation = $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getLangID()))
-                    ? $translation
-                    : $this->trans->get($aValues['trans_id'],
-                    'content', SGL_Translation::getFallbackLangID());
-            }
-        }*/
-        if ($this->conf['translation']['container'] == 'db') {
-            foreach ($aPagedData['data'] as $k => $aValues) {
-                if (($title = $this->trans->get($aValues['trans_id'], 
-                    'content', SGL_Translation::getLangID()))
-                /*||  ($title = $this->trans->get($aValues['trans_id'], 
-                  'content', SGL_Translation::getFallbackLangID()))*/)
-                {
-                    $aPagedData['data'][$k]['addition'] = $title;
-                } else {
-                    //don't show untranslated articles in the articles block
-                    unset($aPagedData['data'][$k]);
-                }
-            }
-        }
-        return $aPagedData;
+        
+        return $this->retrievePaginated($options);
     }
 
 
