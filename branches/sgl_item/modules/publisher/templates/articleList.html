@@ -1,0 +1,9 @@
+{if:articleList}
+    <ul class="noindent">
+    {foreach:articleList,key,aValue}
+        <li><a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}">{aValue[addition]}</a></li>
+    {end:}
+    </ul>
+{else:}
+    {translate(#No articles found#)}
+{end:}
