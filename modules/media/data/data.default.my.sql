@@ -1,5 +1,5 @@
 #
-# Dumping data for table `media_type`
+# Dumping data for table `file_type`
 #
 
 INSERT INTO file_type VALUES (1,'MS Word');

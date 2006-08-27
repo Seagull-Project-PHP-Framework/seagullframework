@@ -1,7 +1,6 @@
 CREATE TABLE `media` (
   `media_id` int(11) NOT NULL default '0',
   `file_type_id` int(11) NOT NULL default '0',
-  `media_type_id` int(11) NOT NULL default '0',
   `name` varchar(128) default NULL,
   `file_name` varchar(255) NOT NULL default '',
   `file_size` int(11) default NULL,

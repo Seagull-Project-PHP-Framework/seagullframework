@@ -12,6 +12,7 @@
         'Locate' => 'Locate',
         'Upload' => 'Upload',
         'Original Name' => 'Original Name',
+        'Size' => 'Size',
         'Mime Type' => 'Mime Type',
         'Kb' => 'kB',
         'Owner' => 'Owner',
