@@ -41,8 +41,11 @@ CREATE TABLE event_type (
 CREATE TABLE "event-media" (
   event_id              INT4                NOT NULL default 0,
   media_id              INT4                NOT NULL default 0,
-  is_event_image        INT4                NOT NULL default 0,
-  constraint PK_EVENT_MEDIA primary key (event_id)
+  is_event_image        INT4                NOT NULL default 0
+);
+
+CREATE INDEX idx_event_media ON table "event-media" (
+  event_id
 );
 
 CREATE INDEX idx_event_media ON table "event-media" (

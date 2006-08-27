@@ -396,8 +396,10 @@ class MediaMgr extends FileMgr
 
         $output->template = 'mediaEdit.html';
         $media = DB_DataObject::factory($this->conf['table']['media']);
-        $media->get($input->mediaId);
+
+        $ok = $media->get($input->mediaId);
         $media->getLinks('link_%s');
+
         $output->media = $media;
     }
 
