@@ -32,7 +32,6 @@ function toggleHighlight(element){
     <input type="hidden" name="action" value="{nextAction}" />
     <input type="hidden" name="frmCallerMgr" value="{callerMgr}" />
     <input type="hidden" name="frmCallerMod" value="{callerMod}" />
-    <input type="hidden" name="frmMediaTypeId" value="{mediaTypeId}" />
     <input type="hidden" name="frmIsEventImage" value="{isEventImage}" />
     <input type="hidden" name="frmEventId" value="{eventId}" />
     <input type="hidden" name="frmUserId" value="{userId}" />
@@ -45,8 +44,9 @@ function toggleHighlight(element){
 
 		<div class="complete_thumb_highlighted">
 
-		{if:this.plugin(#isImage#,media.file_type_id)}<!-- IF IT'S AN IMAGE DISPLAY THIS -->
-			
+		{if:this.plugin(#isImage#,media.file_type_id)}
+		<!-- IF IT'S AN IMAGE DISPLAY THIS -->
+
 			{if:isEqual(callerMgr,#account#)}
                 {if:media.isDefaultImg}
                 <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
@@ -60,24 +60,13 @@ function toggleHighlight(element){
                            onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
 			{end:}
 
-			<!-- DISPLAY RADIO TO SELECT DEFAULT IMG -->
-			{if:isEqual(callerMgr,#artwork#)}
-                {if:media.isDefaultImg}
-                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
-                       value="{media.media_id}" checked="checked" flexy:ignore /> is default
-                {else:}
-                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
-                       value="{media.media_id}" flexy:ignore /> is default
-                {end:}
-			{end:}
-			
 			<div class="thumb_icon">
 				    {this.plugin(#id2MediaIcon#,media.file_type_id):h}
 			</div>
 		{else:}
-			<!-- IF IT'S A FILE DISPLAY THIS -->
+	   <!-- IF IT'S A FILE DISPLAY THIS -->
 			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
-                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+                   onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
 			<div class="thumb_icon">
 				<!-- IN HERE YOU COULD DISPLAY THE THUMBNAIL OF THE IMAGE AND CHANGE THE CLASS TO 'thumb'
 				OTHERWISE IT JUST DISPLAYS THE IMAGE ICON -->
@@ -114,11 +103,3 @@ function toggleHighlight(element){
 
 </form>
 </div>
-
-
-
-
-
-
-
-

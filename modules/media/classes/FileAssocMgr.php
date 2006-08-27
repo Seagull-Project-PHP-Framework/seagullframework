@@ -48,7 +48,6 @@ class FileAssocMgr extends SGL_Manager
             'list'   => array('list'),
             'listImageChoices'   => array('listImageChoices'),
             'associateToEvent'   => array('associateToEvent', 'redirectToCaller'),
-            'associateToArtwork' => array('associateToArtwork', 'redirectToCaller'),
             'associateToUser'    => array('associateToUser', 'redirectToCaller'),
         );
     }
@@ -70,15 +69,12 @@ class FileAssocMgr extends SGL_Manager
         $input->fileTypeId      = $req->get('frmFileTypeId');
         $input->aAssocIds       = $req->get('frmAssociateIds');
         $input->eventId         = $req->get('frmEventId');
-        $input->artworkId       = $req->get('frmArtworkId');
         $input->isEventImage    = $req->get('frmIsEventImage');
         $input->defaultImgId    = $req->get('frmDefaultImg');
         $input->userId          = $req->get('frmUserId');
 
         if ($input->action == 'list') {
-            $input->nextAction = (is_null($input->eventId))
-                ? 'associateToArtwork'
-                : 'associateToEvent';
+            $input->nextAction = 'associateToEvent';
         }
     }
 
@@ -100,7 +96,6 @@ class FileAssocMgr extends SGL_Manager
             WHERE       m.file_type_id = " . $input->fileTypeId . "
             ORDER BY    m.date_created DESC";
         $aMedia = $this->dbh->getAll($query);
-        $output->nextAction = 'associateToUser';
         $output->aMedia = $aMedia;
     }
 
@@ -108,12 +103,8 @@ class FileAssocMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $mediaConstraint = (!is_null($input->mediaTypeId))
-            ? ' WHERE  media_type_id = ' . $input->mediaTypeId
-            : '';
-        $glue = !empty($mediaConstraint) ? 'AND' : 'WHERE';
         $fileTypeConstraint = (!is_null($input->fileTypeId))
-            ? " $glue m.file_type_id = " . $input->fileTypeId
+            ? " WHERE m.file_type_id = " . $input->fileTypeId
             : '';
         $query = "
             SELECT      m.media_id,
@@ -125,29 +116,18 @@ class FileAssocMgr extends SGL_Manager
             FROM        {$this->conf['table']['media']} m
             JOIN        {$this->conf['table']['file_type']} ft ON ft.file_type_id = m.file_type_id
             LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
-            $mediaConstraint
             $fileTypeConstraint
             ORDER BY    m.date_created DESC";
         $aMedia = $this->dbh->getAll($query);
-        $entity = (is_null($input->eventId))
-            ? 'Artwork'
-            : 'Event';
-        $method = 'isAssociatedTo' . $entity;
-        $pk = strtolower($entity) . 'Id';
 
         foreach ($aMedia as $k => $media) {
             if (!is_null($input->isEventImage)) {
-                if ($this->isAssociatedToEventImage($media->media_id, $input->$pk, $input->isEventImage)) {
+                if ($this->isAssociatedToEventImage($media->media_id, $input->eventId)) {
                     $aMedia[$k]->associated = true;
                 }
             } else {
-                if ($this->$method($media->media_id, $input->$pk, $input->isEventImage)) {
+                if ($this->isAssociatedToEvent($media->media_id, $input->eventId)) {
                     $aMedia[$k]->associated = true;
-                }
-                if ($entity == 'Artwork') {
-                    if ($this->isDefaultImage($media->media_id)) {
-                        $aMedia[$k]->isDefaultImg = true;
-                    }
                 }
             }
         }
@@ -155,49 +135,28 @@ class FileAssocMgr extends SGL_Manager
         $output->template = 'fileAssocList.html';
     }
 
-    function isDefaultImage($mediaId)
-    {
-        $query = "
-            SELECT  is_default_image
-            FROM    `artwork-media`
-            WHERE   media_id = $mediaId
-            AND     is_default_image = 1";
-        $yes = $this->dbh->getOne($query);
-        return $yes;
-    }
-
-    function isAssociatedToEventImage($mediaId, $eventId, $isEventImage)
+    function isAssociatedToEventImage($mediaId, $eventId)
     {
         $query = "
             SELECT  media_id
-            FROM    {$this->conf['table']['event-media']}
+            FROM    ".$this->dbh->quoteIdentifier($this->conf['table']['event-media'])."
             WHERE   media_id = $mediaId
             AND     event_id = $eventId
             AND     is_event_image = 1";
-        $yes = $this->dbh->getOne($query);
-        return $yes;
+        $mediaId = $this->dbh->getOne($query);
+        return $mediaId;
     }
 
     function isAssociatedToEvent($mediaId, $eventId)
     {
         $query = "
             SELECT  media_id
-            FROM    {$this->conf['table']['event-media']}
+            FROM    ".$this->dbh->quoteIdentifier($this->conf['table']['event-media'])."
             WHERE   media_id = $mediaId
-            AND     event_id = $eventId";
-        $yes = $this->dbh->getOne($query);
-        return $yes;
-    }
-
-    function isAssociatedToArtwork($mediaId, $artworkId)
-    {
-        $query = "
-            SELECT  media_id
-            FROM    `artwork-media`
-            WHERE   media_id = $mediaId
-            AND     artwork_id = $artworkId";
-        $yes = $this->dbh->getOne($query);
-        return $yes;
+            AND     event_id = $eventId
+            AND     is_event_image = 0";
+        $mediaId = $this->dbh->getOne($query);
+        return $mediaId;
     }
 
     function _cmd_associateToUser(&$input, &$output)
@@ -208,7 +167,6 @@ class FileAssocMgr extends SGL_Manager
             $user->media_id = $input->defaultImgId;
             $success = $user->update();
         }
-
     }
 
     function _cmd_associateToEvent(&$input, &$output)
@@ -216,7 +174,7 @@ class FileAssocMgr extends SGL_Manager
         //  first delete existing associations for this event id
         $isEventImage = ($input->isEventImage) ? 1 : 0;
         $query = "
-            DELETE FROM {$this->conf['table']['event-media']}
+            DELETE FROM ".$this->dbh->quoteIdentifier($this->conf['table']['event-media'])."
             WHERE       event_id = $input->eventId
             AND         is_event_image = $isEventImage";
         $ok = $this->dbh->query($query);
@@ -224,39 +182,18 @@ class FileAssocMgr extends SGL_Manager
         //  then add new ones
         if (count($input->aAssocIds)) {
             if ($isEventImage) {
-                $mediaId = $input->aAssocIds[0];
+                $mediaId = (integer) $input->aAssocIds[0];
                 $query = "
-                    INSERT INTO {$this->conf['table']['event-media']}
+                    INSERT INTO ".$this->dbh->quoteIdentifier($this->conf['table']['event-media'])."
                     VALUES      ($input->eventId, $mediaId, $isEventImage)";
                 $ok = $this->dbh->query($query);
             } else {
                 foreach ($input->aAssocIds as $mediaId) {
                     $query = "
-                        INSERT INTO {$this->conf['table']['event-media']}
+                        INSERT INTO ".$this->dbh->quoteIdentifier($this->conf['table']['event-media'])."
                         VALUES      ($input->eventId, $mediaId, $isEventImage)";
                     $ok = $this->dbh->query($query);
                 }
-            }
-        }
-    }
-
-    function _cmd_associateToArtwork(&$input, &$output)
-    {
-        //  first delete existing associations for this artworkId id
-        $query = "
-            DELETE FROM `artwork-media`
-            WHERE       artwork_id = $input->artworkId
-            AND         media_type_id = $input->mediaTypeId";
-        $ok = $this->dbh->query($query);
-
-        if (count($input->aAssocIds)) {
-            //  then add new ones
-            foreach ($input->aAssocIds as $mediaId) {
-                $isDefaultImage = ($input->defaultImgId == $mediaId) ? 1 : 0;
-                $query = "
-                    INSERT INTO `artwork-media`
-                    VALUES      ($input->artworkId, $mediaId, $input->mediaTypeId, $isDefaultImage)";
-                $ok = $this->dbh->query($query);
             }
         }
     }
