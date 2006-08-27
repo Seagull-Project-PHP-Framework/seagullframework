@@ -1091,10 +1091,10 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                     }
                     $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                 } else {
-                    SGL::raiseMsg('A www was detected but the required webserver' .
+                    PEAR::raiseError('A www directory was detected in one of the modules '.
+                    ' but the required webserver' .
                     ' write perms on seagull/www do not exist, so the symlink could'.
-                    'not be created', false,
-                        SGL_MESSAGE_INFO);
+                    ' not be created');
                 }
             }
         }
@@ -1276,12 +1276,10 @@ class SGL_Task_SyncSequences extends SGL_Task
                     } else {
                         $maxId = 1;
                     }
-
                     // check for NULL
                     if (!$maxId) {
                         $maxId = 1;
                     }
-
                     // drop and recreate sequence
                     $success = false;
                     if (!DB::isError($dbh->dropSequence($table[1]))) {
@@ -1292,14 +1290,14 @@ class SGL_Task_SyncSequences extends SGL_Task
                     if (!$success) {
                         $dbh->rollback();
                         $dbh->autoCommit(true);
-                        SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed'));
+                        SGL_Install_Common::errorPush(PEAR::raiseError('Sequence rebuild failed'));
                     }
                 }
             }
             $success = $dbh->commit();
             $dbh->autoCommit(true);
             if (!$success) {
-                SGL_Install_Common::errorPush(PEAR::raiseError('Rebuild failed'));
+                SGL_Install_Common::errorPush(PEAR::raiseError('Sequence rebuild failed'));
             }
             break;
 

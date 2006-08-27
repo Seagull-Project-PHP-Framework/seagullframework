@@ -214,11 +214,16 @@ class MaintenanceMgr extends SGL_Manager
 
         $ok = $runner->main();
 
-        if (PEAR::isError($ok)) {
-            return $ok;
+        if (SGL_Error::count()) {
+            $oError = SGL_Error::getLast();
+            $msg = $oError->getMessage();
+            $type = SGL_MESSAGE_WARNING;
         } else {
-            SGL::raiseMsg('Environment rebuilt successfully', false, SGL_MESSAGE_INFO);
+            $msg = 'Environment rebuilt successfully';
+            $type = SGL_MESSAGE_INFO;
         }
+        SGL::raiseMsg($msg, false, $type);
+
     }
 
     function _cmd_clearCache(&$input, &$output)
