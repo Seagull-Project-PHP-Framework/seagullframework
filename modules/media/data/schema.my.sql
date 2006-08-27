@@ -8,7 +8,8 @@ CREATE TABLE `media` (
   `date_created` datetime default NULL,
   `added_by` int(11) default NULL,
   `description` text,
-  `num_times_downloaded` int(11) default NULL
+  `num_times_downloaded` int(11) default NULL,
+  PRIMARY KEY  (`media_id`)
 );
 
 create table if not exists file_type

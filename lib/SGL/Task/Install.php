@@ -1090,6 +1090,11 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
                     $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                } else {
+                    SGL::raiseMsg('A www was detected but the required webserver' .
+                    ' write perms on seagull/www do not exist, so the symlink could'.
+                    'not be created', false,
+                        SGL_MESSAGE_INFO);
                 }
             }
         }
