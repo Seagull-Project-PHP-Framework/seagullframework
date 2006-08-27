@@ -251,8 +251,15 @@ class ModuleMgr extends SGL_Manager
         $ok = $runner->main();
 
         //  check for errors
-
-        SGL::raiseMsg('Module successfully installed', false, SGL_MESSAGE_INFO);
+        if (SGL_Error::count()) {
+            $oError = SGL_Error::getLast();
+            $msg = $oError->getMessage();
+            $type = SGL_MESSAGE_WARNING;
+        } else {
+            $msg = 'Module successfully installed';
+            $type = SGL_MESSAGE_INFO;
+        }
+        SGL::raiseMsg($msg, false, $type);
     }
 
     function _cmd_uninstall(&$input, &$output)
