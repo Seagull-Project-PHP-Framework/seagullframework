@@ -281,6 +281,7 @@ class MediaMgr extends FileMgr
                 copy($input->mediaFileTmpName, $targetLocation);
                 $output->fileTypeID = $this->_mime2FileType($input->mediaFileType);
                 $output->fileTypeName = $this->_getType($output->fileTypeID);
+                $output->mediaUniqueName = $uniqueName;
             }
             $output->save = true;
 
@@ -374,16 +375,13 @@ class MediaMgr extends FileMgr
         $media->setFrom($input->media);
         $media->media_id = $this->dbh->nextId($this->conf['table']['media']);
         $media->date_created  = SGL_Date::getTime();
-        if (empty($input->media->added_by)) {
-            $media->added_by = 0;
-        }
+        $media->added_by = SGL_Session::getUid();
         $media->name = SGL_String::censor($media->name);
         $media->description = SGL_String::censor($media->description);
         if ($media->insert()) {
             SGL::raiseMsg('The media has successfully been added', false,
                 SGL_MESSAGE_INFO);
         }
-
         //  if file has been renamed
         if ($input->media->orig_name != $media->name) {
             rename( SGL_UPLOAD_DIR . '/' . $media->media->orig_name,

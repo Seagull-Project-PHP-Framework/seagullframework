@@ -10,7 +10,6 @@ BEGIN;
 CREATE TABLE media (
   media_id              INT4                NOT NULL default 0,
   file_type_id          INT4                NOT NULL default 0,
-  media_type_id         INT4                NOT NULL default 0,
   name                  VARCHAR(128)        default NULL,
   file_name             VARCHAR(255)        NOT NULL default '',
   file_size             INT4                default NULL,
