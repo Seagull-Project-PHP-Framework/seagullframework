@@ -21,7 +21,7 @@
     background-color: <?php echo $secondary ?>;
     font-size: 1.3em;
     font-weight: bold;
-    color: <?php echo $primaryTextLight ?>;
+    color: <?php echo $primaryLight ?>;
     text-align: center;
     text-decoration: none;
     letter-spacing: 0.05em;
