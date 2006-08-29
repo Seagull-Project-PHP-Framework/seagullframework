@@ -7,7 +7,7 @@
  * @author     Elizabeth Smith <auroraeosrose@gmail.com>
  * @copyright  2005 Elizabeth Smith
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.4.0
+ * @version    Release: 0.4.1
  */
 
 /**

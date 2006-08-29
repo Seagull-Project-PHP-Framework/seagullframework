@@ -20,7 +20,7 @@ require_once 'HTML/AJAX/Debug.php';
  * @author      Elizabeth Smith <auroraeosrose@gmail.com>
  * @copyright   2005 Joshua Eichorn, Arpad Ray, David Coallier, Elizabeth Smith
  * @license     http://www.opensource.org/licenses/lgpl-license.php   LGPL
- * @version     Release: 0.4.0
+ * @version     Release: 0.4.1
  * @link        http://pear.php.net/package/HTML_AJAX
  * @todo        Decide if its good thing to support get
  * @todo        Add some sort of debugging console
@@ -67,6 +67,13 @@ class HTML_AJAX {
      * @var string  JSON|PHP|Null
      */
     var $unserializer = 'JSON';
+
+    /**
+     * Option to use loose typing for JSON encoding
+     * @var bool
+     * @access public
+     */
+    var $json_loose_type = true;
 
     /**
      * Content-type map
@@ -168,7 +175,7 @@ class HTML_AJAX {
         $className = strtolower(get_class($instance));
 
         if ($exportedName === false) {
-            $exportedName = $className;
+            $exportedName = get_class($instance);
             if ($this->php4CompatCase) {
                 $exportedName = strtolower($exportedName);
             }
@@ -224,7 +231,7 @@ class HTML_AJAX {
 
         $names = array_keys($this->_exportedInstances);
         foreach ($names as $name) {
-            $client .= $this->generateClassStub($name);
+            $client .= $this->generateClassStub($this->_exportedInstances[$name]['exportedName']);
         }
         return $client;
     }
@@ -255,11 +262,11 @@ class HTML_AJAX {
             return '';
         }
 
-        $client = "// Client stub for the {$this->_exportedInstances[$name]['className']} PHP Class\n";
+        $client = "// Client stub for the {$this->_exportedInstances[$name]['exportedName']} PHP Class\n";
         $client .= "function {$this->_exportedInstances[$name]['exportedName']}(callback) {\n";
         $client .= "\tmode = 'sync';\n";
         $client .= "\tif (callback) { mode = 'async'; }\n";
-        $client .= "\tthis.className = '{$name}';\n";
+        $client .= "\tthis.className = '{$this->_exportedInstances[$name]['exportedName']}';\n";
         if ($this->serverUrl) {
             $client .= "\tthis.dispatcher = new HTML_AJAX_Dispatcher(this.className,mode,callback,'{$this->serverUrl}','{$this->unserializer}');\n}\n";
         } else {
@@ -346,18 +353,18 @@ class HTML_AJAX {
             }
         }
         
-        $class = call_user_func((array)$this->_callbacks['get'], 'c');
+        $class = strtolower(call_user_func((array)$this->_callbacks['get'], 'c'));
         $method = call_user_func($this->_callbacks['get'], 'm');
         $phpCallback = call_user_func((array)$this->_callbacks['get'], 'cb');
         
         if (!empty($class) && !empty($method)) {
             if (!isset($this->_exportedInstances[$class])) {
                 // handle error
-                trigger_error('Unknown class');
+                trigger_error('Unknown class: '. $class); 
             }
             if (!in_array($method,$this->_exportedInstances[$class]['exportedMethods'])) {
                 // handle error
-                trigger_error('Unknown method');
+                trigger_error('Unknown method: ' . $method);
             }
         } else if (!empty($phpCallback)) {
             if (strpos($phpCallback, '.') !== false) {
@@ -516,7 +523,12 @@ class HTML_AJAX {
             require_once "HTML/AJAX/Serializer/{$type}.php";
         }
 
-        $this->_serializers[$type] = new $class();
+        //handle JSON loose typing option for associative arrays
+        if ($type == 'JSON') {
+            $this->_serializers[$type] = new $class($this->json_loose_type);
+        } else {
+            $this->_serializers[$type] = new $class();
+        }
         return $this->_serializers[$type];
     }
 

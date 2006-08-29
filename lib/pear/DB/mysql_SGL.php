@@ -41,7 +41,7 @@ class DB_mysql_SGL extends DB_mysql
 
         // Release the lock
         $result = $this->getOne("SELECT RELEASE_LOCK('sequence_lock')");
-        if (DB::isError($result)) {           
+        if (DB::isError($result)) {
             return $this->raiseError($result);
         }
         return $id;

@@ -32,7 +32,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  2004-2005 Alan Knowles
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: dataobjectsimple.php,v 1.12 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: dataobjectsimple.php,v 1.13 2006/07/06 09:21:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -71,7 +71,7 @@ require_once 'DB/DataObject.php';
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  2004-2005 Alan Knowles
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: dataobjectsimple.php,v 1.12 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: dataobjectsimple.php,v 1.13 2006/07/06 09:21:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_dataobjectsimple extends Translation2_Container
@@ -146,7 +146,9 @@ class Translation2_Container_dataobjectsimple extends Translation2_Container
     function &getPage($pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
-
+        if (PEAR::isError($langID)) {
+            return $langID;
+        }
         $do = DB_DataObject::factory($this->options['table']);
         $do->lang = $langID;
         $do->page = $pageID;

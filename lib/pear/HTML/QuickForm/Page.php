@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Page.php,v 1.5 2005/11/04 20:17:22 avb Exp $
+// $Id: Page.php,v 1.6 2006/05/31 08:58:44 avb Exp $
 
 require_once 'HTML/QuickForm.php';
 
@@ -30,7 +30,7 @@ require_once 'HTML/QuickForm.php';
  *
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 class HTML_QuickForm_Page extends HTML_QuickForm
 {
@@ -85,6 +85,7 @@ class HTML_QuickForm_Page extends HTML_QuickForm
     *
     * @access public
     * @param  string Name of the action
+    * @throws PEAR_Error
     */
     function handle($actionName)
     {

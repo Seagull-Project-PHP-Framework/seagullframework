@@ -7,7 +7,7 @@
  * @author     Joshua Eichorn <josh@bluga.net>
  * @copyright  2005 Joshua Eichorn
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.4.0
+ * @version    Release: 0.4.1
  */
 
 /**
@@ -32,10 +32,10 @@ require_once 'HTML/AJAX.php';
  * @author     Joshua Eichorn <josh@bluga.net>
  * @copyright  2005 Joshua Eichorn
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.4.0
+ * @version    Release: 0.4.1
  * @link       http://pear.php.net/package/PackageName
  */
-class HTML_AJAX_Server
+class HTML_AJAX_Server 
 {
 
     /**
@@ -63,7 +63,7 @@ class HTML_AJAX_Server
      */
     var $clientJsLocation = false;
 
-    /**
+    /** 
      * An array of options that tell the server howto Cache output
      *
      * The rules are functions that make etag hash used to see if the client needs to download updated content
@@ -84,16 +84,16 @@ class HTML_AJAX_Server
      * @access  public
      */
     var $cacheOptions = array(
-        'httpCacheClient'       => true,
+        'httpCacheClient'       => true, 
         'ClientCacheRule'       => 'file',
         'ClientCacheExpects'    => 'files',
-        'httpCacheStub'         => true,
-        'StubCacheRule'         => 'api',
-        'StubCacheExpects'      => 'classes',
+        'httpCacheStub'         => true, 
+        'StubCacheRule'         => 'api', 
+        'StubCacheExpects'      => 'classes', 
         );
 
     /**
-     * Javascript library names and there path
+     * Javascript library names and there path 
      *
      * the return of $this->clientJsLocation(), is prepended before running readfile on them
      *
@@ -137,12 +137,14 @@ class HTML_AJAX_Server
      * @access protected
      */
     var $_initLookup = array();
-
+    
 
     /**
      * Constructor creates the HTML_AJAX instance
+     *
+     * @param string $serverUrl (Optional) the url the client should be making a request too
      */
-    function HTML_AJAX_Server()
+    function HTML_AJAX_Server($serverUrl = false) 
     {
         $this->ajax =& new HTML_AJAX();
 
@@ -158,8 +160,15 @@ class HTML_AJAX_Server
         }
 
         // call the server with this query string
-        $this->ajax->serverUrl = htmlentities($_SERVER['PHP_SELF']) .'?'. htmlentities($querystring);
+        if ($serverUrl === false) {
+            $serverUrl = htmlentities($_SERVER['PHP_SELF']);
+        }
 
+        if (substr($serverUrl,-1) != '?') {
+            $serverUrl .= '?';
+        }
+        $this->ajax->serverUrl =  $serverUrl . htmlentities($querystring);
+        
         $methods = get_class_methods($this);
         foreach($methods as $method) {
             if (preg_match('/^init([a-zA-Z0-9_]+)$/',$method,$match)) {
@@ -173,7 +182,7 @@ class HTML_AJAX_Server
      *
      * @return boolean true if request was handled, false otherwise
      */
-    function handleRequest()
+    function handleRequest() 
     {
         if ($this->options == true) {
             $this->_loadOptions();
@@ -196,7 +205,7 @@ class HTML_AJAX_Server
      *
      * @see HTML_AJAX::registerClass for docs
      */
-    function registerClass(&$instance, $exportedName = false, $exportedMethods = false)
+    function registerClass(&$instance, $exportedName = false, $exportedMethods = false) 
     {
         $this->ajax->registerClass($instance,$exportedName,$exportedMethods);
     }
@@ -244,13 +253,13 @@ class HTML_AJAX_Server
             // invalid callback
             return false;
         }
-
+        
         if (is_array($callback) && is_object($callback[0])) {
             // object method
-            $this->registerClass($callback[0], false, array($callback[1]));
+            $this->registerClass($callback[0], strtolower(get_class($callback[0])), array($callback[1]));
             return true;
         }
-
+        
         // static callback
         $this->ajax->registerPhpCallback($callback);
     }
@@ -260,7 +269,7 @@ class HTML_AJAX_Server
      *
      * @todo    this is going to need tests to cover all the options
      */
-    function generateClient()
+    function generateClient() 
     {
         $headers = array();
 
@@ -314,8 +323,8 @@ class HTML_AJAX_Server
         if ($classList != false && count($classList) > 0) {
 
             // were setup enough to make a stubETag if the input it wants is a class list
-            if ($this->cacheOptions['httpCacheStub'] &&
-                $this->cacheOptions['StubCacheExpects'] == 'classes')
+            if ($this->cacheOptions['httpCacheStub'] && 
+                $this->cacheOptions['StubCacheExpects'] == 'classes') 
             {
                 $stubETag = $this->_callCacheRule('Stub',$classList);
             }
@@ -334,8 +343,8 @@ class HTML_AJAX_Server
             }
 
             // if were cacheing and the rule expects content make a tag and check it, if the check is true were done
-            if ($this->cacheOptions['httpCacheStub'] &&
-                $this->cacheOptions['StubCacheExpects'] == 'content')
+            if ($this->cacheOptions['httpCacheStub'] && 
+                $this->cacheOptions['StubCacheExpects'] == 'content') 
             {
                 $stubETag = $this->_callCacheRule('Stub',ob_get_contents());
             }
@@ -351,8 +360,8 @@ class HTML_AJAX_Server
 
         if (count($fileList) > 0) {
             // if were caching and need a file list build our jsETag
-            if ($this->cacheOptions['httpCacheClient'] &&
-                $this->cacheOptions['ClientCacheExpects'] === 'files')
+            if ($this->cacheOptions['httpCacheClient'] && 
+                $this->cacheOptions['ClientCacheExpects'] === 'files') 
             {
                 $jsETag = $this->_callCacheRule('Client',$fileList);
 
@@ -372,8 +381,8 @@ class HTML_AJAX_Server
             }
 
             // if were caching and need content build the etag
-            if ($this->cacheOptions['httpCacheClient'] &&
-                $this->cacheOptions['ClientCacheExpects'] === 'content')
+            if ($this->cacheOptions['httpCacheClient'] && 
+                $this->cacheOptions['ClientCacheExpects'] === 'content') 
             {
                 $jsETag = $this->_callCacheRule('Client',ob_get_contents());
             }
@@ -399,7 +408,7 @@ class HTML_AJAX_Server
         $length = ob_get_length();
         $output = ob_get_contents();
         ob_end_clean();
-        if ($length > 0 && $this->ajax->_sendContentLength()) {
+        if ($length > 0 && $this->ajax->_sendContentLength()) { 
             $headers['Content-Length'] = $length;
         }
         $headers['Content-Type'] = 'text/javascript; charset=utf-8';
@@ -414,7 +423,7 @@ class HTML_AJAX_Server
      * @access  private
      * @todo    is addslashes enough encoding for js?
      */
-    function _readFile($file)
+    function _readFile($file) 
     {
         if (file_exists($file)) {
             readfile($file);
@@ -430,10 +439,10 @@ class HTML_AJAX_Server
      *
      * @return  string
      */
-    function clientJsLocation()
+    function clientJsLocation() 
     {
         if (!$this->clientJsLocation) {
-            $path = '/usr/local/lib/php/data'.DIRECTORY_SEPARATOR.'HTML_AJAX'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR;
+            $path = 'C:\wamp\php\pear\data'.DIRECTORY_SEPARATOR.'HTML_AJAX'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR;
             if(strpos($path, '@'.'data-dir@') === 0)
             {
                 $path = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'js').DIRECTORY_SEPARATOR;
@@ -449,7 +458,7 @@ class HTML_AJAX_Server
      *
      * @access private
      */
-    function _loadOptions()
+    function _loadOptions() 
     {
         $this->options = array('client'=>array(),'stub'=>array());
         if (isset($_GET['client'])) {
@@ -498,7 +507,7 @@ class HTML_AJAX_Server
      *
      * @access private
      */
-    function _initAll()
+    function _initAll() 
     {
         if ($this->initMethods) {
             foreach($this->_initLookup as $class => $method) {
@@ -513,7 +522,7 @@ class HTML_AJAX_Server
      * @param   string  $className
      * @access private
      */
-    function _init($className)
+    function _init($className) 
     {
         $className = strtolower($className);
         if ($this->initMethods) {

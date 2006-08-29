@@ -60,7 +60,7 @@ define('EVENT_NOTIFICATION_STATE_CANCELLED', 1);
  * @author     Stephan Schmidt <schst@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version    Release: @package_version@
+ * @version    Release: 1.0.0
  * @link       http://pear.php.net/package/Event_Dispatcher
  */
 class Event_Notification
