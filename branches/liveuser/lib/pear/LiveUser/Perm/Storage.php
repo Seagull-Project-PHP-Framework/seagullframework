@@ -103,7 +103,7 @@ class LiveUser_Perm_Storage
      * @access public
      */
     function init(&$storageConf)
-    {             
+    {
         if (is_array($storageConf)) {
             $keys = array_keys($storageConf);
             foreach ($keys as $key) {

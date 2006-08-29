@@ -57,7 +57,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: SQL.php,v 1.58 2006/04/13 09:00:25 lsmith Exp $
+ * @version CVS: $Id: SQL.php,v 1.63 2006/08/19 15:56:26 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -134,24 +134,22 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
     {
         // sanity checks
         $sequence_id = false;
-               
         foreach ($this->tables[$table]['fields'] as $field => $required) {
             if ($required) {
-
                 if ($required === 'seq') {
                     if (!array_key_exists($field, $data) || empty($data[$field])) {
-                        $result = $this->getBeforeId($this->prefix . $this->alias[$table], true);
+                        $result = $this->getBeforeId($this->prefix . $this->alias[$table], $field, true);
                         if ($result === false) {
                             return false;
                         }
-                        $data[$field] = $sequence_id = $result;
+                        $data[$field] = $result;
+                        $sequence_id = is_numeric($result) ? $result : $field;
                     } else {
                         $sequence_id = $data[$field];
                     }
                 } elseif (!array_key_exists($field, $data)
                     || (empty($data[$field]) && $data[$field] !== 0)
                 ) {
-                    
                     $this->stack->push(
                         LIVEUSER_ADMIN_ERROR_QUERY_BUILDER, 'exception',
                         array('reason' => 'field to insert may not be empty: '.$field)
@@ -169,29 +167,28 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
                 $this->stack->push(
                     LIVEUSER_ADMIN_ERROR_QUERY_BUILDER, 'exception',
                     array('reason' => 'field to insert is not defined: '.$field)
-                );             
+                );
                 return false;
             }
-                                          
+
             $fields[] = $this->alias[$field];
-            $value_quoted = $this->quote($value, $this->fields[$field]);            
-            if ($value_quoted === false) {                               
+            $value_quoted = $this->quote($value, $this->fields[$field]);
+            if ($value_quoted === false) {
                 return false;
-            }            
+            }
             $values[] = $value_quoted;
-        }   
+        }
+
         $result = $this->exec($this->createInsert($table, $fields, $values));
-        if ($result === false) {           
+        if ($result === false) {
             return false;
         }
         if ($sequence_id !== false) {
             if (is_numeric($sequence_id)) {
                 return $sequence_id;
             }
-
-            return $this->getAfterId($sequence_id, $this->prefix . $this->alias[$table]);
+            return $this->getAfterId($sequence_id, $this->prefix . $this->alias[$table], $sequence_id);
         }
-
         return $result;
     }
 
@@ -380,9 +377,23 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
     {
         if (!is_array($fields) || empty($fields)) {
             $fields = array_keys($this->tables[$root_table]['fields']);
-        } elseif (($key = array_search('*', $fields)) !== false) {
-            unset($fields[$key]);
-            $fields = array_merge($fields, array_keys($this->tables[$root_table]['fields']));
+        } elseif (($pos = array_search('*', $fields)) !== false) {
+            $fields_tmp = array();
+            foreach ($fields as $key => $field) {
+                if ($pos == $key) {
+                    $fields_default = array_diff(array_keys($this->tables[$root_table]['fields']), $fields);
+                    foreach ($fields_default as $field) {
+                       if (!in_array($field, $fields_tmp)) {
+                            $fields_tmp[] = $field;
+                        }
+                    }
+                } else {
+                    if (!in_array($field, $fields_tmp)) {
+                        $fields_tmp[] = $field;
+                    }
+                }
+            }
+            $fields = array_unique($fields_tmp);
         }
 
         $types = array();
@@ -490,6 +501,14 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
 
         $where = array();
 
+        foreach ($joinfilters as $key => $value) {
+            if (is_string($key)) {
+                $where[] = $key.' = '.$value;
+            } else {
+                $where[] = $value;
+            }
+        }
+
         foreach ($filters as $field => $value) {
             if (array_key_exists($field, $this->fields)) {
                 $type = $this->fields[$field];
@@ -531,7 +550,7 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
                 $where[] = $tmp_field.$op.$value_quoted;
             }
         }
-        $where = array_merge($joinfilters, $where);
+
         return "\n".' WHERE '.implode("\n".'     AND ', $where);
     }
 
@@ -774,7 +793,7 @@ class LiveUser_Admin_Storage_SQL extends LiveUser_Admin_Storage
             // handle single column join
             } else {
                 $filters[] = $this->prefix.$this->alias[$root_table].'.'.$this->tables[$root_table]['joins'][$table].' = '.
-                    $this->prefix.$this->alias[$table].'.'.$this->tables[$root_table]['joins'][$table];
+                    $this->prefix.$this->alias[$table].'.'.$this->tables[$table]['joins'][$root_table];
             }
             unset($tables[$table]);
         }

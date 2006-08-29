@@ -39,7 +39,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: PDO.php,v 1.15 2006/04/13 15:26:49 lsmith Exp $
+ * @version CVS: $Id: PDO.php,v 1.23 2006/08/15 06:43:20 mahono Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -232,8 +232,19 @@ class LiveUser_Auth_PDO extends LiveUser_Auth_Common
             $query .= $this->alias['auth_user_id'] . '='
                 . $this->dbc->quote($auth_user_id);
         } else {
-            $query .= $this->alias['handle'] . '='
-                . $this->dbc->quote($handle);
+            if (!is_array($this->handles) || empty($this->handles)) {
+                $this->stack->push(
+                    LIVEUSER_ERROR_CONFIG, 'exception',
+                    array('reason' => 'No handle set in storage config.')
+                );
+                return false;
+            }
+            $handles = array();
+            foreach ($this->handles as $field) {
+                $handles[] = $this->alias[$field] . '=' .
+                    $this->dbc->quote($handle);
+            }
+            $query .= '(' . implode(' OR ', $handles) . ')';
 
             if (!is_null($this->tables['users']['fields']['passwd'])) {
                 // If $passwd is set, try to find the first user with the given
@@ -258,9 +269,9 @@ class LiveUser_Auth_PDO extends LiveUser_Auth_Common
             return false;
         }
 
-        $row = $res->fetch(PDO::FETCH_ASSOC);
+        $result = $res->fetch(PDO::FETCH_ASSOC);
 
-        if ($row === false) {
+        if ($result === false && $this->dbc->errorCode() != '00000') {
             $this->stack->push(
                 LIVEUSER_ERROR, 'exception',
                 array(
@@ -276,10 +287,10 @@ class LiveUser_Auth_PDO extends LiveUser_Auth_Common
         }
 
         // User was found, read data into class variables and set return value to true
-        if (array_key_exists('lastlogin', $row) && !empty($row['lastlogin'])) {
-            $row['lastlogin'] = strtotime($row['lastlogin']);
+        if (array_key_exists('lastlogin', $result) && !empty($result['lastlogin'])) {
+            $result['lastlogin'] = strtotime($result['lastlogin']);
         }
-        $this->propertyValues = $row;
+        $this->propertyValues = $result;
 
         return true;
     }
@@ -294,7 +305,7 @@ class LiveUser_Auth_PDO extends LiveUser_Auth_Common
     function disconnect()
     {
         if ($this->dsn) {
-            $this->dbc = false;
+            $this->dbc = null;
         }
         return true;
     }

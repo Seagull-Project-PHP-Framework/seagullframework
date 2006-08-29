@@ -40,7 +40,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: PDO.php,v 1.12 2006/04/07 22:20:57 lsmith Exp $
+ * @version CVS: $Id: PDO.php,v 1.13 2006/06/05 09:54:58 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -164,6 +164,10 @@ class LiveUser_Perm_Storage_PDO extends LiveUser_Perm_Storage_SQL
         }
 
         $row = $result->fetch(PDO::FETCH_ASSOC);
+
+        if ($row === false && $this->dbc->errorCode() === '00000') {
+            $row = null;
+        }
 
         return $row;
     }

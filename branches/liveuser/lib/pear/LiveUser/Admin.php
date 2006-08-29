@@ -57,7 +57,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Admin.php,v 1.65 2006/04/11 17:27:39 lsmith Exp $
+ * @version CVS: $Id: Admin.php,v 1.67 2006/08/07 20:38:24 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -180,7 +180,7 @@ class LiveUser_Admin
      * @access public
      * @see init
      */
-    function LiveUser_Admin($debug)
+    function LiveUser_Admin(&$debug)
     {
         $this->stack = &PEAR_ErrorStack::singleton('LiveUser_Admin');
 
@@ -313,7 +313,7 @@ class LiveUser_Admin
             return $perm;
         }
         $this->perm = &$perm;
-        
+
         return $this->perm;
     }
 
@@ -456,11 +456,10 @@ class LiveUser_Admin
             return false;
         }
 
+        $updateData = array();
         if (array_key_exists('perm_type', $data)) {
-            $type = $data['perm_type'];
+            $updateData['perm_type'] = $data['perm_type'];
             unset($data['perm_type']);
-        } else {
-            $type = null;
         }
 
         $this->setAdminAuthContainer($permData['auth_container_name']);
@@ -471,13 +470,17 @@ class LiveUser_Admin
             return false;
         }
 
-        if (is_null($type)) {
-            return true;
+        if (array_key_exists('auth_user_id', $data)
+            && $permData['auth_user_id'] != $data['auth_user_id']
+        ) {
+            $updateData['auth_user_id'] = $data['auth_user_id'];
+        }
+        if (empty($updateData)) {
+            return $result;
         }
 
-        $data = array('perm_type' => $type);
         $filters = array('perm_user_id' => $permUserId);
-        return $this->perm->updateUser($data, $filters);
+        return $this->perm->updateUser($updateData, $filters);
     }
 
     /**
