@@ -33,7 +33,7 @@
  * @author     Ian Eure <ieure at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Ian Eure
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Autoadd.php,v 1.6 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: Autoadd.php,v 1.7 2006/07/12 00:55:06 ieure Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -91,10 +91,15 @@ class Translation2_Admin_Decorator_Autoadd extends Translation2_Admin_Decorator
             || empty($string)
             && !empty($this->autoaddlang)
         ) {
+            // Make sure we add a stub for all languages we know about.
+            $langs = array();
+            foreach ($this->translation2->getLangs('ids') as $lang) {
+                $langs[$lang] = '';
+            }
+            $langs[$this->autoaddlang] = $stringID;
+
             // Add the string
-            $this->translation2->add($stringID, $pageID, array(
-                $this->autoaddlang => $stringID
-            ));
+            $this->translation2->add($stringID, $pageID, $langs);
         }
         return $string;
     }

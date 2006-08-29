@@ -33,7 +33,7 @@
  * @author     Olivier Guilyardi <olivier at samalyse dot com>
  * @copyright  2004-2005 Lorenzo Alberton, Olivier Guilyardi
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: xml.php,v 1.10 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: xml.php,v 1.12 2006/07/06 09:21:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -329,6 +329,13 @@ class Translation2_Container_xml extends Translation2_Container
      */
     function fixEmptySets(&$data)
     {
+        if (PEAR::isError($this->_data) && ($this->_data->code == XML_UNSERIALIZER_ERROR_NO_UNSERIALIZATION)) {
+            //empty file... create skeleton
+            $this->_data = array(
+                'languages' => array(),
+                'pages'     => array(),
+            );
+        }
         if (is_string($data['languages']) and trim($data['languages']) == '') {
             $data['languages'] = array();
         }
@@ -410,6 +417,9 @@ class Translation2_Container_xml extends Translation2_Container
     function getPage($pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
+        if (PEAR::isError($langID)) {
+            return $langID;
+        }
         $pageID = (is_null($pageID)) ? '#NULL'  : $pageID;
         $pageID = (empty($pageID))   ? '#EMPTY' : $pageID;
 
@@ -437,8 +447,10 @@ class Translation2_Container_xml extends Translation2_Container
     function getOne($stringID, $pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
+        if (PEAR::isError($langID)) {
+            return $langID;
+        }
         $pageID = (is_null($pageID)) ? '#NULL' : $pageID;                         
-
         return isset($this->_data['pages'][$pageID][$stringID][$langID])
                ? $this->_data['pages'][$pageID][$stringID][$langID]
                : null;

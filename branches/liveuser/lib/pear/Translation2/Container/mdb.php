@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.22 2006/02/22 16:31:55 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.24 2006/07/06 11:03:34 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -52,7 +52,7 @@ require_once 'Translation2/Container.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.22 2006/02/22 16:31:55 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.24 2006/07/06 11:03:34 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_mdb extends Translation2_Container
@@ -188,6 +188,9 @@ class Translation2_Container_mdb extends Translation2_Container
     function &getPage($pageID = null, $langID = null)
     {
         $langID   = $this->_getLangID($langID);
+        if (PEAR::isError($langID)) {
+            return $langID;
+        }
         $lang_col = $this->_getLangCol($langID);
         $table    = $this->_getLangTable($langID);
 
@@ -204,17 +207,8 @@ class Translation2_Container_mdb extends Translation2_Container
         }
 
         ++$this->_queries;
-        $res = $this->db->query($query);
-        if (PEAR::isError($res)) {
-            return $res;
-        }
-
-        $strings = array();
-        while (list($key, $value) = $this->db->fetchInto($res)) {
-            $strings[$key] = $value;
-        }
-        $this->db->freeResult($res);
-        return $strings;
+        $res = $this->db->getAssoc($query);
+        return $res;
     }
 
     // }}}
@@ -231,6 +225,9 @@ class Translation2_Container_mdb extends Translation2_Container
     function getOne($stringID, $pageID=null, $langID=null)
     {
         $langID   = $this->_getLangID($langID);
+        if (PEAR::isError($langID)) {
+            return $langID;
+        }
         $lang_col = $this->_getLangCol($langID);
         $table    = $this->_getLangTable($langID);
 

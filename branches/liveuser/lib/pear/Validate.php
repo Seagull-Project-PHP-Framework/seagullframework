@@ -32,7 +32,7 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
  * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    CVS: $Id: Validate.php,v 1.88 2006/04/20 12:03:27 toggg Exp $
+ * @version    CVS: $Id: Validate.php,v 1.94 2006/07/31 11:53:22 amir Exp $
  * @link       http://pear.php.net/package/Validate
  */
 
@@ -44,8 +44,8 @@ define('VALIDATE_SPACE',        '\s');
 define('VALIDATE_ALPHA_LOWER',  'a-z');
 define('VALIDATE_ALPHA_UPPER',  'A-Z');
 define('VALIDATE_ALPHA',        VALIDATE_ALPHA_LOWER . VALIDATE_ALPHA_UPPER);
-define('VALIDATE_EALPHA_LOWER', VALIDATE_ALPHA_LOWER . '·ÈÌÛ˙‡ËÏÚ˘‰ÎÔˆ¸‚ÍÓÙ˚ÒÁ˛Ê');
-define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . '¡…Õ”⁄¿»Ã“ŸƒÀœ÷‹¬ Œ‘€—«ﬁ∆–');
+define('VALIDATE_EALPHA_LOWER', VALIDATE_ALPHA_LOWER . '·ÈÌÛ˙‡ËÏÚ˘‰ÎÔˆ¸‚ÍÓÙ˚ÒÁ˛ÊÂ');
+define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . '¡…Õ”⁄¿»Ã“ŸƒÀœ÷‹¬ Œ‘€—«ﬁ∆–≈');
 define('VALIDATE_EALPHA',       VALIDATE_EALPHA_LOWER . VALIDATE_EALPHA_UPPER);
 define('VALIDATE_PUNCTUATION',  VALIDATE_SPACE . '\.,;\:&"\'\?\!\(\)');
 define('VALIDATE_NAME',         VALIDATE_EALPHA . VALIDATE_SPACE . "'");
@@ -116,6 +116,74 @@ class Validate
         }
         return true;
     }
+    
+    /**
+     * Converting a string to UTF-7 (RFC 2152)
+     *
+     * @param   $string     string to be converted
+     *
+     * @return  string  converted string
+     *
+     * @access  private
+     */
+    function __stringToUtf7($string) {
+        $utf7 = array(
+                        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+                        'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+                        'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+                        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+                        's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2',
+                        '3', '4', '5', '6', '7', '8', '9', '+', ','
+                    );
+
+        $state = 0;
+        if (!empty($string)) {
+            $i = 0;
+            while ($i <= strlen($string)) {
+                $char = substr($string, $i, 1);
+                if ($state == 0) {
+                    if ((ord($char) >= 0x7F) || (ord($char) <= 0x1F)) {
+                        if ($char) {
+                            $return .= '&';
+                        }
+                        $state = 1;
+                    } elseif ($char == '&') {
+                        $return .= '&-';
+                    } else {
+                        $return .= $char;
+                    }
+                } elseif (($i == strlen($string) || 
+                            !((ord($char) >= 0x7F)) || (ord($char) <= 0x1F))) {
+                    if ($state != 1) {
+                        $return .= $utf7[ord($char)];
+                    }
+                    $return .= '-';
+                    $state = 0;
+                } else {
+                    switch($state) {
+                        case 1:
+                            $return .= $utf7[ord($char) >> 2];
+                            $residue = (ord($char) & 0x03) << 4;
+                            $state = 2;
+                            break;
+                        case 2:
+                            $return .= $utf7[$residue | (ord($char) >> 4)];
+                            $residue = (ord($char) & 0x0F) << 2;
+                            $state = 3;
+                            break;
+                        case 3:
+                            $return .= $utf7[$residue | (ord($char) >> 6)];
+                            $return .= $utf7[ord($char) & 0x3F];
+                            $state = 1;
+                            break;
+                    }
+                }
+                $i++;
+            }
+            return $return;
+        }
+        return '';
+    }
 
     /**
      * Validate an email according to full RFC822 (inclusive human readable part)
@@ -130,6 +198,9 @@ class Validate
      */
     function __emailRFC822(&$email, &$options)
     {
+        if (Validate::__stringToUtf7($email) != $email) {
+            return false;
+        }
         static $address = null;
         static $uncomment = null;
         if (!$address) {
@@ -213,7 +284,8 @@ class Validate
          @(((\[)?                     #3 domain, 4 as IPv4, 5 optionally bracketed
          (?:(?:(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))\.){3}
                (?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))))(?(5)\])|
-         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?))  #6 domain as hostname
+         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?)  #6 domain as hostname
+         \.((?:([^-])[-a-z]*[-a-z])?)) #7 ICANN domain names 
          $&xi';
 
         if ($use_rfc822? Validate::__emailRFC822($email, $options) :
