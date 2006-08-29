@@ -57,7 +57,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: PDO.php,v 1.8 2006/03/27 09:54:38 lsmith Exp $
+ * @version CVS: $Id: PDO.php,v 1.10 2006/06/05 09:57:58 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -282,6 +282,9 @@ class LiveUser_Admin_Storage_PDO extends LiveUser_Admin_Storage_SQL
         try {
             $stmt = $this->dbc->query($query);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result === false && $this->dbc->errorCode() === '00000') {
+                $result = null;
+            }
         } catch (PDOException $e) {
             $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
                 array(
@@ -407,13 +410,14 @@ class LiveUser_Admin_Storage_PDO extends LiveUser_Admin_Storage_SQL
      * the call is redirected to nextID()
      *
      * @param string name of the table into which a new row was inserted
-     * @param bool when true the seqence is
-     *                          automatic created, if it not exists
+     * @param string name of the field into which a new row was inserted
+     * @param bool when true the seqence is automatic created, if it not exists
      * @return bool|int
      *
      * @access public
+     * @uses MDB2::nextId MDB2_Extended::getBeforeId
      */
-    function getBeforeId($table, $ondemand = true)
+    function getBeforeId($table, $field, $ondemand = true)
     {
         // todo: need to figure out what to do here
         return null;

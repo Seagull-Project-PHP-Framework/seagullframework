@@ -40,7 +40,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: XML.php,v 1.43 2006/04/07 22:20:57 lsmith Exp $
+ * @version CVS: $Id: XML.php,v 1.44 2006/08/22 17:11:43 lsmith Exp $
  * @link http://pear.php.net/LiveUser
  */
 
@@ -154,7 +154,7 @@ class LiveUser_Auth_XML extends LiveUser_Auth_Common
 
         $success = false;
         do {
-          if (is_writable($this->file)) {
+          if (!is_writable($this->file)) {
               $errorMsg = 'Auth freeze failure. Cannot write to the xml file';
               break;
           }

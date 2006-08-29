@@ -57,7 +57,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: Common.php,v 1.32 2006/04/13 08:52:59 lsmith Exp $
+ * @version CVS: $Id: Common.php,v 1.37 2006/08/15 10:38:55 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -190,78 +190,31 @@ class LiveUser_Admin_Auth_Common
     }
 
     /**
-     * Decrypts a password so that it can be compared with the user
-     * input. Uses the algorithm defined in the passwordEncryptionMode
-     * property.
+     * Decrypts a password so that it can be compared with the user input.
+     * Uses the algorithm defined in the passwordEncryptionMode property.
      *
      * @param  string the encrypted password
-     * @return string The decrypted password
+     * @return string the decrypted password
+     *
+     * @access public
      */
     function decryptPW($encryptedPW)
     {
-        if (empty($encryptedPW) && $encryptedPW !== 0) {
-            return '';
-        }
-
-        $decryptedPW = 'Encryption type not supported.';
-
-        switch (strtoupper($this->passwordEncryptionMode)) {
-        case 'PLAIN':
-            $decryptedPW = $encryptedPW;
-            break;
-        case 'MD5':
-            // MD5 can't be decoded, so return the string unmodified
-            $decryptedPW = $encryptedPW;
-            break;
-        case 'RC4':
-            $decryptedPW = LiveUser::cryptRC4($decryptedPW, $this->secret, false);
-            break;
-        case 'SHA1':
-            // SHA1 can't be decoded, so return the string unmodified
-            $decryptedPW = $encryptedPW;
-            break;
-        }
-
-        return $decryptedPW;
+        return LiveUser::decryptPW($encryptedPW, $this->passwordEncryptionMode, $this->secret);
     }
 
     /**
      * Encrypts a password for storage in a backend container.
-     * Uses the algorithm defined in the passwordEncryptionMode
-     * property.
+     * Uses the algorithm defined in the passwordEncryptionMode property.
      *
-     * @param string  password to encrypt
-     * @return string The encrypted password
+     * @param string  encryption type
+     * @return string the encrypted password
+     *
+     * @access public
      */
     function encryptPW($plainPW)
     {
-        if (empty($plainPW) && $plainPW !== 0) {
-            return '';
-        }
-
-        $encryptedPW = 'Encryption type not supported.';
-
-        switch (strtoupper($this->passwordEncryptionMode)) {
-        case 'PLAIN':
-            $encryptedPW = $plainPW;
-            break;
-        case 'MD5':
-            $encryptedPW = md5($plainPW);
-            break;
-        case 'RC4':
-            $encryptedPW = LiveUser::cryptRC4($plainPW, $this->secret, true);
-            break;
-        case 'SHA1':
-            if (!function_exists('sha1')) {
-                $this->stack->push(LIVEUSER_ERROR_NOT_SUPPORTED,
-                    'exception', array(), 'SHA1 function doesn\'t exist. Upgrade your PHP version');
-                return false;
-            }
-            $encryptedPW = sha1($plainPW);
-            break;
-        }
-
-        return $encryptedPW;
+        return LiveUser::encryptPW($plainPW, $this->passwordEncryptionMode, $this->secret);
     }
 
     /**
@@ -275,6 +228,7 @@ class LiveUser_Admin_Auth_Common
      */
     function addUser($data)
     {
+        // todo: does this work?
         if (array_key_exists('passwd', $data)) {
             $data['passwd'] = $this->encryptPW($data['passwd']);
         }

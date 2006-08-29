@@ -57,7 +57,7 @@
  * @author  Bjoern Kraus <krausbn@php.net>
  * @copyright 2002-2006 Markus Wolff
  * @license http://www.gnu.org/licenses/lgpl.txt
- * @version CVS: $Id: DB.php,v 1.25 2006/03/14 13:11:56 lsmith Exp $
+ * @version CVS: $Id: DB.php,v 1.26 2006/05/25 08:20:34 lsmith Exp $
  * @link http://pear.php.net/LiveUser_Admin
  */
 
@@ -103,12 +103,11 @@ class LiveUser_Admin_Storage_DB extends LiveUser_Admin_Storage_SQL
      */
     function init(&$storageConf, $structure)
     {
-        
         parent::init($storageConf, $structure);
-        
+
         if (!is_a($this->dbc, 'db_common') && !is_null($this->dsn)) {
             $this->options['portability'] = DB_PORTABILITY_ALL;
-            $dbc =& DB::connect($this->dsn, $this->options);            
+            $dbc =& DB::connect($this->dsn, $this->options);
             if (PEAR::isError($dbc)) {
                 $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
                     array('container' => 'could not connect: '.$dbc->getMessage(),
@@ -116,8 +115,8 @@ class LiveUser_Admin_Storage_DB extends LiveUser_Admin_Storage_SQL
                 return false;
             }
             $this->dbc =& $dbc;
-        }              
-        
+        }
+
         if (!is_a($this->dbc, 'db_common')) {
             $this->stack->push(LIVEUSER_ERROR_INIT_ERROR, 'error',
                 array('container' => 'storage layer configuration missing'));
@@ -352,15 +351,17 @@ class LiveUser_Admin_Storage_DB extends LiveUser_Admin_Storage_SQL
      * the call is redirected to nextID()
      *
      * @param string name of the table into which a new row was inserted
-     * @param bool when true the seqence is
-     *                          automatic created, if it not exists
+     * @param string name of the field into which a new row was inserted
+     * @param bool when true the seqence is automatic created, if it not exists
      * @return bool|int
      *
      * @access public
+     * @uses MDB2::nextId MDB2_Extended::getBeforeId
      */
-    function getBeforeId($table, $ondemand = true)
+    function getBeforeId($table, $field, $ondemand = true)
     {
-        return $this->nextId($table, $ondemand);
+        $seq = $table.(empty($field) ? '' : '_'.$field);
+        return $this->nextId($seq, $ondemand);
     }
 
     /**
@@ -369,11 +370,13 @@ class LiveUser_Admin_Storage_DB extends LiveUser_Admin_Storage_SQL
      *
      * @param string value as returned by getBeforeId()
      * @param string name of the table into which a new row was inserted
-     * @return int returns the id that the users passed via params
+     * @param string name of the field into which a new row was inserted
+     * @return  bool|int returns the id that the users passed via params
      *
      * @access public
+     * @uses MDB2_Extended::getAfterId
      */
-    function getAfterId($id, $table)
+    function getAfterId($id, $table, $field)
     {
         return $id;
     }
