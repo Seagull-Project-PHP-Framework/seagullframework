@@ -149,7 +149,7 @@ class LUUsersMgr extends SGL_Manager
         
         $query = "
             SELECT  gu.group_id, lt.name
-            FROM    liveuser_groupusers gu, liveuser_groups g
+            FROM    liveuser_groups g, liveuser_groupusers gu
             LEFT JOIN liveuser_translations lt ON lt.section_id = gu.group_id     
             WHERE   gu.group_id = g.group_id
             AND     section_type = ".LIVEUSER_SECTION_GROUP."                    

@@ -256,8 +256,8 @@ class LUAdmin
         
         $query = "
                 SELECT      lgu.group_id, lt.name
-                FROM        {$this->conf['table']['liveuser_groups']} lg, 
-                            {$this->conf['table']['liveuser_groupusers']} lgu 
+                FROM        {$this->conf['table']['liveuser_groupusers']} lgu,
+                            {$this->conf['table']['liveuser_groups']} lg 
                 LEFT JOIN   liveuser_translations lt ON lt.section_id = lg.group_id 
                 WHERE       lg.group_id = lgu.group_id
                 AND         lt.section_type = ".LIVEUSER_SECTION_GROUP."
