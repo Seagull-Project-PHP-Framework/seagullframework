@@ -179,14 +179,17 @@ class User_DoLogin extends SGL_Observable
             $uid = SGL_Session::getUid();
 
             // Check for multiple user sessions: allow one only excluding current one.
-            $multiple = SGL_Session::getUserSessionCount($uid, session_id());
-            if ($multiple > 0) {
-                if ($this->conf['session']['singleUser']) {
-                    SGL_Session::destroyUserSessions($uid, session_id());
-                    SGL::raiseMsg('You are allowed to connect from one computer at a time, other sessions were terminated!');
-                } else {
-                    // Issue warning only
-                    SGL::raiseMsg('You have multiple sessions on this site!');
+            if (!empty($this->conf['session']['extended'])) {
+                $multiple = SGL_Session::getUserSessionCount($uid, session_id());
+                if ($multiple > 0) {
+                    if ($this->conf['session']['singleUser']) {
+                        SGL_Session::destroyUserSessions($uid, session_id());
+                        SGL::raiseMsg('You are allowed to connect from one computer at '.
+                            'a time, other sessions were terminated!');
+                    } else {
+                        // Issue warning only
+                        SGL::raiseMsg('You have multiple sessions on this site!');
+                    }
                 }
             }
             //  if redirect captured
