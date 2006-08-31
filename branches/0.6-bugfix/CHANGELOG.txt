@@ -9,6 +9,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+31-06-06	Added detection of GD extension for media manager
 
 +-----------------------+
 | VERSION: 0.6.0        |

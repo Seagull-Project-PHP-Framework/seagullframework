@@ -246,7 +246,7 @@ class MediaMgr extends FileMgr
         } else {
             return true;
         }
-    }
+    }    
 
     function _cmd_add(&$input, &$output)
     {
@@ -258,6 +258,14 @@ class MediaMgr extends FileMgr
             if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
                 return false;
             }
+            
+	        //  test ability to create img tranform obj
+	        require_once 'Image/Transform.php';
+	        $imageDriver = $this->conf['MediaMgr']['imageDriver'];
+	        $im = Image_Transform::factory($imageDriver);
+	        if (PEAR::isError($im)) {
+	        	return false;
+	        }             
 
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
             $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
@@ -269,7 +277,7 @@ class MediaMgr extends FileMgr
                 $srcImgLocation = $input->mediaFileTmpName;
                 $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName . '.jpg';
 
-                $ok = $this->resizeImageAndSave($srcImgLocation, $targetLocation, $newWidth, $newHeight);
+                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
 
                 //  hard-code to jpeg as all images are converted to jpegs
                 $output->fileTypeID = 5;
@@ -296,7 +304,7 @@ class MediaMgr extends FileMgr
                 $srcImgLocation = $input->mediaFileTmpName;
                 $targetLocation = $thumbsDir . '/small_' . $uniqueName . '.jpg';
 
-                $ok = $this->resizeImageAndSave($srcImgLocation, $targetLocation, $newWidth, $newHeight);
+                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
             }
 
             //  create large thumbnail
@@ -310,7 +318,7 @@ class MediaMgr extends FileMgr
                 $srcImgLocation = $input->mediaFileTmpName;
                 $targetLocation = $thumbsDir . '/large_' . $uniqueName . '.jpg';
 
-                $ok = $this->resizeImageAndSave($srcImgLocation, $targetLocation, $newWidth, $newHeight);
+                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
             }
         } else { // display upload screen
             $output->save = false;
@@ -318,15 +326,18 @@ class MediaMgr extends FileMgr
         }
     }
 
-    function resizeImageAndSave($srcImgLocation, $targetLocation, $newWidth, $newHeight)
+    /**
+     * Resizes image and saves to the target location.
+     *
+     * @param Image_Transform $im
+     * @param string $srcImgLocation Path to src image location
+     * @param string $targetLocation Path to target image location
+     * @param integer $newWidth
+     * @param integer $newHeight
+     * @return boolean Returns true on success
+     */
+    function resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight)
     {
-        //  create img tranform obj
-        require_once 'Image/Transform.php';
-        $imageDriver = $this->conf['MediaMgr']['imageDriver'];
-        $im = Image_Transform::factory($imageDriver);
-        if (PEAR::isError($im)) {
-        	return false;
-        }
         // load image
         $ret = $im->load($srcImgLocation);
         if (PEAR::isError($ret)) {
