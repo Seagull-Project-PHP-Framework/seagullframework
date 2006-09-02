@@ -16,11 +16,11 @@ class Default_Block_Calendar
 
     function getBlockContent()
     {
-    	$theme = $_SESSION['aPrefs']['theme'];
-    	$cssUrl = SGL_BASE_URL . '/js/jscalendar/calendar-brown.css';
-    	$jsUrl = SGL_BASE_URL . '/js/jscalendar/calendar.js';
-    	$langUrl = SGL_BASE_URL . '/js/jscalendar/lang/calendar-' . SGL::getCurrentLang() . '.js';
-    	$setupUrl = SGL_BASE_URL . '/js/jscalendar/calendar-setup.js';
+        $theme = $_SESSION['aPrefs']['theme'];
+        $cssUrl = SGL_BASE_URL . '/js/jscalendar/calendar-brown.css';
+        $jsUrl = SGL_BASE_URL . '/js/jscalendar/calendar.js';
+        $langUrl = SGL_BASE_URL . '/js/jscalendar/lang/calendar-' . SGL::getCurrentLang() . '.js';
+        $setupUrl = SGL_BASE_URL . '/js/jscalendar/calendar-setup.js';
         $baseUrl = SGL_BASE_URL;
 
         $text = <<< CALENDAR

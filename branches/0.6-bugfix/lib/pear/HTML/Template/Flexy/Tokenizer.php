@@ -323,8 +323,8 @@ class HTML_Template_Flexy_Tokenizer
     function yy_error ($code,$fatal)
     {
         if (method_exists($this,'raiseError')) { 
- 	    return $this->raiseError($code, $this->yy_error_string[$code], $fatal); 
- 	}
+        return $this->raiseError($code, $this->yy_error_string[$code], $fatal); 
+    }
         echo $this->yy_error_string[$code];
         if ($fatal) {
             exit;
@@ -3564,7 +3564,7 @@ case 46:
 }
 case 47:
 {
-	//echo "STARTING SINGLEQUOTE";
+    //echo "STARTING SINGLEQUOTE";
     $this->attrVal = array( "'");
     $this->yybegin(IN_SINGLEQUOTE);
     return HTML_TEMPLATE_FLEXY_TOKEN_NONE;
@@ -3684,8 +3684,8 @@ case 65:
 }
 case 66:
 {
-	// inside comment -- without a >
-	return HTML_TEMPLATE_FLEXY_TOKEN_NONE;
+    // inside comment -- without a >
+    return HTML_TEMPLATE_FLEXY_TOKEN_NONE;
 }
 case 67:
 {   
@@ -3861,19 +3861,19 @@ case 87:
     // inside a style comment (not - or not --
     // <!^--...-->   -- comment */   
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 88:
 {
     // we allow anything inside of comstyle!!!
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 89:
 {
-	// inside style comment -- without a >
+    // inside style comment -- without a >
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 90:
 {   
@@ -4084,8 +4084,8 @@ case 119:
 }
 case 120:
 {
-	// inside comment -- without a >
-	return HTML_TEMPLATE_FLEXY_TOKEN_NONE;
+    // inside comment -- without a >
+    return HTML_TEMPLATE_FLEXY_TOKEN_NONE;
 }
 case 121:
 {
@@ -4134,19 +4134,19 @@ case 127:
     // inside a style comment (not - or not --
     // <!^--...-->   -- comment */   
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 128:
 {
     // we allow anything inside of comstyle!!!
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 129:
 {
-	// inside style comment -- without a >
+    // inside style comment -- without a >
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 131:
 {
@@ -4202,13 +4202,13 @@ case 140:
     // inside a style comment (not - or not --
     // <!^--...-->   -- comment */   
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 141:
 {
     // we allow anything inside of comstyle!!!
     $this->value = $this->createToken('Comment');
-	return HTML_TEMPLATE_FLEXY_TOKEN_OK;
+    return HTML_TEMPLATE_FLEXY_TOKEN_OK;
 }
 case 143:
 {

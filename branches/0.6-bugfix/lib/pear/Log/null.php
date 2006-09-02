@@ -28,7 +28,7 @@ class Log_null extends Log
      * @access public
      */
     function Log_null($name, $ident = '', $conf = array(),
-					  $level = PEAR_LOG_DEBUG)
+                      $level = PEAR_LOG_DEBUG)
     {
         $this->_id = md5(microtime());
         $this->_ident = $ident;

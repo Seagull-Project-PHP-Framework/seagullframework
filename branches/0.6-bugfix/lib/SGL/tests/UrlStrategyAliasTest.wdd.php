@@ -24,7 +24,7 @@ class UrlStrategyAliasTest extends UnitTestCase
         $this->da = & DA_Navigation::singleton($forceNew = true);        
         $this->conf = $c->getAll();
         $this->obj = new stdClass();
-        $this->dbh = & SGL_DB::singleton();		                  
+        $this->dbh = & SGL_DB::singleton();                       
         $this->exampleUrl = 'http://example.com/';
     }
            
@@ -65,12 +65,12 @@ class UrlStrategyAliasTest extends UnitTestCase
         $this->assertEqual($ret['managerName'],'block');
         $this->assertEqual($ret['action'],'list');        
         
-	}
-	
-	// Here we go: example.com/news/2/
-	// Instead of http://example.com/publisher/articleview/action/view/frmArticleID/2/
-	
-	function testFlexibleAlias() {
+    }
+    
+    // Here we go: example.com/news/2/
+    // Instead of http://example.com/publisher/articleview/action/view/frmArticleID/2/
+    
+    function testFlexibleAlias() {
         $section = array (
           'title' => 'Alias Test Section',
           'parent_id' => '4',

@@ -112,9 +112,9 @@ class PublisherBase
         if (!isset($input->dataTypeID) && !$sessDatatypeID) {
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
-			$defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site']))
-			 ? $conf['site']['defaultArticleViewType']
-			 : 1;
+            $defaultArticleType = (array_key_exists('defaultArticleViewType', $conf['site']))
+             ? $conf['site']['defaultArticleViewType']
+             : 1;
             $input->dataTypeID = $defaultArticleType;
 
         // if not in input, grab from session

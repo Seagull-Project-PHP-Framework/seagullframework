@@ -24,21 +24,21 @@
  */
 class Mail_sendmail extends Mail {
 
-	/**
+    /**
      * The location of the sendmail or sendmail wrapper binary on the
      * filesystem.
      * @var string
      */
     var $sendmail_path = '/usr/sbin/sendmail';
 
-	/**
+    /**
      * Any extra command-line parameters to pass to the sendmail or
      * sendmail wrapper binary.
      * @var string
      */
     var $sendmail_args = '';
 
-	/**
+    /**
      * Constructor.
      *
      * Instantiates a new Mail_sendmail:: object based on the parameters
@@ -73,7 +73,7 @@ class Mail_sendmail extends Mail {
         }
     }
 
-	/**
+    /**
      * Implements Mail::send() function using the sendmail
      * command-line binary.
      *

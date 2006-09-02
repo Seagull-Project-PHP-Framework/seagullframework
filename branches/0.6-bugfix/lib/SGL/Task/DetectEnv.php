@@ -220,10 +220,10 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 
     function run()
     {
-    	foreach ($this->aRequirements as $m => $dep) {
+        foreach ($this->aRequirements as $m => $dep) {
             $this->aData[$m] = bool2int(extension_loaded($m));
-    	}
-    	return $this->render($this->aData);
+        }
+        return $this->render($this->aData);
     }
 }
 
@@ -260,7 +260,7 @@ class SGL_Task_GetPhpEnv extends SGL_EnvSummaryTask
         $this->aData['webserverPort'] = $_SERVER['SERVER_PORT'];
         $this->aData['webserverSoftware'] = $_SERVER['SERVER_SOFTWARE'];
         $this->aData['seagullVersion'] = file_get_contents(SGL_PATH . '/VERSION.txt');
-    	return $this->render($this->aData);
+        return $this->render($this->aData);
     }
 }
 
@@ -302,7 +302,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
             $this->aRequirements['memory_limit'] = array(SGL_REQUIRED => '>8M');
             $this->aData['memory_limit'] = ini_get('memory_limit');
         }
-    	return $this->render($this->aData);
+        return $this->render($this->aData);
     }
 }
 
@@ -331,7 +331,7 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
         $this->aData['installRoot'] = SGL_PATH;
         $this->aData['varDirExists'] = bool2int(file_exists(SGL_VAR_DIR));
         $this->aData['varDirIsWritable'] = bool2int(is_writable(SGL_VAR_DIR));
-    	return $this->render($this->aData);
+        return $this->render($this->aData);
     }
 }
 
@@ -382,7 +382,7 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
             sort($aPackages);
             $this->aData['pearBundledPackages'] = $aPackages;
         }
-    	return $this->render($this->aData);
+        return $this->render($this->aData);
     }
 }
 ?>

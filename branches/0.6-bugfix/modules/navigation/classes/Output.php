@@ -47,7 +47,7 @@ class NavigationOutput
      * @param   array   $array          hash of radio values
      * @return  string  $radioString    list of radio objects
      * @see     PermissionsMgr()
-	 */
+     */
     function generatePermsRadioList($array, $id = 'id')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -71,7 +71,7 @@ class NavigationOutput
      * @param   array   $array          hash of radio values
      * @return  string  $radioString    list of radio objects
      * @see     PermissionsMgr()
-	 */
+     */
     function generatePermsRadioList1($array, $id = 'id')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

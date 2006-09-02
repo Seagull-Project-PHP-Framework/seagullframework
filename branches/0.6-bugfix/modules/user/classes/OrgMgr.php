@@ -316,25 +316,25 @@ class OrgMgr extends SGL_Manager
             $success = true;
 
             while ((list($index, $orgId) = each($input->aDelete)) && $success) {
-            	$org = $nestedSet->getNode($orgId);
+                $org = $nestedSet->getNode($orgId);
                 if ($org) {
-                	$users = $this->da->getUsersByOrgId($orgId);
-                	if (empty($users)) {
-                		// ok, not dangerous to delete
-                    	$nestedSet->deleteNode($orgId);
-                	} else {
-                		$success = false;
-                		$orgName = $org['name'];
-                		SGL::raiseMsg(	"The selected organisation cannot be deleted because " .
-                						"there are users relating to it");
-                	}
+                    $users = $this->da->getUsersByOrgId($orgId);
+                    if (empty($users)) {
+                        // ok, not dangerous to delete
+                        $nestedSet->deleteNode($orgId);
+                    } else {
+                        $success = false;
+                        $orgName = $org['name'];
+                        SGL::raiseMsg(  "The selected organisation cannot be deleted because " .
+                                        "there are users relating to it");
+                    }
                 }
             }
 
-	        if ($success) {
-	        	//  redirect on success
-	        	SGL::raiseMsg('The selected organisation(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
-	        }
+            if ($success) {
+                //  redirect on success
+                SGL::raiseMsg('The selected organisation(s) have successfully been deleted', true, SGL_MESSAGE_INFO);
+            }
         } else {
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);

@@ -33,28 +33,28 @@
      */
     #require_once 'generate_package_xml_functions.php';
 
-	// Directory where the package files are located.
-	$path = (defined('SGL_PKG_TMP_BUILD_DIR'))
-	   ? SGL_PKG_TMP_BUILD_DIR.'/modules/default'
-	   : dirname(__FILE__);
-	$default_packagedir  = $path;
+    // Directory where the package files are located.
+    $path = (defined('SGL_PKG_TMP_BUILD_DIR'))
+       ? SGL_PKG_TMP_BUILD_DIR.'/modules/default'
+       : dirname(__FILE__);
+    $default_packagedir  = $path;
 
     // Name of the channel, this package will be distributed through
     $default_channel     = 'pear.phpkitchen.com';
 
     // Category and name of the package
-	$default_category    = 'Seagull Modules';
+    $default_category    = 'Seagull Modules';
     $default_package     = 'Seagull_default';
 
-	$default_version     = '1.0';
+    $default_version     = '1.0';
 
     // Summary description
-	$default_summary     = <<<EOT
+    $default_summary     = <<<EOT
 The default module provides basic framework maintenance functionality.
 EOT;
 
     // Longer description
-	$default_description = <<<EOT
+    $default_description = <<<EOT
 There are a wide range of features.
 EOT;
 
@@ -63,16 +63,16 @@ EOT;
 
     // Notes, function to grab them directly from S9Y in
     // generate_package_xml_functions.php
-	$default_notes = <<<EOT
+    $default_notes = <<<EOT
 Publisher notes.
 EOT;
 
     // Instantiate package file manager
-	$default_pkg = new PEAR_PackageFileManager2();
+    $default_pkg = new PEAR_PackageFileManager2();
 
     // Setting options
-	$e = $default_pkg->setOptions(
-		array(
+    $e = $default_pkg->setOptions(
+        array(
             // Where are our package files.
             'packagedirectory'  => $default_packagedir,
             // Where will package files be installed in
@@ -89,12 +89,12 @@ EOT;
             'filelistgenerator' => 'file',
 
             // List of files to ignore and put not explicitly into the package
-		    'ignore'            =>
+            'ignore'            =>
             array(
                 'package2.xml',
                 '*tests*',
                 '*.svn',
-		    ),
+            ),
 
             // Global mapping of directories to file roles.
             // @see http://pear.php.net/manual/en/guide.migrating.customroles.defining.php
@@ -117,7 +117,7 @@ EOT;
             'exceptions'        =>
             array(
             ),
-	    )
+        )
     );
 
     // PEAR error checking
@@ -153,7 +153,7 @@ EOT;
     $default_pkg->addRelease();
 
     // Package release needs a maintainer
-	$default_pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
+    $default_pkg->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
 
     // Internally generate the XML for our package.xml (does not perform output!)
     $test = $default_pkg->generateContents();
@@ -161,19 +161,19 @@ EOT;
 if (!defined('SGL_PKG_TMP_BUILD_DIR'))    {
     if (isset($_GET['make']) || (isset($_SERVER['argv'][1]) &&
             $_SERVER['argv'][1] == 'make')) {
-    	#$e = $pkg->writePackageFile();
-    	$e = $default_pkg->writePackageFile();
+        #$e = $pkg->writePackageFile();
+        $e = $default_pkg->writePackageFile();
 
         #$e = $packagexml->writePackageFile();
-	} else {
-    	#$e = $pkg->debugPackageFile();
-    	$e = $default_pkg->debugPackageFile();
-    	#$e = $packagexml->debugPackageFile();
-	}
+    } else {
+        #$e = $pkg->debugPackageFile();
+        $e = $default_pkg->debugPackageFile();
+        #$e = $packagexml->debugPackageFile();
+    }
 
-	if (PEAR::isError($e)) {
-    	echo $e->getMessage();
-	}
+    if (PEAR::isError($e)) {
+        echo $e->getMessage();
+    }
 }
 
 ?>

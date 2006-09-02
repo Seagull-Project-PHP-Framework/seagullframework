@@ -477,7 +477,7 @@ class NewsletterMgr extends SGL_Manager
     * @access   private
     * @author   Benea Rares <rbenea@bluestardesign.ro>
     * @param    string  $str   Optional noise
-    * @return   string  	   Return the key
+    * @return   string         Return the key
     *
     */
     function _generateKey($str = '')

@@ -1177,7 +1177,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 if ($primary_field != '') {
                     $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
                     if (!is_null($maxId)) {
-                    	$data[] = array($table, $maxId);
+                        $data[] = array($table, $maxId);
                     }
                 }
             }

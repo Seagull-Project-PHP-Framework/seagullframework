@@ -75,7 +75,7 @@ class UserSearchMgr extends SGL_Manager
         $input->action = ($req->get('action')) ? $req->get('action') : 'search';
         $input->template = $this->template;
         $input->masterTemplate  = 'masterMinimal.html';
-		$input->pageTitle = $this->pageTitle . ' :: Search';
+        $input->pageTitle = $this->pageTitle . ' :: Search';
         $input->submitted = $req->get('submitted');
         $input->sortBy = SGL_Util::getSortBy($req->get('frmSortBy'), SGL_SORTBY_USER);
         $input->sortOrder = SGL_Util::getSortOrder($req->get('frmSortOrder'));
@@ -138,7 +138,7 @@ class UserSearchMgr extends SGL_Manager
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $this->validated = false;
-    		$input->action = 'add';
+            $input->action = 'add';
         }
     }
 
@@ -187,7 +187,7 @@ class UserSearchMgr extends SGL_Manager
     function _cmd_search(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-		$output->pageTitle = $this->pageTitle . ' :: Browse';
+        $output->pageTitle = $this->pageTitle . ' :: Browse';
         $output->template = 'userManager.html';
         $criteria = '';
 
@@ -219,8 +219,8 @@ class UserSearchMgr extends SGL_Manager
                     switch ($s['reg_date_mod']) {
 
                     case 1: $mod = '<'; break;
-                	case 2: $mod = '>'; break;
-                	case 3: $mod = '='; break;
+                    case 2: $mod = '>'; break;
+                    case 3: $mod = '='; break;
                     }
                     $criteria .= " AND u.date_created $mod '{$input->regDate1Str}' ";
                 }

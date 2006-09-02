@@ -61,9 +61,9 @@ class SGL_Translation
      *
      * @static
      * @access  public
-     * @param	string	$lang			language to return translations
-     * @param	string	$type			type of object: translation or admin
-     * @return	object	$translation	Translation2 object
+     * @param   string  $lang           language to return translations
+     * @param   string  $type           type of object: translation or admin
+     * @return  object  $translation    Translation2 object
      *
      *
      */

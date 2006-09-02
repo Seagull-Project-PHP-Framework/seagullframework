@@ -16,19 +16,19 @@
 }
 
 #NewsletterEdit p label {
-	width: 120px;
+    width: 120px;
 }
 
 #NewsletterEdit input:text {
-	width: 130px;
+    width: 130px;
 }
 
 #NewsletterCompose p label {
-	width: 70px;
+    width: 70px;
 }
 
 #NewsletterCompose input:text {
-	width: 130px;
+    width: 130px;
 }
 
 #newsletterGroups {
@@ -36,7 +36,7 @@
 }
 
 #newsletterLists {
-	padding-left: 180px;
+    padding-left: 180px;
 }
 
 #addSubNewsList {

@@ -39,7 +39,7 @@
 // $Id: Output.php,v 1.9 2005/01/27 12:33:45 demian Exp $
 
 class PublisherOutput 
-{	
+{   
     function articleOutput($oOutput)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);       

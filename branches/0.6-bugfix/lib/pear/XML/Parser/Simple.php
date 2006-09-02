@@ -160,7 +160,7 @@ class XML_Parser_Simple extends XML_Parser
                 $xml_func = 'xml_set_' . $xml_func;
                 $xml_func($this->parser, $method);
             }
-		}
+        }
     }
 
     /**

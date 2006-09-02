@@ -98,7 +98,7 @@ class STR_DB
             $dbType = 'mysql_SGL';
         }
 
-    	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
+        $protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
             $conf['database']['user'] . ':' .
             $conf['database']['pass'] . '@' .

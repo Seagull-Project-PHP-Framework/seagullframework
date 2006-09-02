@@ -26,7 +26,7 @@ body {
     color: <?php echo $greyDarkest ?>;
     background-color: <?php echo $grey ?>;
     text-align: center;
-	background-image: url(../images/grey_bgnd.gif);
+    background-image: url(../images/grey_bgnd.gif);
 }
 ul {
     list-style: none;
@@ -239,11 +239,11 @@ textarea {
 
 input[type="text"], input[type="password"]
 {
-	border-top: 1px solid #7c7c7c;
-	border-left: 1px solid #c3c3c3;
-	border-right: 1px solid #c3c3c3;
-	border-bottom: 1px solid #ddd;
-	background: #fff url(../images/fieldbg.gif) repeat-x top;
+    border-top: 1px solid #7c7c7c;
+    border-left: 1px solid #c3c3c3;
+    border-right: 1px solid #c3c3c3;
+    border-bottom: 1px solid #ddd;
+    background: #fff url(../images/fieldbg.gif) repeat-x top;
 }
 
 /*

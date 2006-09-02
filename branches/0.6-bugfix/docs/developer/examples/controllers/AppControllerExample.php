@@ -27,7 +27,7 @@ class MyFrontController extends SGL_FrontController
         $process =
             new SGL_Process_Init(
             new SGL_Process_SetupORM(
-			new SGL_Process_StripMagicQuotes(
+            new SGL_Process_StripMagicQuotes(
             new SGL_Process_DiscoverClientOs(
             new SGL_Process_ResolveManager(
             new SGL_Process_CreateSession(

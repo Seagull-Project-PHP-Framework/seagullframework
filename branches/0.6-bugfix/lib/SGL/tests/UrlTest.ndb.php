@@ -485,9 +485,9 @@ class UrlTest extends UnitTestCase {
 
     function testGetStrategiesFingerprint()
     {
-		$url = new SGL_Url('', true, $this->aStrats);
-		$fingerprint = $url->getStrategiesFingerprint($url->aStrategies);
-		$target = 'sgl_urlparser_classicstrategysgl_urlparser_sefstrategysgl_urlparser_aliasstrategy';
+        $url = new SGL_Url('', true, $this->aStrats);
+        $fingerprint = $url->getStrategiesFingerprint($url->aStrategies);
+        $target = 'sgl_urlparser_classicstrategysgl_urlparser_sefstrategysgl_urlparser_aliasstrategy';
         $this->assertEqual(strtolower($fingerprint), $target); // added strtolower for php4 compat
     }
 }

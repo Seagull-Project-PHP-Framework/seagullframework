@@ -72,7 +72,7 @@ class ListMgr extends NewsletterMgr
             'listSubscribers' => array('listSubscribers'),
             'exportSubscribers' => array('exportSubscribers'),
             'editSubscriber' => array('editSubscriber'),
-            'addSubscriber'	=> array('addSubscriber'),
+            'addSubscriber' => array('addSubscriber'),
             'insertSubscriber' => array('insertSubscriber','listSubscribers'),
             'updateSubscriber' => array('updateSubscriber','listSubscribers'),
             'deleteSubscriber' => array('deleteSubscriber','listSubscribers'),
@@ -156,7 +156,7 @@ class ListMgr extends NewsletterMgr
                 }
 
                 if (!empty($input->listName) && is_array($input->listName) && count($input->listName)) {
-                	$input->validNewsList = $this->_getList();
+                    $input->validNewsList = $this->_getList();
 
                     foreach ($input->listName as $list) {
                         if (!array_key_exists($list,$input->validNewsList)) {
@@ -348,14 +348,14 @@ class ListMgr extends NewsletterMgr
         $query = "SELECT * FROM {$this->conf['table']['newsletter']} " .
                 " WHERE status = 0 " .
                 " GROUP BY email ";
-		$result = $dbh->query($query);
+        $result = $dbh->query($query);
 
-		$output->totalItems = $result->numRows();
-		$userList = array();
-		while($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-			$userList[] = $row;
-		}
-		$output->userList = $userList;
+        $output->totalItems = $result->numRows();
+        $userList = array();
+        while($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+            $userList[] = $row;
+        }
+        $output->userList = $userList;
     }
 
     /**
@@ -382,14 +382,14 @@ class ListMgr extends NewsletterMgr
         $output->template = 'addSubscriber.html';
         $input->pageTitle = 'Newsletter List Mgr :: Subscriber Edit';
         foreach ($input->listName as $list) {
-	        $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
-	        $oUser->setFrom($input->oUser);
-	        $oUser->newsletter_id = $this->dbh->nextId('newsletter');
-	        $oUser->date_created = SGL_Date::getTime(true);
-	        $oUser->last_updated = SGL_Date::getTime(true);
-	        $oUser->list = $input->validNewsList[$list]['name'];
-	        $success = $oUser->insert();
-	    }
+            $oUser = DB_DataObject::factory($this->conf['table']['newsletter']);
+            $oUser->setFrom($input->oUser);
+            $oUser->newsletter_id = $this->dbh->nextId('newsletter');
+            $oUser->date_created = SGL_Date::getTime(true);
+            $oUser->last_updated = SGL_Date::getTime(true);
+            $oUser->list = $input->validNewsList[$list]['name'];
+            $success = $oUser->insert();
+        }
         if ($success === false) {
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);

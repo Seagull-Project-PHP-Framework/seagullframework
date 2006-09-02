@@ -197,7 +197,7 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
         }
 
         $query = sprintf('INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (%s, %s, %s, %s, %s)',
-	                $this->options['langs_avail_table'],
+                    $this->options['langs_avail_table'],
                     $this->options['lang_id_col'],
                     $this->options['lang_name_col'],
                     $this->options['lang_meta_col'],

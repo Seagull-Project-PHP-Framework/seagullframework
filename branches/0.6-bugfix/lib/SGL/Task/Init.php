@@ -187,7 +187,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_SORTBY_ORG',                3);
 
         //  Seagull user roles
-        define('SGL_ANY_ROLE', 				    -2);
+        define('SGL_ANY_ROLE',                  -2);
         define('SGL_UNASSIGNED',                -1);
         define('SGL_GUEST',                     0);
         define('SGL_ADMIN',                     1);
@@ -215,8 +215,8 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_LANG_ID_TRANS2',            2);
 
         //  various
-        define('SGL_ANY_SECTION', 				0);
-        define('SGL_NEXT_ID', 				    0);
+        define('SGL_ANY_SECTION',               0);
+        define('SGL_NEXT_ID',                   0);
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);
 
@@ -356,9 +356,9 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
         if (isset( $conf['debug']['customErrorHandler'])
                 && $conf['debug']['customErrorHandler'] == true
                 && !defined('SGL_TEST_MODE')) {
-	        require_once SGL_CORE_DIR . '/ErrorHandler.php';
-	        $eh = & new SGL_ErrorHandler();
-	        $eh->startHandler();
+            require_once SGL_CORE_DIR . '/ErrorHandler.php';
+            $eh = & new SGL_ErrorHandler();
+            $eh->startHandler();
         }
 
         //  clean start for logs
@@ -387,16 +387,16 @@ class SGL_Task_SetBaseUrl extends SGL_Task
     }
 }
 
-//			$userInfo = posix_getpwuid(fileowner($configFile));
-//			$fileOwnerName = $userInfo['name'];
-//			$allowedFileOwners = array('nobody', 'apache');
+//          $userInfo = posix_getpwuid(fileowner($configFile));
+//          $fileOwnerName = $userInfo['name'];
+//          $allowedFileOwners = array('nobody', 'apache');
 //
-//			if (!in_array($fileOwnerName, $allowedFileOwners)) {
+//          if (!in_array($fileOwnerName, $allowedFileOwners)) {
 //                die("<br />Your config file in the seagull/var directory has the wrong " .
-//					"owner (currently set as: $fileOwnerName). " .
+//                  "owner (currently set as: $fileOwnerName). " .
 //                    "Please set the correct file owner to this directory and it's contents, eg:<br/>" .
 //                    "<code>'chmod -R 777 seagull/var'</code>");
-//			}
+//          }
 
 /**
  * @package Task
@@ -529,12 +529,12 @@ class SGL_OutputRendererStrategy
  */
 class SGL_View
 {
-	/**
-	 * Output object.
-	 *
-	 * @var SGL_Output
-	 */
-	var $data;
+    /**
+     * Output object.
+     *
+     * @var SGL_Output
+     */
+    var $data;
 
     /**
      * Reference to renderer strategy.
@@ -552,8 +552,8 @@ class SGL_View
      */
     function SGL_View(&$data, $rendererStrategy)
     {
-    	$this->data = &$data;
-    	$this->rendererStrategy = $rendererStrategy;
+        $this->data = &$data;
+        $this->rendererStrategy = $rendererStrategy;
     }
 
     /**
@@ -572,7 +572,7 @@ class SGL_View
      */
     function render()
     {
-    	return $this->rendererStrategy->render($this);
+        return $this->rendererStrategy->render($this);
     }
 }
 

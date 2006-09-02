@@ -295,12 +295,12 @@ class User_AddUser extends SGL_Observable
         if ($success) {
             //  invoke observers
             $this->notify();
-			$ret = $success;
+            $ret = $success;
             SGL::raiseMsg('user successfully registered', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
-			$ret = false;
+            $ret = false;
         }
         return $ret;
     }

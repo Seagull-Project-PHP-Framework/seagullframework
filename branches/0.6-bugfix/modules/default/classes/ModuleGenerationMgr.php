@@ -329,18 +329,18 @@ EOD;
                             $type -= DB_DATAOBJECT_NOTNULL;
                         }
                         switch (true) {
-                    	case ($type == DB_DATAOBJECT_BLOB + DB_DATAOBJECT_STR):
-                    	case ($type == DB_DATAOBJECT_TXT + DB_DATAOBJECT_STR):
-                    	    $templateName = 'text';
-                    	    break;
-                    	case ($type == DB_DATAOBJECT_BOOL):
-                    	case ($type == DB_DATAOBJECT_DATE):
-                    	case ($type == DB_DATAOBJECT_STR):
-                    	case ($type == DB_DATAOBJECT_INT):
+                        case ($type == DB_DATAOBJECT_BLOB + DB_DATAOBJECT_STR):
+                        case ($type == DB_DATAOBJECT_TXT + DB_DATAOBJECT_STR):
+                            $templateName = 'text';
+                            break;
+                        case ($type == DB_DATAOBJECT_BOOL):
+                        case ($type == DB_DATAOBJECT_DATE):
+                        case ($type == DB_DATAOBJECT_STR):
+                        case ($type == DB_DATAOBJECT_INT):
                             $templateName = 'string';
-                    		break;
-                    	default:
-                    	    $templateName = false;
+                            break;
+                        default:
+                            $templateName = false;
                         }
                         if ($templateName) {
                             $fieldTemplate = @file_get_contents(SGL_MOD_DIR .

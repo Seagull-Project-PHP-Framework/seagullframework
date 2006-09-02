@@ -56,8 +56,8 @@ class EventMgr extends SGL_Manager
             'delete'    => array('delete','redirectToDefault'),
             'list'      => array('list'),
             'view'      => array('view'),
-			'search'    => array('search'),
-			'searchResults' => array('searchResults'),
+            'search'    => array('search'),
+            'searchResults' => array('searchResults'),
             'changeStatus' => array('changeStatus','redirectToView'),
         );
     }
@@ -233,7 +233,7 @@ class EventMgr extends SGL_Manager
     {
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $event = DB_DataObject::factory($this->conf['table']['event']);
-		$event->created_by = SGL_Session::getUid();
+        $event->created_by = SGL_Session::getUid();
         $result = $event->find();
         $aEvents = array();
         if ($result > 0) {
@@ -301,8 +301,8 @@ class EventMgr extends SGL_Manager
 
     function _cmd_view(&$input, &$output)
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);
-    	require_once 'Calendar/Day.php';
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        require_once 'Calendar/Day.php';
         $output->template = 'eventView.html';
         $event = DB_DataObject::factory($this->conf['table']['event']);
         $ok = $event->get($input->eventId);
@@ -343,7 +343,7 @@ class EventMgr extends SGL_Manager
 
     function _cmd_changeStatus(&$input, &$output)
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $event = DB_DataObject::factory($this->conf['table']['event']);
         $event->get($input->eventId);

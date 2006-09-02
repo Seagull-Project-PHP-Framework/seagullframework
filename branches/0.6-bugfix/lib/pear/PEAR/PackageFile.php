@@ -405,7 +405,7 @@ class PEAR_PackageFile
     function &fromAnyFile($info, $state)
     {
         if (is_dir($info)) {
-		 	$info = PEAR::raiseError("'$info' is a directory, a file is expected");
+            $info = PEAR::raiseError("'$info' is a directory, a file is expected");
             return $info;
         }
 

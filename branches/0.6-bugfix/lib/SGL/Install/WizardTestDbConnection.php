@@ -47,7 +47,7 @@ function canConnectToDbServer()
         ? '(' . $aFormValues['socket'] . ')'
         : '';
 
-	$protocol = isset($aFormValues['dbProtocol']['protocol'])
+    $protocol = isset($aFormValues['dbProtocol']['protocol'])
         ? $aFormValues['dbProtocol']['protocol'] . $socket
         : '';
     $host = empty($aFormValues['socket']) ? '+' . $aFormValues['host'] : '';
