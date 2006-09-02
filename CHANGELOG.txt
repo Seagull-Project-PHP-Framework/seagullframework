@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+30-08-06    Fixed whitespace in navigation file that caused header error on rebuild
 30-08-06    Only check for multi sessions if option enabled
 29-08-06    Fixed bugs in MediaMgr
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
