@@ -226,13 +226,13 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
                 }
             }
             if ($result == 'FAILED') {
-            	$failed[] = $t;
+                $failed[] = $t;
             }
             if ($result == 'PASSED') {
-            	$passed[] = $t;
+                $passed[] = $t;
             }
             if ($result == 'SKIPPED') {
-            	$skipped[] = $t;
+                $skipped[] = $t;
             }
         }
         $total = date('i:s', time() - $start);
@@ -240,10 +240,10 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
             $output = "TOTAL TIME: $total\n";
             $output .= count($passed) . " PASSED TESTS\n";
             $output .= count($skipped) . " SKIPPED TESTS\n";
-    		$output .= count($failed) . " FAILED TESTS:\n";
-        	foreach ($failed as $failure) {
-        		$output .= $failure . "\n";
-        	}
+            $output .= count($failed) . " FAILED TESTS:\n";
+            foreach ($failed as $failure) {
+                $output .= $failure . "\n";
+            }
             if (isset($options['realtimelog'])) {
                 $fp = @fopen('run-tests.log', 'a');
             } else {
@@ -261,10 +261,10 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
         $this->ui->outputData(count($passed) . ' PASSED TESTS', $command);
         $this->ui->outputData(count($skipped) . ' SKIPPED TESTS', $command);
         if (count($failed)) {
-    		$this->ui->outputData(count($failed) . ' FAILED TESTS:', $command);
-        	foreach ($failed as $failure) {
-        		$this->ui->outputData($failure, $command);
-        	}
+            $this->ui->outputData(count($failed) . ' FAILED TESTS:', $command);
+            foreach ($failed as $failure) {
+                $this->ui->outputData($failure, $command);
+            }
         }
 
         return true;

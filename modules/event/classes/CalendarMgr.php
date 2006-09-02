@@ -99,7 +99,7 @@ class CalendarMgr extends SGL_Manager
 
     function _cmd_viewDay(&$input, &$output)
     {
-    	SGL::logMessage(null, PEAR_LOG_DEBUG);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'viewDay.html';
         $output->pageTitle = $this->pageTitle . ' :: View month';
 
@@ -221,7 +221,7 @@ class CalendarMgr extends SGL_Manager
         $output->day = $daySelect;
         $output->prevMonthDay = $prevMonthDay;
         $output->nextMonthDay = $nextMonthDay;
-		$output->today_date = date("dS F Y", time());
+        $output->today_date = date("dS F Y", time());
     }
 }
 ?>

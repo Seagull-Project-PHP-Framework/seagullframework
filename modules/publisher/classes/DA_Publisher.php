@@ -115,27 +115,27 @@ class DA_Publisher
             : "WHERE     itm.item_type_id = $id
                AND       it.item_type_id = $id";
         $query = "SELECT
-        			it.item_type_id,
-        			it.item_type_name,
-        			itm.item_type_mapping_id,
-        			itm.field_name,
-        			itm.field_type
+                    it.item_type_id,
+                    it.item_type_name,
+                    itm.item_type_mapping_id,
+                    itm.field_name,
+                    itm.field_type
                   FROM
-                  	{$this->conf['table']['item_type']} it,
-                  	{$this->conf['table']['item_type_mapping']} itm
+                    {$this->conf['table']['item_type']} it,
+                    {$this->conf['table']['item_type_mapping']} itm
                   $constraint";
 
         if ($paginated) {
-	        $limit = $_SESSION['aPrefs']['resPerPage'];
-	        $pagerOptions = array(
-	            'mode'     => 'Sliding',
-	            'delta'    => 3,
-	            'perPage'  => $limit,
-	        );
-	        $ret = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+            $limit = $_SESSION['aPrefs']['resPerPage'];
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+            );
+            $ret = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
         } else {
-        	$ret = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
+            $ret = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
         }
         return $ret;
     }
@@ -165,8 +165,8 @@ class DA_Publisher
     function updateItemTypeName($itemTypeId, $newName)
     {
         $query = "
-        	UPDATE {$this->conf['table']['item_type']}
-        	SET item_type_name='" . $newName . "'
+            UPDATE {$this->conf['table']['item_type']}
+            SET item_type_name='" . $newName . "'
             WHERE item_type_id=" . $itemTypeId;
         return $this->dbh->query($query);
     }
@@ -196,29 +196,29 @@ class DA_Publisher
         }
         if (isset($setClause)) {
             $query = "
-            	UPDATE {$this->conf['table']['item_type_mapping']}
-            	$setClause
-            	WHERE item_type_mapping_id=" . $attributeId;
-        	$ret = $this->dbh->query($query);
+                UPDATE {$this->conf['table']['item_type_mapping']}
+                $setClause
+                WHERE item_type_mapping_id=" . $attributeId;
+            $ret = $this->dbh->query($query);
         } else {
-        	$ret = false;
+            $ret = false;
         }
-		return $ret;
+        return $ret;
     }
 
     function deleteItemTypeById($id)
     {
-		$query = "
-			DELETE FROM {$this->conf['table']['item_type']}
-			WHERE item_type_id=$id";
-		$this->dbh->query($query);
+        $query = "
+            DELETE FROM {$this->conf['table']['item_type']}
+            WHERE item_type_id=$id";
+        $this->dbh->query($query);
     }
 
     function deleteItemAttributesByItemTypeId($id)
     {
-		$query = "
-			DELETE FROM {$this->conf['table']['item_type_mapping']}
-			WHERE item_type_id=$id";
-		$this->dbh->query($query);
+        $query = "
+            DELETE FROM {$this->conf['table']['item_type_mapping']}
+            WHERE item_type_id=$id";
+        $this->dbh->query($query);
     }
 }

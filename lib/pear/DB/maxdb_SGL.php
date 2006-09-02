@@ -14,11 +14,11 @@ class DB_maxdb_SGL extends DB_odbc
         // call constructor of parent class
         $this->DB_odbc();
 
-		$this->phptype = 'odbc';
-		$this->dbsyntax = 'sql92';
+        $this->phptype = 'odbc';
+        $this->dbsyntax = 'sql92';
 
         // set special options
-		$this->setOption('portability',DB_PORTABILITY_LOWERCASE | DB_PORTABILITY_RTRIM);
+        $this->setOption('portability',DB_PORTABILITY_LOWERCASE | DB_PORTABILITY_RTRIM);
     }
 
     /**
@@ -32,7 +32,7 @@ class DB_maxdb_SGL extends DB_odbc
     function getSpecialQuery($type)
     {
 
-		switch ($type) {
+        switch ($type) {
             case 'databases':
                 if (!function_exists('odbc_data_source')) {
                     return null;
@@ -152,31 +152,31 @@ class DB_maxdb_SGL extends DB_odbc
 
         $count = 0;
         $res = array();
-		while ( $aColumn = odbc_fetch_array($id) ) {
-			$res[$count] = array(
-		        'table' => $got_string ? $case_func($result) : '',
-		        'name'  => $case_func($aColumn[COLUMNNAME]),
-		        'type'  => $aColumn[DATATYPE],
-		        'len'   => $aColumn[LEN],
-		        'flags'	=> ($aColumn[NULLABLE] == "YES") ? '' : 'not_null '
-		    );
+        while ( $aColumn = odbc_fetch_array($id) ) {
+            $res[$count] = array(
+                'table' => $got_string ? $case_func($result) : '',
+                'name'  => $case_func($aColumn[COLUMNNAME]),
+                'type'  => $aColumn[DATATYPE],
+                'len'   => $aColumn[LEN],
+                'flags' => ($aColumn[NULLABLE] == "YES") ? '' : 'not_null '
+            );
 
-			if ( $aColumn[MODE] == "KEY" )
-				$res[$count]['flags'] .= 'primary_key';
+            if ( $aColumn[MODE] == "KEY" )
+                $res[$count]['flags'] .= 'primary_key';
 
-			if ($mode & DB_TABLEINFO_ORDER) {
-		        $res['order'][$res[$count]['name']] = $count;
-		    }
-		    if ($mode & DB_TABLEINFO_ORDERTABLE) {
-		        $res['ordertable'][$res[$count]['table']][$res[$count]['name']] = $count;
-		    }
+            if ($mode & DB_TABLEINFO_ORDER) {
+                $res['order'][$res[$count]['name']] = $count;
+            }
+            if ($mode & DB_TABLEINFO_ORDERTABLE) {
+                $res['ordertable'][$res[$count]['table']][$res[$count]['name']] = $count;
+            }
 
-			$count++;
-		}
+            $count++;
+        }
 
-		if ($mode) {
-		    $res['num_fields'] = $count;
-		}
+        if ($mode) {
+            $res['num_fields'] = $count;
+        }
 
         // free the result only if we were called on a table
         if ($got_string) {
@@ -185,7 +185,7 @@ class DB_maxdb_SGL extends DB_odbc
         return $res;
     }
 
-	/**
+    /**
      * Overwritten method from parent class to allow logging facility.
      *
      * @param the SQL query
@@ -198,14 +198,14 @@ class DB_maxdb_SGL extends DB_odbc
     {
 
         // AS: angepasst für MaxDB statt COALESCE -> VALUE im SQL-Statement
-		$query = str_replace('COALESCE(', 'VALUE(', $query);
+        $query = str_replace('COALESCE(', 'VALUE(', $query);
 
-		// replace ; for MaxDB
-		$query = preg_replace("/;\s*$/", '', $query);
+        // replace ; for MaxDB
+        $query = preg_replace("/;\s*$/", '', $query);
 
-		//echo "Query(".$this->phptype."): ".$query."<br>";
+        //echo "Query(".$this->phptype."): ".$query."<br>";
 
-		return parent::simpleQuery($query);
+        return parent::simpleQuery($query);
     }
 
 }

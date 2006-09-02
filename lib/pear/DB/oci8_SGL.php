@@ -15,7 +15,7 @@ class DB_oci8_SGL extends DB_oci8
         $this->DB_oci8();
         
         // set special options
-		$this->setOption('portability',DB_PORTABILITY_LOWERCASE | DB_PORTABILITY_NUMROWS);
+        $this->setOption('portability',DB_PORTABILITY_LOWERCASE | DB_PORTABILITY_NUMROWS);
     }
 
     // }}}
@@ -70,18 +70,18 @@ class DB_oci8_SGL extends DB_oci8
         // Construct the query
         // more at: http://marc.theaimsgroup.com/?l=php-db&m=99831958101212&w=2
         // Perhaps this could be optimized with the use of Unions
-		if ($count >= 0) {
-	        $query = "SELECT $fields FROM".
+        if ($count >= 0) {
+            $query = "SELECT $fields FROM".
                  "  (SELECT rownum as linenum, $fields FROM".
                  "      ($query)".
                  '  WHERE rownum <= '. ($from + $count) .
                  ') WHERE linenum >= ' . ++$from;
-		}
-		else {
-	        $query = "SELECT $fields FROM".
+        }
+        else {
+            $query = "SELECT $fields FROM".
                  "      ($query)".
                  "  WHERE rownum <= $from";
-		}
+        }
         return $query;
     }
 
@@ -174,26 +174,26 @@ class DB_oci8_SGL extends DB_oci8
                 $res[$i]['type']  = preg_replace("/LONG/","LONGTEXT",$res[$i]['type']);
                 $res[$i]['type']  = preg_replace("/CLOB/","LONGTEXT",$res[$i]['type']);
                 
-   				$q_pk = "select count(*) anzahl 
- 						from user_cons_columns a,user_constraints b
-						where a.constraint_name = b.constraint_name 
-						and a.column_name = '".@OCIResult($stmt, 1)."'
-						and a.table_name = '$result'
-						and b.constraint_type = 'P'";
+                $q_pk = "select count(*) anzahl 
+                        from user_cons_columns a,user_constraints b
+                        where a.constraint_name = b.constraint_name 
+                        and a.column_name = '".@OCIResult($stmt, 1)."'
+                        and a.table_name = '$result'
+                        and b.constraint_type = 'P'";
 
-		        $this->last_query = $q_pk;
+                $this->last_query = $q_pk;
 
-		        if (!$stmt_pk = @OCIParse($this->connection, $q_pk)) {
-		       		return $this->oci8RaiseError(DB_ERROR_NEED_MORE_DATA);
-		        }
-		        if (!@OCIExecute($stmt_pk, OCI_DEFAULT)) {
-            		return $this->oci8RaiseError($stmt_pk);
-        		}
-        		if (@OCIFetch($stmt_pk) && @OCIResult($stmt_pk, 1)) {
-            		$res[$i]['flags']  .= 'primary_key';
-    			}
-    			@OCIFreeStatement($stmt_pk);
-    			$res[$i]['flags'] = trim($res[$i]['flags']);
+                if (!$stmt_pk = @OCIParse($this->connection, $q_pk)) {
+                    return $this->oci8RaiseError(DB_ERROR_NEED_MORE_DATA);
+                }
+                if (!@OCIExecute($stmt_pk, OCI_DEFAULT)) {
+                    return $this->oci8RaiseError($stmt_pk);
+                }
+                if (@OCIFetch($stmt_pk) && @OCIResult($stmt_pk, 1)) {
+                    $res[$i]['flags']  .= 'primary_key';
+                }
+                @OCIFreeStatement($stmt_pk);
+                $res[$i]['flags'] = trim($res[$i]['flags']);
 
                 if ($mode & DB_TABLEINFO_ORDER) {
                     $res['order'][$res[$i]['name']] = $i;
@@ -233,8 +233,8 @@ class DB_oci8_SGL extends DB_oci8
                     $res[$i]['len']   = @OCIColumnSize($result, $i+1);
                     $res[$i]['flags'] = '';
 
-              		$res[$i]['type']  = preg_replace("/NUMBER/","DECIMAL",$res[$i]['type']);
-              		$res[$i]['type']  = preg_replace("/LONG/","LONGTEXT",$res[$i]['type']);
+                    $res[$i]['type']  = preg_replace("/NUMBER/","DECIMAL",$res[$i]['type']);
+                    $res[$i]['type']  = preg_replace("/LONG/","LONGTEXT",$res[$i]['type']);
                     $res[$i]['type']  = preg_replace("/CLOB/","LONGTEXT",$res[$i]['type']);
 
                     if ($mode & DB_TABLEINFO_ORDER) {
@@ -278,7 +278,7 @@ class DB_oci8_SGL extends DB_oci8
      */
     function quoteIdentifier($str)
     {
-    	if (preg_match("/^\".*\"$/",$str)) return $str;
+        if (preg_match("/^\".*\"$/",$str)) return $str;
         return '"' . str_replace('"', '""', strtoupper($str)) . '"';
     }
 

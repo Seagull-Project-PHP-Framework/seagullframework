@@ -115,7 +115,7 @@ class SGL_NestedSet
 
     function setImages($imagesArray)
     {
-    	$this->_images = $imagesArray;
+        $this->_images = $imagesArray;
     }
 
     /**
@@ -215,8 +215,8 @@ class SGL_NestedSet
         $groupBy  = $this->_addSQL($addSQL, 'groupBy');
         $where    = $this->_addSQL($addSQL, 'where', 'AND');
 
-    	//  Get this node's rootnode, so we can then get nodes with matching rootid.
-    	$node = $this->getNode($node_id);
+        //  Get this node's rootnode, so we can then get nodes with matching rootid.
+        $node = $this->getNode($node_id);
         $sql = "SELECT $this->_fieldListExternal $cols
                 FROM $this->_tableName $join
                 WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$node[$this->_fieldsInternal['rootid']]}
@@ -542,9 +542,9 @@ class SGL_NestedSet
      * @version 1.0
      * @since   PHP 4.0
      */
-	function prepareValues($values, $quoteValues = false)
+    function prepareValues($values, $quoteValues = false)
     {
-    	$r = array();
+        $r = array();
         if ($quoteValues) {
             foreach ($values as $k => $value) {
                 $internalField = array_search($k,$this->_fieldsInternal);
@@ -604,10 +604,10 @@ class SGL_NestedSet
      * returned by _getNestedSet(). See PEAR/DB/NestedSet.php for API docs.
      */
 
-	function createRootNode($values, $id = false, $first = false, $pos = 'AF')
+    function createRootNode($values, $id = false, $first = false, $pos = 'AF')
     {
-    	$ns = $this->_getNestedSet();
-		return $ns->createRootNode($values, $id, $first, $pos);
+        $ns = $this->_getNestedSet();
+        return $ns->createRootNode($values, $id, $first, $pos);
     }
 
     function createSubNode($id, $values)

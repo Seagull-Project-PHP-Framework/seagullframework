@@ -224,7 +224,7 @@ EOF;
      */
     function _getSourceContext($file, $line)
     {
-    	$sourceContext = null;
+        $sourceContext = null;
 
         //  check that file exists
         if (!is_file($file)) {
@@ -234,35 +234,35 @@ EOF;
         } elseif ((!is_int($line)) || ($line <= 0)) {
             $sourceContext = "Context cannot be shown - ($line) is an invalid line number";
         } else {
-	        $lines = file($file);
+            $lines = file($file);
 
-	        //  get the source ## core dump in windows, scrap colour highlighting :-(
-	        //  $source = highlight_file($file, true);
-	        //  $lines = split("<br />", $source);
-	        //  get line numbers
-	        $start = $line - $this->sourceContextOptions['lines'] - 1;
-	        $finish = $line + $this->sourceContextOptions['lines'];
+            //  get the source ## core dump in windows, scrap colour highlighting :-(
+            //  $source = highlight_file($file, true);
+            //  $lines = split("<br />", $source);
+            //  get line numbers
+            $start = $line - $this->sourceContextOptions['lines'] - 1;
+            $finish = $line + $this->sourceContextOptions['lines'];
 
-	        //  get lines
-	        if ($start < 0) {
-	            $start = 0;
-	        }
+            //  get lines
+            if ($start < 0) {
+                $start = 0;
+            }
 
-	        if ($start >= count($lines)) {
-	            $start = count($lines) -1;
-	        }
+            if ($start >= count($lines)) {
+                $start = count($lines) -1;
+            }
 
-	        for ($i = $start; $i < $finish; $i++) {
-	            //  highlight line in question
-	            if ($i == ($line - 1)) {
-	                $context_lines[] = '<div class="error"><strong>' . ($i + 1) .
-	                    "\t" . strip_tags($lines[$line -1]) . '</strong></div>';
-	            } else {
-	                $context_lines[] = '<strong>' . ($i + 1) .
-	                    "</strong>\t" . @$lines[$i];
-	            }
-	        }
-	        $sourceContext = trim(join("<br />\n", $context_lines)) . "<br />\n";
+            for ($i = $start; $i < $finish; $i++) {
+                //  highlight line in question
+                if ($i == ($line - 1)) {
+                    $context_lines[] = '<div class="error"><strong>' . ($i + 1) .
+                        "\t" . strip_tags($lines[$line -1]) . '</strong></div>';
+                } else {
+                    $context_lines[] = '<strong>' . ($i + 1) .
+                        "</strong>\t" . @$lines[$i];
+                }
+            }
+            $sourceContext = trim(join("<br />\n", $context_lines)) . "<br />\n";
         }
         return $sourceContext;
     }

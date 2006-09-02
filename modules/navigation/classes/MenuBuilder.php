@@ -49,7 +49,7 @@ class MenuBuilder
 {
     var $GUI        = null;
     var $options    = array();
-	var $_startId    = 0;
+    var $_startId    = 0;
 
     function MenuBuilder($type, $options = array())
     {
@@ -62,10 +62,10 @@ class MenuBuilder
             $conf['table']['category'];
     }
 
-	function setStartId($startId = 0)
-	{
-		SGL::logMessage(null, PEAR_LOG_DEBUG);
-    	$this->_startId = $startId;
+    function setStartId($startId = 0)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $this->_startId = $startId;
     }
 
     function &_factory($type, $conf, $options = array())

@@ -117,7 +117,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
 
     /**
      * Name of default cache group.
-     * @var	string	$defaultGroup
+     * @var string  $defaultGroup
      */
      var $defaultGroup = 'Translation2';
 
@@ -316,7 +316,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     {
         if ($this->cleaningFrequency > 0) {
             if (mt_rand(1, $this->cleaningFrequency) == 1) {
-            	$this->cacheLiteFunction->clean($this->defaultGroup);
+                $this->cacheLiteFunction->clean($this->defaultGroup);
             }
         }
     }

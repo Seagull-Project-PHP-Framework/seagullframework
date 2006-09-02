@@ -52,7 +52,7 @@ class Validate_FR
 
         // special case for Corsica and DOM not 100% sure, but cannot test from a db :)
         if ($parts[4] == '2a' || $parts[4] == '2b' || $parts[4] == '9a' ||
-        	$parts[4] == '9b' || $parts[4] == '9c' || $parts[4] == '9d') {
+            $parts[4] == '9b' || $parts[4] == '9c' || $parts[4] == '9d') {
             if (strlen($str) == 15) {
                 return true;
             } else {
@@ -149,7 +149,7 @@ class Validate_FR
     function siren($siren)
     {
         $siren = str_replace(' ', '', $siren);
-        if (!preg_match("/^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$/", $siren,	$match)) {
+        if (!preg_match("/^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$/", $siren, $match)) {
             return false;
         }
         $match[2] *= 2;
@@ -180,7 +180,7 @@ class Validate_FR
     function siret($siret)
     {
         $siret = str_replace(' ', '', $siret);
-        if (!preg_match("/^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$/", $siret,	$match)) {
+        if (!preg_match("/^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$/", $siret, $match)) {
             return false;
         } else {
             if (!Validate_FR::siren(implode('', array_slice($match, 1,9)))) {

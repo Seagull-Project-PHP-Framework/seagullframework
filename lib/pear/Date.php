@@ -486,11 +486,11 @@ class Date
      */
     function setTZ($tz)
     {
-    	if(is_a($tz, 'Date_Timezone')) {
-        	$this->tz = $tz;
-    	} else {
-    		$this->setTZbyID($tz);
-    	}
+        if(is_a($tz, 'Date_Timezone')) {
+            $this->tz = $tz;
+        } else {
+            $this->setTZbyID($tz);
+        }
     }
 
     /**

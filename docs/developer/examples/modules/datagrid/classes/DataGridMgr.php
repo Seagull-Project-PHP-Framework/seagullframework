@@ -49,7 +49,7 @@ class DataGridMgr extends SGL_Manager {
     function DataGridMgr() {
         SGL::logMessage(   __CLASS__ . '::' . __FUNCTION__ ,
             null, null, PEAR_LOG_DEBUG);
-	parent::SGL_Manager();
+    parent::SGL_Manager();
         $this->module       = 'tools';
         $this->pageTitle    = 'dataGridTEST';
         $this->template     = 'dataGridMenu.html';
@@ -341,37 +341,37 @@ class DataGridMgr extends SGL_Manager {
         $dataGrid = & new SGL_DataGrid('one');
         //add columns to dataGrid
         $col = &$dataGrid->addColumn(array(
-					    'type' => 'text',
-					    'name' => 'name',
-					    'dbName' => 'name',
-					    'filterable' => true,
-					    'sortable' => true
-					  ));
+                        'type' => 'text',
+                        'name' => 'name',
+                        'dbName' => 'name',
+                        'filterable' => true,
+                        'sortable' => true
+                      ));
         $col->setTransformInColumn(array('Adamus' => 'ad'));
         $col2 = &$dataGrid->addColumn(array(
-					    'type' => 'text',
-					    'name' => 'surname',
-					    'dbName' => 'surname',
-					    'filterable' => true,
-					    'sortable' => true
-					  ));
+                        'type' => 'text',
+                        'name' => 'surname',
+                        'dbName' => 'surname',
+                        'filterable' => true,
+                        'sortable' => true
+                      ));
         $col2->setTransformInColumn(array('Mielcarus' => 'mtest'));
         $dataGrid->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'city',
-				    'dbName' => 'city',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
-	$dataGrid->addColumn(array(
-				    'type' => 'integer',
-				    'name' => 'age',
-				    'dbName' => 'age',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'avgTotalable' => true,
-				    'avgable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'city',
+                    'dbName' => 'city',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
+    $dataGrid->addColumn(array(
+                    'type' => 'integer',
+                    'name' => 'age',
+                    'dbName' => 'age',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'avgTotalable' => true,
+                    'avgable' => true
+                  ));
         //create instance of data source
         $dataSource = & new SGL_DataGridDataSource();
         //add manually data to source
@@ -385,7 +385,7 @@ class DataGridMgr extends SGL_Manager {
             ('name' => 'Piotrus', 'surname' => 'Skrzypus', 'city' => 'Troja', 'age' => 24));
         $dataSource->addRow(array
             ('name' => 'Tomaszus', 'surname' => 'Przybyszus', 'city' => 'Saloniki', 'age' => 25));
-	$dataSource->addRow(array
+    $dataSource->addRow(array
             ('name' => 'Adamus', 'surname' => 'Mielcarus', 'city' => 'Olimp', 'age' => 33));
         $dataSource->addRow(array
             ('name' => 'Grzegorzus', 'surname' => 'Dabrawus', 'city' => 'Sparta', 'age' => 21));
@@ -395,7 +395,7 @@ class DataGridMgr extends SGL_Manager {
             ('name' => 'Piotrus', 'surname' => 'Skrzypus', 'city' => 'Troja', 'age' => 24));
         $dataSource->addRow(array
             ('name' => 'Tomaszus', 'surname' => 'Przybyszus', 'city' => 'Saloniki', 'age' => 25));
-	$dataSource->addRow(array
+    $dataSource->addRow(array
             ('name' => 'Adamus', 'surname' => 'Mielcarus', 'city' => 'Olimp', 'age' => 33));
         $dataSource->addRow(array
             ('name' => 'Grzegorzus', 'surname' => 'Dabrawus', 'city' => 'Sparta', 'age' => 21));
@@ -405,7 +405,7 @@ class DataGridMgr extends SGL_Manager {
             ('name' => 'Piotrus', 'surname' => 'Skrzypus', 'city' => 'Troja', 'age' => 24));
         $dataSource->addRow(array
             ('name' => 'Tomaszus', 'surname' => 'Przybyszus', 'city' => 'Saloniki', 'age' => 25));
-	$dataSource->addRow(array
+    $dataSource->addRow(array
             ('name' => 'Adamus', 'surname' => 'Mielcarus', 'city' => 'Olimp', 'age' => 33));
         $dataSource->addRow(array
             ('name' => 'Grzegorzus', 'surname' => 'Dabrawus', 'city' => 'Sparta', 'age' => 21));
@@ -439,43 +439,43 @@ class DataGridMgr extends SGL_Manager {
 
         $dataGrid = & new SGL_DataGrid('two');
         $dataGrid->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id',
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id',
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'description',
-				    'dbName' => 'description',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'description',
+                    'dbName' => 'description',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'enclosure',
-				    'name' => 'file',
-				    'dbName' => 'fileattached',
-				  ));
+                    'type' => 'enclosure',
+                    'name' => 'file',
+                    'dbName' => 'fileattached',
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'image',
-				    'name' => 'picture',
-				    'dbName' => 'picture',
-				  ));
+                    'type' => 'image',
+                    'name' => 'picture',
+                    'dbName' => 'picture',
+                  ));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, description, salary, fileattached, picture
             FROM people WHERE #_FILTER#
@@ -504,33 +504,33 @@ class DataGridMgr extends SGL_Manager {
         $dataGrid = & new SGL_DataGrid('three');
         $dataGrid->dataGridHeader = 'Sample title';
         $dataGrid->addColumn(array(
-				    'type' => 'user',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'user',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'colour',
-				    'name' => 'colour column',
-				    'dbName' => 'colour',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'colour',
+                    'name' => 'colour column',
+                    'dbName' => 'colour',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'email',
-				    'name' => 'email',
-				    'dbName' => 'email',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'email',
+                    'name' => 'email',
+                    'dbName' => 'email',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'link',
-				    'name' => 'www',
-				    'dbName' => 'www',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'link',
+                    'name' => 'www',
+                    'dbName' => 'www',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT name, birthdate, colour, email, www
             FROM people WHERE #_FILTER#
@@ -543,41 +543,41 @@ class DataGridMgr extends SGL_Manager {
         $dataGrid2 = & new SGL_DataGrid('four');
         $dataGrid2->emptyTitle     = 'DataGrid with no data - only special title for this situation is shown';
         $dataGrid2->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id'
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id'
+                  ));
         $col = &$dataGrid2->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $col->setFilterSelect(array('Jan', 'Andrew', 'Stephen'));
         $dataGrid2->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'surname',
-				    'dbName' => 'surname',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'surname',
+                    'dbName' => 'surname',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'date',
-				    'name' => 'birth date',
-				    'dbName' => 'birthdate',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'date',
+                    'name' => 'birth date',
+                    'dbName' => 'birthdate',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $dataSource2 = & new SGL_DataGridSQLDataSource("
             SELECT id, name, surname, birthdate, salary
             FROM people WHERE #_FILTER# AND 1=0
@@ -609,41 +609,41 @@ class DataGridMgr extends SGL_Manager {
         $dataGrid->dataGridHeader = 'Sample title';
         $dataGrid->emptyTitle     = 'No title';
         $dataGrid->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id',
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id',
+                  ));
         $col = &$dataGrid->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $col->setFilterSelect(array('Jan', 'Andrew', 'Stephen'));
         $dataGrid->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'surname',
-				    'dbName' => 'surname',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'surname',
+                    'dbName' => 'surname',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'date',
-				    'name' => 'birth date',
-				    'dbName' => 'birthdate',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'date',
+                    'name' => 'birth date',
+                    'dbName' => 'birthdate',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, surname, birthdate, salary
             FROM people WHERE #_FILTER#
@@ -657,41 +657,41 @@ class DataGridMgr extends SGL_Manager {
         $dataGrid2 = & new SGL_DataGrid('2');
         $dataGrid2->dataGridHeader = 'Sample title for second dataGrid';
         $dataGrid2->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id'
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id'
+                  ));
         $col = &$dataGrid2->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $col->setFilterSelect(array('Jan', 'Andrew', 'Stephen'));
         $dataGrid2->addColumn(array(
-				    'type' => 'text',
-				    'name' => 'surname',
-				    'dbName' => 'surname',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'text',
+                    'name' => 'surname',
+                    'dbName' => 'surname',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'date',
-				    'name' => 'birth date',
-				    'dbName' => 'birthdate',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'date',
+                    'name' => 'birth date',
+                    'dbName' => 'birthdate',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $dataSource2 = & new SGL_DataGridDataSource();
         $dataSource2->addRow(array
             ('id' => 12, 'name' => 'dddd', 'date' => '2005-12-09', 'salary' => 1200.3));
@@ -729,51 +729,51 @@ class DataGridMgr extends SGL_Manager {
         //first dataGrid - SQLDataSource
         $dataGrid = & new SGL_DataGrid('five');
         $dataGrid->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id'
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id'
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'user',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'user',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'user',
-				    'name' => 'surname',
-				    'dbName' => 'surname',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'user',
+                    'name' => 'surname',
+                    'dbName' => 'surname',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'colour',
-				    'name' => 'colour',
-				    'dbName' => 'colour',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'colour',
+                    'name' => 'colour',
+                    'dbName' => 'colour',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $col = &$dataGrid->addColumn(array(
-				    'type' => 'action'
-				  ));
+                    'type' => 'action'
+                  ));
         $col->addAction(array(
-				'name' => 'Edit',
-				'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
-			      ));
+                'name' => 'Edit',
+                'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
+                  ));
         $col->addAction(array(
-				'name' => 'Delete',
-				'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
-			      ));
+                'name' => 'Delete',
+                'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
+                  ));
         $dataSource = & new SGL_DataGridSQLDataSource("
             SELECT id, name, surname, colour, salary
             FROM people WHERE #_FILTER#
@@ -785,45 +785,45 @@ class DataGridMgr extends SGL_Manager {
         //second dataGrid - DataSource
         $dataGrid2 = & new SGL_DataGrid('five2');
         $dataGrid2->addColumn(array(
-				    'type' => 'id',
-				    'name' => 'id',
-				    'dbName' => 'id'
-				  ));
+                    'type' => 'id',
+                    'name' => 'id',
+                    'dbName' => 'id'
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'user',
-				    'name' => 'name',
-				    'dbName' => 'name',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'user',
+                    'name' => 'name',
+                    'dbName' => 'name',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'colour',
-				    'name' => 'colour',
-				    'dbName' => 'colour',
-				    'filterable' => true,
-				    'sortable' => true
-				  ));
+                    'type' => 'colour',
+                    'name' => 'colour',
+                    'dbName' => 'colour',
+                    'filterable' => true,
+                    'sortable' => true
+                  ));
         $dataGrid2->addColumn(array(
-				    'type' => 'real',
-				    'name' => 'salary',
-				    'dbName' => 'salary',
-				    'filterable' => true,
-				    'sortable' => true,
-				    'sumable' => true,
-				    'sumTotalable' => true
-				  ));
+                    'type' => 'real',
+                    'name' => 'salary',
+                    'dbName' => 'salary',
+                    'filterable' => true,
+                    'sortable' => true,
+                    'sumable' => true,
+                    'sumTotalable' => true
+                  ));
         $col2 = &$dataGrid2->addColumn(array(
-				    'type' => 'action',
-				    'name' => 'Actions'
-				  ));
+                    'type' => 'action',
+                    'name' => 'Actions'
+                  ));
         $col2->addAction(array(
-				'name' => 'Edit',
-				'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
-			      ));
+                'name' => 'Edit',
+                'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
+                  ));
         $col2->addAction(array(
-				'name' => 'Delete',
-				'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
-			      ));
+                'name' => 'Delete',
+                'url' => SGL_Url::makeLink('show/id/{id}/','DataGrid','tools'),
+                  ));
         $dataSource2 = & new SGL_DataGridDataSource();
         $dataSource2->addRow(array
             ('id' => '12', 'name' => 'dddd', 'colour' => 'yellow', 'salary' => 12.56));

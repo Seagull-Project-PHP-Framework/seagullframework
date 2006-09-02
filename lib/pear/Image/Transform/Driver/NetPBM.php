@@ -394,7 +394,7 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
      * @param $quality
      * @return string A chain of shell command
      * @link http://netpbm.sourceforge.net/doc/directory.html
-	 */
+     */
     function _postProcess($type, $quality)
     {
         array_unshift($this->command, $this->_prepare_cmd(
@@ -406,7 +406,7 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
         $program = '';
         switch ($type) {
             // ppmto* converters
-        	case 'gif':
+            case 'gif':
                 if (!System::which(IMAGE_TRANSFORM_NETPBM_PATH . 'ppmquant'
                                     . ((OS_WINDOWS) ? '.exe' : ''))) {
                     return PEAR::raiseError('Couldn\'t find "ppmquant" binary',
@@ -579,8 +579,8 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
         $cmd = $this->_postProcess($type, $quality);
         passthru($cmd . ' 2>&1');
         if (!$this->keep_settings_on_save) {
-		    $this->free();
-		}
+            $this->free();
+        }
 
         return true;
     }

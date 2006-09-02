@@ -103,7 +103,7 @@ Class Image_Transform_Driver_GD1 extends Image_Transform_Driver_GD
         $t = deg2rad($angle);
 
         if( !is_array($color_mask) ){
-			// Not already in numberical format, so we convert it.
+            // Not already in numberical format, so we convert it.
             if ($color_mask{0} == '#'){
                 $color_mask = $this->colorhex2colorarray($color_mask);
             } else {

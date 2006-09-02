@@ -80,9 +80,9 @@ class BlogMgr extends SGL_Manager
         require_once 'HTTP/Request.php';
         $phpSelfParts = split('\?', $_SERVER['PHP_SELF']);
         $s9yUri = SGL_BASE_URL . '/serendipity/?'.@$phpSelfParts[1];
-    	$req = &new HTTP_Request($s9yUri);
-    	$req->sendRequest();
-    	$output->blogData = $req->getResponseBody();
+        $req = &new HTTP_Request($s9yUri);
+        $req->sendRequest();
+        $output->blogData = $req->getResponseBody();
     }
 }
 ?>

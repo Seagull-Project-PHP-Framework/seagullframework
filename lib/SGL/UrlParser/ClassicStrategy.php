@@ -58,10 +58,10 @@ class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
     function parseQuerystring(/*SGL_Url*/$url, $conf)
     {
         $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'),
-        	'/') . ']/',
-        	$url->querystring,
-        	-1,
-        	PREG_SPLIT_NO_EMPTY);
+            '/') . ']/',
+            $url->querystring,
+            -1,
+            PREG_SPLIT_NO_EMPTY);
 
         $return = array();
 

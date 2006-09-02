@@ -177,12 +177,12 @@ class ContentTypeMgr extends SGL_Manager
 
         //  insert item type fields into item_type_mapping table.
         foreach ($input->type['field_name'] as $k => $name) {
-      		$ok = $this->da->addItemAttributes($itemTypeId, $name,
-      		    $input->type['field_type'][$k]);
+            $ok = $this->da->addItemAttributes($itemTypeId, $name,
+                $input->type['field_type'][$k]);
             if (PEAR::isError($ok)) {
-	            SGL::raiseError('There was a problem updating the content attributes',
-	                SGL_ERROR_NOAFFECTEDROWS);
-	            return false;
+                SGL::raiseError('There was a problem updating the content attributes',
+                    SGL_ERROR_NOAFFECTEDROWS);
+                return false;
             }
         }
         SGL::raiseMsg('content type has successfully been added', true, SGL_MESSAGE_INFO);
@@ -252,19 +252,19 @@ class ContentTypeMgr extends SGL_Manager
             $ok = $this->da->updateItemTypeName($input->contentTypeID,
                 $input->type['item_type_name']);
             if (PEAR::isError($ok)) {
-	            SGL::raiseError('There was a problem updating the content type name',
-	                SGL_ERROR_NOAFFECTEDROWS);
-	            return false;
+                SGL::raiseError('There was a problem updating the content type name',
+                    SGL_ERROR_NOAFFECTEDROWS);
+                return false;
             }
         }
         //  update item type fields
         foreach ($input->type['fields'] as $attributeId => $aItemAttributes) {
 
-      		$ok = $this->da->updateItemAttributes($attributeId, $aItemAttributes);
+            $ok = $this->da->updateItemAttributes($attributeId, $aItemAttributes);
             if (PEAR::isError($ok)) {
-	            SGL::raiseError('There was a problem updating the content attributes',
-	                SGL_ERROR_NOAFFECTEDROWS);
-	            return false;
+                SGL::raiseError('There was a problem updating the content attributes',
+                    SGL_ERROR_NOAFFECTEDROWS);
+                return false;
             }
         }
         SGL::raiseMsg('content type has successfully been updated', true, SGL_MESSAGE_INFO);
@@ -320,23 +320,23 @@ class ContentTypeMgr extends SGL_Manager
 
             foreach ($input->aDelete as $itemTypeId) {
 
-            	//  delete item type from item_type
-				$ok = $this->da->deleteItemTypeById($itemTypeId);
+                //  delete item type from item_type
+                $ok = $this->da->deleteItemTypeById($itemTypeId);
                 if (PEAR::isError($ok)) {
-		            SGL::raiseError('There was a problem deleting the content type',
-		                SGL_ERROR_NOAFFECTEDROWS);
-		            return false;
+                    SGL::raiseError('There was a problem deleting the content type',
+                        SGL_ERROR_NOAFFECTEDROWS);
+                    return false;
                 }
 
                 //  delete item type fields from item_type_mapping
-				$ok = $this->da->deleteItemAttributesByItemTypeId($itemTypeId);
+                $ok = $this->da->deleteItemAttributesByItemTypeId($itemTypeId);
                 if (PEAR::isError($ok)) {
-		            SGL::raiseError('There was a problem deleting the content attributes',
-		                SGL_ERROR_NOAFFECTEDROWS);
-		            return false;
+                    SGL::raiseError('There was a problem deleting the content attributes',
+                        SGL_ERROR_NOAFFECTEDROWS);
+                    return false;
                 }
             }
-			SGL::raiseMsg('content type(s) has successfully been deleted', true, SGL_MESSAGE_INFO);
+            SGL::raiseMsg('content type(s) has successfully been deleted', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Incorrect parameter passed to ' .
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);

@@ -21,36 +21,36 @@ require_once 'HTML/AJAX.php';
 class HTML_AJAX_Response
 {
 
-	/**
-	 * about
-	 * @var $contentType type
-	 */
-	var $contentType = 'text/plain';
+    /**
+     * about
+     * @var $contentType type
+     */
+    var $contentType = 'text/plain';
 
-	/**
-	 * about
-	 * @var $payload type
-	 */
-	var $payload = '';
+    /**
+     * about
+     * @var $payload type
+     */
+    var $payload = '';
 
-	/**
-	 * public function getContentType()
-	 *
-	 * gets the right content type?
-	 */
-	function getContentType()
-	{
-		return $this->contentType;
-	}
+    /**
+     * public function getContentType()
+     *
+     * gets the right content type?
+     */
+    function getContentType()
+    {
+        return $this->contentType;
+    }
 
-	/**
-	 * public function getPayload()
-	 *
-	 * something
-	 */
-	function getPayload()
-	{
-		return $this->payload;
-	}
+    /**
+     * public function getPayload()
+     *
+     * something
+     */
+    function getPayload()
+    {
+        return $this->payload;
+    }
 }
 ?>

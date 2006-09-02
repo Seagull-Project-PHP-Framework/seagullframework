@@ -597,11 +597,11 @@ class HTML_AJAX_Server
      */
     function _compareEtags($serverETag) {
         if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
-    		if (strcmp($_SERVER['HTTP_IF_NONE_MATCH'],$serverETag) == 0) {
+            if (strcmp($_SERVER['HTTP_IF_NONE_MATCH'],$serverETag) == 0) {
                 $this->_sendCacheHeaders($serverETag,true);
                 return true;
             }
-    	}
+        }
         $this->_sendCacheHeaders($serverETag,false);
         return false;
     }

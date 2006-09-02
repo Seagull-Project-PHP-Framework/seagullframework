@@ -61,7 +61,7 @@ class Mail_mail extends Mail {
         }
     }
 
-	/**
+    /**
      * Implements Mail_mail::send() function using php's built-in mail()
      * command.
      *

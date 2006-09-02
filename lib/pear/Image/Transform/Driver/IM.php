@@ -388,9 +388,9 @@ class Image_Transform_Driver_IM extends Image_Transform
                    $this->image . ' ' . $type . ":-");
         passthru($cmd);
 
-		if (!$this->keep_settings_on_save) {
-		    $this->free();
-		}
+        if (!$this->keep_settings_on_save) {
+            $this->free();
+        }
         return true;
     }
 
@@ -401,7 +401,7 @@ class Image_Transform_Driver_IM extends Image_Transform
      */
     function free()
     {
-	    $this->command = array();
+        $this->command = array();
         $this->image = '';
         $this->type = '';
     }

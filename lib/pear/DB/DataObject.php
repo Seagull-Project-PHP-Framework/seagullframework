@@ -434,8 +434,8 @@ class DB_DataObject extends DB_DataObject_Overload
         } else {
             /* theoretically MDB2! */
             if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
-	            $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
-	        }
+                $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
+            }
         }
         
         

@@ -18,7 +18,7 @@ class DB_db2_SGL extends DB_odbc
         $this->phptype = 'db2';
         
         // set special options
-		$this->setOption('portability',DB_PORTABILITY_LOWERCASE);
+        $this->setOption('portability',DB_PORTABILITY_LOWERCASE);
     }
 
     /**
@@ -32,7 +32,7 @@ class DB_db2_SGL extends DB_odbc
     function getSpecialQuery($type)
     {
 
-		switch ($type) {
+        switch ($type) {
             case 'databases':
                 if (!function_exists('odbc_data_source')) {
                     return null;
@@ -154,31 +154,31 @@ class DB_db2_SGL extends DB_odbc
 
         $count = 0;
         $res = array();
-		while ( $aColumn = odbc_fetch_array($id) ) {
-			$res[$count] = array(
-		        'table' => $got_string ? $case_func($result) : $aColumn[TABNNAME],
-		        'name'  => $case_func($aColumn['COLNAME']),
-		        'type'  => preg_replace("/CLOB/","LONGTEXT",$aColumn['TYPENAME']),
-		        'len'   => $aColumn['LENGTH'],
-		        'flags'	=> ($aColumn['NULLS'] == "Y") ? '' : 'not_null '
-		    );
+        while ( $aColumn = odbc_fetch_array($id) ) {
+            $res[$count] = array(
+                'table' => $got_string ? $case_func($result) : $aColumn[TABNNAME],
+                'name'  => $case_func($aColumn['COLNAME']),
+                'type'  => preg_replace("/CLOB/","LONGTEXT",$aColumn['TYPENAME']),
+                'len'   => $aColumn['LENGTH'],
+                'flags' => ($aColumn['NULLS'] == "Y") ? '' : 'not_null '
+            );
 
-			if ($aColumn['KEYSEQ'])
-				$res[$count]['flags'] .= 'primary_key';
+            if ($aColumn['KEYSEQ'])
+                $res[$count]['flags'] .= 'primary_key';
 
-			if ($mode & DB_TABLEINFO_ORDER) {
-		        $res['order'][$res[$count]['name']] = $count;
-		    }
-		    if ($mode & DB_TABLEINFO_ORDERTABLE) {
-		        $res['ordertable'][$res[$count]['table']][$res[$count]['name']] = $count;
-		    }
+            if ($mode & DB_TABLEINFO_ORDER) {
+                $res['order'][$res[$count]['name']] = $count;
+            }
+            if ($mode & DB_TABLEINFO_ORDERTABLE) {
+                $res['ordertable'][$res[$count]['table']][$res[$count]['name']] = $count;
+            }
 
-			$count++;
-		}
+            $count++;
+        }
 
-		if ($mode) {
-		    $res['num_fields'] = $count;
-		}
+        if ($mode) {
+            $res['num_fields'] = $count;
+        }
 
         // free the result only if we were called on a table
         if ($got_string) {

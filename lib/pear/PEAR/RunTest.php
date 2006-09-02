@@ -120,7 +120,7 @@ class PEAR_RunTest
             } elseif (empty($section)) {
                 fclose($fp);
                 return PEAR::raiseError("Invalid sections formats in test file: $file");
-			}
+            }
 
             // Add to the section text.
             $section_text[$section] .= $line;

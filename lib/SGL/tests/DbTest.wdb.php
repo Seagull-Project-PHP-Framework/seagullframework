@@ -19,8 +19,8 @@ class DbTest extends UnitTestCase {
 
     function testSingleton()
     {
-		$dbh1 = & SGL_DB::singleton($this->dsn);
-		$dbh2 = & SGL_DB::singleton($this->dsn);
+        $dbh1 = & SGL_DB::singleton($this->dsn);
+        $dbh2 = & SGL_DB::singleton($this->dsn);
         $this->assertReference($dbh1, $dbh2);
     }
 
@@ -28,20 +28,20 @@ class DbTest extends UnitTestCase {
     {
         $locator = &SGL_ServiceLocator::singleton();
         $dbh1 = $locator->get('DB');
-		SGL_DB::setConnection();
+        SGL_DB::setConnection();
 
-    	require_once 'DB/DataObject.php';
-    	$dbdo = DB_DataObject::factory($this->conf['table']['module']);
-    	$dbh2 = $dbdo->getDatabaseConnection();
+        require_once 'DB/DataObject.php';
+        $dbdo = DB_DataObject::factory($this->conf['table']['module']);
+        $dbh2 = $dbdo->getDatabaseConnection();
 
         $this->assertReference($dbh1, $dbh2);
     }
 
     function testGetDsnArray()
     {
-		$dbh = & SGL_DB::singleton($this->dsn);
-		$dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
-		$expected = array (
+        $dbh = & SGL_DB::singleton($this->dsn);
+        $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
+        $expected = array (
           'phptype' => 'mysql_SGL',
           'username' => 'root',
           'password' => '',
@@ -56,9 +56,9 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnArrayWithoutDb()
     {
-		$dbh = & SGL_DB::singleton($this->dsn);
-		$dsn = SGL_DB::getDsn(SGL_DSN_ARRAY, true);
-		$expected = array (
+        $dbh = & SGL_DB::singleton($this->dsn);
+        $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY, true);
+        $expected = array (
           'phptype' => 'mysql_SGL',
           'username' => 'root',
           'password' => '',
@@ -72,17 +72,17 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnString()
     {
-		$dbh = & SGL_DB::singleton($this->dsn);
-		$dsn = SGL_DB::getDsn(SGL_DSN_STRING);
-		$expected = 'mysql_SGL://root:@tcp+localhost/simpletest';
+        $dbh = & SGL_DB::singleton($this->dsn);
+        $dsn = SGL_DB::getDsn(SGL_DSN_STRING);
+        $expected = 'mysql_SGL://root:@tcp+localhost/simpletest';
         $this->assertEqual($dsn, $expected);
     }
 
     function testGetDsnStringWithoutDb()
     {
-		$dbh = & SGL_DB::singleton($this->dsn);
-		$dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
-		$expected = 'mysql_SGL://root:@tcp+localhost';
+        $dbh = & SGL_DB::singleton($this->dsn);
+        $dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
+        $expected = 'mysql_SGL://root:@tcp+localhost';
         $this->assertEqual($dsn, $expected);
     }
 }

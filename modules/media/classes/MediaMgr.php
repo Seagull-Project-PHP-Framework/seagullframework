@@ -39,13 +39,13 @@ require_once 'DB/DataObject.php';
  */
 class MediaMgr extends FileMgr
 {
-	// add more of these from http://filext.com/
-	var $_aIdents = array(
-    	'application/pdf' => '25 50 44 46 2D 31 2E',
-    	'application/msword' => 'D0 CF 11 E0 A1 B1 1A E1',
-    	'application/zip' => '50 4B 03 04',
-    	'video/mpeg' => '00 00 01 BA 21 00 01'
-	);
+    // add more of these from http://filext.com/
+    var $_aIdents = array(
+        'application/pdf' => '25 50 44 46 2D 31 2E',
+        'application/msword' => 'D0 CF 11 E0 A1 B1 1A E1',
+        'application/zip' => '50 4B 03 04',
+        'video/mpeg' => '00 00 01 BA 21 00 01'
+    );
 
     function MediaMgr()
     {
@@ -130,30 +130,30 @@ class MediaMgr extends FileMgr
 
     function toValidFileName($string, $mimeType)
     {
-    	// remove the current extenion
-    	$chopTo = strlen(strrchr($string, '.'));
-    	$string = substr($string, 0, (strlen($string) - $chopTo));
+        // remove the current extenion
+        $chopTo = strlen(strrchr($string, '.'));
+        $string = substr($string, 0, (strlen($string) - $chopTo));
 
-    	// remove non-alpha characters
-    	$newString = ereg_replace("[^A-Za-z0-9]", '_', $string);
-    	$finalString = ereg_replace("[_]+","_", $newString);
+        // remove non-alpha characters
+        $newString = ereg_replace("[^A-Za-z0-9]", '_', $string);
+        $finalString = ereg_replace("[_]+","_", $newString);
 
-    	// get the correct extension type for the file
-    	$extension = $this->getMimeExtension($mimeType);
+        // get the correct extension type for the file
+        $extension = $this->getMimeExtension($mimeType);
 
-    	return $finalString . $extension;
+        return $finalString . $extension;
     }
 
     function getMimeExtension($mimeType)
     {
-    	$mime = array(
-        	'application/msword'=>'.doc',
-        	'image/gif'=>'.gif',
-        	'image/jpeg'=>'.jpg',
-        	'application/pdf'=>'.pdf',
-        	'image/png'=>'.png',
-        	'application/zip'=>'.zip',
-        	'text/plain'=>'.txt'
+        $mime = array(
+            'application/msword'=>'.doc',
+            'image/gif'=>'.gif',
+            'image/jpeg'=>'.jpg',
+            'application/pdf'=>'.pdf',
+            'image/png'=>'.png',
+            'application/zip'=>'.zip',
+            'text/plain'=>'.txt'
         );
 
         return $mime[$mimeType];
@@ -161,68 +161,68 @@ class MediaMgr extends FileMgr
 
     function condense($value)
     {
-    	return pack('H*', str_replace(' ', '', $value));
+        return pack('H*', str_replace(' ', '', $value));
     }
 
     function getIdent($filename, $aHexIdents)
     {
-    	// open the file for reading (binary)
-    	$fp = fopen($filename, 'rb');
-    	if (!$fp) {
-    		return false;
-    	}
-    	// get the (converted to bin) hex identifier length to extract that amount
-    	// of bytes from our uploaded file
-    	$aBinIdents = array_map(array($this, 'condense'), $aHexIdents);
-    	$aSizes = array_map('strlen', $aBinIdents);
-    	$read = max($aSizes);
+        // open the file for reading (binary)
+        $fp = fopen($filename, 'rb');
+        if (!$fp) {
+            return false;
+        }
+        // get the (converted to bin) hex identifier length to extract that amount
+        // of bytes from our uploaded file
+        $aBinIdents = array_map(array($this, 'condense'), $aHexIdents);
+        $aSizes = array_map('strlen', $aBinIdents);
+        $read = max($aSizes);
 
-    	// store the read data
-    	$data = fread($fp, $read);
-    	fclose($fp);
+        // store the read data
+        $data = fread($fp, $read);
+        fclose($fp);
 
-    	// check our data against the array of catalogued file types $this->_aIdents
-    	foreach ($aBinIdents as $type => $signature) {
-    		$found = (substr($data, 0, strlen($signature)) === $signature);
-    		if ($found) {
-    			break;
-    		}
-    	}
-    	return ($found ? $type : false);
+        // check our data against the array of catalogued file types $this->_aIdents
+        foreach ($aBinIdents as $type => $signature) {
+            $found = (substr($data, 0, strlen($signature)) === $signature);
+            if ($found) {
+                break;
+            }
+        }
+        return ($found ? $type : false);
     }
 
     function isTextFile($filename)
     {
-    	if (!is_readable($filename)) {
-    	    return false;
-    	}
-    	$data = file_get_contents($filename);
-    	$bad = false;
-    	for ($x = 0 , $y = strlen($data); !$bad && $x < $y; $x++) {
-    		$bad = (ord($data{$x}) > 127);
-    	}
-    	return !$bad;
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $data = file_get_contents($filename);
+        $bad = false;
+        for ($x = 0 , $y = strlen($data); !$bad && $x < $y; $x++) {
+            $bad = (ord($data{$x}) > 127);
+        }
+        return !$bad;
     }
 
     function getMimeType($filename)
     {
-    	// is the file an image file
-    	if ($fileInfo = getimagesize($filename)){
-    		$ret = $fileInfo['mime'];
+        // is the file an image file
+        if ($fileInfo = getimagesize($filename)){
+            $ret = $fileInfo['mime'];
 
-    	// is the file type listed in our catalogued types $this->_aIdents
-    	} elseif ($mimeType = $this->getIdent($filename, $this->_aIdents)){
-    		$ret = $mimeType;
+        // is the file type listed in our catalogued types $this->_aIdents
+        } elseif ($mimeType = $this->getIdent($filename, $this->_aIdents)){
+            $ret = $mimeType;
 
-    	// is the uploaded file a text file
-    	} elseif ($this->isTextFile($filename)){
-    		$ret = 'text/plain';
+        // is the uploaded file a text file
+        } elseif ($this->isTextFile($filename)){
+            $ret = 'text/plain';
 
-    	// not a recognised file type by this class
-    	} else {
-    		$ret = false;
-    	}
-    	return $ret;
+        // not a recognised file type by this class
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
     function display(&$output)
@@ -259,13 +259,13 @@ class MediaMgr extends FileMgr
                 return false;
             }
             
-	        //  test ability to create img tranform obj
-	        require_once 'Image/Transform.php';
-	        $imageDriver = $this->conf['MediaMgr']['imageDriver'];
-	        $im = Image_Transform::factory($imageDriver);
-	        if (PEAR::isError($im)) {
-	        	return false;
-	        }             
+            //  test ability to create img tranform obj
+            require_once 'Image/Transform.php';
+            $imageDriver = $this->conf['MediaMgr']['imageDriver'];
+            $im = Image_Transform::factory($imageDriver);
+            if (PEAR::isError($im)) {
+                return false;
+            }             
 
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
             $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
@@ -341,34 +341,34 @@ class MediaMgr extends FileMgr
         // load image
         $ret = $im->load($srcImgLocation);
         if (PEAR::isError($ret)) {
-        	return false;
+            return false;
         }
         //  get img size
         $size = $im->getImageSize();
         if (isset($size[0]) && isset($size[1])) {
-        	$width = $size[0];
-        	$height = $size[1];
+            $width = $size[0];
+            $height = $size[1];
         } else {
-        	return SGL::raiseError('Unable to get image size');
+            return SGL::raiseError('Unable to get image size');
         }
-    	// make sure to keep the image aspect ratio
-    	if ($width >= $height && $newHeight <= $height){
-      		$newHeight = $height / ($width / $newWidth);
-    	} elseif ($width < $height && $newWidth < $width) {
-      		$newWidth = $width / ($height / $newHeight);
-    	} else {
-      		$newWidth = $width;
-      		$newHeight = $height;
-   		}
+        // make sure to keep the image aspect ratio
+        if ($width >= $height && $newHeight <= $height){
+            $newHeight = $height / ($width / $newWidth);
+        } elseif ($width < $height && $newWidth < $width) {
+            $newWidth = $width / ($height / $newHeight);
+        } else {
+            $newWidth = $width;
+            $newHeight = $height;
+        }
 
         $ret = $im->resize($newWidth, $newHeight);
         if (PEAR::isError($ret)) {
-        	return false;
+            return false;
         }
 
         $ret = $im->save($targetLocation, 'jpeg');
         if (PEAR::isError($ret)) {
-        	return false;
+            return false;
         }
         return true;
     }

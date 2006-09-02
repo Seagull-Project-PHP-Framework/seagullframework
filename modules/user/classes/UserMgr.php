@@ -96,7 +96,7 @@ class UserMgr extends RegisterMgr
         parent::validate($req, $input);
         $input->action = ($req->get('action')) ? $req->get('action') : 'list';
 
-        //	determine action based on which button was pressed
+        //  determine action based on which button was pressed
         if ($req->get('delete')) { $input->action = 'delete';}
         if ($req->get('syncToRole')) { $input->action = 'syncToRole';}
 
@@ -290,9 +290,9 @@ class UserMgr extends RegisterMgr
         $output->pageTitle = $this->pageTitle . ' :: Browse';
         $allowedSortFields = array('usr_id','username','is_acct_active');
         if (      !empty($input->sortBy)
-	           && !empty($input->sortOrder)
-	           && in_array($input->sortBy, $allowedSortFields)) {
-			$orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
+               && !empty($input->sortOrder)
+               && in_array($input->sortBy, $allowedSortFields)) {
+            $orderBy_query = ' ORDER BY ' . $input->sortBy . ' ' . $input->sortOrder ;
         } else {
             $orderBy_query = ' ORDER BY u.usr_id ASC ';
         }
@@ -391,8 +391,8 @@ class UserMgr extends RegisterMgr
                 $query = "DELETE FROM {$this->conf['table']['login']} WHERE login_id = $v";
                 $this->dbh->query($query);
             }
-        	//  redirect on success
-        	SGL::raiseMsg('Deleted successfully', true, SGL_MESSAGE_INFO);
+            //  redirect on success
+            SGL::raiseMsg('Deleted successfully', true, SGL_MESSAGE_INFO);
 
         } else {
             SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,

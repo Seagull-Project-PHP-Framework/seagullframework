@@ -241,5 +241,6 @@
             'WF'=>'Wallis et Futuna',
             'YE'=>'Yémen',
             'ZM'=>'Zambie',
-            'ZW'=>'Zimbabwe',    );
+            'ZW'=>'Zimbabwe',
+    );
 ?>

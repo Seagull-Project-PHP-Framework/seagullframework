@@ -95,57 +95,57 @@ class SGL_DataGrid {
         * reference and in PHP cannot be returned reference to object)
         */
 
-	    if (isset($params['type'])) {
+        if (isset($params['type'])) {
             $type = $params['type'];
         } else {
             $type = 'id';
         }
-	    if (isset($params['name'])) {
+        if (isset($params['name'])) {
             $name = $params['name'];
         } else {
             $name = '';
         }
-	    if (isset($params['dbName'])) {
+        if (isset($params['dbName'])) {
             $dbName = $params['dbName'];
         } else {
             $dbName = '';
         }
-	    if (isset($params['sortable'])) {
+        if (isset($params['sortable'])) {
             $sortable = $params['sortable'];
         } else {
             $sortable = false;
         }
-	    if (isset($params['filterable'])) {
+        if (isset($params['filterable'])) {
             $filterable = $params['filterable'];
         } else {
             $filterable = false;
         }
-	    if (isset($params['sumable'])) {
+        if (isset($params['sumable'])) {
             $sumable = $params['sumable'];
         } else {
             $sumable = false;
         }
-	    if (isset($params['avgable'])) {
+        if (isset($params['avgable'])) {
             $avgable = $params['avgable'];
         } else {
             $avgable = false;
         }
-	    if (isset($params['sumTotalable'])) {
+        if (isset($params['sumTotalable'])) {
             $sumTotalable = $params['sumTotalable'];
         } else {
             $sumTotalable = false;
         }
-	    if (isset($params['avgTotalable'])) {
+        if (isset($params['avgTotalable'])) {
             $avgTotalable = $params['avgTotalable'];
         } else {
             $avgTotalable = false;
         }
-	    if (isset($params['align'])) {
+        if (isset($params['align'])) {
             $align = $params['align'];
         } else {
             $align = '';
         }
-	    if (isset($params['tooltip'])) {
+        if (isset($params['tooltip'])) {
             $tooltip = $params['tooltip'];
         } else {
             $tooltip = array();
@@ -589,7 +589,7 @@ class SGL_DataGrid {
         if ($this->defaultPerPage > 0) {
             $this->perPageOptions[$this->defaultPerPage] = $this->defaultPerPage;
         }
-	    $this->perPageOptions[$_SESSION['aPrefs']['resPerPage']] =
+        $this->perPageOptions[$_SESSION['aPrefs']['resPerPage']] =
                                             $_SESSION['aPrefs']['resPerPage'];
         $this->perPageOptions[25] = 25;
         $this->perPageOptions[50] = 50;
