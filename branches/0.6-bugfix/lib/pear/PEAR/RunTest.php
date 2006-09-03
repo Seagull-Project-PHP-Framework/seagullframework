@@ -44,7 +44,7 @@ putenv("PHP_PEAR_RUNTESTS=1");
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.10RC1
+ * @version    Release: 1.4.11
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  */
@@ -120,7 +120,7 @@ class PEAR_RunTest
             } elseif (empty($section)) {
                 fclose($fp);
                 return PEAR::raiseError("Invalid sections formats in test file: $file");
-            }
+			}
 
             // Add to the section text.
             $section_text[$section] .= $line;
