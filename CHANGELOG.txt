@@ -16,6 +16,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+03-08-06    Uggraded PEAR libs
 
 
 +-----------------------+
