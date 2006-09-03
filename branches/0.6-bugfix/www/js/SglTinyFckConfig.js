@@ -49,7 +49,7 @@ function fileBrowserCallBack(field_name, url, type, win)
     }
 
     if (enableAutoTypeSelection && cType) {
-        connector += "?Type=" + cType;
+        connector += "&Type=" + cType;
     }
 
     window.open(connector, "tinyfck", "modal,width=600,height=400");
