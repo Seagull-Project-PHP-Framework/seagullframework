@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+02-08-06    Minimal install cannot select multiple languages (Steven Stremciuc)
 02-08-06    Fixed infinite loop in s9y wrapper BlogMgr (romain)
 02-08-06    Fixed javascript error in TinyFCK (Riccardo Magliocchetti)
 30-08-06    Fixed whitespace in navigation file that caused header error on rebuild

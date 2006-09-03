@@ -40,7 +40,9 @@
      * and users would not see anything.
      */
 
-    $GLOBALS['_SGL']['LANGUAGE'] = array(
+    $GLOBALS['_SGL']['LANGUAGE'] = (SGL::isMinimalInstall()) ? array(
+                    'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
+    ) : array(
                     'cs-iso-8859-2'=> array('cs|czech', 'czech-iso-8859-2', 'cs'),
                     'de-iso-8859-1'=> array('de([-_][[:alpha:]]{2})?|german', 'german-iso-8859-1', 'de'),
                     'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
