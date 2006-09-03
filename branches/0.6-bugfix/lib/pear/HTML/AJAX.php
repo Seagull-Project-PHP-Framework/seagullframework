@@ -7,6 +7,8 @@
 require_once "HTML/AJAX/Serializer/JSON.php";
 require_once "HTML/AJAX/Serializer/Null.php";
 require_once "HTML/AJAX/Serializer/Error.php";
+require_once "HTML/AJAX/Serializer/XML.php";
+require_once "HTML/AJAX/Serializer/PHP.php";
 require_once 'HTML/AJAX/Debug.php';
     
 /**
@@ -20,10 +22,8 @@ require_once 'HTML/AJAX/Debug.php';
  * @author      Elizabeth Smith <auroraeosrose@gmail.com>
  * @copyright   2005 Joshua Eichorn, Arpad Ray, David Coallier, Elizabeth Smith
  * @license     http://www.opensource.org/licenses/lgpl-license.php   LGPL
- * @version     Release: 0.4.0
+ * @version     Release: 0.5.0
  * @link        http://pear.php.net/package/HTML_AJAX
- * @todo        Decide if its good thing to support get
- * @todo        Add some sort of debugging console
  */
 class HTML_AJAX {
     /**
@@ -37,17 +37,6 @@ class HTML_AJAX {
      * @access private
      */    
     var $_exportedInstances = array();
-
-    /**
-     * To make integration with applications easier, you can
-     * register callbacks to serve header calls, clean/retrive server vars
-     * and clean/retrieve get vars
-     */
-    var $_callbacks = array(
-            'headers' => array('HTML_AJAX', '_sendHeaders'),
-            'get'     => array('HTML_AJAX', '_getVar'),
-            'server'   => array('HTML_AJAX', '_getServer'),
-        );
 
     /**
      * Set the server url in the generated stubs to this value
@@ -69,12 +58,20 @@ class HTML_AJAX {
     var $unserializer = 'JSON';
 
     /**
+     * Option to use loose typing for JSON encoding
+     * @var bool
+     * @access public
+     */
+    var $jsonLooseType = true;
+
+    /**
      * Content-type map
      *
      * Used in to automatically choose serializers as needed
      */
     var $contentTypeMap = array(
             'JSON'  => 'application/json',
+            'XML'   => 'application/xml',
             'Null'  => 'text/plain',
             'Error' => 'application/error',
             'PHP'   => 'application/php-serialized',
@@ -120,6 +117,13 @@ class HTML_AJAX {
      * @var boolean
      */
     var $php4CompatCase = false;
+
+    /**
+     * Automatically pack all generated JavaScript making it smaller
+     *
+     * If your using output compression this might not make sense
+     */
+    var $packJavaScript = false;
 
     /**
      * Holds current payload info
@@ -168,7 +172,7 @@ class HTML_AJAX {
         $className = strtolower(get_class($instance));
 
         if ($exportedName === false) {
-            $exportedName = $className;
+            $exportedName = get_class($instance);
             if ($this->php4CompatCase) {
                 $exportedName = strtolower($exportedName);
             }
@@ -230,20 +234,6 @@ class HTML_AJAX {
     }
 
     /**
-     * Registers callbacks for sending headers or retriving post/get vars
-     * for better application integration
-     */
-    function registerCallback($callback, $type = 'headers')
-    {
-        $types = array('headers', 'get', 'server');
-        if(is_callable($callback) && in_array($type, $types)) {
-            $this->_callbacks[$type] = $callback;
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Return the stub for a class
      *
      * @param    string   $name    name of the class to generated the stub for, note that this is the exported name not the php class name
@@ -255,11 +245,11 @@ class HTML_AJAX {
             return '';
         }
 
-        $client = "// Client stub for the {$this->_exportedInstances[$name]['className']} PHP Class\n";
+        $client = "// Client stub for the {$this->_exportedInstances[$name]['exportedName']} PHP Class\n";
         $client .= "function {$this->_exportedInstances[$name]['exportedName']}(callback) {\n";
         $client .= "\tmode = 'sync';\n";
         $client .= "\tif (callback) { mode = 'async'; }\n";
-        $client .= "\tthis.className = '{$name}';\n";
+        $client .= "\tthis.className = '{$this->_exportedInstances[$name]['exportedName']}';\n";
         if ($this->serverUrl) {
             $client .= "\tthis.dispatcher = new HTML_AJAX_Dispatcher(this.className,mode,callback,'{$this->serverUrl}','{$this->unserializer}');\n}\n";
         } else {
@@ -273,6 +263,10 @@ class HTML_AJAX {
         }
         $client = substr($client,0,(strlen($client)-2))."\n";
         $client .= "}\n\n";
+
+        if ($this->packJavaScript) {
+                $client = $this->packJavaScript($client);
+        }
         return $client;
     }
 
@@ -342,31 +336,43 @@ class HTML_AJAX {
         }
         if (isset($_GET['px'])) {
             if ($this->_iframeGrabProxy()) {
+                restore_error_handler();
+                if (function_exists('restore_exception_handler')) {
+                    restore_exception_handler();
+                }
                 return true;
             }
         }
         
-        $class = call_user_func((array)$this->_callbacks['get'], 'c');
-        $method = call_user_func($this->_callbacks['get'], 'm');
-        $phpCallback = call_user_func((array)$this->_callbacks['get'], 'cb');
+        $class = strtolower($this->_getVar('c'));
+        $method = $this->_getVar('m');
+        $phpCallback = $this->_getVar('cb');
         
         if (!empty($class) && !empty($method)) {
             if (!isset($this->_exportedInstances[$class])) {
                 // handle error
-                trigger_error('Unknown class');
+                trigger_error('Unknown class: '. $class); 
             }
             if (!in_array($method,$this->_exportedInstances[$class]['exportedMethods'])) {
                 // handle error
-                trigger_error('Unknown method');
+                trigger_error('Unknown method: ' . $method);
             }
         } else if (!empty($phpCallback)) {
             if (strpos($phpCallback, '.') !== false) {
                 $phpCallback = explode('.', $phpCallback);
             }
             if (!$this->_validatePhpCallback($phpCallback)) {
+                restore_error_handler();
+                if (function_exists('restore_exception_handler')) {
+                    restore_exception_handler();
+                }
                 return false;
             }
         } else {
+            restore_error_handler();
+            if (function_exists('restore_exception_handler')) {
+                restore_exception_handler();
+            }
             return false;
         }
 
@@ -404,11 +410,11 @@ class HTML_AJAX {
     {
         //OPERA IS STUPID FIX
         if (isset($_SERVER['HTTP_X_CONTENT_TYPE'])) {
-            $type = call_user_func($this->_callbacks['server'], 'HTTP_X_CONTENT_TYPE');
+            $type = $this->_getServer('HTTP_X_CONTENT_TYPE');
             $pos = strpos($type, ';');
             return strtolower($pos ? substr($type, 0, $pos) : $type);
         } else if (isset($_SERVER['CONTENT_TYPE'])) {
-            $type = call_user_func($this->_callbacks['server'], 'CONTENT_TYPE');
+            $type = $this->_getServer('CONTENT_TYPE');
             $pos = strpos($type, ';');
             return strtolower($pos ? substr($type, 0, $pos) : $type);
         }
@@ -461,7 +467,7 @@ class HTML_AJAX {
             $output = $this->_iframeWrapper($this->_iframe, $output, $headers);
             $headers['Content-Type'] = 'text/html; charset=utf-8';
         }
-        call_user_func($this->_callbacks['headers'], $headers);
+        $this->_sendHeaders($headers);
         echo $output;
     }
 
@@ -511,12 +517,17 @@ class HTML_AJAX {
     
         $class = 'HTML_AJAX_Serializer_'.$type;
 
-        if (!class_exists($class)) {
+        if ( (version_compare(phpversion(),5,'>') && !class_exists($class,false)) || (version_compare(phpversion(),5,'<') && !class_exists($class)) ) {
             // include the class only if it isn't defined
             require_once "HTML/AJAX/Serializer/{$type}.php";
         }
 
-        $this->_serializers[$type] = new $class();
+        //handle JSON loose typing option for associative arrays
+        if ($type == 'JSON') {
+            $this->_serializers[$type] = new $class($this->jsonLooseType);
+        } else {
+            $this->_serializers[$type] = new $class();
+        }
         return $this->_serializers[$type];
     }
 
@@ -799,6 +810,59 @@ class HTML_AJAX {
     function registerPhpCallback($callback)
     {
         $this->_validCallbacks[md5(serialize($callback))] = 1;
+    }
+
+    /**
+     * Make JavaScript code smaller
+     * 
+     * Currently just strips whitespace and comments, needs to remain fast
+     */
+    function packJavaScript($input) {
+        $stripPregs = array(
+            '/^\s+$/',
+            '/^\s*\/\/.*$/'
+        );
+        $blockStart = '/\/\*/';
+        $blockEnd = '/\*\//';
+
+        $out = '';
+
+		$lines = explode("\n",$input);
+		$inblock = false;
+		foreach($lines as $line) {
+			$keep = true;
+			if ($inblock) {
+				if (preg_match($blockEnd,$line)) {
+					$inblock = false;
+					$keep = false;
+				}
+			}
+			else if (preg_match($blockStart,$line)) {
+				$inblock = true;
+                $keep = false;
+                if (preg_match($blockEnd,$line)) {
+                    $inblock = false;
+                }
+			}
+
+			if (!$inblock) {
+				foreach($stripPregs as $preg) {
+					if (preg_match($preg,$line)) {
+						$keep = false;
+						break;
+					}
+				}
+			}
+
+			if ($keep && !$inblock) {
+				$out .= trim($line)."\n";
+			}
+			/* Enable to see what your striping out
+			else {
+				echo $line."<br>";
+			}//*/
+		}
+        return $out;
     }
 }
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */

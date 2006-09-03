@@ -8,7 +8,7 @@
  * @author     Joshua Eichorn <josh@bluga.net>
  * @copyright  2005 Joshua Eichorn
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.4.0
+ * @version    Release: 0.5.0
  * @link       http://pear.php.net/package/PackageName
  */
 class HTML_AJAX_Serializer_Null 
