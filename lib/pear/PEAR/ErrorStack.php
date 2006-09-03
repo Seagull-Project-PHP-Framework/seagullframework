@@ -132,7 +132,7 @@ define('PEAR_ERRORSTACK_ERR_OBJTOSTRING', 2);
  * $local_stack = new PEAR_ErrorStack('MyPackage');
  * </code>
  * @author     Greg Beaver <cellog@php.net>
- * @version    1.4.10RC1
+ * @version    1.4.11
  * @package    PEAR_ErrorStack
  * @category   Debugging
  * @copyright  2004-2006 Greg Beaver
@@ -305,7 +305,7 @@ class PEAR_ErrorStack {
             $GLOBALS['_PEAR_ERRORSTACK_DEFAULT_LOGGER'] = &$log;
         } elseif (is_callable($log)) {
             $GLOBALS['_PEAR_ERRORSTACK_DEFAULT_LOGGER'] = &$log;
-    }
+	}
     }
     
     /**
@@ -558,18 +558,18 @@ class PEAR_ErrorStack {
         }
         if (is_callable($callback)) {
             switch(call_user_func($callback, $err)){
-                case PEAR_ERRORSTACK_IGNORE: 
-                    return $err;
-                break;
-                case PEAR_ERRORSTACK_PUSH: 
-                    $log = false;
-                break;
-                case PEAR_ERRORSTACK_LOG: 
-                    $push = false;
-                break;
-                case PEAR_ERRORSTACK_DIE: 
-                    $die = true;
-                break;
+            	case PEAR_ERRORSTACK_IGNORE: 
+            		return $err;
+        		break;
+            	case PEAR_ERRORSTACK_PUSH: 
+            		$log = false;
+        		break;
+            	case PEAR_ERRORSTACK_LOG: 
+            		$push = false;
+        		break;
+            	case PEAR_ERRORSTACK_DIE: 
+            		$die = true;
+        		break;
                 // anything else returned has the same effect as pushandlog
             }
         }
@@ -842,7 +842,7 @@ class PEAR_ErrorStack {
                          'line' => $filebacktrace['line']);
             // rearrange for eval'd code or create function errors
             if (strpos($filebacktrace['file'], '(') && 
-                  preg_match(';^(.*?)\((\d+)\) : (.*?)$;', $filebacktrace['file'],
+            	  preg_match(';^(.*?)\((\d+)\) : (.*?)$;', $filebacktrace['file'],
                   $matches)) {
                 $ret['file'] = $matches[1];
                 $ret['line'] = $matches[2] + 0;

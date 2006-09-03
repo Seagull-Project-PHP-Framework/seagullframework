@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Validate.php,v 1.46.2.1 2006/06/08 01:21:54 pajoye Exp $
+ * @version    CVS: $Id: Validate.php,v 1.46.2.3 2006/07/17 17:49:37 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -38,7 +38,7 @@ require_once 'PEAR/Validator/PECL.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.10RC1
+ * @version    Release: 1.4.11
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
