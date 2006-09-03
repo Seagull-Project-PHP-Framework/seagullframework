@@ -13,7 +13,7 @@ function toggleHighlight(element){
 }
 -->
 </script>
-<script type="text/javascript" src="{webRoot}/ajaxServer.php?client=all&amp;stub=mediadao"></script>
+<script type="text/javascript" src="{webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO"></script>
 <script type="text/javascript">
 	// create a javascript hash to hold or callback methods
 	var hwCallback = {
@@ -91,7 +91,7 @@ function toggleHighlight(element){
 	// create our remote object
 	// note the lowercase mapping, this is because in php4 php classes and functions have no case
 	// in the server you can register each function adding the case back
-	var remoteHW = new mediadao(hwCallback);
+	var remoteHW = new MediaDAO(hwCallback);
 
 	function do_getMediaWithConstraint(theType)
 	{

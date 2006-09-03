@@ -1,4 +1,4 @@
-// Main.js
+// Compat.js
 if (!String.fromCharCode && !String.prototype.fromCharCode) {
 String.prototype.fromCharCode = function(code)
 {
@@ -38,7 +38,7 @@ if (s < 0) {
 s += l;
 }
 s = max(min(s, l), 0);  // start point
-d = max(min(typeof d == 'number' ? d : l, l - s), 0);    // delete count
+d = max(min(typeof d == 'number' ? d : l, l - s), 0);	// delete count
 v = i - d;
 n = l + v;
 while (k < d) {
@@ -86,6 +86,24 @@ Array.prototype.pop = function()
 return this.splice(this.length - 1, 1)[0];
 }
 }
+if (!DOMParser.parseFromString && window.ActiveXObject)
+{
+function DOMParser() {/* empty constructor */};
+DOMParser.prototype = {
+parseFromString: function(str, contentType) {
+var xmlDocument = new ActiveXObject('Microsoft.XMLDOM');
+xmlDocument.loadXML(str);
+return xmlDocument;
+}
+};
+function XMLSerializer() {/* empty constructor */};
+XMLSerializer.prototype = {
+serializeToString: function(root) {
+return root.xml || root.outerHTML;
+}
+};
+}
+// Main.js
 var HTML_AJAX = {
 defaultServerUrl: false,
 defaultEncoding: 'JSON',
@@ -148,9 +166,20 @@ request.requestType = 'GET';
 }
 return HTML_AJAX.makeRequest(request);
 },
-phpCallback: function(callee, callback) {
-HTML_AJAX.fullcall(HTML_AJAX.defaultServerUrl, HTML_AJAX.defaultEncoding,
-false, false, callback, arguments.slice(2), {phpCallback: callee});
+callPhpCallback: function(phpCallback, jsCallback, url) {
+var args = new Array();
+for (var i = 3; i < arguments.length; i++) {
+args.push(arguments[i]);
+}
+if (HTML_AJAX_Util.getType(phpCallback[0]) == 'object') {
+jsCallback(phpCallback[0][phpCallback[1]](args));
+return;
+}
+if (!url) {
+url = HTML_AJAX.defaultServerUrl;
+}
+HTML_AJAX.fullcall(url, HTML_AJAX.defaultEncoding,
+false, false, jsCallback, args, {phpCallback: phpCallback});
 },
 call: function(className,method,callback) {
 var args = new Array();
@@ -167,6 +196,13 @@ else {
 options['grab'] = true;
 }
 return HTML_AJAX.fullcall(url,'Null',false,null,callback, '', options);
+},
+post: function(url,payload,callback,options) {
+var serializer = 'Null';
+if (HTML_AJAX_Util.getType(payload) == 'object') {
+serializer = 'Urlencoded';
+}
+return HTML_AJAX.fullcall(url,serializer,false,null,callback, payload, options);
 },
 replace: function(id) {
 var callback = function(result) {
@@ -203,12 +239,12 @@ Open: function(request) {
 Load: function(request) {
 },
 contentTypeMap: {
-'JSON':         'application/json',
-'Null':         'text/plain',
-'Error':        'application/error',
-'PHP':          'application/php-serialized',
-'HA' :           'application/html_ajax_action',
-'Urlencoded':   'application/x-www-form-urlencoded'
+'JSON':			'application/json',
+'Null':			'text/plain',
+'Error':		'application/error',
+'PHP':			'application/php-serialized',
+'HA' :			'application/html_ajax_action',
+'Urlencoded':	'application/x-www-form-urlencoded'
 },
 requestComplete: function(request,error) {
 for(var i in HTML_AJAX.queues) {
@@ -218,27 +254,31 @@ HTML_AJAX.queues[i].requestComplete(request,error);
 }
 },
 formEncode: function(form, array_format) {
-if (HTML_AJAX_Util.getType(form) == 'string') {
-form = document.getElementById(form);
-}
-var el, inpType, value, name, escName;
+form = HTML_AJAX_Util.getElement(form);
+var el, inpType, value, name;
 var out = (array_format) ? {} : '';
 var inputTags = form.getElementsByTagName('INPUT');
 var selectTags = form.getElementsByTagName('SELECT');
 var buttonTags = form.getElementsByTagName('BUTTON');
 var textareaTags = form.getElementsByTagName('TEXTAREA');
-var arrayRegex = /.+\[\]/;
+var arrayRegex = /(.+)%5B%5D/;
 var validElement = function (element) {
 if (!element || !element.getAttribute) {
 return false;
 }
 el = element;
-name = el.getAttribute('name');
+name = HTML_AJAX_Util.encodeUrl(el.getAttribute('name'));
 if (!name) {
 return false;
 }
-escName = escape(name);
-value = escape(el.value);
+if (element.disabled) {
+return false;
+}
+if (!array_format) {
+value = HTML_AJAX_Util.encodeUrl(el.value);
+} else {
+value = el.value;
+}
 inpType = el.getAttribute('type');
 return true;
 }
@@ -251,18 +291,19 @@ if (inpType == 'checkbox' || inpType == 'radio') {
 if (!el.checked) {
 continue inputLoop;
 }
-if (array_format && arrayRegex.test(name)) {
-if (!out[escName]) {
-out[escName] = new Array();
+var arr_var = arrayRegex.exec(name);
+if (array_format && arr_var) {
+if (!out[arr_var[1]]) {
+out[arr_var[1]] = new Array();
 }
-out[escName].push(value);
+out[arr_var[1]].push(value);
 continue inputLoop;
 }
 }
 if (array_format) {
-out[escName] = value;
+out[name] = value;
 } else {
-out += escName + '=' + value + '&';
+out += name + '=' + value + '&';
 }
 } // end inputLoop
 selectLoop:
@@ -276,16 +317,19 @@ var option=options[z];
 if(option.selected){
 if (array_format) {
 if (el.type == 'select-one') {
-out[escName] = escape(option.value);
+out[name] = option.value;
 continue selectLoop;
 } else {
-if (!out[escName]) {
+if (!out[name]) {
 out[name] = new Array();
 }
-out[escName].push(escape(option.value));
+out[name].push(option.value);
 }
 } else {
-out += escName + '=' + escape(option.value) + '&';
+out += name + '=' + option.value + '&';
+if (el.type == 'select-one') {
+continue selectLoop;
+}
 }
 }
 }
@@ -296,9 +340,9 @@ if (!validElement(buttonTags[i])) {
 continue;
 }
 if (array_format) {
-out[escName] = value;
+out[name] = value;
 } else {
-out += escName + '=' + value + '&';
+out += name + '=' + value + '&';
 }
 } // end buttonLoop
 textareaLoop:
@@ -307,29 +351,25 @@ if (!validElement(textareaTags[i])) {
 continue;
 }
 if (array_format) {
-out[escName] = value;
+out[name] = value;
 } else {
-out += escName + '=' + value + '&';
+out += name + '=' + value + '&';
 }
 } // end textareaLoop
 return out;
 },
 formSubmit: function (form, target, options)
 {
-if (HTML_AJAX_Util.getType(form) == 'string') {
-form = document.getElementById(form);
+form = HTML_AJAX_Util.getElement(form);
 if (!form) {
 return false;
 }
-}
 var out = HTML_AJAX.formEncode(form);
-if (HTML_AJAX_Util.getType(target) == 'string') {
-target = document.getElementById(target);
-}
+target = HTML_AJAX_Util.getElement(target);
 if (!target) {
 target = form;
 }
-var action = form.getAttribute('action');
+var action = form.attributes['action'].value;
 var callback = function(result) {
 HTML_AJAX_Util.setInnerHTML(target,result);
 }
@@ -362,11 +402,9 @@ HTML_AJAX.makeRequest(request);
 return true;
 }, // end formSubmit()
 makeFormAJAX: function(form,target,options) {
-if (HTML_AJAX_Util.getType(form) == 'string') {
-var form = document.getElementById(form);
-}
+form = HTML_AJAX_Util.getElement(form);
 var preSubmit = false;
-if(form.onsubmit) {
+if(typeof form.onsubmit != 'undefined') {
 preSubmit = form.onsubmit;
 form.onsubmit = function() {};
 }
@@ -398,6 +436,24 @@ unserialize: function(input) {
 return new String(input).valueOf();
 }
 }
+function HTML_AJAX_Serialize_XML() {}
+HTML_AJAX_Serialize_XML.prototype = {
+contentType: 'application/xml; charset=utf-8',
+serialize: function(input) {
+var xml = '';
+if(typeof(input) == 'object' && input)
+{
+for (var i = 0;i<input.length;i++)
+{
+xml += new XMLSerializer().serializeToString(input[i]);
+}
+}
+return xml;
+},
+unserialize: function(input) {
+return input;
+}
+}
 function HTML_AJAX_Serialize_JSON() {}
 HTML_AJAX_Serialize_JSON.prototype = {
 contentType: 'application/json; charset=utf-8',
@@ -406,7 +462,7 @@ return HTML_AJAX_JSON.stringify(input);
 },
 unserialize: function(input) {
 try {
-return eval(input);
+return eval('('+input+')');
 } catch(e) {
 return HTML_AJAX_JSON.parse(input);
 }
@@ -441,12 +497,20 @@ client.request = this.request;
 return client.makeRequest();
 }
 }
-function HTML_AJAX_Queue_Interval_SingleBuffer(interval) {
+HTML_AJAX.queues = new Object();
+HTML_AJAX.queues['default'] = new HTML_AJAX_Queue_Immediate();
+// Queue.js
+function HTML_AJAX_Queue_Interval_SingleBuffer(interval,singleOutstandingRequest) {
 this.interval = interval;
+if (singleOutstandingRequest) {
+this.singleOutstandingRequest = true;
+}
 }
 HTML_AJAX_Queue_Interval_SingleBuffer.prototype = {
 request: false,
 _intervalId: false,
+singleOutstandingRequest: false,
+client: false,
 addRequest: function(request) {
 this.request = request;
 },
@@ -465,16 +529,77 @@ clearInterval(this._intervalId);
 },
 runInterval: function() {
 if (this.request) {
+if (this.singleOutstandingRequest && this.client) {
+this.client.abort();
+}
+this.client = HTML_AJAX.httpClient();
+this.client.request = this.request;
+this.request = false;
+this.client.makeRequest();
+}
+}
+}
+function HTML_AJAX_Queue_Ordered() { }
+HTML_AJAX_Queue_Ordered.prototype = {
+request: false,
+order: 0,
+current: 0,
+callbacks: {},
+interned: {},
+addRequest: function(request) {
+request.order = this.order;
+this.request = request;
+this.callbacks[this.order] = this.request.callback;
+var self = this;
+this.request.callback = function(result) {
+self.processCallback(result,request.order);
+}
+},
+processRequest: function() {
 var client = HTML_AJAX.httpClient();
 client.request = this.request;
-this.request = false;
 client.makeRequest();
+this.order++;
+},
+requestComplete: function(request,e) {
+if (e) {
+this.current++;
+}
+},
+processCallback: function(result,order) {
+if (order == this.current) {
+this.callbacks[order](result);
+this.current++;
+}
+else {
+this.interned[order] = result;
+if (this.interned[this.current]) {
+this.callbacks[this.current](this.interned[this.current]);
+this.current++;
 }
 }
 }
-HTML_AJAX.queues = new Object();
-HTML_AJAX.queues['default'] = new HTML_AJAX_Queue_Immediate();
-// priorityQueue.js
+}
+function HTML_AJAX_Queue_Single() {
+}
+HTML_AJAX_Queue_Single.prototype = {
+request: false,
+client: false,
+addRequest: function(request) {
+this.request = request;
+},
+processRequest: function() {
+if (this.request) {
+if (this.client) {
+this.client.abort();
+}
+this.client = HTML_AJAX.httpClient();
+this.client.request = this.request;
+this.request = false;
+this.client.makeRequest();
+}
+}
+}
 function HTML_AJAX_Queue_Priority_Item(item, time) {
 this.item = item;
 this.time = time;
@@ -490,8 +615,8 @@ return ret;
 }
 function HTML_AJAX_Queue_Priority_Simple(interval) {
 this.interval = interval;
-this.idleMax = 10;            // keep the interval going with an empty queue for 10 intervals
-this.requestTimeout = 5;      // retry uncompleted requests after 5 seconds
+this.idleMax = 10;			// keep the interval going with an empty queue for 10 intervals
+this.requestTimeout = 5;	  // retry uncompleted requests after 5 seconds
 this.checkRetryChance = 0.1;  // check for uncompleted requests to retry on 10% of intervals
 this._intervalId = 0;
 this._requests = [];
@@ -610,8 +735,8 @@ return this._clients[key];
 },
 getClient: function ()
 {
-for (i = 0; i < this._len; i++) {
-if (!this._clients[i].callInProgress()) {
+for (var i = 0; i < this._len; i++) {
+if (!this._clients[i].callInProgress() && this._clients[i].callbackComplete) {
 return this._clients[i];
 }
 }
@@ -623,7 +748,7 @@ return false;
 },
 removeClient: function (client)
 {
-for (i = 0; i < this._len; i++) {
+for (var i = 0; i < this._len; i++) {
 if (!this._clients[i] == client) {
 this._clients.splice(i, 1);
 return true;
@@ -788,6 +913,10 @@ string += 'Last-Modified : ' + document.getElementById(this._id).lastModified + 
 if (!this._response['Content-Type']) {
 string += 'Content-Type : ' + document.getElementById(this._id).contentType + "\n";
 }
+if (this._response['Content-Type'] == 'application/xml')
+{
+return new DOMParser().parseFromString(this.responseText, 'application/xml');
+}
 if (window.opera && window.opera.version) {
 window.history.go(this._history - window.history.length);
 }
@@ -837,14 +966,14 @@ this._keys = [];
 }
 var ret = '', first = true;
 for (i = 0; i < this._keys.length; i++) {
-ret += (first ? escape(this._keys[i]) : '[' + escape(this._keys[i]) + ']');
+ret += (first ? HTML_AJAX_Util.encodeUrl(this._keys[i]) : '[' + HTML_AJAX_Util.encodeUrl(this._keys[i]) + ']');
 first = false;
 }
 ret += '=';
 switch (HTML_AJAX_Util.getType(input)) {
 case 'string':
 case 'number':
-ret += escape(input.toString());
+ret += HTML_AJAX_Util.encodeUrl(input.toString());
 break;
 case 'boolean':
 ret += (input ? '1' : '0');
@@ -872,7 +1001,7 @@ return;
 input = input.split("&");
 var pos, key, keys, val, _HTML_AJAX = [];
 if (input.length == 1) {
-return unescape(input[0].substr(this.base.length + 1));
+return HTML_AJAX_Util.decodeUrl(input[0].substr(this.base.length + 1));
 }
 for (var i in input) {
 pos = input[i].indexOf("=");
@@ -880,8 +1009,8 @@ if (pos < 1 || input[i].length - pos - 1 < 1) {
 this.raiseError("input is too short", input[i]);
 return;
 }
-key = unescape(input[i].substr(0, pos));
-val = unescape(input[i].substr(pos + 1));
+key = HTML_AJAX_Util.decodeUrl(input[i].substr(0, pos));
+val = HTML_AJAX_Util.decodeUrl(input[i].substr(pos + 1));
 key = key.replace(/\[((\d*\D+)+)\]/g, '["$1"]');
 keys = key.split(']');
 for (j in keys) {
@@ -1043,14 +1172,14 @@ if (divpos == -1) {
 this.raiseError("missing : for array", cont);
 return;
 }
-size = parseInt(cont.substring(1, divpos - 1));
+size = parseInt(cont.substring(0, divpos));
 cont = cont.substring(divpos + 2);
 val = new Array();
 if (cont.length < 1) {
 this.raiseError("array is too short", cont);
 return;
 }
-for (var i = 0; i + 1 < size * 2; i += 2) {
+for (var i = 0; i < size; i++) {
 kret = this.unserialize(cont, 1);
 if (this.error || kret[0] == undefined || kret[1] == "") {
 this.raiseError("missing or invalid key, or missing value for array", cont);
@@ -1127,6 +1256,7 @@ HTML_AJAX_Dispatcher.prototype = {
 queue: 'default',
 timeout: 20000,
 priority: 0,
+options: {},
 doCall: function(callName,args)
 {
 var request = new HTML_AJAX_Request();
@@ -1138,6 +1268,9 @@ request.contentType = this.contentType;
 request.serializer = eval('new HTML_AJAX_Serialize_'+this.serializerType);
 request.queue = this.queue;
 request.priority = this.priority;
+for(var i in this.options) {
+request[i] = this.options[i];
+}
 for(var i=0; i < args.length; i++) {
 request.addArg(i,args[i]);
 };
@@ -1169,6 +1302,8 @@ function HTML_AJAX_HttpClient() { }
 HTML_AJAX_HttpClient.prototype = {
 request: null,
 _timeoutId: null,
+callbackComplete: true,
+aborted: false,
 init:function()
 {
 try {
@@ -1237,18 +1372,24 @@ this.xmlhttp.setRequestHeader(i, this.request.customHeaders[i]);
 }
 }
 if (this.request.customHeaders && !this.request.customHeaders['Content-Type']) {
-if(window.opera)
+var content = this.request.getContentType();
+if(window.opera && content != 'application/xml')
 {
 this.xmlhttp.setRequestHeader('Content-Type','text/plain; charset=utf-8');
-this.xmlhttp.setRequestHeader('x-Content-Type',this.request.getContentType() + '; charset=utf-8');
+this.xmlhttp.setRequestHeader('x-Content-Type', content + '; charset=utf-8');
 }
 else
 {
-this.xmlhttp.setRequestHeader('Content-Type',this.request.getContentType() + '; charset=utf-8');
+this.xmlhttp.setRequestHeader('Content-Type', content +  '; charset=utf-8');
 }
 }
 if (this.request.isAsync) {
+if (this.request.callback) {
+this.callbackComplete = false;
+}
 this.xmlhttp.onreadystatechange = function() { self._readyStateChangeCallback(); }
+} else {
+this.xmlhttp.onreadystatechange = function() {}
 }
 var payload = this.request.getSerializedPayload();
 if (payload) {
@@ -1281,6 +1422,7 @@ this._handleError(e);
 abort: function (automatic)
 {
 if (this.callInProgress()) {
+this.aborted = true;
 this.xmlhttp.abort();
 if (automatic) {
 HTML_AJAX.requestComplete(this.request);
@@ -1310,8 +1452,14 @@ HTML_AJAX.Progress(this.request);
 break;
 case 4:
 window.clearTimeout(this._timeoutId);
-if (this.xmlhttp.status == 200) {
-HTML_AJAX.requestComplete(this.request);
+if (this.aborted) {
+if (this.request.Load) {
+this.request.Load();
+} else if (HTML_AJAX.Load) {
+HTML_AJAX.Load(this.request);
+}
+}
+else if (this.xmlhttp.status == 200) {
 if (this.request.Load) {
 this.request.Load();
 } else if (HTML_AJAX.Load ) {
@@ -1320,12 +1468,14 @@ HTML_AJAX.Load(this.request);
 var response = this._decodeResponse();
 if (this.request.callback) {
 this.request.callback(response);
+this.callbackComplete = true;
 }
 }
 else {
 var e = new Error('HTTP Error Making Request: ['+this.xmlhttp.status+'] '+this.xmlhttp.statusText);
 this._handleError(e);
 }
+HTML_AJAX.requestComplete(this.request);
 break;
 }
 } catch (e) {
@@ -1344,6 +1494,10 @@ content = this.xmlhttp.getResponseHeader('Content-Type');
 if(content.indexOf(';') != -1)
 {
 content = content.substring(0, content.indexOf(';'));
+}
+if(content == 'application/xml')
+{
+return this.xmlhttp.responseXML;
 }
 var unserializer = HTML_AJAX.serializerForEncoding(content);
 return unserializer.unserialize(this.xmlhttp.responseText);
@@ -1558,7 +1712,7 @@ break;
 function string() {
 var i, s = '', t, u;
 if (ch == '"') {
-outer:          while (next()) {
+outer:		  while (next()) {
 if (ch == '"') {
 next();
 return s;
@@ -1779,7 +1933,7 @@ for (var i in attributes)
 {
 if(i == 'innerHTML')
 {
-node.innerHTML = attributes[i] + node.innerHTML;
+HTML_AJAX_Util.setInnerHTML(node, attributes[i], 'prepend');
 }
 else if(i == 'value')
 {
@@ -1806,7 +1960,7 @@ for (var i in attributes)
 {
 if(i == 'innerHTML')
 {
-node.innerHTML += attributes[i];
+HTML_AJAX_Util.setInnerHTML(node, attributes[i], 'append');
 }
 else if(i == 'value')
 {
@@ -1833,7 +1987,7 @@ for (var i in attributes)
 {
 if(i == 'innerHTML')
 {
-node.innerHTML = attributes[i];
+HTML_AJAX_Util.setInnerHTML(node,attributes[i]);
 }
 else if(i == 'value')
 {
@@ -1984,15 +2138,15 @@ if (!loading) {
 loading = document.createElement('div');
 loading.id = 'HTML_AJAX_LOADING';
 loading.innerHTML = 'Loading...';
-loading.style.color           = '#fff';
-loading.style.position        = 'absolute';
-loading.style.top             = 0;
-loading.style.right           = 0;
+loading.style.color	 = '#fff';
+loading.style.position  = 'absolute';
+loading.style.top   = 0;
+loading.style.right	 = 0;
 loading.style.backgroundColor = '#f00';
-loading.style.border          = '1px solid #f99';
-loading.style.width           = '80px';
-loading.style.padding         = '4px';
-loading.style.fontFamily      = 'Arial, Helvetica, sans';
+loading.style.border		= '1px solid #f99';
+loading.style.width		 = '80px';
+loading.style.padding	   = '4px';
+loading.style.fontFamily	= 'Arial, Helvetica, sans';
 loading.count = 0;
 document.body.insertBefore(loading,document.body.firstChild);
 }
@@ -2023,9 +2177,7 @@ loading.style.display = 'none';
 var HTML_AJAX_Util = {
 registerEvent: function(element, event, handler)
 {
-if (typeof element == 'string')	{
-element = document.getElementById(element);
-}
+element = this.getElement(element);
 if (typeof element.addEventListener != "undefined") {   //Dom2
 element.addEventListener(event, handler, false);
 } else if (typeof element.attachEvent != "undefined") { //IE 5+
@@ -2078,6 +2230,12 @@ strRepeat: function(inp, multiplier) {
 var ret = "";
 while (--multiplier > 0) ret += inp;
 return ret;
+},
+encodeUrl: function(input) {
+return encodeURIComponent(input);
+},
+decodeUrl: function(input) {
+return decodeURIComponent(input);
 },
 varDump: function(inp, printFuncs, _indent, _recursionLevel)
 {
@@ -2274,9 +2432,7 @@ return absHost + relParts.join('/');
 },
 setInnerHTML: function(node, innerHTML, type)
 {
-if (HTML_AJAX_Util.getType(node) == 'string') {
-var node = document.getElementById(node);
-}
+node = this.getElement(node);
 if (type != 'append') {
 if (type == 'prepend') {
 var oldHtml = node.innerHTML;
@@ -2336,7 +2492,7 @@ node.appendChild(el.childNodes[i].cloneNode(true));
 }
 }
 else {
-node.innerHTML = innerHTML;
+node.innerHTML += innerHTML;
 }
 if (oldHtml) {
 node.innerHTML += oldHtml;
@@ -2344,6 +2500,7 @@ node.innerHTML += oldHtml;
 if (!good_browser) {
 for(var i = 0; i < scripts.length; i++) {
 if (HTML_AJAX_Util.getType(scripts[i]) == 'string') {
+scripts[i] = scripts[i].replace(/^\s*<!(\[CDATA\[|--)|((\/\/)?--|\]\])>\s*$/g, '');
 window.eval(scripts[i]);
 }
 else {
@@ -2356,23 +2513,23 @@ return;
 classSep: '(^|$| )',
 hasClass: function(o, className) {
 var o = this.getElement(o);
-var regex = new RegExp(this.classSEP + className + this.classSEP);
+var regex = new RegExp(this.classSep + className + this.classSep);
 return regex.test(o.className);
 },
 addClass: function(o, className) {
-var object = this.getElement(object);
+var o = this.getElement(o);
 if(!this.hasClass(o, className)) {
 o.className += " " + className;
 }
 },
 removeClass: function(o, className) {
-var object = this.getElement(object);
-var regex = new RegExp(this.classSEP + className + this.classSEP);
+var o = this.getElement(o);
+var regex = new RegExp(this.classSep + className + this.classSep);
 o.className = o.className.replace(regex, " ");
 },
 replaceClass: function(o, oldClass, newClass) {
 var o = this.getElement(o);
-var regex = new RegExp(this.classSEP + oldClass + this.classSEP);
+var regex = new RegExp(this.classSep + oldClass + this.classSep);
 o.className = o.className.replace(regex, newClass);
 },
 getElement: function(el) {
@@ -2384,6 +2541,7 @@ return el;
 }
 // behavior/behavior.js
 var Behavior = {
+debug : false,
 list : new Array(),
 addLoadEvent : function(func) {
 var oldonload = window.onload;
@@ -2397,14 +2555,34 @@ func();
 }
 },
 apply : function() {
+if (this.debug) {
+document.getElementById(this.debug).innerHTML += 'Apply: '+new Date()+'<br>';
+var total = 0;
+}
+if (Behavior.list.length > 2) {
+cssQuery.caching = true;
+}
 for (i = 0; i < Behavior.list.length; i++) {
 var rule = Behavior.list[i];
+if (this.debug) { var ds = new Date() };
 var tags = cssQuery(rule.selector, rule.from);
+if (this.debug) {
+var de = new Date();
+var ts = de.valueOf()-ds.valueOf();
+document.getElementById(this.debug).innerHTML += 'Rule: '+rule.selector+' - Took: '+ts+' - Returned: '+tags.length+' tags<br>';
+total += ts;
+}
 if (tags) {
 for (j = 0; j < tags.length; j++) {
 rule.action(tags[j]);
 }
 }
+}
+if (Behavior.list.length > 2) {
+cssQuery.caching = false;
+}
+if (this.debug) {
+document.getElementById(this.debug).innerHTML += 'Total rule apply time: '+total;
 }
 },
 register : function(selector, action, from) {
