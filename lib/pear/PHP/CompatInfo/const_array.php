@@ -1,8 +1,15 @@
 <?php
 /**
- * Constants
- * @global array $GLOBALS['_PHP_COMPATINFO_CONST']
+ * Constants for PHP_CompatInfo 1.1.1 or better
+ *
+ * @global     array $GLOBALS['_PHP_COMPATINFO_CONST']
+ * @version    $Id: const_array.php,v 1.5 2006/08/06 16:39:53 farell Exp $
+ * @author     Davey Shafik <davey@php.net>
+ * @author     Laurent Laville <pear@laurent-laville.org>
+ * @package    PHP_CompatInfo
+ * @ignore
  */
+
 $GLOBALS['_PHP_COMPATINFO_CONST'] = array (
   '__FILE__' =>
   array (
@@ -29,62 +36,62 @@ $GLOBALS['_PHP_COMPATINFO_CONST'] = array (
     'name' => '__METHOD__',
     'init' => '5.0.0',
   ),
-  'abstract' =>
+  'ABSTRACT' =>
   array (
     'init' => '5.0.0',
     'name' => 'abstract',
   ),
-  'catch' =>
+  'CATCH' =>
   array (
     'init' => '5.0.0',
     'name' => 'catch',
   ),
-  'final' =>
+  'FINAL' =>
   array (
     'init' => '5.0.0',
     'name' => 'final',
   ),
-  'instanceof' =>
+  'INSTANCEOF' =>
   array (
     'init' => '5.0.0',
     'name' => 'instanceof',
   ),
-  'private' =>
+  'PRIVATE' =>
   array (
     'init' => '5.0.0',
     'name' => 'private',
   ),
-  'protected' =>
+  'PROTECTED' =>
   array (
     'init' => '5.0.0',
     'name' => 'protected',
   ),
-  'public' =>
+  'PUBLIC' =>
   array (
     'init' => '5.0.0',
     'name' => 'public',
   ),
-  'throw' =>
+  'THROW' =>
   array (
     'init' => '5.0.0',
     'name' => 'throw',
   ),
-  'try' =>
+  'TRY' =>
   array (
     'init' => '5.0.0',
     'name' => 'try',
   ),
-  'clone' =>
+  'CLONE' =>
   array (
     'init' => '5.0.0',
     'name' => 'clone',
   ),
-  'interface' =>
+  'INTERFACE' =>
   array (
     'init' => '5.0.0',
     'name' => 'interface',
   ),
-  'implements' =>
+  'IMPLEMENTS' =>
   array (
     'init' => '5.0.0',
     'name' => 'implements',
