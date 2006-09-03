@@ -13,8 +13,9 @@
  * @category   PHP
  * @package    PHP_CompatInfo
  * @author     Davey Shafik <davey@php.net>
+ * @author     Laurent Laville <pear@laurent-laville.org>
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.0
- * @version    CVS: $Id: Cli.php,v 1.8 2006/06/06 21:49:56 farell Exp $
+ * @version    CVS: $Id: Cli.php,v 1.15 2006/09/02 09:50:07 farell Exp $
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      File available since Release 0.8.0
  */
@@ -39,50 +40,79 @@ require_once 'Console/Table.php';
  * @category   PHP
  * @package    PHP_CompatInfo
  * @author     Davey Shafik <davey@php.net>
+ * @author     Laurent Laville <pear@laurent-laville.org>
  * @copyright  Copyright 2003 Davey Shafik and Synaptic Media. All Rights Reserved.
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: @package_version@
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      Class available since Release 0.8.0
  */
 
-class PHP_CompatInfo_Cli extends PHP_CompatInfo {
-
+class PHP_CompatInfo_Cli extends PHP_CompatInfo
+{
     /**
      * @var array Current CLI Flags
+     * @since  0.8.0
      */
     var $opts = array();
 
     /**
      * @var boolean Whether an error has occured
+     * @since  0.8.0
      */
     var $error = false;
 
     /**
      * @var string File to be Processed
+     * @since  0.8.0
      */
     var $file;
 
     /**
      * @var string Directory to be Processed
+     * @since  0.8.0
      */
     var $dir;
 
     /**
      * @var boolean Whether to show debug output
+     * @since  0.8.0
      */
     var $debug;
 
     /**
      * @var boolean Whether to recurse directories when using --dir or -d
+     * @since  0.8.0
      */
     var $recurse = true;
 
     /**
-     * Constructor
+     * @var boolean Whether usage was already printed or not
+     * @since  1.3.1
      */
-     function __construct()
-     {
+    var $usage = false;
+
+    /**
+     * @var int filename column size (max length)
+     * @since  1.3.1
+     */
+    var $split;
+
+    /**
+     * @var string  string to indicate that filename continue on next line
+     * @since  1.3.1
+     */
+    var $glue;
+
+    /**
+     * ZE2 Constructor
+     * @since  0.8.0
+     */
+    function __construct($split = null, $glue = null)
+    {
+        $this->split = (isset($split) && is_int($split)) ? $split : 32;
+        $this->glue  = (isset($glue) && is_string($glue)) ? $glue : '(+)';
+
         $opts = Console_Getopt::readPHPArgv();
         $short_opts = 'd:f:hn';
         $long_opts = array('dir=','file=','help','debug','no-recurse');
@@ -137,90 +167,70 @@ class PHP_CompatInfo_Cli extends PHP_CompatInfo {
                     break;
             }
         }
-     }
+    }
 
-     /**
-      * PHP4 Compatible Constructor
-      */
-     function PHP_CompatInfo_Cli()
-     {
-        $this->__construct();
-     }
+    /**
+     * ZE1 PHP4 Compatible Constructor
+     * @since  0.8.0
+     */
+    function PHP_CompatInfo_Cli($split = null, $glue = null)
+    {
+        $this->__construct($split, $glue);
+    }
 
-     /**
-      * Run the CLI Script
-      *
-      * @access public
-      * @return void
-      */
-     function run()
-     {
-        if ($this->error == true) {
+    /**
+     * Run the CLI Script
+     *
+     * @return void
+     * @access public
+     * @since  0.8.0
+     */
+    function run()
+    {
+        if ($this->error === true) {
             echo $this->opts->message;
             $this->_printUsage();
         } else {
             if (isset($this->dir)) {
-                $output = $this->_parseDir();
-                echo $output;
+                $this->_parseDir();
             } elseif (isset($this->file)) {
-                $output = $this->_parseFile();
-                echo $output;
-            } else {
-                $this->_printHelp();
+                $this->_parseFile();
+            } elseif ($this->usage === false) {
+                $this->_printUsage();
             }
         }
-     }
+    }
 
-     /**
-      * Parse Directory Input
-      *
-      * @access private
-      * @return boolean|string Returns Boolean False on fail
-      */
-      function _parseDir()
-      {
+    /**
+     * Parse Directory Input
+     *
+     * @return void
+     * @access private
+     * @since  0.8.0
+     */
+    function _parseDir()
+    {
         $info = $this->parseDir($this->dir,
-            array('debug' => $this->debug, 'recurse_dir' => $this->recurse)
-            );
-        if ($info == false) {
-            echo 'Failed opening directory ("' .$this->dir. '"). Please check your spelling and try again.';
+            array('debug' => $this->debug, 'recurse_dir' => $this->recurse));
+        if ($info === false) {
+            echo 'No valid files into directory "' . $this->dir
+               . '". Please check your spelling and try again.'
+               . "\n";
             $this->_printUsage();
             return;
         }
         $table = new Console_Table();
-        $table->setHeaders(array('File','Version','Extensions','Constants/Tokens'));
-        if (!isset($info['extensions'][0])) {
-            $ext = '';
-        } else {
-            $ext = array_shift($info['extensions']);
-        }
+        $table->setHeaders(array('Path', 'Version', 'Extensions', 'Constants/Tokens'));
+        $filter = array(&$this, '_splitFilename');
+        $table->addFilter(0, $filter);
 
-        if (!isset($info['constants'][0])) {
-            $const = '';
-        } else {
-            $const = array_shift($info['constants']);
-        }
+        $ext   = implode("\r\n", $info['extensions']);
+        $const = implode("\r\n", $info['constants']);
+
         $dir = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $this->dir);
         $table->addRow(array($dir . DIRECTORY_SEPARATOR . '*', $info['version'], $ext, $const));
-        if (sizeof($info['extensions']) >= sizeof($info['constants'])) {
-            foreach ($info['extensions'] as $i => $ext) {
-                if (isset($info['constants'][$i])) {
-                    $const = $info['constants'][$i];
-                } else {
-                    $const = '';
-                }
-                $table->addRow(array('', '', $ext, $const));
-            }
-        } else {
-            foreach ($info['constants'] as $i => $const) {
-                if (isset($info['extensions'][$i])) {
-                    $ext = $info['extensions'][$i];
-                } else {
-                    $ext = '';
-                }
-                $table->addRow(array('', '', $ext, $const));
-            }
-        }
+
+        unset($info['max_version']);
         unset($info['version']);
         unset($info['extensions']);
         unset($info['constants']);
@@ -230,139 +240,58 @@ class PHP_CompatInfo_Cli extends PHP_CompatInfo {
         unset($info['ignored_files']);
 
         foreach ($info as $file => $info) {
-            if (!isset($info['extensions'][0])) {
-                $ext = '';
-            } else {
-                $ext = array_shift($info['extensions']);
+            if ($info === false) {
+                continue;  // skip this (invalid) file
             }
+            $ext   = implode("\r\n", $info['extensions']);
+            $const = implode("\r\n", $info['constants']);
 
-            if (!isset($info['constants'][0])) {
-                $const = '';
-            } else {
-                $const = array_shift($info['constants']);
-            }
-            $key = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $file);
+            $file = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $file);
+            $table->addSeparator();
             $table->addRow(array($file, $info['version'], $ext, $const));
-            if (sizeof($info['extensions']) >= sizeof($info['constants'])) {
-                foreach ($info['extensions'] as $i => $ext) {
-                    if (isset($info['constants'][$i])) {
-                        $const = $info['constants'][$i];
-                    } else {
-                        $const = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            } else {
-                foreach ($info['constants'] as $i => $const) {
-                    if (isset($info['extensions'][$i])) {
-                        $ext = $info['extensions'][$i];
-                    } else {
-                        $ext = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            }
         }
 
-        return $table->getTable();
+        $output = $table->getTable();
+        echo $output;
     }
 
     /**
      * Parse File Input
      *
+     * @return void
      * @access private
-     * @return boolean|string Returns Boolean False on fail
+     * @since  0.8.0
      */
     function _parseFile()
     {
         $info = $this->parseFile($this->file, array('debug' => $this->debug));
-        if ($info == false) {
-            echo 'Failed opening file. Please check your spelling and try again.';
+        if ($info === false) {
+            echo 'Failed opening file "' . $this->file
+               . '". Please check your spelling and try again.'
+               . "\n";
             $this->_printUsage();
-            return false;
+            return;
         }
         $table = new Console_Table();
-        if ($this->debug == false) {
-            $table->setHeaders(array('File','Version','Extensions','Constants/Tokens'));
-            if (!isset($info['extensions'][0])) {
-                $ext = '';
-            } else {
-                $ext = array_shift($info['extensions']);
-            }
+        $table->setHeaders(array('File', 'Version', 'Extensions', 'Constants/Tokens'));
+        $filter = array(&$this, '_splitFilename');
+        $table->addFilter(0, $filter);
 
-            if (!isset($info['constants'][0])) {
-                $const = '';
-            } else {
-                $const = array_shift($info['constants']);
-            }
+        $ext   = implode("\r\n", $info['extensions']);
+        $const = implode("\r\n", $info['constants']);
 
-            $table->addRow(array($this->file, $info['version'], $ext, $const));
-            if (sizeof($info['extensions']) >= sizeof($info['constants'])) {
-                foreach ($info['extensions'] as $i => $ext) {
-                    if (isset($info['constants'][$i])) {
-                        $const = $info['constants'][$i];
-                    } else {
-                        $const = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            } else {
-                foreach ($info['constants'] as $i => $const) {
-                    if (isset($info['extensions'][$i])) {
-                        $ext = $info['extensions'][$i];
-                    } else {
-                        $ext = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            }
-        } else {
-            $table->setHeaders(array('File','Version','Extensions','Constants/Tokens'));
-
-            if (!isset($info['extensions'][0])) {
-                $ext = '';
-            } else {
-                $ext = array_shift($info['extensions']);
-            }
-
-            if (!isset($info['constants'][0])) {
-                $const = '';
-            } else {
-                $const = array_shift($info['constants']);
-            }
-
-            $table->addRow(array($this->file, $info['version'], $ext, $const));
-
-            if (sizeof($info['extensions']) >= sizeof($info['constants'])) {
-                foreach ($info['extensions'] as $i => $ext) {
-                    if (isset($info['constants'][$i])) {
-                        $const = $info['constants'][$i];
-                    } else {
-                        $const = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            } else {
-                foreach ($info['constants'] as $i => $const) {
-                    if (isset($info['extensions'][$i])) {
-                        $ext = $info['extensions'][$i];
-                    } else {
-                        $ext = '';
-                    }
-                    $table->addRow(array('', '', $ext, $const));
-                }
-            }
-        }
+        $table->addRow(array($this->file, $info['version'], $ext, $const));
 
         $output = $table->getTable();
 
-        if ($this->debug == true) {
+        if ($this->debug === true) {
             $output .= "\nDebug:\n\n";
 
             $table = new Console_Table();
 
-            $table->setHeaders(array('Version','Function','Extension'));
+            $table->setHeaders(array('Version', 'Function', 'Extension'));
 
+            unset($info['max_version']);
             unset($info['version']);
             unset($info['constants']);
             unset($info['extensions']);
@@ -376,17 +305,52 @@ class PHP_CompatInfo_Cli extends PHP_CompatInfo {
             $output .= $table->getTable();
         }
 
-        return $output;
+        echo $output;
+    }
+
+    /**
+     * The Console_Table filter callback limits output to 80 columns.
+     *
+     * @param  string $data  content of filename column (0)
+     * @return string
+     * @access private
+     * @since  1.3.0
+     */
+    function _splitFilename($data)
+    {
+        $str = '';
+        if (strlen($data) > 0) {
+            $sep = DIRECTORY_SEPARATOR;
+            $base = basename($data);
+            $padding = $this->split - strlen($this->glue);
+
+            $dir = str_replace(array('\\', '/'), $sep, $this->dir);
+            $str = str_replace($dir, '[...]', dirname($data)) . $sep;
+
+            if (strlen($str) + strlen($base) > $this->split) {
+                 $str = str_pad($str, $padding) . $this->glue . "\r\n";
+                 if (strlen($base) > $this->split) {
+                     $str .= '[*]' . substr($base, (3 - $this->split)) ;
+                 } else {
+                     $str .= substr($base, -1 * $padding) ;
+                 }
+            } else {
+                 $str .= $base;
+            }
+        }
+        return $str;
     }
 
     /**
      * Show basic Usage
      *
-     * @access private
      * @return void
+     * @access private
+     * @since  0.8.0
      */
     function _printUsage()
     {
+        $this->usage = true;
         echo "\n";
         echo 'Usage:' . "\n";
         echo "  " .basename(__FILE__). ' --dir=DIR [--no-recurse] | --file=FILE [--debug] | [--help]';
@@ -396,8 +360,9 @@ class PHP_CompatInfo_Cli extends PHP_CompatInfo {
     /**
      * Show full help information
      *
-     * @access private
      * @return void
+     * @access private
+     * @since  0.8.0
      */
     function _printHelp()
     {
