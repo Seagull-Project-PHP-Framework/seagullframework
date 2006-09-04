@@ -406,7 +406,7 @@ pre.codeExample {
     margin-right: 0.5em;
     display: block
 }
-#addComment input, #addComment textarea {
+#addComment input[type="text"] {
     width: 200px;
 }
 

@@ -28,17 +28,28 @@
             <input type="text" name="comment[name]" id="comment[name]" value="{comment.question}" />
         </p>
         <p>
-            <label for="comment[title]">Title:</label>
+            <label for="comment[name]">Email:</label>
+            <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+            <input type="text" name="comment[name]" id="comment[name]" value="{comment.question}" />
+        </p>
+        <p>
+            <label for="comment[title]">Homepage:</label>
             <div class="error" flexy:if="error[subject]">{translate(error[subject])}</div>
             <input type="text" name="comment[subject]" id="comment[subject]" value="{comment.subject}" />
         </p>
         <p>
             <label for="comment[comment]">Comment:</label>
             <div class="error" flexy:if="error[comment]">{translate(error[comment])}</div>
-            <textarea name="comment[comment]" id="comment[comment]" />{comment.comment}</textarea>
+            <textarea name="comment[comment]" id="comment[comment]" rows="10" cols="60"/>{comment.comment}</textarea>
         </p>
         <p>
-            <input type="submit" name="submitted" value="submit" />
+            <label for="comment[notify]">&nbsp;</label>
+            <input type="checkbox" name="comment[notify]" id="comment[notify]" value="{comment.notify}" />
+            E-mail notification
+        </p>
+        <p>
+            <input type="submit" name="submitted" value="preview" />
+            <input type="submit" name="submitted" value="post" />
         </p>
     </fieldset>
 
