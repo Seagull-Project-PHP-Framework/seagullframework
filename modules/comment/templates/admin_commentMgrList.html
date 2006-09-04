@@ -1,0 +1,10 @@
+{foreach:aComments,key,oComment}
+<p>{oComment.comment:h}</p>
+{end:}
+
+<h2>{translate(#Add a comment#)}<h2>
+<form method="post" action="{makeLink(#add#,#comment#,#comment#)}">
+<input type="hidden" name="seagull_uri" value="{seagull_uri}">
+<input type="submit" value="{translate(#Add a comment#)}" />
+</form>
+
