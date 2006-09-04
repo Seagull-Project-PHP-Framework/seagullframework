@@ -1,8 +1,11 @@
 <h2>comments</h2>
+
 {if:aComments}
 
 <div id="comments" flexy:foreach="aComments,key,oComment">
-    <div>here is my comment {key}</div>
+    <p><a href="">#{increment(key)}</a> <a href="{oComment.url}">{oComment.full_name}</a> {formatDatePretty(oComment.full_name.date_created)}</p>
+    <hr />
+    <p>{oComment.body:h}</p>
 </div>
 
 {else:}

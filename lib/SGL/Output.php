@@ -288,7 +288,7 @@ class SGL_Output
                     $html .= " checked ";
                 }
                 $html .= " />$v </td>\n";
-                if ($newline) {                
+                if ($newline) {
                     $modvalue = $i % $newline;
                     if ( $modvalue == 0 ) {
                         if ($i < $elementcount){
@@ -598,6 +598,11 @@ class SGL_Output
     {
         $a = $b;
         return;
+    }
+
+    function increment($int)
+    {
+        return ++ $int;
     }
 
     /**
