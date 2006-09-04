@@ -1,5 +1,5 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
-<div class="message">{msgGet()}</div> 
+<div class="message">{msgGet()}</div>
 
 <table class="wide">
 {if:results}
@@ -14,7 +14,7 @@
     <tr>
         <td colspan="2" class="title">{translate(#Answers#)}</td>
     </tr>
-    {foreach:results,key,valueObj} 
+    {foreach:results,key,valueObj}
     <tr>
         <td width="60" align="right" valign="top">
             <a class="noDecoration" name="{valueObj.faq_id}"><strong>{translate(#Q#)}</strong>:</a>
@@ -35,3 +35,8 @@
     </tr>
 {end:}
 </table>
+
+<!--ARE COMMENTS CONFIGURED-->
+{if:conf[FaqMgr][commentsEnabled]}
+    <flexy:include src="comments.html" />
+{end:}

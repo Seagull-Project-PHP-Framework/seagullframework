@@ -25,5 +25,18 @@ $aSections = array(
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
         ),
+
+    //  users
+    array (
+      'title'           => 'FAQs',
+      'parent_id'       => SGL_NODE_USER,
+      'uriType'         => 'dynamic',
+      'module'          => 'faq',
+      'manager'         => 'FaqMgr.php',
+      'actionMapping'   => '',
+      'add_params'      => '',
+      'is_enabled'      => 1,
+      'perms'           => SGL_ADMIN,
+        ),
     );
 ?>

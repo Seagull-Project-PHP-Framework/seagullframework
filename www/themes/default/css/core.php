@@ -393,6 +393,24 @@ pre.codeExample {
 }
 
 /*
+========================Comments=========================*/
+
+#addComment fieldset {
+    padding: 10px;
+    border: 1px solid grey;
+}
+#addComment p label {
+    width: 5em;
+    float: left;
+    text-align: right;
+    margin-right: 0.5em;
+    display: block
+}
+#addComment input, #addComment textarea {
+    width: 200px;
+}
+
+/*
 ========================Miscellaneous2=========================*/
 
 .tipOwner {

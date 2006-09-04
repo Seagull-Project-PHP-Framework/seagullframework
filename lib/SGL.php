@@ -384,6 +384,32 @@ class SGL
      {
         return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
      }
+
+     /**
+      * Returns true if a module is installed, ie has a record in the module table.
+      *
+      * @static
+      * @param string $moduleName
+      * @return boolean
+      */
+     function moduleIsEnabled($moduleName)
+     {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh = $locator->get('DB');
+        if (!$dbh) {
+            $dbh = & SGL_DB::singleton();
+            $locator->register('DB', $dbh);
+        }
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $query = "
+            SELECT  module_id
+            FROM    {$conf['table']['module']}
+            WHERE   name = '$moduleName'";
+        $exists = $dbh->getOne($query);
+
+        return ! is_null($exists);
+     }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {
