@@ -116,6 +116,11 @@ class FileMgr extends SGL_Manager
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $media->get($input->mediaId);
         $fileName = SGL_UPLOAD_DIR . '/' . $media->file_name;
+        return $this->_view($fileName);
+    }
+
+    function _view($filename)
+    {
         if (!@is_file($fileName)) {
             SGL::raiseError('The specified file does not appear to exist',
                 SGL_ERROR_NOFILE);
