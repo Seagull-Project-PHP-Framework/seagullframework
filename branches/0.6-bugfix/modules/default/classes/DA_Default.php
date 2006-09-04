@@ -86,6 +86,7 @@ class DA_Default extends SGL_Manager
      * Returns true if module record exists in db.
      *
      * @return boolean
+     * @deprecated use SGL::moduleIsEnabled($moduleName) instead
      */
     function moduleIsRegistered($moduleName)
     {

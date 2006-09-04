@@ -297,7 +297,6 @@ class SGL_Manager
                && $userRid == SGL_ADMIN) {
             $this->template = 'admin_' . $this->template;
         }
-        //echo'<pre>';die(print_r($mgr));
     }
 
     /**

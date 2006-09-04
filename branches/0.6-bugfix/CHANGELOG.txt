@@ -16,6 +16,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+04-08-06    Deprecated DA_Default::moduleIsRegistered() in favour of SGL::moduleIsEnabled()
 03-08-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call DAOs
             with their correct case, eg in html href: {webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO
             and in js: var remoteHW = new MediaDAO(hwCallback);
