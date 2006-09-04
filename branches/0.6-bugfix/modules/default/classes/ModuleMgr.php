@@ -256,7 +256,7 @@ class ModuleMgr extends SGL_Manager
             $msg = $oError->getMessage();
             $type = SGL_MESSAGE_WARNING;
         } else {
-            $msg = 'Module successfully installed';
+            $msg = 'The ' . $input->moduleName . ' module was successfully installed';
             $type = SGL_MESSAGE_INFO;
         }
         SGL::raiseMsg($msg, false, $type);
@@ -274,8 +274,8 @@ class ModuleMgr extends SGL_Manager
         //  disallow uninstalling default modules
         require_once SGL_CORE_DIR. '/Install/Common.php';
         if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
-            SGL::raiseMsg('This is a default module and cannot be uninstalled', false,
-                SGL_MESSAGE_ERROR);
+            SGL::raiseMsg('This is a default module and cannot be uninstalled',
+                false, SGL_MESSAGE_ERROR);
         } else {
 
             $data = array(
@@ -303,8 +303,8 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
-            SGL::raiseMsg('The module was successfully uninstalled', false,
-                SGL_MESSAGE_INFO);
+            SGL::raiseMsg('The ' . $oModule->name . ' module was successfully uninstalled',
+                false, SGL_MESSAGE_INFO);
         }
     }
 
