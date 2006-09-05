@@ -605,6 +605,21 @@ class SGL_Output
         return ++ $int;
     }
 
+    function getCurrentModule()
+    {
+        $reg =& SGL_Registry::singleton();
+        $req = $reg->getRequest();
+        return $req->getModuleName();
+    }
+
+    function getCurrentManager()
+    {
+        $reg =& SGL_Registry::singleton();
+        $req = $reg->getRequest();
+        return $req->getManagerName();
+    }
+
+
     /**
      * Check permission at the template level and returns true if permission
      * exists.

@@ -13,11 +13,11 @@
 {end:}
 
 <div id="addComment">
-<form method="post" flexy:ignore>
+<form action="{makeUrl(#insert#,#comment#,#comment#)}" method="post" flexy:ignore>
     <fieldset class="hide">
-        <input type="hidden" name="action" value="insert" />
-        <input type="hidden" name="seagull_uri" value="{seagull_uri}" />
-        <input type="hidden" name="comment[parent_id]" value="{comment.parent_id}" />
+        <input type="hidden" name="comment[entity_name]" value="faq" />
+        <input type="hidden" name="frmCallerMod" value="{getCurrentModule()}" />
+        <input type="hidden" name="frmCallerMgr" value="{getCurrentManager()}" />
     </fieldset>
 
     <fieldset>
@@ -40,7 +40,7 @@
         <p>
             <label for="comment[comment]">Comment:</label>
             <div class="error" flexy:if="error[comment]">{translate(error[comment])}</div>
-            <textarea name="comment[comment]" id="comment[comment]" rows="10" cols="60"/>{comment.comment}</textarea>
+            <textarea name="comment[comment]" id="comment[comment]" rows="10" cols="50"/>{comment.comment}</textarea>
         </p>
         <p>
             <label for="comment[notify]">&nbsp;</label>
