@@ -120,6 +120,7 @@ class SGL_Inflector
     /**
      * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
      *
+     * @static
      * @param string $name
      * @return string
      */
@@ -135,6 +136,7 @@ class SGL_Inflector
     /**
      * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
      *
+     * @static
      * @param string $name
      * @return string
      */

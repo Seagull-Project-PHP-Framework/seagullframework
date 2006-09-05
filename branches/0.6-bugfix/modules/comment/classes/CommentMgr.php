@@ -32,18 +32,19 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | CommentMgr.php                                                    |
+// | CommentMgr.php                                                            |
 // +---------------------------------------------------------------------------+
-// | Author: Alouicious Bird  <matti@tahvonen.com>                                  |
+// | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
 // $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
 
+require_once 'Validate.php';
 
 /**
- * Type your class description here ...
+ * Associate comments with any content type.
  *
  * @package comment
- * @author  Alouicious Bird  <matti@tahvonen.com>
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class CommentMgr extends SGL_Manager
 {
@@ -66,20 +67,23 @@ class CommentMgr extends SGL_Manager
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->submitted   = $req->get('submitted');
         $input->comment     = (object)$req->get('comment');
         $input->callerMod   = $req->get('frmCallerMod');
         $input->callerMgr   = $req->get('frmCallerMgr');
+        $input->callerTmpl  = $req->get('frmCallerTmpl');
 
         // if receiving post
         if ($input->submitted) {
+            $v = & new Validate();
             if (empty($input->comment->full_name)) {
                 $aErrors['full_name'] = 'Please enter your name';
             }
             if (empty($input->comment->email)) {
                 $aErrors['email'] = 'You must enter a valid email address';
+            } elseif (!$v->email($input->comment->email)) {
+                $aErrors['email'] = 'Your email is not correctly formatted';
             }
             if (empty($input->comment->body)) {
                 $aErrors['body'] = 'Please specify a comment for your post';
@@ -89,9 +93,11 @@ class CommentMgr extends SGL_Manager
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
-            $input->template = 'faqList.html';
-            $input->moduleName = 'faq';
-           #$input->conf['FaqMgr']['commentsEnabled'] = true;
+            $input->template = $input->callerTmpl;
+            $input->moduleName = $input->callerMod;
+            $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($input->callerMgr);
+            $c = &SGL_Config::singleton();
+            $c->set($mgrName, array('commentsEnabled' => true));
             $this->validated = false;
         }
     }
@@ -99,16 +105,20 @@ class CommentMgr extends SGL_Manager
     function _cmd_insert(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $cc = new CommentContainer($input->seagull_uri);
-        $cc->saveComment(
-            $input->comment->subject,
-            $input->comment->comment,
-            $input->comment->parent_id,
-            $input->comment->name);
-        SGL::raiseMsg('new Comment added succesfully');
-        // API currently sucks or I'm stupid :-(
-        $redir = $this->conf['site']['baseUrl'];
-        if ($this->conf['site']['frontScriptName']) $redir .= '/'.$this->conf['site']['frontScriptName'];
+
+        //  insert record
+        $oComment = DB_DataObject::factory($this->conf['table']['comment']);
+        $oComment->setFrom($input->comment);
+        $oComment->comment_id = $this->dbh->nextId('comment');
+        $oComment->date_created = SGL_Date::getTime(true);
+        $success = $oComment->insert();
+
+        if ($success) {
+            SGL::raiseMsg('comment saved successfully', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('There was a problem inserting the record',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
     }
 
     function _cmd_redirectToCaller(&$input, &$output)

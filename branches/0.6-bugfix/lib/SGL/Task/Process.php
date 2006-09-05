@@ -709,7 +709,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $output->scriptClose      = "\n//--> </script>\n";
         $output->isMinimalInstall = SGL::isMinimalInstall();
-        $output->conf = $this->conf;
+        $output->conf             = $this->c->getAll();
     }
 }
 
