@@ -31,7 +31,7 @@ class CommentDAO extends SGL_Manager
     {
         $constraint = (is_null($id))
             ? ''
-            : 'AND entity_id = $id';
+            : "AND entity_id = $id";
         $query = "
             SELECT *
             FROM {$this->conf['table']['comment']}

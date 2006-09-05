@@ -147,7 +147,8 @@ class ArticleViewMgr extends SGL_Manager
         }
         //  display comments?
         if (!empty($this->conf['ArticleViewMgr']['commentsEnabled'])) {
-            $output->aComments = $this->da->getCommentsByEntityId('articleview');
+            $output->aComments = $this->da->getCommentsByEntityId('articleview',
+                $input->articleID);
         }
     }
 
