@@ -556,6 +556,13 @@ class SGL_Output
         return SGL_Url::makeLink($action, $mgr, $mod, $aList, $params, $idx, $this);
     }
 
+    function getCurrentUrl()
+    {
+        $reg =& SGL_Registry::singleton();
+        $oCurrentUrl = $reg->getCurrentUrl();
+        return $oCurrentUrl->toString();
+    }
+
     function isVerticalNav($styleSheet)
     {
         return in_array($styleSheet, array('SglListamaticSubtle', 'verticalSimple'));
@@ -622,7 +629,7 @@ class SGL_Output
         $req = $reg->getRequest();
         $frmCallerMgr = $req->get('frmCallerMgr');
         $mgrName = (is_null($frmCallerMgr))
-            ? $req->getModuleName()
+            ? $req->getManagerName()
             : $frmCallerMgr;
         return $mgrName;
     }

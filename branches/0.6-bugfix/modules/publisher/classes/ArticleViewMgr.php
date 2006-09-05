@@ -65,6 +65,14 @@ class ArticleViewMgr extends SGL_Manager
             'view'   => array('view'),
             'summary'   => array('summary'),
         );
+        //  enable comments if configured
+        if (SGL::moduleIsEnabled('comment')) {
+            require_once SGL_MOD_DIR  . '/comment/classes/CommentDAO.php';
+            require_once SGL_CORE_DIR . '/Delegator.php';
+            $dao = &CommentDAO::singleton();
+            $this->da  = new SGL_Delegator();
+            $this->da->add($dao);
+        }
     }
 
     function validate($req, &$input)
@@ -75,7 +83,7 @@ class ArticleViewMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->masterTemplate  = $this->masterTemplate;
         $input->template        = $this->template;
- 
+
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'view';
         $input->articleID       = ($req->get('frmArticleID'))
@@ -136,6 +144,10 @@ class ArticleViewMgr extends SGL_Manager
             $output->documentList = PublisherBase::getDocumentListByCatID($input->catID);
         } else {
             $output->staticArticle = true;
+        }
+        //  display comments?
+        if (!empty($this->conf['ArticleViewMgr']['commentsEnabled'])) {
+            $output->aComments = $this->da->getCommentsByEntityId('articleview');
         }
     }
 

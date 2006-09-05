@@ -53,6 +53,12 @@ img {
     border: none;
 }
 
+hr {
+    border-top: 1px dotted #999;
+    border-bottom: 0px;
+    height: 1px;
+}
+
 /*
 ======================Global layaout==========================*/
 #outer-wrapper {
@@ -398,13 +404,6 @@ pre.codeExample {
 #addComment fieldset {
     padding: 10px;
     border: 1px solid grey;
-}
-#addComment p label {
-    width: 5em;
-    float: left;
-    text-align: right;
-    margin-right: 0.5em;
-    display: block
 }
 #addComment input[type="text"] {
     width: 200px;

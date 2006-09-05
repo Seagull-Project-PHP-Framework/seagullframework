@@ -8,7 +8,7 @@
         <!--ANCHOR-->
         <a name="comment{increment(key)}"></a>
         <!--COMMENT PERMALINK-->
-        <a href="{makeUrl()}#comment{increment(key)}">#{increment(key)}</a>
+        <a href="{getCurrentUrl()}#comment{increment(key)}">#{increment(key)}</a>
         <!--AUTHOR-->
         {if:oComment.url}
         <a href="{oComment.url}">{oComment.full_name}</a>
@@ -30,10 +30,11 @@
 <div id="addComment">
 <form action="{makeUrl(#insert#,#comment#,#comment#)}" method="post" flexy:ignore>
     <fieldset class="hide">
-        <input type="hidden" name="comment[entity_name]" value="faq" />
-        <input type="hidden" name="frmCallerMod" value="{getCurrentModule()}" />
-        <input type="hidden" name="frmCallerMgr" value="{getCurrentManager()}" />
-        <input type="hidden" name="frmCallerTmpl" value="{getCurrentTemplate()}" />
+        <input type="hidden" name="comment[entity_name]" value="{getCurrentManager()}" />
+        <input type="hidden" name="frmCallerMod"    value="{getCurrentModule()}" />
+        <input type="hidden" name="frmCallerMgr"    value="{getCurrentManager()}" />
+        <input type="hidden" name="frmCallerId"     value="{articleID}" />
+        <input type="hidden" name="frmCallerTmpl"   value="{getCurrentTemplate()}" />
     </fieldset>
 
     <fieldset>
@@ -62,16 +63,16 @@
                 <textarea name="comment[body]" id="comment[body]" rows="10" cols="50"/>{comment.body}</textarea>
             </dd>
 
-            <dt><label for="comment[notify]">&nbsp;</label></dt>
+            <!--<dt><label for="comment[notify]">&nbsp;</label></dt>
             <dd>
                 <input type="checkbox" name="comment[notify]" id="comment[notify]" value="{comment.notify}" />
                 E-mail notification
-            </dd>
+            </dd>-->
 
             <dt>&nbsp;</dt>
             <dd>
-                <input type="submit" name="submitted" value="preview" />
-                <input type="submit" name="submitted" value="post" />
+                <!--<input type="submit" name="submitted" value="preview" />-->
+                <input class="wideButton" type="submit" name="submitted" value="post" />
             </dd>
         </dl>
     </fieldset>

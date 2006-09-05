@@ -130,7 +130,7 @@ class SGL_Inflector
         if (strtolower(substr($name, -3)) != 'mgr') {
             $name .= 'Mgr';
         }
-        return SGL_Inflector::caseFix(ucfirst($name));
+        return SGL_Inflector::caseFix(ucfirst($name), $force = true);
     }
 
     /**
@@ -202,6 +202,13 @@ class SGL_Inflector
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);
         $isFound = array_search(strtolower($str), $aConfValuesLowerCase);
+        //  iterate through unloaded config files until key is found (not implemented)
+        if (!$isFound) {
+            #crude hack, avoid mgrs with interior bumpy caps
+            if ($str == 'ArticleviewMgr') {
+                $str = 'ArticleViewMgr';
+            }
+        }
         return ($isFound !== false) ? $aConfValues[$isFound] : $str;
     }
 }
