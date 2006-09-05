@@ -22,35 +22,43 @@
     </fieldset>
 
     <fieldset>
-    <legend>Enter your comment</legend>
-        <p>
-            <label for="comment[full_name]">Name:</label>
-            <span class="error" flexy:if="error[full_name]">{translate(error[full_name])}</span>
-            <input type="text" name="comment[full_name]" id="comment[full_name]" value="{comment.full_name}" />
-        </p>
-        <p>
-            <label for="comment[email]">Email:</label>
-            <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
-            <input type="text" name="comment[email]" id="comment[email]" value="{comment.email}" />
-        </p>
-        <p>
-            <label for="comment[title]">Homepage:</label>
-            <input type="text" name="comment[subject]" id="comment[subject]" value="{comment.subject}" />
-        </p>
-        <p>
-            <label for="comment[body]">Comment:</label>
-            <span class="error" flexy:if="error[body]">{translate(error[body])}</span>
-            <textarea name="comment[body]" id="comment[body]" rows="10" cols="50"/>{comment.body}</textarea>
-        </p>
-        <p>
-            <label for="comment[notify]">&nbsp;</label>
-            <input type="checkbox" name="comment[notify]" id="comment[notify]" value="{comment.notify}" />
-            E-mail notification
-        </p>
-        <p>
-            <input type="submit" name="submitted" value="preview" />
-            <input type="submit" name="submitted" value="post" />
-        </p>
+        <legend>Enter your comment</legend>
+        <dl class="onSide">
+            <dt><label for="comment[full_name]">Name:</label></dt>
+            <dd class="error" flexy:if="error[full_name]">{translate(error[full_name])}</dd>
+            <dd>
+                <input type="text" name="comment[full_name]" id="comment[full_name]" value="{comment.full_name}" />
+            </dd>
+
+            <dt><label for="comment[email]">Email:</label></dt>
+            <dd>
+                <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
+                <input type="text" name="comment[email]" id="comment[email]" value="{comment.email}" />
+            </dd>
+
+            <dt><label for="comment[title]">Homepage:</label></dt>
+            <dd>
+                <input type="text" name="comment[subject]" id="comment[subject]" value="{comment.subject}" />
+            </dd>
+
+            <dt><label for="comment[body]">Comment:</label></dt>
+            <dd>
+                <div class="error" flexy:if="error[body]">{translate(error[body])}</div>
+                <textarea name="comment[body]" id="comment[body]" rows="10" cols="50"/>{comment.body}</textarea>
+            </dd>
+
+            <dt><label for="comment[notify]">&nbsp;</label></dt>
+            <dd>
+                <input type="checkbox" name="comment[notify]" id="comment[notify]" value="{comment.notify}" />
+                E-mail notification
+            </dd>
+
+            <dt>&nbsp;</dt>
+            <dd>
+                <input type="submit" name="submitted" value="preview" />
+                <input type="submit" name="submitted" value="post" />
+            </dd>
+        </dl>
     </fieldset>
 
 </form>
