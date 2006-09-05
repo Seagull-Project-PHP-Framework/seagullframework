@@ -134,7 +134,7 @@ class CommentMgr extends SGL_Manager
         $aRedirect = array(
             'moduleName'  => $input->callerMod,
             'managerName' => $input->callerMgr);
-        if (!is_null($input->callerId)) {
+        if (!empty($input->callerId)) {
             $aRedirect['frmArticleID'] = $input->callerId;
         }
 
