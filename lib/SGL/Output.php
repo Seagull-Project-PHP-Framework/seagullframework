@@ -609,14 +609,33 @@ class SGL_Output
     {
         $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
-        return $req->getModuleName();
+        $frmCallerMod = $req->get('frmCallerMod');
+        $modName = (is_null($frmCallerMod))
+            ? $req->getModuleName()
+            : $frmCallerMod;
+        return $modName;
     }
 
     function getCurrentManager()
     {
         $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
-        return $req->getManagerName();
+        $frmCallerMgr = $req->get('frmCallerMgr');
+        $mgrName = (is_null($frmCallerMgr))
+            ? $req->getModuleName()
+            : $frmCallerMgr;
+        return $mgrName;
+    }
+
+    function getCurrentTemplate()
+    {
+        $reg =& SGL_Registry::singleton();
+        $req = $reg->getRequest();
+        $frmCallerTmpl = $req->get('frmCallerTmpl');
+        $tmplName = (is_null($frmCallerTmpl))
+            ? $this->template
+            : $frmCallerTmpl;
+        return $tmplName;
     }
 
 
