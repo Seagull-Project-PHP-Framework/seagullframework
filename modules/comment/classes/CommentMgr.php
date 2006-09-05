@@ -86,7 +86,7 @@ class CommentMgr extends SGL_Manager
                 $aErrors['email'] = 'Your email is not correctly formatted';
             }
             if (empty($input->comment->body)) {
-                $aErrors['body'] = 'Please specify a comment for your post';
+                $aErrors['body'] = 'You must fill in your comment';
             }
         }
         //  if errors have occured
