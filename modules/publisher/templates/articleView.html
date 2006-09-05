@@ -1,34 +1,33 @@
-<h1 class="pageTitle">{leadArticle[title]}</h1>
+<h1 flexy:if="leadArticle[title]" class="pageTitle">{leadArticle[title]}</h1>
+<h1 flexy:if="!leadArticle[title]" class="pageTitle">{translate(pageTitle)}</h1>
 <div class="message">{msgGet()}</div>
 
 {if:staticArticle}
     <div id="staticArticle">
-        {if:leadArticle} 
+        {if:leadArticle}
             {t:articleOutput}
         {else:}
-            {translate(#No lead article found#)}
+            <p flexy:if="leadArticle[title]">{translate(#No lead article found#)}</p>
         {end:}
     </div>
 {else:}
 <!-- If not a static article display option blocks -->
-<h2 class="sectionHeader">{translate(#Current Category#)}: {currentCat}</h2>
-<h3 class="colHeader">{translate(#You are here#)}: {path:h}</h3>
-    <div id="options">
+<h2 flexy:if="currentCat" class="sectionHeader">{translate(#Current Category#)}: {currentCat}</h2>
+<h3 flexy:if="path" class="colHeader">{translate(#You are here#)}: {path:h}</h3>
+    <div flexy:if="leadArticle[title]" id="options">
+        {if:articleList}
         <div class="options-block">
             <div class="blockHeader">{translate(#Related Articles#)}</div>
     		<div class="blockContent">
-            {if:articleList}
                 <ul class="noindent">
                 {foreach:articleList,key,aValue}
                     <li><a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}">{aValue[addition]}</a></li>
                 {end:}
                 </ul>
-            {else:}
-                {translate(#No articles found#)}
-            {end:}
             </div>
         </div>
-    
+        {end:}
+
         {if:documentList}
         <div class="options-block">
             <div class="blockHeader">{translate(#Related Documents#)}</div>
@@ -42,13 +41,19 @@
             </div>
         </div>
         {end:}
-    </div>
+
+    </div><!--END options-->
 
     <div id="leadArticle">
-        {if:leadArticle} 
+        {if:leadArticle}
             {t:articleOutput}
         {else:}
-            {translate(#No lead article found#)}
+            <p flexy:if="leadArticle[title]">{translate(#No lead article found#)}</p>
         {end:}
     </div>
+{end:}
+
+<!-- ARE COMMENTS ENABLED -->
+{if:conf[ArticleViewMgr][commentsEnabled]}
+    <flexy:include src="comments.html" />
 {end:}

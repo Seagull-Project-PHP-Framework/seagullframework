@@ -72,6 +72,7 @@ class CommentMgr extends SGL_Manager
         $input->comment     = (object)$req->get('comment');
         $input->callerMod   = $req->get('frmCallerMod');
         $input->callerMgr   = $req->get('frmCallerMgr');
+        $input->callerId    = $req->get('frmCallerId');
         $input->callerTmpl  = $req->get('frmCallerTmpl');
 
         // if receiving post
@@ -111,6 +112,11 @@ class CommentMgr extends SGL_Manager
         $oComment->setFrom($input->comment);
         $oComment->comment_id = $this->dbh->nextId('comment');
         $oComment->date_created = SGL_Date::getTime(true);
+        if (!is_null($input->callerId)) {
+            $oComment->entity_id = $input->callerId;
+        }
+        $oComment->type = 'comment';
+        //  get remote IP
         $success = $oComment->insert();
 
         if ($success) {
@@ -125,10 +131,14 @@ class CommentMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_HTTP::redirect(array(
+        $aRedirect = array(
             'moduleName'  => $input->callerMod,
-            'managerName' => $input->callerMgr)
-            );
+            'managerName' => $input->callerMgr);
+        if (!is_null($input->callerId)) {
+            $aRedirect['frmArticleID'] = $input->callerId;
+        }
+
+        SGL_HTTP::redirect($aRedirect);
     }
 }
 ?>
