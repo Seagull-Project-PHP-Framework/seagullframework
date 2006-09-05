@@ -1,8 +1,8 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <div class="message">{msgGet()}</div>
 
-<table class="wide">
 {if:results}
+<table class="wide">
     <tr>
         <td colspan="2" class="title">{translate(#Questions#)}</td>
     </tr>
@@ -29,12 +29,8 @@
         <td colspan="2" align="right"><a href="#">{translate(#back to top#)}</a></td>
     </tr>
     {end:}
-{else:}
-    <tr>
-        <td>{translate(#No FAQs found#)}.</td>
-    </tr>
-{end:}
 </table>
+{end:}
 
 <!-- ARE COMMENTS ENABLED -->
 {if:conf[FaqMgr][commentsEnabled]}

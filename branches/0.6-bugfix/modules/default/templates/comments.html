@@ -1,10 +1,25 @@
+<a name="comments"></a>
 <h2>comments</h2>
 
 {if:aComments}
 
 <div id="comments" flexy:foreach="aComments,key,oComment">
-    <p><a href="">#{increment(key)}</a> <a href="{oComment.url}">{oComment.full_name}</a> {formatDatePretty(oComment.full_name.date_created)}</p>
+    <p>
+        <!--ANCHOR-->
+        <a name="comment{increment(key)}"></a>
+        <!--COMMENT PERMALINK-->
+        <a href="{makeUrl()}#comment{increment(key)}">#{increment(key)}</a>
+        <!--AUTHOR-->
+        {if:oComment.url}
+        <a href="{oComment.url}">{oComment.full_name}</a>
+        {else:}
+        <strong>{oComment.full_name}</strong>
+        {end:}
+        <!--DATE-->
+        {formatDatePretty(oComment.full_name.date_created)}
+    </p>
     <hr />
+    <!--COMMENT-->
     <p>{oComment.body:h}</p>
 </div>
 

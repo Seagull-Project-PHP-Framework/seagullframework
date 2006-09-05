@@ -1,6 +1,7 @@
 <?php
     $words = array(
 /*  COMMENT MGR  */
+        'Comment Manager' => 'Comment Manager',
 
 /*  ERROR MSGS  */
         'Please enter your name' => 'Please enter your name',
