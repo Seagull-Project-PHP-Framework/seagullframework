@@ -19,11 +19,8 @@ class Default_Block_Sample2
     function getBlockContent()
     {
         $text = <<< HTML
-<p class="alignCenter">
-<a href="http://seagullproject.org/export/rss/">
-    <img src="$this->webRoot/images/xml.gif" alt="Seagull RSS" title="RSS 1.0" />
-</a>
-</p>
+<p><a href="http://feeds.feedburner.com/seagullproject" title="Subscribe to my feed, Seagull PHP Framework" rel="alternate" type="application/rss+xml">
+<img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="border:0"/></a></p>
 HTML;
         return $text;
     }
