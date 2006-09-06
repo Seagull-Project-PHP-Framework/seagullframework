@@ -112,7 +112,7 @@ class CommentMgr extends SGL_Manager
         $oComment->setFrom($input->comment);
         $oComment->comment_id = $this->dbh->nextId('comment');
         $oComment->date_created = SGL_Date::getTime(true);
-        if (!is_null($input->callerId)) {
+        if (!empty($input->callerId)) {
             $oComment->entity_id = $input->callerId;
         }
         $oComment->type = 'comment';
