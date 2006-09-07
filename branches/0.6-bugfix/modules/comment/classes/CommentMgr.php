@@ -116,7 +116,7 @@ class CommentMgr extends SGL_Manager
             $oComment->entity_id = $input->callerId;
         }
         $oComment->type = 'comment';
-        //  get remote IP
+        $oComment->ip = $_SERVER['REMOTE_ADDR'];;
         $success = $oComment->insert();
 
         if ($success) {
