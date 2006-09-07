@@ -394,21 +394,27 @@ class SGL
       */
      function moduleIsEnabled($moduleName)
      {
-        $locator = &SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
-        if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+        static $aInstances;
+        if (!isset($aInstances)) {
+            $aInstances = array();
         }
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $query = "
-            SELECT  module_id
-            FROM    {$conf['table']['module']}
-            WHERE   name = '$moduleName'";
-        $exists = $dbh->getOne($query);
+        if (!isset($aInstances[$moduleName])) {
 
-        return ! is_null($exists);
+            $locator = &SGL_ServiceLocator::singleton();
+            $dbh = $locator->get('DB');
+            if (!$dbh) {
+                $dbh = & SGL_DB::singleton();
+                $locator->register('DB', $dbh);
+            }
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $query = "
+                SELECT  module_id
+                FROM    {$conf['table']['module']}
+                WHERE   name = '$moduleName'";
+            $aInstances[$moduleName] = $dbh->getOne($query);
+        }
+        return ! is_null($aInstances[$moduleName]);
      }
 }
 

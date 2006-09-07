@@ -172,8 +172,6 @@ class VariousTest extends UnitTestCase {
     }
 }
 
-
-
 class Foo1{}
 class Bar1{}
 class Baz{}
