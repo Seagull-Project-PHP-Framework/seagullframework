@@ -9,7 +9,37 @@ define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
     : false);
 
 require_once $rootDir .'/lib/SGL/FrontController.php';
-SGL_FrontController::init();
+
+class AjaxInit extends SGL_FrontController
+{
+    function run()
+    {
+        define('SGL_TEST_MODE', true);
+
+        if (!defined('SGL_INITIALISED')) {
+            SGL_FrontController::init();
+        }
+        //  assign request to registry
+        $input = &SGL_Registry::singleton();
+        $req = SGL_Request::singleton();
+
+        if (PEAR::isError($req)) {
+            //  stop with error page
+            SGL::displayStaticPage($req->getMessage());
+        }
+        $input->setRequest($req);
+        $output = &new SGL_Output();
+
+        $process =  new SGL_Task_Init(
+                    new SGL_Task_CreateSession(
+                    new SGL_Void()
+                   ));
+
+        $process->process($input, $output);
+    }    
+}
+
+AjaxInit::run();
 require_once 'HTML/AJAX/Server.php';
 
 class AutoServer extends HTML_AJAX_Server
