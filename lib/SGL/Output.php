@@ -645,6 +645,17 @@ class SGL_Output
         return $tmplName;
     }
 
+    function getCurrentId()
+    {
+        $reg =& SGL_Registry::singleton();
+        $req = $reg->getRequest();
+        $frmCallerId = $req->get('frmCallerId');
+        $id = (is_null($frmCallerId))
+            ? $this->articleID
+            : $frmCallerId;
+        return $id;
+    }
+
 
     /**
      * Check permission at the template level and returns true if permission
