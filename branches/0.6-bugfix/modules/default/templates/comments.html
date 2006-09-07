@@ -46,7 +46,7 @@
                 <input type="text" name="comment[full_name]" id="comment[full_name]" value="{comment.full_name}" />
             </dd>
 
-            <dt><label for="comment[email]">Email:</label></dt>
+            <dt><label for="comment[email]"><span class="required">*</span>Email:</label></dt>
             <dd>
                 <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
                 <input type="text" name="comment[email]" id="comment[email]" value="{comment.email}" />
@@ -57,7 +57,7 @@
                 <input type="text" name="comment[subject]" id="comment[subject]" value="{comment.subject}" />
             </dd>
 
-            <dt><label for="comment[body]">Comment:</label></dt>
+            <dt><label for="comment[body]"><span class="required">*</span>Comment:</label></dt>
             <dd>
                 <div class="error" flexy:if="error[body]">{translate(error[body])}</div>
                 <textarea name="comment[body]" id="comment[body]" rows="10" cols="50"/>{comment.body}</textarea>

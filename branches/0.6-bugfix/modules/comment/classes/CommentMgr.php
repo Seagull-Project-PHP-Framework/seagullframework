@@ -79,7 +79,7 @@ class CommentMgr extends SGL_Manager
         if ($input->submitted) {
             $v = & new Validate();
             if (empty($input->comment->full_name)) {
-                $aErrors['full_name'] = 'Please enter your name';
+                $input->comment->full_name = 'anonymous';
             }
             if (empty($input->comment->email)) {
                 $aErrors['email'] = 'You must enter a valid email address';
