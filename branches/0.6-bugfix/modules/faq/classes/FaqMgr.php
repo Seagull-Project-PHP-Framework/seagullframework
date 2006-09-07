@@ -100,7 +100,7 @@ class FaqMgr extends SGL_Manager
         }
         $output->results = $aFaqs;
         //  display comments?
-        if (!empty($this->conf['FaqMgr']['commentsEnabled'])) {
+        if (SGL::moduleIsEnabled('comment') && !empty($this->conf['FaqMgr']['commentsEnabled'])) {
             $output->aComments = $this->da->getCommentsByEntityId('faq');
         }
     }
