@@ -23,7 +23,9 @@ class Default_Block_Debug
 <form name="rebuildSeagull" method="post" action="$url" id="rebuildSeagull" flexy:ignore>
     <p class="center">
         <input type="hidden" name="action" value="rebuildSeagull" />
-        <input type="submit" class="sgl-button"name="submit" value="Rebuild Seagull" />
+        <input type="submit" class="sgl-button"name="submit" value="Rebuild Seagull" /><br />
+        <input type="checkbox" name="frmSampleData" id="sampleData" value="1" />
+        <label for="sampleData">with sample data</label>
     </p>
 </form>
 HTML;
