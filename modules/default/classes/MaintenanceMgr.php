@@ -210,6 +210,7 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_SymLinkWwwData());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_CreateMemberUser());
+        $runner->addTask(new SGL_Task_EnableDebugBlock());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
         $ok = $runner->main();

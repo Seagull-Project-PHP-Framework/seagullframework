@@ -16,6 +16,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+09-09-06    Add abililty to include a debug block in development rebuilds
 06-09-06    Added Comment module, can be used with all existing modules
 05-08-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>
             in a template will create a link to the currently requested page
