@@ -465,6 +465,22 @@ class SGL_Session
     }
 
     /**
+     * Returns a valid session identifier that can be used as a URL paramenter, ie
+     * SGLSESSID=1cgmq51l7jh8og8qvt0qu1ntf4
+     *
+     * @return string
+     */
+    function getId()
+    {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        return defined('SID') && SID !=''
+            ? SID
+            : $conf['cookie']['name'] . '='. session_id();
+    }
+
+    /**
      * Destroys current session.
      *
      * @access  public
