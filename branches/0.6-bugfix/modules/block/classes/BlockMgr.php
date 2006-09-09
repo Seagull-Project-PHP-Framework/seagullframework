@@ -58,7 +58,7 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        include SGL_DAT_DIR . '/ary.blocksNames.php';
+        require_once SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;
         $daUser             = &DA_User::singleton();
         $daNav              = &DA_Navigation::singleton();
@@ -164,6 +164,27 @@ class BlockMgr extends SGL_Manager
         $this->_editDisplay($output);
     }
 
+    function _cmd_insert(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $oBlock             = $input->block;
+        $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
+        $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
+        $oBlock->params     = serialize($output->aParams);
+        $block              = & new Block();
+
+        //  insert block record
+        $block->setFrom($oBlock);
+        $block->insert();
+
+        //  clear cache so a new cache file is built reflecting changes
+        SGL_Cache::clear('blocks');
+
+        //  Redirect on success
+        SGL::raiseMsg('Block successfully added', true, SGL_MESSAGE_INFO);
+    }
+
     function _cmd_edit(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -176,7 +197,6 @@ class BlockMgr extends SGL_Manager
         $block->get($input->blockId);
         $data          = $block->toArray('%s');
         $output->block = (object)$data;
-
         $this->_editDisplay($output);
     }
 
@@ -198,29 +218,6 @@ class BlockMgr extends SGL_Manager
         // clear cache so a new cache file is built reflecting changes
         SGL_Cache::clear('blocks');
         SGL::raiseMsg('Block details successfully updated', true, SGL_MESSAGE_INFO);
-        SGL_HTTP::redirect();
-    }
-
-    function _cmd_insert(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $oBlock             = $input->block;
-        $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
-        $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
-        $oBlock->params     = serialize($output->aParams);
-        $block              = & new Block();
-
-        //  insert block record
-        $block->setFrom($oBlock);
-        $block->insert();
-
-        //  clear cache so a new cache file is built reflecting changes
-        SGL_Cache::clear('blocks');
-
-        //  Redirect on success
-        SGL::raiseMsg('Block successfully added', true, SGL_MESSAGE_INFO);
-        SGL_HTTP::redirect();
     }
 
     function _cmd_delete(&$input, &$output)
