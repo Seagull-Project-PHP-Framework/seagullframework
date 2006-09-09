@@ -705,9 +705,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->webRoot          = SGL_BASE_URL;
         $output->imagesDir        = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
         $output->versionAPI       = SGL_SEAGULL_VERSION;
-        $output->sessID           = defined('SID') && SID !=''
-            ? SID
-            : $this->conf['cookie']['name'] . '='. session_id();
+        $output->sessID           = SGL_Session::getId();
         $output->scriptOpen       = "\n<script type=\"text/javascript\"> <!--\n";
         $output->scriptClose      = "\n//--> </script>\n";
         $output->isMinimalInstall = SGL::isMinimalInstall();
