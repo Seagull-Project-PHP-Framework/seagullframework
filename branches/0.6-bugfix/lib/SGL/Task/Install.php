@@ -780,6 +780,28 @@ class SGL_Task_RemoveNavigation extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
+class SGL_Task_EnableDebugBlock extends SGL_Task
+{
+    function run($data)
+    {
+        require_once SGL_MOD_DIR . '/block/classes/BlockDAO.php';
+        $da = & BlockDAO::singleton();
+        if (!empty($da->conf['debug']['enableDebugBlock'])) {
+            $oBlock = new stdClass();
+            $oBlock->name = 'Default_Block_Debug';
+            $oBlock->title = 'Debug Block';
+            $oBlock->is_enabled = 1;
+            $oBlock->position = 'Left';
+            $oBlock->sections = array(0); // all
+            $oBlock->roles = array(SGL_ADMIN);
+            $ok = $da->addBlock($oBlock);
+        }
+    }
+}
+
 
 /**
  * @package Task

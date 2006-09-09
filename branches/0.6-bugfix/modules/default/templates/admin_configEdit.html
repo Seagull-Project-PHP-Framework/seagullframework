@@ -285,6 +285,12 @@ function toggleTransElements() {
                 {generateRadioPair(#conf[debug][sessionDebugAllowed]#,conf[debug][sessionDebugAllowed]):h}
             </p>
             <p>
+                <label class="tipOwner" for="conf[debug][enableDebugBlock]">{translate(#Enable debug block#)}
+                <span class="tipText">{translate(#Your database can be dropped if this block is enabled#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][enableDebugBlock]#,conf[debug][enableDebugBlock]):h}
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[debug][production]">{translate(#Production website#)}
                 <span class="tipText">{translate(#Setting this to true will disable all screen-based error messages#)}</span>
                 </label>

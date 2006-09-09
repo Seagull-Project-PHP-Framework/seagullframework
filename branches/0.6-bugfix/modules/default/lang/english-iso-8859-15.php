@@ -235,6 +235,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Enable authorisation'=>'Enable authorisation',
         'Enable custom error handler'=>'Enable custom error handler',
         'Enable debug session'=>'Enable debug session',
+        'Enable debug block'=>'Enable debug block - [USE WITH CAUTION!]',
+        'Your database can be dropped if this block is enabled'=>'Your database can be dropped if this block is enabled, use for development purposes only',
         'Production website'=>'Production website',
         'Show backtrace'=>'Show backtrace',
         'Enable Profiling'=>'Enable Profiling',
