@@ -203,7 +203,12 @@ class SGL_BlockLoader
                         $aParams = array();
                     }
                     @$obj = & new $blockClass();
-                    $this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id, $aParams);
+                    if ($data = $obj->init($this->output, $oBlock->block_id, $aParams)) {
+                        $this->_aData[$index]->content = $data;
+                    } else {
+                        unset($this->_aData[$index]);
+                    }
+                    #$this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id, $aParams);
                 }
             }
             $this->_sort();
