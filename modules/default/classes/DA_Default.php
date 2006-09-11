@@ -213,6 +213,7 @@ class DA_Default extends SGL_Manager
      */
     function getModuleById($id = null)
     {
+        require_once 'DB/DataObject.php';
         $oModule = DB_DataObject::factory($this->conf['table']['module']);
         if (!is_null($id)) {
             $oModule->get($id);
@@ -222,6 +223,7 @@ class DA_Default extends SGL_Manager
 
     function getModuleByName($name = null)
     {
+        require_once 'DB/DataObject.php';
         $oModule = DB_DataObject::factory($this->conf['table']['module']);
         if (!is_null($name)) {
             $oModule->get('name', $name);

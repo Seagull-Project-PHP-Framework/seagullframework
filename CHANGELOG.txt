@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+10-09-06    Added missing dbdo include that caused error with caching enabled
+            (romain)
 10-09-06    Improvements to error handling for production environments (Dmitry
             Lakachauskis)
 10-09-06    Fixed problem where CategoryNav block didn't work correctly for php4

@@ -38,6 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id$
 
+require_once 'DB/DataObject.php';
 
 /**
  * Module config manager.
@@ -75,7 +76,7 @@ class ModuleConfigMgr extends SGL_Manager
         $input->moduleNameId    = $req->get('frmModule');
         $input->action          = ($req->get('action')) ? $req->get('action') : 'edit';
         $input->config          = $req->get('config');
-        
+
         $input->submitted       = $req->get('submitted');
 
         $aErrors = array();
