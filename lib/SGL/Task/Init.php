@@ -359,11 +359,19 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
             require_once SGL_CORE_DIR . '/ErrorHandler.php';
             $eh = & new SGL_ErrorHandler();
             $eh->startHandler();
-        }
 
-        //  clean start for logs
-        error_log(' ');
-        error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
+            //  clean start for logs
+            error_log(' ');
+            error_log('##########   New request: '.trim($_SERVER['PHP_SELF']).'   ##########');
+        } else {
+            // otherwise setup standard PHP error handling
+            if (!empty($conf['debug']['production'])) {
+                ini_set('display_errors', false);
+            }
+            if (!empty($conf['log']['enabled'])) {
+                ini_set('log_errors', true);
+            }
+        }
     }
 }
 
@@ -410,6 +418,10 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
         if (count($conf)) {
             @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
+            if (!empty($conf['log']['ignoreRepeated'])) {
+                ini_set('ignore_repeated_errors', true);
+                ini_set('ignore_repeated_source', true);
+            }
         }
     }
 }
