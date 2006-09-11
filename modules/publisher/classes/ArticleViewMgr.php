@@ -124,7 +124,9 @@ class ArticleViewMgr extends SGL_Manager
 
         $output->template = 'articleView.html';
         $ret = SGL_Item::getItemDetail($input->articleID, null, $input->articleLang);
-        $output->redir = urlencode(urlencode(SGL_BASE_URL . $_SERVER['PHP_SELF']));
+        //  Encode current url for redirecting purposes
+        $url = $input->getCurrentUrl();
+        $output->redir = urlencode(urlencode($url->toString()));
 
         if (PEAR::isError($ret) || !$ret) {
             return false;

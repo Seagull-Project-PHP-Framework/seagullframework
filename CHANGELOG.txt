@@ -4,13 +4,14 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+10-09-06    Fixed redirect problem with articles (Julien Casanova)
 10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)
-03-08-06    Fixed documentation to correctly reflect minimum PHP version required (falko)
-03-08-06    Corrected tz values that didn't work on all linux systems (Steven Stremciuc)
-02-08-06    Minimal install cannot select multiple languages (Steven Stremciuc)
-02-08-06    Fixed infinite loop in s9y wrapper BlogMgr (romain)
-02-08-06    Fixed javascript error in TinyFCK (Riccardo Magliocchetti)
-31-06-06	Added detection of GD extension for media manager
+03-09-06    Fixed documentation to correctly reflect minimum PHP version required (falko)
+03-09-06    Corrected tz values that didn't work on all linux systems (Steven Stremciuc)
+02-09-06    Minimal install cannot select multiple languages (Steven Stremciuc)
+02-09-06    Fixed infinite loop in s9y wrapper BlogMgr (romain)
+02-09-06    Fixed javascript error in TinyFCK (Riccardo Magliocchetti)
+31-08-06	Added detection of GD extension for media manager
 30-08-06    Fixed whitespace in navigation file that caused header error on rebuild
 30-08-06    Only check for multi sessions if option enabled
 29-08-06    Fixed bugs in MediaMgr
@@ -19,10 +20,10 @@ BUGFIXES
 IMPROVEMENTS
 09-09-06    Add abililty to include a debug block in development rebuilds
 06-09-06    Added Comment module, can be used with all existing modules
-05-08-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>
+05-09-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>
             in a template will create a link to the currently requested page
-04-08-06    Deprecated DA_Default::moduleIsRegistered() in favour of SGL::moduleIsEnabled()
-03-08-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call DAOs
+04-09-06    Deprecated DA_Default::moduleIsRegistered() in favour of SGL::moduleIsEnabled()
+03-09-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call DAOs
             with their correct case, eg in html href: {webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO
             and in js: var remoteHW = new MediaDAO(hwCallback);
 
