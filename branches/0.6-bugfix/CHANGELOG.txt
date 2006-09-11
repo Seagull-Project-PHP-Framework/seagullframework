@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+10-09-06    Fixed problem where CategoryNav block didn't work correctly for php4
+            users (Steven Stremciuc)
 10-09-06    Fixed horizontal scrolling in msie (Dmitry Lakachauskis)
 10-09-06    Fixed redirect problem with articles (Julien Casanova)
 10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)

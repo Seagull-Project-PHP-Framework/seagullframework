@@ -47,7 +47,7 @@
 class Navigation_Block_CategoryNav
 {
 
-    function init($output)
+    function init(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->javascriptSrc[] = 'js/TreeMenu.js';
