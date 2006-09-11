@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)
 03-08-06    Fixed documentation to correctly reflect minimum PHP version required (falko)
 03-08-06    Corrected tz values that didn't work on all linux systems (Steven Stremciuc)
 02-08-06    Minimal install cannot select multiple languages (Steven Stremciuc)
