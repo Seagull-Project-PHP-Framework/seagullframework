@@ -113,6 +113,7 @@ a.narrow, input.narrow {
     -moz-border-radius: 0 0 0.4em 0.4em;
     border-top: 1px solid <?php echo $borderLight ?>;
     padding-bottom: 40px; /* TO REMOVE */
+    margin-right: -1px; /* hides annoying horizontal scrolling in IE */
 }
 #footer {
     text-align: center;
