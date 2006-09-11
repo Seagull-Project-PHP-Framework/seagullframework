@@ -128,8 +128,8 @@ class ContactUsMgr extends SGL_Manager
             }
             //check for mail header injection
             require_once SGL_CORE_DIR . '/Emailer.php';
-            $input->contact->first_name = SGL_Emailer::cleanMailInjection($input->contact->first_name);
-            $input->contact->last_name  = SGL_Emailer::cleanMailInjection($input->contact->last_name);
+            $input->contact->first_name = SGL_Emailer::cleanMailInjection(addslashes($input->contact->first_name));
+            $input->contact->last_name  = SGL_Emailer::cleanMailInjection(addslashes($input->contact->last_name));
             $input->contact->email      = SGL_Emailer::cleanMailInjection($input->contact->email);
         }
         //  if errors have occured
@@ -240,7 +240,7 @@ class ContactUsMgr extends SGL_Manager
                 'toRealName'      => 'Admin',
                 'fromEmail'       => $oContact->email,
                 'fromEmailAdress' => $oContact->email,
-                'fromRealName'    => $contacterName,
+                'fromRealName'    => '"' . $contacterName . '"',
                 'replyTo'         => $oContact->email,
                 'subject'         => SGL_String::translate('Contact Enquiry from') .' '. $this->conf['site']['name'],
                 'type'            => $oContact->enquiry_type,
