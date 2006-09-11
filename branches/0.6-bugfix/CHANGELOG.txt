@@ -4,13 +4,17 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+10-09-06    Improvements to error handling for production environments (Dmitry
+            Lakachauskis)
 10-09-06    Fixed problem where CategoryNav block didn't work correctly for php4
             users (Steven Stremciuc)
 10-09-06    Fixed horizontal scrolling in msie (Dmitry Lakachauskis)
 10-09-06    Fixed redirect problem with articles (Julien Casanova)
 10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)
-03-09-06    Fixed documentation to correctly reflect minimum PHP version required (falko)
-03-09-06    Corrected tz values that didn't work on all linux systems (Steven Stremciuc)
+03-09-06    Fixed documentation to correctly reflect minimum PHP version required
+            (falko)
+03-09-06    Corrected tz values that didn't work on all linux systems (Steven
+            Stremciuc)
 02-09-06    Minimal install cannot select multiple languages (Steven Stremciuc)
 02-09-06    Fixed infinite loop in s9y wrapper BlogMgr (romain)
 02-09-06    Fixed javascript error in TinyFCK (Riccardo Magliocchetti)
@@ -25,9 +29,11 @@ IMPROVEMENTS
 06-09-06    Added Comment module, can be used with all existing modules
 05-09-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>
             in a template will create a link to the currently requested page
-04-09-06    Deprecated DA_Default::moduleIsRegistered() in favour of SGL::moduleIsEnabled()
-03-09-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call DAOs
-            with their correct case, eg in html href: {webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO
+04-09-06    Deprecated DA_Default::moduleIsRegistered() in favour of
+            SGL::moduleIsEnabled()
+03-09-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call
+            DAOs with their correct case, eg in html href:
+            {webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO
             and in js: var remoteHW = new MediaDAO(hwCallback);
 
 
