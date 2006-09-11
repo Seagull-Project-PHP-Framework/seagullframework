@@ -251,7 +251,7 @@ class SGL_Task_DefineTableAliases extends SGL_Task
     {
         $c = &SGL_Config::singleton();
         foreach ($data['aModuleList'] as $module) {
-            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/tableAliases.ini';
+            $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/data/tableAliases.ini';
             if (file_exists($tableAliasIniPath)) {
                 $aData = parse_ini_file($tableAliasIniPath);
                 foreach ($aData as $k => $v) {

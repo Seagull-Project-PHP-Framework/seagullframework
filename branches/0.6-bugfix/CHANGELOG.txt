@@ -27,6 +27,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+10-09-06    Moved tableAlias.ini files into data folder (Steven Stremciuc)
 09-09-06    Add abililty to include a debug block in development rebuilds
 06-09-06    Added Comment module, can be used with all existing modules
 05-09-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>

@@ -234,7 +234,7 @@ class ModuleGenerationMgr extends SGL_Manager
             $ok = $this->_createTemplates($aDirectories, $aTemplates, $output);
         }
         // add to tableAliases
-        $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->moduleName  . '/tableAliases.ini';
+        $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->moduleName  . '/data/tableAliases.ini';
         $addTable = true;
 
         if (file_exists($tableAliasIniPath)) {
