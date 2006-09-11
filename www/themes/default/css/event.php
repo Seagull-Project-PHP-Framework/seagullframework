@@ -578,10 +578,14 @@
         height: 20px;
     }
 
-    #select_dates{display: inline-block;}
+    #select_dates{
+        display: inline-block;
+    }
     /* Hides from IE Mac \*/
     * html #select_dates {height: 1%;}
-    #select_dates{display:block;}
+    #select_dates{
+        display: block;
+    }
     /* End Hack */
 
     #select_dates span{

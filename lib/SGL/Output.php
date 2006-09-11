@@ -534,6 +534,12 @@ class SGL_Output
 
     function getAllOnLoadEvents()
     {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if (!empty($conf['site']['globalJavascriptOnload'])) {
+            $this->aOnLoadEvents[] = $conf['site']['globalJavascriptOnload'];
+        }
         if (count($this->aOnLoadEvents)) {
             return implode(';', $this->aOnLoadEvents);
         }
