@@ -43,7 +43,8 @@ require_once 'DB/DataObject.php';
 /**
  * Module config manager.
  *
- * @package default
+ * @package seagull
+ * @subpackage default
  * @author  Julien Casanova <julien_casanova@yahoo.fr>
  * @version $Revision:$
  */
@@ -89,9 +90,11 @@ class ModuleConfigMgr extends SGL_Manager
                 $input->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->moduleNameId . '/conf.ini');
                 //  Default validation on module conf file
                 if (!is_file($input->moduleConfigFile) || !is_readable($input->moduleConfigFile)) {
-                    $aErrors[] = 'The config file ' . $input->moduleConfigFile . ' does not exist or is not readable.';
+                    $aErrors[] = 'The config file ' . $input->moduleConfigFile .
+                        ' does not exist or is not readable.';
                 } elseif (!is_writable($input->moduleConfigFile)) {
-                    $aErrors[] = 'The config file ' . $input->moduleConfigFile . ' is not writable. Check files permissions.';
+                    $aErrors[] = 'The config file ' . $input->moduleConfigFile .
+                        ' is not writable. Check files permissions.';
                 }
             }
         }
@@ -130,8 +133,8 @@ class ModuleConfigMgr extends SGL_Manager
         $output->module = $this->da->getModuleByName($input->moduleNameId);
 
         // then get its config file
-        $moduleConfig = & SGL_ParamHandler::singleton($input->moduleConfigFile);
-        $config = $moduleConfig->read();
+        $c = &SGL_Config::singleton();
+        $config = $c->load($input->moduleConfigFile);
 
         // Try to identify type of parameters
         $aConfig = array();
@@ -158,9 +161,9 @@ class ModuleConfigMgr extends SGL_Manager
             SGL::raiseError('There was a problem inserting the record',
                 SGL_ERROR_NOAFFECTEDROWS);
         }
-
         // Then update module config parameters
-        $config = & SGL_ParamHandler::singleton($input->moduleConfigFile);
+        $c = new SGL_Config($autoLoad = false);
+        $config = $c->load($input->moduleConfigFile);
 
         $aConfig = array();
         foreach ($input->config as $section => $aParams) {
@@ -168,7 +171,8 @@ class ModuleConfigMgr extends SGL_Manager
             $aConfig[$section] = $aParams;
         }
         //  write configuration to file
-        $ok = $config->write($aConfig);
+        $c->replace($aConfig);
+        $ok = $c->save($input->moduleConfigFile);
         if (!is_a($ok, 'PEAR_Error')) {
             SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
         } else {
