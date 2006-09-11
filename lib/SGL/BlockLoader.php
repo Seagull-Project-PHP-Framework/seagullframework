@@ -206,9 +206,9 @@ class SGL_BlockLoader
                     if ($data = $obj->init($this->output, $oBlock->block_id, $aParams)) {
                         $this->_aData[$index]->content = $data;
                     } else {
+                        //  remove the whole block if a false is captured
                         unset($this->_aData[$index]);
                     }
-                    #$this->_aData[$index]->content = $obj->init($this->output, $oBlock->block_id, $aParams);
                 }
             }
             $this->_sort();
