@@ -166,6 +166,16 @@ class SGL_ErrorHandler
 </div>
 <hr />
 EOF;
+                if (SGL::runningFromCLI()) {
+                    $output = <<<EOL
+MESSAGE: $errStr
+TYPE: {$this->errorType[$errNo][0]}
+FILE: $file
+LINE: $line
+
+ --
+EOL;
+                }
                 echo $output;
 
                 //  disable block so errors can be seen
