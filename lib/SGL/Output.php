@@ -424,9 +424,9 @@ class SGL_Output
             $curRowClass = $pColor;
         }
 
-        if ($isBold)
+        if ($isBold) {
             $curRowClass .= ' bold';
-
+        }
         return $curRowClass;
     }
 
