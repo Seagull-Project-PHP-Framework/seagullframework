@@ -114,7 +114,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
             'adminFirstName' => 'Demo',
             'adminLastName' => 'Admin',
             'adminEmail' => 'demian@phpkitchen.com',
-            'aModuleList' => SGL_Util::getAllModuleDirs($onlyRegistered = true),
+            'aModuleList' => SGL_Install_Common::getMinimumModuleList(),
             'serverName' => isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'localhost',
             'installPassword'       => $installPassword,
             'storeTranslationsInDB' => $transContainer,
@@ -124,7 +124,6 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_SetTimeout());
-        $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_DropDatabase());
         $runner->addTask(new SGL_Task_CreateDatabase());

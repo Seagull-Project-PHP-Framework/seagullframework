@@ -1064,7 +1064,7 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
         $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
         //  only remove when not installing modules, ie for sgl-rebuild
         if (empty($data['moduleInstall'])) {
-            if (is_file($linksFile)) {
+            if (is_file($linksFile) && is_writable($linksFile)) {
                 unlink($linksFile);
             }
         }
@@ -1088,13 +1088,15 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                     }
                 }
             }
-            if (!$handle = fopen($linksFile, 'a+')) {
-                SGL_Install_Common::errorPush(
-                    PEAR::raiseError('could not open links file for writing'));
-            }
-            if (fwrite($handle, $linkData) === false) {
-                SGL_Install_Common::errorPush(
-                    PEAR::raiseError('could not write to file' . $linksFile));
+            if (is_writable($linksFile)) {
+                if (!$handle = fopen($linksFile, 'a+')) {
+                    SGL_Install_Common::errorPush(
+                        PEAR::raiseError('could not open links file for writing'));
+                }
+                if (fwrite($handle, $linkData) === false) {
+                    SGL_Install_Common::errorPush(
+                        PEAR::raiseError('could not write to file' . $linksFile));
+                }
             }
         }
     }
@@ -1410,7 +1412,11 @@ class SGL_Task_InstallerCleanup extends SGL_Task
 #{$data['installPassword']}
 ?>
 PHP;
-        $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
+        if (is_writable(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+            $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
+        } else {
+            SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
+        }
 
         //  update lang in default prefs
         require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
